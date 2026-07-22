@@ -4,6 +4,7 @@ import{Activity,AlertTriangle,ArrowRight,Award,BadgeCheck,BookMarked,BookOpen,Bo
 import popDataUrl from'./data/pop-content.json?url';
 import flowDataUrl from'./data/flowcharts-content.json?url';
 import{featuredMedia,flowSpecs,questionBank,scenarios,trackGroups,tracks}from'./courseData';
+import{loadProfile,saveProfile,hasAccount,registerCertificate,certificateSvg,downloadSvg}from'./profile';
 import'./styles.css';
 
 const[popData,flowData]=await Promise.all([
@@ -14,7 +15,7 @@ const[popData,flowData]=await Promise.all([
 const TRACK_ICONS={Compass,Scale,Inbox,GitBranch,FileCheck,Milestone,RefreshCw,ShieldCheck,Files,Map:MapIcon,Trees,Building2,ClipboardCheck,BadgeCheck,Library};
 
 const STORAGE_KEY='academia-iat-progress-v2';
-const NAV=[['dashboard','Visão geral',Home],['formacao','Formação',BookOpen],['fluxos','Fluxogramas',GitBranch],['laboratorio','Laboratório',FlaskConical],['avaliacoes','Avaliações',ClipboardCheck],['biblioteca','Biblioteca',Library]];
+const NAV=[['dashboard','Visão geral',Home],['formacao','Formação',BookOpen],['fluxos','Fluxogramas',GitBranch],['laboratorio','Laboratório',FlaskConical],['avaliacoes','Avaliações',ClipboardCheck],['biblioteca','Biblioteca',Library],['perfil','Meu perfil',BadgeCheck]];
 const blockMap=new Map(popData.blocks.map(b=>[b.id,b]));
 const tableMap=new Map(popData.tables.map(t=>[t.id,t]));
 const figureByBlock=new Map(popData.figures.map(f=>[f.blockId,f]));
@@ -43,6 +44,8 @@ function sectionText(section){return(section.blockIds||[]).map(id=>{const b=bloc
 function firstLesson(trackId){return(trackLessons.get(trackId)||[])[0]}
 
 function App(){
+ const [profile,setProfileRaw]=useState(()=>loadProfile());
+ const setProfile=(p)=>{const v=typeof p==='function'?p(profile):p;setProfileRaw(v);saveProfile(v);};
  const[state,setState]=useStoredState();
  const[view,setView]=useState('dashboard');
  const[selectedLesson,setSelectedLesson]=useState(()=>lessonMap.has(state.lastLesson)?state.lastLesson:firstLesson('m00')?.id);
@@ -54,7 +57,7 @@ function App(){
  function openLesson(id){setSelectedLesson(id);setState(s=>({...s,lastLesson:id}));setView('lesson');setSearchOpen(false);setMenuOpen(false);scrollTo({top:0,behavior:'smooth'})}
  function complete(id){setState(s=>({...s,completed:s.completed.includes(id)?s.completed.filter(x=>x!==id):[...s.completed,id]}));setToast(state.completed.includes(id)?'Aula marcada como não concluída':'Aula concluída e progresso salvo')}
  function bookmark(id){setState(s=>({...s,bookmarks:s.bookmarks.includes(id)?s.bookmarks.filter(x=>x!==id):[...s.bookmarks,id]}));setToast(state.bookmarks.includes(id)?'Favorito removido':'Aula salva nos favoritos')}
- let content={dashboard:<Dashboard state={state} progress={progress} go={go} openLesson={openLesson}/>,formacao:<Formation state={state} openLesson={openLesson}/>,fluxos:<Flowcharts/>,laboratorio:<Laboratory state={state} setState={setState}/>,avaliacoes:<Assessments state={state} setState={setState}/>,biblioteca:<KnowledgeLibrary state={state} openLesson={openLesson}/>,lesson:<Lesson lesson={lessonMap.get(selectedLesson)||lessons[0]} state={state} setState={setState} openLesson={openLesson} complete={complete} bookmark={bookmark} go={go}/>}[view];
+ let content={dashboard:<Dashboard state={state} progress={progress} go={go} openLesson={openLesson}/>,formacao:<Formation state={state} openLesson={openLesson}/>,fluxos:<Flowcharts/>,laboratorio:<Laboratory state={state} setState={setState}/>,avaliacoes:<Assessments state={state} setState={setState}/>,biblioteca:<KnowledgeLibrary state={state} openLesson={openLesson}/>,perfil:<Profile state={state} progress={progress} profile={profile} setProfile={setProfile} go={go} openLesson={openLesson}/>,lesson:<Lesson lesson={lessonMap.get(selectedLesson)||lessons[0]} state={state} setState={setState} openLesson={openLesson} complete={complete} bookmark={bookmark} go={go}/>}[view];
  return <div className="app-shell">
   <Topbar onMenu={()=>setMenuOpen(v=>!v)} onSearch={()=>setSearchOpen(true)} progress={progress}/>
   <Sidebar view={view} go={go} open={menuOpen}/>
@@ -65,6 +68,35 @@ function App(){
  </div>
 }
 
+function Profile({state,progress,profile,setProfile,go,openLesson}){
+ const conta=hasAccount(profile);
+ const [editando,setEditando]=useState(!conta);
+ const [form,setForm]=useState({name:profile.name||'',role:profile.role||'',unit:profile.unit||''});
+ const salvar=(e)=>{e&&e.preventDefault&&e.preventDefault();const nome=(form.name||'').trim();if(!nome)return;setProfile(pr=>({...pr,name:nome,role:(form.role||'').trim(),unit:(form.unit||'').trim(),createdAt:pr.createdAt||new Date().toISOString()}));setEditando(false);};
+ const mods=tracks.map(t=>({t,p:trackProgress(t.id,state)}));
+ const concluidos=mods.filter(m=>m.p===100).length;
+ const hoje=()=>new Date().toLocaleDateString('pt-BR',{day:'2-digit',month:'long',year:'numeric'});
+ const build=(typeof document!=='undefined'&&document.querySelector('meta[name=build]')?.content)||'local';
+ const baixarCert=(label,percent)=>{const nowIso=new Date().toISOString();setProfile(pr=>registerCertificate(pr,label,percent,nowIso));const svg=certificateSvg({name:profile.name,label,dateLabel:'Emitido em '+hoje(),percent,buildId:build});downloadSvg('certificado-'+label.toLowerCase().replace(/[^a-z0-9]+/g,'-').slice(0,40)+'.svg',svg);};
+ if(!conta||editando){
+  return <div className="page profile-page"><PageHeader icon={BadgeCheck} kicker="Meu perfil" title={conta?'Editar meu perfil':'Criar meu perfil'} subtitle="Seu progresso e seus certificados ficam vinculados a este perfil."/>
+   <form className="profile-form" onSubmit={salvar}><label>Nome<input value={form.name} onChange={e=>setForm(f=>({...f,name:e.target.value}))} placeholder="Como você quer ser identificado" autoFocus/></label>
+   <label>Cargo ou função<input value={form.role} onChange={e=>setForm(f=>({...f,role:e.target.value}))} placeholder="Opcional"/></label>
+   <label>Órgão ou setor<input value={form.unit} onChange={e=>setForm(f=>({...f,unit:e.target.value}))} placeholder="Opcional"/></label>
+   <div className="profile-actions"><button type="submit" className="primary">{conta?'Salvar':'Criar perfil'} <Check/></button>{conta&&<button type="button" className="text-action" onClick={()=>setEditando(false)}>Cancelar</button>}</div>
+   <p className="profile-note">Registro pessoal de estudo, guardado apenas neste navegador. Não é login seguro nem credencial institucional do IAT.</p></form></div>;
+ }
+ return <div className="page profile-page"><PageHeader icon={BadgeCheck} kicker="Meu perfil" title={profile.name} subtitle={[profile.role,profile.unit].filter(Boolean).join(' · ')||'Registro pessoal de estudo'}/>
+  <section className="profile-grid">
+   <article className="profile-card profile-progress"><h3>Progresso do curso</h3><div className="pring" style={{'--v':progress}}><strong>{progress}%</strong></div><small>{state.completed.length} de {lessons.length} tópicos concluídos</small><small>{concluidos} de {tracks.length} módulos completos</small></article>
+   <article className="profile-card profile-personal"><h3>Meus dados</h3><dl><dt>Nome</dt><dd>{profile.name}</dd><dt>Cargo</dt><dd>{profile.role||'—'}</dd><dt>Órgão</dt><dd>{profile.unit||'—'}</dd><dt>Desde</dt><dd>{profile.createdAt?new Date(profile.createdAt).toLocaleDateString('pt-BR'):'—'}</dd></dl><button className="text-action" onClick={()=>{setForm({name:profile.name,role:profile.role,unit:profile.unit});setEditando(true);}}>Editar dados</button></article>
+   <article className="profile-card profile-activity"><h3>Atividade</h3><ul className="profile-activity-list"><li><Bookmark size={15}/> {state.bookmarks.length} favoritos</li><li><StickyNote size={15}/> {Object.keys(state.notes||{}).length} anotações</li><li><CheckCircle2 size={15}/> {state.completed.length} tópicos feitos</li></ul>{state.lastLesson&&<button className="text-action" onClick={()=>openLesson(state.lastLesson)}>Continuar de onde parou <ArrowRight size={15}/></button>}</article>
+  </section>
+  <section className="profile-cert-block"><div className="section-title"><div><h2>Certificados</h2><p>Marcos de conclusão que você pode baixar. Cada um é um registro pessoal de estudo.</p></div><Award/></div>
+   <div className="cert-course">{progress===100?<button className="primary" onClick={()=>baixarCert('Curso completo do POP',100)}><Download size={16}/> Baixar certificado do curso</button>:<p className="cert-locked">Conclua os {lessons.length} tópicos para liberar o certificado do curso completo. Faltam {lessons.length-state.completed.length}.</p>}</div>
+   <h4>Por módulo</h4><ul className="cert-modules">{mods.map(({t,p})=><li key={t.id}><span className="cert-mod-code">{t.code}</span><span className="cert-mod-title">{t.title}</span><span className="cert-mod-bar"><i style={{width:p+'%'}}/></span><span className="cert-mod-pct">{p}%</span>{p===100?<button className="cert-mod-dl" onClick={()=>baixarCert('Módulo '+t.code+' — '+t.title,100)}><Download size={14}/></button>:<span className="cert-mod-pending">em curso</span>}</li>)}</ul></section>
+  <p className="profile-note">Os certificados desta plataforma são registros pessoais de autoestudo. Não são documentos oficiais do Instituto Água e Terra.</p></div>;
+}
 function Topbar({onMenu,onSearch,progress}){return <header className="topbar"><button className="mobile-menu" onClick={onMenu} aria-label="Abrir menu"><Menu/></button><div className="compact-brand"><span className="brand-wave">IAT</span><div><strong>Academia de Licenciamento</strong><small>Hidrelétrico</small></div></div><button className="global-search" onClick={onSearch}><Search/><span>Buscar no POP, aulas e checklists</span><kbd>Ctrl K</kbd></button><div className="top-progress" title={`${progress}% concluído`}><span>{progress}%</span><i><em style={{width:`${progress}%`}}/></i></div><div className="profile"><span>RA</span><div><strong>Rafael</strong><small>Analista em formação</small></div></div></header>}
 function Sidebar({view,go,open}){return <aside className={'sidebar-v2 '+(open?'open':'')}><div className="brand-panel"><strong>Academia IAT</strong><span>Licenciamento<br/>Hidrelétrico</span><svg viewBox="0 0 150 38" aria-hidden="true"><path d="M3 25 C28 2 40 35 63 15 S102 30 147 8"/><path d="M3 31 C32 15 58 37 85 25 S120 22 147 18"/></svg></div><nav>{NAV.map(([id,label,Icon])=><button key={id} className={view===id||(view==='lesson'&&id==='formacao')?'active':''} onClick={()=>go(id)}><Icon/>{label}</button>)}</nav><div className="sidebar-help"><CircleHelp/><div><strong>Precisa de ajuda?</strong><small>Acesse o guia da plataforma</small></div><ChevronRight/></div><div className="source-lock"><ShieldCheck/><span>Conteúdo integral<br/><b>POP v1.2 · julho de 2026</b></span></div></aside>}
 

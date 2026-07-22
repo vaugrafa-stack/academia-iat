@@ -66,6 +66,10 @@ try {
   await click(navButtons.find(x => x.textContent.includes('Fluxogramas')));
   assert(document.querySelectorAll('.flow-menu button').length === 7, 'sete fluxogramas interativos');
   assert(document.querySelectorAll('.interactive-flow > button').length >= 6, 'nós interativos do fluxo renderizados');
+  const montarTab = [...document.querySelectorAll('.flow-mode-tabs button')].find(x => x.textContent.includes('Montar'));
+  await click(montarTab);
+  assert(document.querySelectorAll('.fb-slots li').length === 6, 'atividade de montar o fluxo com seis etapas');
+  assert(document.querySelectorAll('.fb-pool button').length === 6, 'etapas embaralhadas disponíveis para montar');
 
   await click(navButtons.find(x => x.textContent.includes('Laboratório')));
   assert(document.querySelectorAll('.scenario-tabs button').length === 7, 'sete cenários práticos');

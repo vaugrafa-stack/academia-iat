@@ -45,3 +45,47 @@ button.profile:hover{background:var(--soft)}
 button.profile>div{text-align:left}
 button.profile>span{transition:transform .15s}
 button.profile:hover>span{transform:scale(1.05)}
+/* #2 Fluxograma como atividade + checklist da aula */
+.flow-mode-tabs{display:flex;align-items:center;gap:8px;margin-bottom:16px}
+.flow-mode-tabs button{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--line);background:#fff;padding:8px 14px;border-radius:8px;cursor:pointer;font-weight:700;color:var(--muted)}
+.flow-mode-tabs button svg{width:16px}
+.flow-mode-tabs button.active{background:var(--green);color:#fff;border-color:var(--green)}
+.flow-mode-tabs .fb-badge{margin-left:auto;display:inline-flex;align-items:center;gap:6px;font-weight:800;font-size:12px;color:var(--green);background:var(--green3);padding:6px 11px;border-radius:20px}
+.flow-mode-tabs .fb-badge svg{width:15px}
+.flow-builder{border:1px solid var(--line);border-radius:12px;padding:20px;background:var(--soft)}
+.fb-head h3{margin:0 0 4px}.fb-head p{margin:0 0 16px;color:var(--muted);font-size:14px}
+.fb-slots{list-style:none;margin:0 0 16px;padding:0;display:flex;flex-direction:column;gap:8px}
+.fb-slots li{display:flex;align-items:center;gap:11px;padding:11px 14px;border-radius:9px;border:1px dashed var(--line);background:#fff;min-height:48px}
+.fb-slots li>span{width:26px;height:26px;flex:0 0 auto;border-radius:50%;background:#eef3f0;display:grid;place-items:center;font-weight:800;font-size:13px}
+.fb-slots li strong{flex:1}.fb-slots li em{flex:1;color:#9aa7a0;font-style:normal}
+.fb-slots li svg{width:18px}
+.fb-slots li.ok{border-style:solid;border-color:var(--green2);background:var(--green3)}
+.fb-slots li.ok svg{color:var(--green2)}
+.fb-slots li.bad{border-style:solid;border-color:var(--red);background:#fdeceA}
+.fb-slots li.bad svg{color:var(--red)}
+.fb-pool{display:flex;flex-wrap:wrap;gap:9px;margin-bottom:14px}
+.fb-pool button{border:1px solid #ccd8d2;background:#fff;padding:10px 14px;border-radius:8px;cursor:pointer;font-weight:600;transition:transform .1s,border-color .1s}
+.fb-pool button:hover{border-color:var(--green);transform:translateY(-1px)}
+.fb-empty{color:var(--muted);font-size:14px}
+.fb-actions{display:flex;gap:16px;margin-bottom:6px}
+.fb-actions button{display:inline-flex;align-items:center;gap:6px}
+.fb-actions button:disabled{opacity:.45;cursor:default}
+.fb-result{display:flex;align-items:center;gap:12px;margin-top:14px;padding:14px 16px;border-radius:10px;background:#fff4dc;border:1px solid var(--amber)}
+.fb-result.perfect{background:var(--green3);border-color:var(--green2)}
+.fb-result svg{width:26px;flex:0 0 auto;color:var(--amber)}
+.fb-result.perfect svg{color:var(--green2)}
+.fb-result strong{display:block}.fb-result p{margin:2px 0 0;font-size:13px;color:var(--muted)}
+.lesson-checklist{margin:18px 0 22px;border:1px solid var(--line);border-radius:12px;padding:16px 18px;background:var(--soft)}
+.lc-head{display:grid;grid-template-columns:auto auto;align-items:center;gap:6px 12px;margin-bottom:14px}
+.lc-head strong{display:inline-flex;align-items:center;gap:8px}
+.lc-head span{justify-self:end;font-weight:800;color:var(--green);font-size:13px}
+.lc-head i{grid-column:1/3;height:6px;border-radius:5px;background:#e4ebe7;overflow:hidden}
+.lc-head em{display:block;height:100%;background:var(--green);border-radius:inherit;transition:width .25s}
+.lc-item{display:flex;align-items:flex-start;gap:11px;width:100%;text-align:left;border:1px solid transparent;border-bottom:1px solid var(--line);background:none;padding:11px 8px;cursor:pointer;border-radius:7px}
+.lc-item:last-of-type{border-bottom:none}
+.lc-item:hover{background:#fff}
+.lc-item svg{width:20px;flex:0 0 auto;color:#b3c0b9;margin-top:1px}
+.lc-item.done svg{color:var(--green2)}
+.lc-item.done span{color:var(--muted);text-decoration:line-through}
+.lc-complete{display:flex;align-items:center;gap:8px;margin-top:12px;padding:10px 14px;border-radius:8px;background:var(--green3);color:var(--green);font-weight:700;font-size:14px}
+.lc-complete svg{width:18px}

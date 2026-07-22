@@ -43,18 +43,23 @@ function trackProgress(id,state){const ls=trackLessons.get(id)||[];return ls.len
 function sectionText(section){return(section.blockIds||[]).map(id=>{const b=blockMap.get(id);return b?.paragraph?.text||b?.caption||''}).filter(Boolean).join(' ')}
 function firstLesson(trackId){return(trackLessons.get(trackId)||[])[0]}
 
+const VIEW_IDS=['dashboard','formacao','fluxos','laboratorio','avaliacoes','biblioteca','perfil'];
+function parseHash(){const h=((typeof location!=='undefined'&&location.hash)||'').replace(/^#\/?/,'');if(!h)return{view:'dashboard',lesson:null};const i=h.indexOf('/');const seg=i<0?h:h.slice(0,i);const rest=i<0?'':h.slice(i+1);if(seg==='aula'&&rest)return{view:'lesson',lesson:decodeURIComponent(rest)};if(VIEW_IDS.includes(seg))return{view:seg,lesson:null};return{view:'dashboard',lesson:null};}
+function pushHash(t){if(typeof location==='undefined')return;if(location.hash===t)return;try{history.pushState(null,'',t)}catch{location.hash=t}}
 function App(){
  const [profile,setProfileRaw]=useState(()=>loadProfile());
  const setProfile=(p)=>{const v=typeof p==='function'?p(profile):p;setProfileRaw(v);saveProfile(v);};
  const[state,setState]=useStoredState();
- const[view,setView]=useState('dashboard');
- const[selectedLesson,setSelectedLesson]=useState(()=>lessonMap.has(state.lastLesson)?state.lastLesson:firstLesson('m00')?.id);
+ const _init=parseHash();
+ const[view,setView]=useState(_init.view);
+ const[selectedLesson,setSelectedLesson]=useState(()=>_init.lesson&&lessonMap.has(_init.lesson)?_init.lesson:(lessonMap.has(state.lastLesson)?state.lastLesson:firstLesson('m00')?.id));
  const[menuOpen,setMenuOpen]=useState(false),[searchOpen,setSearchOpen]=useState(false),[toast,setToast]=useState('');
  const progress=Math.round(state.completed.length/lessons.length*100);
  useEffect(()=>{const fn=e=>{if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='k'){e.preventDefault();setSearchOpen(true)}if(e.key==='Escape')setSearchOpen(false)};window.addEventListener('keydown',fn);return()=>window.removeEventListener('keydown',fn)},[]);
  useEffect(()=>{if(toast){const id=setTimeout(()=>setToast(''),2600);return()=>clearTimeout(id)}},[toast]);
- function go(next){setView(next);setMenuOpen(false);scrollTo({top:0,behavior:'smooth'})}
- function openLesson(id){setSelectedLesson(id);setState(s=>({...s,lastLesson:id}));setView('lesson');setSearchOpen(false);setMenuOpen(false);scrollTo({top:0,behavior:'smooth'})}
+ useEffect(()=>{const onNav=()=>{const p=parseHash();if(p.view==='lesson'){if(p.lesson&&lessonMap.has(p.lesson)){setSelectedLesson(p.lesson);setState(s=>s.lastLesson===p.lesson?s:{...s,lastLesson:p.lesson})}setView('lesson')}else setView(p.view);setMenuOpen(false);setSearchOpen(false)};window.addEventListener('popstate',onNav);window.addEventListener('hashchange',onNav);return()=>{window.removeEventListener('popstate',onNav);window.removeEventListener('hashchange',onNav)}},[]);
+ function go(next){setView(next);setMenuOpen(false);pushHash(next==='dashboard'?'#/':'#/'+next);scrollTo({top:0,behavior:'smooth'})}
+ function openLesson(id){if(!id)return;setSelectedLesson(id);setState(s=>({...s,lastLesson:id}));setView('lesson');setSearchOpen(false);setMenuOpen(false);pushHash('#/aula/'+encodeURIComponent(id));scrollTo({top:0,behavior:'smooth'})}
  function complete(id){setState(s=>({...s,completed:s.completed.includes(id)?s.completed.filter(x=>x!==id):[...s.completed,id]}));setToast(state.completed.includes(id)?'Aula marcada como não concluída':'Aula concluída e progresso salvo')}
  function bookmark(id){setState(s=>({...s,bookmarks:s.bookmarks.includes(id)?s.bookmarks.filter(x=>x!==id):[...s.bookmarks,id]}));setToast(state.bookmarks.includes(id)?'Favorito removido':'Aula salva nos favoritos')}
  let content={dashboard:<Dashboard state={state} progress={progress} go={go} openLesson={openLesson}/>,formacao:<Formation state={state} openLesson={openLesson}/>,fluxos:<Flowcharts/>,laboratorio:<Laboratory state={state} setState={setState}/>,avaliacoes:<Assessments state={state} setState={setState}/>,biblioteca:<KnowledgeLibrary state={state} openLesson={openLesson}/>,perfil:<Profile state={state} progress={progress} profile={profile} setProfile={setProfile} go={go} openLesson={openLesson}/>,lesson:<Lesson lesson={lessonMap.get(selectedLesson)||lessons[0]} state={state} setState={setState} openLesson={openLesson} complete={complete} bookmark={bookmark} go={go}/>}[view];

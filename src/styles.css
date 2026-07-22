@@ -89,3 +89,17 @@ button.profile:hover>span{transform:scale(1.05)}
 .lc-item.done span{color:var(--muted);text-decoration:line-through}
 .lc-complete{display:flex;align-items:center;gap:8px;margin-top:12px;padding:10px 14px;border-radius:8px;background:var(--green3);color:var(--green);font-weight:700;font-size:15px}
 .lc-complete svg{width:18px}
+/* Painel do fluxograma-fonte sempre visivel */
+.flow-toolbar-label{font-size:13px;font-weight:700;color:var(--muted)}
+.source-flow-panel{border-top:1px solid var(--line);margin:0 22px;padding:16px 0 20px}
+.sfp-head{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.sfp-title{display:flex;align-items:center;gap:7px;font-size:14px;font-weight:800}
+.sfp-title svg{width:16px}
+.sfp-head .variant-tabs{margin-left:auto}
+.sfp-fit,.sfp-open{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:#fff;border-radius:7px;padding:6px 10px;font-size:12px;font-weight:700;cursor:pointer;color:var(--ink);text-decoration:none}
+.sfp-open svg{width:14px}
+.sfp-scroll{margin-top:14px;border:1px solid var(--line);border-radius:8px;overflow:auto;min-height:200px;max-height:640px;background:#fafcfb}
+.sfp-scroll.fit img{max-width:100%;display:block;margin:0 auto}
+.sfp-scroll.real img{max-width:none;display:block}
+.sfp-meta{display:block;margin-top:8px;color:var(--muted);font-size:12px}
+.sfp-missing{margin-top:14px;color:var(--red);font-size:13px}

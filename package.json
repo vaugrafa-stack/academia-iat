@@ -1,0 +1,20 @@
+{
+  "scripts": {
+    "dev": "vite --host 127.0.0.1 --port 5173 --strictPort --open",
+    "build": "vite build",
+    "test": "node tools/smoke-test.mjs",
+    "media": "python tools/build_training_videos.py"
+  },
+  "dependencies": {
+    "@vitejs/plugin-react": "latest",
+    "vite": "latest",
+    "typescript": "latest",
+    "react": "latest",
+    "react-dom": "latest",
+    "lucide-react": "latest"
+  },
+  "devDependencies": {
+    "vitest": "latest",
+    "jsdom": "latest"
+  }
+}

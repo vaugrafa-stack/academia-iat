@@ -1,0 +1,247 @@
+- generic [ref=e3]:
+  - banner [ref=e4]:
+    - button "Buscar no POP, aulas e checklists Ctrl K" [ref=e5] [cursor=pointer]:
+      - generic [ref=e9]: Buscar no POP, aulas e checklists
+      - generic [ref=e10]: Ctrl K
+    - generic "0% concluído" [ref=e11]:
+      - generic [ref=e12]: 0%
+      - generic [ref=e13]:
+        - emphasis
+    - generic [ref=e14]:
+      - generic [ref=e15]: RA
+      - generic [ref=e16]:
+        - strong [ref=e17]: Rafael
+        - generic [ref=e18]: Analista em formação
+  - complementary [ref=e19]:
+    - generic [ref=e20]:
+      - strong [ref=e21]: Academia IAT
+      - generic [ref=e22]: LicenciamentoHidrelétrico
+    - navigation [ref=e26]:
+      - button "Visão geral" [ref=e27] [cursor=pointer]
+      - button "Formação" [active] [ref=e31] [cursor=pointer]
+      - button "Fluxogramas" [ref=e34] [cursor=pointer]
+      - button "Laboratório" [ref=e39] [cursor=pointer]
+      - button "Avaliações" [ref=e42] [cursor=pointer]
+      - button "Biblioteca" [ref=e47] [cursor=pointer]
+    - generic [ref=e54]:
+      - strong [ref=e55]: Precisa de ajuda?
+      - generic [ref=e56]: Acesse o guia da plataforma
+    - generic [ref=e59]: Conteúdo integralPOP v1.2 · julho de 2026
+  - main [ref=e64]:
+    - generic [ref=e548]:
+      - generic [ref=e554]:
+        - heading "Formação completa" [level=1] [ref=e555]
+        - paragraph [ref=e556]: 15 módulos conectam cada seção do POP a objetivos, conteúdo-fonte, prática e avaliação.
+      - generic [ref=e557]:
+        - textbox "Filtrar módulos ou aulas" [ref=e562]
+        - generic [ref=e563]: 125 tópicos · 1117 min
+      - generic [ref=e564]:
+        - generic [ref=e565]:
+          - generic [ref=e566]: Fundamentos e método
+          - article [ref=e569]:
+            - button "M00 Orientação, escopo e controle documental Como usar o POP, entender seu alcance e reconhecer os limites da atuação técnica. 0% 0/16 tópicos" [ref=e570] [cursor=pointer]:
+              - generic [ref=e575]:
+                - generic [ref=e576]: M00
+                - strong [ref=e577]: Orientação, escopo e controle documental
+                - emphasis [ref=e578]: Como usar o POP, entender seu alcance e reconhecer os limites da atuação técnica.
+              - generic [ref=e579]:
+                - generic [ref=e580]: 0%
+                - generic [ref=e581]:
+                  - emphasis
+                - generic [ref=e582]: 0/16 tópicos
+          - article [ref=e585]:
+            - button "M01 Papéis, normas, definições e método obrigatório Competências, ordem de consulta, transições, conceitos e sequência rastreável de decisão. 0% 0/15 tópicos" [ref=e586] [cursor=pointer]:
+              - generic [ref=e592]:
+                - generic [ref=e593]: M01
+                - strong [ref=e594]: Papéis, normas, definições e método obrigatório
+                - emphasis [ref=e595]: Competências, ordem de consulta, transições, conceitos e sequência rastreável de decisão.
+              - generic [ref=e596]:
+                - generic [ref=e597]: 0%
+                - generic [ref=e598]:
+                  - emphasis
+                - generic [ref=e599]: 0/15 tópicos
+          - article [ref=e602]:
+            - button "M02 Fluxo geral, recebimento e triagem Leitura cronológica e temática, conferência inicial e saídas possíveis da triagem. 0% 0/7 tópicos" [ref=e603] [cursor=pointer]:
+              - generic [ref=e608]:
+                - generic [ref=e609]: M02
+                - strong [ref=e610]: Fluxo geral, recebimento e triagem
+                - emphasis [ref=e611]: Leitura cronológica e temática, conferência inicial e saídas possíveis da triagem.
+              - generic [ref=e612]:
+                - generic [ref=e613]: 0%
+                - generic [ref=e614]:
+                  - emphasis
+                - generic [ref=e615]: 0/7 tópicos
+            - generic [ref=e618]:
+              - button "1 6 Fluxo geral do processo de licenciamento 9 min · Conteúdo integral do POP" [ref=e619] [cursor=pointer]:
+                - generic [ref=e620]: "1"
+                - generic [ref=e621]:
+                  - strong [ref=e622]: 6 Fluxo geral do processo de licenciamento
+                  - generic [ref=e623]: 9 min · Conteúdo integral do POP
+              - button "2 6.1 Saídas possíveis da triagem 8 min · Conteúdo integral do POP" [ref=e626] [cursor=pointer]:
+                - generic [ref=e627]: "2"
+                - generic [ref=e628]:
+                  - strong [ref=e629]: 6.1 Saídas possíveis da triagem
+                  - generic [ref=e630]: 8 min · Conteúdo integral do POP
+              - button "3 7 Recebimento, triagem e leitura do processo 6 min · Conteúdo integral do POP" [ref=e633] [cursor=pointer]:
+                - generic [ref=e634]: "3"
+                - generic [ref=e635]:
+                  - strong [ref=e636]: 7 Recebimento, triagem e leitura do processo
+                  - generic [ref=e637]: 6 min · Conteúdo integral do POP
+              - button "4 7.1 Procedimento passo a passo 18 min · Conteúdo integral do POP" [ref=e640] [cursor=pointer]:
+                - generic [ref=e641]: "4"
+                - generic [ref=e642]:
+                  - strong [ref=e643]: 7.1 Procedimento passo a passo
+                  - generic [ref=e644]: 18 min · Conteúdo integral do POP
+              - button "5 7.2 Alertas de triagem 13 min · Conteúdo integral do POP" [ref=e647] [cursor=pointer]:
+                - generic [ref=e648]: "5"
+                - generic [ref=e649]:
+                  - strong [ref=e650]: 7.2 Alertas de triagem
+                  - generic [ref=e651]: 13 min · Conteúdo integral do POP
+              - button "6 6 Análise documental 6 min · Conteúdo integral do POP" [ref=e654] [cursor=pointer]:
+                - generic [ref=e655]: "6"
+                - generic [ref=e656]:
+                  - strong [ref=e657]: 6 Análise documental
+                  - generic [ref=e658]: 6 min · Conteúdo integral do POP
+              - button "7 7 Análise técnica 6 min · Conteúdo integral do POP" [ref=e661] [cursor=pointer]:
+                - generic [ref=e662]: "7"
+                - generic [ref=e663]:
+                  - strong [ref=e664]: 7 Análise técnica
+                  - generic [ref=e665]: 6 min · Conteúdo integral do POP
+        - generic [ref=e668]:
+          - generic [ref=e669]: Enquadramento e modalidades
+          - article [ref=e672]:
+            - button "M03 Enquadramento e Consulta Prévia Tipologia, potência, alagamento, IDA, sensibilidade, estudo e cenários da Consulta Prévia. 0% 0/9 tópicos" [ref=e673] [cursor=pointer]:
+              - generic [ref=e679]:
+                - generic [ref=e680]: M03
+                - strong [ref=e681]: Enquadramento e Consulta Prévia
+                - emphasis [ref=e682]: Tipologia, potência, alagamento, IDA, sensibilidade, estudo e cenários da Consulta Prévia.
+              - generic [ref=e683]:
+                - generic [ref=e684]: 0%
+                - generic [ref=e685]:
+                  - emphasis
+                - generic [ref=e686]: 0/9 tópicos
+          - article [ref=e689]:
+            - button "M04 DLAM, LAC e LAS Dispensa, adesão e compromisso, licenciamento simplificado e seus limites. 0% 0/5 tópicos" [ref=e690] [cursor=pointer]:
+              - generic [ref=e696]:
+                - generic [ref=e697]: M04
+                - strong [ref=e698]: DLAM, LAC e LAS
+                - emphasis [ref=e699]: Dispensa, adesão e compromisso, licenciamento simplificado e seus limites.
+              - generic [ref=e700]:
+                - generic [ref=e701]: 0%
+                - generic [ref=e702]:
+                  - emphasis
+                - generic [ref=e703]: 0/5 tópicos
+          - article [ref=e706]:
+            - 'button "M05 Licenciamento trifásico: LP, LI e LO Finalidade, documentos, mérito e produtos técnicos de cada fase do rito trifásico. 0% 0/5 tópicos" [ref=e707] [cursor=pointer]':
+              - generic [ref=e711]:
+                - generic [ref=e712]: M05
+                - strong [ref=e713]: "Licenciamento trifásico: LP, LI e LO"
+                - emphasis [ref=e714]: Finalidade, documentos, mérito e produtos técnicos de cada fase do rito trifásico.
+              - generic [ref=e715]:
+                - generic [ref=e716]: 0%
+                - generic [ref=e717]:
+                  - emphasis
+                - generic [ref=e718]: 0/5 tópicos
+          - article [ref=e721]:
+            - button "M06 AA, renovação, regularização, transferência e alterações Situações transitórias e especiais, sem misturar objetos, títulos ou fases. 0% 0/7 tópicos" [ref=e722] [cursor=pointer]:
+              - generic [ref=e729]:
+                - generic [ref=e730]: M06
+                - strong [ref=e731]: AA, renovação, regularização, transferência e alterações
+                - emphasis [ref=e732]: Situações transitórias e especiais, sem misturar objetos, títulos ou fases.
+              - generic [ref=e733]:
+                - generic [ref=e734]: 0%
+                - generic [ref=e735]:
+                  - emphasis
+                - generic [ref=e736]: 0/7 tópicos
+        - generic [ref=e739]:
+          - generic [ref=e740]: Interfaces e estudos
+          - article [ref=e743]:
+            - button "M07 Sistemas associados e segurança de barragens Áreas de apoio, linhas e acessos, PNSB, PSB, PAE, ZAS e interfaces de competência. 0% 0/5 tópicos" [ref=e744] [cursor=pointer]:
+              - generic [ref=e749]:
+                - generic [ref=e750]: M07
+                - strong [ref=e751]: Sistemas associados e segurança de barragens
+                - emphasis [ref=e752]: Áreas de apoio, linhas e acessos, PNSB, PSB, PAE, ZAS e interfaces de competência.
+              - generic [ref=e753]:
+                - generic [ref=e754]: 0%
+                - generic [ref=e755]:
+                  - emphasis
+                - generic [ref=e756]: 0/5 tópicos
+          - article [ref=e759]:
+            - button "M08 Memorial e estudos ambientais Memorial, PCA, RAS, RDPA, EIA, RIMA, PBA e demais estudos, com critérios de suficiência. 0% 0/10 tópicos" [ref=e760] [cursor=pointer]:
+              - generic [ref=e766]:
+                - generic [ref=e767]: M08
+                - strong [ref=e768]: Memorial e estudos ambientais
+                - emphasis [ref=e769]: Memorial, PCA, RAS, RDPA, EIA, RIMA, PBA e demais estudos, com critérios de suficiência.
+              - generic [ref=e770]:
+                - generic [ref=e771]: 0%
+                - generic [ref=e772]:
+                  - emphasis
+                - generic [ref=e773]: 0/10 tópicos
+          - article [ref=e776]:
+            - button "M09 PACUERA integral Exigibilidade, TR, diagnóstico, UTHs, zoneamento, participação, IA, implementação e revisão. 0% 0/9 tópicos" [ref=e777] [cursor=pointer]:
+              - generic [ref=e781]:
+                - generic [ref=e782]: M09
+                - strong [ref=e783]: PACUERA integral
+                - emphasis [ref=e784]: Exigibilidade, TR, diagnóstico, UTHs, zoneamento, participação, IA, implementação e revisão.
+              - generic [ref=e785]:
+                - generic [ref=e786]: 0%
+                - generic [ref=e787]:
+                  - emphasis
+                - generic [ref=e788]: 0/9 tópicos
+          - article [ref=e791]:
+            - button "M10 Cartografia, APP, flora, fauna e recursos hídricos Base espacial da análise e verificações ambientais integradas. 0% 0/5 tópicos" [ref=e792] [cursor=pointer]:
+              - generic [ref=e797]:
+                - generic [ref=e798]: M10
+                - strong [ref=e799]: Cartografia, APP, flora, fauna e recursos hídricos
+                - emphasis [ref=e800]: Base espacial da análise e verificações ambientais integradas.
+              - generic [ref=e801]:
+                - generic [ref=e802]: 0%
+                - generic [ref=e803]:
+                  - emphasis
+                - generic [ref=e804]: 0/5 tópicos
+          - article [ref=e807]:
+            - button "M11 ANEEL, IPHAN, intervenientes e vistoria Interfaces institucionais, limites de competência e evidência de campo. 0% 0/6 tópicos" [ref=e808] [cursor=pointer]:
+              - generic [ref=e814]:
+                - generic [ref=e815]: M11
+                - strong [ref=e816]: ANEEL, IPHAN, intervenientes e vistoria
+                - emphasis [ref=e817]: Interfaces institucionais, limites de competência e evidência de campo.
+              - generic [ref=e818]:
+                - generic [ref=e819]: 0%
+                - generic [ref=e820]:
+                  - emphasis
+                - generic [ref=e821]: 0/6 tópicos
+        - generic [ref=e824]:
+          - generic [ref=e825]: Decisão e qualidade
+          - article [ref=e828]:
+            - button "M12 Suficiência, pendências, condicionantes e conclusão Da matriz documental à manifestação conclusiva, com linguagem proporcional e verificável. 0% 0/10 tópicos" [ref=e829] [cursor=pointer]:
+              - generic [ref=e835]:
+                - generic [ref=e836]: M12
+                - strong [ref=e837]: Suficiência, pendências, condicionantes e conclusão
+                - emphasis [ref=e838]: Da matriz documental à manifestação conclusiva, com linguagem proporcional e verificável.
+              - generic [ref=e839]:
+                - generic [ref=e840]: 0%
+                - generic [ref=e841]:
+                  - emphasis
+                - generic [ref=e842]: 0/10 tópicos
+          - article [ref=e845]:
+            - button "M13 Formatação, qualidade e rastreabilidade Padrão documental, revisão, evidências, consistência interna e controle final. 0% 0/10 tópicos" [ref=e846] [cursor=pointer]:
+              - generic [ref=e851]:
+                - generic [ref=e852]: M13
+                - strong [ref=e853]: Formatação, qualidade e rastreabilidade
+                - emphasis [ref=e854]: Padrão documental, revisão, evidências, consistência interna e controle final.
+              - generic [ref=e855]:
+                - generic [ref=e856]: 0%
+                - generic [ref=e857]:
+                  - emphasis
+                - generic [ref=e858]: 0/10 tópicos
+          - article [ref=e861]:
+            - button "M14 Anexos, referências e caso integrador Modelos reutilizáveis, siglas, referências e consolidação do percurso. 0% 0/6 tópicos" [ref=e862] [cursor=pointer]:
+              - generic [ref=e866]:
+                - generic [ref=e867]: M14
+                - strong [ref=e868]: Anexos, referências e caso integrador
+                - emphasis [ref=e869]: Modelos reutilizáveis, siglas, referências e consolidação do percurso.
+              - generic [ref=e870]:
+                - generic [ref=e871]: 0%
+                - generic [ref=e872]:
+                  - emphasis
+                - generic [ref=e873]: 0/6 tópicos

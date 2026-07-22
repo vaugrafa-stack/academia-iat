@@ -103,3 +103,20 @@ button.profile:hover>span{transform:scale(1.05)}
 .sfp-scroll.real img{max-width:none;display:block}
 .sfp-meta{display:block;margin-top:8px;color:var(--muted);font-size:12px}
 .sfp-missing{margin-top:14px;color:var(--red);font-size:13px}
+/* Auditoria de controles mortos: novos elementos funcionais */
+button.sidebar-help{background:transparent;font:inherit;color:inherit;cursor:pointer;text-align:left;width:100%}
+.ph-kicker{display:block;font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--green2);margin-bottom:2px}
+.case-summary{margin:14px 22px 0;padding:14px 16px;border:1px solid var(--line);border-left:4px solid var(--green);border-radius:8px;background:var(--soft);font-size:14px}
+.case-summary ul{margin:8px 0;padding-left:18px}
+.case-summary li{margin:3px 0}
+.case-header button.active{background:var(--green3);border-color:var(--green)}
+.lab-evidence button.seen{background:var(--green3);border-color:var(--green)}
+.lab-evidence button.seen svg:last-child{color:var(--green)}
+.cert-history{margin:14px 0 4px}
+.cert-history ul{list-style:none;margin:8px 0 0;padding:0;display:flex;flex-direction:column;gap:6px}
+.cert-history li{display:flex;align-items:center;gap:8px;font-size:13px;border:1px solid var(--line);border-radius:7px;padding:7px 10px;background:#fff}
+.cert-history li span{flex:1;font-weight:700}
+.cert-history li small{color:var(--muted)}
+.cert-history li svg{color:var(--green)}
+.lesson-context nav button.active{background:var(--green3);border-radius:6px}
+.lesson-context nav button.active svg:last-child{color:var(--green)}

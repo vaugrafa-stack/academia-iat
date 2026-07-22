@@ -1,10 +1,11 @@
 import React,{useEffect,useMemo,useRef,useState}from'react';
 import{createRoot}from'react-dom/client';
-import{Activity,AlertTriangle,ArrowRight,Award,BadgeCheck,BookMarked,BookOpen,Bookmark,BookmarkCheck,Building2,Check,CheckCircle2,ChevronLeft,ChevronRight,Circle,CircleHelp,ClipboardCheck,Clock,Compass,Database,Download,ExternalLink,Eye,FileCheck,FileCheck2,FileText,Files,Filter,FlaskConical,GitBranch,GraduationCap,Home,Image as ImageIcon,Inbox,Info,Layers3,Library,Lightbulb,Lock,Map as MapIcon,Maximize2,Menu,MessageSquareText,Milestone,PanelLeftClose,PanelLeftOpen,Pause,Play,RefreshCw,RotateCcw,Route,Scale,Search,ShieldCheck,Sparkles,StickyNote,Table2,Target,Trees,Trophy,X,ZoomIn,ZoomOut}from'lucide-react';
+import{Activity,AlertTriangle,ArrowRight,Award,BadgeCheck,BookMarked,BookOpen,Bookmark,BookmarkCheck,Building2,Check,CheckCircle2,ChevronLeft,ChevronRight,Circle,CircleHelp,ClipboardCheck,Clock,Compass,Database,Download,ExternalLink,Eye,FileCheck,FileCheck2,FileText,Files,Filter,FlaskConical,GitBranch,GraduationCap,Home,Image as ImageIcon,Inbox,Info,Layers3,Library,Lightbulb,Lock,Map as MapIcon,Maximize2,Menu,MessageSquareText,Milestone,PanelLeftClose,PanelLeftOpen,Pause,Play,RefreshCw,RotateCcw,Route,Scale,Search,ShieldCheck,Sparkles,StickyNote,Table2,Target,Trees,Trophy,X,Zap,ZoomIn,ZoomOut}from'lucide-react';
+import HydroGuide from'./hydro';
 import popDataUrl from'./data/pop-content.json?url';
 import flowDataUrl from'./data/flowcharts-content.json?url';
 import{featuredMedia,flowSpecs,questionBank,scenarios,trackGroups,tracks}from'./courseData';
-import{loadProfile,saveProfile,hasAccount,registerCertificate,certificateSvg,downloadSvg}from'./profile';
+import{loadProfile,saveProfile,hasAccount,registerCertificate,certificateSvg,downloadSvg,listUsers,switchUser,createUser,deleteUser,exportBackup,importBackup,progressKey}from'./profile';
 import'./styles.css';
 
 const[popData,flowData]=await Promise.all([
@@ -20,16 +21,17 @@ if(BASE){const PATH_KEYS=new Set(['publicPath','src','poster','captions']);const
 const TRACK_ICONS={Compass,Scale,Inbox,GitBranch,FileCheck,Milestone,RefreshCw,ShieldCheck,Files,Map:MapIcon,Trees,Building2,ClipboardCheck,BadgeCheck,Library};
 
 const STORAGE_KEY='academia-iat-progress-v2';
-const NAV=[['dashboard','Visão geral',Home],['formacao','Formação',BookOpen],['fluxos','Fluxogramas',GitBranch],['laboratorio','Laboratório',FlaskConical],['avaliacoes','Avaliações',ClipboardCheck],['biblioteca','Biblioteca',Library],['perfil','Meu perfil',BadgeCheck]];
+const NAV=[['dashboard','Visão geral',Home],['hidreletricas','Hidrelétricas',Zap],['formacao','Formação',BookOpen],['fluxos','Fluxogramas',GitBranch],['laboratorio','Laboratório',FlaskConical],['avaliacoes','Avaliações',ClipboardCheck],['biblioteca','Biblioteca',Library],['perfil','Meu perfil',BadgeCheck]];
 const blockMap=new Map(popData.blocks.map(b=>[b.id,b]));
 const tableMap=new Map(popData.tables.map(t=>[t.id,t]));
 const figureByBlock=new Map(popData.figures.map(f=>[f.blockId,f]));
 const sectionMap=new Map(popData.sections.map(s=>[s.id,s]));
 
 function useStoredState(){
+ const key=useMemo(()=>{try{return progressKey()}catch{return STORAGE_KEY}},[]);
  const initial={completed:[],bookmarks:[],notes:{},quizScores:{},labs:{},lastLesson:null,videoSeen:[],streak:1};
- const[state,setState]=useState(()=>{try{return{...initial,...JSON.parse(localStorage.getItem(STORAGE_KEY)||'{}')}}catch{return initial}});
- useEffect(()=>{localStorage.setItem(STORAGE_KEY,JSON.stringify(state))},[state]);
+ const[state,setState]=useState(()=>{try{return{...initial,...JSON.parse(localStorage.getItem(key)||'{}')}}catch{return initial}});
+ useEffect(()=>{localStorage.setItem(key,JSON.stringify(state))},[state,key]);
  return[state,setState];
 }
 function norm(v=''){return v.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase()}
@@ -48,7 +50,7 @@ function trackProgress(id,state){const ls=trackLessons.get(id)||[];return ls.len
 function sectionText(section){return(section.blockIds||[]).map(id=>{const b=blockMap.get(id);return b?.paragraph?.text||b?.caption||''}).filter(Boolean).join(' ')}
 function firstLesson(trackId){return(trackLessons.get(trackId)||[])[0]}
 
-const VIEW_IDS=['dashboard','formacao','fluxos','laboratorio','avaliacoes','biblioteca','perfil'];
+const VIEW_IDS=['dashboard','hidreletricas','formacao','fluxos','laboratorio','avaliacoes','biblioteca','perfil'];
 function parseHash(){const h=((typeof location!=='undefined'&&location.hash)||'').replace(/^#\/?/,'');if(!h)return{view:'dashboard',lesson:null};const i=h.indexOf('/');const seg=i<0?h:h.slice(0,i);const rest=i<0?'':h.slice(i+1);if(seg==='aula'&&rest)return{view:'lesson',lesson:decodeURIComponent(rest)};if(VIEW_IDS.includes(seg))return{view:seg,lesson:null};return{view:'dashboard',lesson:null};}
 function pushHash(t){if(typeof location==='undefined')return;if(location.hash===t)return;try{history.pushState(null,'',t)}catch{location.hash=t}}
 function App(){
@@ -67,7 +69,7 @@ function App(){
  function openLesson(id){if(!id)return;setSelectedLesson(id);setState(s=>({...s,lastLesson:id}));setView('lesson');setSearchOpen(false);setMenuOpen(false);pushHash('#/aula/'+encodeURIComponent(id));scrollTo({top:0,behavior:'smooth'})}
  function complete(id){setState(s=>({...s,completed:s.completed.includes(id)?s.completed.filter(x=>x!==id):[...s.completed,id]}));setToast(state.completed.includes(id)?'Aula marcada como não concluída':'Aula concluída e progresso salvo')}
  function bookmark(id){setState(s=>({...s,bookmarks:s.bookmarks.includes(id)?s.bookmarks.filter(x=>x!==id):[...s.bookmarks,id]}));setToast(state.bookmarks.includes(id)?'Favorito removido':'Aula salva nos favoritos')}
- let content={dashboard:<Dashboard state={state} progress={progress} go={go} openLesson={openLesson}/>,formacao:<Formation state={state} openLesson={openLesson}/>,fluxos:<Flowcharts state={state} setState={setState}/>,laboratorio:<Laboratory state={state} setState={setState}/>,avaliacoes:<Assessments state={state} setState={setState}/>,biblioteca:<KnowledgeLibrary state={state} openLesson={openLesson}/>,perfil:<Profile state={state} progress={progress} profile={profile} setProfile={setProfile} go={go} openLesson={openLesson}/>,lesson:<Lesson lesson={lessonMap.get(selectedLesson)||lessons[0]} state={state} setState={setState} openLesson={openLesson} complete={complete} bookmark={bookmark} go={go}/>}[view];
+ let content={dashboard:<Dashboard state={state} progress={progress} go={go} openLesson={openLesson}/>,hidreletricas:<HydroGuide go={go}/>,formacao:<Formation state={state} openLesson={openLesson}/>,fluxos:<Flowcharts state={state} setState={setState}/>,laboratorio:<Laboratory state={state} setState={setState}/>,avaliacoes:<Assessments state={state} setState={setState}/>,biblioteca:<KnowledgeLibrary state={state} openLesson={openLesson}/>,perfil:<Profile state={state} progress={progress} profile={profile} setProfile={setProfile} go={go} openLesson={openLesson}/>,lesson:<Lesson lesson={lessonMap.get(selectedLesson)||lessons[0]} state={state} setState={setState} openLesson={openLesson} complete={complete} bookmark={bookmark} go={go}/>}[view];
  return <div className="app-shell">
   <Topbar onMenu={()=>setMenuOpen(v=>!v)} onSearch={()=>setSearchOpen(true)} progress={progress} profile={profile} onProfile={()=>go('perfil')}/>
   <Sidebar view={view} go={go} open={menuOpen} openLesson={openLesson}/>
@@ -94,7 +96,8 @@ function Profile({state,progress,profile,setProfile,go,openLesson}){
    <label>Cargo ou função<input value={form.role} onChange={e=>setForm(f=>({...f,role:e.target.value}))} placeholder="Opcional"/></label>
    <label>Órgão ou setor<input value={form.unit} onChange={e=>setForm(f=>({...f,unit:e.target.value}))} placeholder="Opcional"/></label>
    <div className="profile-actions"><button type="submit" className="primary">{conta?'Salvar':'Criar perfil'} <Check/></button>{conta&&<button type="button" className="text-action" onClick={()=>setEditando(false)}>Cancelar</button>}</div>
-   <p className="profile-note">Registro pessoal de estudo, guardado apenas neste navegador. Não é login seguro nem credencial institucional do IAT.</p></form></div>;
+   <p className="profile-note">Registro pessoal de estudo, guardado apenas neste navegador. Não é login seguro nem credencial institucional do IAT.</p></form>
+   <div className="profile-restore-alt"><span>Já estudava em outro computador?</span><label className="text-action file-action">Restaurar backup<input type="file" accept="application/json" onChange={e=>{const f=e.target.files[0];if(!f)return;f.text().then(t=>{const r=importBackup(t);if(r.ok)location.reload();else alert(r.error)})}}/></label></div></div>;
  }
  return <div className="page profile-page"><PageHeader icon={BadgeCheck} kicker="Meu perfil" title={profile.name} subtitle={[profile.role,profile.unit].filter(Boolean).join(' · ')||'Registro pessoal de estudo'}/>
   <section className="profile-grid">
@@ -102,6 +105,10 @@ function Profile({state,progress,profile,setProfile,go,openLesson}){
    <article className="profile-card profile-personal"><h3>Meus dados</h3><dl><dt>Nome</dt><dd>{profile.name}</dd><dt>Cargo</dt><dd>{profile.role||'—'}</dd><dt>Órgão</dt><dd>{profile.unit||'—'}</dd><dt>Desde</dt><dd>{profile.createdAt?new Date(profile.createdAt).toLocaleDateString('pt-BR'):'—'}</dd></dl><button className="text-action" onClick={()=>{setForm({name:profile.name,role:profile.role,unit:profile.unit});setEditando(true);}}>Editar dados</button></article>
    <article className="profile-card profile-activity"><h3>Atividade</h3><ul className="profile-activity-list"><li><Bookmark size={15}/> {state.bookmarks.length} favoritos</li><li><StickyNote size={15}/> {Object.values(state.notes||{}).filter(v=>v&&v.trim()).length} anotações</li><li><CheckCircle2 size={15}/> {state.completed.length} tópicos feitos</li></ul>{state.lastLesson&&<button className="text-action" onClick={()=>openLesson(state.lastLesson)}>Continuar de onde parou <ArrowRight size={15}/></button>}</article>
   </section>
+  <section className="profile-users"><div className="section-title"><div><h2>Perfis neste navegador</h2><p>Troque de usuário, crie um novo perfil ou leve seu estudo para outro computador por backup.</p></div></div>
+   <ul className="user-list">{listUsers().map(u=><li key={u.id} className={u.active?'active':''}><span className="u-ini">{((u.name||'?').trim().split(/\s+/).map(w=>w[0]).slice(0,2).join('').toUpperCase())||'?'}</span><span className="u-name">{u.name}{u.role?<small> · {u.role}</small>:null}</span>{u.active?<em>ativo</em>:<><button className="text-action" onClick={()=>{switchUser(u.id);location.reload()}}>Entrar</button><button className="u-del" title="Excluir perfil" onClick={()=>{if(confirm(`Excluir o perfil "${u.name}" e o progresso dele neste navegador?`)){deleteUser(u.id);location.reload()}}}><X size={14}/></button></>}</li>)}</ul>
+   <div className="profile-actions-row"><button className="text-action" onClick={()=>{createUser();location.reload()}}>+ Novo perfil</button><button className="text-action" onClick={()=>exportBackup()}><Download size={14}/> Baixar backup</button><label className="text-action file-action">Restaurar backup<input type="file" accept="application/json" onChange={e=>{const f=e.target.files[0];if(!f)return;f.text().then(t=>{const r=importBackup(t);if(r.ok)location.reload();else alert(r.error)})}}/></label></div>
+   <p className="profile-note">Cada perfil guarda progresso próprio, apenas neste navegador. Para continuar em outro computador, baixe o backup aqui e restaure lá.</p></section>
   <section className="profile-cert-block"><div className="section-title"><div><h2>Certificados</h2><p>Marcos de conclusão que você pode baixar. Cada um é um registro pessoal de estudo.</p></div><Award/></div>
    <div className="cert-course">{progress===100?<button className="primary" onClick={()=>baixarCert('Curso completo do POP',100)}><Download size={16}/> Baixar certificado do curso</button>:<p className="cert-locked">Conclua os {lessons.length} tópicos para liberar o certificado do curso completo. Faltam {lessons.length-state.completed.length}.</p>}</div>
    {(profile.certificates||[]).length>0&&<div className="cert-history"><h4>Marcos emitidos</h4><ul>{(profile.certificates||[]).map(c=><li key={c.id}><Award size={14}/><span>{c.label}</span><small>{c.at?new Date(c.at).toLocaleDateString('pt-BR'):''} · {c.percent}%</small></li>)}</ul></div>}<h4>Por módulo</h4><ul className="cert-modules">{mods.map(({t,p})=><li key={t.id}><span className="cert-mod-code">{t.code}</span><span className="cert-mod-title">{t.title}</span><span className="cert-mod-bar"><i style={{width:p+'%'}}/></span><span className="cert-mod-pct">{p}%</span>{p===100?<button className="cert-mod-dl" onClick={()=>baixarCert('Módulo '+t.code+' — '+t.title,100)}><Download size={14}/></button>:<span className="cert-mod-pending">em curso</span>}</li>)}</ul></section>

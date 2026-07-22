@@ -1,21 +1,23 @@
 // Perfil do usuario da Academia IAT.
 //
-// Toda a persistencia do perfil vive aqui, separada do progresso do curso, que
-// continua sob 'academia-iat-progress-v2'. O objetivo e isolar a camada de
-// armazenamento: hoje e localStorage, e no futuro, quando houver backend, basta
-// trocar loadProfile e saveProfile por chamadas de API. O resto do aplicativo
-// nao sabe de onde vem o dado.
+// Toda a persistencia do perfil vive aqui, separada do resto do app. Hoje e
+// localStorage com varios usuarios por navegador; no futuro, quando houver
+// backend, basta trocar as funcoes deste modulo por chamadas de API.
 //
 // Limite honesto, deixado explicito na interface: enquanto for local, isto e um
 // registro pessoal de estudo, por navegador, sem login seguro e sem valor de
-// credencial institucional.
+// credencial institucional. O backup exportado e o meio de levar o progresso
+// para outro computador.
 
-const PROFILE_KEY = 'academia-iat-profile-v1';
-export const PROFILE_SCHEMA = 1;
+const LEGACY_PROFILE_KEY = 'academia-iat-profile-v1';
+const LEGACY_PROGRESS_KEY = 'academia-iat-progress-v2';
+const USERS_KEY = 'academia-iat-users-v1';
+export const PROFILE_SCHEMA = 2;
 
 export function defaultProfile() {
   return {
     schemaVersion: PROFILE_SCHEMA,
+    id: '',
     createdAt: '',
     name: '',
     role: '',        // cargo ou lotacao
@@ -26,30 +28,134 @@ export function defaultProfile() {
   };
 }
 
-export function loadProfile() {
+function newId() {
+  return 'u' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+}
+
+function readRegistry() {
   try {
-    const raw = localStorage.getItem(PROFILE_KEY);
-    if (!raw) return defaultProfile();
-    const parsed = JSON.parse(raw);
-    if (!parsed || typeof parsed !== 'object') return defaultProfile();
-    // Migracao tolerante: preenche campos ausentes com o padrao.
-    return { ...defaultProfile(), ...parsed, schemaVersion: PROFILE_SCHEMA };
-  } catch {
-    return defaultProfile();
-  }
+    const raw = localStorage.getItem(USERS_KEY);
+    if (raw) {
+      const reg = JSON.parse(raw);
+      if (reg && Array.isArray(reg.users)) return reg;
+    }
+  } catch { /* cai na migracao */ }
+  return null;
+}
+
+function writeRegistry(reg) {
+  try { localStorage.setItem(USERS_KEY, JSON.stringify(reg)); } catch { /* sessao efemera */ }
+}
+
+// Migracao do modelo de usuario unico: o perfil antigo vira o primeiro usuario
+// e o progresso legado passa a pertencer a ele. Os dados antigos nao sao
+// apagados, para haver caminho de volta.
+function ensureRegistry() {
+  let reg = readRegistry();
+  if (reg) return reg;
+  let legacy = null;
+  try { legacy = JSON.parse(localStorage.getItem(LEGACY_PROFILE_KEY) || 'null'); } catch { /* ignora */ }
+  const first = { ...defaultProfile(), ...(legacy || {}), schemaVersion: PROFILE_SCHEMA, id: newId() };
+  reg = { activeId: first.id, users: [first] };
+  try {
+    const legacyProgress = localStorage.getItem(LEGACY_PROGRESS_KEY);
+    if (legacyProgress) localStorage.setItem(LEGACY_PROGRESS_KEY + '::' + first.id, legacyProgress);
+  } catch { /* progresso legado permanece onde esta */ }
+  writeRegistry(reg);
+  return reg;
+}
+
+export function progressKey() {
+  const reg = ensureRegistry();
+  return LEGACY_PROGRESS_KEY + '::' + reg.activeId;
+}
+
+export function loadProfile() {
+  const reg = ensureRegistry();
+  const u = reg.users.find((x) => x.id === reg.activeId) || reg.users[0];
+  return { ...defaultProfile(), ...(u || {}), schemaVersion: PROFILE_SCHEMA };
 }
 
 export function saveProfile(profile) {
-  try {
-    localStorage.setItem(PROFILE_KEY, JSON.stringify(profile));
-  } catch {
-    /* armazenamento indisponivel: o perfil vale so para esta sessao */
-  }
-  return profile;
+  const reg = ensureRegistry();
+  const i = reg.users.findIndex((x) => x.id === reg.activeId);
+  const merged = { ...defaultProfile(), ...profile, id: reg.activeId, schemaVersion: PROFILE_SCHEMA };
+  if (i >= 0) reg.users[i] = merged; else reg.users.push(merged);
+  writeRegistry(reg);
+  return merged;
+}
+
+export function listUsers() {
+  const reg = ensureRegistry();
+  return reg.users.map((u) => ({ id: u.id, name: u.name || 'Sem nome', role: u.role || '', active: u.id === reg.activeId }));
+}
+
+export function switchUser(id) {
+  const reg = ensureRegistry();
+  if (!reg.users.some((u) => u.id === id)) return false;
+  reg.activeId = id;
+  writeRegistry(reg);
+  return true;
+}
+
+export function createUser() {
+  const reg = ensureRegistry();
+  const u = { ...defaultProfile(), id: newId() };
+  reg.users.push(u);
+  reg.activeId = u.id;
+  writeRegistry(reg);
+  return u;
+}
+
+export function deleteUser(id) {
+  const reg = ensureRegistry();
+  if (reg.users.length <= 1) return false; // sempre resta um perfil
+  reg.users = reg.users.filter((u) => u.id !== id);
+  if (reg.activeId === id) reg.activeId = reg.users[0].id;
+  writeRegistry(reg);
+  try { localStorage.removeItem(LEGACY_PROGRESS_KEY + '::' + id); } catch { /* melhor esforco */ }
+  return true;
 }
 
 export function hasAccount(profile) {
   return Boolean(profile && profile.name && profile.name.trim());
+}
+
+// Backup completo (perfil + progresso) como arquivo JSON: e o caminho honesto
+// de levar o estudo para outro computador enquanto nao existe servidor.
+export function exportBackup() {
+  const reg = ensureRegistry();
+  const u = reg.users.find((x) => x.id === reg.activeId) || reg.users[0];
+  let progress = null;
+  try { progress = JSON.parse(localStorage.getItem(LEGACY_PROGRESS_KEY + '::' + u.id) || 'null'); } catch { /* backup segue sem progresso */ }
+  const payload = { kind: 'academia-iat-backup', schema: 1, exportedAt: new Date().toISOString(), profile: u, progress };
+  const blob = new Blob([JSON.stringify(payload, null, 1)], { type: 'application/json;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  const nome = (u.name || 'perfil').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9]+/g, '-').slice(0, 30);
+  a.download = 'academia-iat-backup-' + nome + '.json';
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
+export function importBackup(text) {
+  let data;
+  try { data = JSON.parse(text); } catch { return { ok: false, error: 'O arquivo não é um JSON válido.' }; }
+  if (!data || data.kind !== 'academia-iat-backup' || !data.profile) {
+    return { ok: false, error: 'O arquivo não é um backup da Academia IAT.' };
+  }
+  const reg = ensureRegistry();
+  const u = { ...defaultProfile(), ...data.profile, id: newId(), schemaVersion: PROFILE_SCHEMA };
+  reg.users.push(u);
+  reg.activeId = u.id;
+  writeRegistry(reg);
+  try {
+    if (data.progress) localStorage.setItem(LEGACY_PROGRESS_KEY + '::' + u.id, JSON.stringify(data.progress));
+  } catch { /* progresso nao coube: perfil ainda assim foi criado */ }
+  return { ok: true, name: u.name || 'Sem nome' };
 }
 
 // Marco de conclusao: registra um certificado uma unica vez por rotulo.

@@ -39,3 +39,9 @@
 .cert-mod-dl{border:none;background:#0e7357;color:#fff;border-radius:8px;padding:.3rem .45rem;cursor:pointer;display:grid;place-items:center}
 .cert-mod-pending{font-size:.72rem;color:#9aaaa2}
 @media(max-width:820px){.profile-grid{grid-template-columns:1fr}.cert-modules li{grid-template-columns:2.4rem minmax(0,1fr) 46px auto}.cert-mod-bar{display:none}}
+/* Avatar do topo ligado ao perfil */
+button.profile{border:none;background:transparent;margin:0;padding:6px 8px;border-radius:10px;cursor:pointer;transition:background .15s}
+button.profile:hover{background:var(--soft)}
+button.profile>div{text-align:left}
+button.profile>span{transition:transform .15s}
+button.profile:hover>span{transform:scale(1.05)}

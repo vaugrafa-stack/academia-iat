@@ -48,7 +48,7 @@ try {
   assert(packageJson.scripts.dev.includes('--open'), 'iniciador abre o navegador quando o servidor fica pronto');
   assert(launcher.includes('A plataforma ja esta ativa') && launcher.includes(':server_error'), 'iniciador trata instancia existente e mantem erros visiveis');
 
-  assert(document.querySelectorAll('.sidebar-v2 nav button').length === 6, 'seis áreas principais disponíveis');
+  assert(document.querySelectorAll('.sidebar-v2 nav button').length === 7, 'sete áreas principais disponíveis (inclui Meu perfil)');
   assert(document.querySelector('.dashboard-page h1')?.textContent.includes('Aprenda o procedimento'), 'painel inicial renderizado');
   assert(document.querySelectorAll('.journey-track button').length === 15, 'quinze módulos no percurso');
 
@@ -78,6 +78,11 @@ try {
 
   await click(navButtons.find(x => x.textContent.includes('Biblioteca')));
   assert(document.querySelector('.library-search'), 'biblioteca integral renderizada');
+
+  const avatar = document.querySelector('button.profile');
+  assert(Boolean(avatar), 'avatar do topo é um botão');
+  await click(avatar);
+  assert(document.querySelector('.profile-page'), 'avatar do topo abre o perfil');
 
   console.log('SMOKE_OK');
 } finally {

@@ -3,8 +3,9 @@
 import React, { useState, useMemo } from 'react';
 import {
   Waves, Zap, Droplets, Factory, Mountain, Gauge, ArrowRight, Info,
-  Layers3, Activity, CircleHelp, Sparkles, TowerControl, Wind,
+  Layers3, Activity, CircleHelp, Sparkles, TowerControl, Wind, MapPin,
 } from 'lucide-react';
+import { TurbineGallery, PRCasesSection, ArrangementSchematics } from './hydroCases';
 
 const ASSET = (p) => ((import.meta.env.BASE_URL || '/').replace(/\/$/, '')) + p;
 
@@ -306,21 +307,17 @@ export default function HydroGuide({ go }) {
       <section className="hydro-block">
         <div className="section-title"><div><h2>Turbinas: escolha por queda e vazão</h2><p>Cada máquina rende melhor em uma faixa.</p></div><Wind /></div>
         <TurbinePicker />
-        <div className="turb-tabs">{TURBINAS.map((t, i) => (
-          <button key={t.nome} className={turb === i ? 'active' : ''} onClick={() => setTurb(i)}>{t.nome}</button>
-        ))}</div>
-        <div className="turb-detail">
-          <div><small>{TURBINAS[turb].tipo}</small><h3>Turbina {TURBINAS[turb].nome}</h3><p>{TURBINAS[turb].nota}</p></div>
-          <ul><li><Mountain size={15} /> {TURBINAS[turb].queda}</li><li><Droplets size={15} /> {TURBINAS[turb].vazao}</li></ul>
-        </div>
+        <TurbineGallery />
       </section>
 
       <section className="hydro-block">
-        <div className="section-title"><div><h2>Figuras de apoio</h2></div><Info /></div>
-        <div className="hydro-figs">
-          <figure><img src={ASSET('/hidro/componentes.png')} alt="Componentes de um empreendimento hidrelétrico" /><figcaption>Componentes que o estudo deve localizar e compatibilizar.</figcaption></figure>
-          <figure><img src={ASSET('/hidro/arranjos.png')} alt="Arranjos hidrelétricos" /><figcaption>Diferentes arranjos de aproveitamento.</figcaption></figure>
-        </div>
+        <div className="section-title"><div><h2>Casos reais no Paraná</h2><p>Um empreendimento verificado por tipo, com critérios e o site oficial de cada um.</p></div><MapPin /></div>
+        <PRCasesSection />
+      </section>
+
+      <section className="hydro-block">
+        <div className="section-title"><div><h2>Esquemas de arranjo</h2><p>Três diagramas detalhados: como o arranjo físico muda o circuito, a operação e o impacto.</p></div><Info /></div>
+        <ArrangementSchematics />
       </section>
 
       <section className="hydro-cta">

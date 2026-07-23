@@ -17,21 +17,21 @@ export const tracks = [
 ];
 
 export const featuredMedia = {
-  m00:{src:'/media/fluxo-geral.mp4',poster:'/media/fluxo-geral-poster.png',captions:'/media/fluxo-geral.vtt',title:'O fluxo geral em 20 segundos'},
-  m01:{src:'/media/fluxo-geral.mp4',poster:'/media/fluxo-geral-poster.png',captions:'/media/fluxo-geral.vtt',title:'Decidir com rastreabilidade'},
-  m02:{src:'/media/fluxo-geral.mp4',poster:'/media/fluxo-geral-poster.png',captions:'/media/fluxo-geral.vtt',title:'Da entrada à saída técnica'},
-  m03:{src:'/media/enquadramento.mp4',poster:'/media/enquadramento-poster.png',captions:'/media/enquadramento.vtt',title:'Enquadramento sem atalhos'},
-  m04:{src:'/media/enquadramento.mp4',poster:'/media/enquadramento-poster.png',captions:'/media/enquadramento.vtt',title:'Critérios antes da modalidade'},
-  m05:{src:'/media/fluxo-geral.mp4',poster:'/media/fluxo-geral-poster.png',captions:'/media/fluxo-geral.vtt',title:'LP, LI e LO em sequência'},
-  m06:{src:'/media/fluxo-geral.mp4',poster:'/media/fluxo-geral-poster.png',captions:'/media/fluxo-geral.vtt',title:'Identifique o objeto da alteração'},
-  m07:{src:'/media/fluxo-geral.mp4',poster:'/media/fluxo-geral-poster.png',captions:'/media/fluxo-geral.vtt',title:'Interfaces e responsabilidades'},
-  m08:{src:'/media/fluxo-geral.mp4',poster:'/media/fluxo-geral-poster.png',captions:'/media/fluxo-geral.vtt',title:'Documento, conteúdo e consequência'},
-  m09:{src:'/media/pacuera.mp4',poster:'/media/pacuera-poster.png',captions:'/media/pacuera.vtt',title:'PACUERA: território em foco'},
-  m10:{src:'/media/enquadramento.mp4',poster:'/media/enquadramento-poster.png',captions:'/media/enquadramento.vtt',title:'A dimensão espacial da decisão'},
-  m11:{src:'/media/fluxo-geral.mp4',poster:'/media/fluxo-geral-poster.png',captions:'/media/fluxo-geral.vtt',title:'Coordenar sem substituir competências'},
-  m12:{src:'/media/fluxo-geral.mp4',poster:'/media/fluxo-geral-poster.png',captions:'/media/fluxo-geral.vtt',title:'Da pendência à conclusão'},
-  m13:{src:'/media/fluxo-geral.mp4',poster:'/media/fluxo-geral-poster.png',captions:'/media/fluxo-geral.vtt',title:'Revisão que reduz retrabalho'},
-  m14:{src:'/media/fluxo-geral.mp4',poster:'/media/fluxo-geral-poster.png',captions:'/media/fluxo-geral.vtt',title:'Síntese do método operacional'},
+  m00: { src: '/media/m00.mp4', poster: '/media/m00-poster.png', captions: '/media/m00.vtt', title: "Orientação e escopo" },
+  m01: { src: '/media/m01.mp4', poster: '/media/m01-poster.png', captions: '/media/m01.vtt', title: "Papéis, normas e método" },
+  m02: { src: '/media/m02.mp4', poster: '/media/m02-poster.png', captions: '/media/m02.vtt', title: "Fluxo geral e triagem" },
+  m03: { src: '/media/m03.mp4', poster: '/media/m03-poster.png', captions: '/media/m03.vtt', title: "Enquadramento e Consulta Prévia" },
+  m04: { src: '/media/m04.mp4', poster: '/media/m04-poster.png', captions: '/media/m04.vtt', title: "DLAM, LAC e LAS" },
+  m05: { src: '/media/m05.mp4', poster: '/media/m05-poster.png', captions: '/media/m05.vtt', title: "LP, LI e LO em sequência" },
+  m06: { src: '/media/m06.mp4', poster: '/media/m06-poster.png', captions: '/media/m06.vtt', title: "Situações especiais" },
+  m07: { src: '/media/m07.mp4', poster: '/media/m07-poster.png', captions: '/media/m07.vtt', title: "Sistemas associados e barragens" },
+  m08: { src: '/media/m08.mp4', poster: '/media/m08-poster.png', captions: '/media/m08.vtt', title: "Memorial e estudos" },
+  m09: { src: '/media/m09.mp4', poster: '/media/m09-poster.png', captions: '/media/m09.vtt', title: "PACUERA integral" },
+  m10: { src: '/media/m10.mp4', poster: '/media/m10-poster.png', captions: '/media/m10.vtt', title: "Base espacial e meio ambiente" },
+  m11: { src: '/media/m11.mp4', poster: '/media/m11-poster.png', captions: '/media/m11.vtt', title: "Intervenientes e vistoria" },
+  m12: { src: '/media/m12.mp4', poster: '/media/m12-poster.png', captions: '/media/m12.vtt', title: "Da suficiência à conclusão" },
+  m13: { src: '/media/m13.mp4', poster: '/media/m13-poster.png', captions: '/media/m13.vtt', title: "Qualidade e rastreabilidade" },
+  m14: { src: '/media/m14.mp4', poster: '/media/m14-poster.png', captions: '/media/m14.vtt', title: "Anexos e caso integrador" },
 };
 
 export const flowSpecs = [

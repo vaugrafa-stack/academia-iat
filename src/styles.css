@@ -232,3 +232,54 @@ button.sidebar-help{background:transparent;font:inherit;color:inherit;cursor:poi
 .hydro-cta svg{width:26px;color:var(--green);flex:none}
 .hydro-cta p{margin:2px 0 0;font-size:13px;color:#37544b}
 @media(max-width:980px){.hydro-hero,.cross-layout,.turb-detail{grid-template-columns:1fr}.tp-scale{grid-template-columns:repeat(2,1fr)}}
+/* ===== Camada premium: profundidade, movimento e micro-interacoes ===== */
+:root{--shadow-1:0 1px 2px #0f2a2008,0 2px 8px #0f2a200a;--shadow-2:0 2px 6px #0f2a200d,0 10px 28px #0f2a2014;--shadow-3:0 6px 16px #0f2a2014,0 22px 48px #0f2a201f;--ease:cubic-bezier(.22,.9,.3,1)}
+.view-anim{animation:viewIn .42s var(--ease)}
+@keyframes viewIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+@media(prefers-reduced-motion:reduce){.view-anim,.cs-flow,.cs-spill,.cs-turbine,.cs-hot::after{animation:none!important}}
+/* botoes e cartoes respiram */
+button{transition:background .18s var(--ease),border-color .18s var(--ease),color .18s var(--ease),box-shadow .18s var(--ease),transform .18s var(--ease)}
+button.primary{background:linear-gradient(135deg,var(--green2),var(--green));border:none;color:#fff;box-shadow:0 4px 14px #07583b33;border-radius:9px;padding:11px 20px;font-weight:800;display:inline-flex;align-items:center;gap:8px;cursor:pointer}
+button.primary:hover{box-shadow:0 6px 20px #07583b4d;transform:translateY(-1px)}
+button.primary:active{transform:translateY(0);box-shadow:0 2px 8px #07583b33}
+.track-row,.pot-card,.res-card,.dam-card,.profile-card,.hydro-block,.module-tests button,.today-plan button,.flow-menu button{transition:box-shadow .22s var(--ease),transform .22s var(--ease),border-color .22s var(--ease)}
+.track-row:hover,.pot-card:hover,.res-card:hover,.dam-card:hover,.module-tests button:hover{box-shadow:var(--shadow-2);transform:translateY(-2px)}
+.profile-card,.hydro-block,.coverage-card,.flow-preview{box-shadow:var(--shadow-1)}
+.dashboard-feature{box-shadow:var(--shadow-2);border-radius:14px}
+/* sidebar: indicador do item ativo */
+.sidebar-v2 nav button{position:relative;transition:background .18s var(--ease),color .18s var(--ease)}
+.sidebar-v2 nav button::before{content:'';position:absolute;left:0;top:20%;bottom:20%;width:3px;border-radius:3px;background:#57d8bf;opacity:0;transform:scaleY(.4);transition:opacity .2s var(--ease),transform .25s var(--ease)}
+.sidebar-v2 nav button.active::before{opacity:1;transform:scaleY(1)}
+/* toast com entrada */
+.toast{animation:toastIn .32s var(--ease);box-shadow:var(--shadow-3)}
+@keyframes toastIn{from{opacity:0;transform:translateY(14px) scale(.97)}to{opacity:1;transform:none}}
+/* quiz: opcoes com resposta tatil */
+.quiz-options button{transition:border-color .16s var(--ease),background .16s var(--ease),transform .16s var(--ease)}
+.quiz-options button:not(:disabled):hover{transform:translateX(3px);border-color:var(--green2)}
+.answer-feedback{animation:viewIn .3s var(--ease)}
+.quiz-result{animation:viewIn .4s var(--ease)}
+/* player de video premium */
+.vl2 .vl-stage{position:relative;background:#04231c}
+.vl2 video{display:block;width:100%}
+.vl-play{position:absolute;inset:0;margin:auto;width:76px;height:76px;border-radius:50%;border:none;background:#07583be6;color:#fff;display:grid;place-items:center;cursor:pointer;box-shadow:0 8px 30px #04231c66;backdrop-filter:blur(2px);transition:transform .2s var(--ease),background .2s var(--ease)}
+.vl-play:hover{transform:scale(1.08);background:var(--green2)}
+.vl-play svg{width:30px;height:30px;margin-left:4px}
+.vl2 .vl-stage::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,#04231c26,transparent 30%);pointer-events:none;opacity:1;transition:opacity .3s}
+.vl2.playing .vl-stage::after{opacity:0}
+.vl-tools{display:flex;align-items:center;gap:8px}
+.vl-tools small{margin-right:4px}
+.vl-tools button{border:1px solid #ffffff42;background:transparent;color:#cfe8dd;border-radius:6px;padding:3px 8px;font-size:11px;font-weight:800;cursor:pointer}
+.vl-tools button.active{background:#57d8bf;border-color:#57d8bf;color:#04231c}
+/* barras de progresso animadas */
+.top-progress em,.intro-stat em,.track-metrics em,.context-progress em{transition:width .6s var(--ease)}
+.pring{transition:--v .6s}
+/* scrollbar sutil */
+*::-webkit-scrollbar{width:10px;height:10px}
+*::-webkit-scrollbar-thumb{background:#c3d2ca;border-radius:8px;border:2px solid #fff}
+*::-webkit-scrollbar-thumb:hover{background:#9fb5aa}
+/* selo/section-title refinado */
+.section-title svg{color:var(--green2)}
+.page-header span{box-shadow:var(--shadow-1)}
+/* imagens da biblioteca com zoom suave */
+.figure-grid figure button img,.hydro-figs img{transition:transform .35s var(--ease)}
+.figure-grid figure button:hover img,.hydro-figs figure:hover img{transform:scale(1.03)}

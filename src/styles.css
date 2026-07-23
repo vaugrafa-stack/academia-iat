@@ -471,3 +471,63 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
 .path-node{padding:14px 6px 8px}
 /* abas da biblioteca roláveis com barra discreta */
 .library-tabs{overflow-x:auto;scrollbar-width:thin}
+/* ===== Aba Suporte ===== */
+.suporte-page{max-width:860px}
+.suporte-card{display:flex;gap:20px;align-items:flex-start;border:1px solid var(--line);border-radius:14px;padding:26px;background:#fff;box-shadow:var(--shadow-2)}
+.sup-avatar{width:84px;height:84px;border-radius:50%;background:linear-gradient(135deg,var(--green2),var(--green));color:#fff;display:grid;place-items:center;font-size:28px;font-weight:800;flex:none;box-shadow:0 8px 22px #07583b33}
+.sup-info h2{margin:0 0 2px;font-size:22px}
+.sup-cargo{margin:0 0 10px;color:var(--muted);font-weight:700;font-size:14px}
+.sup-mail{display:inline-flex;align-items:center;gap:8px;background:var(--green3);color:var(--green);font-weight:800;border-radius:9px;padding:10px 16px;text-decoration:none;font-size:14px;transition:background .2s var(--ease),transform .2s var(--ease)}
+.sup-mail:hover{background:#cdeadd;transform:translateY(-1px)}
+.sup-note{margin:12px 0 0;font-size:13px;color:#37544b;line-height:1.55}
+.suporte-tipos{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:20px}
+.suporte-tipos article{border:1px solid var(--line);border-radius:10px;padding:16px;background:#fff;box-shadow:var(--shadow-1)}
+.suporte-tipos strong{display:block;margin-bottom:6px}
+.suporte-tipos p{margin:0;font-size:13px;color:#37544b;line-height:1.5}
+/* resumo da norma */
+.leis-resumo{border:1px solid var(--line);border-left:4px solid var(--blue);border-radius:8px;padding:12px 16px;background:#f7fbff;margin-top:14px}
+.leis-resumo h3{margin:0 0 6px!important;font-size:14px!important}
+.leis-resumo p{margin:0;font-size:13.5px;line-height:1.6;color:#37544b}
+/* marca com tema de ensino */
+.brand-hydro{width:100%;max-width:150px}
+/* ===== Profundidade nos clicaveis ===== */
+.track-summary,.module-tests button,.today-plan>button,.flow-menu button,.scenario-tabs button,.library-tabs button,.tg-tabs button,.turb-tabs button,.variant-tabs button,.lesson-list button,.leis-list button,.leis-cites button,.quiz-options button,.lab-evidence button,.cd-nav button,.user-list li,.cert-modules li{box-shadow:0 1px 2px #0f2a200a,inset 0 1px 0 #ffffffcc}
+.module-tests button:active,.today-plan>button:active,.flow-menu button:active,.scenario-tabs button:active,.tg-tabs button:active,.turb-tabs button:active,.variant-tabs button:active,.quiz-options button:not(:disabled):active,.lab-evidence button:active{transform:translateY(1px);box-shadow:inset 0 2px 4px #0f2a2014}
+.lesson-tabs button:active,.library-tabs button:active{transform:translateY(1px)}
+button.primary:active{box-shadow:inset 0 2px 6px #04231c40}
+.brand-hydro{width:100%;max-width:200px;height:auto;margin-top:10px;display:block}
+/* ===== Como solicitar a autorizacao ===== */
+.lic-cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:18px;margin-top:14px}
+.lic-col{border:1px solid var(--line);border-radius:12px;padding:18px 20px;background:#fff;box-shadow:var(--shadow-1)}
+.lic-col h3{display:flex;align-items:center;gap:8px;margin:0 0 14px;font-size:16px}
+.lic-aneel h3{color:#8a6d00}
+.lic-aneel h3 svg{color:var(--amber)}
+.lic-iat h3{color:var(--green)}
+.lic-iat h3 svg{color:var(--green)}
+.lic-col ol{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:12px}
+.lic-col li{display:flex;gap:12px;align-items:flex-start}
+.lic-col li span{flex:none;width:26px;height:26px;border-radius:50%;display:grid;place-items:center;font-size:13px;font-weight:800;color:#fff}
+.lic-aneel li span{background:var(--amber);color:#4a3900}
+.lic-iat li span{background:var(--green)}
+.lic-col strong{display:block;font-size:14px;margin-bottom:2px}
+.lic-col p{margin:0;font-size:13px;line-height:1.55;color:#37544b}
+.lic-papeis-h{margin:22px 0 10px;font-size:16px}
+.lic-papeis{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px}
+.lic-papeis article{border:1px solid var(--line);border-left:4px solid var(--blue);border-radius:9px;padding:12px 14px;background:var(--soft)}
+.lic-papeis strong{display:block;font-size:13.5px;margin-bottom:4px}
+.lic-papeis p{margin:0;font-size:12.5px;line-height:1.5;color:#37544b}
+.lic-cta{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-top:18px;border-top:1px solid var(--line);padding-top:16px}
+.lic-cta p{margin:0;font-size:13px;color:var(--muted);max-width:640px}
+/* retrato do acervo no laboratorio */
+.lab-acervo{display:flex;gap:10px;align-items:flex-start;border:1px solid var(--line);border-left:4px solid var(--blue);border-radius:10px;padding:12px 16px;background:#f7fbff;margin-bottom:14px}
+.lab-acervo svg{flex:none;margin-top:2px;color:var(--blue)}
+.lab-acervo p{margin:0;font-size:13px;line-height:1.55;color:#37544b}
+/* destaque: video joga certo dentro da moldura e clicavel */
+.feature-media:after{pointer-events:none}
+.feature-media video{width:100%;height:100%;min-height:230px;object-fit:cover;display:block}
+.feature-media>span{z-index:3;border-radius:6px}
+/* mobile: percurso rola dentro da secao; suporte quebra; grids empilham */
+.river-journey{overflow-x:auto}
+.suporte-card{flex-wrap:wrap;min-width:0}
+.sup-mail{word-break:break-all}
+@media(max-width:640px){.arr-grid,.prc-grid,.hydro-figs,.tg-body,.lic-cols{grid-template-columns:1fr}.page{padding:24px 14px 60px}}

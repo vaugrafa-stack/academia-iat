@@ -211,6 +211,42 @@ export function PRCasesSection() {
   );
 }
 
+/* ============ COMO SOLICITAR A AUTORIZAÇÃO (trilhas ANEEL x IAT) ============ */
+const TRILHA_ANEEL = [
+  ['Estudos e definição do aproveitamento', 'Inventário do trecho, partição de quedas e projeto do aproveitamento: potência, queda, vazão e arranjo.'],
+  ['Registro na ANEEL', 'Registro do projeto conforme a REN nº 875/2020 (adequabilidade do sumário executivo — DRS) e obtenção do CEG, o código único do empreendimento.'],
+  ['Outorga setorial', 'Até 5 MW: registro/comunicação. Acima de 5 MW: autorização da ANEEL (limite ampliado pela legislação setorial vigente). Grandes aproveitamentos: concessão mediante leilão.'],
+  ['Conexão à rede', 'Parecer de acesso, projeto da linha/subestação e contratos de conexão e uso do sistema.'],
+];
+const TRILHA_IAT = [
+  ['Consulta Prévia (recomendada)', 'Antes de formalizar: mapa da ADA, arranjo em KML/KMZ e memorial descritivo (art. 36 da IN IAT nº 09/2025). A manifestação orienta modalidade e estudo, vale 24 meses e não aprova viabilidade.'],
+  ['Enquadramento', 'Potência, área de alagamento, IDA, supressão e sensibilidade definem a modalidade — DLAM, LAC, LAS ou rito trifásico — e o estudo exigido (RAS/RDPA, PCA ou EIA/RIMA), sempre pelo critério mais restritivo.'],
+  ['Protocolo e análise', 'Formalização pelo SGA/eProtocolo com a documentação da fase; o IAT confere suficiência antes do mérito e diligencia lacunas.'],
+  ['LP → LI → LO', 'LP atesta viabilidade e concepção; LI autoriza instalar conforme projeto (com autorizações florestais, de fauna e outorga/DRDH); LO verifica o instalado e fixa condicionantes de operação — e o PACUERA quando exigível.'],
+  ['Intervenientes', 'IPHAN (patrimônio), gestor de UC afetada e demais órgãos manifestam-se no processo; o IAT verifica compatibilidade sem substituir a decisão de cada um.'],
+];
+const PAPEIS = [
+  ['Empreendedor', 'Decide investir, contrata estudos, protocola nos dois trilhos, mantém titularidade coerente entre ANEEL e IAT, responde exigências e cumpre condicionantes.'],
+  ['Consultoria ambiental', 'Elabora memorial e estudos conforme os Termos de Referência, com ARTs; responde complementações técnicas e acompanha vistorias.'],
+  ['IAT', 'Analisa, diligencia, licencia e fiscaliza o componente ambiental no Paraná; confere a existência e compatibilidade dos atos externos.'],
+  ['ANEEL', 'Registra e outorga o aproveitamento energético, emite o CEG e regula a operação comercial.'],
+  ['Órgãos intervenientes', 'IPHAN, gestores de UC e demais órgãos: manifestações específicas na sua competência, que integram o processo sem transferi-la.'],
+];
+export function LicensingPath({ go }) {
+  return (
+    <div className="lic-path">
+      <p className="prc-note"><Info size={15} /> Roteiro didático baseado no POP e na IN IAT nº 09/2025 (trilha ambiental) e no regime setorial da ANEEL (trilha energética). Os dois trilhos correm em paralelo e precisam conversar: titularidade, arranjo e potência devem coincidir.</p>
+      <div className="lic-cols">
+        <section className="lic-col lic-aneel"><h3><Zap size={17} /> Trilha setorial — ANEEL</h3><ol>{TRILHA_ANEEL.map(([t, d], i) => <li key={t}><span>{i + 1}</span><div><strong>{t}</strong><p>{d}</p></div></li>)}</ol></section>
+        <section className="lic-col lic-iat"><h3><Factory size={17} /> Trilha ambiental — IAT</h3><ol>{TRILHA_IAT.map(([t, d], i) => <li key={t}><span>{i + 1}</span><div><strong>{t}</strong><p>{d}</p></div></li>)}</ol></section>
+      </div>
+      <h3 className="lic-papeis-h">Quem faz o quê</h3>
+      <div className="lic-papeis">{PAPEIS.map(([t, d]) => <article key={t}><strong>{t}</strong><p>{d}</p></article>)}</div>
+      <div className="lic-cta"><p>O detalhe de cada fase — documentos, critérios de suficiência e produtos — está nos módulos M03 a M05 da Formação e nas normas da Biblioteca.</p><button className="primary" onClick={() => go('formacao')}>Estudar as fases <ExternalLink size={15} /></button></div>
+    </div>
+  );
+}
+
 /* ============ ESQUEMAS DE ARRANJO (substituem as figuras confusas) ============ */
 function ArrPeBarragem() {
   return (

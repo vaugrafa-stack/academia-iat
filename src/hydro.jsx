@@ -5,7 +5,7 @@ import {
   Waves, Zap, Droplets, Factory, Mountain, Gauge, ArrowRight, Info,
   Layers3, Activity, CircleHelp, Sparkles, TowerControl, Wind, MapPin,
 } from 'lucide-react';
-import { TurbineGallery, PRCasesSection, ArrangementSchematics } from './hydroCases';
+import { TurbineGallery, PRCasesSection, ArrangementSchematics, LicensingPath } from './hydroCases';
 
 const ASSET = (p) => ((import.meta.env.BASE_URL || '/').replace(/\/$/, '')) + p;
 
@@ -318,6 +318,11 @@ export default function HydroGuide({ go }) {
       <section className="hydro-block">
         <div className="section-title"><div><h2>Esquemas de arranjo</h2><p>Três diagramas detalhados: como o arranjo físico muda o circuito, a operação e o impacto.</p></div><Info /></div>
         <ArrangementSchematics />
+      </section>
+
+      <section className="hydro-block">
+        <div className="section-title"><div><h2>Como solicitar a autorização para construir</h2><p>Da ideia à operação: o caminho na ANEEL e no IAT, e o papel de cada ator.</p></div><Gauge /></div>
+        <LicensingPath go={go} />
       </section>
 
       <section className="hydro-cta">

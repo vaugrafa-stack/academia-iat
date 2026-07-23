@@ -48,7 +48,7 @@ try {
   assert(packageJson.scripts.dev.includes('--open'), 'iniciador abre o navegador quando o servidor fica pronto');
   assert(launcher.includes('A plataforma ja esta ativa') && launcher.includes(':server_error'), 'iniciador trata instancia existente e mantem erros visiveis');
 
-  assert(document.querySelectorAll('.sidebar-v2 nav button').length === 8, 'oito áreas principais disponíveis (inclui Hidrelétricas e Meu perfil)');
+  assert(document.querySelectorAll('.sidebar-v2 nav button').length === 9, 'nove áreas principais disponíveis (inclui Hidrelétricas, Meu perfil e Suporte)');
   assert(document.querySelector('.dashboard-page h1')?.textContent.includes('Aprenda o procedimento'), 'painel inicial renderizado');
   assert(document.querySelectorAll('.journey-track button').length === 15, 'quinze módulos no percurso');
 
@@ -72,7 +72,7 @@ try {
   assert(document.querySelectorAll('.fb-pool button').length === 6, 'etapas embaralhadas disponíveis para montar');
 
   await click(navButtons.find(x => x.textContent.includes('Laboratório')));
-  assert(document.querySelectorAll('.scenario-tabs button').length === 7, 'sete cenários práticos');
+  assert(document.querySelectorAll('.scenario-tabs button').length === 10, 'dez cenários práticos (7 didáticos + 3 do acervo real)');
   const answerButton = document.querySelector('.question-stack fieldset:not(.locked) button');
   await click(answerButton);
   assert(document.querySelectorAll('.question-stack fieldset:not(.locked)').length >= 2, 'decisão libera a etapa seguinte');

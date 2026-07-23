@@ -262,7 +262,7 @@ export default function HydroGuide({ go }) {
         <div className="section-title"><div><h2>Anatomia do arranjo</h2><p>Clique em cada ponto do corte para entender a função.</p></div><Layers3 /></div>
         <div className="cross-layout">
           <CrossSection selected={parte} onSelect={setParte} />
-          <aside className="cross-detail">
+          <aside className="cross-detail" key={parte}>
             <div className="cd-head"><sel.icon /><h3>{sel.nome}</h3></div>
             <p className="cd-resumo">{sel.resumo}</p>
             <p>{sel.detalhe}</p>

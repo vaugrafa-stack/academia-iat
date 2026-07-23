@@ -183,6 +183,10 @@ export function certificateSvg({ name, label, dateLabel, percent, buildId }) {
   <rect width="1120" height="792" fill="#f7fbf9"/>
   <rect x="26" y="26" width="1068" height="740" rx="18" fill="#ffffff" stroke="#0e7357" stroke-width="3"/>
   <rect x="40" y="40" width="1040" height="712" rx="12" fill="none" stroke="#cfe8dd" stroke-width="1.5"/>
+  <path d="M60 620 C 200 585, 340 655, 520 615 S 860 585, 1060 625" stroke="#57d8bf" stroke-width="3" fill="none" opacity="0.45" stroke-linecap="round"/>
+  <path d="M60 645 C 240 615, 420 668, 620 636 S 920 612, 1060 648" stroke="#0e7357" stroke-width="2" fill="none" opacity="0.3" stroke-linecap="round"/>
+  <circle cx="560" cy="230" r="26" fill="none" stroke="#0e7357" stroke-width="2.5"/>
+  <path d="M548 230 l8 9 l16 -18" stroke="#0e7357" stroke-width="3.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
   <text x="560" y="150" text-anchor="middle" font-size="20" letter-spacing="4" fill="#0e7490">ACADEMIA IAT</text>
   <text x="560" y="188" text-anchor="middle" font-size="16" letter-spacing="2" fill="#5b6f68">Licenciamento de Hidreletricas</text>
   <text x="560" y="300" text-anchor="middle" font-size="30" fill="#334">Registro pessoal de estudo</text>

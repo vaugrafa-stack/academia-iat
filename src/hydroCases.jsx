@@ -138,6 +138,32 @@ export function TurbineGallery() {
   );
 }
 
+/* ============ REVERSÍVEL: esquema animado (não há caso no PR) ============ */
+function SvgReversivel() {
+  return (
+    <svg viewBox="0 0 460 250" className="arr-svg" aria-label="Esquema de usina reversível (bombeamento)">
+      <rect width="460" height="250" fill="#f6fbf9" />
+      <path d="M40 60 L200 60 L200 44 L40 44 Z" fill="#bfe3ff" stroke="#7db8e8" />
+      <text x="46" y="36" fontSize="12" fontWeight="800" fill="#1769c2">reservatório SUPERIOR</text>
+      <path d="M260 210 L440 210 L440 192 L260 192 Z" fill="#bfe3ff" stroke="#7db8e8" />
+      <text x="300" y="238" fontSize="12" fontWeight="800" fill="#1769c2">reservatório INFERIOR</text>
+      <path d="M198 58 C 240 90, 250 150, 268 198" stroke="#2c3e46" strokeWidth="12" fill="none" strokeLinecap="round" />
+      <path className="jet-anim" d="M198 58 C 240 90, 250 150, 268 198" stroke="#57d8bf" strokeWidth="4" fill="none" strokeLinecap="round" strokeDasharray="10 12" />
+      <circle cx="252" cy="150" r="20" fill="#063b31" />
+      <path d="M252 138 l6 8 h-4 v8 h-4 v-8 h-4 Z" fill="#f3bd4f" />
+      <text x="280" y="146" fontSize="12" fontWeight="700" fill="#37544b">bomba-turbina</text>
+      <text x="280" y="161" fontSize="12" fontWeight="700" fill="#37544b">reversível</text>
+      <g>
+        <path d="M120 96 l0 34" stroke="#0a7755" strokeWidth="4" markerEnd="url(#seta1)" />
+        <text x="130" y="112" fontSize="11.5" fill="#0a7755" fontWeight="800">GERA na ponta (desce)</text>
+        <path d="M96 176 l0 -34" stroke="#e5a000" strokeWidth="4" />
+        <text x="106" y="168" fontSize="11.5" fill="#8a6d00" fontWeight="800">BOMBEIA fora de ponta (sobe)</text>
+      </g>
+      <text x="40" y="248" fontSize="11" fill="#66756e">funciona como bateria: consome energia barata para estocar água e gerar na hora cara</text>
+    </svg>
+  );
+}
+
 /* ============ CASOS REAIS NO PARANÁ (verificados) ============ */
 export const PR_CASES = [
   { tipo: 'UHE de acumulação', criterio: 'Acima de 30 MW · concessão (leilão) · em regra EIA/RIMA · reservatório de regularização',
@@ -158,9 +184,9 @@ export const PR_CASES = [
   { tipo: 'UHE binacional', criterio: 'Empreendimento de tratado internacional · regime jurídico próprio',
     nome: 'Itaipu Binacional', local: 'Rio Paraná, Foz do Iguaçu-PR (Brasil/Paraguai)', dados: '14.000 MW · 20 unidades geradoras Francis · líder mundial em produção acumulada de energia',
     site: 'https://www.itaipu.gov.br/', siteLabel: 'itaipu.gov.br (site oficial)' },
-  { tipo: 'Reversível (bombeamento)', criterio: 'Bombeia água a reservatório superior fora de ponta e turbina na ponta — "bateria" hídrica',
-    nome: 'Sem usina reversível em operação comercial no Paraná', local: '—', dados: 'O conceito é estudado no Brasil como apoio à expansão de renováveis intermitentes; não há caso instalado e em operação no PR para citar.',
-    site: null, siteLabel: null },
+  { tipo: 'Reversível (bombeamento)', criterio: 'Bombeia água a reservatório superior fora de ponta e turbina na ponta — "bateria" hídrica', reversivel: true,
+    nome: 'Bath County Pumped Storage Station — exemplo fora do Paraná', local: 'Bath County, Virgínia, Estados Unidos', dados: 'Não há usina reversível em operação comercial no Paraná; este é o exemplo internacional de referência: 3.003 MW em 6 unidades reversíveis, a maior do mundo, em operação desde 1985 (Dominion Energy 60% e Allegheny Power 40%).',
+    site: 'https://www.dominionenergy.com/en/About/Making-Energy/Hydroelectric-Power-Facilities/Bath-County-Pumped-Storage-Station', siteLabel: 'dominionenergy.com (página da operadora)' },
 ];
 
 export function PRCasesSection() {
@@ -168,12 +194,16 @@ export function PRCasesSection() {
     <div className="pr-cases">
       <p className="prc-note"><Info size={15} /> Casos reais, com dados públicos verificados nas fontes oficiais indicadas. Os critérios de porte seguem a classificação da ANEEL; o rito de licenciamento aplicável é o do POP e da norma vigente.</p>
       <div className="prc-grid">{PR_CASES.map((c) => (
-        <article key={c.nome} className={'prc-card' + (c.site ? '' : ' prc-empty')}>
+        <article key={c.nome} className={'prc-card' + (c.site ? '' : ' prc-empty') + (c.reversivel ? ' prc-wide' : '')}>
           <span className="prc-tipo">{c.tipo}</span>
           <h3>{c.nome}</h3>
           <p className="prc-crit"><Factory size={13} /> {c.criterio}</p>
           <p className="prc-local"><MapPin size={13} /> {c.local}</p>
           <p className="prc-dados">{c.dados}</p>
+          {c.reversivel && <div className="prc-fotos">
+            <figure><SvgReversivel /><figcaption>Esquema: o ciclo diário de geração e bombeamento.</figcaption></figure>
+            <figure><img src={BASE + '/hidro/reversivel-bath-county.jpg'} alt="Bath County Pumped Storage Station — casa de força e subestação" /><figcaption><Camera size={13} /> Foto real da usina · <a href={WMPAGE('Bath_County_Pumped_Storage_Station.jpg')} target="_blank" rel="noreferrer">Wikimedia Commons</a> (licença livre)</figcaption></figure>
+          </div>}
           {c.site && <a className="prc-site" href={c.site} target="_blank" rel="noreferrer"><ExternalLink size={14} /> {c.siteLabel}</a>}
         </article>
       ))}</div>

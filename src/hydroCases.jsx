@@ -98,16 +98,16 @@ function SvgBulbo() {
         ))}
         <circle cx="208" cy="118" r="10" fill="#063b31" />
       </g>
-      <text x="60" y="200" fontSize="11" fill="#66756e">conjunto horizontal submerso no fluxo — quedas muito baixas</text>
+      <text x="60" y="200" fontSize="11" fill="#66756e">conjunto horizontal submerso no fluxo, quedas muito baixas</text>
     </svg>
   );
 }
 
 export const TURBINES_RICH = [
-  { nome: 'Pelton', Svg: SvgPelton, foto: 'Peltonturbine-1.jpg', tipo: 'Ação (impulso)', faixa: 'Quedas altas — acima de ~250 m', usoPR: 'UHE Gov. Parigot de Souza (Antonina): 4 Pelton de 62,5 MW com ~750 m de queda.' },
-  { nome: 'Francis', Svg: SvgFrancis, foto: 'Francis_Turbine_complete.jpg', tipo: 'Reação', faixa: 'Quedas médias — ~30 a 400 m', usoPR: 'UHE Foz do Areia (Pinhão): 4 Francis de 419 MW. Também Itaipu (20 unidades).' },
-  { nome: 'Kaplan', Svg: SvgKaplan, foto: 'Kaplan_turbine_bonneville.jpg', tipo: 'Reação (pás ajustáveis)', faixa: 'Quedas baixas — ~10 a 70 m', usoPR: 'UHE Baixo Iguaçu (Capanema): 3 Kaplan de ~117 MW, a fio d\'água.' },
-  { nome: 'Bulbo', Svg: SvgBulbo, foto: null, tipo: 'Reação (horizontal)', faixa: 'Quedas muito baixas — abaixo de ~15 m', usoPR: 'Sem unidade em operação no PR; no Brasil é típica das UHEs do rio Madeira (RO).' },
+  { nome: 'Pelton', Svg: SvgPelton, foto: 'Peltonturbine-1.jpg', tipo: 'Ação (impulso)', faixa: 'Quedas altas: acima de ~250 m', usoPR: 'UHE Gov. Parigot de Souza (Antonina): 4 Pelton de 62,5 MW com ~750 m de queda.' },
+  { nome: 'Francis', Svg: SvgFrancis, foto: 'Francis_Turbine_complete.jpg', tipo: 'Reação', faixa: 'Quedas médias: ~30 a 400 m', usoPR: 'UHE Foz do Areia (Pinhão): 4 Francis de 419 MW. Também Itaipu (20 unidades).' },
+  { nome: 'Kaplan', Svg: SvgKaplan, foto: 'Kaplan_turbine_bonneville.jpg', tipo: 'Reação (pás ajustáveis)', faixa: 'Quedas baixas: ~10 a 70 m', usoPR: 'UHE Baixo Iguaçu (Capanema): 3 Kaplan de ~117 MW, a fio d\'água.' },
+  { nome: 'Bulbo', Svg: SvgBulbo, foto: null, tipo: 'Reação (horizontal)', faixa: 'Quedas muito baixas: abaixo de ~15 m', usoPR: 'Sem unidade em operação no PR; no Brasil é típica das UHEs do rio Madeira (RO).' },
 ];
 
 export function TurbineGallery() {
@@ -119,14 +119,14 @@ export function TurbineGallery() {
         <button key={x.nome} className={k === i ? 'active' : ''} onClick={() => setI(k)}>{x.nome}</button>
       ))}</div>
       <div className="tg-body">
-        <figure className="tg-schema"><t.Svg /><figcaption>Esquema de funcionamento — {t.nome} ({t.tipo.toLowerCase()})</figcaption></figure>
+        <figure className="tg-schema"><t.Svg /><figcaption>Esquema de funcionamento: {t.nome} ({t.tipo.toLowerCase()})</figcaption></figure>
         {t.foto ? (
           <figure className="tg-photo">
             <img src={WM(t.foto)} alt={`Foto real de turbina ${t.nome}`} />
             <figcaption><Camera size={13} /> Foto real · <a href={WMPAGE(t.foto)} target="_blank" rel="noreferrer">Wikimedia Commons</a> (licença livre)</figcaption>
           </figure>
         ) : (
-          <div className="tg-nophoto"><Info /><p>Sem foto de licença livre confirmada para bulbo — o esquema ao lado mostra o conjunto gerador submerso no próprio fluxo.</p></div>
+          <div className="tg-nophoto"><Info /><p>Sem foto de licença livre confirmada para bulbo: o esquema ao lado mostra o conjunto gerador submerso no próprio fluxo.</p></div>
         )}
         <div className="tg-info">
           <h3>Turbina {t.nome}</h3>
@@ -175,17 +175,17 @@ export const PR_CASES = [
   { tipo: 'UHE de queda alta (derivação)', criterio: 'Circuito longo de adução por túnel · queda elevada · turbinas Pelton',
     nome: 'UHE Gov. Pedro Viriato Parigot de Souza (Capivari-Cachoeira)', local: 'Antonina-PR (capta no rio Capivari e restitui no Cachoeira)', dados: '260 MW · 4 turbinas Pelton de 62,5 MW · ~750 m de queda, a maior do sul do país · mais de 50 anos de operação',
     site: 'https://www.copel.com/site/copel-geracao/usinas/usina-parigot-de-souza/', siteLabel: 'copel.com (página oficial da usina)' },
-  { tipo: 'PCH — Pequena Central Hidrelétrica', criterio: 'Acima de 5 até 30 MW · reservatório em regra até 13 km² · autorização ANEEL',
+  { tipo: 'PCH, Pequena Central Hidrelétrica', criterio: 'Acima de 5 até 30 MW · reservatório em regra até 13 km² · autorização ANEEL',
     nome: 'PCH Bela Vista', local: 'Rio Chopim, Verê / São João-PR', dados: '29,81 MW · inaugurada em outubro de 2021 (unidades em jun/jul/ago) · investimento de R$ 224 milhões da Copel',
     site: 'https://pchbelavista.com.br/', siteLabel: 'pchbelavista.com.br (site oficial)' },
-  { tipo: 'CGH — Central Geradora Hidrelétrica', criterio: 'Até 5 MW · registro/comunicação à ANEEL · rito proporcional ao porte',
-    nome: 'CGH São Francisco de Sales', local: 'Rio São Francisco, Clevelândia-PR (comunidade Palmital)', dados: '0,9 MW · empreendimento privado com barragem de derivação e canal adutor de 317 m · site relata obras iniciadas em 2021 — confirme a situação operacional atual no SIGA/ANEEL',
+  { tipo: 'CGH, Central Geradora Hidrelétrica', criterio: 'Até 5 MW · registro/comunicação à ANEEL · rito proporcional ao porte',
+    nome: 'CGH São Francisco de Sales', local: 'Rio São Francisco, Clevelândia-PR (comunidade Palmital)', dados: '0,9 MW · empreendimento privado com barragem de derivação e canal adutor de 317 m · site relata obras iniciadas em 2021; confirme a situação operacional atual no SIGA/ANEEL',
     site: 'https://cghsaofranciscodesales.com.br/', siteLabel: 'cghsaofranciscodesales.com.br (site do empreendimento)' },
   { tipo: 'UHE binacional', criterio: 'Empreendimento de tratado internacional · regime jurídico próprio',
     nome: 'Itaipu Binacional', local: 'Rio Paraná, Foz do Iguaçu-PR (Brasil/Paraguai)', dados: '14.000 MW · 20 unidades geradoras Francis · líder mundial em produção acumulada de energia',
     site: 'https://www.itaipu.gov.br/', siteLabel: 'itaipu.gov.br (site oficial)' },
-  { tipo: 'Reversível (bombeamento)', criterio: 'Bombeia água a reservatório superior fora de ponta e turbina na ponta — "bateria" hídrica', reversivel: true,
-    nome: 'Bath County Pumped Storage Station — exemplo fora do Paraná', local: 'Bath County, Virgínia, Estados Unidos', dados: 'Não há usina reversível em operação comercial no Paraná; este é o exemplo internacional de referência: 3.003 MW em 6 unidades reversíveis, a maior do mundo, em operação desde 1985 (Dominion Energy 60% e Allegheny Power 40%).',
+  { tipo: 'Reversível (bombeamento)', criterio: 'Bombeia água a reservatório superior fora de ponta e turbina na ponta, a "bateria" hídrica', reversivel: true,
+    nome: 'Bath County Pumped Storage Station: exemplo fora do Paraná', local: 'Bath County, Virgínia, Estados Unidos', dados: 'Não há usina reversível em operação comercial no Paraná; este é o exemplo internacional de referência: 3.003 MW em 6 unidades reversíveis, a maior do mundo, em operação desde 1985 (Dominion Energy 60% e Allegheny Power 40%).',
     site: 'https://www.dominionenergy.com/en/About/Making-Energy/Hydroelectric-Power-Facilities/Bath-County-Pumped-Storage-Station', siteLabel: 'dominionenergy.com (página da operadora)' },
 ];
 
@@ -202,7 +202,7 @@ export function PRCasesSection() {
           <p className="prc-dados">{c.dados}</p>
           {c.reversivel && <div className="prc-fotos">
             <figure><SvgReversivel /><figcaption>Esquema: o ciclo diário de geração e bombeamento.</figcaption></figure>
-            <figure><img src={BASE + '/hidro/reversivel-bath-county.jpg'} alt="Bath County Pumped Storage Station — casa de força e subestação" /><figcaption><Camera size={13} /> Foto real da usina · <a href={WMPAGE('Bath_County_Pumped_Storage_Station.jpg')} target="_blank" rel="noreferrer">Wikimedia Commons</a> (licença livre)</figcaption></figure>
+            <figure><img src={BASE + '/hidro/reversivel-bath-county.jpg'} alt="Bath County Pumped Storage Station: casa de força e subestação" /><figcaption><Camera size={13} /> Foto real da usina · <a href={WMPAGE('Bath_County_Pumped_Storage_Station.jpg')} target="_blank" rel="noreferrer">Wikimedia Commons</a> (licença livre)</figcaption></figure>
           </div>}
           {c.site && <a className="prc-site" href={c.site} target="_blank" rel="noreferrer"><ExternalLink size={14} /> {c.siteLabel}</a>}
         </article>
@@ -214,15 +214,15 @@ export function PRCasesSection() {
 /* ============ COMO SOLICITAR A AUTORIZAÇÃO (trilhas ANEEL x IAT) ============ */
 const TRILHA_ANEEL = [
   ['Estudos e definição do aproveitamento', 'Inventário do trecho, partição de quedas e projeto do aproveitamento: potência, queda, vazão e arranjo.'],
-  ['Registro na ANEEL', 'Registro do projeto conforme a REN nº 875/2020 (adequabilidade do sumário executivo — DRS) e obtenção do CEG, o código único do empreendimento.'],
+  ['Registro na ANEEL', 'Registro do projeto conforme a REN nº 875/2020 (adequabilidade do sumário executivo, DRS) e obtenção do CEG, o código único do empreendimento.'],
   ['Outorga setorial', 'Até 5 MW: registro/comunicação. Acima de 5 MW: autorização da ANEEL (limite ampliado pela legislação setorial vigente). Grandes aproveitamentos: concessão mediante leilão.'],
   ['Conexão à rede', 'Parecer de acesso, projeto da linha/subestação e contratos de conexão e uso do sistema.'],
 ];
 const TRILHA_IAT = [
   ['Consulta Prévia (recomendada)', 'Antes de formalizar: mapa da ADA, arranjo em KML/KMZ e memorial descritivo (art. 36 da IN IAT nº 09/2025). A manifestação orienta modalidade e estudo, vale 24 meses e não aprova viabilidade.'],
-  ['Enquadramento', 'Potência, área de alagamento, IDA, supressão e sensibilidade definem a modalidade — DLAM, LAC, LAS ou rito trifásico — e o estudo exigido (RAS/RDPA, PCA ou EIA/RIMA), sempre pelo critério mais restritivo.'],
+  ['Enquadramento', 'Potência, área de alagamento, IDA, supressão e sensibilidade definem a modalidade (DLAM, LAC, LAS ou rito trifásico) e o estudo exigido (RAS/RDPA, PCA ou EIA/RIMA), sempre pelo critério mais restritivo.'],
   ['Protocolo e análise', 'Formalização pelo SGA/eProtocolo com a documentação da fase; o IAT confere suficiência antes do mérito e diligencia lacunas.'],
-  ['LP → LI → LO', 'LP atesta viabilidade e concepção; LI autoriza instalar conforme projeto (com autorizações florestais, de fauna e outorga/DRDH); LO verifica o instalado e fixa condicionantes de operação — e o PACUERA quando exigível.'],
+  ['LP → LI → LO', 'LP atesta viabilidade e concepção; LI autoriza instalar conforme projeto (com autorizações florestais, de fauna e outorga/DRDH); LO verifica o instalado e fixa condicionantes de operação, e o PACUERA quando exigível.'],
   ['Intervenientes', 'IPHAN (patrimônio), gestor de UC afetada e demais órgãos manifestam-se no processo; o IAT verifica compatibilidade sem substituir a decisão de cada um.'],
 ];
 const PAPEIS = [
@@ -237,12 +237,12 @@ export function LicensingPath({ go }) {
     <div className="lic-path">
       <p className="prc-note"><Info size={15} /> Roteiro didático baseado no POP e na IN IAT nº 09/2025 (trilha ambiental) e no regime setorial da ANEEL (trilha energética). Os dois trilhos correm em paralelo e precisam conversar: titularidade, arranjo e potência devem coincidir.</p>
       <div className="lic-cols">
-        <section className="lic-col lic-aneel"><h3><Zap size={17} /> Trilha setorial — ANEEL</h3><ol>{TRILHA_ANEEL.map(([t, d], i) => <li key={t}><span>{i + 1}</span><div><strong>{t}</strong><p>{d}</p></div></li>)}</ol></section>
-        <section className="lic-col lic-iat"><h3><Factory size={17} /> Trilha ambiental — IAT</h3><ol>{TRILHA_IAT.map(([t, d], i) => <li key={t}><span>{i + 1}</span><div><strong>{t}</strong><p>{d}</p></div></li>)}</ol></section>
+        <section className="lic-col lic-aneel"><h3><Zap size={17} /> Trilha setorial · ANEEL</h3><ol>{TRILHA_ANEEL.map(([t, d], i) => <li key={t}><span>{i + 1}</span><div><strong>{t}</strong><p>{d}</p></div></li>)}</ol></section>
+        <section className="lic-col lic-iat"><h3><Factory size={17} /> Trilha ambiental · IAT</h3><ol>{TRILHA_IAT.map(([t, d], i) => <li key={t}><span>{i + 1}</span><div><strong>{t}</strong><p>{d}</p></div></li>)}</ol></section>
       </div>
       <h3 className="lic-papeis-h">Quem faz o quê</h3>
       <div className="lic-papeis">{PAPEIS.map(([t, d]) => <article key={t}><strong>{t}</strong><p>{d}</p></article>)}</div>
-      <div className="lic-cta"><p>O detalhe de cada fase — documentos, critérios de suficiência e produtos — está nos módulos M03 a M05 da Formação e nas normas da Biblioteca.</p><button className="primary" onClick={() => go('formacao')}>Estudar as fases <ExternalLink size={15} /></button></div>
+      <div className="lic-cta"><p>O detalhe de cada fase (documentos, critérios de suficiência e produtos) está nos módulos M03 a M05 da Formação e nas normas da Biblioteca.</p><button className="primary" onClick={() => go('formacao')}>Estudar as fases <ExternalLink size={15} /></button></div>
     </div>
   );
 }

@@ -43,7 +43,7 @@ SPECS = {
     "m01": ("Papéis, normas e método", "Ordem de consulta e sequência rastreável de decisão.",
         [("1", "Papéis", "Competência de cada ator"), ("2", "Fontes", "Ordem de consulta"), ("3", "Transição", "Regime aplicável"), ("4", "Conceitos", "Definições operacionais"), ("5", "Método", "Sequência obrigatória")],
         ["Cada órgão decide no seu limite; o IAT verifica compatibilidade.", "Lei e regulamento prevalecem sobre TR e orientação interna.", "Em transição normativa, registre datas, estágio e justificativa.", "Definições precisas evitam enquadramentos improvisados.", "A sequência de decisão deve ser rastreável de ponta a ponta.", "Método obrigatório é proteção, não burocracia."]),
-    "m02": ("Fluxo geral e triagem", "A conclusão é resultado — nunca o ponto de partida.",
+    "m02": ("Fluxo geral e triagem", "A conclusão é resultado, nunca o ponto de partida.",
         [("1", "Receber", "Identificar o objeto"), ("2", "Ordenar", "Leitura cronológica"), ("3", "Conferir", "Suficiência inicial"), ("4", "Decidir", "Saídas da triagem"), ("5", "Registrar", "Motivação da saída")],
         ["Comece pelo objeto do pedido e pelo histórico do processo.", "Leitura cronológica e temática antes de qualquer juízo.", "Sem documento exigível: diligência documental.", "Estudo com lacuna técnica: diligência técnica fundamentada.", "Delimitação espacial exige poligonais e arquivos geoespaciais.", "A conclusão resulta da compatibilização documental e técnica."]),
     "m03": ("Enquadramento e Consulta Prévia", "A modalidade não se define por um único número.",

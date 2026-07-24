@@ -35,9 +35,9 @@ SCENES = [
     ("Curso d'água e reservatório", "O rio é represado e forma o reservatório: energia potencial acumulada e usos múltiplos da água.", (170, 330, 190, 90)),
     ("APP do entorno", "Faixa de vegetação protegida ao redor do reservatório: a APP filtra sedimentos e protege as margens.", (150, 240, 200, 60)),
     ("PACUERA", "O uso do entorno é ordenado pelo PACUERA: zoneamento que diz o que pode e o que não pode em cada trecho.", (300, 250, 240, 80)),
-    ("Barragem", "A barragem sustenta o desnível entre montante e jusante — a queda que move a usina.", (455, 400, 90, 130)),
+    ("Barragem", "A barragem sustenta o desnível entre montante e jusante: a queda que move a usina.", (455, 400, 90, 130)),
     ("Vertedouro", "Nas cheias, o excedente passa pelo vertedouro com energia dissipada, protegendo a estrutura.", (520, 380, 70, 120)),
-    ("Captação: tomada d'água", "A tomada d'água capta o fluxo com grades e comportas — início do circuito de geração.", (420, 480, 70, 50)),
+    ("Captação: tomada d'água", "A tomada d'água capta o fluxo com grades e comportas: início do circuito de geração.", (420, 480, 70, 50)),
     ("Conduto forçado", "A água desce sob pressão pelo conduto forçado, convertendo altura em velocidade.", (610, 520, 170, 70)),
     ("Casa de força: geração", "Na casa de força, a turbina gira com a água e o gerador converte rotação em eletricidade.", (800, 540, 110, 80)),
     ("Subestação e linha de transmissão", "O transformador eleva a tensão e a linha de transmissão leva a energia ao sistema interligado.", (1010, 330, 150, 120)),
@@ -146,7 +146,7 @@ def make_frame(fn):
         return im
     if idx == len(SCENES) - 1:
         d.rectangle((0, 0, W, H), fill=INK)
-        d.text((70, 300), "Do rio à rede — tudo isso passa pelo licenciamento.", font=F["title"], fill=WHITE)
+        d.text((70, 300), "Do rio à rede: tudo isso passa pelo licenciamento.", font=F["title"], fill=WHITE)
         d.text((70, 360), cap, font=F["small"], fill="#c7e4de")
         d.rounded_rectangle((70, 430, 330, 478), 24, GREEN)
         d.text((100, 442), "Abrir a Formação", font=F["tag"], fill=WHITE)

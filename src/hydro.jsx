@@ -1,4 +1,4 @@
-// Secao "Como funciona uma hidreletrica" — guia tecnico visual e interativo.
+// Secao "Como funciona uma hidreletrica", guia tecnico visual e interativo.
 // Modulo isolado (primeiro passo de quebra do main.jsx). Recebe apenas `go`.
 import React, { useState, useMemo } from 'react';
 import {
@@ -52,14 +52,14 @@ const BARRAGENS = [
   { nome: 'Contrafortes', resiste: 'Laje apoiada em contrafortes', onde: 'Economia de concreto em vãos', svg: 'contraforte' },
   { nome: 'Terra (aterro)', resiste: 'Maciço de solo compactado com núcleo impermeável', onde: 'Vales largos, farto material local', svg: 'terra' },
   { nome: 'Enrocamento', resiste: 'Maciço de rocha com face de concreto (CFRD) ou núcleo argiloso', onde: 'Boa disponibilidade de rocha', svg: 'enrocamento' },
-  { nome: 'CCR — concreto compactado a rolo', resiste: 'Concreto seco compactado em camadas, como um aterro', onde: 'Execução rápida de grandes volumes', svg: 'ccr' },
+  { nome: 'CCR, concreto compactado a rolo', resiste: 'Concreto seco compactado em camadas, como um aterro', onde: 'Execução rápida de grandes volumes', svg: 'ccr' },
 ];
 
 const TURBINAS = [
-  { nome: 'Pelton', tipo: 'Ação (impulso)', queda: 'Queda alta — acima de ~250 m', vazao: 'Vazão baixa', nota: 'Jatos d\'água atingem conchas na periferia da roda. Típica de aproveitamentos de montanha.', hMin: 250, hMax: 1800 },
-  { nome: 'Francis', tipo: 'Reação', queda: 'Queda média — ~30 a 400 m', vazao: 'Vazão média', nota: 'A mais usada no Brasil. Água entra em espiral (caracol) e sai axialmente. Ampla faixa de aplicação.', hMin: 30, hMax: 400 },
-  { nome: 'Kaplan', tipo: 'Reação', queda: 'Queda baixa — ~10 a 70 m', vazao: 'Vazão alta', nota: 'Hélice com pás ajustáveis, mantém rendimento com vazão variável. Comum em grandes rios de planície.', hMin: 10, hMax: 70 },
-  { nome: 'Bulbo', tipo: 'Reação', queda: 'Queda muito baixa — abaixo de ~15 m', vazao: 'Vazão muito alta', nota: 'Unidade horizontal submersa. Típica de usinas a fio d\'água em rios de grande vazão e pouca queda.', hMin: 2, hMax: 15 },
+  { nome: 'Pelton', tipo: 'Ação (impulso)', queda: 'Queda alta: acima de ~250 m', vazao: 'Vazão baixa', nota: 'Jatos d\'água atingem conchas na periferia da roda. Típica de aproveitamentos de montanha.', hMin: 250, hMax: 1800 },
+  { nome: 'Francis', tipo: 'Reação', queda: 'Queda média: ~30 a 400 m', vazao: 'Vazão média', nota: 'A mais usada no Brasil. Água entra em espiral (caracol) e sai axialmente. Ampla faixa de aplicação.', hMin: 30, hMax: 400 },
+  { nome: 'Kaplan', tipo: 'Reação', queda: 'Queda baixa: ~10 a 70 m', vazao: 'Vazão alta', nota: 'Hélice com pás ajustáveis, mantém rendimento com vazão variável. Comum em grandes rios de planície.', hMin: 10, hMax: 70 },
+  { nome: 'Bulbo', tipo: 'Reação', queda: 'Queda muito baixa: abaixo de ~15 m', vazao: 'Vazão muito alta', nota: 'Unidade horizontal submersa. Típica de usinas a fio d\'água em rios de grande vazão e pouca queda.', hMin: 2, hMax: 15 },
 ];
 
 function turbinaPorQueda(h) {
@@ -191,9 +191,9 @@ function PowerCalc() {
     <div className="power-calc">
       <div className="pc-formula"><Zap /> <span>P = ρ · g · Q · H · η</span> <small>densidade × gravidade × vazão × queda × rendimento</small></div>
       <div className="pc-controls">
-        <label>Vazão turbinada — Q <b>{q} m³/s</b><input type="range" min="1" max="1500" value={q} onChange={(e) => setQ(+e.target.value)} /></label>
-        <label>Queda líquida — H <b>{h} m</b><input type="range" min="2" max="250" value={h} onChange={(e) => setH(+e.target.value)} /></label>
-        <label>Rendimento — η <b>{ef}%</b><input type="range" min="70" max="95" value={ef} onChange={(e) => setEf(+e.target.value)} /></label>
+        <label>Vazão turbinada, Q <b>{q} m³/s</b><input type="range" min="1" max="1500" value={q} onChange={(e) => setQ(+e.target.value)} /></label>
+        <label>Queda líquida, H <b>{h} m</b><input type="range" min="2" max="250" value={h} onChange={(e) => setH(+e.target.value)} /></label>
+        <label>Rendimento, η <b>{ef}%</b><input type="range" min="70" max="95" value={ef} onChange={(e) => setEf(+e.target.value)} /></label>
       </div>
       <div className="pc-out">
         <div><span>Potência estimada</span><strong>{potMW >= 1 ? potMW.toFixed(1) + ' MW' : Math.round(potKW) + ' kW'}</strong></div>
@@ -210,14 +210,14 @@ function TurbinePicker() {
   const rec = turbinaPorQueda(h);
   return (
     <div className="turb-picker">
-      <label className="tp-slider">Arraste a queda de projeto — H <b>{h} m</b>
+      <label className="tp-slider">Arraste a queda de projeto, H <b>{h} m</b>
         <input type="range" min="2" max="800" value={h} onChange={(e) => setH(+e.target.value)} />
       </label>
       <div className="tp-scale">
         {[['Bulbo', 2, 15], ['Kaplan', 10, 70], ['Francis', 30, 400], ['Pelton', 250, 800]].map(([nome, a, b]) => (
           <div key={nome} className={'tp-band' + (rec === nome ? ' rec' : '')}>
             <span className="tp-name">{nome}</span>
-            <span className="tp-range">{a}–{b} m</span>
+            <span className="tp-range">{a} a {b} m</span>
           </div>
         ))}
       </div>
@@ -279,7 +279,7 @@ export default function HydroGuide({ go }) {
       </section>
 
       <section className="hydro-block">
-        <div className="section-title"><div><h2>Tipos por potência</h2><p>Classificação da ANEEL — muda porte, outorga e exigência de estudo.</p></div><Factory /></div>
+        <div className="section-title"><div><h2>Tipos por potência</h2><p>Classificação da ANEEL: muda porte, outorga e exigência de estudo.</p></div><Factory /></div>
         <div className="pot-grid">{TIPOS_POTENCIA.map((t) => (
           <article key={t.sigla} className="pot-card" style={{ '--pc': t.cor }}>
             <div className="pot-sigla">{t.sigla}</div>

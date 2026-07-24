@@ -544,3 +544,14 @@ button.primary:active{box-shadow:inset 0 2px 6px #04231c40}
 
 .lab-canvas{animation:tabIn .32s var(--ease)}
 .scenario-tabs{scroll-margin-top:80px}
+/* Aba Aula: subsecoes e conteudo real */
+.lesson-children{display:flex;flex-direction:column;gap:6px;margin:14px 0;border:1px solid var(--line);border-radius:10px;padding:14px 16px;background:var(--soft)}
+.lesson-children>strong{display:flex;align-items:center;gap:7px;font-size:13px;color:var(--green);margin-bottom:4px}
+.lesson-children button{display:flex;align-items:center;gap:10px;width:100%;text-align:left;border:1px solid var(--line);background:#fff;border-radius:8px;padding:9px 12px;cursor:pointer;transition:border-color .18s var(--ease),box-shadow .18s var(--ease),transform .18s var(--ease)}
+.lesson-children button:hover{border-color:var(--green2);box-shadow:var(--shadow-1);transform:translateX(3px)}
+.lesson-children button>span{flex:none;min-width:44px;font-weight:800;color:var(--green2);font-size:13px}
+.lesson-children button>em{flex:1;font-style:normal;font-size:14px}
+.lesson-children button>svg{color:var(--muted);flex:none}
+.lesson-keypoints{margin:14px 0;display:flex;flex-direction:column;gap:12px}
+.lesson-keypoints p{margin:0;font-size:15px;line-height:1.7;color:#22332c}
+.lesson-keypoints p:first-letter{font-weight:600}

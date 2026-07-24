@@ -32,8 +32,7 @@ function SvgPelton() {
       <path d="M76 105 L118 105" stroke="#34a9e1" strokeWidth="8" strokeLinecap="round" className="jet-anim" strokeDasharray="8 10" />
       <polygon points="70,96 92,105 70,114" fill="#93a7af" />
       <text x="14" y="88" fontSize="11" fill="#bcd0c7" fontWeight="700">bocal / injetor</text>
-      <text x="196" y="40" fontSize="11" fill="#bcd0c7" fontWeight="700">conchas (dupla colher)</text>
-      <text x="98" y="205" fontSize="11" fill="#93aaa1">jato em pressão atmosférica → turbina de AÇÃO</text>
+      <text x="292" y="40" textAnchor="end" fontSize="11" fill="#bcd0c7" fontWeight="700">conchas (dupla colher)</text>
     </svg>
   );
 }
@@ -59,7 +58,6 @@ function SvgFrancis() {
       <rect x="142" y="150" width="16" height="46" fill="#8fd0ff" opacity=".8" />
       <path d="M142 196 q8 12 16 0" fill="#8fd0ff" opacity=".8" />
       <text x="166" y="182" fontSize="11" fill="#bcd0c7" fontWeight="700">tubo de sucção</text>
-      <text x="66" y="212" fontSize="11" fill="#93aaa1">fluxo radial→axial sob pressão → turbina de REAÇÃO</text>
     </svg>
   );
 }
@@ -79,7 +77,6 @@ function SvgKaplan() {
       </g>
       <path d="M212 96 l20 -12 M212 124 l20 12" stroke="#f3bd4f" strokeWidth="3" />
       <text x="196" y="76" fontSize="11" fill="#bcd0c7" fontWeight="700">pás AJUSTÁVEIS</text>
-      <text x="60" y="208" fontSize="11" fill="#93aaa1">hélice de passo variável → rendimento alto com vazão variável</text>
     </svg>
   );
 }
@@ -98,16 +95,15 @@ function SvgBulbo() {
         ))}
         <circle cx="208" cy="118" r="10" fill="#2fa07a" />
       </g>
-      <text x="60" y="200" fontSize="11" fill="#93aaa1">conjunto horizontal submerso no fluxo, quedas muito baixas</text>
     </svg>
   );
 }
 
 export const TURBINES_RICH = [
-  { nome: 'Pelton', Svg: SvgPelton, foto: 'Peltonturbine-1.jpg', tipo: 'Ação (impulso)', faixa: 'Quedas altas: acima de ~250 m', usoPR: 'UHE Gov. Parigot de Souza (Antonina): 4 Pelton de 62,5 MW com ~750 m de queda.' },
-  { nome: 'Francis', Svg: SvgFrancis, foto: 'Francis_Turbine_complete.jpg', tipo: 'Reação', faixa: 'Quedas médias: ~30 a 400 m', usoPR: 'UHE Foz do Areia (Pinhão): 4 Francis de 419 MW. Também Itaipu (20 unidades).' },
-  { nome: 'Kaplan', Svg: SvgKaplan, foto: 'Kaplan_turbine_bonneville.jpg', tipo: 'Reação (pás ajustáveis)', faixa: 'Quedas baixas: ~10 a 70 m', usoPR: 'UHE Baixo Iguaçu (Capanema): 3 Kaplan de ~117 MW, a fio d\'água.' },
-  { nome: 'Bulbo', Svg: SvgBulbo, foto: null, tipo: 'Reação (horizontal)', faixa: 'Quedas muito baixas: abaixo de ~15 m', usoPR: 'Sem unidade em operação no PR; no Brasil é típica das UHEs do rio Madeira (RO).' },
+  { nome: 'Pelton', Svg: SvgPelton, legenda: "Jato em pressão atmosférica: turbina de AÇÃO.", foto: 'Peltonturbine-1.jpg', tipo: 'Ação (impulso)', faixa: 'Quedas altas: acima de ~250 m', usoPR: 'UHE Gov. Parigot de Souza (Antonina): 4 Pelton de 62,5 MW com ~750 m de queda.' },
+  { nome: 'Francis', Svg: SvgFrancis, legenda: "Fluxo radial que vira axial, sob pressão: turbina de REAÇÃO.", foto: 'Francis_Turbine_complete.jpg', tipo: 'Reação', faixa: 'Quedas médias: ~30 a 400 m', usoPR: 'UHE Foz do Areia (Pinhão): 4 Francis de 419 MW. Também Itaipu (20 unidades).' },
+  { nome: 'Kaplan', Svg: SvgKaplan, legenda: "Hélice de passo variável: mantém rendimento com vazão variável.", foto: 'Kaplan_turbine_bonneville.jpg', tipo: 'Reação (pás ajustáveis)', faixa: 'Quedas baixas: ~10 a 70 m', usoPR: 'UHE Baixo Iguaçu (Capanema): 3 Kaplan de ~117 MW, a fio d\'água.' },
+  { nome: 'Bulbo', Svg: SvgBulbo, legenda: "Conjunto horizontal submerso no próprio fluxo, para quedas muito baixas.", foto: null, tipo: 'Reação (horizontal)', faixa: 'Quedas muito baixas: abaixo de ~15 m', usoPR: 'Sem unidade em operação no PR; no Brasil é típica das UHEs do rio Madeira (RO).' },
 ];
 
 export function TurbineGallery() {
@@ -119,7 +115,7 @@ export function TurbineGallery() {
         <button key={x.nome} className={k === i ? 'active' : ''} onClick={() => setI(k)}>{x.nome}</button>
       ))}</div>
       <div className="tg-body">
-        <figure className="tg-schema"><t.Svg /><figcaption>Esquema de funcionamento: {t.nome} ({t.tipo.toLowerCase()})</figcaption></figure>
+        <figure className="tg-schema"><t.Svg /><figcaption><span className="tg-cap-t">Esquema: {t.nome} ({t.tipo.toLowerCase()})</span><span className="tg-cap-d">{t.legenda}</span></figcaption></figure>
         {t.foto ? (
           <figure className="tg-photo">
             <img src={WM(t.foto)} alt={`Foto real de turbina ${t.nome}`} />
@@ -159,7 +155,6 @@ function SvgReversivel() {
         <path d="M96 176 l0 -34" stroke="#e5a000" strokeWidth="4" />
         <text x="106" y="168" fontSize="11.5" fill="#f4c05a" fontWeight="800">BOMBEIA fora de ponta (sobe)</text>
       </g>
-      <text x="40" y="248" fontSize="11" fill="#93aaa1">funciona como bateria: consome energia barata para estocar água e gerar na hora cara</text>
     </svg>
   );
 }
@@ -201,7 +196,7 @@ export function PRCasesSection() {
           <p className="prc-local"><MapPin size={13} /> {c.local}</p>
           <p className="prc-dados">{c.dados}</p>
           {c.reversivel && <div className="prc-fotos">
-            <figure><SvgReversivel /><figcaption>Esquema: o ciclo diário de geração e bombeamento.</figcaption></figure>
+            <figure><SvgReversivel /><figcaption>Ciclo diário: funciona como bateria hídrica, consome energia barata para estocar água no reservatório superior e gera na hora de ponta.</figcaption></figure>
             <figure><img src={BASE + '/hidro/reversivel-bath-county.jpg'} alt="Bath County Pumped Storage Station: casa de força e subestação" /><figcaption><Camera size={13} /> Foto real da usina · <a href={WMPAGE('Bath_County_Pumped_Storage_Station.jpg')} target="_blank" rel="noreferrer">Wikimedia Commons</a> (licença livre)</figcaption></figure>
           </div>}
           {c.site && <a className="prc-site" href={c.site} target="_blank" rel="noreferrer"><ExternalLink size={14} /> {c.siteLabel}</a>}
@@ -262,7 +257,6 @@ function ArrPeBarragem() {
       <text x="164" y="228" fontSize="12" fontWeight="700" fill="#3fe0a6">barragem</text>
       <text x="276" y="170" fontSize="12" fontWeight="700" fill="#3fe0a6">casa de força no pé</text>
       <text x="330" y="228" fontSize="12" fill="#93aaa1">restituição imediata</text>
-      <text x="10" y="24" fontSize="13" fontWeight="800" fill="#e9f3ee">Pé de barragem: queda criada só pelo barramento; circuito curto</text>
     </svg>
   );
 }
@@ -283,7 +277,6 @@ function ArrDerivacao() {
       <text x="300" y="200" fontSize="12" fontWeight="700" fill="#3fe0a6">casa de força afastada</text>
       <path d="M74 96 L318 161" fill="none" stroke="#3fe0a6" strokeWidth="1" strokeDasharray="4 4" />
       <text x="150" y="188" fontSize="11" fill="#93aaa1">trecho de vazão reduzida (TVR) no leito natural</text>
-      <text x="10" y="24" fontSize="13" fontWeight="800" fill="#e9f3ee">Derivação: circuito longo aproveita a queda do relevo (ex.: Parigot de Souza)</text>
     </svg>
   );
 }
@@ -310,16 +303,15 @@ function ArrFioAgua() {
       <text x="252" y="82" fontSize="10.5" fill="#bcd0c7">estoca água entre estações</text>
       <text x="252" y="96" fontSize="10.5" fill="#bcd0c7">regulariza vazão e firma energia</text>
       <text x="252" y="212" fontSize="10.5" fill="#93aaa1">maior área alagada · deplecionamento</text>
-      <text x="10" y="24" fontSize="13" fontWeight="800" fill="#e9f3ee">Regularização: fio d'água × acumulação (ex.: Baixo Iguaçu × Foz do Areia)</text>
     </svg>
   );
 }
 export function ArrangementSchematics() {
   return (
     <div className="arr-grid">
-      <figure><ArrPeBarragem /><figcaption>Arranjo compacto: barragem, casa de força ao pé e restituição imediata.</figcaption></figure>
-      <figure><ArrDerivacao /><figcaption>Arranjo de derivação: açude, adução longa, chaminé de equilíbrio e TVR.</figcaption></figure>
-      <figure><ArrFioAgua /><figcaption>Fio d'água × acumulação: o reservatório define a operação e o impacto.</figcaption></figure>
+      <figure><ArrPeBarragem /><figcaption>Pé de barragem: a queda vem só do barramento. Circuito curto, casa de força ao pé e restituição imediata ao rio.</figcaption></figure>
+      <figure><ArrDerivacao /><figcaption>Derivação: circuito longo que aproveita a queda do relevo (caso da UHE Parigot de Souza), com açude, adução, chaminé de equilíbrio e trecho de vazão reduzida.</figcaption></figure>
+      <figure><ArrFioAgua /><figcaption>Regularização: fio d'água (caso do Baixo Iguaçu) contra acumulação (caso de Foz do Areia). O tamanho do reservatório define a operação e o impacto.</figcaption></figure>
     </div>
   );
 }

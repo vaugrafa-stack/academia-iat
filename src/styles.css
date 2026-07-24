@@ -628,3 +628,7 @@ button:focus-visible,input:focus-visible,textarea:focus-visible,a:focus-visible,
 
 .theme-toggle{width:40px;height:40px;border-radius:9px;border:1px solid var(--line);background:var(--surface2);color:var(--ink2);display:grid;place-items:center;cursor:pointer;transition:background .18s var(--ease),color .18s var(--ease),transform .18s var(--ease)}
 .theme-toggle:hover{color:var(--green2);transform:translateY(-1px)}
+
+.tg-schema figcaption{flex-direction:column;align-items:flex-start;gap:3px}
+.tg-cap-t{font-weight:700;color:var(--ink2)}
+.tg-cap-d{color:var(--muted);line-height:1.5}

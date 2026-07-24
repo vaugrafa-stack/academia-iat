@@ -19,47 +19,47 @@ function SvgPelton() {
   const conchas = Array.from({ length: 12 }, (_, i) => i * 30);
   return (
     <svg viewBox="0 0 300 220" className="turb-svg" aria-label="Esquema de turbina Pelton">
-      <circle cx="150" cy="110" r="66" fill="none" stroke="#07583b" strokeWidth="3" />
-      <circle cx="150" cy="110" r="12" fill="#07583b" />
+      <circle cx="150" cy="110" r="66" fill="none" stroke="#3fe0a6" strokeWidth="3" />
+      <circle cx="150" cy="110" r="12" fill="#3fe0a6" />
       <g className="spin-slow">
         {conchas.map((a) => (
           <g key={a} transform={`rotate(${a} 150 110)`}>
-            <path d="M150 36 q-10 -12 -2 -20 q10 6 12 16 q-4 6 -10 4" fill="#0a7755" stroke="#063b31" strokeWidth="1.4" />
+            <path d="M150 36 q-10 -12 -2 -20 q10 6 12 16 q-4 6 -10 4" fill="#37d39a" stroke="#2fa07a" strokeWidth="1.4" />
           </g>
         ))}
       </g>
-      <rect x="10" y="98" width="66" height="14" rx="7" fill="#2c3e46" />
+      <rect x="10" y="98" width="66" height="14" rx="7" fill="#93a7af" />
       <path d="M76 105 L118 105" stroke="#34a9e1" strokeWidth="8" strokeLinecap="round" className="jet-anim" strokeDasharray="8 10" />
-      <polygon points="70,96 92,105 70,114" fill="#2c3e46" />
-      <text x="14" y="88" fontSize="11" fill="#37544b" fontWeight="700">bocal / injetor</text>
-      <text x="196" y="40" fontSize="11" fill="#37544b" fontWeight="700">conchas (dupla colher)</text>
-      <text x="98" y="205" fontSize="11" fill="#66756e">jato em pressão atmosférica → turbina de AÇÃO</text>
+      <polygon points="70,96 92,105 70,114" fill="#93a7af" />
+      <text x="14" y="88" fontSize="11" fill="#bcd0c7" fontWeight="700">bocal / injetor</text>
+      <text x="196" y="40" fontSize="11" fill="#bcd0c7" fontWeight="700">conchas (dupla colher)</text>
+      <text x="98" y="205" fontSize="11" fill="#93aaa1">jato em pressão atmosférica → turbina de AÇÃO</text>
     </svg>
   );
 }
 function SvgFrancis() {
   return (
     <svg viewBox="0 0 300 220" className="turb-svg" aria-label="Esquema de turbina Francis">
-      <path d="M150 110 m66 0 a66 66 0 1 1 -18 -46" fill="none" stroke="#1769c2" strokeWidth="16" strokeLinecap="round" opacity=".85" />
-      <text x="212" y="52" fontSize="11" fill="#37544b" fontWeight="700">caixa espiral</text>
+      <path d="M150 110 m66 0 a66 66 0 1 1 -18 -46" fill="none" stroke="#4cc4f5" strokeWidth="16" strokeLinecap="round" opacity=".85" />
+      <text x="212" y="52" fontSize="11" fill="#bcd0c7" fontWeight="700">caixa espiral</text>
       {Array.from({ length: 10 }, (_, i) => i * 36).map((a) => (
         <g key={a} transform={`rotate(${a} 150 110)`}>
-          <rect x="146" y="58" width="7" height="16" rx="3" fill="#0a7755" transform="rotate(24 150 66)" />
+          <rect x="146" y="58" width="7" height="16" rx="3" fill="#37d39a" transform="rotate(24 150 66)" />
         </g>
       ))}
       <g className="spin-slow">
         {Array.from({ length: 9 }, (_, i) => i * 40).map((a) => (
           <g key={a} transform={`rotate(${a} 150 110)`}>
-            <path d="M150 78 q16 14 6 30 l-8 -4 q6 -12 -4 -22 Z" fill="#07583b" />
+            <path d="M150 78 q16 14 6 30 l-8 -4 q6 -12 -4 -22 Z" fill="#3fe0a6" />
           </g>
         ))}
-        <circle cx="150" cy="110" r="14" fill="#063b31" />
+        <circle cx="150" cy="110" r="14" fill="#2fa07a" />
       </g>
-      <text x="52" y="52" fontSize="11" fill="#37544b" fontWeight="700">distribuidor (palhetas)</text>
+      <text x="52" y="52" fontSize="11" fill="#bcd0c7" fontWeight="700">distribuidor (palhetas)</text>
       <rect x="142" y="150" width="16" height="46" fill="#8fd0ff" opacity=".8" />
       <path d="M142 196 q8 12 16 0" fill="#8fd0ff" opacity=".8" />
-      <text x="166" y="182" fontSize="11" fill="#37544b" fontWeight="700">tubo de sucção</text>
-      <text x="66" y="212" fontSize="11" fill="#66756e">fluxo radial→axial sob pressão → turbina de REAÇÃO</text>
+      <text x="166" y="182" fontSize="11" fill="#bcd0c7" fontWeight="700">tubo de sucção</text>
+      <text x="66" y="212" fontSize="11" fill="#93aaa1">fluxo radial→axial sob pressão → turbina de REAÇÃO</text>
     </svg>
   );
 }
@@ -67,19 +67,19 @@ function SvgKaplan() {
   return (
     <svg viewBox="0 0 300 220" className="turb-svg" aria-label="Esquema de turbina Kaplan">
       <path d="M40 40 L120 70 L120 150 L40 180 Z" fill="#bfe3ff" opacity=".7" />
-      <text x="42" y="32" fontSize="11" fill="#37544b" fontWeight="700">fluxo axial</text>
-      <rect x="120" y="96" width="90" height="28" rx="6" fill="#2c3e46" />
+      <text x="42" y="32" fontSize="11" fill="#bcd0c7" fontWeight="700">fluxo axial</text>
+      <rect x="120" y="96" width="90" height="28" rx="6" fill="#93a7af" />
       <g className="spin-slow" style={{ transformOrigin: '150px 110px' }}>
         {[0, 90, 180, 270].map((a) => (
           <g key={a} transform={`rotate(${a} 150 110)`}>
-            <path d="M150 110 q34 -10 52 -34 q10 18 -6 34 q-22 12 -46 0 Z" fill="#0a7755" stroke="#063b31" strokeWidth="1.2" opacity=".92" />
+            <path d="M150 110 q34 -10 52 -34 q10 18 -6 34 q-22 12 -46 0 Z" fill="#37d39a" stroke="#2fa07a" strokeWidth="1.2" opacity=".92" />
           </g>
         ))}
-        <circle cx="150" cy="110" r="16" fill="#063b31" />
+        <circle cx="150" cy="110" r="16" fill="#2fa07a" />
       </g>
       <path d="M212 96 l20 -12 M212 124 l20 12" stroke="#f3bd4f" strokeWidth="3" />
-      <text x="196" y="76" fontSize="11" fill="#37544b" fontWeight="700">pás AJUSTÁVEIS</text>
-      <text x="60" y="208" fontSize="11" fill="#66756e">hélice de passo variável → rendimento alto com vazão variável</text>
+      <text x="196" y="76" fontSize="11" fill="#bcd0c7" fontWeight="700">pás AJUSTÁVEIS</text>
+      <text x="60" y="208" fontSize="11" fill="#93aaa1">hélice de passo variável → rendimento alto com vazão variável</text>
     </svg>
   );
 }
@@ -88,17 +88,17 @@ function SvgBulbo() {
     <svg viewBox="0 0 300 220" className="turb-svg" aria-label="Esquema de turbina bulbo">
       <path d="M10 70 L290 70 M10 160 L290 160" stroke="#9fb5aa" strokeWidth="2" />
       <path d="M10 78 L290 78" stroke="#8fd0ff" strokeWidth="10" opacity=".7" className="jet-anim" strokeDasharray="14 16" />
-      <ellipse cx="130" cy="118" rx="66" ry="30" fill="#2c3e46" />
+      <ellipse cx="130" cy="118" rx="66" ry="30" fill="#93a7af" />
       <text x="96" y="122" fontSize="12" fill="#8fe3cf" fontWeight="700">GERADOR</text>
       <g className="spin-slow" style={{ transformOrigin: '208px 118px' }}>
         {[0, 120, 240].map((a) => (
           <g key={a} transform={`rotate(${a} 208 118)`}>
-            <path d="M208 118 q22 -8 34 -24 q8 14 -4 26 q-16 8 -30 -2 Z" fill="#0a7755" stroke="#063b31" strokeWidth="1.2" />
+            <path d="M208 118 q22 -8 34 -24 q8 14 -4 26 q-16 8 -30 -2 Z" fill="#37d39a" stroke="#2fa07a" strokeWidth="1.2" />
           </g>
         ))}
-        <circle cx="208" cy="118" r="10" fill="#063b31" />
+        <circle cx="208" cy="118" r="10" fill="#2fa07a" />
       </g>
-      <text x="60" y="200" fontSize="11" fill="#66756e">conjunto horizontal submerso no fluxo, quedas muito baixas</text>
+      <text x="60" y="200" fontSize="11" fill="#93aaa1">conjunto horizontal submerso no fluxo, quedas muito baixas</text>
     </svg>
   );
 }
@@ -142,24 +142,24 @@ export function TurbineGallery() {
 function SvgReversivel() {
   return (
     <svg viewBox="0 0 460 250" className="arr-svg" aria-label="Esquema de usina reversível (bombeamento)">
-      <rect width="460" height="250" fill="#f6fbf9" />
+      <rect width="460" height="250" fill="#1a2620" />
       <path d="M40 60 L200 60 L200 44 L40 44 Z" fill="#bfe3ff" stroke="#7db8e8" />
-      <text x="46" y="36" fontSize="12" fontWeight="800" fill="#1769c2">reservatório SUPERIOR</text>
+      <text x="46" y="36" fontSize="12" fontWeight="800" fill="#4cc4f5">reservatório SUPERIOR</text>
       <path d="M260 210 L440 210 L440 192 L260 192 Z" fill="#bfe3ff" stroke="#7db8e8" />
-      <text x="300" y="238" fontSize="12" fontWeight="800" fill="#1769c2">reservatório INFERIOR</text>
-      <path d="M198 58 C 240 90, 250 150, 268 198" stroke="#2c3e46" strokeWidth="12" fill="none" strokeLinecap="round" />
+      <text x="300" y="238" fontSize="12" fontWeight="800" fill="#4cc4f5">reservatório INFERIOR</text>
+      <path d="M198 58 C 240 90, 250 150, 268 198" stroke="#93a7af" strokeWidth="12" fill="none" strokeLinecap="round" />
       <path className="jet-anim" d="M198 58 C 240 90, 250 150, 268 198" stroke="#57d8bf" strokeWidth="4" fill="none" strokeLinecap="round" strokeDasharray="10 12" />
-      <circle cx="252" cy="150" r="20" fill="#063b31" />
+      <circle cx="252" cy="150" r="20" fill="#2fa07a" />
       <path d="M252 138 l6 8 h-4 v8 h-4 v-8 h-4 Z" fill="#f3bd4f" />
-      <text x="280" y="146" fontSize="12" fontWeight="700" fill="#37544b">bomba-turbina</text>
-      <text x="280" y="161" fontSize="12" fontWeight="700" fill="#37544b">reversível</text>
+      <text x="280" y="146" fontSize="12" fontWeight="700" fill="#bcd0c7">bomba-turbina</text>
+      <text x="280" y="161" fontSize="12" fontWeight="700" fill="#bcd0c7">reversível</text>
       <g>
-        <path d="M120 96 l0 34" stroke="#0a7755" strokeWidth="4" markerEnd="url(#seta1)" />
-        <text x="130" y="112" fontSize="11.5" fill="#0a7755" fontWeight="800">GERA na ponta (desce)</text>
+        <path d="M120 96 l0 34" stroke="#37d39a" strokeWidth="4" markerEnd="url(#seta1)" />
+        <text x="130" y="112" fontSize="11.5" fill="#37d39a" fontWeight="800">GERA na ponta (desce)</text>
         <path d="M96 176 l0 -34" stroke="#e5a000" strokeWidth="4" />
-        <text x="106" y="168" fontSize="11.5" fill="#8a6d00" fontWeight="800">BOMBEIA fora de ponta (sobe)</text>
+        <text x="106" y="168" fontSize="11.5" fill="#f4c05a" fontWeight="800">BOMBEIA fora de ponta (sobe)</text>
       </g>
-      <text x="40" y="248" fontSize="11" fill="#66756e">funciona como bateria: consome energia barata para estocar água e gerar na hora cara</text>
+      <text x="40" y="248" fontSize="11" fill="#93aaa1">funciona como bateria: consome energia barata para estocar água e gerar na hora cara</text>
     </svg>
   );
 }
@@ -251,66 +251,66 @@ export function LicensingPath({ go }) {
 function ArrPeBarragem() {
   return (
     <svg viewBox="0 0 460 240" className="arr-svg" aria-label="Arranjo pé de barragem">
-      <rect width="460" height="240" fill="#f6fbf9" />
+      <rect width="460" height="240" fill="#1a2620" />
       <path d="M0 150 L180 150 L180 120 L0 120 Z" fill="#bfe3ff" />
-      <path d="M180 120 L180 205 L225 205 L212 120 Z" fill="#b9c3bd" stroke="#5b6672" strokeWidth="2" />
-      <path d="M186 128 L212 200" stroke="#2c3e46" strokeWidth="8" strokeLinecap="round" />
-      <rect x="214" y="178" width="52" height="30" fill="#fff" stroke="#07583b" strokeWidth="2" />
-      <path d="M214 178 L240 164 L266 178 Z" fill="#0a4a38" />
+      <path d="M180 120 L180 205 L225 205 L212 120 Z" fill="#8a9a93" stroke="#8399a0" strokeWidth="2" />
+      <path d="M186 128 L212 200" stroke="#93a7af" strokeWidth="8" strokeLinecap="round" />
+      <rect x="214" y="178" width="52" height="30" fill="#fff" stroke="#3fe0a6" strokeWidth="2" />
+      <path d="M214 178 L240 164 L266 178 Z" fill="#2fa07a" />
       <rect x="266" y="196" width="194" height="16" fill="#bfe3ff" />
-      <text x="10" y="112" fontSize="12" fontWeight="700" fill="#07583b">reservatório</text>
-      <text x="164" y="228" fontSize="12" fontWeight="700" fill="#07583b">barragem</text>
-      <text x="276" y="170" fontSize="12" fontWeight="700" fill="#07583b">casa de força no pé</text>
-      <text x="330" y="228" fontSize="12" fill="#66756e">restituição imediata</text>
-      <text x="10" y="24" fontSize="13" fontWeight="800" fill="#12211b">Pé de barragem: queda criada só pelo barramento; circuito curto</text>
+      <text x="10" y="112" fontSize="12" fontWeight="700" fill="#3fe0a6">reservatório</text>
+      <text x="164" y="228" fontSize="12" fontWeight="700" fill="#3fe0a6">barragem</text>
+      <text x="276" y="170" fontSize="12" fontWeight="700" fill="#3fe0a6">casa de força no pé</text>
+      <text x="330" y="228" fontSize="12" fill="#93aaa1">restituição imediata</text>
+      <text x="10" y="24" fontSize="13" fontWeight="800" fill="#e9f3ee">Pé de barragem: queda criada só pelo barramento; circuito curto</text>
     </svg>
   );
 }
 function ArrDerivacao() {
   return (
     <svg viewBox="0 0 460 240" className="arr-svg" aria-label="Arranjo de derivação">
-      <rect width="460" height="240" fill="#f6fbf9" />
+      <rect width="460" height="240" fill="#1a2620" />
       <path d="M0 90 Q120 70 200 96 T460 120" fill="none" stroke="#bfe3ff" strokeWidth="16" />
-      <path d="M60 84 L74 108" stroke="#5b6672" strokeWidth="8" />
-      <path d="M74 96 C160 96 260 96 330 150" fill="none" stroke="#2c3e46" strokeWidth="9" strokeDasharray="2 0" />
+      <path d="M60 84 L74 108" stroke="#8399a0" strokeWidth="8" />
+      <path d="M74 96 C160 96 260 96 330 150" fill="none" stroke="#93a7af" strokeWidth="9" strokeDasharray="2 0" />
       <circle cx="250" cy="96" r="10" fill="none" stroke="#f3bd4f" strokeWidth="3" />
-      <text x="222" y="80" fontSize="11" fontWeight="700" fill="#8a6d00">chaminé de equilíbrio</text>
-      <rect x="318" y="146" width="52" height="30" fill="#fff" stroke="#07583b" strokeWidth="2" />
-      <path d="M318 146 L344 132 L370 146 Z" fill="#0a4a38" />
+      <text x="222" y="80" fontSize="11" fontWeight="700" fill="#f4c05a">chaminé de equilíbrio</text>
+      <rect x="318" y="146" width="52" height="30" fill="#fff" stroke="#3fe0a6" strokeWidth="2" />
+      <path d="M318 146 L344 132 L370 146 Z" fill="#2fa07a" />
       <path d="M370 164 Q420 176 460 168" fill="none" stroke="#bfe3ff" strokeWidth="12" />
-      <text x="18" y="70" fontSize="12" fontWeight="700" fill="#07583b">açude de derivação</text>
-      <text x="120" y="128" fontSize="12" fontWeight="700" fill="#07583b">túnel/canal + conduto forçado</text>
-      <text x="300" y="200" fontSize="12" fontWeight="700" fill="#07583b">casa de força afastada</text>
-      <path d="M74 96 L318 161" fill="none" stroke="#07583b" strokeWidth="1" strokeDasharray="4 4" />
-      <text x="150" y="188" fontSize="11" fill="#66756e">trecho de vazão reduzida (TVR) no leito natural</text>
-      <text x="10" y="24" fontSize="13" fontWeight="800" fill="#12211b">Derivação: circuito longo aproveita a queda do relevo (ex.: Parigot de Souza)</text>
+      <text x="18" y="70" fontSize="12" fontWeight="700" fill="#3fe0a6">açude de derivação</text>
+      <text x="120" y="128" fontSize="12" fontWeight="700" fill="#3fe0a6">túnel/canal + conduto forçado</text>
+      <text x="300" y="200" fontSize="12" fontWeight="700" fill="#3fe0a6">casa de força afastada</text>
+      <path d="M74 96 L318 161" fill="none" stroke="#3fe0a6" strokeWidth="1" strokeDasharray="4 4" />
+      <text x="150" y="188" fontSize="11" fill="#93aaa1">trecho de vazão reduzida (TVR) no leito natural</text>
+      <text x="10" y="24" fontSize="13" fontWeight="800" fill="#e9f3ee">Derivação: circuito longo aproveita a queda do relevo (ex.: Parigot de Souza)</text>
     </svg>
   );
 }
 function ArrFioAgua() {
   return (
     <svg viewBox="0 0 460 240" className="arr-svg" aria-label="Fio d'água vs acumulação">
-      <rect width="460" height="240" fill="#f6fbf9" />
+      <rect width="460" height="240" fill="#1a2620" />
       <rect x="10" y="46" width="210" height="176" fill="#fff" stroke="#dce5e0" />
       <path d="M20 150 L110 150 L110 132 L20 132 Z" fill="#bfe3ff" />
-      <path d="M110 132 L110 190 L138 190 L130 132 Z" fill="#b9c3bd" stroke="#5b6672" strokeWidth="1.6" />
-      <rect x="138" y="172" width="34" height="20" fill="#fff" stroke="#07583b" strokeWidth="1.6" />
+      <path d="M110 132 L110 190 L138 190 L130 132 Z" fill="#8a9a93" stroke="#8399a0" strokeWidth="1.6" />
+      <rect x="138" y="172" width="34" height="20" fill="#fff" stroke="#3fe0a6" strokeWidth="1.6" />
       <path d="M172 184 L212 184" stroke="#bfe3ff" strokeWidth="10" />
-      <text x="22" y="66" fontSize="12" fontWeight="800" fill="#1769c2">FIO D'ÁGUA</text>
-      <text x="22" y="82" fontSize="10.5" fill="#37544b">reservatório mínimo</text>
-      <text x="22" y="96" fontSize="10.5" fill="#37544b">gera conforme o rio</text>
-      <text x="22" y="212" fontSize="10.5" fill="#66756e">menor alagamento · geração variável</text>
+      <text x="22" y="66" fontSize="12" fontWeight="800" fill="#4cc4f5">FIO D'ÁGUA</text>
+      <text x="22" y="82" fontSize="10.5" fill="#bcd0c7">reservatório mínimo</text>
+      <text x="22" y="96" fontSize="10.5" fill="#bcd0c7">gera conforme o rio</text>
+      <text x="22" y="212" fontSize="10.5" fill="#93aaa1">menor alagamento · geração variável</text>
       <rect x="240" y="46" width="210" height="176" fill="#fff" stroke="#dce5e0" />
       <path d="M250 166 L360 166 L360 108 L250 128 Z" fill="#bfe3ff" />
-      <path d="M360 108 L360 200 L392 200 L380 108 Z" fill="#b9c3bd" stroke="#5b6672" strokeWidth="1.6" />
-      <rect x="392" y="182" width="34" height="20" fill="#fff" stroke="#07583b" strokeWidth="1.6" />
+      <path d="M360 108 L360 200 L392 200 L380 108 Z" fill="#8a9a93" stroke="#8399a0" strokeWidth="1.6" />
+      <rect x="392" y="182" width="34" height="20" fill="#fff" stroke="#3fe0a6" strokeWidth="1.6" />
       <path d="M426 192 L450 192" stroke="#bfe3ff" strokeWidth="10" />
-      <path d="M250 128 L360 108" stroke="#1769c2" strokeWidth="1.4" strokeDasharray="4 3" />
-      <text x="252" y="66" fontSize="12" fontWeight="800" fill="#07583b">ACUMULAÇÃO</text>
-      <text x="252" y="82" fontSize="10.5" fill="#37544b">estoca água entre estações</text>
-      <text x="252" y="96" fontSize="10.5" fill="#37544b">regulariza vazão e firma energia</text>
-      <text x="252" y="212" fontSize="10.5" fill="#66756e">maior área alagada · deplecionamento</text>
-      <text x="10" y="24" fontSize="13" fontWeight="800" fill="#12211b">Regularização: fio d'água × acumulação (ex.: Baixo Iguaçu × Foz do Areia)</text>
+      <path d="M250 128 L360 108" stroke="#4cc4f5" strokeWidth="1.4" strokeDasharray="4 3" />
+      <text x="252" y="66" fontSize="12" fontWeight="800" fill="#3fe0a6">ACUMULAÇÃO</text>
+      <text x="252" y="82" fontSize="10.5" fill="#bcd0c7">estoca água entre estações</text>
+      <text x="252" y="96" fontSize="10.5" fill="#bcd0c7">regulariza vazão e firma energia</text>
+      <text x="252" y="212" fontSize="10.5" fill="#93aaa1">maior área alagada · deplecionamento</text>
+      <text x="10" y="24" fontSize="13" fontWeight="800" fill="#e9f3ee">Regularização: fio d'água × acumulação (ex.: Baixo Iguaçu × Foz do Areia)</text>
     </svg>
   );
 }

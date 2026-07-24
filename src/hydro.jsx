@@ -32,11 +32,11 @@ const PARTES = [
 ];
 
 const TIPOS_POTENCIA = [
-  { sigla: 'CGH', nome: 'Central Geradora Hidrelétrica', faixa: 'até 5 MW', cor: '#0a7755',
+  { sigla: 'CGH', nome: 'Central Geradora Hidrelétrica', faixa: 'até 5 MW', cor: '#37d39a',
     nota: 'Menor porte. Dispensada de concessão/autorização, sujeita a registro na ANEEL. Geração distribuída, impacto local reduzido.' },
-  { sigla: 'PCH', nome: 'Pequena Central Hidrelétrica', faixa: 'acima de 5 até 30 MW', cor: '#1769c2',
+  { sigla: 'PCH', nome: 'Pequena Central Hidrelétrica', faixa: 'acima de 5 até 30 MW', cor: '#4cc4f5',
     nota: 'Reservatório em regra até 13 km². Outorgada por autorização da ANEEL. Muitas vezes a fio d\'água, com licenciamento proporcional ao porte.' },
-  { sigla: 'UHE', nome: 'Usina Hidrelétrica', faixa: 'acima de 30 MW', cor: '#07583b',
+  { sigla: 'UHE', nome: 'Usina Hidrelétrica', faixa: 'acima de 30 MW', cor: '#3fe0a6',
     nota: 'Grande porte, outorgada por concessão (leilão). Em regra exige EIA/RIMA. Maior complexidade estrutural, fundiária e socioambiental.' },
 ];
 
@@ -71,14 +71,14 @@ function turbinaPorQueda(h) {
 
 function DamMini({ kind }) {
   // pequenos diagramas esquematicos por tipo de barragem
-  const common = { fill: 'none', stroke: '#07583b', strokeWidth: 2 };
+  const common = { fill: 'none', stroke: '#3fe0a6', strokeWidth: 2 };
   const water = { fill: '#bfe3ff' };
   return (
     <svg viewBox="0 0 120 70" className="dam-mini" aria-hidden="true">
-      <rect x="0" y="52" width="120" height="18" fill="#e7efe9" />
+      <rect x="0" y="52" width="120" height="18" fill="#1e2c27" />
       {kind === 'gravidade' && <>
         <rect x="2" y="30" width="52" height="22" {...water} />
-        <path d="M56 52 L56 20 L76 52 Z" fill="#c9d3ce" stroke="#07583b" strokeWidth="1.5" />
+        <path d="M56 52 L56 20 L76 52 Z" fill="#7f918a" stroke="#3fe0a6" strokeWidth="1.5" />
       </>}
       {kind === 'arco' && <>
         <rect x="2" y="30" width="52" height="22" {...water} />
@@ -87,22 +87,22 @@ function DamMini({ kind }) {
       {kind === 'contraforte' && <>
         <rect x="2" y="30" width="52" height="22" {...water} />
         <path d="M56 18 L70 52" {...common} />
-        <path d="M60 52 L66 40 M64 52 L70 44" stroke="#07583b" strokeWidth="1.5" />
+        <path d="M60 52 L66 40 M64 52 L70 44" stroke="#3fe0a6" strokeWidth="1.5" />
       </>}
       {kind === 'terra' && <>
         <rect x="2" y="34" width="48" height="18" {...water} />
-        <path d="M50 52 L66 24 L86 52 Z" fill="#d8c8a8" stroke="#8a7a54" strokeWidth="1.5" />
-        <path d="M64 24 L68 24 L68 52 L64 52 Z" fill="#9a8a64" />
+        <path d="M50 52 L66 24 L86 52 Z" fill="#b8a888" stroke="#c9b98a" strokeWidth="1.5" />
+        <path d="M64 24 L68 24 L68 52 L64 52 Z" fill="#a89868" />
       </>}
       {kind === 'enrocamento' && <>
         <rect x="2" y="34" width="48" height="18" {...water} />
-        <path d="M50 52 L66 24 L86 52 Z" fill="#c7cdd1" stroke="#5b6672" strokeWidth="1.5" />
-        <path d="M63 26 L69 26 L67 52 L61 52 Z" fill="#8b96a1" />
+        <path d="M50 52 L66 24 L86 52 Z" fill="#7f8a90" stroke="#8399a0" strokeWidth="1.5" />
+        <path d="M63 26 L69 26 L67 52 L61 52 Z" fill="#67727c" />
       </>}
       {kind === 'ccr' && <>
         <rect x="2" y="30" width="52" height="22" {...water} />
-        <path d="M56 52 L56 20 L74 52 Z" fill="#c9d3ce" stroke="#07583b" strokeWidth="1.5" />
-        <path d="M56 28 L70 28 M56 36 L73 36 M56 44 L74 44" stroke="#9aa8a0" strokeWidth="1" />
+        <path d="M56 52 L56 20 L74 52 Z" fill="#7f918a" stroke="#3fe0a6" strokeWidth="1.5" />
+        <path d="M56 28 L70 28 M56 36 L73 36 M56 44 L74 44" stroke="#6f817a" strokeWidth="1" />
       </>}
     </svg>
   );
@@ -124,35 +124,35 @@ function CrossSection({ selected, onSelect }) {
       <svg viewBox="0 0 900 470" className="cross-svg" role="img" aria-label="Corte esquemático de uma usina hidrelétrica">
         <defs>
           <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0" stopColor="#eaf6ff" /><stop offset="1" stopColor="#f6fbf9" />
+            <stop offset="0" stopColor="#15201c" /><stop offset="1" stopColor="#1a2620" />
           </linearGradient>
           <linearGradient id="wtr" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0" stopColor="#5db4f0" /><stop offset="1" stopColor="#1769c2" />
+            <stop offset="0" stopColor="#5db4f0" /><stop offset="1" stopColor="#4cc4f5" />
           </linearGradient>
         </defs>
         <rect width="900" height="470" fill="url(#sky)" />
         {/* terreno */}
-        <path d="M0 300 L250 300 L250 250 L0 250 Z" fill="#dfe9e2" />
-        <path d="M0 470 L900 470 L900 340 L640 340 L560 420 L250 420 L250 300 L0 300 Z" fill="#e7efe9" />
+        <path d="M0 300 L250 300 L250 250 L0 250 Z" fill="#243330" />
+        <path d="M0 470 L900 470 L900 340 L640 340 L560 420 L250 420 L250 300 L0 300 Z" fill="#1e2c27" />
         {/* reservatorio */}
         <rect x="0" y="250" width="250" height="120" fill="url(#wtr)" />
         <line x1="0" y1="250" x2="250" y2="250" stroke="#bfe3ff" strokeWidth="3" />
         {/* barragem */}
-        <path d="M250 250 L250 420 L320 420 L300 250 Z" fill="#b9c3bd" stroke="#5b6672" strokeWidth="2" />
+        <path d="M250 250 L250 420 L320 420 L300 250 Z" fill="#8a9a93" stroke="#8399a0" strokeWidth="2" />
         {/* vertedouro (agua caindo) */}
         <path className="cs-spill" d="M300 260 C 318 300, 322 360, 320 418" stroke="#8fd0ff" strokeWidth="8" fill="none" strokeLinecap="round" opacity="0.8" />
         {/* tomada d'agua */}
-        <rect x="235" y="330" width="26" height="26" fill="#0a4a38" stroke="#07583b" strokeWidth="2" />
+        <rect x="235" y="330" width="26" height="26" fill="#2fa07a" stroke="#3fe0a6" strokeWidth="2" />
         <path d="M237 332 L259 354 M237 344 L253 360 M245 332 L259 346" stroke="#6fe3c6" strokeWidth="1.5" />
         {/* conduto forçado */}
-        <path d="M258 343 L560 405" stroke="#2c3e46" strokeWidth="14" strokeLinecap="round" />
+        <path d="M258 343 L560 405" stroke="#93a7af" strokeWidth="14" strokeLinecap="round" />
         <path className="cs-flow" d="M258 343 L560 405" stroke="#57d8bf" strokeWidth="5" strokeLinecap="round" fill="none" />
         {/* casa de forca */}
-        <rect x="540" y="360" width="120" height="70" fill="#fff" stroke="#07583b" strokeWidth="2" />
-        <path d="M540 360 L600 330 L660 360 Z" fill="#0a4a38" />
+        <rect x="540" y="360" width="120" height="70" fill="#fff" stroke="#3fe0a6" strokeWidth="2" />
+        <path d="M540 360 L600 330 L660 360 Z" fill="#2fa07a" />
         {/* turbina (circulo) */}
-        <circle cx="585" cy="398" r="17" fill="none" stroke="#07583b" strokeWidth="3" />
-        <circle className="cs-turbine" cx="585" cy="398" r="10" fill="#1769c2" />
+        <circle cx="585" cy="398" r="17" fill="none" stroke="#3fe0a6" strokeWidth="3" />
+        <circle className="cs-turbine" cx="585" cy="398" r="10" fill="#4cc4f5" />
         <path className="cs-turbine" d="M585 388 L585 408 M575 398 L595 398 M578 391 L592 405 M592 391 L578 405" stroke="#fff" strokeWidth="1.6" />
         {/* canal de fuga */}
         <rect x="640" y="405" width="260" height="30" fill="url(#wtr)" opacity="0.85" />
@@ -160,8 +160,8 @@ function CrossSection({ selected, onSelect }) {
         <path d="M690 360 L690 300 M672 316 L708 316 M676 300 L704 300" stroke="#3a4750" strokeWidth="2.5" fill="none" />
         <path d="M690 300 C 760 290, 820 300, 880 285" stroke="#3a4750" strokeWidth="1.5" fill="none" />
         {/* rotulos de queda */}
-        <line x1="130" y1="250" x2="130" y2="405" stroke="#07583b" strokeWidth="1.2" strokeDasharray="4 4" />
-        <text x="138" y="330" fontSize="15" fill="#07583b" fontWeight="700">H (queda)</text>
+        <line x1="130" y1="250" x2="130" y2="405" stroke="#3fe0a6" strokeWidth="1.2" strokeDasharray="4 4" />
+        <text x="138" y="330" fontSize="15" fill="#3fe0a6" fontWeight="700">H (queda)</text>
       </svg>
       {/* hotspots posicionados em % sobre o svg */}
       <div className="cs-hots">

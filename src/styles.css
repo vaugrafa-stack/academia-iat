@@ -565,21 +565,21 @@ button.primary:active{box-shadow:inset 0 2px 6px #04231c40}
 .lesson-keypoints p:first-letter{font-weight:600}
 
 /* ================= TEMA ESCURO / GLASS (dim) ================= */
-:root{--shadow-1:0 1px 1px #00000030,0 2px 10px #00000030;--shadow-2:0 4px 14px #00000038,0 14px 40px #0000003a;--shadow-3:0 10px 30px #00000045,0 30px 70px #00000050;--track:rgba(255,255,255,.10)}
+:root:not([data-theme="light"]){--shadow-1:0 1px 1px #00000030,0 2px 10px #00000030;--shadow-2:0 4px 14px #00000038,0 14px 40px #0000003a;--shadow-3:0 10px 30px #00000045,0 30px 70px #00000050;--track:rgba(255,255,255,.10)}
 html{background:var(--bg)}
 body{margin:0;background:var(--bg);color:var(--ink)}
-.app-shell{background:
+:root:not([data-theme="light"]) .app-shell{background:
   radial-gradient(1100px 520px at 82% -8%, rgba(47,211,154,.10), transparent 60%),
   radial-gradient(900px 480px at -6% 12%, rgba(76,196,245,.08), transparent 55%),
   var(--bg)}
 ::selection{background:rgba(47,211,154,.28);color:#fff}
 /* superficies de vidro */
-.topbar{background:rgba(21,31,27,.72);backdrop-filter:blur(16px) saturate(1.2);border-bottom:1px solid var(--line)}
-.sidebar-v2{background:linear-gradient(180deg,rgba(26,38,32,.92),rgba(18,27,23,.92));backdrop-filter:blur(14px);border-right:1px solid var(--line)}
-.dashboard-feature{background:linear-gradient(135deg,rgba(36,51,48,.55),rgba(21,31,27,.35));backdrop-filter:blur(8px);border:1px solid var(--line)}
-.search-modal section{background:rgba(26,38,32,.92);backdrop-filter:blur(20px);border:1px solid var(--line)}
-.modal-scrim,.nav-scrim{background:rgba(6,14,11,.6);backdrop-filter:blur(3px)}
-.toast{background:rgba(26,38,32,.95);backdrop-filter:blur(10px);border:1px solid var(--line);color:var(--ink)}
+:root:not([data-theme="light"]) .topbar{background:rgba(21,31,27,.72);backdrop-filter:blur(16px) saturate(1.2);border-bottom:1px solid var(--line)}
+:root:not([data-theme="light"]) .sidebar-v2{background:linear-gradient(180deg,rgba(26,38,32,.92),rgba(18,27,23,.92));backdrop-filter:blur(14px);border-right:1px solid var(--line)}
+:root:not([data-theme="light"]) .dashboard-feature{background:linear-gradient(135deg,rgba(36,51,48,.55),rgba(21,31,27,.35));backdrop-filter:blur(8px);border:1px solid var(--line)}
+:root:not([data-theme="light"]) .search-modal section{background:rgba(26,38,32,.92);backdrop-filter:blur(20px);border:1px solid var(--line)}
+:root:not([data-theme="light"]) .modal-scrim,:root:not([data-theme="light"]) .nav-scrim{background:rgba(6,14,11,.6);backdrop-filter:blur(3px)}
+:root:not([data-theme="light"]) .toast{background:rgba(26,38,32,.95);backdrop-filter:blur(10px);border:1px solid var(--line);color:var(--ink)}
 /* inputs escuros */
 input,textarea,select{background:var(--surface2);color:var(--ink);border-color:var(--line)}
 input::placeholder,textarea::placeholder{color:var(--muted)}
@@ -598,11 +598,11 @@ input::placeholder,textarea::placeholder{color:var(--muted)}
 .lesson-tabs button,.library-tabs button{color:var(--muted)}
 .lesson-tabs button.active,.library-tabs button.active{color:var(--green2)}
 /* imagens e SVG-fonte com moldura suave e leve reducao de brilho */
-.source-figure img,.material-figure img,.figure-grid img,.hydro-figs img,.tg-photo img,.sfp-scroll,.flow-gallery img{filter:brightness(.94) contrast(1.02)}
+:root:not([data-theme="light"]) :is(.source-figure img,.material-figure img,.figure-grid img,.hydro-figs img,.tg-photo img,.flow-gallery img){filter:brightness(.94) contrast(1.02)}
 .sfp-scroll{background:#0e1613}
 .data-table thead,.data-table .header-row td,.data-table th{background:var(--surface2);color:var(--ink)}
-.data-table tbody tr:not(.header-row):nth-child(even) td{background:rgba(255,255,255,.03)}
-.data-table tbody tr:not(.header-row):hover td{background:rgba(47,211,154,.08)}
+:root:not([data-theme="light"]) .data-table tbody tr:not(.header-row):nth-child(even) td{background:rgba(255,255,255,.03)}
+:root:not([data-theme="light"]) .data-table tbody tr:not(.header-row):hover td{background:rgba(47,211,154,.08)}
 /* video/hero permanecem escuros; brand-panel */
 .brand-panel{color:var(--ink)}
 .source-lock,.sidebar-help{color:var(--ink2)}
@@ -610,3 +610,21 @@ input::placeholder,textarea::placeholder{color:var(--muted)}
 kbd{background:var(--surface2);color:var(--ink2);border-color:var(--line)}
 /* foco visivel no escuro */
 button:focus-visible,input:focus-visible,textarea:focus-visible,a:focus-visible,video:focus-visible{outline:3px solid var(--green2);outline-offset:2px}
+
+/* ===== TEMA CLARO (opt-in) ===== */
+:root[data-theme="light"]{
+  --bg:#f4f7f5;--bg2:#eef2f0;--surface:#ffffff;--surface2:#f5f8f6;--glass:rgba(255,255,255,.75);
+  --green:#07583b;--green2:#0a7755;--green3:#dff1e8;--blue:#1769c2;--blue2:#e7f2ff;--amber:#e5a000;--amber2:#fff4dc;--red:#c84435;
+  --line:#dce5e0;--soft:#f5f8f6;--muted:#66756e;--ink:#12211b;--ink2:#37544b;--track:#e4ebe7;
+  color:var(--ink);background:var(--bg);
+  --shadow-1:0 1px 2px #0f2a2008,0 2px 8px #0f2a200a;--shadow-2:0 2px 6px #0f2a200d,0 10px 28px #0f2a2014;--shadow-3:0 6px 16px #0f2a2014,0 22px 48px #0f2a201f
+}
+:root[data-theme="light"] .app-shell{background:var(--bg)}
+:root[data-theme="light"] .topbar{background:#ffffffee;backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+:root[data-theme="light"] .sidebar-v2{background:#fff;border-right:1px solid var(--line)}
+:root[data-theme="light"] input,:root[data-theme="light"] textarea,:root[data-theme="light"] select,:root[data-theme="light"] .global-search{background:#fff}
+/* diagramas tecnicos sempre em painel escuro (tracos sao claros) */
+.cross-wrap,.turb-svg,.dam-mini,.arr-svg,.sfp-scroll{background:#141f1b!important}
+
+.theme-toggle{width:40px;height:40px;border-radius:9px;border:1px solid var(--line);background:var(--surface2);color:var(--ink2);display:grid;place-items:center;cursor:pointer;transition:background .18s var(--ease),color .18s var(--ease),transform .18s var(--ease)}
+.theme-toggle:hover{color:var(--green2);transform:translateY(-1px)}

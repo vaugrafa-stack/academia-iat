@@ -50,11 +50,11 @@ try {
 
   assert(document.querySelectorAll('.sidebar-v2 nav button').length === 9, 'nove áreas principais disponíveis (inclui Hidrelétricas, Meu perfil e Suporte)');
   assert(document.querySelector('.dashboard-page h1')?.textContent.includes('Aprenda o procedimento'), 'painel inicial renderizado');
-  assert(document.querySelectorAll('.journey-track button').length === 15, 'quinze módulos no percurso');
+  assert(document.querySelectorAll('.journey-track button').length === 17, 'dezessete módulos no percurso');
 
   const navButtons = [...document.querySelectorAll('.sidebar-v2 nav button')];
   await click(navButtons.find(x => x.textContent.includes('Formação')));
-  assert(document.querySelectorAll('.track-row').length === 15, 'formação completa com quinze módulos');
+  assert(document.querySelectorAll('.track-row').length === 17, 'formação completa com dezessete módulos');
   const m00 = [...document.querySelectorAll('.track-summary')].find(x => x.textContent.includes('Orientação'));
   await click(m00);
   const lessonButton = document.querySelector('.track-row.expanded .lesson-list button');

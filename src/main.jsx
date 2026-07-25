@@ -37,15 +37,27 @@ function useStoredState(){
  return[state,setState];
 }
 function norm(v=''){return v.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase()}
-function assignedTrack(section){
- const n=section.number||'';
- if(/^18\.(10|11|12|13)/.test(n))return'm09';
- if(/^(Anexo|Referências)/.test(n))return'm14';
- const root=n.includes('.')?n.split('.')[0]:n;
- for(const t of tracks){if(t.id==='m09'||t.id==='m14')continue;if(t.sections.includes(root)||(!n&&t.id==='m00'))return t.id}
- return'm14';
+// Cada aula vai para a trilha cuja secao declarada for o prefixo MAIS ESPECIFICO
+// do numero. Assim 20.2.1 fica no modulo de unidades de conservacao (20.2) e nao
+// no de intervenientes (20), sem precisar de regra especial por modulo.
+function assignedTrack(section,byId){
+ const n=(section.number||'').trim();
+ if(/^(Anexo\s+F|F\.\d)/i.test(n))return'm16';
+ if(/^(Anexo|Referências)/i.test(n)||/^refer[eê]ncias/i.test(section.title||''))return'm14';
+ if(n){
+  let melhor='',escolhido=null;
+  for(const t of tracks)for(const sec of (t.sections||[])){
+   if((n===sec||n.startsWith(sec+'.'))&&sec.length>melhor.length){melhor=sec;escolhido=t.id}
+  }
+  if(escolhido)return escolhido;
+ }
+ // sem numero proprio (checklists, roteiros): herda a trilha da secao-mae
+ let p=section.parentId&&byId?byId.get(section.parentId):null,guard=0;
+ while(p&&guard++<8){const t=assignedTrack(p,byId);if(t!=='m00')return t;p=p.parentId&&byId?byId.get(p.parentId):null}
+ return'm00';
 }
-const lessons=popData.sections.filter(s=>s.title&&!/sumário navegável|índice de fluxogramas|índice navegável/i.test(s.title)).map((s,i)=>({...s,trackId:assignedTrack(s),order:i,minutes:Math.max(4,Math.min(28,Math.round((s.blockIds?.length||1)*1.8)+4))}));
+const sectionById=new Map(popData.sections.map(s=>[s.id,s]));
+const lessons=popData.sections.filter(s=>s.title&&!s.navigationOnly&&!/sumário navegável|índice de fluxogramas|índice navegável/i.test(s.title)).map((s,i)=>({...s,trackId:assignedTrack(s,sectionById),order:i,minutes:Math.max(4,Math.min(28,Math.round((s.blockIds?.length||1)*1.8)+4))}));
 const lessonMap=new Map(lessons.map(l=>[l.id,l]));
 const trackLessons=new Map(tracks.map(t=>[t.id,lessons.filter(l=>l.trackId===t.id)]));
 function trackProgress(id,state){const ls=trackLessons.get(id)||[];return ls.length?Math.round(ls.filter(l=>state.completed.includes(l.id)).length/ls.length*100):0}

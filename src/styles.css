@@ -632,3 +632,45 @@ button:focus-visible,input:focus-visible,textarea:focus-visible,a:focus-visible,
 .tg-schema figcaption{flex-direction:column;align-items:flex-start;gap:3px}
 .tg-cap-t{font-weight:700;color:var(--ink2)}
 .tg-cap-d{color:var(--muted);line-height:1.5}
+
+/* ===== Ajustes finos de celular ===== */
+@media(max-width:640px){
+  /* topbar: cabecalho enxuto, avatar so com iniciais */
+  .topbar{padding:0 12px;gap:10px}
+  .compact-brand small{display:none}
+  .compact-brand strong{font-size:12.5px;line-height:1.2}
+  .global-search span,.global-search kbd{display:none}
+  .global-search{flex:0 0 40px;width:40px;justify-content:center;padding:0}
+  .top-progress{display:none}
+  button.profile{padding:4px}
+  button.profile>div{display:none}
+  .theme-toggle{flex:none}
+  /* video em destaque: legenda e duracao empilhadas, sem sobrepor */
+  .feature-media>span:not(.fm-chip){position:static;display:block;max-width:100%;padding:9px 12px;font-size:12.5px;line-height:1.35;background:var(--surface2);border-radius:0}
+  .feature-media>.fm-chip{top:8px;right:8px;font-size:10.5px;padding:3px 8px}
+  /* percurso do rio: rolagem explicita */
+  .river-line{overflow-x:auto;-webkit-overflow-scrolling:touch}
+  /* aula: coluna unica e video sem sobra */
+  .lesson-header h1{font-size:22px;line-height:1.25}
+  .vl-tools{flex-wrap:wrap;gap:6px}
+  .vl2 figcaption{flex-direction:column;align-items:flex-start;gap:6px}
+  /* laboratorio e fluxos rolam na horizontal quando preciso */
+  .decision-path,.scenario-tabs,.flow-menu,.tg-tabs,.turb-tabs,.library-tabs,.lesson-tabs{overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:thin}
+  .decision-path{padding-bottom:6px}
+  /* alvos de toque confortaveis */
+  .sidebar-v2 nav button{min-height:46px}
+  .cd-nav button,.tg-tabs button,.turb-tabs button{min-height:38px}
+}
+@media(max-width:640px){
+  /* a marca cede espaco para que busca, tema e avatar sempre caibam */
+  .compact-brand{flex:1 1 auto;min-width:0;gap:6px}
+  .compact-brand>div{min-width:0}
+  .compact-brand strong{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block}
+  .topbar{gap:8px}
+  .mobile-menu,.global-search,.theme-toggle,button.profile{flex-shrink:0}
+  .compact-brand{flex-shrink:1}
+}
+@media(max-width:430px){
+  .compact-brand strong{font-size:12px}
+  .brand-wave{font-size:19px}
+}

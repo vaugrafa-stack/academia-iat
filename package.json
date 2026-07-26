@@ -2,10 +2,11 @@
   "scripts": {
     "dev": "vite --host 127.0.0.1 --port 5173 --strictPort --open",
     "build": "vite build",
-    "test": "node tools/check-rubricas.mjs && node tools/smoke-test.mjs",
+    "test": "node tools/check-rubricas.mjs && node tools/check-questoes.mjs && node tools/audit-lessons.mjs && node tools/smoke-test.mjs",
     "audit": "node tools/audit-lessons.mjs",
     "media": "python tools/build_training_videos.py",
-    "rubricas": "node tools/check-rubricas.mjs"
+    "rubricas": "node tools/check-rubricas.mjs",
+    "check:questoes": "node tools/check-questoes.mjs"
   },
   "dependencies": {
     "@vitejs/plugin-react": "latest",

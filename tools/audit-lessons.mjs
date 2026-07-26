@@ -1,5 +1,5 @@
 // Auditoria estrutural das aulas contra o POP.
-// Replica a logica de main.jsx (assignedTrack, lessons, materiais) e sinaliza
+// Usa o mesmo roteamento da aplicacao (src/lessons.js) e sinaliza
 // aulas no modulo errado, sem conteudo, com materiais quebrados ou cobertura incompleta.
 import { readFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
@@ -10,22 +10,14 @@ const pop = JSON.parse(await readFile(resolve(root, 'src/data/pop-content.json')
 // tracks espelhados de courseData.js (fonte da verdade do roteamento)
 const courseSrc = await readFile(resolve(root, 'src/courseData.js'), 'utf8');
 const tracks = (await import('../src/courseData.js')).tracks;
+const { derivarAulas } = await import('../src/lessons.js');
 
 const blockMap = new Map(pop.blocks.map(b => [b.id, b]));
 const tableMap = new Map(pop.tables.map(t => [t.id, t]));
 
-function assignedTrack(section) {
-  const n = section.number || '';
-  if (/^18\.(10|11|12|13)/.test(n)) return 'm09';
-  if (/^(Anexo|Referências)/.test(n)) return 'm14';
-  const root = n.includes('.') ? n.split('.')[0] : n;
-  for (const t of tracks) { if (t.id === 'm09' || t.id === 'm14') continue; if (t.sections.includes(root) || (!n && t.id === 'm00')) return t.id; }
-  return 'm14';
-}
-
-const lessons = pop.sections
-  .filter(s => s.title && !/sumário navegável|índice de fluxogramas|índice navegável/i.test(s.title))
-  .map((s, i) => ({ ...s, trackId: assignedTrack(s), order: i }));
+// Roteamento e derivacao vem de src/lessons.js: a copia local aqui envelheceu
+// e passou a acusar doze alertas inexistentes sobre M15 e M16.
+const { lessons } = derivarAulas(pop, tracks);
 
 const findings = [];
 const flag = (sev, id, number, msg) => findings.push({ sev, id, number: number || '(sem nº)', msg });
@@ -34,26 +26,35 @@ const flag = (sev, id, number, msg) => findings.push({ sev, id, number: number |
 const excluded = pop.sections.filter(s => !(s.title && !/sumário navegável|índice de fluxogramas|índice navegável/i.test(s.title)));
 console.log(`Seções no POP: ${pop.sections.length} · Aulas geradas: ${lessons.length} · Excluídas (navegação/sem título): ${excluded.length}`);
 
-// 2. Fallback m14 indevido: caiu no catch-all sem ser Anexo/Referências
-for (const l of lessons) {
-  if (l.trackId === 'm14') {
-    const n = l.number || '';
-    if (!/^(Anexo|Referências)/.test(n)) flag('ALERTA', l.id, n, `roteada para M14 (catch-all) sem ser Anexo/Referências — possível módulo errado`);
+// 2 e 3. Coerencia do roteamento. A checagem antiga exigia que o numero RAIZ
+// pertencesse as secoes declaradas do modulo, regra que deixou de valer quando
+// o roteamento passou a usar o prefixo mais especifico: 20.6.4.1 vai para M16
+// (secao "20.6") e o raiz "20" e de M11. Agora a pergunta e outra: a atribuicao
+// e explicavel por alguma regra declarada, ou caiu no catch-all sem explicacao?
+const trackById = new Map(tracks.map(t => [t.id, t]));
+const secById = new Map(pop.sections.map(s => [s.id, s]));
+const dentroDeAnexo = (sec) => {
+  let p = sec.parentId ? secById.get(sec.parentId) : null, g = 0;
+  while (p && g++ < 8) {
+    if (/^(Anexo|Referências)/i.test((p.number || '').trim())) return true;
+    p = p.parentId ? secById.get(p.parentId) : null;
   }
+  return false;
+};
+for (const l of lessons) {
+  const n = (l.number || '').trim();
+  const t = trackById.get(l.trackId);
+  if (!t) { flag('ERRO', l.id, n, `trilha inexistente: ${l.trackId}`); continue; }
+  if (/^(Anexo|Referências|F.d)/i.test(n) || dentroDeAnexo(l)) continue;   // anexo e seus filhos
+  if (!n) continue;                                                          // sem numero: herdou da mae
+  const casa = (t.sections || []).some(sec => n === sec || n.startsWith(sec + '.'));
+  if (!casa) flag('ALERTA', l.id, n, `atribuida a ${l.trackId} [${(t.sections||[]).join(',')}] sem prefixo que explique o numero`);
 }
 
-// 3. Coerência número→módulo: o root do número pertence às sections declaradas do módulo?
-const trackById = new Map(tracks.map(t => [t.id, t]));
-for (const l of lessons) {
-  const n = l.number || '';
-  if (!n) continue;
-  if (/^18\.(10|11|12|13)/.test(n)) continue; // PACUERA tratado à parte
-  if (/^(Anexo|Referências)/.test(n)) continue;
-  const rootNum = n.includes('.') ? n.split('.')[0] : n;
-  const t = trackById.get(l.trackId);
-  if (t && !t.sections.includes(rootNum)) {
-    flag('ALERTA', l.id, n, `atribuída a ${l.trackId} cujas seções são [${t.sections.join(',')}], mas o número raiz é "${rootNum}"`);
-  }
+// 3b. Nenhum modulo pode ficar sem aula: M15 e M16 ja ficaram vazios sem que
+// ninguem percebesse, porque a auditoria olhava so o roteamento antigo.
+for (const t of tracks) {
+  if (!lessons.some(l => l.trackId === t.id)) flag('ERRO', t.id, '', `modulo ${t.code} sem nenhuma aula`);
 }
 
 // 4. Aulas sem nenhum bloco de conteúdo renderizável (nem texto nem tabela)

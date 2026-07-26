@@ -846,3 +846,14 @@ a[href^="http"]::after{content:" (" attr(href) ")";font-size:10px;color:#555}
    quando a palavra sozinha nao cabe, e a hifenizacao entra pelo lang do html. */
 .path-node strong{font-size:13px;line-height:1.25;text-align:center;overflow-wrap:break-word;hyphens:auto}
 .path-node{width:122px}
+
+/* ===== Trecho do POP no feedback da questão =====
+   O par secao+trecho existia no banco desde sempre, mas nunca era renderizado.
+   Sem tela, dez citacoes falsas passaram despercebidas por meses. */
+.quiz-fonte{margin:12px 0 0;padding:0;border-left:3px solid var(--green2);background:var(--surface2);border-radius:0 10px 10px 0}
+.quiz-fonte blockquote{margin:0;padding:11px 13px 8px;font-size:13px;line-height:1.6;color:var(--ink2);font-style:italic}
+.quiz-fonte blockquote::before{content:"“"}
+.quiz-fonte blockquote::after{content:"”"}
+.quiz-fonte figcaption{display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:0 13px 11px;font-size:12px;color:var(--muted)}
+.quiz-fonte figcaption button{display:inline-flex;align-items:center;gap:4px;border:0;background:none;padding:0;color:var(--blue);font-size:12px;font-weight:800;cursor:pointer;text-decoration:underline}
+.quiz-fonte figcaption button:hover{opacity:.8}

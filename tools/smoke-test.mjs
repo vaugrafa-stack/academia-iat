@@ -82,6 +82,15 @@ try {
   await click(navButtons.find(x => x.textContent.includes('Avaliações')));
   assert(document.querySelectorAll('.module-tests button').length >= 10, 'avaliações por módulo disponíveis');
 
+  // A avaliacao do modulo abre com oito questoes e o feedback mostra o trecho do
+  // POP: sem essa tela, citacao errada no banco nao aparece para ninguem.
+  await click(document.querySelectorAll('.module-tests button')[0]);
+  assert(/Questão 1 de 8/.test(document.body.textContent), 'avaliação do módulo abre com oito questões');
+  await click(document.querySelector('.quiz-options button'));
+  await click([...document.querySelectorAll('button')].find(x => /Confirmar/.test(x.textContent)));
+  const fonte = document.querySelector('.quiz-fonte blockquote');
+  assert(fonte && fonte.textContent.trim().length > 20, 'feedback exibe o trecho do POP que sustenta a questão');
+
   await click(navButtons.find(x => x.textContent.includes('Biblioteca')));
   assert(document.querySelector('.library-search'), 'biblioteca integral renderizada');
 

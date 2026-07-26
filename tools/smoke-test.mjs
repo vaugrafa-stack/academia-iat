@@ -55,8 +55,10 @@ try {
   const navButtons = [...document.querySelectorAll('.sidebar-v2 nav button')];
   await click(navButtons.find(x => x.textContent.includes('Formação')));
   assert(document.querySelectorAll('.track-row').length === 17, 'formação completa com dezessete módulos');
-  const m00 = [...document.querySelectorAll('.track-summary')].find(x => x.textContent.includes('Orientação'));
-  await click(m00);
+  // o M00 ja abre expandido, para o iniciante ver por onde comecar
+  assert(Boolean(document.querySelector('.track-row.expanded .lesson-list button')), 'primeiro módulo já vem aberto para quem chega');
+  const outro = [...document.querySelectorAll('.track-row:not(.expanded) .track-summary')][0];
+  await click(outro);
   const lessonButton = document.querySelector('.track-row.expanded .lesson-list button');
   assert(Boolean(lessonButton), 'lista de aulas expande por módulo');
   await click(lessonButton);

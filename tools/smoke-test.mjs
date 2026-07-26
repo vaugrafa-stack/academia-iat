@@ -74,7 +74,7 @@ try {
   assert(document.querySelectorAll('.fb-pool button').length === 6, 'etapas embaralhadas disponíveis para montar');
 
   await click(navButtons.find(x => x.textContent.includes('Laboratório')));
-  assert(document.querySelectorAll('.scenario-tabs button').length === 10, 'dez cenários práticos (7 didáticos + 3 do acervo real)');
+  assert(document.querySelectorAll('.scenario-tabs button').length === 21, 'vinte e um cenários práticos, um por módulo no mínimo');
   const answerButton = document.querySelector('.question-stack fieldset:not(.locked) button');
   await click(answerButton);
   assert(document.querySelectorAll('.question-stack fieldset:not(.locked)').length >= 2, 'decisão libera a etapa seguinte');

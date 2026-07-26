@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Gera uma videoaula de 30 s por modulo (m00-m14), com abertura, etapas
+"""Gera uma videoaula de 30 s por modulo (m00 a m16, 17 modulos), com abertura, etapas
 animadas, capitulos de legenda, encerramento, VTT e poster proprios."""
 from __future__ import annotations
 
@@ -75,19 +75,19 @@ SPECS = {
         ["O IAT verifica existência e compatibilidade dos atos externos.", "Não se substitui a decisão do órgão competente.", "Manifestação de interveniente integra o processo.", "A vistoria produz evidência localizada e datada.", "Achados de campo se relacionam ao objeto do processo.", "Rastreabilidade de campo é parte do produto técnico."]),
     "m12": ("Da suficiência à conclusão", "Linguagem proporcional e verificável.",
         [("1", "Matriz", "Suficiência documental"), ("2", "Pendência", "Lacuna e fundamento"), ("3", "Condicionar", "Clareza e proporção"), ("4", "Concluir", "Manifestação técnica"), ("5", "Comunicar", "Encaminhamento")],
-        ["A matriz documental mostra o que sustenta a decisão.", "Pendência boa indica lacuna, fundamento e providência.", "Condicionante clara é verificável e ligada ao impacto.", "A conclusão deriva da análise, nunca a precede.", "Encaminhamento proporcional fecha o ciclo.", "Escrever bem é decidir bem."]),
+        ["A matriz documental mostra o que sustenta a decisão.", "Pendência boa indica lacuna, fundamento e providência.", "Condicionante clara é verificável e ligada ao impacto.", "A conclusão deriva da análise, nunca a precede.", "Impacto não mitigável aciona a compensação do Decreto Estadual nº 7.150/2024.", "Escrever bem é decidir bem."]),
     "m13": ("Qualidade e rastreabilidade", "Padrão documental protege a decisão.",
         [("1", "Formatar", "Padrão institucional"), ("2", "Revisar", "Coerência interna"), ("3", "Evidenciar", "Fontes citadas"), ("4", "Conferir", "Consistência final"), ("5", "Assinar", "Responsabilidade")],
         ["Formato padronizado facilita leitura e controle.", "Análise, conclusão e condicionantes devem conversar.", "Cada afirmação técnica tem evidência localizável.", "A revisão final captura inconsistências internas.", "Assinatura pressupõe conferência completa.", "Qualidade documental é qualidade de decisão."]),
-    "m14": ("Anexos e caso integrador", "Modelos apoiam; a análise decide.",
+    "m14": ("Anexos e referências", "Modelos apoiam; a análise decide.",
         [("1", "Modelos", "Base adaptável"), ("2", "Siglas", "Glossário do POP"), ("3", "Referências", "Fontes do método"), ("4", "Integrar", "Caso completo"), ("5", "Consolidar", "Percurso fechado")],
-        ["Anexos trazem modelos reutilizáveis, não fôrmas fixas.", "Adapte o modelo ao caso concreto, sempre.", "O glossário evita ambiguidade de sigla e termo.", "Referências ancoram o método nas fontes.", "O caso integrador percorre o fluxo completo.", "Fim do percurso: método aplicado com autonomia."]),
+        ["Anexos trazem modelos reutilizáveis, não fôrmas fixas.", "Adapte o modelo ao caso concreto, sempre.", "O glossário evita ambiguidade de sigla e termo.", "Referências ancoram o método nas fontes.", "Os anexos A a E fecham o percurso com modelos, siglas e referências.", "Fim do percurso: método aplicado com autonomia."]),
     "m15": ("Unidades de conservação e APAs", "UC no entorno muda a análise, e APA tem cuidado próprio.",
         [("1", "Triar", "UC, APA e zona"), ("2", "Localizar", "GeoPR e GeoParaná"), ("3", "Consultar", "Órgão gestor"), ("4", "Aplicar", "Plano de Manejo"), ("5", "Registrar", "Efeito por fase")],
-        ["Toda triagem verifica unidade de conservação, APA e zona de amortecimento.", "A base espacial oficial sustenta a análise: GeoPR e GeoParaná.", "Em UC de proteção integral, a anuência do órgão gestor é indispensável.", "APA admite uso, mas o zoneamento do Plano de Manejo condiciona a decisão.", "Plano de Manejo alterado depois da licença exige análise da situação nova.", "O efeito muda conforme a fase e a modalidade do licenciamento."]),
+        ["Toda triagem verifica unidade de conservação, APA e zona de amortecimento.", "A base espacial oficial sustenta a análise: GeoPR e GeoParaná.", "Em UC, verifique categoria, Plano de Manejo e zona incidente antes de concluir.", "APA admite uso, mas o zoneamento do Plano de Manejo condiciona a decisão.", "Plano de Manejo alterado depois da licença exige análise da situação nova.", "O efeito muda conforme a fase e a modalidade do licenciamento."]),
     "m16": ("Licenciamento federal delegado", "Competência da União executada pelo IAT, com ACT e relatório anual.",
         [("1", "Competência", "Origem e delegação"), ("2", "ACT", "Ler e controlar"), ("3", "Obrigações", "Papel de delegatário"), ("4", "RTAA", "Relatório anual"), ("5", "Prestar", "Contas e retomada")],
-        ["Primeiro identifique se a competência é originária da União e foi delegada.", "O Acordo de Cooperação Técnica define o que o IAT pode e deve fazer.", "Como delegatário, o IAT assume obrigações próprias e prazos definidos.", "O RTAA é o Relatório Técnico Anual de Atividades, enviado uma vez por ano.", "RLO de UHE com 300 MW ou mais tem tratamento específico no acordo.", "Compensação, fiscalização e supervisão seguem o que o acordo estabelece."]),
+        ["Primeiro identifique se a competência é originária da União e foi delegada.", "O Acordo de Cooperação Técnica define o que o IAT pode e deve fazer.", "Como delegatário, o IAT assume obrigações próprias e prazos definidos.", "O RTAA é o Relatório Técnico Anual de Atividades, enviado uma vez por ano.", "Em RLO de UHE com 300 MW ou mais, a análise começa pela competência.", "A compensação permanece com o Ibama, salvo cláusula expressa do ACT."]),
 }
 
 

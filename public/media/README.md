@@ -2,9 +2,9 @@
 
 Este diretório contém três conjuntos de microaulas:
 
-- `fluxo-geral.*` — seções 6, 6.1 e 7;
-- `enquadramento.*` — seção 8;
-- `pacuera.*` — seção 18.10 e Quadros 30 a 32.
+- `fluxo-geral.*` - seções 6, 6.1 e 7;
+- `enquadramento.*` - seção 8;
+- `pacuera.*` - seção 18.10 e Quadros 30 a 32.
 
 Cada conjunto inclui:
 

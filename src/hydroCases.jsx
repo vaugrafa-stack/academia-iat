@@ -100,10 +100,10 @@ function SvgBulbo() {
 }
 
 export const TURBINES_RICH = [
-  { nome: 'Pelton', Svg: SvgPelton, legenda: "Jato em pressão atmosférica: turbina de AÇÃO.", foto: 'Peltonturbine-1.jpg', tipo: 'Ação (impulso)', faixa: 'Quedas altas: acima de ~250 m', usoPR: 'UHE Gov. Parigot de Souza (Antonina): 4 Pelton de 62,5 MW com ~750 m de queda.' },
-  { nome: 'Francis', Svg: SvgFrancis, legenda: "Fluxo radial que vira axial, sob pressão: turbina de REAÇÃO.", foto: 'Francis_Turbine_complete.jpg', tipo: 'Reação', faixa: 'Quedas médias: ~30 a 400 m', usoPR: 'UHE Foz do Areia (Pinhão): 4 Francis de 419 MW. Também Itaipu (20 unidades).' },
-  { nome: 'Kaplan', Svg: SvgKaplan, legenda: "Hélice de passo variável: mantém rendimento com vazão variável.", foto: 'Kaplan_turbine_bonneville.jpg', tipo: 'Reação (pás ajustáveis)', faixa: 'Quedas baixas: ~10 a 70 m', usoPR: 'UHE Baixo Iguaçu (Capanema): 3 Kaplan de ~117 MW, a fio d\'água.' },
-  { nome: 'Bulbo', Svg: SvgBulbo, legenda: "Conjunto horizontal submerso no próprio fluxo, para quedas muito baixas.", foto: null, tipo: 'Reação (horizontal)', faixa: 'Quedas muito baixas: abaixo de ~15 m', usoPR: 'Sem unidade em operação no PR; no Brasil é típica das UHEs do rio Madeira (RO).' },
+  { nome: 'Pelton', Svg: SvgPelton, vazao: 'Vazão baixa', legenda: "Jato em pressão atmosférica: turbina de AÇÃO.", foto: 'Peltonturbine-1.jpg', tipo: 'Ação (impulso)', faixa: 'Quedas altas: acima de ~250 m', usoPR: 'UHE Gov. Parigot de Souza (Antonina): 4 unidades Pelton, com desnível de 754 m.' },
+  { nome: 'Francis', Svg: SvgFrancis, vazao: 'Vazão média', legenda: "Fluxo radial que vira axial, sob pressão: turbina de REAÇÃO.", foto: 'Francis_Turbine_complete.jpg', tipo: 'Reação', faixa: 'Quedas médias: ~30 a 400 m', usoPR: 'UHE Foz do Areia (Pinhão): 4 Francis de 419 MW. Também Itaipu (20 unidades).' },
+  { nome: 'Kaplan', Svg: SvgKaplan, vazao: 'Vazão alta', legenda: "Hélice de passo variável: mantém rendimento com vazão variável.", foto: 'Kaplan_turbine_bonneville.jpg', tipo: 'Reação (pás ajustáveis)', faixa: 'Quedas baixas: ~10 a 70 m', usoPR: 'UHE Baixo Iguaçu (Capanema): 3 Kaplan de ~117 MW, a fio d\'água.' },
+  { nome: 'Bulbo', Svg: SvgBulbo, vazao: 'Vazão muito alta', legenda: "Conjunto horizontal submerso no próprio fluxo, para quedas muito baixas.", foto: null, tipo: 'Reação (horizontal)', faixa: 'Quedas muito baixas: abaixo de ~15 m', usoPR: 'Sem unidade em operação no PR; no Brasil é típica das UHEs do rio Madeira (RO).' },
 ];
 
 export function TurbineGallery() {
@@ -126,7 +126,7 @@ export function TurbineGallery() {
         )}
         <div className="tg-info">
           <h3>Turbina {t.nome}</h3>
-          <p><strong>{t.tipo}</strong> · {t.faixa}</p>
+          <p><strong>{t.tipo}</strong> · {t.faixa}{t.vazao ? ' · ' + t.vazao : ''}</p>
           <p className="tg-pr"><MapPin size={14} /> <strong>No Paraná:</strong> {t.usoPR}</p>
         </div>
       </div>
@@ -168,9 +168,9 @@ export const PR_CASES = [
     nome: 'UHE Baixo Iguaçu', local: 'Rio Iguaçu, Capanema / Capitão Leônidas Marques-PR', dados: '350 MW · 3 turbinas Kaplan (~117 MW cada) · concluída em 2019 · vizinha do Parque Nacional do Iguaçu',
     site: 'https://baixoiguacu.com.br/', siteLabel: 'baixoiguacu.com.br (site oficial, com dados técnicos)' },
   { tipo: 'UHE de queda alta (derivação)', criterio: 'Circuito longo de adução por túnel · queda elevada · turbinas Pelton',
-    nome: 'UHE Gov. Pedro Viriato Parigot de Souza (Capivari-Cachoeira)', local: 'Antonina-PR (capta no rio Capivari e restitui no Cachoeira)', dados: '260 MW · 4 turbinas Pelton de 62,5 MW · ~750 m de queda, a maior do sul do país · mais de 50 anos de operação',
+    nome: 'UHE Gov. Pedro Viriato Parigot de Souza (Capivari-Cachoeira)', local: 'Antonina-PR (capta no rio Capivari e restitui no Cachoeira)', dados: '260 MW de potência instalada, com quatro geradores de 62,5 MW segundo a Copel · desnível de 754 m, a maior queda do sul do país · mais de 50 anos de operação',
     site: 'https://www.copel.com/site/copel-geracao/usinas/usina-parigot-de-souza/', siteLabel: 'copel.com (página oficial da usina)' },
-  { tipo: 'PCH, Pequena Central Hidrelétrica', criterio: 'Acima de 5 até 30 MW · reservatório em regra até 13 km² · autorização ANEEL',
+  { tipo: 'PCH, Pequena Central Hidrelétrica', criterio: 'Acima de 5 até 30 MW · área de reservatório de até 3 km², excluída a calha do leito regular (POP) · autorização ANEEL',
     nome: 'PCH Bela Vista', local: 'Rio Chopim, Verê / São João-PR', dados: '29,81 MW · inaugurada em outubro de 2021 (unidades em jun/jul/ago) · investimento de R$ 224 milhões da Copel',
     site: 'https://pchbelavista.com.br/', siteLabel: 'pchbelavista.com.br (site oficial)' },
   { tipo: 'CGH, Central Geradora Hidrelétrica', criterio: 'Até 5 MW · registro/comunicação à ANEEL · rito proporcional ao porte',
@@ -180,14 +180,14 @@ export const PR_CASES = [
     nome: 'Itaipu Binacional', local: 'Rio Paraná, Foz do Iguaçu-PR (Brasil/Paraguai)', dados: '14.000 MW · 20 unidades geradoras Francis · líder mundial em produção acumulada de energia',
     site: 'https://www.itaipu.gov.br/', siteLabel: 'itaipu.gov.br (site oficial)' },
   { tipo: 'Reversível (bombeamento)', criterio: 'Bombeia água a reservatório superior fora de ponta e turbina na ponta, a "bateria" hídrica', reversivel: true,
-    nome: 'Bath County Pumped Storage Station: exemplo fora do Paraná', local: 'Bath County, Virgínia, Estados Unidos', dados: 'Não há usina reversível em operação comercial no Paraná; este é o exemplo internacional de referência: 3.003 MW em 6 unidades reversíveis, a maior do mundo, em operação desde 1985 (Dominion Energy 60% e Allegheny Power 40%).',
+    nome: 'Bath County Pumped Storage Station: exemplo fora do Paraná', local: 'Bath County, Virgínia, Estados Unidos', dados: 'Não há usina reversível em operação comercial no Paraná; este é o exemplo internacional de referência: 3.003 MW em 6 unidades reversíveis, em operação desde 1985, por muitos anos a maior do mundo (Dominion Energy 60% e Allegheny Power 40%).',
     site: 'https://www.dominionenergy.com/en/About/Making-Energy/Hydroelectric-Power-Facilities/Bath-County-Pumped-Storage-Station', siteLabel: 'dominionenergy.com (página da operadora)' },
 ];
 
 export function PRCasesSection() {
   return (
     <div className="pr-cases">
-      <p className="prc-note"><Info size={15} /> Casos reais, com dados públicos verificados nas fontes oficiais indicadas. Os critérios de porte seguem a classificação da ANEEL; o rito de licenciamento aplicável é o do POP e da norma vigente.</p>
+      <p className="prc-note"><Info size={15} /> Casos reais, com dados públicos coletados nas fontes indicadas em cada card, oficiais sempre que disponíveis. Confirme potência e situação operacional na fonte antes de citar em processo. Os critérios de porte seguem a classificação da ANEEL; o rito de licenciamento aplicável é o do POP e da norma vigente.</p>
       <div className="prc-grid">{PR_CASES.map((c) => (
         <article key={c.nome} className={'prc-card' + (c.site ? '' : ' prc-empty') + (c.reversivel ? ' prc-wide' : '')}>
           <span className="prc-tipo">{c.tipo}</span>
@@ -214,7 +214,7 @@ const TRILHA_ANEEL = [
   ['Conexão à rede', 'Parecer de acesso, projeto da linha/subestação e contratos de conexão e uso do sistema.'],
 ];
 const TRILHA_IAT = [
-  ['Consulta Prévia (recomendada)', 'Antes de formalizar: mapa da ADA, arranjo em KML/KMZ e memorial descritivo (art. 36 da IN IAT nº 09/2025). A manifestação orienta modalidade e estudo, vale 24 meses e não aprova viabilidade.'],
+  ['Consulta Prévia (obrigatória para CGH a partir de 1 MW, PCH e UHE)', 'Antes de formalizar: mapa da ADA, arranjo em KML/KMZ e memorial descritivo (art. 36 da IN IAT nº 09/2025). A manifestação orienta modalidade e estudo, vale 24 meses e não aprova viabilidade.'],
   ['Enquadramento', 'Potência, área de alagamento, IDA, supressão e sensibilidade definem a modalidade (DLAM, LAC, LAS ou rito trifásico) e o estudo exigido (RAS/RDPA, PCA ou EIA/RIMA), sempre pelo critério mais restritivo.'],
   ['Protocolo e análise', 'Formalização pelo SGA/eProtocolo com a documentação da fase; o IAT confere suficiência antes do mérito e diligencia lacunas.'],
   ['LP → LI → LO', 'LP atesta viabilidade e concepção; LI autoriza instalar conforme projeto (com autorizações florestais, de fauna e outorga/DRDH); LO verifica o instalado e fixa condicionantes de operação, e o PACUERA quando exigível.'],

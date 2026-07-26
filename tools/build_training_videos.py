@@ -45,7 +45,7 @@ FONTS = {
 VIDEOS = {
     "fluxo-geral": {
         "title": "Fluxo geral da análise",
-        "subtitle": "A conclusão é resultado — nunca o ponto de partida.",
+        "subtitle": "A conclusão é resultado, nunca o ponto de partida.",
         "source": "POP §§ 6, 6.1 e 7",
         "steps": [
             ("1", "Receber", "Identificar o objeto"),

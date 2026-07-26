@@ -1,4 +1,4 @@
-# Academia IAT — Licenciamento Hidrelétrico
+# Academia IAT - Licenciamento Hidrelétrico
 
 Plataforma completa de aprendizagem baseada no `POP-DLE-HID-001`, versão 1.2, julho de 2026, e no documento de proposta de fluxogramas.
 

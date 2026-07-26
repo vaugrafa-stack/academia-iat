@@ -12,7 +12,7 @@ const ASSET = (p) => ((import.meta.env.BASE_URL || '/').replace(/\/$/, '')) + p;
 // --- Componentes do arranjo (hotspots do corte transversal) ---
 const PARTES = [
   { id: 'reservatorio', nome: 'Reservatório', icon: Droplets, resumo: 'Massa de água represada que estoca energia potencial.',
-    detalhe: 'Volume de água acumulado a montante da barragem. A diferença de nível entre a superfície do reservatório e a casa de força é a queda (H), que define quanta energia cada metro cúbico de água pode entregar. Reservatórios de acumulação regularizam a vazão ao longo do ano; usinas a fio d\'água têm reservatório reduzido.' },
+    detalhe: 'Volume de água acumulado a montante da barragem. A diferença de nível entre a superfície do reservatório e o nível de água no canal de fuga, a jusante, é a queda bruta (H), que define quanta energia cada metro cúbico de água pode entregar. Reservatórios de acumulação regularizam a vazão ao longo do ano; usinas a fio d\'água têm reservatório reduzido.' },
   { id: 'barragem', nome: 'Barragem / barramento', icon: Mountain, resumo: 'Estrutura que barra o rio e cria a queda.',
     detalhe: 'Barra o curso d\'água, eleva o nível a montante e sustenta a pressão da água. Pode ser de concreto (gravidade, arco, contrafortes) ou de aterro (terra, enrocamento). É a estrutura de maior responsabilidade estrutural e alvo central da segurança de barragens.' },
   { id: 'vertedouro', nome: 'Vertedouro', icon: Waves, resumo: 'Extravasa com segurança as cheias.',
@@ -26,7 +26,7 @@ const PARTES = [
   { id: 'turbina', nome: 'Turbina + gerador', icon: Gauge, resumo: 'Converte o movimento da água em eletricidade.',
     detalhe: 'A turbina transforma a energia hidráulica em energia mecânica de rotação; acoplada ao gerador, produz energia elétrica. O tipo (Pelton, Francis, Kaplan, bulbo) é escolhido pela queda e pela vazão do aproveitamento.' },
   { id: 'fuga', nome: 'Tubo de sucção e canal de fuga', icon: Wind, resumo: 'Devolve a água ao rio a jusante.',
-    detalhe: 'Após passar pela turbina, a água segue pelo tubo de sucção (que recupera parte da energia) e pelo canal de fuga de volta ao leito do rio, a jusante. A cota do canal de fuga fecha o cálculo da queda líquida.' },
+    detalhe: 'Após passar pela turbina, a água segue pelo tubo de sucção (que recupera parte da energia) e pelo canal de fuga de volta ao leito do rio, a jusante. A cota do canal de fuga fecha o cálculo da queda bruta; a queda líquida é a bruta menos as perdas de carga na tomada, na adução e no conduto forçado.' },
   { id: 'subestacao', nome: 'Subestação e conexão', icon: TowerControl, resumo: 'Eleva a tensão e conecta ao sistema.',
     detalhe: 'A energia gerada é elevada de tensão nos transformadores da subestação e injetada no sistema de transmissão (linha de transmissão / LDAT). É a fronteira entre o empreendimento e o Sistema Interligado Nacional.' },
 ];
@@ -35,9 +35,9 @@ const TIPOS_POTENCIA = [
   { sigla: 'CGH', nome: 'Central Geradora Hidrelétrica', faixa: 'até 5 MW', cor: '#37d39a',
     nota: 'Menor porte. Dispensada de concessão/autorização, sujeita a registro na ANEEL. Geração distribuída, impacto local reduzido.' },
   { sigla: 'PCH', nome: 'Pequena Central Hidrelétrica', faixa: 'acima de 5 até 30 MW', cor: '#4cc4f5',
-    nota: 'Reservatório em regra até 13 km². Outorgada por autorização da ANEEL. Muitas vezes a fio d\'água, com licenciamento proporcional ao porte.' },
+    nota: 'Área de reservatório de até 3 km², excluída a calha do leito regular, conforme o POP. Outorgada por autorização da ANEEL. Muitas vezes a fio d\'água, com licenciamento proporcional ao porte.' },
   { sigla: 'UHE', nome: 'Usina Hidrelétrica', faixa: 'acima de 30 MW', cor: '#3fe0a6',
-    nota: 'Grande porte, outorgada por concessão (leilão). Em regra exige EIA/RIMA. Maior complexidade estrutural, fundiária e socioambiental.' },
+    nota: 'Grande porte na classificação do POP. A outorga é por autorização até 50 MW e por concessão, mediante leilão, acima disso. Em regra exige EIA/RIMA. Maior complexidade estrutural, fundiária e socioambiental.' },
 ];
 
 const TIPOS_RESERVATORIO = [
@@ -185,14 +185,14 @@ function PowerCalc() {
   const [ef, setEf] = useState(90);
   const potKW = 9.81 * q * h * (ef / 100);
   const potMW = potKW / 1000;
-  const casas = Math.max(0, Math.round(potMW * 1000 / 150)); // ~150 kWmed p/ familia (ilustrativo)
+  const casas = Math.round(potKW / 0.2); // ~0,2 kW medios por domicilio, cerca de 150 kWh/mes (ilustrativo)
   const classe = potMW <= 5 ? 'CGH' : potMW <= 30 ? 'PCH' : 'UHE';
   return (
     <div className="power-calc">
       <div className="pc-formula"><Zap /> <span>P = ρ · g · Q · H · η</span> <small>densidade × gravidade × vazão × queda × rendimento</small></div>
       <div className="pc-controls">
         <label>Vazão turbinada, Q <b>{q} m³/s</b><input type="range" min="1" max="1500" value={q} onChange={(e) => setQ(+e.target.value)} /></label>
-        <label>Queda líquida, H <b>{h} m</b><input type="range" min="2" max="250" value={h} onChange={(e) => setH(+e.target.value)} /></label>
+        <label>Queda líquida, H <b>{h} m</b><input type="range" min="2" max="800" value={h} onChange={(e) => setH(+e.target.value)} /></label>
         <label>Rendimento, η <b>{ef}%</b><input type="range" min="70" max="95" value={ef} onChange={(e) => setEf(+e.target.value)} /></label>
       </div>
       <div className="pc-out">
@@ -305,7 +305,7 @@ export default function HydroGuide({ go }) {
       </section>
 
       <section className="hydro-block">
-        <div className="section-title"><div><h2>Turbinas: escolha por queda e vazão</h2><p>Cada máquina rende melhor em uma faixa.</p></div><Wind /></div>
+        <div className="section-title"><div><h2>Turbinas: escolha por queda e vazão</h2><p>Cada máquina rende melhor em uma faixa de queda e de vazão.</p></div><Wind /></div>
         <TurbinePicker />
         <TurbineGallery />
       </section>

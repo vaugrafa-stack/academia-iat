@@ -842,4 +842,7 @@ a[href^="http"]::after{content:" (" attr(href) ")";font-size:10px;color:#555}
 .decision-path{align-items:stretch}
 .decision-path>.path-node,.decision-path .path-node{align-self:stretch}
 .decision-path>i{align-self:center}
-.path-node strong{font-size:13px;line-height:1.25;text-align:center;overflow-wrap:anywhere}
+/* anywhere partia a palavra no meio ("Suficienc / ia"); break-word so quebra
+   quando a palavra sozinha nao cabe, e a hifenizacao entra pelo lang do html. */
+.path-node strong{font-size:13px;line-height:1.25;text-align:center;overflow-wrap:break-word;hyphens:auto}
+.path-node{width:122px}

@@ -719,3 +719,54 @@ button:focus-visible,input:focus-visible,textarea:focus-visible,a:focus-visible,
 .kp-quadro-nota svg{color:var(--green2);flex:none}
 /* Busca do glossario */
 .glossario-busca{margin:14px 0}
+
+/* ===== Acessibilidade: contraste conforme WCAG AA =====
+   A conversao para o tema escuro clareou os acentos mas manteve o texto branco
+   por cima. Sobre verde ou azul claros isso dava 1,93:1, medido no proprio app.
+   Sobre acento claro, o texto passa a ser escuro. */
+:root{--sobre-acento:#08231b}
+:root:not([data-theme="light"]) .tg-tabs button.active,
+:root:not([data-theme="light"]) .turb-tabs button.active,
+:root:not([data-theme="light"]) .variant-tabs button.active,
+:root:not([data-theme="light"]) .cd-nav button.active,
+:root:not([data-theme="light"]) .scenario-tabs button.active,
+:root:not([data-theme="light"]) .flow-mode-tabs button.active,
+:root:not([data-theme="light"]) .tp-band.rec,
+:root:not([data-theme="light"]) .tp-band.rec .tp-name,
+:root:not([data-theme="light"]) .tp-band.rec .tp-range,
+:root:not([data-theme="light"]) button.primary,
+:root:not([data-theme="light"]) button.primary svg,
+:root:not([data-theme="light"]) .sup-mail{color:var(--sobre-acento)}
+/* circulos do percurso: fundo escuro e numero claro */
+:root:not([data-theme="light"]) .journey-track button>span{background:var(--surface2);color:var(--ink);border-color:#6f8880}
+:root:not([data-theme="light"]) .journey-track button.done>span{background:var(--green2);color:var(--sobre-acento);border-color:var(--green2)}
+:root:not([data-theme="light"]) .journey-track button.current>span{background:var(--surface);color:var(--blue);border-color:var(--blue)}
+/* selos de modulo: fundo escuro, cor do modulo no texto e na borda */
+:root:not([data-theme="light"]) .module-tests button>span,
+:root:not([data-theme="light"]) .cert-mod-code,
+:root:not([data-theme="light"]) .outline-track>span{background:var(--surface2)!important;color:var(--ink)!important;border:1px solid currentColor}
+/* tinta escura remanescente sobre fundo escuro */
+:root:not([data-theme="light"]) .lab-tip strong,
+:root:not([data-theme="light"]) .lab-tip p,
+:root:not([data-theme="light"]) .quick-tip strong,
+:root:not([data-theme="light"]) .quick-tip p{color:var(--ink2)}
+:root:not([data-theme="light"]) .debrief h3,
+:root:not([data-theme="light"]) .debrief p{color:var(--ink)}
+/* foco visivel em qualquer tema */
+:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+/* atalho de teclado para o conteudo */
+.skip-link{position:absolute;left:-9999px;top:0;z-index:100;background:var(--green2);color:var(--sobre-acento);padding:12px 18px;border-radius:0 0 10px 0;font-weight:800;text-decoration:none}
+.skip-link:focus{left:0}
+/* respeita quem pediu menos movimento */
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important;scroll-behavior:auto!important}}
+/* impressao: levar a aula ou o checklist para o campo */
+@media print{
+.sidebar-v2,.topbar,.lesson-outline,.lesson-context,.toast,.nav-scrim,.search-modal,.vl2,.video-lesson,.today-plan,.mf-acoes,.lesson-footer,.skip-link,.theme-toggle{display:none!important}
+.main,.page,.lesson-layout,.lesson-content{margin:0!important;padding:0!important;max-width:none!important}
+.lesson-layout{display:block!important}
+:root{--bg:#fff;--surface:#fff;--surface2:#fff;--ink:#111;--ink2:#333;--muted:#555;--line:#bbb;--track:#ddd}
+body,.app-shell{background:#fff!important;color:#111!important}
+*{box-shadow:none!important;text-shadow:none!important}
+.data-table,.lesson-checklist,.modulo-fim{page-break-inside:avoid}
+a[href^="http"]::after{content:" (" attr(href) ")";font-size:10px;color:#555}
+}

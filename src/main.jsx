@@ -94,11 +94,11 @@ function App(){
  function complete(id){setState(s=>({...s,completed:s.completed.includes(id)?s.completed.filter(x=>x!==id):[...s.completed,id]}));setToast(state.completed.includes(id)?'Aula marcada como não concluída':'Aula concluída e progresso salvo')}
  function bookmark(id){setState(s=>({...s,bookmarks:s.bookmarks.includes(id)?s.bookmarks.filter(x=>x!==id):[...s.bookmarks,id]}));setToast(state.bookmarks.includes(id)?'Favorito removido':'Aula salva nos favoritos')}
  let content={dashboard:<Dashboard state={state} progress={progress} go={go} openLesson={openLesson}/>,hidreletricas:<HydroGuide go={go}/>,formacao:<Formation state={state} openLesson={openLesson}/>,fluxos:<Flowcharts state={state} setState={setState}/>,laboratorio:<Laboratory state={state} setState={setState}/>,avaliacoes:<Assessments state={state} setState={setState} openLesson={openLesson}/>,biblioteca:<KnowledgeLibrary state={state} openLesson={openLesson}/>,perfil:<Profile state={state} progress={progress} profile={profile} setProfile={setProfile} go={go} openLesson={openLesson}/>,suporte:<Suporte/>,lesson:<Lesson lesson={lessonMap.get(selectedLesson)||lessons[0]} state={state} setState={setState} openLesson={openLesson} complete={complete} bookmark={bookmark} go={go}/>}[view];
- return <div className="app-shell">
+ return <div className="app-shell"><a className="skip-link" href="#conteudo">Ir para o conteúdo</a>
   <Topbar onMenu={()=>setMenuOpen(v=>!v)} onSearch={()=>setSearchOpen(true)} progress={progress} profile={profile} onProfile={()=>go('perfil')}/>
   <Sidebar view={view} go={go} open={menuOpen} openLesson={openLesson}/>
   {menuOpen&&<button className="nav-scrim" aria-label="Fechar menu" onClick={()=>setMenuOpen(false)}/>} 
-  <main className={'main '+(view==='lesson'?'lesson-main':'')}><div className="view-anim" key={view==='lesson'?'l:'+selectedLesson:view}>{content}</div></main>
+  <main id="conteudo" tabIndex={-1} className={'main '+(view==='lesson'?'lesson-main':'')}><div className="view-anim" key={view==='lesson'?'l:'+selectedLesson:view}>{content}</div></main>
   {searchOpen&&<GlobalSearch close={()=>setSearchOpen(false)} openLesson={openLesson}/>} 
   {toast&&<div className="toast"><CheckCircle2/>{toast}</div>}
  </div>
@@ -163,7 +163,7 @@ function Sidebar({view,go,open,openLesson}){return <aside className={'sidebar-v2
 <path d="M7 14 L28 12 M7 19 L28 17 M7 24 L28 22 M40 12 L61 14 M40 17 L61 19 M40 22 L61 24" stroke="#0b3b2d" strokeWidth="1.5" opacity=".55"/>
 <path d="M26 -2 L42 -2 L34 3 Z M34 -2 L34 -8 M30 -8 L38 -8" stroke="#f3bd4f" strokeWidth="2" fill="#f3bd4f"/>
 </g>
-</svg></div><nav>{NAV.map(([id,label,Icon])=><button key={id} className={view===id||(view==='lesson'&&id==='formacao')?'active':''} onClick={()=>go(id)}><Icon/>{label}</button>)}</nav><button className="sidebar-help" onClick={()=>openLesson&&openLesson(firstLesson('m00')?.id)}><CircleHelp/><div><strong>Por onde começar?</strong><small>Abra o módulo de Orientação</small></div><ChevronRight/></button><div className="source-lock"><ShieldCheck/><span>Conteúdo integral<br/><b>POP v{popData.metadata?.operational?.version||'1.2'} · {popData.metadata?.operational?.dateLabel||'julho de 2026'}</b></span></div></aside>}
+</svg></div><nav>{NAV.map(([id,label,Icon])=>{const at=view===id||(view==='lesson'&&id==='formacao');return <button key={id} aria-current={at?'page':undefined} className={at?'active':''} onClick={()=>go(id)}><Icon/>{label}</button>})}</nav><button className="sidebar-help" onClick={()=>openLesson&&openLesson(firstLesson('m00')?.id)}><CircleHelp/><div><strong>Por onde começar?</strong><small>Abra o módulo de Orientação</small></div><ChevronRight/></button><div className="source-lock"><ShieldCheck/><span>Conteúdo integral<br/><b>POP v{popData.metadata?.operational?.version||'1.2'} · {popData.metadata?.operational?.dateLabel||'julho de 2026'}</b></span></div></aside>}
 
 function Dashboard({state,progress,go,openLesson}){
  const continueLesson=lessonMap.get(state.lastLesson)||firstLesson('m00')||lessons[0];

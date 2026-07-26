@@ -64,18 +64,15 @@ def is_list(p: Paragraph) -> bool:
 def para_payload(p: Paragraph, pid: str):
     lvl = heading_level(p)
     lst = is_list(p)
-    return {
+    # so o que a plataforma le: estilo, recuo e espacamento do Word ficam de fora
+    out = {
         "id": pid,
         "semanticType": "heading" if lvl else ("list-item" if lst else "paragraph"),
         "text": (p.text or "").strip(),
-        "styleId": None,
-        "styleName": p.style.name,
-        "headingLevel": lvl,
-        "list": {"numbering": True} if lst else None,
-        "alignment": None,
-        "indentation": None,
-        "spacing": None,
     }
+    if lvl:
+        out["headingLevel"] = lvl
+    return out
 
 
 def main(src: Path):
@@ -206,10 +203,7 @@ def main(src: Path):
                 cells = []
                 for ci, c in enumerate(row.cells, 1):
                     stats["tableParagraphCount"] += len(c.paragraphs)
-                    cells.append({"index": ci, "gridSpan": 1, "text": (c.text or "").strip(),
-                                  "paragraphs": [{"id": f"{tid}-r{ri:03d}-c{ci:02d}-p{k+1:02d}",
-                                                  "semanticType": "paragraph", "text": (pp.text or "").strip()}
-                                                 for k, pp in enumerate(c.paragraphs)]})
+                    cells.append({"index": ci, "text": (c.text or "").strip()})
                 rows.append({"index": ri, "isHeader": ri == 1, "cells": cells})
             # legenda: paragrafo anterior no formato "Quadro N - titulo"
             cap = ""

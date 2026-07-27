@@ -332,12 +332,153 @@ export const NOVOS_CENARIOS = [
     ],
     outcome: 'A soma dos períodos é 215 e o acumulado declarado é 262: faltam 47 registros sem explicação. Isso é limitação de rastreabilidade, não prova de abandono, porque os três relatórios demonstram continuidade das inspeções, do monitoramento e das estruturas. O encaminhamento é diligência consolidada, exigindo série histórica única e conciliada por semestre e acumulada, sem reapresentação integral dos relatórios já protocolados.',
   },
+  {
+    // Residuos: o acumulado FECHA e mesmo assim nao e rastreavel. Consistencia
+    // interna nao e demonstracao de metodo, e este e o engano mais fino da
+    // analise de programas.
+    id: 'prog-residuos', track: 'm08', label: 'Resíduos e unidades', type: 'PCH',
+    title: 'Consolidação em toneladas sem metodologia de conversão',
+    facts: [
+      'As tabelas primárias discriminam resíduos em quilogramas, litros e unidades',
+      'A consolidação por tipologia apresenta um valor único por semestre',
+      'As considerações finais expressam o acumulado em toneladas',
+      'A seção de indicadores do 3º relatório repete os dados do 2º semestre',
+    ],
+    evidence: [
+      'Tabelas primárias por tipo de resíduo e unidade de medida',
+      'Consolidação por tipologia de cada semestre',
+      'Série de inspeções relacionadas ao programa',
+      'Ato autorizativo de coleta e transporte de óleo lubrificante usado',
+    ],
+    serie: {
+      titulo: 'Duas séries do mesmo programa, lado a lado',
+      colunas: ['Relatório', 'Consolidado do período', 'Acumulado declarado', 'Inspeções do período'],
+      linhas: [
+        ['1º', '5.406,5', 'não informado', '16'],
+        ['2º', '297,0', '5.703,5', '19'],
+        ['3º', '194,5', '5.898,0', 'repete "19 do 2º semestre"'],
+      ],
+      nota: 'Confira as duas séries separadamente: uma fecha, a outra não.',
+    },
+    steps: ['Unidades', 'Consolidação', 'Inspeções', 'Indicadores', 'Encaminhamento'],
+    questions: [
+      ['O acumulado de resíduos (5.703,5 e depois 5.898,0) corresponde à soma dos consolidados anteriores?', 'sim'],
+      ['Essa consistência aritmética demonstra, por si só, o método de conversão de litros para massa?', 'nao'],
+      ['A série de inspeções fecha, somando 16 e 19 contra o acumulado de 46 informado?', 'nao'],
+      ['Uma seção de indicadores que repete o período anterior demonstra os indicadores do período atual?', 'nao'],
+      ['Cabe aceitar os resultados separados por unidade de medida, como alternativa à conversão?', 'sim'],
+    ],
+    outcome: 'O acumulado de resíduos fecha (5.406,5 mais 297,0 dá 5.703,5, e mais 194,5 dá 5.898,0), mas fechar não é ser rastreável: dados primários em litros, quilogramas e unidades viram um número único e depois toneladas, sem critério de conversão declarado. Já a série de inspeções não fecha: 16 mais 19 são 35, contra 46 acumulados. E a seção de indicadores do terceiro relatório reproduz o período anterior, de modo que os indicadores do semestre não ficam demonstrados. Exigir a metodologia de conversão ou a consolidação separada por unidade, conciliar a série de inspeções e refazer a seção de indicadores do período.',
+  },
+  {
+    // Compensacao florestal: a acao existiu, mas foi lancada no semestre
+    // errado. E o unico cenario em que a resposta certa para uma das fases e
+    // "nao ha o que exigir", calibragem que a plataforma nunca treinou.
+    id: 'prog-compensacao', track: 'm12', label: 'Ação no semestre certo', type: 'PCH',
+    title: 'Ação física real, atribuída ao período errado',
+    facts: [
+      'No 1º semestre o programa estava em formalização, sem execução física prevista',
+      'O 2º relatório cobre 01/01/2025 a 30/06/2025',
+      'O 2º relatório informa retirada de povoamento de pinus ocorrida no início de julho de 2025',
+      'A previsão de início da restauração muda a cada relatório',
+    ],
+    evidence: [
+      'Projeto de compensação aprovado e seu cronograma',
+      'Registros fotográficos datados das áreas',
+      'Período de abrangência declarado em cada relatório',
+      'Indicadores de cobertura, regeneração e diversidade',
+    ],
+    serie: {
+      titulo: 'Previsão de início da restauração, relatório a relatório',
+      colunas: ['Relatório', 'Período coberto', 'Início previsto da restauração'],
+      linhas: [
+        ['1º', 'jul a dez/2024', '2025'],
+        ['2º', 'jan a jun/2025', '2025'],
+        ['3º', 'jul a dez/2025', '1º semestre de 2026'],
+      ],
+      nota: 'A reprogramação só aparece comparando os três relatórios.',
+    },
+    steps: ['Fase', 'Cronologia', 'Reprogramação', 'Exigível', 'Encaminhamento'],
+    questions: [
+      ['No 1º semestre, a ausência de restauração física caracteriza inconsistência a ser exigida?', 'nao'],
+      ['Uma ação de julho de 2025 pode ser contabilizada como executada em relatório que cobre até 30/06/2025?', 'nao'],
+      ['A retirada do povoamento é evolução física relevante, ainda que na etapa preparatória?', 'sim'],
+      ['A postergação sucessiva do início exige justificativa e cronograma atualizado?', 'sim'],
+      ['Preparar a área equivale a demonstrar a restauração e seus indicadores?', 'nao'],
+    ],
+    outcome: 'No primeiro semestre não há correção material a exigir: o próprio relatório demonstra etapa administrativa e preparatória, e cobrar execução aqui seria exigência sem fundamento. A retirada do povoamento é evolução física real, mas ocorreu em julho de 2025 e pertence ao terceiro semestre, não ao relatório que se encerra em 30/06. Comparando os três, o início da restauração passou de 2025 para 2026, o que exige justificativa e cronograma atualizado. Preparar a área não é restaurar: os indicadores de cobertura, regeneração e diversidade seguem pendentes.',
+  },
+  {
+    // Recomposicao de APP: o total nao fecha com as parcelas nem com a
+    // cartografia, e o texto se contradiz sobre o plantio. Ensina o cruzamento
+    // mais dificil, numero declarado contra base espacial.
+    id: 'prog-app', track: 'm10', label: 'APP e cartografia', type: 'PCH',
+    title: 'Total de APP que não fecha com as parcelas nem com a cartografia',
+    facts: [
+      'O texto informa redução total de 1,92 ha de APP',
+      'Discrimina 0,88 ha na margem direita e 1,39 ha na margem esquerda',
+      'A seção de indicadores registra que o plantio de mudas não foi realizado',
+      'As considerações finais afirmam que houve plantio, monitoramento e manutenção',
+    ],
+    evidence: [
+      'Cartografia do projeto técnico aprovado',
+      'Quadro de redução e realocação de APP por margem',
+      'Seção de indicadores do programa',
+      'Considerações finais do relatório',
+    ],
+    serie: {
+      titulo: 'Redução de APP: total declarado contra as parcelas',
+      colunas: ['Item', 'Valor declarado'],
+      linhas: [
+        ['Margem direita', '0,88 ha'],
+        ['Margem esquerda', '1,39 ha'],
+        ['Total informado no texto', '1,92 ha'],
+      ],
+      nota: 'Some as margens e compare com o total informado.',
+    },
+    steps: ['Parcelas', 'Total', 'Cartografia', 'Contradição', 'Encaminhamento'],
+    questions: [
+      ['A soma das parcelas por margem (0,88 e 1,39) confere com o total informado de 1,92 ha?', 'nao'],
+      ['A divergência deve ser compatibilizada também com a cartografia do projeto aprovado?', 'sim'],
+      ['Indicadores e considerações finais podem afirmar coisas opostas sobre o plantio?', 'nao'],
+      ['A ausência de plantio até o terceiro semestre caracteriza, isoladamente, descumprimento?', 'nao'],
+      ['A avaliação do semestre deve ficar vinculada às ações efetivamente comprovadas?', 'sim'],
+    ],
+    outcome: 'As parcelas somam 2,27 ha e o texto declara 1,92 ha: divergência de 0,35 ha que precisa ser corrigida e compatibilizada com a cartografia do projeto, porque número de APP sem base espacial não se valida. O relatório também se contradiz: os indicadores registram que o plantio não ocorreu e as considerações finais afirmam que ocorreu. A ausência de plantio não é, isoladamente, descumprimento, desde que o cronograma permaneça compatível com o projeto e com o prazo vinculado à renovação da Licença de Operação. Mantida a informação de que o plantio não iniciou, a avaliação do semestre fica vinculada ao que foi efetivamente comprovado.',
+  },
 ];
 
 // Rubrica da fundamentacao. `termos` sao os sinais procurados no texto escrito,
 // comparados sem acento e sem caixa. E conferencia de termo, nao avaliacao do
 // raciocinio, e a interface diz isso ao mostrar o resultado.
 export const RUBRICAS = {
+  'prog-residuos': {
+    elementos: [
+      { rot: 'Unidades primárias distintas', termos: ['litro', 'quilograma', 'unidade', 'convers', 'massa', 'tonelada'] },
+      { rot: 'Fechar não é ser rastreável', termos: ['rastreav', 'rastreáv', 'metodolog', 'criterio', 'critério'] },
+      { rot: 'Série de inspeções não concilia', termos: ['16', '19', '46', '35', 'inspec', 'inspeç'] },
+      { rot: 'Indicadores do período repetidos', termos: ['repet', 'reproduz', 'periodo anterior', 'período anterior'] },
+    ],
+    modelo: 'Análise: os dados primários discriminam resíduos em quilogramas, litros e unidades, e a consolidação por tipologia apresenta valor único por semestre, depois expresso em toneladas. O acumulado declarado corresponde à soma dos consolidados anteriores. Já a série de inspeções não concilia: 16 no primeiro período e 19 no segundo somam 35, contra 46 informados como acumulado. Comentário: a consistência aritmética do acumulado não substitui a demonstração da metodologia de conversão dos volumes em massa, de modo que a consolidação não é rastreável na forma apresentada. A seção de indicadores do terceiro relatório reproduz os dados do período anterior, e por isso os indicadores do semestre não ficam demonstrados. Solicitações: apresentar a metodologia e os critérios de conversão entre volume e massa, ou manter os resultados consolidados separadamente por unidade de medida; conciliar a série de inspeções e esclarecer a diferença; e refazer a seção de indicadores com os registros específicos do período.',
+  },
+  'prog-compensacao': {
+    elementos: [
+      { rot: 'Etapa preparatória não gera exigência', termos: ['preparat', 'formaliza', 'administrativ', 'nao ha', 'não há'] },
+      { rot: 'Ação no semestre em que ocorreu', termos: ['julho', 'periodo', 'período', '30/06', 'cronolog'] },
+      { rot: 'Reprogramação sucessiva', termos: ['reprogram', 'posterg', '2026', 'cronograma atualizado', 'justificativa'] },
+      { rot: 'Preparar não é restaurar', termos: ['restaura', 'indicador', 'cobertura', 'regenera', 'diversidade'] },
+    ],
+    modelo: 'Análise: no primeiro semestre o programa estava em formalização e preparação, etapa em que a ausência de execução física é coerente com o que o próprio relatório demonstra. O segundo relatório cobre até 30/06/2025 e informa a retirada do povoamento de pinus ocorrida no início de julho de 2025, ação que pertence ao terceiro semestre. Comparando os três, a previsão de início da restauração passou de 2025 para o primeiro semestre de 2026. Comentário: não identifico correção material a exigir quanto ao primeiro semestre; a retirada do povoamento é evolução física relevante, mas deve ser contabilizada no período em que efetivamente ocorreu. Preparar a área não equivale a restaurar: os indicadores de cobertura, regeneração e diversidade permanecem pendentes. Solicitações: vincular cada ação ao semestre em que ocorreu, apresentar justificativa e cronograma atualizado para a reprogramação do início, e demonstrar nos relatórios seguintes a execução das medidas de restauração com os respectivos indicadores.',
+  },
+  'prog-app': {
+    elementos: [
+      { rot: 'Total contra as parcelas', termos: ['0,88', '1,39', '2,27', '1,92', '0,35', 'margem'] },
+      { rot: 'Compatibilização com a cartografia', termos: ['cartograf', 'projeto aprovado', 'base espacial', 'espacial'] },
+      { rot: 'Contradição interna sobre o plantio', termos: ['plantio', 'contradi', 'indicador', 'considera'] },
+      { rot: 'Pendência não é descumprimento', termos: ['descumprimento', 'cronograma', 'renova', 'prazo', 'comprovad'] },
+    ],
+    modelo: 'Análise: o relatório informa redução total de 1,92 ha de APP e discrimina 0,88 ha na margem direita e 1,39 ha na margem esquerda, cuja soma é 2,27 ha, restando divergência de 0,35 ha. A seção de indicadores registra que o plantio de mudas não foi realizado, enquanto as considerações finais afirmam que houve plantio, monitoramento e manutenção. Comentário: a divergência quantitativa precisa ser corrigida e compatibilizada com a cartografia do projeto aprovado, porque número de APP sem base espacial não se valida. A contradição interna sobre o plantio compromete a leitura do que foi efetivamente executado. A ausência de plantio até este semestre não caracteriza, isoladamente, descumprimento, desde que o cronograma permaneça compatível com o prazo vinculado à renovação da Licença de Operação. Solicitações: corrigir o quantitativo de redução e realocação da APP compatibilizando total, parcelas e cartografia; corrigir a redação sobre a realização do plantio; e manter a avaliação do semestre vinculada às ações efetivamente comprovadas.',
+  },
   'prog-semestral': {
     elementos: [
       { rot: 'Conferência aritmética da série', termos: ['215', '262', '47', '71', 'soma', 'acumulad', 'concilia'] },

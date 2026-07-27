@@ -33,8 +33,10 @@ globalThis.fetch = async input => {
 
 const vite = await createServer({ root, server: { middlewareMode: true }, appType: 'custom', logLevel: 'error' });
 try {
-  await vite.ssrLoadModule('/src/main.jsx');
-  await new Promise(r => setTimeout(r, 80));
+  // A montagem passou para bootstrap.jsx; main.jsx so exporta o App. Carregar
+  // main.jsx aqui nao renderiza nada e o teste falha no primeiro assert.
+  await vite.ssrLoadModule('/src/bootstrap.jsx');
+  await new Promise(r => setTimeout(r, 220));
 
   const assert = (condition, message) => {
     if (!condition) throw new Error(message);

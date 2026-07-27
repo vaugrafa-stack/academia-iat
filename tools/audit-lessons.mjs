@@ -23,7 +23,8 @@ const findings = [];
 const flag = (sev, id, number, msg) => findings.push({ sev, id, number: number || '(sem nº)', msg });
 
 // 1. Cobertura: toda seção do POP vira aula ou é intencionalmente excluída (navegação)?
-const excluded = pop.sections.filter(s => !(s.title && !/sumário navegável|índice de fluxogramas|índice navegável/i.test(s.title)));
+const lessonIds = new Set(lessons.map((lesson) => lesson.id));
+const excluded = pop.sections.filter((section) => !lessonIds.has(section.id));
 console.log(`Seções no POP: ${pop.sections.length} · Aulas geradas: ${lessons.length} · Excluídas (navegação/sem título): ${excluded.length}`);
 
 // 2 e 3. Coerencia do roteamento. A checagem antiga exigia que o numero RAIZ
@@ -109,4 +110,4 @@ for (const sev of ['ERRO', 'ALERTA', 'INFO']) {
 
 const critical = bySev('ERRO').length + bySev('ALERTA').length;
 console.log(`\n${critical === 0 ? 'OK — nenhum erro estrutural ou de roteamento.' : `Revisar ${critical} item(ns) de ERRO/ALERTA.`}`);
-process.exit(0);
+process.exit(critical === 0 ? 0 : 1);

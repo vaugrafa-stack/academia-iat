@@ -83,7 +83,11 @@ def frases(texto: str):
     out = []
     for f in _FIM.split(texto or ""):
         f = re.sub(r"\s+", " ", f).strip()
-        if len(f) < 35 or len(f) > 400:
+        # O teto existe para descartar lixo de extracao, nao prosa longa: a
+        # secao 11.2 e uma unica frase de 471 caracteres e ficava sem roteiro
+        # nenhum, caindo no video do modulo sem ninguem perceber. Quem apara o
+        # tamanho e encurtar(), depois.
+        if len(f) < 35 or len(f) > 900:
             continue
         if re.match(r"^(Quadro|Tabela|Figura)\s+\d", f):
             continue

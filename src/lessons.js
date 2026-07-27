@@ -6,7 +6,19 @@
 // mente treina a pessoa a ignorar a ferramenta, entao a regra agora e unica e
 // as duas pontas importam daqui.
 
-const IGNORAR_TITULO = /sumário navegável|índice de fluxogramas|índice navegável/i;
+// Defesa adicional ao marcador navigationOnly. A expressão é ancorada para
+// não transformar em navegação uma seção substantiva como a 26.3
+// ("Títulos, numeração, sumário e navegação").
+const TITULO_EXCLUSIVAMENTE_NAVEGACIONAL =
+  /^(?:sumário navegável|índice de fluxogramas|índice navegável de quadros e tabelas|índice de anexos|quadros|tabelas)$/i;
+
+export function isLessonSection(section) {
+  return Boolean(
+    section?.title
+      && !section.navigationOnly
+      && !TITULO_EXCLUSIVAMENTE_NAVEGACIONAL.test(section.title.trim()),
+  );
+}
 
 // Qual modulo recebe a secao. `byId` permite subir pelo parentId quando a
 // secao nao tem numero proprio (checklists e roteiros dentro de um capitulo).
@@ -54,7 +66,7 @@ export function assignedTrack(section, byId, tracks) {
 export function derivarAulas(popData, tracks) {
   const sectionById = new Map(popData.sections.map((s) => [s.id, s]));
   const lessons = popData.sections
-    .filter((s) => s.title && !s.navigationOnly && !IGNORAR_TITULO.test(s.title))
+    .filter(isLessonSection)
     .map((s, i) => ({
       ...s,
       trackId: assignedTrack(s, sectionById, tracks),

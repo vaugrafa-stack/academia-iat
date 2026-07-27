@@ -11,8 +11,7 @@ import{derivarAulas}from'./lessons.js';
 import{registrarOffline}from'./offline.js';
 import{loadAppData}from'./appData.js';
 import{getLearningDesign}from'./learningDesign.js';
-import{resolveOfficialSource,sourceRegistryStats}from'./officialSources.js';
-import{buildScenarioDocument,minimumEvidenceRequired}from'./scenarioDocuments.js';
+import{resolveOfficialSource}from'./officialSources.js';
 import'./styles.css';
 import'./nota10.css';
 try{const _t=localStorage.getItem('academia-iat-theme');document.documentElement.dataset.theme=(_t==='light'||_t==='dark')?_t:'dark';}catch{document.documentElement.dataset.theme='dark';}

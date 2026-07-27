@@ -446,12 +446,63 @@ export const NOVOS_CENARIOS = [
     ],
     outcome: 'As parcelas somam 2,27 ha e o texto declara 1,92 ha: divergência de 0,35 ha que precisa ser corrigida e compatibilizada com a cartografia do projeto, porque número de APP sem base espacial não se valida. O relatório também se contradiz: os indicadores registram que o plantio não ocorreu e as considerações finais afirmam que ocorreu. A ausência de plantio não é, isoladamente, descumprimento, desde que o cronograma permaneça compatível com o projeto e com o prazo vinculado à renovação da Licença de Operação. Mantida a informação de que o plantio não iniciou, a avaliação do semestre fica vinculada ao que foi efetivamente comprovado.',
   },
+  {
+    // Triagem de condicionantes. O POP define seis elementos de qualidade
+    // (Quadro 40) e sete defeitos a evitar (item 24.1), mas a plataforma nunca
+    // pedia para JULGAR uma condicionante escrita. As seis abaixo foram
+    // redigidas para exibir um defeito cada, exceto uma que atende ao padrao.
+    id: 'condic-triagem', track: 'm12', label: 'Triagem de condicionantes', type: 'PCH',
+    title: 'Seis condicionantes na mesa: quais sobrevivem ao padrão de qualidade',
+    facts: [
+      'Minuta de licença com seis condicionantes propostas pela equipe',
+      'O Quadro 40 do POP define verbo de ação, objeto, prazo, indicador, responsabilidade e forma de comprovação',
+      'O item 24.1 lista as condicionantes que devem ser evitadas',
+      'Uma das pendências do processo é crítica e impede a decisão segura',
+    ],
+    evidence: [
+      'Quadro 40 do POP, padrão de qualidade das condicionantes',
+      'Item 24.1, condicionantes que devem ser evitadas',
+      'Quadro 41, foco de condicionantes por fase',
+      'Checklist com a classificação de gravidade das pendências',
+    ],
+    serie: {
+      titulo: 'Condicionantes propostas, como foram escritas',
+      colunas: ['Nº', 'Texto proposto'],
+      linhas: [
+        ['1', 'Cumprir a legislação ambiental vigente.'],
+        ['2', 'Apresentar, a cada 6 meses contados da emissão desta licença, relatório de execução do programa de monitoramento da qualidade da água, com ART e laudos laboratoriais dos parâmetros previstos.'],
+        ['3', 'O empreendedor deverá definir se a supressão adicional identificada é ou não passível de autorização.'],
+        ['4', 'Apresentar as poligonais da ADA e da casa de força, ausentes no processo, necessárias para analisar APP e supressão.'],
+        ['5', 'Manter o monitoramento de fauna.'],
+        ['6', 'Comprovar a compensação quando expedido o regulamento indicado no art. 5º da Lei nº 20.929/2021.'],
+      ],
+      nota: 'Julgue cada uma pelos seis elementos do Quadro 40 antes de responder.',
+    },
+    steps: ['Padrão', 'Genérica', 'Competência', 'Pendência', 'Redação'],
+    questions: [
+      ['A condicionante 1 atende ao padrão de qualidade, com prazo, indicador e forma de comprovação?', 'nao'],
+      ['A condicionante 2 reúne verbo de ação, objeto definido, prazo, indicador e forma de comprovação?', 'sim'],
+      ['A condicionante 3 é admissível, mandando o empreendedor decidir se cabe autorização?', 'nao'],
+      ['A condicionante 4 pode substituir a diligência de uma pendência crítica que impede a decisão?', 'nao'],
+      ['A condicionante 6 pode manter a redação transitória depois do Decreto Estadual nº 7.150/2024?', 'nao'],
+    ],
+    outcome: 'Só a condicionante 2 sobrevive: ela tem verbo de ação, objeto definido, prazo, indicador e forma de comprovação. A 1 repete obrigação legal sem relação direta com o empreendimento e sem nada verificável. A 3 transfere ao empreendedor competência decisória do órgão. A 4 tenta resolver por condicionante uma pendência crítica que precisa ser sanada antes do deferimento, e por isso volta para diligência. A 5 não tem prazo, indicador nem forma de comprovação. A 6 mantém redação transitória que não deve mais ser utilizada depois da publicação do Decreto Estadual nº 7.150/2024.',
+  },
 ];
 
 // Rubrica da fundamentacao. `termos` sao os sinais procurados no texto escrito,
 // comparados sem acento e sem caixa. E conferencia de termo, nao avaliacao do
 // raciocinio, e a interface diz isso ao mostrar o resultado.
 export const RUBRICAS = {
+  'condic-triagem': {
+    elementos: [
+      { rot: 'Os seis elementos do padrão', termos: ['prazo', 'indicador', 'comprova', 'verbo', 'objeto', 'responsab'] },
+      { rot: 'Obrigação legal genérica não é condicionante', termos: ['generic', 'genéric', 'obrigacao legal', 'obrigação legal', 'repete', 'relacao direta', 'relação direta'] },
+      { rot: 'Competência decisória não se transfere', termos: ['competenc', 'competênc', 'transfer', 'decisor', 'decisór', 'orgao', 'órgão'] },
+      { rot: 'Pendência crítica volta para diligência', termos: ['critic', 'crític', 'diligencia', 'diligência', 'antes do deferimento', 'impede'] },
+    ],
+    modelo: 'Análise: das seis condicionantes propostas, apenas a segunda reúne os elementos do Quadro 40, porque traz verbo de ação, objeto definido, prazo de seis meses, indicador na forma de laudos laboratoriais e forma de comprovação com ART. A primeira repete obrigação legal genérica, sem relação direta com o empreendimento e sem nada verificável; a quinta não tem prazo, indicador nem forma de comprovação. Comentário: a terceira transfere ao empreendedor competência decisória do órgão ambiental, o que o item 24.1 veda expressamente. A quarta tenta resolver por condicionante uma pendência crítica que impede a decisão segura e que, por isso, deve ser sanada antes do deferimento. A sexta mantém redação transitória que não deve mais ser utilizada depois da publicação do Decreto Estadual nº 7.150/2024. Solicitações: manter apenas a segunda condicionante; reescrever a primeira e a quinta com prazo, indicador e forma de comprovação, ou suprimi-las; devolver a quarta para diligência; e retirar a terceira e a sexta da minuta.',
+  },
   'prog-residuos': {
     elementos: [
       { rot: 'Unidades primárias distintas', termos: ['litro', 'quilograma', 'unidade', 'convers', 'massa', 'tonelada'] },

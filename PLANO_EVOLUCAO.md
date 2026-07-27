@@ -38,7 +38,7 @@ Legenda: ⬜ pendente · 🟨 em curso · ✅ pronto · ⛔ recusado (com motivo
 | Casos por módulo | 1 na maioria; 3 em M05, M08, M14 | Profundidade desigual |
 | Videoaulas | 159 de 161 | Duas seções organizacionais sem roteiro |
 | Exemplo trabalhado | Presente na abertura de cada módulo | — |
-| Medida de aprendizagem | 1 questão por módulo | Mede direção, não magnitude |
+| Medida de aprendizagem | 3 questões por módulo | — |
 
 ### Reconhecido e não resolvido
 - Competência de especialista exige documento real, caso aberto e avaliação
@@ -124,7 +124,7 @@ primeiro, como já foi feito no bloco de programas ambientais.
 
 ---
 
-## Etapa 5 — Avaliação que mede magnitude ⬜
+## Etapa 5 — Avaliação que mede magnitude ✅
 
 **Problema.** O diagnóstico usa uma questão por módulo: mede direção, não
 magnitude. Já dito na tela, mas é limitação real.
@@ -138,6 +138,15 @@ magnitude. Já dito na tela, mas é limitação real.
 
 **Pronto quando.** Comparação entrada/saída reporta percentual por módulo, e a
 semente garante que o par compara o mesmo instrumento.
+
+**Decisão tomada.** Não houve semente aleatória: a seleção é determinística
+(as três primeiras questões de cada módulo, na ordem do banco). Semente seria
+complexidade sem ganho, já que o que importa é entrada e saída usarem o mesmo
+instrumento. O custo subiu de 17 para 51 questões e a tela passou a declarar
+isso: promessa de 15 min faria a pessoa abandonar no meio e perder a medida.
+
+**Análise de item ficou fora.** Exige série histórica de várias pessoas, e o
+progresso é local por navegador. Sem backend, não há amostra.
 
 ---
 
@@ -197,7 +206,7 @@ resolução automática de "Quadro N" é insegura.
 | 2 Extrair telas | 🟨 | `src/ui.jsx`, `src/painelAluno.jsx` | 6 módulos sem referência solta; 11 áreas renderizam; main.jsx 92 → 81 kB |
 | 3 Exemplo trabalhado | ✅ | `ExemploNoProcesso` | Aparece só na aula de abertura; 28 testes de unidade; desfecho fica no laboratório |
 | 4 Profundidade de prática | ⬜ | | |
-| 5 Avaliação com magnitude | ⬜ | | |
+| 5 Avaliação com magnitude | ✅ | `DIAG_POR_MODULO=3` | 51 questões, 3 por módulo, seleção determinística; comparação reporta `M01 0→3 de 3` |
 | 6 Tela de offline | ⬜ | | |
 | 7 Acessibilidade | ⬜ | | |
 | 8 Quadros na aula | ⛔ | — | Premissa falsa: 3 de 161 aulas citam quadro externo; resolver por número abriria o quadro errado |

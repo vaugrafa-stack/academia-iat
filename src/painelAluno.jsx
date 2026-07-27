@@ -23,10 +23,18 @@ export function Suporte(){return <div className="page suporte-page"><PageHeader 
 export function ComparaDiagnostico({d}){
  const e=d.entrada,x=d.saida;
  const pct=r=>Math.round(r.acertos/r.total*100);
- const virou=(a,b)=>{const o={};for(const id of Object.keys(a.porQuestao||{})){const A=a.porQuestao[id],B=(b.porQuestao||{})[id];if(!B)continue;if(A.ok!==B.ok)o[A.track]=B.ok?'ganhou':'perdeu'}return o};
- const mudou=x?virou(e,x):{};
- const ganhos=Object.entries(mudou).filter(([,v])=>v==='ganhou').map(([t])=>t);
- const perdas=Object.entries(mudou).filter(([,v])=>v==='perdeu').map(([t])=>t);
+ // Agrega por modulo. Com uma questao por modulo o resultado era binario,
+ // acertou ou nao; com tres vira quantas de quantas, e da para dizer o tamanho
+ // da mudanca em vez de so o sinal dela.
+ const porModulo=(r)=>{const m={};for(const id of Object.keys(r.porQuestao||{})){
+   const q=r.porQuestao[id];const a=m[q.track]||(m[q.track]={ok:0,n:0});a.n++;if(q.ok)a.ok++}
+  return m};
+ const antes=porModulo(e),depois=x?porModulo(x):null;
+ const deltas=depois?Object.keys(antes).filter(t=>depois[t]).map(t=>({
+   t,de:antes[t].ok,para:depois[t].ok,n:antes[t].n,d:depois[t].ok-antes[t].ok
+  })).filter(z=>z.d!==0).sort((a,b)=>b.d-a.d):[];
+ const ganhos=deltas.filter(z=>z.d>0);
+ const perdas=deltas.filter(z=>z.d<0);
  const nome=id=>tracks.find(t=>t.id===id)?.code||id;
  return <section className="diag-compara">
   <header><Activity size={16}/><h2>Ponto de partida e ponto de chegada</h2></header>
@@ -38,11 +46,11 @@ export function ComparaDiagnostico({d}){
    :<div className="dc-pendente"><small>Saída</small><p>Refaça o diagnóstico depois de estudar para medir o que mudou.</p></div>}
   </div>
   {x&&<p className="dc-saldo">{x.acertos>e.acertos?`Ganho de ${x.acertos-e.acertos} ${x.acertos-e.acertos===1?'questão':'questões'} entre os dois diagnósticos.`:x.acertos===e.acertos?'Mesmo número de acertos nos dois diagnósticos.':`Queda de ${e.acertos-x.acertos} ${e.acertos-x.acertos===1?'questão':'questões'}: vale rever o que mudou.`}</p>}
-  {x&&(ganhos.length>0||perdas.length>0)&&<div className="dc-modulos">
-   {ganhos.length>0&&<p><b className="ok">Passou a acertar</b> {ganhos.map(nome).join(', ')}</p>}
-   {perdas.length>0&&<p><b className="nao">Deixou de acertar</b> {perdas.map(nome).join(', ')}</p>}
+  {x&&deltas.length>0&&<div className="dc-modulos">
+   {ganhos.length>0&&<p><b className="ok">Subiu</b> {ganhos.map(z=>nome(z.t)+' '+z.de+'\u2192'+z.para+' de '+z.n).join(' \u00b7 ')}</p>}
+   {perdas.length>0&&<p><b className="nao">Caiu</b> {perdas.map(z=>nome(z.t)+' '+z.de+'\u2192'+z.para+' de '+z.n).join(' \u00b7 ')}</p>}
   </div>}
-  <small className="dc-limite">Uma questão por módulo mede direção, não magnitude: por módulo o resultado é acertou ou não acertou. O total é o número comparável.</small>
+  <small className="dc-limite">São três questões por módulo, sempre as mesmas nas duas medidas. Três itens dizem se houve mudança e de que tamanho; não são uma nota do módulo.</small>
  </section>
 }
 

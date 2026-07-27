@@ -100,6 +100,8 @@ try {
   assert(document.querySelectorAll('.rd-caso select option').length >= 26, 'redator oferece todos os casos como base');
 
   await click(navButtons.find(x => x.textContent.includes('Mapa do Paraná')));
+  assert(document.querySelectorAll('.mp-camadas button').length === 3, 'mapa oferece as três camadas');
+  assert(document.querySelectorAll('.mp-ex-opcoes button').length === 5, 'exercício de enquadramento com as cinco tipologias');
   assert(document.querySelectorAll('.mp-bacias path').length >= 15, 'mapa desenha as bacias hidrográficas do Paraná');
   assert(document.querySelectorAll('.mp-usinas circle').length >= 100, 'mapa plota as usinas do registro público');
   await click(document.querySelector('.mp-item'));

@@ -7,14 +7,106 @@
 // As fontes sao publicas: a divisao hidrografica oficial do Parana e o SIGA da
 // ANEEL. Nada aqui vem da base de processos do IAT.
 import React, { useMemo, useRef, useState } from 'react';
-import { Map as MapIcon, Search, X, Layers3, Zap, ZoomIn, ZoomOut, Maximize2, Move } from 'lucide-react';
+import { Map as MapIcon, Search, X, Layers3, Zap, ZoomIn, ZoomOut, Maximize2, Target, ChevronRight } from 'lucide-react';
 
 const COR = { CGH: '#57d8bf', PCH: '#4cc4f5', UHE: '#9fb7ff' };
 const ORDEM = ['CGH', 'PCH', 'UHE'];
 
 const norm = (v) => (v || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
 
-export default function MapaParana({ dados }) {
+// Faixas de potencia do Quadro 8 do POP. O limite superior e inclusivo, como no
+// quadro: "ate 75 kW", "superior a 75 kW e ate 500 kW", e assim por diante.
+const FAIXAS = [
+  { sigla: 'MCH', ate: 0.075, rot: 'até 75 kW' },
+  { sigla: 'MGH', ate: 0.5, rot: 'acima de 75 kW até 500 kW' },
+  { sigla: 'CGH', ate: 5, rot: 'acima de 500 kW até 5 MW' },
+  { sigla: 'PCH', ate: 30, rot: 'acima de 5 MW até 30 MW' },
+  { sigla: 'UHE', ate: Infinity, rot: 'acima de 30 MW' },
+];
+const faixaDe = (mw) => FAIXAS.find((f) => mw <= f.ate) || FAIXAS[FAIXAS.length - 1];
+
+// Exercicio de enquadramento sobre o registro publico.
+//
+// Por que vale a pena: o erro que o Quadro 8 nomeia e "tratar como CGH sem
+// verificar potencia". O sorteio favorece os casos limitrofes, onde 5 MW e CGH
+// e 5,2 MW ja e PCH, porque e ali que o enquadramento erra. E o feedback
+// insiste no que o POP diz logo em seguida: tipologia e a entrada, nao a
+// modalidade, que ainda depende de alagamento, IDA, supressao e territorio.
+function ExercicioEnquadrar({ usinas, state, setState }) {
+  const elegiveis = useMemo(() => (usinas || []).filter((u) => u.mw > 0), [usinas]);
+  const sortear = React.useCallback(() => {
+    // Peso maior perto das fronteiras de faixa: e la que o enquadramento erra.
+    const peso = (u) => ([0.075, 0.5, 5, 30].some((l) => Math.abs(u.mw - l) / l < 0.25) ? 4 : 1);
+    const total = elegiveis.reduce((a, u) => a + peso(u), 0);
+    let n = Math.random() * total;
+    for (const u of elegiveis) { n -= peso(u); if (n <= 0) return u; }
+    return elegiveis[0];
+  }, [elegiveis]);
+
+  const [alvo, setAlvo] = useState(() => sortear());
+  const [resposta, setResposta] = useState(null);
+  const placar = state.enquadra || { acertos: 0, total: 0 };
+  const certa = faixaDe(alvo.mw).sigla;
+
+  const responder = (sigla) => {
+    if (resposta) return;
+    setResposta(sigla);
+    setState((s) => {
+      const p = s.enquadra || { acertos: 0, total: 0 };
+      return { ...s, enquadra: { acertos: p.acertos + (sigla === certa ? 1 : 0), total: p.total + 1 } };
+    });
+  };
+  const proxima = () => { setAlvo(sortear()); setResposta(null); };
+
+  return (
+    <section className="mp-exercicio">
+      <header>
+        <Target size={16} />
+        <div>
+          <strong>Enquadre pela potência</strong>
+          <small>Usina do registro público da ANEEL. Diga a tipologia antes de conferir.</small>
+        </div>
+        {placar.total > 0 && <b>{placar.acertos}/{placar.total}</b>}
+      </header>
+
+      <div className="mp-ex-caso">
+        <span className="mp-ex-mw">{alvo.mw.toLocaleString('pt-BR')} MW</span>
+        <div>
+          <strong>{alvo.nome}</strong>
+          <small>{alvo.mun}{alvo.baciaPR ? ` · bacia ${alvo.baciaPR}` : ''} · {alvo.fase}</small>
+        </div>
+      </div>
+
+      <div className="mp-ex-opcoes" role="group" aria-label="Tipologia">
+        {FAIXAS.map((f) => {
+          const est = !resposta ? '' : f.sigla === certa ? 'certa' : f.sigla === resposta ? 'errada' : '';
+          return (
+            <button key={f.sigla} className={est} onClick={() => responder(f.sigla)} disabled={!!resposta}>
+              <b>{f.sigla}</b><small>{f.rot}</small>
+            </button>
+          );
+        })}
+      </div>
+
+      {resposta && (
+        <div className={'mp-ex-feedback' + (resposta === certa ? ' ok' : '')}>
+          <p>
+            {resposta === certa ? 'Correto. ' : `Não. ${alvo.mw.toLocaleString('pt-BR')} MW é ${certa}. `}
+            Pelo Quadro 8, {certa} é {faixaDe(alvo.mw).rot}.
+          </p>
+          <p className="mp-ex-limite">
+            A tipologia é a entrada do enquadramento, não a modalidade. Ela ainda depende de área de
+            alagamento, IDA, supressão de vegetação e da compatibilidade territorial com unidades de
+            conservação, e entre critérios prevalece o mais restritivo.
+          </p>
+          <button onClick={proxima}>Próxima usina <ChevronRight size={14} /></button>
+        </div>
+      )}
+    </section>
+  );
+}
+
+export default function MapaParana({ dados, state, setState }) {
   const [tipos, setTipos] = useState(() => new Set(ORDEM));
   const [busca, setBusca] = useState('');
   const [sel, setSel] = useState(null);          // usina selecionada
@@ -239,6 +331,7 @@ export default function MapaParana({ dados }) {
         </figure>
 
         <aside className="mp-painel">
+          {state && setState && <ExercicioEnquadrar usinas={dados.usinas} state={state} setState={setState} />}
           <div className="mp-filtros" role="group" aria-label="Filtrar por tipologia">
             {ORDEM.map((t) => (
               <button key={t} className={tipos.has(t) ? 'ativo' : ''} onClick={() => alternar(t)}

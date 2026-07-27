@@ -445,7 +445,7 @@ button.primary:active{transform:translateY(0);box-shadow:0 2px 8px #07583b33}
 body{transition:opacity .24s ease}
 body.page-leave{opacity:0}
 /* sliders com identidade */
-input[type=range]{-webkit-appearance:none;appearance:none;height:6px;border-radius:4px;background:linear-gradient(90deg,var(--green2),#dff1e8);outline-offset:4px}
+input[type=range]{-webkit-appearance:none;appearance:none;height:6px;border-radius:4px;background:linear-gradient(90deg,var(--green2),var(--track));outline-offset:4px}
 input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:20px;height:20px;border-radius:50%;background:var(--surface);border:3px solid var(--green2);box-shadow:0 2px 8px #0a281c33;cursor:pointer;transition:transform .15s var(--ease)}
 input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.15)}
 input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;background:var(--surface);border:3px solid var(--green2);box-shadow:0 2px 8px #0a281c33;cursor:pointer}
@@ -581,7 +581,7 @@ body{margin:0;background:var(--bg);color:var(--ink)}
 :root:not([data-theme="light"]) .modal-scrim,:root:not([data-theme="light"]) .nav-scrim{background:rgba(6,14,11,.6);backdrop-filter:blur(3px)}
 :root:not([data-theme="light"]) .toast{background:rgba(26,38,32,.95);backdrop-filter:blur(10px);border:1px solid var(--line);color:var(--ink)}
 /* inputs escuros */
-input,textarea,select{background:var(--surface2);color:var(--ink);border-color:var(--line)}
+input:not([type=range]),textarea,select{background:var(--surface2);color:var(--ink);border-color:var(--line)}
 input::placeholder,textarea::placeholder{color:var(--muted)}
 .global-search{background:var(--surface2);border-color:var(--line);color:var(--muted)}
 .global-search:hover{background:var(--surface)}
@@ -622,7 +622,7 @@ button:focus-visible,input:focus-visible,textarea:focus-visible,a:focus-visible,
 :root[data-theme="light"] .app-shell{background:var(--bg)}
 :root[data-theme="light"] .topbar{background:#ffffffee;backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
 :root[data-theme="light"] .sidebar-v2{background:#fff;border-right:1px solid var(--line)}
-:root[data-theme="light"] input,:root[data-theme="light"] textarea,:root[data-theme="light"] select,:root[data-theme="light"] .global-search{background:#fff}
+:root[data-theme="light"] input:not([type=range]),:root[data-theme="light"] textarea,:root[data-theme="light"] select,:root[data-theme="light"] .global-search{background:#fff}
 /* diagramas tecnicos sempre em painel escuro (tracos sao claros) */
 .cross-wrap,.turb-svg,.dam-mini,.arr-svg,.sfp-scroll{background:#141f1b!important}
 
@@ -996,3 +996,8 @@ a[href^="http"]::after{content:" (" attr(href) ")";font-size:10px;color:#555}
 @media(max-width:560px){
  .offline-bar,.update-bar{bottom:10px;font-size:12px;padding:10px 13px;flex-wrap:wrap}
 }
+
+/* Rótulos dos esquemas de turbina passam por cima do rotor e das conchas, e
+   sobre traço claro o texto perdia definição. Um contorno escuro atrás da
+   letra (paint-order) resolve sem mexer na composição do desenho. */
+.turb-svg text{paint-order:stroke;stroke:#0b1f1b;stroke-width:3.5px;stroke-linejoin:round}

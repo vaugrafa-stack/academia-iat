@@ -37,7 +37,7 @@ Legenda: ⬜ pendente · 🟨 em curso · ✅ pronto · ⛔ recusado (com motivo
 | Questões por módulo | 8 em todos | Uniforme, mas sem análise de item |
 | Casos por módulo | 1 na maioria; 3 em M05, M08, M14 | Profundidade desigual |
 | Videoaulas | 159 de 161 | Duas seções organizacionais sem roteiro |
-| Exemplo trabalhado | Ausente na aula | Aula mostra critério, não mostra alguém aplicando |
+| Exemplo trabalhado | Presente na abertura de cada módulo | — |
 | Medida de aprendizagem | 1 questão por módulo | Mede direção, não magnitude |
 
 ### Reconhecido e não resolvido
@@ -95,7 +95,7 @@ propriedade, uma por commit.
 
 ---
 
-## Etapa 3 — Exemplo trabalhado na aula ⬜
+## Etapa 3 — Exemplo trabalhado na aula ✅
 
 **Problema.** A aula apresenta o critério do POP. Ela não mostra ninguém
 aplicando o critério a um caso. Quem nunca analisou um processo lê a regra e
@@ -189,7 +189,7 @@ inline, sem sair da leitura.
 |---|---|---|---|
 | 1 Dado derivado | ✅ | `src/derivados.js` | 26 testes de unidade (eram 12); 11 áreas renderizam; build e 7 portões verdes |
 | 2 Extrair telas | 🟨 | `src/ui.jsx`, `src/painelAluno.jsx` | 6 módulos sem referência solta; 11 áreas renderizam; main.jsx 92 → 81 kB |
-| 3 Exemplo trabalhado | ⬜ | | |
+| 3 Exemplo trabalhado | ✅ | `ExemploNoProcesso` | Aparece só na aula de abertura; 28 testes de unidade; desfecho fica no laboratório |
 | 4 Profundidade de prática | ⬜ | | |
 | 5 Avaliação com magnitude | ⬜ | | |
 | 6 Tela de offline | ⬜ | | |

@@ -1333,3 +1333,19 @@ button:disabled{cursor:not-allowed}
 .mp-ex-limite{font-size:12px!important;color:var(--muted)!important;font-style:italic}
 .mp-ex-feedback button{display:inline-flex;align-items:center;gap:5px;padding:7px 13px;border-radius:8px;
  border:1px solid var(--line);background:var(--surface);color:var(--ink);font-size:13px;font-weight:700;cursor:pointer}
+
+/* ===== Exemplo trabalhado: como o critério aparece num processo ===== */
+.exemplo-processo{margin:18px 0;padding:15px;border:1px solid var(--line);border-radius:13px;
+ background:var(--surface2);border-left:3px solid var(--blue)}
+.exemplo-processo header{display:flex;align-items:flex-start;gap:10px;margin-bottom:11px}
+.exemplo-processo header small{display:block;font-size:11px;letter-spacing:.06em;text-transform:uppercase;
+ color:var(--muted);font-weight:800;margin-bottom:3px}
+.exemplo-processo header h3{margin:0;font-size:16px;line-height:1.35}
+.ep-fatos{list-style:none;margin:0 0 11px;padding:0;display:flex;flex-direction:column;gap:5px}
+.ep-fatos li{position:relative;padding-left:16px;font-size:13.5px;line-height:1.55;color:var(--ink2)}
+.ep-fatos li::before{content:"";position:absolute;left:0;top:8px;width:6px;height:6px;border-radius:50%;background:var(--blue)}
+.ep-pergunta{display:flex;align-items:flex-start;gap:8px;margin:0 0 12px;padding:10px 12px;border-radius:9px;
+ background:var(--surface);font-size:13.5px;line-height:1.55;color:var(--ink);font-weight:600}
+.exemplo-processo>button{display:inline-flex;align-items:center;gap:7px;padding:9px 15px;border-radius:9px;
+ border:0;background:var(--green2);color:var(--sobre-acento);font-size:13.5px;font-weight:800;cursor:pointer}
+.ep-nota{display:block;margin-top:9px;font-size:12px;line-height:1.5;color:var(--muted);font-style:italic}

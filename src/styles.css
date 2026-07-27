@@ -1077,3 +1077,25 @@ button:disabled{cursor:not-allowed}
 .lab-serie td:nth-child(4){font-variant-numeric:tabular-nums}
 .lab-serie>small{display:flex;align-items:center;gap:7px;padding:10px 14px;font-size:12px;color:var(--muted);
  background:var(--surface);border-top:1px solid var(--line)}
+
+/* ===== Laboratório agrupado por natureza do trabalho =====
+   Com 26 casos numa fita única, achar o caso certo virou impossível e a
+   progressão ficou invisível. O nível descreve a exigência do caso. */
+.lab-grupos{display:flex;flex-direction:column;gap:18px;margin:18px 0 24px}
+.lab-grupo{border:1px solid var(--line);border-radius:14px;background:var(--surface);padding:15px 16px}
+.lab-grupo>header{display:flex;align-items:flex-start;gap:14px;margin-bottom:12px}
+.lab-grupo h3{margin:0;font-size:16px;color:var(--ink)}
+.lab-grupo>header p{margin:4px 0 0;font-size:13px;line-height:1.5;color:var(--muted);max-width:74ch}
+.lg-nivel{flex:0 0 auto;font-size:11px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;
+ padding:5px 11px;border-radius:999px;border:1px solid currentColor;white-space:nowrap}
+.lg-nivel.n-fundamentos{color:var(--green2)}
+.lg-nivel.n-fases{color:var(--blue)}
+.lg-nivel.n-territorio{color:var(--blue)}
+.lg-nivel.n-decisao{color:var(--amber,#f3bd4f)}
+.lg-nivel.n-programas{color:#f0917e}
+.lab-grupo .scenario-tabs{margin:0}
+.lg-progresso{display:block;margin-top:10px;font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
+@media(max-width:640px){
+ .lab-grupo>header{flex-direction:column;gap:8px}
+ .lg-nivel{align-self:flex-start}
+}

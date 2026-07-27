@@ -490,6 +490,52 @@ export const NOVOS_CENARIOS = [
   },
 ];
 
+// Agrupamento dos casos por NATUREZA DO TRABALHO, não por módulo.
+//
+// Com 26 casos numa fita única de abas, achar o caso certo virou impossível e a
+// progressão ficou invisível: nada dizia que comparar três relatórios ao longo
+// do tempo é trabalho de outra ordem que enquadrar uma fase. Os grupos abaixo
+// ordenam do primeiro contato ao julgamento que exige experiência.
+//
+// O nível descreve a EXIGÊNCIA do caso, não o tempo de casa de quem resolve.
+export const GRUPOS_LAB = [
+  {
+    id: 'fundamentos',
+    titulo: 'Fundamentos e método',
+    nivel: 'Primeiro contato',
+    resumo: 'O que fundamenta uma exigência, que norma se aplica e como ler o processo antes de julgar.',
+    ids: ['escopo', 'transicao', 'triagem'],
+  },
+  {
+    id: 'fases',
+    titulo: 'Enquadramento e fases',
+    nivel: 'Aplicação',
+    resumo: 'Qual é o objeto de cada fase e o que se decide em cada uma, sem transportar exigência de uma para a outra.',
+    ids: ['cp', 'cp-antiga', 'las', 'lp', 'li', 'lo', 'rlo', 'rlo-vencida'],
+  },
+  {
+    id: 'territorio',
+    titulo: 'Estudos, território e interfaces',
+    nivel: 'Aplicação',
+    resumo: 'Suficiência do estudo, base espacial, unidades de conservação e os limites de competência de cada órgão.',
+    ids: ['estudos', 'pacuera', 'uc-apa', 'geo-insuficiente', 'barragem', 'intervenientes', 'delegado'],
+  },
+  {
+    id: 'decisao',
+    titulo: 'Decisão e produto técnico',
+    nivel: 'Avançado',
+    resumo: 'Transformar achado em encaminhamento proporcional e escrever o que sustenta a decisão.',
+    ids: ['condicionantes', 'condic-triagem', 'revisao', 'integrador'],
+  },
+  {
+    id: 'programas',
+    titulo: 'Acompanhamento de programas',
+    nivel: 'Especialista',
+    resumo: 'Comparar relatórios ao longo do tempo e distinguir a natureza do achado: execução, rastreabilidade, cronologia ou base espacial.',
+    ids: ['prog-semestral', 'prog-residuos', 'prog-compensacao', 'prog-app'],
+  },
+];
+
 // Rubrica da fundamentacao. `termos` sao os sinais procurados no texto escrito,
 // comparados sem acento e sem caixa. E conferencia de termo, nao avaliacao do
 // raciocinio, e a interface diz isso ao mostrar o resultado.

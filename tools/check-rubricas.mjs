@@ -7,7 +7,7 @@
 //      escolhido e largo demais e a conferencia vira ruido.
 //
 // Uso:  node tools/check-rubricas.mjs
-import { scenarios } from '../src/courseData.js';
+import { scenarios, GRUPOS_LAB } from '../src/courseData.js';
 
 const norm = (v) => (v || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
 
@@ -27,6 +27,21 @@ const GENERICOS = [
 ];
 
 let erros = 0;
+
+// Todo caso pertence a exatamente um grupo do laboratorio. Caso orfao some da
+// navegacao agrupada sem quebrar teste nenhum: ele existe, e ninguem acha.
+{
+  const nosGrupos = GRUPOS_LAB.flatMap((g) => g.ids);
+  const vistos = new Set();
+  for (const id of nosGrupos) {
+    if (vistos.has(id)) { erros++; console.log('FALHA grupo: caso repetido em mais de um grupo -> ' + id); }
+    vistos.add(id);
+    if (!scenarios.some((c) => c.id === id)) { erros++; console.log('FALHA grupo: id inexistente -> ' + id); }
+  }
+  for (const c of scenarios) {
+    if (!vistos.has(c.id)) { erros++; console.log('FALHA grupo: caso sem grupo, invisivel na navegacao -> ' + c.id); }
+  }
+}
 
 for (const s of scenarios) {
   if (!s.elementos || !s.elementos.length) { erros++; console.log(`FALHA ${s.id}: sem elementos de rubrica`); continue; }

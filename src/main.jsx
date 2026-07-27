@@ -1,6 +1,8 @@
 import React,{useEffect,useMemo,useRef,useState}from'react';
 import{Activity,AlertTriangle,ArrowRight,Award,BadgeCheck,BookMarked,BookOpen,Bookmark,BookmarkCheck,Building2,Check,CheckCircle2,ChevronLeft,ChevronRight,Circle,CircleHelp,ClipboardCheck,Clock,Compass,Database,Download,ExternalLink,Eye,FileCheck,FileCheck2,FileText,Files,Filter,FlaskConical,GitBranch,GraduationCap,Home,Image as ImageIcon,Inbox,Info,Layers3,Library,Lightbulb,Lock,Map as MapIcon,Maximize2,Menu,MessageSquareText,Milestone,PanelLeftClose,PanelLeftOpen,Pause,Play,RefreshCw,RotateCcw,Route,Scale,Search,ShieldCheck,Sparkles,StickyNote,Table2,Target,Trees,Moon,Sun,Trophy,X,Zap,CloudOff,ZoomIn,ZoomOut}from'lucide-react';
 import HydroGuide from'./hydro';
+import MapaParana from'./mapa.jsx';
+import mapaDados from'./data/mapa-parana.json';
 import popDataUrl from'./data/pop-content.json?url';
 import flowDataUrl from'./data/flowcharts-content.json?url';
 import aulaMediaUrl from'./data/aula-media.json?url';
@@ -24,7 +26,7 @@ const{popData,flowData,aulaMedia}=await loadAppData({popDataUrl,flowDataUrl,aula
 const TRACK_ICONS={Compass,Scale,Inbox,GitBranch,FileCheck,Milestone,RefreshCw,ShieldCheck,Files,Map:MapIcon,Trees,Building2,ClipboardCheck,BadgeCheck,Library};
 
 const STORAGE_KEY='academia-iat-progress-v2';
-const NAV=[['dashboard','Visão geral',Home],['hidreletricas','Hidrelétricas',Zap],['formacao','Formação',BookOpen],['fluxos','Fluxogramas',GitBranch],['laboratorio','Laboratório',FlaskConical],['avaliacoes','Avaliações',ClipboardCheck],['biblioteca','Biblioteca',Library],['perfil','Meu perfil',BadgeCheck],['suporte','Suporte',CircleHelp]];
+const NAV=[['dashboard','Visão geral',Home],['hidreletricas','Hidrelétricas',Zap],['mapa','Mapa do Paraná',MapIcon],['formacao','Formação',BookOpen],['fluxos','Fluxogramas',GitBranch],['laboratorio','Laboratório',FlaskConical],['avaliacoes','Avaliações',ClipboardCheck],['biblioteca','Biblioteca',Library],['perfil','Meu perfil',BadgeCheck],['suporte','Suporte',CircleHelp]];
 const blockMap=new Map(popData.blocks.map(b=>[b.id,b]));
 const GLOSSARIO=(()=>{const t=popData.tables.find(x=>/siglas e abrevia/i.test(x.title||''));const m=new Map();if(t)for(const r of t.rows.slice(1)){const c=r.cells||[];const sig=(c[0]&&c[0].text||'').trim();if(sig&&sig.length<=8&&/^[A-ZÇÃÕ0-9/.-]+$/.test(sig))m.set(sig,{nome:(c[1]&&c[1].text||'').trim(),desc:(c[2]&&c[2].text||'').trim()})}return m})();
 function siglasDaAula(texto){const achadas=[];for(const [sig,v] of GLOSSARIO){if(new RegExp('(^|[^A-Za-zÀ-ÿ])'+sig.replace(/[.*+?^${}()|[]\]/g,'\$&')+'([^A-Za-zÀ-ÿ]|$)').test(texto))achadas.push({sig,...v})}return achadas.slice(0,10)}
@@ -67,7 +69,7 @@ const INDICE=(()=>{const out=[];return{get(){if(out.length)return out;
 function sectionText(section){return(section.blockIds||[]).map(id=>{const b=blockMap.get(id);return b?.paragraph?.text||b?.caption||''}).filter(Boolean).join(' ')}
 function firstLesson(trackId){const ls=trackLessons.get(trackId)||[];return ls.find(l=>(l.number||'').trim())||ls[0]}
 
-const VIEW_IDS=['dashboard','hidreletricas','formacao','fluxos','laboratorio','avaliacoes','biblioteca','perfil','suporte'];
+const VIEW_IDS=['dashboard','hidreletricas','mapa','formacao','fluxos','laboratorio','avaliacoes','biblioteca','perfil','suporte'];
 function parseHash(){const h=((typeof location!=='undefined'&&location.hash)||'').replace(/^#\/?/,'');if(!h)return{view:'dashboard',lesson:null};const i=h.indexOf('/');const seg=i<0?h:h.slice(0,i);const rest=i<0?'':h.slice(i+1);if(seg==='aula'&&rest)return{view:'lesson',lesson:decodeURIComponent(rest)};if(VIEW_IDS.includes(seg))return{view:seg,lesson:null};return{view:'dashboard',lesson:null};}
 function reloadFade(){document.body.classList.add('page-leave');setTimeout(()=>location.reload(),240)}
 function pushHash(t){if(typeof location==='undefined')return;if(location.hash===t)return;try{history.pushState(null,'',t)}catch{location.hash=t}}
@@ -92,7 +94,7 @@ function App(){
  function openLesson(id){if(!id)return;setSelectedLesson(id);setState(s=>({...s,lastLesson:id}));setView('lesson');setSearchOpen(false);setMenuOpen(false);pushHash('#/aula/'+encodeURIComponent(id));scrollTo({top:0,behavior:'smooth'})}
  function complete(id){const agora=new Date().toISOString();setState(s=>({...s,completed:s.completed.includes(id)?s.completed.filter(x=>x!==id):[...s.completed,id],doneAt:{...(s.doneAt||{}),[id]:s.completed.includes(id)?undefined:agora},lastVisit:agora}));setToast(state.completed.includes(id)?'Aula marcada como não concluída':'Aula concluída e progresso salvo')}
  function bookmark(id){setState(s=>({...s,bookmarks:s.bookmarks.includes(id)?s.bookmarks.filter(x=>x!==id):[...s.bookmarks,id]}));setToast(state.bookmarks.includes(id)?'Favorito removido':'Aula salva nos favoritos')}
- let content={dashboard:<Dashboard state={state} progress={progress} go={go} openLesson={openLesson}/>,hidreletricas:<HydroGuide go={go}/>,formacao:<Formation state={state} openLesson={openLesson}/>,fluxos:<Flowcharts state={state} setState={setState}/>,laboratorio:<Laboratory state={state} setState={setState}/>,avaliacoes:<Assessments state={state} setState={setState} openLesson={openLesson}/>,biblioteca:<KnowledgeLibrary state={state} openLesson={openLesson}/>,perfil:<Profile state={state} progress={progress} profile={profile} setProfile={setProfile} go={go} openLesson={openLesson}/>,suporte:<Suporte/>,lesson:<Lesson lesson={lessonMap.get(selectedLesson)||lessons[0]} state={state} setState={setState} openLesson={openLesson} complete={complete} bookmark={bookmark} go={go}/>}[view];
+ let content={dashboard:<Dashboard state={state} progress={progress} go={go} openLesson={openLesson}/>,hidreletricas:<HydroGuide go={go}/>,mapa:<MapaParana dados={mapaDados}/>,formacao:<Formation state={state} openLesson={openLesson}/>,fluxos:<Flowcharts state={state} setState={setState}/>,laboratorio:<Laboratory state={state} setState={setState}/>,avaliacoes:<Assessments state={state} setState={setState} openLesson={openLesson}/>,biblioteca:<KnowledgeLibrary state={state} openLesson={openLesson}/>,perfil:<Profile state={state} progress={progress} profile={profile} setProfile={setProfile} go={go} openLesson={openLesson}/>,suporte:<Suporte/>,lesson:<Lesson lesson={lessonMap.get(selectedLesson)||lessons[0]} state={state} setState={setState} openLesson={openLesson} complete={complete} bookmark={bookmark} go={go}/>}[view];
  return <div className="app-shell"><a className="skip-link" href="#conteudo">Ir para o conteúdo</a>
   <Topbar onMenu={()=>setMenuOpen(v=>!v)} onSearch={()=>setSearchOpen(true)} progress={progress} profile={profile} onProfile={()=>go('perfil')}/>
   <Sidebar view={view} go={go} open={menuOpen} openLesson={openLesson}/>

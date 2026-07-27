@@ -1099,3 +1099,64 @@ button:disabled{cursor:not-allowed}
  .lab-grupo>header{flex-direction:column;gap:8px}
  .lg-nivel{align-self:flex-start}
 }
+
+/* ===== Mapa do Paraná =====
+   SVG próprio, sem tiles externos: a CSP é restrita e o mapa precisa existir
+   offline, que é onde ele serve. */
+.mapa-layout{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(300px,1fr);gap:18px;align-items:start}
+.mp-quadro{margin:0;padding:12px;border:1px solid var(--line);border-radius:14px;background:var(--surface)}
+.mp-quadro svg{width:100%;height:auto;display:block}
+.mp-bacias path{fill:var(--surface2);stroke:var(--line);stroke-width:1.1;transition:fill .12s}
+.mp-bacias path:hover,.mp-bacias path.ativa{fill:color-mix(in srgb,var(--green2) 20%,var(--surface2));stroke:var(--green2);stroke-width:1.6}
+.mp-usinas circle{stroke:var(--surface);stroke-width:1.1;cursor:pointer;transition:r .12s}
+.mp-usinas circle:hover{stroke:var(--ink);stroke-width:2}
+.mp-usinas circle.ativa{stroke:var(--ink);stroke-width:2.6}
+.mp-quadro figcaption{display:flex;align-items:center;gap:7px;margin-top:9px;font-size:13px;color:var(--muted)}
+
+.mp-painel{display:flex;flex-direction:column;gap:12px;min-width:0}
+.mp-filtros{display:flex;gap:8px;flex-wrap:wrap}
+.mp-filtros button{display:inline-flex;align-items:center;gap:7px;padding:8px 13px;border-radius:999px;
+ border:1px solid var(--line);background:var(--surface);color:var(--muted);font-size:13px;font-weight:800;cursor:pointer}
+.mp-filtros button.ativo{color:var(--ink);border-color:var(--ink2);background:var(--surface2)}
+.mp-filtros button i{width:11px;height:11px;border-radius:50%;display:block}
+.mp-filtros button small{font-weight:600;opacity:.75;font-variant-numeric:tabular-nums}
+
+.mp-busca{display:flex;align-items:center;gap:9px;padding:0 12px;height:42px;border:1px solid var(--line);
+ border-radius:10px;background:var(--surface);color:var(--muted)}
+.mp-busca input{flex:1;min-width:0;border:0;background:none;color:var(--ink);font-size:14px;outline:none}
+.mp-busca>button{border:0;background:none;color:var(--muted);cursor:pointer;display:flex}
+
+.mp-detalhe{border:1px solid var(--line);border-radius:12px;background:var(--surface2);padding:13px}
+.mp-detalhe header{display:flex;align-items:center;gap:9px;margin-bottom:10px}
+.mp-detalhe header strong{flex:1;font-size:15px;color:var(--ink);line-height:1.3}
+.mp-detalhe header>button{border:0;background:none;color:var(--muted);cursor:pointer;display:flex}
+.mp-tag{font-size:11px;font-weight:800;letter-spacing:.05em;padding:3px 9px;border-radius:999px;border:1px solid currentColor}
+.mp-detalhe dl{display:grid;grid-template-columns:auto 1fr;gap:5px 12px;margin:0;font-size:13px}
+.mp-detalhe dt{color:var(--muted)}
+.mp-detalhe dd{margin:0;color:var(--ink2)}
+
+.mp-lista{border:1px solid var(--line);border-radius:12px;background:var(--surface);overflow:hidden;
+ max-height:430px;overflow-y:auto}
+.mp-lista-cab{position:sticky;top:0;padding:9px 13px;font-size:12px;color:var(--muted);
+ background:var(--surface2);border-bottom:1px solid var(--line)}
+.mp-item{display:flex;align-items:flex-start;gap:10px;width:100%;padding:10px 13px;border:0;
+ border-bottom:1px solid var(--line);background:none;text-align:left;cursor:pointer;color:var(--ink)}
+.mp-item:hover{background:var(--surface2)}
+.mp-item.ativo{background:color-mix(in srgb,var(--green2) 14%,var(--surface))}
+.mp-item i{flex:0 0 auto;width:10px;height:10px;border-radius:50%;margin-top:5px}
+.mp-item span{display:flex;flex-direction:column;min-width:0}
+.mp-item strong{font-size:13px;line-height:1.35}
+.mp-item small{font-size:12px;color:var(--muted)}
+.mp-vazio{padding:16px 13px;font-size:13px;color:var(--muted);margin:0}
+
+.mp-fontes{display:flex;gap:10px;margin-top:16px;padding:13px;border:1px solid var(--line);
+ border-radius:12px;background:var(--surface2);font-size:12px;color:var(--muted)}
+.mp-fontes strong{display:block;color:var(--ink2);margin-bottom:5px;font-size:12px}
+.mp-fontes ul{margin:0 0 7px;padding-left:17px;line-height:1.55}
+.mp-fontes p{margin:0;line-height:1.55}
+
+@media(max-width:980px){
+ .mapa-layout{grid-template-columns:minmax(0,1fr)}
+ .mp-lista{max-height:330px}
+}
+.mp-bacias path.par{fill:color-mix(in srgb,var(--ink) 7%,var(--surface2))}

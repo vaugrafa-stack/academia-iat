@@ -87,6 +87,32 @@ def aneis(geom):
     return []
 
 
+def dentro(px, py, anel):
+    """Ponto em poligono por cruzamento de raio."""
+    dentro_ = False
+    n = len(anel)
+    j = n - 1
+    for i in range(n):
+        xi, yi = anel[i]
+        xj, yj = anel[j]
+        if (yi > py) != (yj > py):
+            xint = (xj - xi) * (py - yi) / (yj - yi) + xi
+            if px < xint:
+                dentro_ = not dentro_
+        j = i
+    return dentro_
+
+
+def bacia_do_ponto(lon, lat, bacias):
+    """Qual bacia contem a usina. Sem isto a bacia so tem nome e area, e o
+    mapa nao responde a pergunta que interessa: quantas usinas ha nela."""
+    for b in bacias:
+        for anel in b["partes"]:
+            if dentro(lon, lat, anel):
+                return b["nome"]
+    return None
+
+
 def carregar_bacias():
     dados = json.loads(BACIAS.read_text(encoding="utf-8"))
     out = []
@@ -155,6 +181,16 @@ def main():
     def proj(lon, lat):
         return (round((lon - x0) * k * escala + dx, 1),
                 round((y1 - lat) * escala + dy, 1))
+
+    # Atribuicao da bacia a cada usina. Precisa vir antes do laco abaixo, que
+    # descarta a geometria: sem a contagem, a bacia so teria nome e area e o
+    # mapa nao responderia quantas usinas ha nela.
+    from collections import Counter
+    for u in usinas:
+        u["baciaPR"] = bacia_do_ponto(u["lon"], u["lat"], bacias)
+    contagem = Counter(u["baciaPR"] for u in usinas if u["baciaPR"])
+    for b in bacias:
+        b["usinas"] = contagem.get(b["nome"], 0)
 
     for b in bacias:
         caminhos = []

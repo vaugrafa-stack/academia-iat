@@ -18,15 +18,20 @@ export default function MapaParana({ dados }) {
   const [tipos, setTipos] = useState(() => new Set(ORDEM));
   const [busca, setBusca] = useState('');
   const [sel, setSel] = useState(null);          // usina selecionada
-  const [bacia, setBacia] = useState(null);      // bacia em destaque
+  const [bacia, setBacia] = useState(null);      // bacia sob o cursor
+  const [baciaSel, setBaciaSel] = useState(null); // bacia escolhida, filtra a lista
   const listaRef = useRef(null);
 
   const usinas = useMemo(() => {
     const q = norm(busca);
     return (dados.usinas || []).filter(
-      (u) => tipos.has(u.tipo) && (!q || norm(`${u.nome} ${u.mun} ${u.bacia}`).includes(q)),
+      (u) => tipos.has(u.tipo)
+        && (!baciaSel || u.baciaPR === baciaSel)
+        && (!q || norm(`${u.nome} ${u.mun} ${u.bacia}`).includes(q)),
     );
-  }, [dados.usinas, tipos, busca]);
+  }, [dados.usinas, tipos, busca, baciaSel]);
+
+  const infoBacia = (dados.bacias || []).find((b) => b.nome === (bacia || baciaSel));
 
   const porTipo = useMemo(() => {
     const c = {};
@@ -69,12 +74,14 @@ export default function MapaParana({ dados }) {
               {(dados.bacias || []).map((b, i) => (
                 // Alterna o tom para a divisao ficar legivel: 16 bacias no mesmo
                 // preenchimento viram uma mancha unica e o mapa perde a funcao.
+                // Sem <title>: o tooltip nativo do navegador e feio, chega
+                // atrasado e nao cabe informacao. A bacia passa a falar no
+                // painel abaixo do mapa, e o clique filtra a lista.
                 <path key={b.nome} d={b.d}
-                      className={(bacia === b.nome ? 'ativa' : '') + (i % 2 ? ' par' : '')}
+                      className={(baciaSel === b.nome ? 'escolhida' : bacia === b.nome ? 'ativa' : '') + (i % 2 ? ' par' : '')}
                       onMouseEnter={() => setBacia(b.nome)}
-                      onMouseLeave={() => setBacia(null)}>
-                  <title>{b.nome}{b.area ? ` · ${b.area.toLocaleString('pt-BR')} km²` : ''}</title>
-                </path>
+                      onMouseLeave={() => setBacia(null)}
+                      onClick={() => setBaciaSel((v) => (v === b.nome ? null : b.nome))} />
               ))}
             </g>
             <g className="mp-usinas">
@@ -89,9 +96,19 @@ export default function MapaParana({ dados }) {
             </g>
           </svg>
           <figcaption>
-            {bacia
-              ? <><Layers3 size={14} /> Bacia {bacia}</>
-              : <>Passe sobre uma bacia para identificá-la. Clique num ponto para ver a usina.</>}
+            {infoBacia ? (
+              <>
+                <Layers3 size={14} />
+                <span className="mp-bacia-nome">Bacia {infoBacia.nome}</span>
+                {infoBacia.area != null && <span>{infoBacia.area.toLocaleString('pt-BR')} km²</span>}
+                <span>{infoBacia.usinas} {infoBacia.usinas === 1 ? 'usina' : 'usinas'}</span>
+                {baciaSel === infoBacia.nome
+                  ? <button className="mp-limpar" onClick={() => setBaciaSel(null)}>ver todas <X size={12} /></button>
+                  : <em>clique para filtrar</em>}
+              </>
+            ) : (
+              <>Passe sobre uma bacia para identificá-la, clique para filtrar a lista. Clique num ponto para ver a usina.</>
+            )}
           </figcaption>
         </figure>
 
@@ -130,7 +147,7 @@ export default function MapaParana({ dados }) {
           )}
 
           <div className="mp-lista" ref={listaRef}>
-            <div className="mp-lista-cab">{usinas.length} de {(dados.usinas || []).length} em exibição</div>
+            <div className="mp-lista-cab">{usinas.length} de {(dados.usinas || []).length} em exibição{baciaSel ? ` · bacia ${baciaSel}` : ''}</div>
             {usinas.map((u, i) => (
               <button key={`${u.nome}-${i}`}
                       className={'mp-item' + (sel && sel.nome === u.nome && sel.x === u.x ? ' ativo' : '')}

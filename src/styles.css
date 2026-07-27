@@ -1105,7 +1105,10 @@ button:disabled{cursor:not-allowed}
    offline, que é onde ele serve. */
 .mapa-layout{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(300px,1fr);gap:18px;align-items:start}
 .mp-quadro{margin:0;padding:12px;border:1px solid var(--line);border-radius:14px;background:var(--surface)}
-.mp-quadro svg{width:100%;height:auto;display:block}
+/* So o mapa ocupa a largura: sem o filho direto, esta regra esticava
+   tambem o icone da legenda, que virava um galao cinza embaixo do mapa. */
+.mp-quadro>svg{width:100%;height:auto;display:block}
+.mp-quadro figcaption svg{width:14px;height:14px;flex:0 0 auto}
 .mp-bacias path{fill:var(--surface2);stroke:var(--line);stroke-width:1.1;transition:fill .12s}
 .mp-bacias path:hover,.mp-bacias path.ativa{fill:color-mix(in srgb,var(--green2) 20%,var(--surface2));stroke:var(--green2);stroke-width:1.6}
 .mp-usinas circle{stroke:var(--surface);stroke-width:1.1;cursor:pointer;transition:r .12s}
@@ -1160,3 +1163,10 @@ button:disabled{cursor:not-allowed}
  .mp-lista{max-height:330px}
 }
 .mp-bacias path.par{fill:color-mix(in srgb,var(--ink) 7%,var(--surface2))}
+.mp-bacias path.escolhida{fill:color-mix(in srgb,var(--green2) 30%,var(--surface2));stroke:var(--green2);stroke-width:2}
+.mp-bacias path{cursor:pointer}
+.mp-quadro figcaption{flex-wrap:wrap;gap:5px 12px}
+.mp-bacia-nome{font-weight:800;color:var(--ink)}
+.mp-quadro figcaption em{font-style:normal;opacity:.75}
+.mp-limpar{display:inline-flex;align-items:center;gap:5px;border:1px solid var(--line);background:var(--surface2);
+ color:var(--ink);border-radius:999px;padding:3px 10px;font-size:12px;font-weight:800;cursor:pointer}

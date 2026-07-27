@@ -50,7 +50,7 @@ try {
   assert(packageJson.scripts.dev.includes('--open'), 'iniciador abre o navegador quando o servidor fica pronto');
   assert(launcher.includes('A plataforma ja esta ativa') && launcher.includes(':server_error'), 'iniciador trata instancia existente e mantem erros visiveis');
 
-  assert(document.querySelectorAll('.sidebar-v2 nav button').length === 10, 'dez áreas principais disponíveis (inclui Mapa do Paraná)');
+  assert(document.querySelectorAll('.sidebar-v2 nav button').length === 11, 'onze áreas principais disponíveis (inclui Mapa e Redigir uma IT)');
   assert(document.querySelector('.dashboard-page h1')?.textContent.includes('Aprenda o procedimento'), 'painel inicial renderizado');
   assert(document.querySelectorAll('.journey-track button').length === 17, 'dezessete módulos no percurso');
 
@@ -93,6 +93,11 @@ try {
   await click([...document.querySelectorAll('button')].find(x => /Confirmar/.test(x.textContent)));
   const fonte = document.querySelector('.quiz-fonte blockquote');
   assert(fonte && fonte.textContent.trim().length > 20, 'feedback exibe o trecho do POP que sustenta a questão');
+
+  await click(navButtons.find(x => x.textContent.includes('Redigir uma IT')));
+  assert(document.querySelectorAll('.rd-trilha button').length === 10, 'redator abre as dez seções do Anexo B');
+  assert(/O que o POP exige/i.test(document.querySelector('.rd-exige')?.textContent || ''), 'cada seção mostra o que o POP exige');
+  assert(document.querySelectorAll('.rd-caso select option').length >= 26, 'redator oferece todos os casos como base');
 
   await click(navButtons.find(x => x.textContent.includes('Mapa do Paraná')));
   assert(document.querySelectorAll('.mp-bacias path').length >= 15, 'mapa desenha as bacias hidrográficas do Paraná');

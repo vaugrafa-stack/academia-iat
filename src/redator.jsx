@@ -1,0 +1,168 @@
+// Redator de Informacao Tecnica.
+//
+// A plataforma ensinava a reconhecer: julgar sim ou nao, apontar o defeito,
+// escolher o encaminhamento. Mas o produto que o analista assina e a
+// Informacao Tecnica, e ate aqui ninguem escrevia uma. Aqui ele escreve, secao
+// por secao, com o que o POP exige em cada uma ao lado e o caso da pratica
+// como materia-prima.
+//
+// O que este redator NAO faz: corrigir o texto. Ele nao tem como julgar
+// redacao, e fingir que tem seria pior do que nao avaliar. Ele guarda o
+// rascunho, mostra o que falta, confronta com o desfecho do caso e permite
+// levar o texto para avaliacao humana.
+import React, { useMemo, useState } from 'react';
+import { FileText, ChevronRight, ChevronLeft, Download, Check, Circle, Lightbulb, AlertTriangle, Eye } from 'lucide-react';
+import { ESTRUTURA_IT, MINIMO_SECAO, progressoIT, montarIT } from './redatorIT.js';
+
+export default function RedatorIT({ scenarios, grupos, state, setState, go }) {
+  const [casoId, setCasoId] = useState(() => state.itCasoAtual || scenarios[0]?.id);
+  const [passo, setPasso] = useState(0);
+  const [verTexto, setVerTexto] = useState(false);
+
+  const caso = scenarios.find((c) => c.id === casoId) || scenarios[0];
+  const rascunho = (state.its && state.its[caso.id]) || {};
+  const prog = useMemo(() => progressoIT(rascunho), [rascunho]);
+  const secao = ESTRUTURA_IT[passo];
+  const texto = rascunho[secao.id] || '';
+
+  const escrever = (v) => setState((s) => ({
+    ...s,
+    itCasoAtual: caso.id,
+    its: { ...(s.its || {}), [caso.id]: { ...((s.its || {})[caso.id] || {}), [secao.id]: v } },
+  }));
+
+  const trocarCaso = (id) => { setCasoId(id); setPasso(0); setVerTexto(false); };
+
+  const baixar = () => {
+    const blob = new Blob([montarIT(caso, rascunho)], { type: 'text/plain;charset=utf-8' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `IT-exercicio-${caso.id}.txt`;
+    a.click();
+    URL.revokeObjectURL(a.href);
+  };
+
+  return (
+    <div className="page redator-page">
+      <header className="page-header">
+        <span><FileText /></span>
+        <div>
+          <small className="ph-kicker">PRODUTO TÉCNICO</small>
+          <h1>Escrever uma Informação Técnica</h1>
+          <p>As dez seções que o Anexo B do POP exige, uma por vez, com o caso da prática como matéria-prima. O texto fica salvo neste navegador.</p>
+        </div>
+      </header>
+
+      <div className="rd-caso">
+        <label htmlFor="rd-sel">Caso de base</label>
+        <select id="rd-sel" value={caso.id} onChange={(e) => trocarCaso(e.target.value)}>
+          {grupos.map((g) => (
+            <optgroup key={g.id} label={`${g.titulo} · ${g.nivel}`}>
+              {g.ids.map((id) => {
+                const c = scenarios.find((x) => x.id === id);
+                return c ? <option key={id} value={id}>{c.label} — {c.title.slice(0, 58)}</option> : null;
+              })}
+            </optgroup>
+          ))}
+        </select>
+        <span className="rd-prog">{prog.feitas} de {prog.total} seções escritas</span>
+      </div>
+
+      <div className="rd-trilha" role="tablist" aria-label="Seções da Informação Técnica">
+        {ESTRUTURA_IT.map((s, i) => {
+          const feita = prog.ids.includes(s.id);
+          return (
+            <button key={s.id} role="tab" aria-selected={i === passo}
+                    className={(i === passo ? 'atual ' : '') + (feita ? 'feita' : '')}
+                    onClick={() => { setPasso(i); setVerTexto(false); }}>
+              <i>{feita ? <Check size={12} /> : s.n}</i>
+              <span>{s.titulo}</span>
+            </button>
+          );
+        })}
+      </div>
+
+      {verTexto ? (
+        <section className="rd-preview">
+          <div className="rd-preview-cab">
+            <strong><Eye size={16} /> Sua Informação Técnica</strong>
+            <div>
+              <button onClick={baixar}><Download size={15} /> Baixar como texto</button>
+              <button className="primary" onClick={() => setVerTexto(false)}>Voltar a escrever</button>
+            </div>
+          </div>
+          <pre>{montarIT(caso, rascunho)}</pre>
+          <article className="rd-confronto">
+            <strong><Lightbulb size={15} /> Confronte com o desfecho do caso</strong>
+            <p>{caso.outcome}</p>
+            {caso.modelo && (
+              <details>
+                <summary>Ver a fundamentação modelo deste caso</summary>
+                <p>{caso.modelo}</p>
+              </details>
+            )}
+            <small>A comparação é sua. Este exercício não corrige redação: ele guarda o que você escreveu, mostra o que o POP exige em cada seção e permite levar o texto para avaliação de quem orienta.</small>
+          </article>
+        </section>
+      ) : (
+        <section className="rd-editor">
+          <div className="rd-guia">
+            <h2>{secao.n}. {secao.titulo}</h2>
+            <div className="rd-exige">
+              <strong>O que o POP exige aqui</strong>
+              <p>{secao.exige}</p>
+            </div>
+            <div className="rd-armadilha">
+              <AlertTriangle size={15} />
+              <div><strong>Erro recorrente</strong><p>{secao.armadilha}</p></div>
+            </div>
+            <div className="rd-dica">
+              <Lightbulb size={15} />
+              <p>{secao.dica(caso)}</p>
+            </div>
+            <details className="rd-materia">
+              <summary>Matéria-prima do caso</summary>
+              <ul>{(caso.facts || []).map((f) => <li key={f}>{f}</li>)}</ul>
+              {caso.serie && (
+                <table>
+                  <thead><tr>{caso.serie.colunas.map((c) => <th key={c}>{c}</th>)}</tr></thead>
+                  <tbody>{caso.serie.linhas.map((l, i) => <tr key={i}>{l.map((c, j) => <td key={j}>{c}</td>)}</tr>)}</tbody>
+                </table>
+              )}
+            </details>
+          </div>
+
+          <div className="rd-campo">
+            <textarea value={texto} onChange={(e) => escrever(e.target.value)}
+                      placeholder={`Escreva a seção "${secao.titulo}"...`}
+                      aria-label={`Texto da seção ${secao.titulo}`} />
+            <div className="rd-medidor">
+              <span>{texto.trim().length} caracteres</span>
+              <i><em style={{ width: `${Math.min(100, texto.trim().length / MINIMO_SECAO * 100)}%` }} /></i>
+              <span>{texto.trim().length >= MINIMO_SECAO ? 'seção escrita' : `mínimo ${MINIMO_SECAO}`}</span>
+            </div>
+            <div className="rd-nav">
+              <button disabled={passo === 0} onClick={() => setPasso((p) => p - 1)}>
+                <ChevronLeft size={16} /> Anterior
+              </button>
+              {passo < ESTRUTURA_IT.length - 1 ? (
+                <button className="primary" onClick={() => setPasso((p) => p + 1)}>
+                  Próxima seção <ChevronRight size={16} />
+                </button>
+              ) : (
+                <button className="primary" onClick={() => setVerTexto(true)}>
+                  Ver a IT completa <Eye size={16} />
+                </button>
+              )}
+            </div>
+          </div>
+        </section>
+      )}
+
+      <footer className="rd-aviso">
+        <Circle size={13} />
+        <p>Exercício didático. O texto produzido aqui não é peça processual, não tem validade e não representa manifestação do IAT.</p>
+      </footer>
+    </div>
+  );
+}

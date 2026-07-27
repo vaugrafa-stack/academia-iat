@@ -8,3 +8,9 @@ Ele não deve apenas indicar presença de arquivo
 
 00:10.400 --> 00:14.000
 Deve avaliar compatibilidade com o empreendimento, titular, fase, modalidade, estudo, outorga, ANEEL, cartografia e condicionantes
+
+00:14.000 --> 00:17.600
+Identificação: Nome, CNPJ, município, corpo hídrico, bacia, potência e coordenadas
+
+00:17.600 --> 00:21.200
+Enquadramento: Tipologia MCH, MGH, CGH, PCH ou UHE e modalidade requerida

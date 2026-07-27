@@ -232,6 +232,99 @@ function TurbinePicker() {
   );
 }
 
+// Ciclo de geracao, animado em SVG.
+//
+// Substitui um GIF de 290 kB cujo texto estava sem acento ("Reservatorio",
+// "casa de forca") e serrilhava em tela grande. Em SVG o texto sai nitido em
+// qualquer tamanho e a animacao cai sozinha com prefers-reduced-motion.
+//
+// Os rotulos ficam FORA do desenho, numa legenda HTML: escritos sobre a
+// ilustracao eles se sobrepunham a barragem e ao reservatorio, e qualquer
+// ajuste de posicao quebrava em outra largura de tela.
+const CICLO_ETAPAS = [
+  ['Reservatório', 'a água represada acumula energia potencial'],
+  ['Conduto forçado', 'a queda vira velocidade'],
+  ['Turbina', 'a água em movimento gira o rotor'],
+  ['Gerador', 'a rotação vira energia elétrica'],
+  ['Restituição', 'a água turbinada volta ao rio'],
+];
+
+function CicloGeracao() {
+  const agua = '#4cc4f5';
+  const verde = '#3fe0a6';
+  const marcador = (x, y, n) => (
+    <g key={n}>
+      <circle cx={x} cy={y} r="13" fill="#0b1f1b" stroke={verde} strokeWidth="2" />
+      <text x={x} y={y} className="cg-num" textAnchor="middle" dominantBaseline="central">{n}</text>
+    </g>
+  );
+  return (
+    <>
+      <svg viewBox="0 0 640 280" className="ciclo-svg" role="img"
+           aria-label="Ciclo de geração de uma usina hidrelétrica: a água do reservatório desce pelo conduto forçado, gira a turbina, o gerador produz eletricidade que segue pela linha de transmissão, e a água turbinada é restituída ao rio.">
+        <defs>
+          <linearGradient id="cg-ceu" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stopColor="#0d2b30" /><stop offset="1" stopColor="#10352f" />
+          </linearGradient>
+        </defs>
+
+        <rect width="640" height="280" fill="url(#cg-ceu)" rx="10" />
+        <path d="M0 150 L110 104 L214 150 Z" fill="#16463c" opacity=".85" />
+        <path d="M452 150 L536 108 L640 150 Z" fill="#16463c" opacity=".85" />
+
+        {/* reservatorio */}
+        <rect x="0" y="150" width="232" height="86" fill={agua} opacity=".7" />
+        <path className="cg-onda" d="M0 157 q29 -7 58 0 t58 0 t58 0 t58 0 t58 0"
+              fill="none" stroke="#bfe3ff" strokeWidth="2.5" opacity=".6" />
+        {marcador(60, 194, 1)}
+
+        {/* barragem e tomada d'agua */}
+        <path d="M232 150 L232 236 L268 236 L250 150 Z" fill="#8399a0" stroke={verde} strokeWidth="2" />
+        <rect x="208" y="192" width="24" height="22" fill="#0a4a38" stroke={verde} strokeWidth="2" rx="3" />
+
+        {/* conduto forcado, com o fluxo descendo */}
+        <line x1="232" y1="204" x2="392" y2="240" stroke="#2b3a3f" strokeWidth="14" strokeLinecap="round" />
+        <line className="cg-fluxo" x1="232" y1="204" x2="392" y2="240" stroke={verde} strokeWidth="6"
+              strokeLinecap="round" strokeDasharray="10 22" />
+        {marcador(312, 190, 2)}
+
+        {/* casa de forca: turbina girando e gerador pulsando */}
+        <rect x="392" y="206" width="98" height="54" fill="#0e3630" stroke={verde} strokeWidth="2" rx="4" />
+        <path d="M392 206 L441 184 L490 206 Z" fill="#0a4a38" stroke={verde} strokeWidth="2" />
+        <g className="cg-turbina" style={{ transformOrigin: '424px 234px' }}>
+          <circle cx="424" cy="234" r="14" fill="none" stroke={agua} strokeWidth="3" />
+          <path d="M424 234 L424 221 M424 234 L435 241 M424 234 L413 241"
+                stroke={agua} strokeWidth="3" strokeLinecap="round" />
+        </g>
+        {marcador(424, 172, 3)}
+        <rect className="cg-gerador" x="452" y="222" width="26" height="24" rx="3"
+              fill="#0a4a38" stroke="#f3bd4f" strokeWidth="2" />
+        {marcador(465, 172, 4)}
+
+        {/* subestacao e linha de transmissao */}
+        <path d="M566 214 L556 152 M566 214 L576 152 M559 178 L573 178 M557 194 L575 194"
+              stroke="#8399a0" strokeWidth="2.5" fill="none" />
+        <path className="cg-linha" d="M490 220 Q528 192 556 156"
+              stroke="#f3bd4f" strokeWidth="2" fill="none" strokeDasharray="6 6" />
+
+        {/* canal de fuga */}
+        <rect x="490" y="248" width="150" height="18" fill={agua} opacity=".7" />
+        <path className="cg-onda2" d="M490 256 q22 -5 44 0 t44 0 t44 0"
+              fill="none" stroke="#bfe3ff" strokeWidth="2" opacity=".55" />
+        {marcador(560, 236, 5)}
+      </svg>
+      {/* O numero vem do contador CSS, nao de um <span>: com o span, qualquer
+          falha de folha de estilo mostrava o numero duas vezes ("1. 1Reservatorio"),
+          porque o marcador nativo do <ol> reaparece junto. */}
+      <ol className="ciclo-legenda">
+        {CICLO_ETAPAS.map(([nome, desc]) => (
+          <li key={nome}><strong>{nome}</strong><small>{desc}</small></li>
+        ))}
+      </ol>
+    </>
+  );
+}
+
 export default function HydroGuide({ go }) {
   const [parte, setParte] = useState('turbina');
   const [turb, setTurb] = useState(0);
@@ -249,7 +342,7 @@ export default function HydroGuide({ go }) {
 
       <section className="hydro-hero">
         <figure className="hydro-gif">
-          <img src={ASSET('/hidro/funcionamento.gif')} alt="Animação do funcionamento de uma usina hidrelétrica" />
+          <CicloGeracao />
           <figcaption>Ciclo de geração: captação, adução, turbinamento e restituição ao rio.</figcaption>
         </figure>
         <div className="hydro-hero-copy">

@@ -142,20 +142,57 @@ def roteiro(sec, blocos, tabelas):
             pontos = [encurtar(p, 145) for p in passos[:4]]
     if len(pontos) < 4 and len(fs) > 1:
         pontos += [encurtar(f, 145) for f in fs[1:1 + (4 - len(pontos))]]
-    if not pontos and quadros:
-        # secao que e um quadro: a primeira coluna ja e a lista de criterios
-        col = []
-        for q in quadros:
-            for r in q["rows"][1:]:
-                c = (r["cells"][0]["text"] or "").strip()
-                if 3 < len(c) < 140:
-                    col.append(c)
-        pontos = [encurtar(c, 145) for c in col[:4]]
-        if not essencia and quadros:
-            essencia = encurtar(quadros[0].get("title") or quadros[0]["caption"])
+    # Quadro: completa quando a secao rende menos de tres falas, nao so quando
+    # nao rende nenhuma. Varias secoes do POP sao uma frase curta seguida do
+    # quadro, e o video ficava com uma cena so.
+    if len(pontos) < 3 and quadros:
+        pontos += _linhas_quadro(quadros, 145)[: 4 - len(pontos)]
+        if not essencia:
+            essencia = _abertura_quadro(quadros[0])
+
+    # Secao magra: com uma ou duas falas sobra tempo, entao a frase pode ser
+    # mais longa em vez de cortada no limite pensado para cinco cenas.
+    if len(pontos) <= 1:
+        if essencia:
+            essencia = encurtar(essencia[0] if isinstance(essencia, tuple) else essencia, 260)
+        pontos = [encurtar(p[0], 240) for p in pontos]
+
     if not essencia and pontos:
         essencia, pontos = pontos[0], pontos[1:]
     return essencia, [p for p in pontos if p and p[0]][:4]
+
+
+def _linhas_quadro(quadros, limite):
+    """Transforma linhas de quadro em falas.
+
+    A primeira coluna costuma ser um rotulo de uma palavra ("Critico", "Medio",
+    "Outorga"). Narrar rotulo solto nao ensina nada, entao ele so vira fala
+    acompanhado da coluna que o explica: "Critico: impede decisao segura...".
+    """
+    out = []
+    for q in quadros:
+        for r in q["rows"][1:]:
+            celulas = [(c["text"] or "").strip() for c in r["cells"]]
+            if not celulas or not celulas[0]:
+                continue
+            rot = celulas[0]
+            desc = next((c for c in celulas[1:] if c), "")
+            texto = f"{rot}: {desc}" if len(rot) < 45 and desc else rot
+            if len(texto) < 30:
+                continue
+            out.append(encurtar(texto, limite))
+    return out
+
+
+def _abertura_quadro(q):
+    """Frase de entrada de uma secao que e um quadro: diz o que ele relaciona,
+    usando o titulo e os cabecalhos das colunas."""
+    titulo = (q.get("title") or q.get("caption") or "").strip().rstrip(".")
+    cab = [(c["text"] or "").strip() for c in q["rows"][0]["cells"]] if q.get("rows") else []
+    cab = [c for c in cab if c]
+    if titulo and len(cab) >= 2:
+        return encurtar(f"{titulo}: o quadro do POP relaciona {', '.join(cab[:-1])} e {cab[-1]}", 240)
+    return encurtar(titulo or "Quadro do POP", 240)
 
 
 # --------------------------------------------------------------- desenho

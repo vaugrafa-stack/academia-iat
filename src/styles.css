@@ -857,3 +857,90 @@ a[href^="http"]::after{content:" (" attr(href) ")";font-size:10px;color:#555}
 .quiz-fonte figcaption{display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:0 13px 11px;font-size:12px;color:var(--muted)}
 .quiz-fonte figcaption button{display:inline-flex;align-items:center;gap:4px;border:0;background:none;padding:0;color:var(--blue);font-size:12px;font-weight:800;cursor:pointer;text-decoration:underline}
 .quiz-fonte figcaption button:hover{opacity:.8}
+
+/* ===== Segunda passada de contraste, medida nas 10 rotas x 2 temas =====
+   A primeira passada cobriu os selos que eu conhecia. A varredura por
+   composicao de camadas achou o resto. */
+
+/* Branco sobre acento claro rende 1,93:1 no tema escuro. Onde o acento e
+   fundo solido, a tinta e escura. */
+:root:not([data-theme="light"]) .profile>span,
+:root:not([data-theme="light"]) .mini-flow span,
+:root:not([data-theme="light"]) .lesson-list button>span:first-child.complete,
+:root:not([data-theme="light"]) .outline-lessons button>span:first-child.done,
+:root:not([data-theme="light"]) .interactive-steps summary span,
+:root:not([data-theme="light"]) .concept-strip>div>span,
+:root:not([data-theme="light"]) .data-table figcaption span,
+:root:not([data-theme="light"]) .flow-menu button.active>span,
+:root:not([data-theme="light"]) .interactive-flow>button.active span,
+:root:not([data-theme="light"]) .interactive-flow>button.visited span,
+:root:not([data-theme="light"]) .u-ini{color:var(--sobre-acento)}
+
+/* O e-mail do suporte nao tem fundo solido, so um veu de 15% do acento: a
+   regra anterior lhe deu tinta escura sobre fundo escuro (1,61:1). */
+:root:not([data-theme="light"]) .sup-mail{color:var(--green2)}
+
+/* Selo de dias na revisao espacada: 11px sobre o trilho pede tinta mais clara. */
+.tpr-dias{color:var(--ink2)}
+
+/* --muted rendia 4,49:1 sobre o branco, um centesimo abaixo do minimo AA, e
+   isso alcancava subtitulos e legendas de todas as telas no tema claro. */
+:root[data-theme="light"]{--muted:#5f6e67}
+
+/* Os cartoes de potencia usam --pc, uma cor viva definida por cartao. Sobre
+   fundo claro ela cai para cerca de 1,9:1; no tema claro entra escurecida,
+   preservando a identidade de cor de cada tipologia. */
+:root[data-theme="light"] .pot-sigla,
+:root[data-theme="light"] .pot-faixa{color:color-mix(in srgb,var(--pc) 55%,#04211a)}
+
+/* Texto de apoio que ficou claro demais no tema claro. */
+:root[data-theme="light"] .cert-mod-pending,
+:root[data-theme="light"] .question-stack fieldset.locked span{color:#5a6862}
+
+/* Numeros restantes sobre acento solido: trilha de licenciamento (ambar),
+   percurso de decisao do laboratorio (verde, azul e cinza) e o proprio cinza
+   dos nos ainda nao percorridos, que rendia 2,0:1 com tinta branca. */
+:root:not([data-theme="light"]) .lic-col ol>li>span,
+:root:not([data-theme="light"]) .path-node>span{color:var(--sobre-acento)}
+/* No cinza dos nos pendentes a tinta escura tambem e a legivel. */
+:root:not([data-theme="light"]) .path-node:not(.complete):not(.current)>span{background:#c6d2cc;color:#16221d}
+
+/* Ultimos achados da varredura por composicao de camadas. */
+
+/* Botao de acao textual do perfil ficou com fundo claro (#f0f0f0) no tema
+   escuro: a conversao para o escuro nao alcancou esta regra, e o resultado era
+   tinta clara sobre fundo claro, 1,01:1. */
+:root:not([data-theme="light"]) .text-action{background:var(--surface2);color:var(--ink);border-color:var(--line)}
+:root:not([data-theme="light"]) .text-action:hover{background:var(--track)}
+
+/* Titulo das colunas da trilha de licenciamento: o ambar escurecido pela
+   conversao ficou em 2,95:1 sobre o cartao escuro. */
+:root:not([data-theme="light"]) .lic-col h3{color:var(--amber,#f3bd4f)}
+
+/* Botao solido de acento com tinta branca. */
+:root:not([data-theme="light"]) .diagnostic button{color:var(--sobre-acento)}
+
+/* No tema claro, o cinza dos nos pendentes e a cor do modulo davam 3,4:1 com
+   tinta branca. Fundo mais escuro em vez de tinta mais clara: preserva a
+   identidade de cor e sobe o contraste. */
+:root[data-theme="light"] .path-node:not(.complete):not(.current)>span{background:#5d6b64}
+/* As cores dos modulos ficam na faixa media: nem tinta branca nem escura
+   passam sobre elas (2,4 a 3,9:1). O tema escuro ja resolvia trocando o
+   preenchimento por contorno; o claro passa a fazer o mesmo, com a cor do
+   modulo virando tinta e borda. O componente expoe a cor em --tc para isso. */
+:root[data-theme="light"] .module-tests button>span,
+:root[data-theme="light"] .cert-mod-code,
+:root[data-theme="light"] .outline-track>span{background:var(--surface2)!important;color:color-mix(in srgb,var(--tc,#2f9e6e) 58%,#04211a)!important;border:1px solid currentColor}
+
+/* Painéis que são escuros nos dois temas (vídeo, esquema animado) herdavam o
+   --muted do tema claro, que é escuro: texto escuro sobre painel escuro. */
+:root[data-theme="light"] .hydro-gif figcaption,
+:root[data-theme="light"] .video-lesson small,
+:root[data-theme="light"] .vl2 small,
+:root[data-theme="light"] .vl2 .vl2-kicker{color:#b9d0ca}
+/* Nome do perfil ativo: --muted sobre o realce da linha rendia 4,18:1. */
+.profile-users li.active .u-name small{color:var(--ink2)}
+/* Seletor de velocidade do vídeo: o estado ativo usava tinta clara sobre o
+   acento claro. */
+:root:not([data-theme="light"]) .vl2-speed button.active,
+:root:not([data-theme="light"]) .video-speed button.active{color:var(--sobre-acento)}

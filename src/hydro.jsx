@@ -32,12 +32,18 @@ const PARTES = [
 ];
 
 const TIPOS_POTENCIA = [
-  { sigla: 'CGH', nome: 'Central Geradora Hidrelétrica', faixa: 'até 5 MW', cor: '#37d39a',
-    nota: 'Menor porte. Dispensada de concessão/autorização, sujeita a registro na ANEEL. Geração distribuída, impacto local reduzido.' },
-  { sigla: 'PCH', nome: 'Pequena Central Hidrelétrica', faixa: 'acima de 5 até 30 MW', cor: '#4cc4f5',
-    nota: 'Área de reservatório de até 3 km², excluída a calha do leito regular, conforme o POP. Outorgada por autorização da ANEEL. Muitas vezes a fio d\'água, com licenciamento proporcional ao porte.' },
-  { sigla: 'UHE', nome: 'Usina Hidrelétrica', faixa: 'acima de 30 MW', cor: '#3fe0a6',
-    nota: 'Grande porte na classificação do POP. A outorga é por autorização até 50 MW e por concessão, mediante leilão, acima disso. Em regra exige EIA/RIMA. Maior complexidade estrutural, fundiária e socioambiental.' },
+  // Faixas e definicoes do Quadro 8 do POP. O erro recorrente de cada tipologia
+  // e o que o proprio Quadro 8 registra na coluna de erros.
+  { sigla: 'MCH', nome: 'Microcentral Hidrelétrica', faixa: 'até 75 kW', cor: '#7ec8a9',
+    nota: 'Potência igual ou inferior a 75 kW. Confirmar potência, supressão, outorga, arranjo e intervenção em APP antes de definir entre DLAM, LAS ou outra modalidade. Erro recorrente: tratar como CGH sem verificar potência e características atuais.' },
+  { sigla: 'MGH', nome: 'Minigeradora Hidrelétrica', faixa: 'acima de 75 kW até 500 kW', cor: '#37d39a',
+    nota: 'Potência superior a 75 kW e até 500 kW. Confirmar IDA, supressão e alagamento para definir entre DLAM, LAC, LAS ou outra forma aplicável. Erro recorrente: aplicar licenciamento complexo sem avaliar o enquadramento.' },
+  { sigla: 'CGH', nome: 'Central Geradora Hidrelétrica', faixa: 'acima de 500 kW até 5 MW', cor: '#2fb8c9',
+    nota: 'Potência superior a 500 kW e até 5 MW. Confirmar se está abaixo ou acima de 1 MW, porque a Consulta Prévia é obrigatória a partir de 1 MW. Erro recorrente: exigir autorização ou concessão da ANEEL como se fosse PCH, sem verificar a regra setorial aplicável.' },
+  { sigla: 'PCH', nome: 'Pequena Central Hidrelétrica', faixa: 'acima de 5 MW até 30 MW', cor: '#4cc4f5',
+    nota: 'Potência superior a 5 MW e até 30 MW, com área de reservatório de até 3 km², excluída a calha do leito regular. Outorgada por autorização da ANEEL. Erro recorrente: concluir pelo nome do empreendimento, sem confrontar potência, reservatório, ANEEL, outorga e SGA.' },
+  { sigla: 'UHE', nome: 'Usina Hidrelétrica', faixa: 'acima de 30 MW', cor: '#9fb7ff',
+    nota: 'Capacidade instalada superior a 30 MW, reservatório maior que 3 km² ou assim definida pela ANEEL. A outorga é por autorização até 50 MW e por concessão, mediante leilão, acima disso. Em regra exige EIA e RIMA. Erro recorrente: ignorar competência, delegação, processo federal ou exigência de EIA e RIMA.' },
 ];
 
 const TIPOS_RESERVATORIO = [

@@ -4,6 +4,7 @@ animadas, capitulos de legenda, encerramento, VTT e poster proprios."""
 from __future__ import annotations
 
 import math
+import re
 import sys
 from pathlib import Path
 
@@ -22,6 +23,22 @@ P = {
     "muted": "#b9d0ca",
 }
 ACCENTS = ["#57d8bf", "#34a9e1", "#f3bd4f", "#7ec8a9", "#9fb7ff"]
+
+
+# O nome do arquivo segue o ID do modulo (m12.mp4), porque featuredMedia aponta
+# para ele, mas o que aparece no quadro e o ROTULO, que acompanha a ordem do
+# percurso. Depois da renumeracao os dois deixaram de coincidir: o modulo de
+# unidades de conservacao tem id m15 e rotulo M12.
+def _rotulos():
+    src = (ROOT / "src" / "courseData.js").read_text(encoding="utf-8")
+    return dict(re.findall(r"id:'(m\d\d)',code:'(M\d\d)'", src))
+
+
+ROTULOS = _rotulos()
+
+
+def rotulo(mid: str) -> str:
+    return ROTULOS.get(mid, mid.upper())
 
 
 def font(size: int, bold: bool = False):
@@ -132,7 +149,7 @@ def make_frame(code, spec, frame_no: int):
     if t < 2.6:  # cartao de abertura
         k = ease(t / 1.1)
         d.rounded_rectangle((70, 250, 70 + int(k * 240), 258), radius=4, fill=accent)
-        d.text((70, 280), code.upper(), font=F["code"], fill=accent)
+        d.text((70, 280), rotulo(code), font=F["code"], fill=accent)
         lines = wrap(d, title, F["mega"], 1100)
         for i, ln in enumerate(lines[:2]):
             d.text((70, 330 + i * 66), ln, font=F["mega"], fill=P["white"])
@@ -147,7 +164,7 @@ def make_frame(code, spec, frame_no: int):
         k = ease((t - (DURATION - 2.4)) / .9)
         d.text((70, 300), "Continue na aula completa", font=F["title"],
                fill=(int(255 * k), int(255 * k), int(255 * k)))
-        d.text((70, 366), f"Módulo {code.upper()} · leitura integral do POP, quadros e prática",
+        d.text((70, 366), f"Módulo {rotulo(code)} · leitura integral do POP, quadros e prática",
                font=F["subtitle"], fill="#c7e4de")
         d.rounded_rectangle((70, 430, 340, 478), 24, P["green"])
         d.text((100, 442), "Abrir o módulo", font=F["node"], fill="white")
@@ -157,7 +174,7 @@ def make_frame(code, spec, frame_no: int):
     intro = ease(tc / 0.8)
     dx = int((1 - intro) * -70)
     d.rounded_rectangle((70 + dx, 48, 330 + dx, 82), 18, "#10584e", outline="#2a8a78", width=1)
-    d.text((88 + dx, 54), f"VIDEOAULA · {code.upper()}", font=F["kicker"], fill="#73ead8")
+    d.text((88 + dx, 54), f"VIDEOAULA · {rotulo(code)}", font=F["kicker"], fill="#73ead8")
     d.text((70 + dx, 105), title, font=F["title"], fill=P["white"])
     d.text((70 + dx, 163), subtitle, font=F["subtitle"], fill="#c7e4de")
 
@@ -196,7 +213,7 @@ def make_frame(code, spec, frame_no: int):
     cf = int(255 * fade)
     d.text((95, cap_y + 22), captions[ci], font=F["caption"], fill=(cf, cf, cf))
 
-    d.text((70, 665), f"Videoaula didática do módulo {code.upper()} · confirme norma e orientação vigentes.",
+    d.text((70, 665), f"Videoaula didática do módulo {rotulo(code)} · confirme norma e orientação vigentes.",
            font=F["small"], fill=P["muted"])
     d.rounded_rectangle((70, 627, 1210, 635), radius=4, fill="#224d49")
     d.rounded_rectangle((70, 627, 70 + int(1140 * t / DURATION), 635), radius=4, fill=accent)
@@ -218,6 +235,9 @@ def write_vtt(code, spec):
 
 
 def build(code, spec):
+    """Escreve o MP4 SEM audio. A narracao e embutida depois, por
+    tools/build_narration.py: reconstruir um video aqui apaga a faixa de audio
+    que ele tinha, e o modulo fica mudo ate a narracao rodar de novo."""
     path = OUT / f"{code}.mp4"
     writer = imageio_ffmpeg.write_frames(
         str(path), (WIDTH, HEIGHT), fps=FPS, quality=7, codec="libx264",
@@ -237,3 +257,4 @@ if __name__ == "__main__":
     for code, spec in SPECS.items():
         build(code, spec)
     print("OK", len(SPECS), "videoaulas")
+    print("ATENCAO: os videos saem mudos. Rode agora:  python tools/build_narration.py")

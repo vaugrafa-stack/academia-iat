@@ -1,7 +1,7 @@
 // Roteamento das secoes do POP para os modulos, em um lugar so.
 //
 // Por que este arquivo existe. A regra vivia dentro de main.jsx e a auditoria
-// mantinha uma copia propria que envelheceu: ela nao conhecia M15 nem M16 e
+// mantinha uma copia propria que envelheceu: ela nao conhecia m15 nem m16 e
 // passou a acusar doze alertas que nao existiam na aplicacao. Ferramenta que
 // mente treina a pessoa a ignorar a ferramenta, entao a regra agora e unica e
 // as duas pontas importam daqui.
@@ -26,8 +26,8 @@ export function assignedTrack(section, byId, tracks) {
       p = p.parentId ? byId.get(p.parentId) : null;
     }
   }
-  // Prefixo MAIS ESPECIFICO vence: 20.2.1 fica em M15 (secao "20.2") e nao em
-  // M11 (secao "20").
+  // Prefixo MAIS ESPECIFICO vence: 20.2.1 fica em m15 (secao "20.2") e nao em
+  // m11 (secao "20").
   if (n) {
     let melhor = '';
     let escolhido = null;

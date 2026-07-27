@@ -9,14 +9,14 @@ const pop = JSON.parse(await readFile(resolve(root, 'src/data/pop-content.json')
 
 // tracks espelhados de courseData.js (fonte da verdade do roteamento)
 const courseSrc = await readFile(resolve(root, 'src/courseData.js'), 'utf8');
-const tracks = (await import('../src/courseData.js')).tracks;
+const { tracks, trackGroups } = await import('../src/courseData.js');
 const { derivarAulas } = await import('../src/lessons.js');
 
 const blockMap = new Map(pop.blocks.map(b => [b.id, b]));
 const tableMap = new Map(pop.tables.map(t => [t.id, t]));
 
 // Roteamento e derivacao vem de src/lessons.js: a copia local aqui envelheceu
-// e passou a acusar doze alertas inexistentes sobre M15 e M16.
+// e passou a acusar doze alertas inexistentes sobre m15 e m16.
 const { lessons } = derivarAulas(pop, tracks);
 
 const findings = [];
@@ -28,7 +28,7 @@ console.log(`Seções no POP: ${pop.sections.length} · Aulas geradas: ${lessons
 
 // 2 e 3. Coerencia do roteamento. A checagem antiga exigia que o numero RAIZ
 // pertencesse as secoes declaradas do modulo, regra que deixou de valer quando
-// o roteamento passou a usar o prefixo mais especifico: 20.6.4.1 vai para M16
+// o roteamento passou a usar o prefixo mais especifico: 20.6.4.1 vai para m16
 // (secao "20.6") e o raiz "20" e de M11. Agora a pergunta e outra: a atribuicao
 // e explicavel por alguma regra declarada, ou caiu no catch-all sem explicacao?
 const trackById = new Map(tracks.map(t => [t.id, t]));
@@ -51,11 +51,23 @@ for (const l of lessons) {
   if (!casa) flag('ALERTA', l.id, n, `atribuida a ${l.trackId} [${(t.sections||[]).join(',')}] sem prefixo que explique o numero`);
 }
 
-// 3b. Nenhum modulo pode ficar sem aula: M15 e M16 ja ficaram vazios sem que
+// 3b. Nenhum modulo pode ficar sem aula: m15 e m16 ja ficaram vazios sem que
 // ninguem percebesse, porque a auditoria olhava so o roteamento antigo.
 for (const t of tracks) {
   if (!lessons.some(l => l.trackId === t.id)) flag('ERRO', t.id, '', `modulo ${t.code} sem nenhuma aula`);
 }
+
+// 3c. O rotulo do modulo tem de acompanhar a ORDEM do percurso. O numero existe
+// para dizer em que ponto o modulo esta; quando ele contradiz a sequencia, a
+// tela mostra M11, M15, M16, M12, e quem le acha que a plataforma se perdeu.
+const ordemGrupos = trackGroups.flatMap((g) => g.ids);
+if (JSON.stringify(tracks.map((t) => t.id)) !== JSON.stringify(ordemGrupos)) {
+  flag('ERRO', 'tracks', '', 'a ordem do array tracks difere da ordem de trackGroups');
+}
+tracks.forEach((t, i) => {
+  const esperado = 'M' + String(i).padStart(2, '0');
+  if (t.code !== esperado) flag('ERRO', t.id, '', `rotulo ${t.code} na posicao ${i} do percurso, deveria ser ${esperado}`);
+});
 
 // 4. Aulas sem nenhum bloco de conteúdo renderizável (nem texto nem tabela)
 for (const l of lessons) {

@@ -1,5 +1,10 @@
 import{NOVOS_CENARIOS,RUBRICAS}from'./labCases.js';
 import{QUESTOES_EXTRA}from'./questionsExtra.js';
+// O 'id' e a chave de armazenamento (progresso, notas de avaliacao e
+// certificados sao gravados por ele) e por isso nunca muda. O 'code' e apenas
+// o rotulo, e ele acompanha a ORDEM de trackGroups: o numero existe para dizer
+// em que posicao do percurso o modulo esta. Por isso o modulo de unidades de
+// conservacao tem id m15 e rotulo M12: ele entrou depois, mas se estuda antes.
 export const tracks = [
   {id:'m00',code:'M00',title:'Orientação, escopo e controle documental',sections:['Controle documental','1'],icon:'Compass',color:'#3b8070',summary:'Como usar o POP, entender seu alcance e reconhecer os limites da atuação técnica.'},
   {id:'m01',code:'M01',title:'Papéis, normas, definições e método obrigatório',sections:['2','3','4','5'],icon:'Scale',color:'#1769c2',summary:'Competências, ordem de consulta, transições, conceitos e sequência rastreável de decisão.'},
@@ -13,11 +18,11 @@ export const tracks = [
   {id:'m09',code:'M09',title:'PACUERA integral',sections:['18.10','18.11','18.12','18.13'],icon:'Map',color:'#0f79a8',summary:'Exigibilidade, TR, diagnóstico, UTHs, zoneamento, participação social, implementação e revisão.'},
   {id:'m10',code:'M10',title:'Cartografia, APP, flora, fauna e recursos hídricos',sections:['19'],icon:'Trees',color:'#278454',summary:'Base espacial da análise e verificações ambientais integradas.'},
   {id:'m11',code:'M11',title:'ANEEL, IPHAN, município e vistoria',sections:['20','21'],icon:'Building2',color:'#795e2e',summary:'Interfaces institucionais, limites de competência e evidência de campo.'},
-  {id:'m12',code:'M12',title:'Suficiência, pendências, condicionantes e conclusão',sections:['22','23','24','25'],icon:'ClipboardCheck',color:'#0b6553',summary:'Da matriz documental à manifestação conclusiva, com linguagem proporcional e verificável.'},
-  {id:'m13',code:'M13',title:'Formatação, qualidade e rastreabilidade',sections:['26','27'],icon:'BadgeCheck',color:'#426a91',summary:'Padrão documental, revisão, evidências, consistência interna e controle final.'},
-  {id:'m14',code:'M14',title:'Anexos, referências e caso integrador',sections:['Anexo A','Anexo B','Anexo C','Anexo D','Anexo E','Referências'],icon:'Library',color:'#6c7049',summary:'Modelos reutilizáveis, siglas, referências e consolidação do percurso.'},
-  {id:'m15',code:'M15',title:'Unidades de conservação, APAs e Planos de Manejo',sections:['20.2','9.2'],icon:'Trees',color:'#2f9e6e',summary:'Triagem e análise de UC e APA por fase, Plano de Manejo, GeoPR e o caso da Escarpa Devoniana.'},
-  {id:'m16',code:'M16',title:'Licenciamento federal delegado: ACT e RTAA',sections:['20.6','Anexo F'],icon:'FileCheck',color:'#1f7fb8',summary:'Competência delegada ao IAT, leitura do ACT, obrigações do delegatário e o relatório anual de atividades.'},
+  {id:'m15',code:'M12',title:'Unidades de conservação, APAs e Planos de Manejo',sections:['20.2','9.2'],icon:'Trees',color:'#2f9e6e',summary:'Triagem e análise de UC e APA por fase, Plano de Manejo, GeoPR e o caso da Escarpa Devoniana.'},
+  {id:'m16',code:'M13',title:'Licenciamento federal delegado: ACT e RTAA',sections:['20.6','Anexo F'],icon:'FileCheck',color:'#1f7fb8',summary:'Competência delegada ao IAT, leitura do ACT, obrigações do delegatário e o relatório anual de atividades.'},
+  {id:'m12',code:'M14',title:'Suficiência, pendências, condicionantes e conclusão',sections:['22','23','24','25'],icon:'ClipboardCheck',color:'#0b6553',summary:'Da matriz documental à manifestação conclusiva, com linguagem proporcional e verificável.'},
+  {id:'m13',code:'M15',title:'Formatação, qualidade e rastreabilidade',sections:['26','27'],icon:'BadgeCheck',color:'#426a91',summary:'Padrão documental, revisão, evidências, consistência interna e controle final.'},
+  {id:'m14',code:'M16',title:'Anexos, referências e caso integrador',sections:['Anexo A','Anexo B','Anexo C','Anexo D','Anexo E','Referências'],icon:'Library',color:'#6c7049',summary:'Modelos reutilizáveis, siglas, referências e consolidação do percurso.'},
 ];
 
 export const featuredMedia = {

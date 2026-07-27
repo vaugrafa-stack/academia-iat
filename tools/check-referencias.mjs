@@ -18,7 +18,7 @@ import { resolve } from 'node:path';
 const raiz = resolve(import.meta.dirname, '..');
 // Modulos de UI fora de main.jsx. main.jsx nao entra: la tudo divide o mesmo
 // escopo e o verificador so acusaria ruido.
-const ARQUIVOS = ['src/redator.jsx', 'src/mapa.jsx', 'src/hydro.jsx', 'src/hydroCases.jsx'];
+const ARQUIVOS = ['src/ui.jsx', 'src/painelAluno.jsx', 'src/redator.jsx', 'src/mapa.jsx', 'src/hydro.jsx', 'src/hydroCases.jsx'];
 
 // Globais e nativos que nao precisam de import.
 const AMBIENTE = new Set([
@@ -38,12 +38,15 @@ for (const rel of ARQUIVOS) {
     continue;
   }
 
-  // So o uso em JSX (<Componente). O padrao "Nome(" parecia mais abrangente,
-  // mas casa com prosa em portugues: "Terra (", "Souza (", "Itaipu (" viravam
-  // referencias inexistentes nos arquivos com muito texto. E o uso em JSX que
-  // produziu a falha real, "PageHeader is not defined".
+  // Uso em JSX, nas duas formas que ja produziram falha real:
+  //   <Componente            -> "PageHeader is not defined"
+  //   prop={Componente}      -> "CircleHelp is not defined", um icone passado
+  //                             como valor, que a primeira versao nao via.
+  // O padrao "Nome(" foi descartado: casa com prosa em portugues, e "Terra (",
+  // "Souza (" e "Itaipu (" viravam referencia inexistente nos arquivos de texto.
   const usados = new Set();
   for (const m of s.matchAll(/<([A-Z]\w*)/g)) usados.add(m[1]);
+  for (const m of s.matchAll(/[=:]\s*\{\s*([A-Z]\w*)\s*[}\s,)]/g)) usados.add(m[1]);
 
   const definidos = new Set();
   for (const m of s.matchAll(/^import\s*\{([^}]+)\}/gm)) {

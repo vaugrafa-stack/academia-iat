@@ -3,6 +3,8 @@ import{Activity,AlertTriangle,ArrowRight,Award,BadgeCheck,BookMarked,BookOpen,Bo
 import HydroGuide from'./hydro';
 import MapaParana from'./mapa.jsx';
 import RedatorIT from'./redator.jsx';
+import{ThemeToggle,Suporte,ComparaDiagnostico,AutoAvaliacao}from'./painelAluno.jsx';
+import{PageHeader,Empty}from'./ui.jsx';
 import mapaDados from'./data/mapa-parana.json';
 import popDataUrl from'./data/pop-content.json?url';
 import flowDataUrl from'./data/flowcharts-content.json?url';
@@ -131,13 +133,6 @@ function Profile({state,progress,profile,setProfile,go,openLesson}){
    {(profile.certificates||[]).length>0&&<div className="cert-history"><h4>Marcos emitidos</h4><ul>{(profile.certificates||[]).map(c=><li key={c.id}><Award size={14}/><span>{c.label}</span><small>{c.at?new Date(c.at).toLocaleDateString('pt-BR'):''} · {c.percent}%</small></li>)}</ul></div>}<h4>Por módulo</h4><ul className="cert-modules">{mods.map(({t,p})=>{const pr=prontidao(t.id,state);return <li key={t.id}><span className="cert-mod-code">{t.code}</span><span className="cert-mod-title">{t.title}</span><span className="cert-sinais" role="img" aria-label={[[pr.leitura,'leitura',true],[pr.avaliacao,'avaliação',pr.temQuiz],[pr.pratica,'prática',pr.temPratica]].map(([ok,rot,aplica])=>aplica?rot+(ok?' concluída':' pendente'):'sem '+rot+' própria').join(', ')}>{[[pr.leitura,'Leitura',true],[pr.avaliacao,pr.temQuiz?'Avaliação':'Sem avaliação própria',pr.temQuiz],[pr.pratica,pr.temPratica?'Prática':'Sem caso próprio',pr.temPratica]].map(([ok,rot,aplica],i)=><i key={i} className={'sin'+(aplica?(ok?' ok':''):' na')} title={rot}/>)}</span><span className="cert-mod-pct">{p}%</span>{pr.pronto?<button className="cert-mod-dl" onClick={()=>baixarCert('Módulo '+t.code+' · '+t.title,100)}><Download size={14}/></button>:<span className="cert-mod-pending">{!pr.leitura?'ler tudo':!pr.avaliacao?'fazer avaliação':'praticar'}</span>}</li>})}</ul></section>
   <p className="profile-note">Os certificados desta plataforma são registros pessoais de autoestudo. Não são documentos oficiais do Instituto Água e Terra.</p></div>;
 }
-function Suporte(){return <div className="page suporte-page"><PageHeader icon={CircleHelp} kicker="Fale com quem mantém a plataforma" title="Suporte" subtitle="Dúvidas, sugestões de conteúdo ou correções: escreva diretamente ao responsável."/>
- <section className="suporte-card"><div className="sup-avatar">RV</div><div className="sup-info"><h2>Rafael Valgrande Augusto</h2><p className="sup-cargo">Engenheiro Sanitarista e Ambiental</p><a className="sup-mail" href="mailto:bol.rafaelaugusto@iat.pr.gov.br?subject=Academia%20IAT%3A%20d%C3%BAvida%20ou%20sugest%C3%A3o"><MessageSquareText size={16}/> bol.rafaelaugusto@iat.pr.gov.br</a><p className="sup-note">Ao escrever, diga em qual módulo, aula ou tela está a dúvida ou a sugestão: isso acelera a resposta e a correção.</p></div></section>
- <section className="suporte-tipos">{[['Dúvida de conteúdo','Algo no material parece incompleto, confuso ou desatualizado.'],['Sugestão','Ideia de melhoria, novo exercício ou tema a aprofundar.'],['Problema técnico','Algo não abre, não salva ou não funciona como deveria.']].map(([t,d])=><article key={t}><strong>{t}</strong><p>{d}</p></article>)}</section></div>}
-function ThemeToggle(){const[t,setT]=useState(()=>(typeof document!=='undefined'&&document.documentElement.dataset.theme)||'dark');const toggle=()=>{const nx=t==='light'?'dark':'light';document.documentElement.dataset.theme=nx;try{localStorage.setItem('academia-iat-theme',nx)}catch{}setT(nx)};// O icone sozinho nao diz o que faz para quem nao esta acostumado com a
- // convencao de sol e lua. O rotulo acompanha, e some so no celular, onde a
- // barra do topo nao tem espaco: la o title e o aria-label seguem valendo.
- return <button className="theme-toggle" onClick={toggle} title={t==='light'?'Mudar para o modo escuro':'Mudar para o modo claro'} aria-label={t==='light'?'Mudar para o modo escuro':'Mudar para o modo claro'}>{t==='light'?<Moon size={18}/>:<Sun size={18}/>}<span>{t==='light'?'Modo Escuro':'Modo Claro'}</span></button>}
 function Topbar({onMenu,onSearch,progress,profile,onProfile}){const _n=((profile&&profile.name)||'').trim();const _acc=hasAccount(profile);const _ini=_acc?(_n.split(/\s+/).filter(Boolean).map(w=>w[0]).slice(0,2).join('').toUpperCase()||'IAT'):'+';return <header className="topbar"><button className="mobile-menu" onClick={onMenu} aria-label="Abrir menu"><Menu/></button><div className="compact-brand"><span className="brand-wave">IAT</span><div><strong>Academia de Licenciamento</strong><small>Hidrelétrico</small></div></div><button className="global-search" onClick={onSearch} aria-label="Buscar no POP, aulas e checklists. Atalho Control K"><Search/><span>Buscar no POP, aulas e checklists</span><kbd aria-hidden="true">Ctrl K</kbd></button><div className="top-progress" title={`${progress}% concluído`} role="progressbar" aria-label="Progresso geral" aria-valuemin="0" aria-valuemax="100" aria-valuenow={progress}><span>{progress}%</span><i><em style={{width:`${progress}%`}}/></i></div><ThemeToggle/><button className="profile" onClick={onProfile} aria-label={_acc?`Abrir perfil de ${_n}`:'Criar meu perfil'} title={_acc?'Ver meu perfil':'Criar meu perfil'}><span aria-hidden="true">{_ini}</span><div><strong>{_acc?_n.split(/\s+/)[0]:'Meu perfil'}</strong><small>{_acc?(profile.role||'Registro pessoal'):'Criar sua conta'}</small></div></button></header>}
 function Sidebar({view,go,open,openLesson}){return <aside className={'sidebar-v2 '+(open?'open':'')}><div className="brand-panel"><strong>Academia IAT</strong><span>Licenciamento<br/>Hidrelétrico</span><svg viewBox="0 0 200 128" aria-hidden="true" className="brand-hydro">
 <rect x="8" y="52" width="62" height="26" rx="3" fill="#57d8bf" opacity=".85"/>
@@ -250,39 +245,6 @@ function conferirElementos(cenario,txt){const t=norm(txt||'');
 // que avalia, a plataforma entrega o julgamento a quem escreveu, com o modelo
 // ao lado e uma pergunta objetiva por elemento. O resultado fica registrado e
 // exportavel, que e o que permite avaliacao humana depois.
-const JUIZOS=[['sim','Tratei e sustentei'],['parcial','Mencionei sem sustentar'],['nao','Não tratei']];
-function AutoAvaliacao({caso,texto,conf,state,setState}){
- const salvo=(state.autoaval&&state.autoaval[caso.id])||{};
- const marcar=(rot,v)=>setState(st=>({...st,autoaval:{...(st.autoaval||{}),[caso.id]:{...((st.autoaval||{})[caso.id]||{}),[rot]:v}}}));
- const marcados=caso.elementos.filter(e=>salvo[e.rot]).length;
- const sustentados=caso.elementos.filter(e=>salvo[e.rot]==='sim').length;
- const completo=marcados===caso.elementos.length;
- const divergem=caso.elementos.filter(e=>{const j=salvo[e.rot];const citou=conf.els.find(x=>x.rot===e.rot)?.ok;return j==='sim'&&!citou});
- const baixar=()=>{
-  const linhas=['AUTOAVALIAÇÃO DA FUNDAMENTAÇÃO · EXERCÍCIO DIDÁTICO','',
-   'Caso: '+caso.title,'Decisões: veja o debriefing na plataforma','',
-   'TEXTO ESCRITO','',texto||'[vazio]','','JULGAMENTO DE QUEM ESCREVEU',''];
-  for(const e of caso.elementos){const j=salvo[e.rot];
-   linhas.push('- '+e.rot+': '+(JUIZOS.find(x=>x[0]===j)?.[1]||'não avaliado'))}
-  linhas.push('','REDAÇÃO MODELO','',caso.modelo,'',
-   'Documento de treinamento. Não é peça processual e não representa manifestação do IAT.');
-  const b=new Blob([linhas.join('\n')],{type:'text/plain;charset=utf-8'});
-  const a=document.createElement('a');a.href=URL.createObjectURL(b);
-  a.download='autoavaliacao-'+caso.id+'.txt';a.click();URL.revokeObjectURL(a.href)};
- return <div className="auto-aval">
-  <strong><Eye size={15}/> Agora julgue você: comparando com o modelo, o que o seu texto fez em cada elemento?</strong>
-  <ul>{caso.elementos.map(e=><li key={e.rot}>
-   <span>{e.rot}</span>
-   <div role="group" aria-label={'Julgamento para '+e.rot}>
-    {JUIZOS.map(([v,rot])=><button key={v} className={salvo[e.rot]===v?'sel '+v:''} onClick={()=>marcar(e.rot,v)} aria-pressed={salvo[e.rot]===v}>{rot}</button>)}
-   </div></li>)}</ul>
-  {completo&&<p className="aa-saldo">Você sustentou {sustentados} de {caso.elementos.length} elementos.
-   {divergem.length>0&&' Em '+divergem.length+(divergem.length===1?' elemento':' elementos')+' você marcou que sustentou, mas a conferência de termos não encontrou o vocabulário esperado: vale reler se o argumento está mesmo explícito no texto.'}</p>}
-  {completo&&<button className="aa-exportar" onClick={baixar}><Download size={14}/> Baixar para avaliação de quem orienta</button>}
-  {!completo&&<small className="aa-falta">Marque os {caso.elementos.length-marcados} restantes para fechar a autoavaliação.</small>}
- </div>
-}
-
 function Laboratory({state,setState}){const[selected,setSelected]=useState(scenarios[2].id),[answers,setAnswers]=useState({}),[reason,setReason]=useState(''),[showResult,setShowResult]=useState(false),[showSummary,setShowSummary]=useState(false),[seenEv,setSeenEv]=useState({});const s=scenarios.find(x=>x.id===selected);useEffect(()=>{setAnswers({});setReason((state.labs&&state.labs[selected]&&state.labs[selected].texto)||'');setShowResult(false);setShowSummary(false);setSeenEv({})},[selected]);const answered=Object.keys(answers).length;const score=s.questions.filter((q,i)=>answers[i]===q[1]).length;const conf=conferirElementos(s,reason);function finish(){setShowResult(true);setState(st=>({...st,labs:{...st.labs,[s.id]:{score,total:s.questions.length,date:new Date().toISOString(),texto:reason,elementos:conf.tocados,elementosTotal:conf.total}}}))}return <div className="page lab-page"><PageHeader title="Pratique antes de assinar" subtitle="Laboratório didático: selecione evidências, tome decisões e compare sua fundamentação." icon={FlaskConical}/><div className="lab-acervo"><Database size={16}/><p><strong>Casos de treinamento</strong>: situações construídas a partir dos critérios do POP para exercitar a decisão. Nenhum caso reproduz processo, empreendimento ou dado de acervo.</p></div><div className="lab-grupos">{GRUPOS_LAB.map(g=>{const casos=g.ids.map(id=>scenarios.find(c=>c.id===id)).filter(Boolean);const feitos=casos.filter(c=>state.labs[c.id]).length;return <section className="lab-grupo" key={g.id}><header><div><h3>{g.titulo}</h3><p>{g.resumo}</p></div><span className={'lg-nivel n-'+g.id}>{g.nivel}</span></header><div className="scenario-tabs">{casos.map(x=><button className={selected===x.id?'active':''} onClick={()=>{setSelected(x.id);setTimeout(()=>document.querySelector('.lab-workspace')?.scrollIntoView({behavior:'smooth',block:'start'}),70)}} key={x.id}>{x.label}{state.labs[x.id]&&<CheckCircle2/>}</button>)}</div><small className="lg-progresso">{feitos} de {casos.length} praticados</small></section>})}</div><div className="lab-workspace"><section className="lab-canvas" key={selected}><div className="case-header"><div><small>CENÁRIO · {s.type}</small><h2>{s.title}</h2></div><button className={showSummary?'active':''} onClick={()=>setShowSummary(v=>!v)}><FileText/> Resumo do caso</button></div>{showSummary&&<div className="case-summary"><p><strong>{s.title}</strong>, cenário de {s.type}.</p><ul>{s.facts.map(f=><li key={f}>{f}</li>)}</ul><p>{s.evidence.length} evidências disponíveis · {s.questions.length} decisões no percurso · debriefing ao finalizar.</p></div>}<div className="case-facts">{s.facts.map(f=><span key={f}><Activity/>{f}</span>)}</div>{s.serie&&<figure className="lab-serie"><figcaption><Table2 size={15}/> {s.serie.titulo}</figcaption><div className="ls-rolagem"><table><thead><tr>{s.serie.colunas.map(c=><th key={c}>{c}</th>)}</tr></thead><tbody>{s.serie.linhas.map((l,i)=><tr key={i}>{l.map((c,j)=><td key={j}>{c}</td>)}</tr>)}</tbody></table></div>{s.serie.nota&&<small><Lightbulb size={13}/> {s.serie.nota}</small>}</figure>}<div className="decision-path"><div className="path-node complete"><span>1</span><strong>Triagem</strong><Check/></div>{s.questions.map((q,i)=><React.Fragment key={q[0]}><i className={answers[i]?'active':''}/><button className={'path-node '+(answers[i]?'complete ':'')+(i===answered?'current':'')} onClick={()=>{const el=document.querySelectorAll('.question-stack fieldset')[i];el&&el.scrollIntoView({behavior:'smooth',block:'center'})}}><span>{i+2}</span><strong>{(s.steps&&s.steps[i])||('Etapa '+(i+2))}</strong>{answers[i]?<Check/>:<Circle/>}</button></React.Fragment>)}<i className={answered===s.questions.length?'active':''}/><div className={'path-node '+(showResult?'complete':'')}><span>{s.questions.length+2}</span><strong>Parecer</strong>{showResult?<Check/>:<Circle/>}</div></div><div className="lab-evidence"><div><h3>Evidências disponíveis</h3>{s.evidence.map(e=><button key={e} className={seenEv[e]?'seen':''} onClick={()=>setSeenEv(v=>({...v,[e]:!v[e]}))}><FileText/><span>{e}<small>{seenEv[e]?'Consultada':'Documento do cenário'}</small></span>{seenEv[e]?<CheckCircle2/>:<Eye/>}</button>)}</div><div className="question-stack"><h3>Decisões do percurso</h3>{s.questions.map((q,i)=><fieldset key={q[0]} className={i>answered?'locked':''}><legend>{i+1}. {q[0]}</legend>{i>answered?<span><Lock/> Responda à etapa anterior</span>:<div><button className={answers[i]==='sim'?'selected':''} onClick={()=>setAnswers(a=>({...a,[i]:'sim'}))}>Sim</button><button className={answers[i]==='nao'?'selected':''} onClick={()=>setAnswers(a=>({...a,[i]:'nao'}))}>Não</button></div>}</fieldset>)}</div></div></section><aside className="lab-inspector"><div><small>SEU PARECER DIDÁTICO</small><h2>Fundamente a decisão</h2><p>Relacione evidências, consequência técnica e encaminhamento.</p></div><textarea value={reason} onChange={e=>setReason(e.target.value)} placeholder="Escreva sua fundamentação..."/><div className="decision-readiness"><span>Decisões respondidas <b>{answered}/{s.questions.length}</b></span><i><em style={{width:`${answered/s.questions.length*100}%`}}/></i><span>Fundamentação <b>{reason.length}/30 mín.</b></span><i><em style={{width:`${Math.min(100,reason.length/30*100)}%`}}/></i></div><button className="primary" disabled={answered<s.questions.length||reason.length<30} onClick={finish}>Finalizar e ver debriefing <ArrowRight/></button><div className="lab-tip"><Lightbulb/><p><strong>Dica do laboratório</strong> Não procure apenas “sim” ou “não”: explicite por que a evidência é suficiente ou insuficiente.</p></div>{showResult&&<div className="debrief"><Trophy/><small>DEBRIEFING</small><h3>{score}/{s.questions.length} decisões alinhadas</h3><p>{s.outcome}</p>{s.elementos&&<div className="fund-check"><strong>Sua fundamentação mencionou {conf.tocados} de {conf.total} elementos esperados</strong><ul>{conf.els.map(e=><li key={e.rot} className={e.ok?'ok':''}>{e.ok?<Check size={14}/>:<Circle size={14}/>}<span>{e.rot}</span></li>)}</ul><p className="fund-nota">Conferência de termos: ela verifica se o elemento foi citado, não se o argumento está correto. Quem julga o raciocínio é você, comparando com a redação modelo abaixo.</p><details className="fund-modelo" open><summary>Redação modelo deste caso</summary><p>{s.modelo}</p></details><AutoAvaliacao caso={s} texto={reason} conf={conf} state={state} setState={setState}/></div>}<button onClick={()=>{setAnswers({});setShowResult(false)}}><RotateCcw/> Tentar novamente</button></div>}</aside></div></div>}
 
 // Comparacao entre o diagnostico de entrada e o de saida.
@@ -291,32 +253,6 @@ function Laboratory({state,setState}){const[selected,setSelected]=useState(scena
 // acertou ou nao acertou. O numero que tem significado e o total, e a lista
 // abaixo dele serve para dizer onde mudou. O cartao diz isso em vez de fingir
 // precisao que dezessete questoes nao dao.
-function ComparaDiagnostico({d}){
- const e=d.entrada,x=d.saida;
- const pct=r=>Math.round(r.acertos/r.total*100);
- const virou=(a,b)=>{const o={};for(const id of Object.keys(a.porQuestao||{})){const A=a.porQuestao[id],B=(b.porQuestao||{})[id];if(!B)continue;if(A.ok!==B.ok)o[A.track]=B.ok?'ganhou':'perdeu'}return o};
- const mudou=x?virou(e,x):{};
- const ganhos=Object.entries(mudou).filter(([,v])=>v==='ganhou').map(([t])=>t);
- const perdas=Object.entries(mudou).filter(([,v])=>v==='perdeu').map(([t])=>t);
- const nome=id=>tracks.find(t=>t.id===id)?.code||id;
- return <section className="diag-compara">
-  <header><Activity size={16}/><h2>Ponto de partida e ponto de chegada</h2></header>
-  <div className="dc-barras">
-   <div><small>Entrada</small><strong>{e.acertos}/{e.total}</strong><i><em style={{width:`${pct(e)}%`}}/></i>
-    <span>{new Date(e.data).toLocaleDateString('pt-BR')} · {e.leitura}% do conteúdo lido</span></div>
-   {x?<div><small>Saída</small><strong>{x.acertos}/{x.total}</strong><i><em className="saida" style={{width:`${pct(x)}%`}}/></i>
-    <span>{new Date(x.data).toLocaleDateString('pt-BR')} · {x.leitura}% do conteúdo lido</span></div>
-   :<div className="dc-pendente"><small>Saída</small><p>Refaça o diagnóstico depois de estudar para medir o que mudou.</p></div>}
-  </div>
-  {x&&<p className="dc-saldo">{x.acertos>e.acertos?`Ganho de ${x.acertos-e.acertos} ${x.acertos-e.acertos===1?'questão':'questões'} entre os dois diagnósticos.`:x.acertos===e.acertos?'Mesmo número de acertos nos dois diagnósticos.':`Queda de ${e.acertos-x.acertos} ${e.acertos-x.acertos===1?'questão':'questões'}: vale rever o que mudou.`}</p>}
-  {x&&(ganhos.length>0||perdas.length>0)&&<div className="dc-modulos">
-   {ganhos.length>0&&<p><b className="ok">Passou a acertar</b> {ganhos.map(nome).join(', ')}</p>}
-   {perdas.length>0&&<p><b className="nao">Deixou de acertar</b> {perdas.map(nome).join(', ')}</p>}
-  </div>}
-  <small className="dc-limite">Uma questão por módulo mede direção, não magnitude: por módulo o resultado é acertou ou não acertou. O total é o número comparável.</small>
- </section>
-}
-
 function Assessments({state,setState,openLesson}){const[track,setTrack]=useState('geral'),[started,setStarted]=useState(false),[index,setIndex]=useState(0),[answers,setAnswers]=useState({}),[revealed,setRevealed]=useState(false),[done,setDone]=useState(false);const questions=useMemo(()=>{if(track!=='geral')return questionBank.filter(q=>q.track===track);const byTrack=new Map();for(const q of questionBank){if(!byTrack.has(q.track))byTrack.set(q.track,[]);byTrack.get(q.track).push(q)}const alvo=tracks.length;const picked=[];for(let round=0;picked.length<alvo&&round<questionBank.length;round++){for(const t of tracks){const qs=byTrack.get(t.id);if(qs&&qs[round]&&picked.length<alvo)picked.push(qs[round])}}return picked},[track]);const q=questions[index];const score=questions.filter((x,i)=>answers[i]===x.answer).length;function reset(id=track){setTrack(id);setStarted(false);setIndex(0);setAnswers({});setRevealed(false);setDone(false)}function next(){if(index===questions.length-1){setDone(true);setState(s=>{
    const base={...s,quizScores:{...s.quizScores,[track]:{score,total:questions.length,date:new Date().toISOString()}}};
    if(track!=='geral')return base;
@@ -355,7 +291,4 @@ function ordenaBusca(itens,q){const n=norm(q);
   for(const t of ['sigla','quadro','seção'])for(let i=0;i<cota[t];i++){const x=por[t].shift();if(x){out.push(x);mexeu=true}}
   if(!mexeu)return out}}
 function snippet(text,q){let clean=(text||'').replace(/\s+/g,' ').trim();let pos=norm(clean).indexOf(norm(q));if(pos<0)return clean.slice(0,180)+(clean.length>180?'…':'');return(pos>45?'…':'')+clean.slice(Math.max(0,pos-45),pos+145)+(pos+145<clean.length?'…':'')}
-function PageHeader({title,subtitle,icon:Icon,kicker}){return <header className="page-header"><span><Icon/></span><div>{kicker&&<small className="ph-kicker">{kicker}</small>}<h1>{title}</h1><p>{subtitle}</p></div></header>}
-function Empty({text}){return <div className="empty-state"><BookOpen/><p>{text}</p></div>}
-
 export default App;

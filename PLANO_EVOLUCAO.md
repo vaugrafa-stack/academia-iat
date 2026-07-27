@@ -25,7 +25,7 @@ Legenda: ⬜ pendente · 🟨 em curso · ✅ pronto · ⛔ recusado (com motivo
 ### Arquitetura
 | Item | Medida | Problema |
 |---|---|---|
-| `src/main.jsx` | 92 kB, maior linha 7.285 caracteres | Ilegível; toda tela divide o mesmo escopo |
+| `src/main.jsx` | 81 kB | Em redução; telas restantes dependem do dado derivado |
 | `src/labCases.js` | 70 kB | Conteúdo e código no mesmo arquivo |
 | `src/courseData.js` | 67 kB, linhas de 1.192 caracteres | Idem |
 | Testes de unidade | 26 (profile, offline, platform, derivados) | — |
@@ -72,7 +72,7 @@ move nesta etapa.
 
 ---
 
-## Etapa 2 — Extrair telas, uma por vez ⬜
+## Etapa 2 — Extrair telas, uma por vez 🟨
 
 **Problema.** Com o dado separado, cada tela vira extraível. Sem isso, não.
 
@@ -87,6 +87,11 @@ faltou. `check-referencias` cobre identificador solto.
 
 **Pronto quando.** `main.jsx` abaixo de 25 kB, cada arquivo com uma
 responsabilidade, todos os portões verdes.
+
+**Primeira leva entregue.** `ui.jsx` (PageHeader, Empty) e `painelAluno.jsx`
+(ThemeToggle, Suporte, ComparaDiagnostico, AutoAvaliacao). main.jsx: 92 → 81 kB.
+As telas restantes dependem do dado derivado e passarão a recebê-lo por
+propriedade, uma por commit.
 
 ---
 
@@ -183,7 +188,7 @@ inline, sem sair da leitura.
 | Etapa | Estado | Commit | Verificação |
 |---|---|---|---|
 | 1 Dado derivado | ✅ | `src/derivados.js` | 26 testes de unidade (eram 12); 11 áreas renderizam; build e 7 portões verdes |
-| 2 Extrair telas | ⬜ | | |
+| 2 Extrair telas | 🟨 | `src/ui.jsx`, `src/painelAluno.jsx` | 6 módulos sem referência solta; 11 áreas renderizam; main.jsx 92 → 81 kB |
 | 3 Exemplo trabalhado | ⬜ | | |
 | 4 Profundidade de prática | ⬜ | | |
 | 5 Avaliação com magnitude | ⬜ | | |

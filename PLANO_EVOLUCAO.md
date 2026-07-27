@@ -171,15 +171,21 @@ com registro do percurso testado.
 
 ---
 
-## Etapa 8 — Conteúdo: quadros e glossário dentro da aula ⬜
+## Etapa 8 — Conteúdo: quadros e glossário dentro da aula ⛔ recusada
 
-**Problema.** Boa parte do critério do POP vive em Quadro. A aula mostra o
-quadro quando a seção é um quadro, mas não quando o quadro está citado.
+**A premissa era falsa e construir teria enganado.** Medi antes de escrever: de
+161 aulas, apenas 3 citam quadro que não está nelas, e as três citam "Quadro 1".
 
-**Ação.** Detectar referência a Quadro no texto da aula e oferecer o quadro
-inline, sem sair da leitura.
+Esse "Quadro 1" é o da **IN IAT nº 09/2025**, norma externa, não o "Quadro 1 -
+Informações de controle documental" do POP. O trecho é explícito: "não substitui
+a leitura do art. 9º, do Quadro 1, dos Termos de Referência vigentes".
 
-**Pronto quando.** Aula que cita quadro permite abri-lo no lugar.
+Uma resolução automática por número teria aberto o quadro errado no lugar certo,
+com aparência de fonte. Melhor não ter o recurso do que tê-lo mentindo.
+
+**O que fica registrado.** Quem for mexer nisso precisa distinguir citação a
+quadro do POP de citação a quadro de norma externa. Sem essa distinção, qualquer
+resolução automática de "Quadro N" é insegura.
 
 ---
 
@@ -194,4 +200,4 @@ inline, sem sair da leitura.
 | 5 Avaliação com magnitude | ⬜ | | |
 | 6 Tela de offline | ⬜ | | |
 | 7 Acessibilidade | ⬜ | | |
-| 8 Quadros na aula | ⬜ | | |
+| 8 Quadros na aula | ⛔ | — | Premissa falsa: 3 de 161 aulas citam quadro externo; resolver por número abriria o quadro errado |

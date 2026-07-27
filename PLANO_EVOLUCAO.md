@@ -165,7 +165,7 @@ verificável com a rede desligada.
 
 ---
 
-## Etapa 7 — Acessibilidade auditada por teclado e leitor ⬜
+## Etapa 7 — Acessibilidade auditada por teclado e leitor ✅
 
 **Problema.** Contraste foi medido e corrigido. Ordem de foco, rótulo acessível
 e navegação por teclado nas telas novas (redator, mapa com zoom, autoavaliação)
@@ -177,6 +177,15 @@ aparecer.
 
 **Pronto quando.** Todas as áreas navegáveis por teclado, sem armadilha de foco,
 com registro do percurso testado.
+
+**Auditado.** Zero controles sem nome acessível nas 11 áreas. Zero `tabindex`
+positivo. Zero imagem sem alternativa. Um defeito real corrigido:
+`.mp-busca input` tinha `outline:none` sem substituto, deixando quem navega
+por teclado sem saber onde estava; o anel passou para o grupo.
+
+**Cuidado registrado.** `getComputedStyle` não lê `:focus-visible`, então a
+primeira varredura acusou 25 falsos positivos. Verificação de foco se faz na
+folha de estilo, não pelo estilo computado do elemento.
 
 ---
 
@@ -208,5 +217,5 @@ resolução automática de "Quadro N" é insegura.
 | 4 Profundidade de prática | ⬜ | | |
 | 5 Avaliação com magnitude | ✅ | `DIAG_POR_MODULO=3` | 51 questões, 3 por módulo, seleção determinística; comparação reporta `M01 0→3 de 3` |
 | 6 Tela de offline | ⬜ | | |
-| 7 Acessibilidade | ⬜ | | |
+| 7 Acessibilidade | ✅ | `.mp-busca:focus-within`, `#mp-ajuda-teclado` | 0 controles sem nome nas 11 áreas; 1 anel de foco restaurado; mapa descreve as teclas e anuncia o zoom |
 | 8 Quadros na aula | ⛔ | — | Premissa falsa: 3 de 161 aulas citam quadro externo; resolver por número abriria o quadro errado |

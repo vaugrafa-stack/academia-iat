@@ -264,7 +264,7 @@ export default function MapaParana({ dados, state, setState }) {
               <button onClick={() => ampliar(1.3)} disabled={!podeAproximar} aria-label="Aproximar"><ZoomIn size={15} /></button>
               <button onClick={() => ampliar(1 / 1.3)} disabled={!podeAfastar} aria-label="Afastar"><ZoomOut size={15} /></button>
               <button onClick={inteiro} disabled={!podeAfastar} aria-label="Ver o mapa inteiro"><Maximize2 size={15} /></button>
-              <span>{escala.toFixed(1)}x</span>
+              <span aria-live="polite" aria-atomic="true">{escala.toFixed(1)}x</span>
             </div>
           </div>
           {/* Dito na tela, nao so no codigo: nao ha camada de imagem de
@@ -272,7 +272,9 @@ export default function MapaParana({ dados, state, setState }) {
               politica de seguranca bloqueia e que sumiriam sem rede,
               justamente em campo. O que se ve aqui e dado publico embarcado. */}
           <p className="mp-limite-camada">Sem camada de satélite: imagem de terceiro exigiria servidor externo, que a política de segurança bloqueia e que não funcionaria sem rede. Tudo aqui é dado público embarcado.</p>
+          <p id="mp-ajuda-teclado" className="mp-ajuda-teclado">Com o mapa em foco: setas deslocam, mais e menos aproximam e afastam, zero volta ao mapa inteiro.</p>
           <svg ref={svgRef} viewBox={`${v.x} ${v.y} ${v.w} ${v.h}`} role="img" tabIndex={0}
+               aria-describedby="mp-ajuda-teclado"
                className={escala > 1.02 ? 'mp-arrastavel' : ''}
                onWheel={roda} onPointerDown={pegar} onPointerMove={mover}
                onPointerUp={soltar} onPointerCancel={soltar} onKeyDown={tecla}

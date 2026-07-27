@@ -1126,7 +1126,10 @@ button:disabled{cursor:not-allowed}
 
 .mp-busca{display:flex;align-items:center;gap:9px;padding:0 12px;height:42px;border:1px solid var(--line);
  border-radius:10px;background:var(--surface);color:var(--muted)}
+/* O outline:none aqui apagava o unico sinal de foco do campo: quem navega por
+   teclado ficava sem saber onde esta. O anel vai para o contorno do grupo. */
 .mp-busca input{flex:1;min-width:0;border:0;background:none;color:var(--ink);font-size:14px;outline:none}
+.mp-busca:focus-within{outline:3px solid var(--blue);outline-offset:2px;border-radius:9px}
 .mp-busca>button{border:0;background:none;color:var(--muted);cursor:pointer;display:flex}
 
 .mp-detalhe{border:1px solid var(--line);border-radius:12px;background:var(--surface2);padding:13px}
@@ -1349,3 +1352,7 @@ button:disabled{cursor:not-allowed}
 .exemplo-processo>button{display:inline-flex;align-items:center;gap:7px;padding:9px 15px;border-radius:9px;
  border:0;background:var(--green2);color:var(--sobre-acento);font-size:13.5px;font-weight:800;cursor:pointer}
 .ep-nota{display:block;margin-top:9px;font-size:12px;line-height:1.5;color:var(--muted);font-style:italic}
+/* A ajuda de teclado do mapa fica visível: quem navega por teclado não sabe
+   quais teclas existem, e esconder a informação só ajuda quem já sabe. */
+.mp-ajuda-teclado{margin:0;padding:6px 11px;border-bottom:1px solid var(--line);
+ background:var(--surface2);font-size:11.5px;line-height:1.5;color:var(--muted)}

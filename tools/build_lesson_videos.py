@@ -64,8 +64,17 @@ F = {"mega": font(38, True), "title": font(26, True), "cap": font(19, True),
 
 # --------------------------------------------------------------- roteiro
 
-# Abreviacoes que nao encerram frase; sem isto "art. 25" viraria duas falas.
-_ABREV = r"(?<!\bart)(?<!\bn[ºo])(?<!\bnº)(?<!\bDr)(?<!\bSr)(?<!\bfig)(?<!\bp)(?<!\binc)"
+# Abreviacoes que NAO encerram frase. O olhar-para-tras e avaliado DEPOIS do
+# ponto, entao cada entrada precisa incluir o proprio ponto: sem isso "O art. 15
+# da Instrucao Normativa" virava duas falas e a segunda comecava em "15 da
+# Instrucao". A forma plural conta separado, porque "arts. 43 e 44" e tao comum
+# no POP quanto "art. 15".
+_SIGLAS = ["art", "arts", "inc", "incs", "fig", "figs", "par", "pars", "cap",
+           "caps", "proc", "procs", "dr", "dra", "sr", "sra", "esp", "cf",
+           "ex", "pp", "p", "n", "nº", "n°", "no", "sec", "séc", "aprox"]
+_ABREV = "".join(r"(?<!" + re.escape(s) + r"\.)" for s in
+                 sorted({v for s in _SIGLAS for v in (s, s.capitalize(), s.upper())}))
+
 _FIM = re.compile(_ABREV + r"(?<=[.;])\s+(?=[A-ZÀ-ÚÁÉÍÓÚÂÊÔÃÕ0-9])")
 
 

@@ -635,7 +635,7 @@ button:focus-visible,input:focus-visible,textarea:focus-visible,a:focus-visible,
 /* diagramas tecnicos sempre em painel escuro (tracos sao claros) */
 .cross-wrap,.turb-svg,.dam-mini,.arr-svg,.sfp-scroll{background:#141f1b!important}
 
-.theme-toggle{width:40px;height:40px;border-radius:9px;border:1px solid var(--line);background:var(--surface2);color:var(--ink2);display:grid;place-items:center;cursor:pointer;transition:background .18s var(--ease),color .18s var(--ease),transform .18s var(--ease)}
+.theme-toggle{width:auto;min-width:40px;padding:0 12px;gap:8px;height:40px;border-radius:9px;border:1px solid var(--line);background:var(--surface2);color:var(--ink2);display:inline-flex;align-items:center;justify-content:center;cursor:pointer;transition:background .18s var(--ease),color .18s var(--ease),transform .18s var(--ease)}
 .theme-toggle:hover{color:var(--green2);transform:translateY(-1px)}
 
 .tg-schema figcaption{flex-direction:column;align-items:flex-start;gap:3px}
@@ -1258,3 +1258,28 @@ button:disabled{cursor:not-allowed}
 .dc-modulos b.nao{color:var(--amber,#f3bd4f)}
 .dc-limite{display:block;margin-top:12px;font-size:12px;line-height:1.5;color:var(--muted);font-style:italic}
 @media(max-width:640px){.dc-barras{grid-template-columns:1fr}}
+
+/* Rótulo do alternador de tema: o ícone sozinho não diz o que faz. Some no
+   celular, onde a barra do topo não tem espaço; title e aria-label ficam. */
+.theme-toggle span{font-size:13px;font-weight:700;white-space:nowrap}
+@media(max-width:900px){.theme-toggle span{display:none}.theme-toggle{padding:0;width:40px}}
+
+/* ===== Autoavaliação guiada da fundamentação =====
+   A conferência por termo não distingue "não citei" de "citei errado". Quem
+   julga o raciocínio é quem escreveu, com o modelo ao lado. */
+.auto-aval{margin-top:14px;padding-top:13px;border-top:1px dashed var(--line)}
+.auto-aval>strong{display:flex;align-items:flex-start;gap:8px;font-size:13px;line-height:1.45;color:var(--ink);margin-bottom:11px}
+.auto-aval ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:9px}
+.auto-aval li{display:flex;flex-direction:column;gap:6px}
+.auto-aval li>span{font-size:13px;color:var(--ink2)}
+.auto-aval li>div{display:flex;gap:6px;flex-wrap:wrap}
+.auto-aval li button{padding:6px 11px;border-radius:999px;border:1px solid var(--line);
+ background:var(--surface);color:var(--muted);font-size:12px;font-weight:700;cursor:pointer}
+.auto-aval li button.sel{color:var(--ink);border-color:currentColor}
+.auto-aval li button.sel.sim{color:var(--green2)}
+.auto-aval li button.sel.parcial{color:var(--amber,#f3bd4f)}
+.auto-aval li button.sel.nao{color:var(--muted);border-color:var(--muted)}
+.aa-saldo{margin:12px 0 0;font-size:13px;line-height:1.55;color:var(--ink2)}
+.aa-falta{display:block;margin-top:10px;font-size:12px;color:var(--muted);font-style:italic}
+.aa-exportar{display:inline-flex;align-items:center;gap:7px;margin-top:11px;padding:8px 14px;border-radius:9px;
+ border:1px solid var(--line);background:var(--surface2);color:var(--ink);font-size:13px;font-weight:700;cursor:pointer}

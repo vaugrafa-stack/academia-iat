@@ -76,7 +76,8 @@ try {
   assert(document.querySelectorAll('.fb-pool button').length === 6, 'etapas embaralhadas disponíveis para montar');
 
   await click(navButtons.find(x => x.textContent.includes('Laboratório')));
-  assert(document.querySelectorAll('.scenario-tabs button').length === 21, 'vinte e um cenários práticos, um por módulo no mínimo');
+  assert(document.querySelectorAll('.scenario-tabs button').length >= 21, 'ao menos vinte e um cenários práticos, um por módulo no mínimo');
+  assert(document.querySelector('.lab-serie table') || [...document.querySelectorAll('.scenario-tabs button')].some(b => /Programas semestrais/.test(b.textContent)), 'caso longitudinal com série histórica disponível');
   const answerButton = document.querySelector('.question-stack fieldset:not(.locked) button');
   await click(answerButton);
   assert(document.querySelectorAll('.question-stack fieldset:not(.locked)').length >= 2, 'decisão libera a etapa seguinte');

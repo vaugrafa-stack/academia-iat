@@ -290,12 +290,63 @@ export const NOVOS_CENARIOS = [
     ],
     outcome: 'Verificar a competência e a regra de transição do art. 4º do Decreto nº 8.437/2015, confirmar objeto, vigência e fases do ACT antes de qualquer ato, e não direcionar a compensação ao fluxo estadual sem ler o instrumento, conforme o art. 26 da IN IBAMA nº 08/2019. Registrar como Pendente de validação o que não puder ser confirmado e manter a base contínua que alimenta o RTAA de 31 de março.',
   },
+  {
+    // Caso longitudinal: tres relatorios semestrais do MESMO empreendimento.
+    // Os demais cenarios examinam uma peca; este exige comparar a serie ao
+    // longo do tempo, que e o que a analise de programas realmente cobra.
+    // Construido sobre o padrao de um processo real de acompanhamento, sem
+    // identificar empreendimento, pessoas, protocolo ou licenca.
+    id: 'prog-semestral', track: 'm08', label: 'Programas semestrais', type: 'PCH',
+    title: 'Três relatórios semestrais de programas ambientais que não se conciliam',
+    facts: [
+      'PCH em operação desde 01/07/2024, com quatro programas em acompanhamento',
+      'Três relatórios semestrais protocolados, um por semestre de operação',
+      'Cada relatório declara os registros de inspeção ambiental do seu período',
+      'O terceiro relatório declara também um total acumulado desde o início da operação',
+    ],
+    evidence: [
+      '1º relatório semestral (jul a dez/2024)',
+      '2º relatório semestral (jan a jun/2025)',
+      '3º relatório semestral (jul a dez/2025)',
+      'Projeto de compensação aprovado e cronograma do PBA',
+    ],
+    // A serie e o coracao do caso: so somando os tres periodos se descobre que
+    // o acumulado declarado nao fecha.
+    serie: {
+      titulo: 'Registros de inspeção ambiental (RIA) declarados pelo empreendedor',
+      colunas: ['Relatório', 'Período', 'Declarado no período', 'Acumulado declarado'],
+      linhas: [
+        ['1º', 'jul a dez/2024', '71', 'não informado'],
+        ['2º', 'jan a jun/2025', '68', 'não informado'],
+        ['3º', 'jul a dez/2025', '76', '262'],
+      ],
+      nota: 'Some a coluna do período antes de responder.',
+    },
+    steps: ['Série', 'Conferência', 'Natureza', 'Consequência', 'Encaminhamento'],
+    questions: [
+      ['A soma dos três períodos declarados (71, 68 e 76) confere com os 262 acumulados do terceiro relatório?', 'nao'],
+      ['A diferença encontrada, por si só, autoriza concluir que os programas foram abandonados?', 'nao'],
+      ['O status declarado pelo empreendedor equivale ao status validado pelo IAT?', 'nao'],
+      ['Cabe exigir série histórica única e conciliada, separando o valor de cada período do acumulado?', 'sim'],
+      ['As solicitações dos três relatórios devem ser comunicadas de forma consolidada, em regra de uma única vez?', 'sim'],
+    ],
+    outcome: 'A soma dos períodos é 215 e o acumulado declarado é 262: faltam 47 registros sem explicação. Isso é limitação de rastreabilidade, não prova de abandono, porque os três relatórios demonstram continuidade das inspeções, do monitoramento e das estruturas. O encaminhamento é diligência consolidada, exigindo série histórica única e conciliada por semestre e acumulada, sem reapresentação integral dos relatórios já protocolados.',
+  },
 ];
 
 // Rubrica da fundamentacao. `termos` sao os sinais procurados no texto escrito,
 // comparados sem acento e sem caixa. E conferencia de termo, nao avaliacao do
 // raciocinio, e a interface diz isso ao mostrar o resultado.
 export const RUBRICAS = {
+  'prog-semestral': {
+    elementos: [
+      { rot: 'Conferência aritmética da série', termos: ['215', '262', '47', '71', 'soma', 'acumulad', 'concilia'] },
+      { rot: 'Declarado não é validado', termos: ['declarad', 'validad', 'evidencia', 'evidência', 'comprova'] },
+      { rot: 'Rastreabilidade, não abandono', termos: ['rastreab', 'abandono', 'continuidade', 'interrup', 'execucao', 'execução'] },
+      { rot: 'Encaminhamento consolidado', termos: ['consolidad', 'uma unica vez', 'uma única vez', 'diligencia', 'diligência'] },
+    ],
+    modelo: 'Análise: os três relatórios declaram 71, 68 e 76 registros de inspeção nos respectivos períodos, e o terceiro informa 262 acumulados desde o início da operação. A soma dos períodos é 215, de modo que 47 registros do acumulado não têm origem demonstrada na série apresentada. Comentário: a divergência é de rastreabilidade e não de execução. Os três relatórios demonstram continuidade das inspeções, do monitoramento e das estruturas, e nada indica interrupção ou abandono dos programas; o que não se pode validar é a série quantitativa, porque o status declarado pelo empreendedor não equivale ao status validado pelo IAT. Solicitações: apresentar série histórica única e conciliada desde o primeiro semestre, distinguindo com clareza o valor de cada período do total acumulado, e esclarecer a origem da diferença de 47 registros. Encaminho as solicitações dos três relatórios de forma consolidada, em uma única vez, sem exigir reapresentação integral do que já foi protocolado.',
+  },
   cp: {
     elementos: [
       { rot: 'Objeto e localização caracterizados', termos: ['objeto', 'localiza', 'arranjo', 'ada', 'kmz'] },

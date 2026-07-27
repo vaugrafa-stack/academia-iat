@@ -6,7 +6,9 @@
     "audit": "node tools/audit-lessons.mjs",
     "media": "python tools/build_training_videos.py",
     "rubricas": "node tools/check-rubricas.mjs",
-    "check:questoes": "node tools/check-questoes.mjs"
+    "check:questoes": "node tools/check-questoes.mjs",
+    "check:videoaulas": "node tools/check-videoaulas.mjs",
+    "media:aulas": "python tools/build_lesson_videos.py"
   },
   "dependencies": {
     "@vitejs/plugin-react": "latest",

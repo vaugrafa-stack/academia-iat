@@ -944,3 +944,8 @@ a[href^="http"]::after{content:" (" attr(href) ")";font-size:10px;color:#555}
    acento claro. */
 :root:not([data-theme="light"]) .vl2-speed button.active,
 :root:not([data-theme="light"]) .video-speed button.active{color:var(--sobre-acento)}
+
+/* Observações que o POP traz depois da lista numerada: elas são nota do
+   procedimento, não abertura da seção, e antes apareciam como introdução. */
+.kp-notas{margin-top:14px;padding-top:12px;border-top:1px dashed var(--line)}
+.kp-notas-tit{display:flex;align-items:center;gap:7px;font-size:12px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}

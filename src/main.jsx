@@ -10,7 +10,7 @@ import aulaMediaUrl from'./data/aula-media.json?url';
 import{featuredMedia,flowSpecs,questionBank,scenarios,trackGroups,tracks,GRUPOS_LAB}from'./courseData';
 import{loadProfile,saveProfile,hasAccount,registerCertificate,certificateSvg,downloadSvg,listUsers,switchUser,createUser,deleteUser,exportBackup,importBackup,progressKey}from'./profile';
 import{resumoDaNorma}from'./leiResumos';
-import{derivarAulas}from'./lessons.js';
+import{criarDerivados,norm}from'./derivados.js';
 import{registrarOffline}from'./offline.js';
 import{loadAppData}from'./appData.js';
 import{getLearningDesign}from'./learningDesign.js';
@@ -27,13 +27,11 @@ const{popData,flowData,aulaMedia}=await loadAppData({popDataUrl,flowDataUrl,aula
 const TRACK_ICONS={Compass,Scale,Inbox,GitBranch,FileCheck,Milestone,RefreshCw,ShieldCheck,Files,Map:MapIcon,Trees,Building2,ClipboardCheck,BadgeCheck,Library};
 
 const STORAGE_KEY='academia-iat-progress-v2';
+// Um so ponto de entrada para o dado derivado do POP. Os nomes seguem os
+// mesmos, entao nenhuma tela precisou mudar nesta etapa.
+const{blockMap,tableMap,figureByBlock,sectionMap,GLOSSARIO,siglasDaAula,
+ sectionById,lessons,lessonMap,trackLessons,sectionText,INDICE,firstLesson}=criarDerivados(popData,tracks);
 const NAV=[['dashboard','Visão geral',Home],['hidreletricas','Hidrelétricas',Zap],['mapa','Mapa do Paraná',MapIcon],['formacao','Formação',BookOpen],['fluxos','Fluxogramas',GitBranch],['laboratorio','Laboratório',FlaskConical],['redator','Redigir uma IT',FileText],['avaliacoes','Avaliações',ClipboardCheck],['biblioteca','Biblioteca',Library],['perfil','Meu perfil',BadgeCheck],['suporte','Suporte',CircleHelp]];
-const blockMap=new Map(popData.blocks.map(b=>[b.id,b]));
-const GLOSSARIO=(()=>{const t=popData.tables.find(x=>/siglas e abrevia/i.test(x.title||''));const m=new Map();if(t)for(const r of t.rows.slice(1)){const c=r.cells||[];const sig=(c[0]&&c[0].text||'').trim();if(sig&&sig.length<=8&&/^[A-ZÇÃÕ0-9/.-]+$/.test(sig))m.set(sig,{nome:(c[1]&&c[1].text||'').trim(),desc:(c[2]&&c[2].text||'').trim()})}return m})();
-function siglasDaAula(texto){const achadas=[];for(const [sig,v] of GLOSSARIO){if(new RegExp('(^|[^A-Za-zÀ-ÿ])'+sig.replace(/[.*+?^${}()|[]\]/g,'\$&')+'([^A-Za-zÀ-ÿ]|$)').test(texto))achadas.push({sig,...v})}return achadas.slice(0,10)}
-const tableMap=new Map(popData.tables.map(t=>[t.id,t]));
-const figureByBlock=new Map(popData.figures.map(f=>[f.blockId,f]));
-const sectionMap=new Map(popData.sections.map(s=>[s.id,s]));
 
 function useStoredState(){
  const key=useMemo(()=>{try{return progressKey()}catch{return STORAGE_KEY}},[]);
@@ -42,11 +40,9 @@ function useStoredState(){
  useEffect(()=>{localStorage.setItem(key,JSON.stringify(state))},[state,key]);
  return[state,setState];
 }
-function norm(v=''){return v.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase()}
 // Cada aula vai para a trilha cuja secao declarada for o prefixo MAIS ESPECIFICO
 // do numero. Assim 20.2.1 fica no modulo de unidades de conservacao (20.2) e nao
 // no de intervenientes (20), sem precisar de regra especial por modulo.
-const{sectionById,lessons,lessonMap,trackLessons}=derivarAulas(popData,tracks);
 function trackProgress(id,state){const ls=trackLessons.get(id)||[];return ls.length?Math.round(ls.filter(l=>state.completed.includes(l.id)).length/ls.length*100):0}
 // Prontidao do modulo: leitura, avaliacao e pratica. O certificado passa a
 // depender de desempenho, nao so de auto-marcacao de leitura.
@@ -62,13 +58,6 @@ function prontidao(trackId,state){
 }
 // Indice unico de busca: aulas, quadros e siglas. Antes a busca do topo via so
 // aulas e a da Biblioteca via aulas e quadros, com coberturas diferentes.
-const INDICE=(()=>{const out=[];return{get(){if(out.length)return out;
- for(const l of lessons)out.push({type:'seção',id:l.id,title:((l.number||'')+' '+l.title).trim(),text:sectionText(l)});
- for(const t of popData.tables)if(!t.navigationOnly)out.push({type:'quadro',id:t.id,title:t.caption,text:t.rows.map(r=>r.cells.map(c=>c.text).join(' ')).join(' ')});
- for(const [sig,v] of GLOSSARIO)out.push({type:'sigla',id:'sigla:'+sig,title:sig+', '+v.nome,text:v.desc});
- return out}}})();
-function sectionText(section){return(section.blockIds||[]).map(id=>{const b=blockMap.get(id);return b?.paragraph?.text||b?.caption||''}).filter(Boolean).join(' ')}
-function firstLesson(trackId){const ls=trackLessons.get(trackId)||[];return ls.find(l=>(l.number||'').trim())||ls[0]}
 
 const VIEW_IDS=['dashboard','hidreletricas','mapa','formacao','fluxos','laboratorio','redator','avaliacoes','biblioteca','perfil','suporte'];
 function parseHash(){const h=((typeof location!=='undefined'&&location.hash)||'').replace(/^#\/?/,'');if(!h)return{view:'dashboard',lesson:null};const i=h.indexOf('/');const seg=i<0?h:h.slice(0,i);const rest=i<0?'':h.slice(i+1);if(seg==='aula'&&rest)return{view:'lesson',lesson:decodeURIComponent(rest)};if(VIEW_IDS.includes(seg))return{view:seg,lesson:null};return{view:'dashboard',lesson:null};}

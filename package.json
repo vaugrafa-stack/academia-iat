@@ -2,7 +2,7 @@
   "scripts": {
     "dev": "vite --host 127.0.0.1 --port 5173 --strictPort --open",
     "build": "vite build && node tools/build-sw.mjs dist && node tools/check-bundle.mjs dist",
-    "test": "node tools/check-provenance.mjs && node tools/check-referencias.mjs && node tools/check-rubricas.mjs && node tools/check-questoes.mjs && node tools/check-videoaulas.mjs && node tools/audit-lessons.mjs && node tools/smoke-test.mjs",
+    "test": "vitest run && node tools/check-provenance.mjs && node tools/check-referencias.mjs && node tools/check-rubricas.mjs && node tools/check-questoes.mjs && node tools/check-videoaulas.mjs && node tools/audit-lessons.mjs && node tools/smoke-test.mjs",
     "audit": "node tools/audit-lessons.mjs",
     "extract:pop": "python tools/extract_pop.py",
     "check:provenance": "node tools/check-provenance.mjs",

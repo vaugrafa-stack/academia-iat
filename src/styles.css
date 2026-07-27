@@ -978,3 +978,21 @@ a[href^="http"]::after{content:" (" attr(href) ")";font-size:10px;color:#555}
  background:var(--green2);color:var(--sobre-acento);font-size:12px;font-weight:800}
 .ciclo-legenda strong{font-size:13px;color:var(--ink)}
 .ciclo-legenda small{font-size:12px;color:var(--muted);line-height:1.35}
+
+/* ===== Estado de conexão e versão nova =====
+   Barras fixas no rodapé, acima do conteúdo, para não empurrar o layout. */
+.offline-bar,.update-bar{position:fixed;left:50%;transform:translateX(-50%);bottom:18px;z-index:80;
+ display:flex;align-items:center;gap:10px;max-width:min(680px,calc(100vw - 32px));
+ padding:11px 16px;border-radius:12px;font-size:13px;line-height:1.4;
+ box-shadow:0 12px 32px #0006;backdrop-filter:blur(10px)}
+.offline-bar{background:color-mix(in srgb,var(--amber,#f3bd4f) 18%,var(--surface2));
+ border:1px solid color-mix(in srgb,var(--amber,#f3bd4f) 42%,transparent);color:var(--ink)}
+.update-bar{background:var(--surface2);border:1px solid var(--line);color:var(--ink)}
+.offline-bar svg,.update-bar svg{flex:0 0 auto}
+.update-bar span{flex:1}
+.update-bar button{border:0;border-radius:8px;padding:7px 13px;font-size:13px;font-weight:800;
+ background:var(--green2);color:var(--sobre-acento);cursor:pointer}
+.update-bar .ub-depois{background:transparent;color:var(--muted);padding:7px 6px;text-decoration:underline}
+@media(max-width:560px){
+ .offline-bar,.update-bar{bottom:10px;font-size:12px;padding:10px 13px;flex-wrap:wrap}
+}

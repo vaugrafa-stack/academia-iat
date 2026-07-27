@@ -1,14 +1,16 @@
 {
   "scripts": {
     "dev": "vite --host 127.0.0.1 --port 5173 --strictPort --open",
-    "build": "vite build",
+    "build": "vite build && node tools/build-sw.mjs dist",
     "test": "node tools/check-rubricas.mjs && node tools/check-questoes.mjs && node tools/check-videoaulas.mjs && node tools/audit-lessons.mjs && node tools/smoke-test.mjs",
     "audit": "node tools/audit-lessons.mjs",
     "media": "python tools/build_training_videos.py",
     "rubricas": "node tools/check-rubricas.mjs",
     "check:questoes": "node tools/check-questoes.mjs",
     "check:videoaulas": "node tools/check-videoaulas.mjs",
-    "media:aulas": "python tools/build_lesson_videos.py"
+    "media:aulas": "python tools/build_lesson_videos.py",
+    "build:pages": "vite build --outDir dist-pages && node tools/build-sw.mjs dist-pages $PAGES_REPO",
+    "preview": "vite preview --port 4173 --strictPort"
   },
   "dependencies": {
     "@vitejs/plugin-react": "latest",

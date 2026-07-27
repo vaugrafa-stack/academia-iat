@@ -1,6 +1,6 @@
 import React,{useEffect,useMemo,useRef,useState}from'react';
 import{createRoot}from'react-dom/client';
-import{Activity,AlertTriangle,ArrowRight,Award,BadgeCheck,BookMarked,BookOpen,Bookmark,BookmarkCheck,Building2,Check,CheckCircle2,ChevronLeft,ChevronRight,Circle,CircleHelp,ClipboardCheck,Clock,Compass,Database,Download,ExternalLink,Eye,FileCheck,FileCheck2,FileText,Files,Filter,FlaskConical,GitBranch,GraduationCap,Home,Image as ImageIcon,Inbox,Info,Layers3,Library,Lightbulb,Lock,Map as MapIcon,Maximize2,Menu,MessageSquareText,Milestone,PanelLeftClose,PanelLeftOpen,Pause,Play,RefreshCw,RotateCcw,Route,Scale,Search,ShieldCheck,Sparkles,StickyNote,Table2,Target,Trees,Moon,Sun,Trophy,X,Zap,ZoomIn,ZoomOut}from'lucide-react';
+import{Activity,AlertTriangle,ArrowRight,Award,BadgeCheck,BookMarked,BookOpen,Bookmark,BookmarkCheck,Building2,Check,CheckCircle2,ChevronLeft,ChevronRight,Circle,CircleHelp,ClipboardCheck,Clock,Compass,Database,Download,ExternalLink,Eye,FileCheck,FileCheck2,FileText,Files,Filter,FlaskConical,GitBranch,GraduationCap,Home,Image as ImageIcon,Inbox,Info,Layers3,Library,Lightbulb,Lock,Map as MapIcon,Maximize2,Menu,MessageSquareText,Milestone,PanelLeftClose,PanelLeftOpen,Pause,Play,RefreshCw,RotateCcw,Route,Scale,Search,ShieldCheck,Sparkles,StickyNote,Table2,Target,Trees,Moon,Sun,Trophy,X,Zap,CloudOff,ZoomIn,ZoomOut}from'lucide-react';
 import HydroGuide from'./hydro';
 import popDataUrl from'./data/pop-content.json?url';
 import flowDataUrl from'./data/flowcharts-content.json?url';
@@ -9,6 +9,7 @@ import{featuredMedia,flowSpecs,questionBank,scenarios,trackGroups,tracks}from'./
 import{loadProfile,saveProfile,hasAccount,registerCertificate,certificateSvg,downloadSvg,listUsers,switchUser,createUser,deleteUser,exportBackup,importBackup,progressKey}from'./profile';
 import{resumoDaNorma}from'./leiResumos';
 import{derivarAulas}from'./lessons.js';
+import{registrarOffline}from'./offline.js';
 import'./styles.css';
 try{const _t=localStorage.getItem('academia-iat-theme');document.documentElement.dataset.theme=(_t==='light'||_t==='dark')?_t:'dark';}catch{document.documentElement.dataset.theme='dark';}
 
@@ -82,6 +83,11 @@ function App(){
  const[view,setView]=useState(_init.view);
  const[selectedLesson,setSelectedLesson]=useState(()=>_init.lesson&&lessonMap.has(_init.lesson)?_init.lesson:(lessonMap.has(state.lastLesson)?state.lastLesson:firstLesson('m00')?.id));
  const[menuOpen,setMenuOpen]=useState(false),[searchOpen,setSearchOpen]=useState(false),[toast,setToast]=useState('');
+ // Conexao e versao nova. A atualizacao nao entra sozinha: ela esperaria a
+ // pessoa terminar de escrever a fundamentacao no laboratorio, e recarregar
+ // no meio disso jogaria fora o que ela digitou.
+ const[online,setOnline]=useState(true),[aplicarUpdate,setAplicarUpdate]=useState(null);
+ useEffect(()=>{registrarOffline({onConexao:setOnline,onAtualizacao:fn=>setAplicarUpdate(()=>fn)})},[]);
  const progress=Math.round(state.completed.length/lessons.length*100);
  useEffect(()=>{const fn=e=>{if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='k'){e.preventDefault();setSearchOpen(true)}if(e.key==='Escape')setSearchOpen(false)};window.addEventListener('keydown',fn);return()=>window.removeEventListener('keydown',fn)},[]);
  useEffect(()=>{if(toast){const id=setTimeout(()=>setToast(''),2600);return()=>clearTimeout(id)}},[toast]);
@@ -97,6 +103,8 @@ function App(){
   {menuOpen&&<button className="nav-scrim" aria-label="Fechar menu" onClick={()=>setMenuOpen(false)}/>} 
   <main id="conteudo" tabIndex={-1} className={'main '+(view==='lesson'?'lesson-main':'')}><div className="view-anim" key={view==='lesson'?'l:'+selectedLesson:view}>{content}</div></main>
   {searchOpen&&<GlobalSearch close={()=>setSearchOpen(false)} abrir={r=>{setSearchOpen(false);if(r.type==='seção')return openLesson(r.id);ALVO_BIB=r.type==='sigla'?{tab:'glossario'}:{tab:'tabelas',tabela:r.id};go('biblioteca')}}/>} 
+  {!online&&<div className="offline-bar" role="status"><CloudOff size={15}/> Sem conexão. O procedimento, os quadros, os fluxos e a prática continuam disponíveis; vídeos ainda não abertos ficam indisponíveis.</div>}
+  {aplicarUpdate&&<div className="update-bar" role="status"><RefreshCw size={15}/><span>Há uma versão nova da Academia.</span><button onClick={()=>aplicarUpdate()}>Atualizar agora</button><button className="ub-depois" onClick={()=>setAplicarUpdate(null)}>Depois</button></div>}
   {toast&&<div className="toast"><CheckCircle2/>{toast}</div>}
  </div>
 }

@@ -68,6 +68,21 @@ jobs:
       - name: Auditar o catálogo offline
         run: node tools/check-offline-packages.mjs
 
+      - name: Identificar o release aprovado
+        run: |
+          node --input-type=module <<'NODE'
+          import { writeFile } from "node:fs/promises";
+
+          await writeFile("dist/.nojekyll", "GitHub Pages static artifact\n");
+          await writeFile(
+            "dist/release.json",
+            `${JSON.stringify({
+              schemaVersion: 1,
+              commit: process.env.GITHUB_SHA,
+              workflowRun: process.env.GITHUB_RUN_ID,
+            }, null, 2)}\n`,
+          );
+          NODE
       - name: Validar o artefato publicável
         run: |
           node --input-type=module <<'NODE'
@@ -83,6 +98,8 @@ jobs:
             "sw.js",
             "icone-192.png",
             "icone-512.png",
+            ".nojekyll",
+            "release.json",
           ];
 
           for (const file of required) {
@@ -97,6 +114,9 @@ jobs:
             await readFile(join(dist, "manifest.webmanifest"), "utf8"),
           );
           const serviceWorker = await readFile(join(dist, "sw.js"), "utf8");
+          const release = JSON.parse(
+            await readFile(join(dist, "release.json"), "utf8"),
+          );
 
           if (manifest.start_url !== base || manifest.scope !== base) {
             throw new Error(
@@ -112,6 +132,11 @@ jobs:
           }
           if (!serviceWorker.includes(`const BASE = ${JSON.stringify(base)}`)) {
             throw new Error(`service worker não foi gerado para ${base}`);
+          }
+          if (release.commit !== process.env.GITHUB_SHA) {
+            throw new Error(
+              `release.json aponta para ${release.commit}, esperado ${process.env.GITHUB_SHA}`,
+            );
           }
 
           const scripts = [
@@ -150,4 +175,34 @@ jobs:
           if-no-files-found: error
           retention-days: 14
           compression-level: 0
+          include-hidden-files: true
 
+  publish-pages:
+    name: Publicar exatamente o artefato aprovado
+    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: write
+
+    steps:
+      - name: Baixar o dist aprovado neste mesmo workflow
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        with:
+          name: academia-iat-${{ github.sha }}
+          path: dist
+
+      - name: Publicar a branch gh-pages sem recompilar
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          cd dist
+          git init
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout -b gh-pages
+          git add -A
+          git commit -m "Deploy ${GITHUB_SHA}"
+          git remote add origin "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+          git push --force origin gh-pages

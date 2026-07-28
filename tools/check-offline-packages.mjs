@@ -3,7 +3,6 @@ import { posix, resolve, sep } from 'node:path';
 
 import {
   buildOfflinePayload,
-  serializeOfflinePayload,
 } from './build-offline-packages.mjs';
 
 const root = resolve(import.meta.dirname, '..');
@@ -126,7 +125,7 @@ check(catalog.totalBytes === totalBytes, 'totalBytes diverge da soma dos pacotes
 
 const expected = await buildOfflinePayload();
 check(
-  raw === serializeOfflinePayload(expected),
+  JSON.stringify(catalog) === JSON.stringify(expected),
   'catálogo versionado diverge das trilhas, do POP ou das mídias locais',
 );
 

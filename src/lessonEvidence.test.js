@@ -65,10 +65,39 @@ describe("lessonEvidence", () => {
     expect(selectLessonScenario(cases, "m01", 1)).toEqual({
       scenario: cases[1],
       questionIndex: 0,
+      scope: "module",
     });
     expect(selectLessonScenario(cases, "m01", 2)).toEqual({
       scenario: cases[0],
       questionIndex: 0,
+      scope: "module",
+    });
+  });
+
+  it("prioriza um caso e uma decisão fundamentados diretamente na aula", () => {
+    const cases = [
+      { id: "outro", track: "m15", questions: [["1"]] },
+      {
+        id: "uc-apa",
+        track: "m15",
+        questions: [["1"], ["2"], ["3"], ["4"], ["5"]],
+      },
+      { id: "escopo", track: "m00", questions: [["1"], ["2"], ["3"]] },
+    ];
+
+    expect(
+      selectLessonScenario(cases, "m00", 0, "pop-section-138"),
+    ).toEqual({
+      scenario: cases[1],
+      questionIndex: 0,
+      scope: "section",
+    });
+    expect(
+      selectLessonScenario(cases, "m15", 2, "pop-section-135"),
+    ).toEqual({
+      scenario: cases[1],
+      questionIndex: 3,
+      scope: "section",
     });
   });
 });

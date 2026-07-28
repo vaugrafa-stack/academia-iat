@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useMemo, useState } from 'react';
 import {
   Activity,
   ArrowRight,
@@ -19,6 +19,8 @@ import {
 import { PageHeader } from './ui.jsx';
 import { AutoAvaliacao } from './painelAluno.jsx';
 import { buildScenarioDocument, minimumEvidenceRequired } from './scenarioDocuments.js';
+import { tracks } from './courseData.js';
+import { getLabSources, LAB_SOURCE_POLICY } from './labSources.js';
 
 function normalizar(valor = '') {
   return valor.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
@@ -78,6 +80,95 @@ function rotuloResposta(valor) {
   return 'Não respondida';
 }
 
+export function resolverRemediacaoModulo(scenario, trackRegistry = tracks) {
+  if (!scenario?.track || !Array.isArray(trackRegistry)) return null;
+  const track = trackRegistry.find((candidate) => candidate.id === scenario.track);
+  if (!track?.code || !track?.title || !track?.remediationLessonId) return null;
+  return {
+    trackId: track.id,
+    code: track.code,
+    title: track.title,
+    lessonId: track.remediationLessonId,
+    href: `#/aula/${encodeURIComponent(track.remediationLessonId)}`,
+  };
+}
+
+function tituloEvidenciaPorReferencia(scenario, referenceId) {
+  const ordinal = Number(/-e(\d+)$/.exec(referenceId)?.[1]);
+  return Number.isInteger(ordinal) && ordinal > 0
+    ? scenario?.evidence?.[ordinal - 1] || null
+    : null;
+}
+
+export function resolverProvenienciaDecisao(scenario, questionIndex) {
+  const record = getLabSources(scenario?.id);
+  const decision = record?.decisions?.[questionIndex];
+  if (!decision) return null;
+  return {
+    ...decision,
+    evidenceTitles: decision.caseEvidenceRefs
+      .map((referenceId) => tituloEvidenciaPorReferencia(scenario, referenceId))
+      .filter(Boolean),
+  };
+}
+
+function rotuloAula(lesson, fallbackId) {
+  if (!lesson) return fallbackId;
+  return [lesson.number, lesson.title].filter(Boolean).join(' — ');
+}
+
+function DecisionProvenance({ provenance, lessonMap }) {
+  if (!provenance) return null;
+  const mixed = provenance.supportMode === 'mixed';
+  const pending = provenance.reviewStatus === 'needs-technical-review';
+  return (
+    <details className={`lab-source-details${pending ? ' pending' : ''}`}>
+      <summary>
+        Fundamento e evidências desta decisão
+        <span>{provenance.popSources.length} {provenance.popSources.length === 1 ? 'trecho' : 'trechos'}</span>
+      </summary>
+      <div className="lab-source-body">
+        <div className="lab-source-badges" aria-label="Situação da fundamentação">
+          <span>{mixed ? 'POP + caso sintético' : 'Fundamento da minuta POP'}</span>
+          <span>{pending ? 'Pendente de revisão técnica' : 'Mapeamento preliminar'}</span>
+        </div>
+        {pending && (
+          <p className="lab-source-warning">
+            Esta conclusão combina interpretação ou dado do caso que a minuta não resolve
+            sozinha. Ela deve ser revisada por pessoa tecnicamente responsável antes de
+            qualquer uso fora do treinamento.
+          </p>
+        )}
+        {provenance.popSources.map((source) => {
+          const lesson = lessonMap?.get?.(source.sec);
+          return (
+            <figure className="lab-source-quote" key={source.id}>
+              <blockquote>{source.quote}</blockquote>
+              <figcaption>
+                <a href={`#/aula/${encodeURIComponent(source.sec)}`}>
+                  Minuta POP v1.7 · {rotuloAula(lesson, source.sec)}
+                  <ArrowRight aria-hidden="true" />
+                </a>
+              </figcaption>
+            </figure>
+          );
+        })}
+        {provenance.evidenceTitles.length > 0 && (
+          <div className="lab-case-evidence">
+            <strong>Dados sintéticos usados neste caso</strong>
+            <ul>
+              {provenance.evidenceTitles.map((title) => <li key={title}>{title}</li>)}
+            </ul>
+          </div>
+        )}
+        <p className="fund-nota">
+          {LAB_SOURCE_POLICY.reviewStatuses[provenance.reviewStatus]}
+        </p>
+      </div>
+    </details>
+  );
+}
+
 function EvidenceDocument({ document, note, onNote, onClose, readOnly = false }) {
   if (!document) return null;
   return (
@@ -122,31 +213,53 @@ function EvidenceDocument({ document, note, onNote, onClose, readOnly = false })
   );
 }
 
-function DecisionReview({ scenario, answers }) {
+function DecisionReview({ scenario, answers, lessonMap }) {
+  const remediation = resolverRemediacaoModulo(scenario);
   return (
-    <ol className="lab-answer-review" aria-label="Revisão das decisões">
-      {scenario.questions.map((question, index) => {
-        const learner = answers[index];
-        const expected = question[1];
-        const correct = learner === expected;
-        return (
-          <li key={question[0]}>
-            <span>{question[0]}</span>
-            <b className={correct ? 'correct' : 'incorrect'}>
-              {correct ? 'Alinhada' : 'Revisar'}
-            </b>
-            <span>
-              sua resposta: {rotuloResposta(learner)} · esperado no caso: {rotuloResposta(expected)}
-            </span>
-            <p>
-              Confronte a decisão com <strong>{scenario.evidence[index % scenario.evidence.length]}</strong>.
-              O gabarito vale apenas para este cenário sintético; revise o fundamento no módulo {scenario.track.toUpperCase()}
-              antes de transferir a conclusão para outro caso.
-            </p>
-          </li>
-        );
-      })}
-    </ol>
+    <>
+      <ol className="lab-answer-review" aria-label="Revisão das decisões">
+        {scenario.questions.map((question, index) => {
+          const learner = answers[index];
+          const expected = question[1];
+          const correct = learner === expected;
+          const provenance = resolverProvenienciaDecisao(scenario, index);
+          return (
+            <li key={question[0]}>
+              <span>{question[0]}</span>
+              <b className={correct ? 'correct' : 'incorrect'}>
+                {correct ? 'Alinhada' : 'Revisar'}
+              </b>
+              <span>
+                sua resposta: {rotuloResposta(learner)} · esperado no caso: {rotuloResposta(expected)}
+              </span>
+              <p>
+                Confronte a decisão com{' '}
+                <strong>
+                  {provenance?.evidenceTitles?.join(', ')
+                    || 'as evidências sintéticas indicadas no cenário'}
+                </strong>.
+                O gabarito vale apenas para este cenário sintético; revise o fundamento
+                {remediation ? <> no módulo {remediation.code}</> : ' no módulo correspondente'}
+                {' '}antes de transferir a conclusão para outro caso.
+              </p>
+              <DecisionProvenance provenance={provenance} lessonMap={lessonMap} />
+            </li>
+          );
+        })}
+      </ol>
+      {remediation && (
+        <>
+          <a className="source-jump" href={remediation.href}>
+            Revisar {remediation.code} · {remediation.title}
+            <ArrowRight aria-hidden="true" />
+          </a>
+          <p className="fund-nota">
+            Remediação geral do módulo: o link abre a primeira aula existente do percurso.
+            Ele não identifica uma fonte específica para cada decisão deste cenário.
+          </p>
+        </>
+      )}
+    </>
   );
 }
 
@@ -155,6 +268,7 @@ export default function Laboratorio({
   setState,
   scenarios,
   grupos,
+  lessonMap,
   initialScenarioId,
   onSelectScenario,
 }) {
@@ -210,7 +324,7 @@ export default function Laboratorio({
     }
   }, [initialScenarioId, scenarios, selected]);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const saved = state.labs?.[selected];
     const savedAnswers = saved?.versao >= 3 && saved?.respostas
       ? saved.respostas
@@ -260,7 +374,7 @@ export default function Laboratorio({
           rubrica: rubric,
           rubricaTotal: rubricTotal,
           indiceCompletude: rubricTotal,
-          revisaoHumanaPendente: true,
+          conferenciaTecnicaPendente: true,
           versao: 3,
         },
       },
@@ -279,8 +393,9 @@ export default function Laboratorio({
         <ShieldCheck aria-hidden="true" />
         <p>
           <strong>Ambiente de treinamento.</strong> Casos e documentos são sintéticos,
-          construídos a partir dos critérios do POP. Não reproduzem processo, empreendimento,
-          assinatura, decisão ou aprovação institucional.
+          e o debriefing separa o fundamento extraído da minuta POP v1.7 dos fatos,
+          cálculos e inferências produzidos para a prática. Nada aqui reproduz processo,
+          empreendimento, assinatura, decisão ou aprovação institucional.
         </p>
       </div>
 
@@ -523,9 +638,13 @@ export default function Laboratorio({
               </div>
               <p className="fund-nota">
                 Este índice mede respostas objetivas e presença/completude observável. Não avalia
-                coerência, mérito técnico ou competência; a revisão humana continua pendente.
+                coerência, mérito técnico ou competência; a conferência técnica continua pendente.
               </p>
-              <DecisionReview scenario={scenario} answers={answers} />
+              <DecisionReview
+                scenario={scenario}
+                answers={answers}
+                lessonMap={lessonMap}
+              />
               {scenario.elementos && (
                 <div className="fund-check">
                   <strong>Sua fundamentação mencionou {conference.tocados} de {conference.total} elementos esperados</strong>

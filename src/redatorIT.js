@@ -82,7 +82,7 @@ export const ESTRUTURA_IT = [
     n: 12, id: 'controle_qualidade', titulo: 'Controle de qualidade e revisão final',
     exige: 'Conferir coerência entre objeto, base, achados, gravidade, conclusão, pendências, condicionantes e encaminhamento; revisar forma, rastreabilidade e limites de competência.',
     armadilha: 'Assinar texto cuja conclusão contradiz os achados ou que declara como validada matéria atribuída a outro órgão.',
-    dica: () => 'Faça uma leitura inversa: do encaminhamento para cada evidência que o sustenta, e registre o que ainda exige revisão humana.',
+    dica: () => 'Faça uma leitura inversa: do encaminhamento para cada evidência que o sustenta, e registre o que ainda exige conferência técnica.',
   },
 ];
 

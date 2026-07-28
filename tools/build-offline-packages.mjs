@@ -35,7 +35,7 @@ async function mediaItem(relativePath) {
 
 export async function buildOfflinePayload() {
   const pop = JSON.parse(
-    await readFile(resolve(root, 'src/data/pop-content.json'), 'utf8'),
+    await readFile(resolve(root, 'src/data/pop-public-content.json'), 'utf8'),
   );
   const { trackLessons } = derivarAulas(pop, tracks);
   const packages = [];

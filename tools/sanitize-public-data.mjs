@@ -6,6 +6,7 @@ import { fileURLToPath } from 'node:url';
 const ROOT = process.cwd();
 const PUBLIC_FILES = [
   'src/data/pop-content.json',
+  'src/data/pop-public-content.json',
   'src/data/flowcharts-content.json',
 ];
 
@@ -143,6 +144,10 @@ export function findUnsafePublicData(serialized) {
   return [...new Set(findings)];
 }
 
+export function isSanitizedPublicDocument(document) {
+  return JSON.stringify(document) === JSON.stringify(sanitizePublicDocument(document));
+}
+
 async function processFile(relativePath, checkOnly) {
   const absolutePath = path.join(ROOT, relativePath);
   const raw = await readFile(absolutePath, 'utf8');
@@ -155,7 +160,11 @@ async function processFile(relativePath, checkOnly) {
     throw new Error(`${relativePath}: conteúdo público inseguro (${findings.join(', ')})`);
   }
 
-  if (raw === output) {
+  // O gate verifica o conteúdo, não a representação textual do JSON.
+  // Git pode materializar LF como CRLF em um clone Windows; exigir igualdade
+  // byte a byte fazia um artefato semanticamente sanitizado reprovar apenas
+  // pelo sistema operacional.
+  if (isSanitizedPublicDocument(parsed)) {
     console.log(`OK: ${relativePath} já está sanitizado.`);
     return;
   }

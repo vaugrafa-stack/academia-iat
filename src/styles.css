@@ -431,6 +431,13 @@ button.primary:active{transform:translateY(0);box-shadow:0 2px 8px #07583b33}
 /* drawer mobile suave */
 .nav-scrim{animation:scrimIn .25s ease both}
 .sidebar-v2{transition:transform .32s var(--ease)}
+.sidebar-mobile-close{display:none}
+@media(max-width:980px){
+  .sidebar-mobile-close{position:absolute;z-index:3;top:29px;right:25px;width:44px;height:44px;border:1px solid #ffffff66;border-radius:8px;background:var(--green);color:#fff;display:grid;place-items:center;box-shadow:0 4px 14px #003b2744;cursor:pointer}
+  .sidebar-mobile-close:hover{background:var(--green2)}
+  .sidebar-mobile-close svg{width:21px;height:21px}
+  .sidebar-v2 .brand-panel{padding-right:58px}
+}
 /* toast sai com fade */
 .toast{animation:toastIn .32s var(--ease),toastOut .3s ease 2.2s forwards}
 @keyframes toastOut{to{opacity:0;transform:translateY(8px)}}
@@ -851,7 +858,7 @@ a[href^="http"]::after{content:" (" attr(href) ")";font-size:10px;color:#555}
 .decision-path{align-items:stretch}
 .decision-path>.path-node,.decision-path .path-node{align-self:stretch}
 .decision-path>i{align-self:center}
-/* anywhere partia a palavra no meio ("Suficienc / ia"); break-word so quebra
+/* anywhere partia palavras no meio; break-word só quebra
    quando a palavra sozinha nao cabe, e a hifenizacao entra pelo lang do html. */
 .path-node strong{font-size:13px;line-height:1.25;text-align:center;overflow-wrap:break-word;hyphens:auto}
 .path-node{width:122px}

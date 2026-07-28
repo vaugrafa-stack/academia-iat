@@ -9,7 +9,7 @@
 // O que este redator NAO faz: corrigir o texto. Ele nao tem como julgar
 // redacao, e fingir que tem seria pior do que nao avaliar. Ele guarda o
 // rascunho, mostra o que falta, confronta com o desfecho do caso e permite
-// levar o texto para avaliacao humana.
+// levar o texto para avaliacao tecnica.
 import React, { useMemo, useState } from 'react';
 import { FileText, ChevronRight, ChevronLeft, Download, Check, Circle, Lightbulb, AlertTriangle, Eye } from 'lucide-react';
 import { ESTRUTURA_IT, MINIMO_SECAO, progressoIT, montarIT } from './redatorIT.js';
@@ -175,7 +175,7 @@ export default function RedatorIT({ scenarios, grupos, state, setState, go }) {
 
       <footer className="rd-aviso">
         <Circle size={13} />
-        <p>Exercício didático. A contagem indica apenas preenchimento mínimo, não suficiência nem qualidade. O texto não é peça processual, não tem validade, depende de revisão humana e não representa manifestação do IAT.</p>
+        <p>Exercício didático. A contagem indica apenas preenchimento mínimo, não suficiência nem qualidade. O texto não é peça processual, não tem validade, depende de conferência técnica e não representa manifestação do IAT.</p>
       </footer>
     </div>
   );

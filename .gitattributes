@@ -1,3 +1,6 @@
 *.vtt text eol=lf
+src/data/pop-content.json text eol=lf
+src/data/pop-public-content.json text eol=lf
+src/data/flowcharts-content.json text eol=lf
 src/data/offline-packages.json text eol=lf
 

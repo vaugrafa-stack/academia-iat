@@ -22,8 +22,13 @@ globalThis.cancelAnimationFrame = clearTimeout;
 const nativeFetch = globalThis.fetch;
 globalThis.fetch = async input => {
   const url = String(input);
-  if (url.includes('pop-content') || url.includes('flowcharts-content')) {
-    const file = url.includes('pop-content') ? 'src/data/pop-content.json' : 'src/data/flowcharts-content.json';
+  let file = null;
+  if (url.includes('pop-public-content')) file = 'src/data/pop-public-content.json';
+  else if (url.includes('pop-content')) {
+    throw new Error('A aplicação tentou carregar o conteúdo-fonte bruto.');
+  }
+  else if (url.includes('flowcharts-content')) file = 'src/data/flowcharts-content.json';
+  if (file) {
     const body = await readFile(resolve(root, file));
     return new Response(body, { headers: { 'content-type': 'application/json' } });
   }
@@ -78,6 +83,10 @@ try {
   assert(Boolean(document.querySelector('.exemplo-processo')), 'aula conecta o critério a um caso do módulo');
 
   await click(navButtons.find(x => x.textContent.includes('Fluxogramas')));
+  await waitFor(
+    () => document.querySelectorAll('.flow-menu button').length === 7,
+    'fluxogramas não terminaram de carregar após a navegação',
+  );
   assert(Boolean(document.querySelector('.flow-source-warning')), 'fluxos declaram que o documento-fonte é uma proposta');
   assert(document.querySelectorAll('.flow-menu button').length === 7, 'sete fluxogramas interativos');
   assert(document.querySelectorAll('.interactive-flow > button').length >= 6, 'nós interativos do fluxo renderizados');
@@ -145,9 +154,9 @@ try {
   await click(navButtons.find(x => x.textContent.includes('Biblioteca')));
   await waitFor(
     () => Boolean(document.querySelector('.library-search')),
-    'biblioteca integral não terminou de carregar',
+    'biblioteca operacional não terminou de carregar',
   );
-  assert(document.querySelector('.library-search'), 'biblioteca integral renderizada');
+  assert(document.querySelector('.library-search'), 'biblioteca operacional renderizada');
 
   const avatar = document.querySelector('button.profile');
   assert(Boolean(avatar), 'avatar do topo é um botão');

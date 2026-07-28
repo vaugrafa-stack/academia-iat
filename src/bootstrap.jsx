@@ -4,13 +4,17 @@ import { AlertTriangle, RefreshCw } from 'lucide-react';
 import { AppErrorBoundary } from './AppErrorBoundary.jsx';
 import { describeAppDataError } from './appData.js';
 
-const root = createRoot(document.getElementById('root'));
+function reloadCurrentPage() {
+  window.location.reload();
+}
 
-function StartupFailure({ error }) {
+export function StartupFailure({ error, onRetry = reloadCurrentPage }) {
   const issue = describeAppDataError(error);
   return (
     <main
       role="alert"
+      aria-labelledby="startup-error-title"
+      aria-describedby="startup-error-message"
       style={{
         minHeight: '100vh',
         display: 'grid',
@@ -26,11 +30,11 @@ function StartupFailure({ error }) {
         <small style={{ display: 'block', marginTop: 16, color: '#9ecaba' }}>
           FALHA RECUPERÁVEL · {issue.code}
         </small>
-        <h1>{issue.title}</h1>
-        <p>{issue.message}</p>
+        <h1 id="startup-error-title">{issue.title}</h1>
+        <p id="startup-error-message">{issue.message}</p>
         <button
           type="button"
-          onClick={() => window.location.reload()}
+          onClick={onRetry}
           style={{
             minHeight: 44,
             display: 'inline-flex',
@@ -55,14 +59,58 @@ function StartupFailure({ error }) {
   );
 }
 
-try {
-  const { default: App } = await import('./main.jsx');
-  root.render(
-    <AppErrorBoundary>
-      <App />
-    </AppErrorBoundary>,
-  );
-} catch (error) {
-  console.error('[Academia IAT] falha de inicialização', error);
-  root.render(<StartupFailure error={error} />);
+export function reportStartupError(error, logger = console) {
+  const issue = describeAppDataError(error);
+  logger.error('[Academia IAT] falha de inicialização', { code: issue.code });
 }
+
+export async function bootstrapApplication({
+  rootElement,
+  createRootImpl = createRoot,
+  loadApplication = () => import('./main.jsx'),
+  onReload = reloadCurrentPage,
+  reportError = reportStartupError,
+} = {}) {
+  if (!rootElement) {
+    const error = new Error('Contêiner principal ausente.');
+    reportError(error);
+    return {
+      status: 'failed',
+      issue: describeAppDataError(error),
+      root: null,
+    };
+  }
+
+  const root = createRootImpl(rootElement);
+
+  try {
+    const applicationModule = await loadApplication();
+    const App = applicationModule?.default;
+    if (!App) {
+      throw new Error('Módulo principal sem exportação padrão.');
+    }
+    root.render(
+      <AppErrorBoundary onReload={onReload}>
+        <App />
+      </AppErrorBoundary>,
+    );
+    return { status: 'mounted', root };
+  } catch (error) {
+    reportError(error);
+    root.render(<StartupFailure error={error} onRetry={onReload} />);
+    return {
+      status: 'failed',
+      issue: describeAppDataError(error),
+      root,
+    };
+  }
+}
+
+const rootElement = document.getElementById('root');
+export const startupPromise = rootElement
+  ? bootstrapApplication({ rootElement })
+  : Promise.resolve({ status: 'skipped', root: null });
+
+// Mantém o contrato da entrada: quem carrega este módulo só prossegue depois
+// que o App ou a tela de recuperação substituiu o splash inicial.
+await startupPromise;

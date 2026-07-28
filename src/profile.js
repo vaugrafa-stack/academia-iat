@@ -65,7 +65,7 @@ function readRegistry() {
   } catch (error) {
     throw persistenceException(storageError(error), error);
   }
-  if (!raw) return null;
+  if (raw === null) return null;
   try {
     return normalizeStoredRegistry(JSON.parse(raw));
   } catch (error) {
@@ -73,6 +73,26 @@ function readRegistry() {
       ok: false,
       code: 'REGISTRY_INVALID',
       error: 'O registro local de perfis está inválido. Os dados originais foram preservados para recuperação.',
+      recoverable: true,
+    }, error);
+  }
+}
+
+function readLegacyProfile() {
+  let raw;
+  try {
+    raw = localStorage.getItem(LEGACY_PROFILE_KEY);
+  } catch (error) {
+    throw persistenceException(storageError(error), error);
+  }
+  if (raw === null) return null;
+  try {
+    return validateProfile(JSON.parse(raw));
+  } catch (error) {
+    throw persistenceException({
+      ok: false,
+      code: 'REGISTRY_INVALID',
+      error: 'O perfil legado está inválido. Os dados originais foram preservados para recuperação.',
       recoverable: true,
     }, error);
   }
@@ -145,9 +165,16 @@ export function validateProgress(value) {
   validateRecord(value.checks, 'Itens conferidos');
   validateRecord(value.lessonEvidence, 'Registros de prática ativa');
   validateRecord(value.doneAt, 'Datas de conclusão');
+  validateRecord(value.its, 'Rascunhos de Informação Técnica');
+  validateRecord(value.diagnostico, 'Resultados do diagnóstico');
+  validateRecord(value.autoaval, 'Resultados da autoavaliação');
+  validateRecord(value.enquadra, 'Resultados do exercício de enquadramento');
 
   if (value.lastLesson !== undefined && value.lastLesson !== null && typeof value.lastLesson !== 'string') {
     throw new Error('A última aula do backup está em formato inválido.');
+  }
+  if (value.itCasoAtual !== undefined && value.itCasoAtual !== null && typeof value.itCasoAtual !== 'string') {
+    throw new Error('O caso atual da Informação Técnica está em formato inválido.');
   }
   if (value.lastVisit !== undefined && value.lastVisit !== null && typeof value.lastVisit !== 'string') {
     throw new Error('A última visita do backup está em formato inválido.');
@@ -157,6 +184,18 @@ export function validateProgress(value) {
   }
   if (value.notes && Object.values(value.notes).some((note) => typeof note !== 'string')) {
     throw new Error('As anotações do backup precisam ser textos.');
+  }
+  if (value.enquadra) {
+    const { acertos, total } = value.enquadra;
+    if (
+      !Number.isInteger(acertos) ||
+      !Number.isInteger(total) ||
+      acertos < 0 ||
+      total < 0 ||
+      acertos > total
+    ) {
+      throw new Error('O resultado do exercício de enquadramento está em formato inválido.');
+    }
   }
 
   return safeJsonClone(value);
@@ -258,8 +297,7 @@ function restoreStorageValue(key, previousValue) {
 function ensureRegistry() {
   let reg = readRegistry();
   if (reg) return reg;
-  let legacy = null;
-  try { legacy = JSON.parse(localStorage.getItem(LEGACY_PROFILE_KEY) || 'null'); } catch { /* ignora */ }
+  const legacy = readLegacyProfile();
   const first = { ...defaultProfile(), ...(legacy || {}), schemaVersion: PROFILE_SCHEMA, id: newId() };
   reg = { activeId: first.id, users: [first] };
   try {
@@ -289,12 +327,17 @@ export function loadProfile() {
 
 export function exportProfileRegistryRecovery() {
   let raw;
+  let source = 'registry';
   try {
     raw = localStorage.getItem(USERS_KEY);
+    if (raw === null) {
+      raw = localStorage.getItem(LEGACY_PROFILE_KEY);
+      source = 'legacy-profile';
+    }
   } catch (error) {
     return storageError(error);
   }
-  if (!raw) {
+  if (raw === null) {
     return {
       ok: false,
       code: 'REGISTRY_MISSING',
@@ -306,24 +349,36 @@ export function exportProfileRegistryRecovery() {
   const url = URL.createObjectURL(blob);
   const link = document.createElement('a');
   link.href = url;
-  link.download = 'academia-iat-perfis-recuperacao.json';
+  link.download = source === 'registry'
+    ? 'academia-iat-perfis-recuperacao.json'
+    : 'academia-iat-perfil-legado-recuperacao.json';
   document.body.appendChild(link);
   link.click();
   link.remove();
   setTimeout(() => URL.revokeObjectURL(url), 1000);
-  return { ok: true, code: 'REGISTRY_EXPORTED' };
+  return { ok: true, code: 'REGISTRY_EXPORTED', source };
 }
 
 export function resetInvalidProfileRegistry() {
-  let previous;
+  let previousRegistry;
+  let previousLegacyProfile;
+  let capturedRegistry = false;
+  let capturedLegacyProfile = false;
   try {
-    previous = localStorage.getItem(USERS_KEY);
+    previousRegistry = localStorage.getItem(USERS_KEY);
+    capturedRegistry = true;
+    previousLegacyProfile = localStorage.getItem(LEGACY_PROFILE_KEY);
+    capturedLegacyProfile = true;
     localStorage.removeItem(USERS_KEY);
+    localStorage.removeItem(LEGACY_PROFILE_KEY);
     const profile = loadProfile();
     return { ok: true, code: 'REGISTRY_RESET', profile };
   } catch (error) {
-    if (previous !== undefined) {
-      try { restoreStorageValue(USERS_KEY, previous); } catch { /* preserva o erro original */ }
+    if (capturedRegistry) {
+      try { restoreStorageValue(USERS_KEY, previousRegistry); } catch { /* preserva o erro original */ }
+    }
+    if (capturedLegacyProfile) {
+      try { restoreStorageValue(LEGACY_PROFILE_KEY, previousLegacyProfile); } catch { /* preserva o erro original */ }
     }
     return persistenceResult(error);
   }

@@ -109,7 +109,13 @@ async function main(argv = process.argv.slice(2)) {
     } catch (error) {
       if (error?.code !== 'ENOENT') throw error;
     }
-    if (published !== serialized) {
+    let publishedPayload = null;
+    try {
+      publishedPayload = JSON.parse(published);
+    } catch {
+      // A mensagem única abaixo cobre tanto ausência quanto JSON inválido.
+    }
+    if (JSON.stringify(publishedPayload) !== JSON.stringify(payload)) {
       console.error('FALHA: src/data/offline-packages.json está ausente ou desatualizado.');
       console.error('Execute: node tools/build-offline-packages.mjs');
       return 1;

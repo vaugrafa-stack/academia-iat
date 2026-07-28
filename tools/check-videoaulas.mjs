@@ -14,7 +14,7 @@ import { readFile, stat } from 'node:fs/promises';
 import { resolve } from 'node:path';
 
 const root = resolve(import.meta.dirname, '..');
-const pop = JSON.parse(await readFile(resolve(root, 'src/data/pop-content.json'), 'utf8'));
+const pop = JSON.parse(await readFile(resolve(root, 'src/data/pop-public-content.json'), 'utf8'));
 const { tracks } = await import('../src/courseData.js');
 const { derivarAulas } = await import('../src/lessons.js');
 const { lessons } = derivarAulas(pop, tracks);

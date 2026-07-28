@@ -38,14 +38,46 @@ describe('contratos de acessibilidade das superfícies principais', () => {
     expect(main).not.toContain('painel-aula-${lesson.id}-${ids[index]}');
   });
 
-  it('trata o menu movel como dialogo, contem o foco e devolve-o ao fechar', async () => {
+  it('mantém o campo de anotações vinculado ao seu rótulo visível', async () => {
     const main = await readFile(mainUrl, 'utf8');
+
+    expect(main).toMatch(
+      /<label htmlFor="lesson-notes">[\s\S]*?Seu caderno[\s\S]*?<\/label>/,
+    );
+    expect(main).toMatch(/<textarea[\s\S]*?id="lesson-notes"[\s\S]*?value=\{value\}/);
+  });
+
+  it('trata o menu movel como dialogo, isola o fundo e devolve o foco por todas as saidas', async () => {
+    const [main, baseCss] = await Promise.all([
+      readFile(mainUrl, 'utf8'),
+      readFile(baseCssUrl, 'utf8'),
+    ]);
 
     expect(main).toContain('role={mobile && open ? "dialog" : undefined}');
     expect(main).toContain('aria-modal={mobile && open ? "true" : undefined}');
-    expect(main).toContain('inert={searchOpen || (mobileNav && menuOpen)}');
+    expect(main).toMatch(
+      /<Topbar[\s\S]*?inert=\{searchOpen \|\| \(mobileNav && menuOpen\)\}/,
+    );
+    expect(main).toMatch(
+      /<main[\s\S]*?inert=\{searchOpen \|\| \(mobileNav && menuOpen\)\}/,
+    );
     expect(main).toContain('document.addEventListener("keydown", containFocus)');
-    expect(main).toContain('document.querySelector(".mobile-menu")?.focus()');
+    expect(main).toContain('const restoreMenuFocusOnClose = useRef(false)');
+    expect(main).toContain('const restoreFocusId = setTimeout(');
+    expect(main).toContain('mobileMenuButton.current?.focus({ preventScroll: true })');
+    expect(main).toMatch(
+      /if \(event.key === "Escape"\) \{[\s\S]*?closeMobileMenu\(\);[\s\S]*?return;/,
+    );
+    expect(main).toMatch(
+      /className="nav-scrim"[\s\S]*?onPointerDown=\{\(event\) => event\.preventDefault\(\)\}[\s\S]*?onClick=\{closeMobileMenu\}/,
+    );
+    expect(main).toContain('onClose={closeMobileMenu}');
+    expect(main).toMatch(
+      /className="sidebar-mobile-close"[\s\S]*?aria-label="Fechar menu"[\s\S]*?onClick=\{onClose\}/,
+    );
+    expect(baseCss).toMatch(
+      /@media\(max-width:980px\)\{\s*\.sidebar-mobile-close\{[^}]*width:44px;[^}]*height:44px;[^}]*display:grid/,
+    );
   });
 
   it('reposiciona o foco no historico e mantem contraste forte no link de salto', async () => {

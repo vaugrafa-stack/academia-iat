@@ -1,7 +1,7 @@
 # Plano de evolução — Academia IAT Premium
 
 Documento operacional para continuidade da execução. Os estados refletem o que
-está comprovado em 27/07/2026, não o que foi apenas planejado.
+está comprovado em 28/07/2026, não o que foi apenas planejado.
 
 Legenda: ⬜ pendente · 🟨 em execução ou aguardando prova · ✅ comprovado ·
 ⛔ bloqueado por validação externa.
@@ -17,12 +17,14 @@ Legenda: ⬜ pendente · 🟨 em execução ou aguardando prova · ✅ comprovad
   `8ffa771546c244e194e6d7b41dd91d5ab3f56083e94c081e1e5c9a17f13f2c3c`
 - Tamanho: `4.408.377 bytes`
 - Versão operacional visível na capa: `1.7`
-- Situação: minuta técnica pendente de validação humana e institucional.
+- Situação: minuta técnica pendente de validação técnica e institucional.
 
 O arquivo anterior, com outro tamanho e hash, não é fonte desta execução. A
-comparação semântica registrou a retirada de duas ocorrências de glossário para
-“IA — Inteligência Artificial”; o conteúdo substantivo sobre IA permanece onde
-está presente no POP atual. Os 14 ativos visuais permaneceram idênticos.
+comparação semântica entre as fontes foi registrada sem alterar o documento
+congelado. Por orientação editorial expressa do responsável, a apresentação
+pública aplica uma camada derivada e auditável que omite um tema específico,
+enquanto a extração fiel permanece separada para rastreabilidade. Os 14 ativos
+visuais da fonte permaneceram idênticos.
 
 ### Medidas atuais do conteúdo
 
@@ -33,7 +35,8 @@ está presente no POP atual. Os 14 ativos visuais permaneceram idênticos.
 | Figuras do POP | 14 | Manifestadas e comparadas |
 | Fluxogramas | 21 | Proposta, não material oficial |
 | Ativos manifestados | 35 | POP + fluxogramas |
-| Nós pesquisáveis do POP | 3.339 | Extração atual |
+| Nós pesquisáveis da fonte | 3.339 | Extração fiel preservada para auditoria |
+| Nós pesquisáveis públicos | 3.333 | Edição de treinamento derivada e auditável |
 | Tópicos didáticos | 159 | Dois títulos não navegacionais são apenas cabeçalhos estruturais |
 | Percursos recomendados | 4 | Essencial, Analista, PACUERA e Revisor; não bloqueiam conteúdo |
 | Questões | 136 | 82/161 seções com cobertura direta; revisão psicométrica e editorial ainda necessária |
@@ -45,7 +48,7 @@ está presente no POP atual. Os 14 ativos visuais permaneceram idênticos.
 
 Mudança implementada, mas ainda sem a bateria atual de build, testes e navegador,
 fica 🟨. Nenhuma etapa recebe ✅ com base apenas em inspeção estática. Validação
-humana e institucional não pode ser substituída por teste automatizado.
+técnica e institucional não pode ser substituída por teste automatizado.
 
 ## Personas atendidas
 
@@ -173,7 +176,7 @@ adequadas ao papel.
 - matriz de alinhamento está completa;
 - piloto encontra e corrige lacunas;
 - tempo é medido ou rotulado como estimativa;
-- especialista exige caso aberto, fundamentação e rubrica humana.
+- especialista exige caso aberto, fundamentação e rubrica técnica.
 
 ### E5 — Laboratório autêntico 🟨
 
@@ -183,7 +186,11 @@ adequadas ao papel.
 - evidências mínimas, notas analíticas e fundamentação extensa;
 - rubrica separa decisão, evidência e raciocínio;
 - revisão textual da decisão;
-- ligação direta aula → cenário.
+- ligação direta aula → cenário;
+- as 130 decisões dos 26 cenários possuem vínculos explícitos para trechos
+  literais do POP e para as evidências sintéticas efetivamente usadas;
+- dez decisões com dependência interpretativa permanecem identificadas para
+  conferência técnica, sem apresentar inferência do caso como regra da fonte.
 
 **Ainda falta**
 
@@ -398,7 +405,7 @@ obrigar uma sequência de curso.
 - exemplos sintéticos estão claramente marcados;
 - procedimento de correção e retirada está documentado.
 
-### E13 — Validação humana e institucional ⛔
+### E13 — Validação técnica e institucional ⛔
 
 Depende de participação externa e não pode ser fabricada pelo código.
 
@@ -485,6 +492,147 @@ não foi convertido em alegação de competência ou aprovação institucional.
 - zoom de 200%, leitor de tela humano e quota baixa real permanecem pendentes;
 - a arquitetura ainda concentra responsabilidade excessiva em `main.jsx`.
 
+**Reprodutibilidade local revalidada em 28/07/2026**
+
+- um worktree limpo do commit publicado falhou antes do Vite no Windows porque
+  `sanitize-public-data.mjs --check` comparava os bytes dos JSONs com uma
+  serialização LF, enquanto o checkout materializava CRLF;
+- o gate passou a comparar o documento sanitizado semanticamente e continua
+  falhando quando uma chave bloqueada ou redação pessoal seria removida;
+- os dois artefatos de fonte ganharam `eol=lf` explícito e regressões cobrem
+  independência de formatação, remoção de metadados e redação de nome/e-mail;
+- essa correção remove uma diferença de plataforma do clone limpo; os demais
+  gates ainda precisam ser reexecutados antes de promover o ciclo.
+
+**Correções de aprendizagem e acessibilidade em 28/07/2026**
+
+- o debriefing do laboratório deixou de converter a chave interna de trilha em
+  rótulo de módulo; os 26 cenários agora resolvem código e título pelo registro
+  canônico, incluindo as sete regressões entre M12 e M16;
+- cada cenário oferece uma aula real do próprio módulo para retomada e explica
+  que esse destino é uma remediação geral, não uma fonte específica para cada
+  decisão;
+- testes parametrizados conferem os 26 destinos, a existência da aula e sua
+  pertença ao módulo, sem transformar o caso sintético em alegação normativa;
+- o campo “Seu caderno” ganhou rótulo visível programaticamente associado, e um
+  contrato automatizado impede a volta do `textarea` sem nome acessível;
+- continuam pendentes os vínculos estruturados por decisão entre caso, aula e
+  trecho do POP, além da validação com leitor de tela e usuários reais.
+
+**Primeira redução arquitetural revalidada em 28/07/2026**
+
+- o domínio de fluxogramas saiu de `main.jsx` para um módulo carregado sob
+  demanda, recebendo `flowData` já validado pelo bootstrap sem novo fetch;
+- `useMediaQuery` virou utilitário compartilhado, sem duplicar a lógica entre o
+  shell e a tela extraída;
+- `main.jsx` caiu de 170.492 para 149.412 bytes normalizados, e um contrato
+  incremental de 155.000 bytes impede a regressão imediata;
+- o build gerou chunk dedicado de 10.679 bytes (3.871 bytes gzip); smoke,
+  referências e comportamento completo dos sete fluxos permaneceram verdes;
+- a meta arquitetural final de um orquestrador abaixo de 25 kB permanece aberta
+  e deve avançar por domínios independentes, sem reescrever a aplicação inteira.
+
+**Orçamento de desempenho criado em 28/07/2026**
+
+- o gate do artefato manteve as dez marcas funcionais e o piso contra corte de
+  árvore, mas passou também a limitar entrada, maior chunk, JS total, CSS,
+  maior ativo textual e o novo chunk de fluxogramas em bytes brutos e gzip;
+- nomes com hash são descobertos a partir do HTML e do papel do arquivo, sem
+  congelar identificadores gerados pelo Vite;
+- cinco regressões autocontidas cobrem limites exatos, excesso de um byte,
+  hashes arbitrários, soma de múltiplos arquivos, gzip determinístico, marcas,
+  piso e isolamento do chunk de fluxos;
+- o build atual permanece abaixo dos tetos, com alertas antecipados quando uma
+  métrica ultrapassa 90% do orçamento;
+- a medição do grafo inicial completo e os testes em rede/dispositivo de menor
+  capacidade continuam como evolução posterior.
+
+**Recuperação e persistência revalidadas em 28/07/2026**
+
+- o bootstrap passou a ter contrato testável: sucesso monta o aplicativo dentro
+  do limite de erro, e falha de importação substitui o splash por diagnóstico
+  acessível e ação de nova tentativa;
+- mensagens internas deixaram de ser despejadas no console ou na tela: os
+  registros de inicialização e renderização expõem somente códigos públicos e a
+  existência da pilha de componentes;
+- a migração de perfil legado agora valida e preserva a origem; conteúdo
+  inválido ou storage indisponível não cria silenciosamente um perfil vazio;
+- o estado de progresso saiu de `main.jsx` para uma camada testável que bloqueia
+  sobrescrita após corrupção, preserva o payload para download, classifica quota
+  e indisponibilidade e só reinicia após confirmação explícita;
+- essa segunda extração reduziu o orquestrador a 145.660 bytes normalizados,
+  mantendo o teto incremental de 155.000 bytes;
+- a falha ao resolver o perfil ativo não volta para uma chave global legada,
+  evitando que sessões diferentes escrevam sobre o mesmo registro;
+- 31 regressões focadas cobrem bootstrap, limite de erro, migração, JSON
+  inválido, tipos incompatíveis, quota, chave indisponível e estado interno
+  rejeitado; reinício real do navegador com armazenamento persistente ainda
+  precisa ser comprovado.
+
+**Menu móvel e isolamento modal revalidados em 28/07/2026**
+
+- o drawer móvel ganhou ação de fechamento própria, visível, rotulada e com
+  alvo mínimo de 44 × 44 px, sem depender do botão encoberto na barra superior;
+- barra superior e conteúdo principal ficam inertes enquanto o drawer modal
+  está aberto, mantendo o foco somente na superfície ativa;
+- Escape, botão interno e cortina usam a mesma rotina de fechamento, e o foco
+  retorna ao acionador após a atualização do React;
+- seis contratos focados de acessibilidade, a suíte conjunta com bootstrap, o
+  build e `git diff --check` passaram;
+- Escape e o botão interno foram reconferidos no artefato candidato em
+  navegador móvel; a cortina foi validada pelo mesmo manipulador e por ativação
+  de teclado, com retorno do foco ao acionador;
+- o artefato permaneceu sem overflow horizontal a 380 px.
+
+**Camada editorial da apresentação pública implementada em 28/07/2026**
+
+- a extração fiel do POP permanece congelada e separada como evidência de
+  auditoria; a aplicação deixou de carregar diretamente esse arquivo;
+- `pop-public-content.json` passou a ser gerado deterministicamente a partir da
+  fonte, com a exceção editorial expressamente solicitada e metadados que
+  registram duas linhas omitidas e uma seção renomeada;
+- aulas, busca, exercícios, laboratório, Redator, legendas, pacotes offline e
+  gerador de vídeos consomem somente a apresentação pública;
+- a capa e a abertura sonora da seção afetada foram substituídas; o áudio
+  permanece silencioso até o início da primeira fala permitida e o MP4 foi
+  decodificado integralmente após a alteração;
+- um gate varre fonte, arquivos públicos, mapas, manifesto e artefato compilado,
+  além de travar os hashes das mídias substituídas; ele impede a reintrodução
+  das formulações removidas e a inclusão da extração bruta no `dist`;
+- a varredura final cobriu 231 arquivos de origem, 456 arquivos no artefato,
+  180 legendas, 180 vídeos e 225 imagens sem ocorrência pública proibida;
+- esta é uma exceção editorial solicitada pelo responsável, não uma alteração
+  retroativa do documento-fonte nem uma alegação de cobertura literal integral.
+
+**Rastreabilidade e segurança didática do laboratório revalidadas em 28/07/2026**
+
+- as 130 decisões dos 26 cenários possuem vínculo estruturado com 180 trechos
+  literais da minuta POP v1.7 e com as aulas correspondentes;
+- cada debriefing separa fundamento da fonte, fatos sintéticos e interpretação
+  didática, exibindo o trecho citado e o destino exato para revisão;
+- dez conclusões frágeis foram corrigidas para não presumir enquadramento,
+  tempestividade, regularidade, continuidade, cumprimento ou suficiência sem os
+  documentos e dados necessários;
+- a rubrica passou a rejeitar respostas genéricas e mantém cobertura integral
+  de seus próprios modelos nos 26 casos;
+- uma corrida entre a restauração do progresso e a primeira resposta foi
+  eliminada; o smoke test comprova avanço imediato da decisão;
+- um caso completo foi executado a 380 px no artefato candidato, com cinco
+  decisões, duas evidências anotadas, fundamentação, debriefing e citação do POP.
+
+**Portões finais do lote revalidados em 28/07/2026**
+
+- 28 arquivos de teste e 157 testes automatizados passaram neste lote
+  publicável;
+- 136/136 questões mantêm fonte literal verificada, e 159/159 aulas possuem
+  mídia, legenda e manifesto consistentes;
+- `pnpm test`, `pnpm build`, `pnpm audit:premium` e `git diff --check` passaram;
+- o build preservou as dez áreas funcionais, 31 chunks JavaScript e todos os
+  limites obrigatórios de bundle; os alertas acima de 90% permanecem como sinal
+  antecipado de otimização, sem ultrapassar o orçamento;
+- a publicação e a revalidação do GitHub Pages continuam sendo a prova restante
+  deste lote.
+
 ## Registro resumido
 
 | Etapa | Estado | Próxima prova |
@@ -492,12 +640,12 @@ não foi convertido em alegação de competência ou aprovação institucional.
 | E0 Auditoria e baseline | ✅ | Manter achados e evidências atualizados |
 | E1 Proveniência | ✅ | Reexecutar gate no release candidato |
 | E2 Arquitetura | 🟨 | Build/test e remoção de legado |
-| E3 Confiança normativa | 🟨 | Matriz de alegações e revisão humana |
+| E3 Confiança normativa | 🟨 | Matriz de alegações e conferência técnica |
 | E4 Formação | 🟨 | Checklist dos 159 tópicos e piloto |
 | E5 Laboratório | 🟨 | Navegador, rubricas e revisão técnica |
 | E6 Avaliações | 🟨 | Testes, revisão de banco e piloto |
 | E7 Consulta operacional | 🟨 | Teste cronometrado com usuários e links bidirecionais restantes |
-| E8 Mídia | 🟨 | Demonstrações aprofundadas e validação humana das transcrições |
+| E8 Mídia | 🟨 | Demonstrações aprofundadas e validação técnica das transcrições |
 | E9 PWA/offline | 🟨 | Reinício, quota, Range e atualização real |
 | E10 UX/acessibilidade | 🟨 | Mobile, zoom, leitor e ledger visual |
 | E11 Persistência/CI | 🟨 | Execução do pipeline em clone limpo e orçamento de performance |

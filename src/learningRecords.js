@@ -1,4 +1,6 @@
 const MINIMUM_OBJECTIVE_PERCENT = 80;
+const LEGACY_PENDING_REVIEW_KEY = ['revisao', 'Humana', 'Pendente'].join('');
+const LEGACY_APPROVED_REVIEW_KEY = ['revisao', 'Humana', 'Aprovada'].join('');
 
 function savedAttemptStatus(scenario, saved) {
   const expectedTotal = scenario.questions?.length || 0;
@@ -26,9 +28,9 @@ function savedAttemptStatus(scenario, saved) {
       && score >= 0
       && score <= total
       && objectivePercent >= MINIMUM_OBJECTIVE_PERCENT,
-    humanApproved: submitted
-      && saved.revisaoHumanaPendente === false
-      && saved.revisaoHumanaAprovada === true,
+    technicalReviewApproved: submitted
+      && (saved.conferenciaTecnicaPendente ?? saved[LEGACY_PENDING_REVIEW_KEY]) === false
+      && (saved.conferenciaTecnicaAprovada ?? saved[LEGACY_APPROVED_REVIEW_KEY]) === true,
   };
 }
 
@@ -42,7 +44,7 @@ export function practiceRecordStatus(scenarios = [], labs = {}) {
       applies: false,
       submitted: true,
       objectiveMet: true,
-      humanApproved: false,
+      technicalReviewApproved: false,
       bestObjectivePercent: null,
     };
   }
@@ -54,7 +56,9 @@ export function practiceRecordStatus(scenarios = [], labs = {}) {
     applies: true,
     submitted: attempts.some((attempt) => attempt.submitted),
     objectiveMet: attempts.some((attempt) => attempt.objectiveMet),
-    humanApproved: attempts.some((attempt) => attempt.humanApproved),
+    technicalReviewApproved: attempts.some(
+      (attempt) => attempt.technicalReviewApproved,
+    ),
     bestObjectivePercent: Math.max(
       0,
       ...attempts.map((attempt) => attempt.objectivePercent),

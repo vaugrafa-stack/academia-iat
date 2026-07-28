@@ -1,6 +1,7 @@
 import React, {
   lazy,
   Suspense,
+  useCallback,
   useEffect,
   useLayoutEffect,
   useMemo,
@@ -29,7 +30,6 @@ import {
   Database,
   Download,
   ExternalLink,
-  Eye,
   FileCheck,
   FileCheck2,
   FileText,
@@ -52,11 +52,9 @@ import {
   Milestone,
   PanelLeftClose,
   PanelLeftOpen,
-  Pause,
   Play,
   RefreshCw,
   RotateCcw,
-  Route,
   Scale,
   Search,
   ShieldCheck,
@@ -69,8 +67,6 @@ import {
   X,
   Zap,
   CloudOff,
-  ZoomIn,
-  ZoomOut,
 } from "lucide-react";
 import TranscriptPanel from "./TranscriptPanel.jsx";
 import {
@@ -80,12 +76,11 @@ import {
 } from "./painelAluno.jsx";
 import { PageHeader, Empty } from "./ui.jsx";
 import mapaDados from "./data/mapa-parana.json";
-import popDataUrl from "./data/pop-content.json?url";
+import popDataUrl from "./data/pop-public-content.json?url";
 import flowDataUrl from "./data/flowcharts-content.json?url";
 import aulaMediaUrl from "./data/aula-media.json?url";
 import {
   featuredMedia as featuredMediaSource,
-  flowSpecs,
   questionBank,
   scenarios,
   trackGroups,
@@ -108,8 +103,6 @@ import {
   importBackup,
   exportProfileRegistryRecovery,
   resetInvalidProfileRegistry,
-  progressKey,
-  validateProgress,
 } from "./profile";
 import { resumoDaNorma } from "./leiResumos";
 import { criarDerivados, norm } from "./derivados.js";
@@ -134,6 +127,8 @@ import {
   selectLessonQuestion,
   selectLessonScenario,
 } from "./lessonEvidence.js";
+import { useMediaQuery } from "./useMediaQuery.js";
+import { useStoredState } from "./storedState.js";
 import "./styles.css";
 import "./nota10.css";
 
@@ -142,6 +137,7 @@ const MapaParana = lazy(() => import("./mapa.jsx"));
 const RedatorIT = lazy(() => import("./redator.jsx"));
 const LaboratorioPremium = lazy(() => import("./laboratorio.jsx"));
 const OfflineManager = lazy(() => import("./OfflineManager.jsx"));
+const Flowcharts = lazy(() => import("./Flowcharts.jsx"));
 try {
   const _t = localStorage.getItem("academia-iat-theme");
   document.documentElement.dataset.theme =
@@ -185,7 +181,6 @@ const TRACK_ICONS = {
   Library,
 };
 
-const STORAGE_KEY = "academia-iat-progress-v2";
 // Um so ponto de entrada para o dado derivado do POP. Os nomes seguem os
 // mesmos, entao nenhuma tela precisou mudar nesta etapa.
 const {
@@ -217,120 +212,6 @@ const NAV = [
   ["suporte", "Suporte", CircleHelp],
 ];
 
-function useStoredState() {
-  const key = useMemo(() => {
-    try {
-      return progressKey();
-    } catch {
-      return STORAGE_KEY;
-    }
-  }, []);
-  const initialRef = useRef({
-      completed: [],
-      bookmarks: [],
-      notes: {},
-      quizScores: {},
-      labs: {},
-      lastLesson: null,
-      videoSeen: [],
-      streak: 1,
-      doneAt: {},
-      lessonEvidence: {},
-      lastVisit: null,
-      its: {},
-      itCasoAtual: null,
-      diagnostico: {},
-      autoaval: {},
-      enquadra: { acertos: 0, total: 0 },
-    });
-  const loadRef = useRef(null);
-  if (!loadRef.current) {
-    const initial = initialRef.current;
-    let raw = null;
-    let readSucceeded = false;
-    try {
-      raw = localStorage.getItem(key);
-      readSucceeded = true;
-      loadRef.current = {
-        state: {
-          ...initial,
-          ...(validateProgress(JSON.parse(raw || "{}")) || {}),
-        },
-        raw: null,
-        blocked: false,
-        issue: null,
-      };
-    } catch (error) {
-      loadRef.current = {
-        state: initial,
-        raw,
-        blocked: true,
-        issue: {
-          code: readSucceeded ? "STORAGE_CORRUPT" : "STORAGE_UNAVAILABLE",
-          message: readSucceeded
-            ? "O progresso salvo está incompatível ou corrompido. O valor original foi preservado e não será sobrescrito sem sua decisão."
-            : "O navegador não permitiu ler nem salvar o progresso local nesta sessão.",
-          detail: error instanceof Error ? error.message : "Formato inválido.",
-        },
-      };
-    }
-  }
-  const persistenceBlocked = useRef(loadRef.current.blocked);
-  const invalidRaw = useRef(loadRef.current.raw);
-  const [state, setState] = useState(loadRef.current.state);
-  const [storageStatus, setStorageStatus] = useState(loadRef.current.issue);
-  useEffect(() => {
-    if (persistenceBlocked.current) return undefined;
-    const timer = setTimeout(() => {
-      try {
-        const clean = validateProgress(state);
-        localStorage.setItem(key, JSON.stringify(clean));
-        setStorageStatus(null);
-      } catch (error) {
-        const quota =
-          error?.name === "QuotaExceededError" ||
-          error?.name === "NS_ERROR_DOM_QUOTA_REACHED" ||
-          error?.code === 22 ||
-          error?.code === 1014;
-        setStorageStatus({
-          code: quota ? "STORAGE_QUOTA" : "STORAGE_UNAVAILABLE",
-          message: quota
-            ? "O navegador ficou sem espaço. As mudanças mais recentes podem não ter sido salvas."
-            : "O navegador não permitiu salvar o progresso desta sessão.",
-        });
-      }
-    }, 180);
-    return () => clearTimeout(timer);
-  }, [state, key]);
-  function resolveCorruptStorage(action) {
-    if (action === "download") {
-      const blob = new Blob([invalidRaw.current || ""], { type: "application/json" });
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.href = url;
-      link.download = "academia-iat-progresso-recuperacao.json";
-      link.click();
-      URL.revokeObjectURL(url);
-      return;
-    }
-    if (action !== "reset") return;
-    if (!window.confirm("Descartar o progresso incompatível e começar um registro local novo?")) return;
-    const fresh = { ...initialRef.current };
-    try {
-      localStorage.setItem(key, JSON.stringify(fresh));
-      persistenceBlocked.current = false;
-      invalidRaw.current = null;
-      setStorageStatus(null);
-      setState(fresh);
-    } catch {
-      setStorageStatus({
-        code: "STORAGE_UNAVAILABLE",
-        message: "O navegador não permitiu reiniciar o progresso local.",
-      });
-    }
-  }
-  return [state, setState, storageStatus, resolveCorruptStorage];
-}
 // Cada aula vai para a trilha cuja secao declarada for o prefixo MAIS ESPECIFICO
 // do numero. Assim 20.2.1 fica no modulo de unidades de conservacao (20.2) e nao
 // no de intervenientes (20), sem precisar de regra especial por modulo.
@@ -344,7 +225,7 @@ function trackProgress(id, state) {
     : 0;
 }
 // Requisitos automáticos do registro pessoal de autoestudo. O mérito da
-// fundamentação continua separado e depende de revisão humana.
+// fundamentação continua separado e depende de conferência técnica.
 function requisitosAutoestudo(trackId, state) {
   const leitura = trackProgress(trackId, state) === 100;
   const temQuiz = questionBank.some((q) => q.track === trackId);
@@ -360,7 +241,7 @@ function requisitosAutoestudo(trackId, state) {
     pratica: !!pratica,
     praticaEntregue: praticaRegistro.submitted,
     praticaObjetiva: praticaRegistro.objectiveMet,
-    praticaRevisada: praticaRegistro.humanApproved,
+    praticaRevisada: praticaRegistro.technicalReviewApproved,
     praticaPercentual: praticaRegistro.bestObjectivePercent,
     temQuiz,
     temPratica: praticaRegistro.applies,
@@ -418,20 +299,6 @@ function pushHash(t) {
     location.hash = t;
   }
 }
-function useMediaQuery(query) {
-  const [get, setGet] = useState(
-    () => typeof matchMedia !== "undefined" && matchMedia(query).matches,
-  );
-  useEffect(() => {
-    if (typeof matchMedia === "undefined") return;
-    const media = matchMedia(query),
-      sync = () => setGet(media.matches);
-    sync();
-    media.addEventListener("change", sync);
-    return () => media.removeEventListener("change", sync);
-  }, [query]);
-  return get;
-}
 function App() {
   const profileBoot = useRef(null);
   if (!profileBoot.current) {
@@ -485,6 +352,8 @@ function App() {
     [toast, setToast] = useState("");
   const mobileNav = useMediaQuery("(max-width: 980px)");
   const searchReturn = useRef(null);
+  const mobileMenuButton = useRef(null);
+  const restoreMenuFocusOnClose = useRef(false);
   // Conexao e versao nova. A atualizacao nao entra sozinha: ela esperaria a
   // pessoa terminar de escrever a fundamentacao no laboratorio, e recarregar
   // no meio disso jogaria fora o que ela digitou.
@@ -505,6 +374,26 @@ function App() {
     setSearchOpen(false);
     setTimeout(() => searchReturn.current?.focus?.(), 0);
   }
+  const closeMobileMenu = useCallback(() => {
+    restoreMenuFocusOnClose.current = true;
+    setMenuOpen(false);
+  }, []);
+  useEffect(() => {
+    if (menuOpen || !restoreMenuFocusOnClose.current) return undefined;
+    restoreMenuFocusOnClose.current = false;
+    const restoreFocus = () =>
+      mobileMenuButton.current?.focus({ preventScroll: true });
+    const drawer = document.getElementById("navegacao-lateral");
+    restoreFocus();
+    // A cortina é removida no clique e o drawer ainda conclui sua transição.
+    // Reforce o foco ao final dela; o temporizador cobre movimento reduzido.
+    drawer?.addEventListener("transitionend", restoreFocus, { once: true });
+    const restoreFocusId = setTimeout(restoreFocus, 400);
+    return () => {
+      drawer?.removeEventListener("transitionend", restoreFocus);
+      clearTimeout(restoreFocusId);
+    };
+  }, [menuOpen]);
   useEffect(() => {
     const fn = (e) => {
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k") {
@@ -539,8 +428,7 @@ function App() {
     const containFocus = (event) => {
       if (event.key === "Escape") {
         event.preventDefault();
-        setMenuOpen(false);
-        setTimeout(() => document.querySelector(".mobile-menu")?.focus(), 0);
+        closeMobileMenu();
         return;
       }
       if (event.key !== "Tab") return;
@@ -561,7 +449,7 @@ function App() {
       clearTimeout(focusId);
       document.removeEventListener("keydown", containFocus);
     };
-  }, [mobileNav, menuOpen, searchOpen]);
+  }, [mobileNav, menuOpen, searchOpen, closeMobileMenu]);
   useEffect(() => {
     const onNav = () => {
       const p = parseHash();
@@ -687,13 +575,16 @@ function App() {
         openLesson={openLesson}
       />
     ),
-    fluxos: <Flowcharts state={state} setState={setState} />,
+    fluxos: (
+      <Flowcharts state={state} setState={setState} flowData={flowData} />
+    ),
     laboratorio: (
       <LaboratorioPremium
         state={state}
         setState={setState}
         scenarios={scenarios}
         grupos={GRUPOS_LAB}
+        lessonMap={lessonMap}
         initialScenarioId={selectedScenario}
         onSelectScenario={(id) => {
           setSelectedScenario(id);
@@ -751,13 +642,14 @@ function App() {
         Ir para o conteúdo
       </a>
       <Topbar
-        onMenu={() => setMenuOpen((v) => !v)}
+        onMenu={menuOpen ? closeMobileMenu : () => setMenuOpen(true)}
         menuOpen={menuOpen}
+        menuButtonRef={mobileMenuButton}
         onSearch={openSearch}
         progress={progress}
         profile={profile}
         onProfile={() => go("perfil")}
-        inert={searchOpen}
+        inert={searchOpen || (mobileNav && menuOpen)}
       />
       <Sidebar
         view={view}
@@ -766,15 +658,15 @@ function App() {
         openLesson={openLesson}
         mobile={mobileNav}
         modalOpen={searchOpen}
+        onClose={closeMobileMenu}
       />
       {menuOpen && (
         <button
+          type="button"
           className="nav-scrim"
           aria-label="Fechar menu"
-          onClick={() => {
-            setMenuOpen(false);
-            setTimeout(() => document.querySelector(".mobile-menu")?.focus(), 0);
-          }}
+          onPointerDown={(event) => event.preventDefault()}
+          onClick={closeMobileMenu}
         />
       )}
       <main
@@ -832,7 +724,7 @@ function App() {
                 ? " Libere espaço e altere qualquer item para tentar novamente."
                 : " As mudanças desta sessão podem não ser preservadas."}
           </span>
-          {storageStatus.code === "STORAGE_CORRUPT" && (
+          {storageStatus.recoveryAvailable && (
             <div className="storage-recovery-actions">
               <button type="button" onClick={() => resolveCorruptStorage("download")}>
                 Baixar cópia
@@ -1453,7 +1345,7 @@ function Profile({
       </section>
       <p className="profile-note">
         Estes registros comprovam apenas ações e respostas objetivas salvas
-        neste navegador. A fundamentação prática permanece sem aprovação humana.
+        neste navegador. A fundamentação prática permanece sem aprovação técnica.
         Eles não comprovam identidade, competência profissional, aprovação
         institucional ou capacitação oficial do Instituto Água e Terra.
       </p>
@@ -1463,6 +1355,7 @@ function Profile({
 function Topbar({
   onMenu,
   menuOpen,
+  menuButtonRef,
   onSearch,
   progress,
   profile,
@@ -1483,6 +1376,7 @@ function Topbar({
   return (
     <header className="topbar" inert={inert}>
       <button
+        ref={menuButtonRef}
         className="mobile-menu"
         onClick={onMenu}
         aria-label={menuOpen ? "Fechar menu" : "Abrir menu"}
@@ -1539,7 +1433,15 @@ function Topbar({
     </header>
   );
 }
-function Sidebar({ view, go, open, openLesson, mobile, modalOpen }) {
+function Sidebar({
+  view,
+  go,
+  open,
+  openLesson,
+  mobile,
+  modalOpen,
+  onClose,
+}) {
   const hidden = mobile && !open;
   return (
     <aside
@@ -1551,6 +1453,16 @@ function Sidebar({ view, go, open, openLesson, mobile, modalOpen }) {
       inert={hidden || modalOpen}
       className={"sidebar-v2 " + (open ? "open" : "")}
     >
+      {mobile && open && (
+        <button
+          type="button"
+          className="sidebar-mobile-close"
+          aria-label="Fechar menu"
+          onClick={onClose}
+        >
+          <X aria-hidden="true" />
+        </button>
+      )}
       <div className="brand-panel">
         <strong>Academia IAT</strong>
         <span>
@@ -1899,8 +1811,8 @@ function Dashboard({ state, progress, go, openLesson }) {
         <article className="coverage-card">
           <div className="section-title">
             <div>
-              <h2>Todo o POP, em um só lugar</h2>
-              <p>Extração auditada e vinculada às aulas.</p>
+              <h2>Conteúdo do POP organizado para estudo</h2>
+              <p>Edição de treinamento auditada e vinculada às aulas.</p>
             </div>
             <Database />
           </div>
@@ -1931,7 +1843,7 @@ function Dashboard({ state, progress, go, openLesson }) {
             </span>
           </div>
           <button onClick={() => go("biblioteca")}>
-            Abrir biblioteca integral <ArrowRight />
+            Abrir biblioteca de treinamento <ArrowRight />
           </button>
         </article>
       </section>
@@ -2283,7 +2195,12 @@ function Lesson({
   const evidence = state.lessonEvidence?.[lesson.id] || {};
   const questionSelection = selectLessonQuestion(questionBank, lesson, index);
   const question = questionSelection?.question || null;
-  const scenarioSelection = selectLessonScenario(scenarios, track.id, index);
+  const scenarioSelection = selectLessonScenario(
+    scenarios,
+    track.id,
+    index,
+    lesson.id,
+  );
   const objectiveCorrect =
     Boolean(question) &&
     evidence.objectiveQuestionId === question.id &&
@@ -2528,6 +2445,7 @@ function Lesson({
               openLesson={openLesson}
               caso={scenarioSelection?.scenario || null}
               casoPergunta={scenarioSelection?.questionIndex || 0}
+              casoEscopo={scenarioSelection?.scope || "module"}
               go={go}
               evidence={evidence}
               evidenceStatus={evidenceStatus}
@@ -2863,7 +2781,12 @@ function VideoLesson({ media, track }) {
 //
 // De proposito NAO mostra o desfecho: se mostrasse, o laboratorio viraria
 // leitura. A aula enquadra o problema; a pratica resolve.
-function ExemploNoProcesso({ caso, questionIndex = 0, go }) {
+function ExemploNoProcesso({
+  caso,
+  questionIndex = 0,
+  scope = "module",
+  go,
+}) {
   if (!caso) return null;
   const question = (caso.questions || [])[questionIndex]?.[0];
   return (
@@ -2871,7 +2794,11 @@ function ExemploNoProcesso({ caso, questionIndex = 0, go }) {
       <header>
         <Milestone size={16} />
         <div>
-          <small>EXEMPLO DO MÓDULO PARA TRANSFERIR O CRITÉRIO</small>
+          <small>
+            {scope === "section"
+              ? "CASO COM FUNDAMENTO DIRETO NESTA AULA"
+              : "EXEMPLO RELACIONADO DO MÓDULO"}
+          </small>
           <h3>{caso.title}</h3>
         </div>
       </header>
@@ -3089,7 +3016,7 @@ function LessonActivePractice({
       <p className="lesson-active-limit">
         Este é um registro pessoal de autoestudo salvo neste navegador. A
         fundamentação escrita não foi corrigida nem aprovada por pessoa
-        responsável; use revisão humana quando houver efeito institucional.
+        responsável; solicite conferência técnica quando houver efeito institucional.
       </p>
     </section>
   );
@@ -3105,6 +3032,7 @@ function LessonOverview({
   openLesson,
   caso,
   casoPergunta = 0,
+  casoEscopo = "module",
   go,
   evidence,
   evidenceStatus,
@@ -3230,7 +3158,7 @@ function LessonOverview({
             className="kp-mais"
             onClick={() => setTab && setTab("fonte")}
           >
-            <FileText size={15} /> Conferir a posição e a versão integral na
+            <FileText size={15} /> Conferir a posição e a versão disponibilizada na
             fonte
           </button>
         </div>
@@ -3300,6 +3228,7 @@ function LessonOverview({
       <ExemploNoProcesso
         caso={caso}
         questionIndex={casoPergunta}
+        scope={casoEscopo}
         go={go}
       />
       {vazia && irmaos.length > 0 && (
@@ -3469,7 +3398,7 @@ function TableRenderer({ table, compact = false }) {
 function LessonMaterials({ tables, figures }) {
   if (!tables.length && !figures.length)
     return (
-      <Empty text="Este tópico não possui quadro ou figura próprio. Consulte o conteúdo integral para o texto-fonte." />
+      <Empty text="Este tópico não possui quadro ou figura próprio. Consulte o conteúdo disponibilizado na fonte." />
     );
   return (
     <div className="materials-view">
@@ -3494,11 +3423,14 @@ function Notes({ value, setValue }) {
       <div>
         <StickyNote />
         <span>
-          <strong>Seu caderno</strong>
+          <label htmlFor="lesson-notes">
+            <strong>Seu caderno</strong>
+          </label>
           <small>Salvo automaticamente neste dispositivo</small>
         </span>
       </div>
       <textarea
+        id="lesson-notes"
         value={value}
         onChange={(e) => setValue(e.target.value)}
         placeholder="Registre dúvidas, exemplos do seu trabalho e pontos para revisar..."
@@ -3521,462 +3453,6 @@ function Notes({ value, setValue }) {
         </button>
       </div>
     </section>
-  );
-}
-
-function shuffleIdx(n) {
-  const a = [...Array(n).keys()];
-  for (let i = a.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [a[i], a[j]] = [a[j], a[i]];
-  }
-  return a;
-}
-
-function FlowDecisionGate({ flow, record }) {
-  const [choice, setChoice] = useState(null);
-  const decision = flow.decision;
-  if (!decision) return null;
-  const answered = choice !== null;
-  const correct = choice === decision.answer;
-
-  function answer(index) {
-    if (answered) return;
-    setChoice(index);
-    record?.(`${flow.id}:decisao`, index === decision.answer ? 1 : 0, 1);
-  }
-
-  return (
-    <section className="flow-decision-gate" aria-labelledby={`fd-${flow.id}`}>
-      <small>DECISÃO RAMIFICADA · CASO DIDÁTICO</small>
-      <h3 id={`fd-${flow.id}`}>{decision.prompt}</h3>
-      <div className="flow-decision-options">
-        {decision.options.map((option, index) => (
-          <button
-            type="button"
-            key={option}
-            disabled={answered}
-            aria-pressed={choice === index}
-            aria-label={
-              answered
-                ? `${String.fromCharCode(65 + index)}. ${option}. ${
-                    index === decision.answer
-                      ? "Resposta correta."
-                      : index === choice
-                        ? "Sua resposta, incorreta."
-                        : "Alternativa não selecionada."
-                  }`
-                : undefined
-            }
-            className={
-              answered
-                ? index === decision.answer
-                  ? "correct"
-                  : index === choice
-                    ? "wrong"
-                    : ""
-                : ""
-            }
-            onClick={() => answer(index)}
-          >
-            <span>{String.fromCharCode(65 + index)}</span>
-            {option}
-          </button>
-        ))}
-      </div>
-      {answered && (
-        <div
-          className={`flow-decision-feedback ${correct ? "correct" : "wrong"}`}
-          role="status"
-          aria-live="polite"
-          aria-atomic="true"
-        >
-          {correct ? <CheckCircle2 aria-hidden="true" /> : <AlertTriangle aria-hidden="true" />}
-          <div>
-            <strong>{correct ? "Decisão alinhada" : "Decisão a revisar"}</strong>
-            <p>{decision.feedback}</p>
-            <small>Fonte didática: {decision.source}</small>
-            <button type="button" onClick={() => setChoice(null)}>
-              Tentar novamente
-            </button>
-          </div>
-        </div>
-      )}
-    </section>
-  );
-}
-
-function FlowBuilder({ flow, record }) {
-  const N = flow.nodes.length;
-  const [pool, setPool] = useState(() => shuffleIdx(N));
-  const [built, setBuilt] = useState([]);
-  useEffect(() => {
-    setPool(shuffleIdx(N));
-    setBuilt([]);
-  }, [flow.id]);
-  const done = built.length === N;
-  const score = built.filter((idx, k) => idx === k).length;
-  useEffect(() => {
-    if (done) record && record(flow.id, score, N);
-  }, [done]);
-  function place(idx) {
-    setBuilt((b) => [...b, idx]);
-    setPool((p) => p.filter((x) => x !== idx));
-  }
-  function undo() {
-    if (!built.length) return;
-    const last = built[built.length - 1];
-    setBuilt((b) => b.slice(0, -1));
-    setPool((p) => [...p, last]);
-  }
-  function reset() {
-    setPool(shuffleIdx(N));
-    setBuilt([]);
-  }
-  return (
-    <div className="flow-builder">
-      <div className="fb-head">
-        <h3>Monte a sequência correta</h3>
-        <p>
-          Escolha as etapas na ordem do fluxo. Cada posição informa “correta” ou
-          “incorreta” também em texto.
-        </p>
-      </div>
-      <ol className="fb-slots" aria-label="Sequência montada">
-        {Array.from({ length: N }).map((_, k) => {
-          const idx = built[k];
-          const filled = idx !== undefined;
-          const ok = filled && idx === k;
-          return (
-            <li key={k} className={filled ? (ok ? "ok" : "bad") : "open"}>
-              <span>{k + 1}</span>
-              {filled ? (
-                <>
-                  <strong>{flow.nodes[idx]}</strong>
-                  <em className="fb-status">
-                    {ok ? "Posição correta" : "Posição incorreta"}
-                  </em>
-                  {ok ? <Check aria-hidden="true" /> : <X aria-hidden="true" />}
-                </>
-              ) : (
-                <em>Escolha a etapa {k + 1}</em>
-              )}
-            </li>
-          );
-        })}
-      </ol>
-      <div className="fb-pool" aria-label="Etapas disponíveis">
-        {pool.length ? (
-          pool.map((idx) => (
-            <button
-              key={idx}
-              onClick={() => place(idx)}
-              aria-label={`Colocar “${flow.nodes[idx]}” na posição ${built.length + 1}`}
-            >
-              {flow.nodes[idx]}
-            </button>
-          ))
-        ) : (
-          <span className="fb-empty">Todas as etapas foram posicionadas.</span>
-        )}
-      </div>
-      <div className="fb-actions">
-        <button className="text-action" onClick={undo} disabled={!built.length}>
-          <RotateCcw size={15} /> Desfazer
-        </button>
-        <button className="text-action" onClick={reset}>
-          <RefreshCw size={15} /> Recomeçar
-        </button>
-      </div>
-      <div aria-live="polite">
-        {done && (
-          <div className={"fb-result " + (score === N ? "perfect" : "")}>
-            {score === N ? <CheckCircle2 /> : <AlertTriangle />}
-            <div>
-              <strong>
-                {score} de {N} etapas na posição correta
-              </strong>
-              <p>
-                {score === N
-                  ? "Sequência correta. Explique agora por que cada transição existe."
-                  : "Há posições incorretas. Use os rótulos textuais, revise o fluxo-fonte e tente novamente."}
-              </p>
-            </div>
-          </div>
-        )}
-      </div>
-      {done && <FlowDecisionGate flow={flow} record={record} />}
-    </div>
-  );
-}
-function Flowcharts({ state, setState }) {
-  const [selected, setSelected] = useState(flowSpecs[0].id),
-    [variant, setVariant] = useState("simplificado"),
-    [active, setActive] = useState(0),
-    [playing, setPlaying] = useState(true),
-    [zoom, setZoom] = useState(1),
-    [mode, setMode] = useState("explorar"),
-    [fit, setFit] = useState(true);
-  const reduceMotion = useMediaQuery("(prefers-reduced-motion: reduce)");
-  const flow = flowSpecs.find((f) => f.id === selected);
-  useEffect(() => {
-    setActive(0);
-    setZoom(1);
-  }, [selected]);
-  useEffect(() => {
-    if (reduceMotion) {
-      setPlaying(false);
-      return undefined;
-    }
-    if (!playing || mode !== "explorar") return undefined;
-    const id = setInterval(
-      () => setActive((a) => (a + 1) % flow.nodes.length),
-      1600,
-    );
-    return () => clearInterval(id);
-  }, [playing, flow, mode, reduceMotion]);
-  const source = flowData.flowcharts.find(
-    (f) => f.number === flow.imageNumber && f.variant === variant,
-  );
-  const guidance = flow.guidance?.[active];
-  const record = (id, score, total) =>
-    setState &&
-    setState((s) => ({
-      ...s,
-      flows: {
-        ...(s.flows || {}),
-        [id]: { score, total, date: new Date().toISOString() },
-      },
-    }));
-  const best = state && state.flows && state.flows[selected];
-  return (
-    <div className="page">
-      <PageHeader
-        title="Fluxos: proposta e atividade"
-        subtitle="Compare as sete propostas em versão original, simplificada e completa e pratique a ordem de suas etapas."
-        icon={Route}
-      />
-      <aside className="flow-source-warning" role="note">
-        <AlertTriangle aria-hidden="true" />
-        <p>
-          <strong>Material de proposta.</strong> Os diagramas vêm do documento
-          separado “Proposta de Fluxogramas” e não representam, por si, fluxo
-          institucional aprovado. A atividade interativa simplifica a sequência:
-          confirme decisões, retornos e fundamentos no POP vigente.
-        </p>
-      </aside>
-      <div className="flow-workspace">
-        <aside className="flow-menu">
-          {flowSpecs.map((f, i) => (
-            <button
-              className={selected === f.id ? "active" : ""}
-              aria-pressed={selected === f.id}
-              key={f.id}
-              onClick={() => setSelected(f.id)}
-            >
-              <span>{i + 1}</span>
-              <div>
-                <strong>{f.title}</strong>
-                <small>
-                  {state && state.flows && state.flows[f.id]
-                    ? `Montado ${state.flows[f.id].score}/${state.flows[f.id].total}`
-                    : "Explorar e montar"}
-                </small>
-              </div>
-              <ChevronRight />
-            </button>
-          ))}
-        </aside>
-        <section className="flow-canvas">
-          <div className="flow-mode-tabs">
-            <button
-              className={mode === "explorar" ? "active" : ""}
-              aria-pressed={mode === "explorar"}
-              onClick={() => setMode("explorar")}
-            >
-              <Eye /> Explorar
-            </button>
-            <button
-              className={mode === "montar" ? "active" : ""}
-              aria-pressed={mode === "montar"}
-              onClick={() => setMode("montar")}
-            >
-              <GitBranch /> Montar o fluxo
-            </button>
-            {best && (
-              <span className="fb-badge">
-                <CheckCircle2 /> {best.score}/{best.total}
-              </span>
-            )}
-          </div>
-          {mode === "explorar" ? (
-            <>
-              <div className="flow-toolbar">
-                <span className="flow-toolbar-label">
-                  Percurso didático em {flow.nodes.length} etapas
-                </span>
-                <div>
-                  <button
-                    aria-label={
-                      playing
-                        ? "Pausar animação do fluxo"
-                        : "Reproduzir animação do fluxo"
-                    }
-                    aria-pressed={playing}
-                    onClick={() => setPlaying((v) => !v)}
-                  >
-                    {playing ? <Pause /> : <Play />}
-                  </button>
-                  <button
-                    aria-label="Reduzir zoom do fluxo"
-                    onClick={() => setZoom((z) => Math.max(0.7, z - 0.1))}
-                  >
-                    <ZoomOut />
-                  </button>
-                  <span role="status" aria-live="polite">
-                    {Math.round(zoom * 100)}%
-                  </span>
-                  <button
-                    aria-label="Aumentar zoom do fluxo"
-                    onClick={() => setZoom((z) => Math.min(1.4, z + 0.1))}
-                  >
-                    <ZoomIn />
-                  </button>
-                </div>
-              </div>
-              <div
-                className="interactive-flow"
-                style={{ transform: `scale(${zoom})` }}
-              >
-                {flow.nodes.map((n, i) => (
-                  <React.Fragment key={n}>
-                    <button
-                      className={
-                        (i === active ? "active " : "") +
-                        (i < active ? "visited " : "") +
-                        (n.includes("?") ? "decision" : "")
-                      }
-                      aria-current={i === active ? "step" : undefined}
-                      onClick={() => {
-                        setActive(i);
-                        setPlaying(false);
-                      }}
-                    >
-                      <span>{i + 1}</span>
-                      <strong>{n}</strong>
-                      <small>
-                        {i === active
-                          ? "Etapa em foco"
-                          : i < active
-                            ? "Percorrida"
-                            : "A seguir"}
-                      </small>
-                    </button>
-                    {i < flow.nodes.length - 1 && (
-                      <div className={i < active ? "lit" : ""}>
-                        <ArrowRight />
-                      </div>
-                    )}
-                  </React.Fragment>
-                ))}
-              </div>
-              <div className="flow-insight">
-                <Info />
-                <div>
-                  <small>ETAPA {active + 1}</small>
-                  <h3>{flow.nodes[active]}</h3>
-                  {guidance ? (
-                    <>
-                      <p><strong>Pergunta de controle:</strong> {guidance.question}</p>
-                      <dl className="flow-guidance">
-                        <div>
-                          <dt>Evidência necessária</dt>
-                          <dd>{guidance.evidence}</dd>
-                        </div>
-                        <div>
-                          <dt>Risco se ignorar</dt>
-                          <dd>{guidance.risk}</dd>
-                        </div>
-                        <div>
-                          <dt>Onde conferir</dt>
-                          <dd>{guidance.source}</dd>
-                        </div>
-                      </dl>
-                    </>
-                  ) : (
-                    <p>
-                      Esta é uma sequência didática resumida. Confira a proposta
-                      completa abaixo e registre a motivação antes de avançar.
-                    </p>
-                  )}
-                </div>
-              </div>
-            </>
-          ) : (
-            <FlowBuilder key={flow.id} flow={flow} record={record} />
-          )}
-          <section className="source-flow-panel">
-            <div className="sfp-head">
-              <span className="sfp-title">
-                <Eye /> Proposta de fluxograma vinculada
-              </span>
-              <div className="variant-tabs">
-                {[
-                  ["original", "Original"],
-                  ["simplificado", "Simplificado"],
-                  ["completo", "Completo"],
-                ].map(([v, l]) => (
-                  <button
-                    className={variant === v ? "active" : ""}
-                    aria-pressed={variant === v}
-                    onClick={() => setVariant(v)}
-                    key={v}
-                  >
-                    {l}
-                  </button>
-                ))}
-              </div>
-              <button
-                className="sfp-fit"
-                aria-pressed={!fit}
-                onClick={() => setFit((f) => !f)}
-              >
-                {fit ? "Ver em tamanho real" : "Ajustar à largura"}
-              </button>
-              {source && (
-                <a
-                  className="sfp-open"
-                  href={source.publicPath}
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  <Maximize2 /> Nova aba
-                </a>
-              )}
-            </div>
-            {source ? (
-              <div className={"sfp-scroll " + (fit ? "fit" : "real")}>
-                <img
-                  key={source.publicPath}
-                  src={source.publicPath}
-                  alt={`${flow.title}, versão ${variant}`}
-                />
-              </div>
-            ) : (
-              <p className="sfp-missing">
-                Imagem não encontrada para esta versão.
-              </p>
-            )}
-            {source && (
-              <small className="sfp-meta">
-                Versão {variant} · {source.widthPx}×{source.heightPx}px · imagem
-                vinculada ao documento de fluxogramas
-              </small>
-            )}
-          </section>
-        </section>
-      </div>
-    </div>
   );
 }
 
@@ -4441,7 +3917,7 @@ function KnowledgeLibrary({ state, openLesson, target }) {
     <div className="page">
       <PageHeader
         title="Biblioteca operacional"
-        subtitle={`Pesquise no texto integral, abra os ${popData.tables.filter((t) => !t.navigationOnly).length} quadros e tabelas e consulte todas as imagens do material-fonte.`}
+        subtitle={`Pesquise na edição de treinamento, abra os ${popData.tables.filter((t) => !t.navigationOnly).length} quadros e tabelas disponibilizados e consulte as imagens do material-fonte.`}
         icon={Library}
       />
       <nav className="library-tabs" aria-label="Áreas da biblioteca">
@@ -4471,7 +3947,7 @@ function KnowledgeLibrary({ state, openLesson, target }) {
           <div className="big-search">
             <Search aria-hidden="true" />
             <input
-              aria-label="Buscar no conteúdo integral do POP"
+              aria-label="Buscar na edição de treinamento do POP"
               autoFocus
               value={query}
               onChange={(e) => setQuery(e.target.value)}
@@ -4494,7 +3970,7 @@ function KnowledgeLibrary({ state, openLesson, target }) {
                 parágrafos pesquisáveis
               </h2>
               <p>
-                A busca percorre todas as seções e o conteúdo das tabelas,
+                A busca percorre as seções e os conteúdos disponibilizados,
                 preservando o vínculo com a aula correspondente.
               </p>
               <div>
@@ -4739,7 +4215,7 @@ function KnowledgeLibrary({ state, openLesson, target }) {
                               "pt-BR",
                             )}
                           </span>
-                          <span>Revisão humana de vigência: pendente</span>
+                          <span>Conferência técnica de vigência: pendente</span>
                         </div>
                         <small className="fonte-nota">{fonte.note}</small>
                       </>

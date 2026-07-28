@@ -9,12 +9,15 @@ import {
 } from './profile.js';
 
 const USERS_KEY = 'academia-iat-users-v1';
+const LEGACY_PROFILE_KEY = 'academia-iat-profile-v1';
+const LEGACY_PROGRESS_KEY = 'academia-iat-progress-v2';
 const PROGRESS_PREFIX = 'academia-iat-progress-v2::';
 
 class MemoryStorage {
   constructor() {
     this.values = new Map();
     this.failNext = null;
+    this.failRead = null;
   }
 
   get length() {
@@ -26,6 +29,11 @@ class MemoryStorage {
   }
 
   getItem(key) {
+    if (this.failRead?.(String(key))) {
+      const error = new Error('storage blocked');
+      error.name = 'SecurityError';
+      throw error;
+    }
     return this.values.has(String(key)) ? this.values.get(String(key)) : null;
   }
 
@@ -213,6 +221,95 @@ describe('importBackup', () => {
 });
 
 describe('registro local de perfis', () => {
+  it('migra perfil e progresso legados validados sem apagar os originais', () => {
+    localStorage.clear();
+    const legacyProfile = JSON.stringify({
+      name: '  Ana Legada  ',
+      role: 'Analista',
+      unit: 'IAT',
+      persona: 'analista',
+      theme: 'dark',
+      certificates: [],
+    });
+    const legacyProgress = JSON.stringify({
+      completed: ['pop-section-001'],
+      bookmarks: [],
+      notes: { 'pop-section-001': 'Registro legado preservado' },
+    });
+    localStorage.setItem(LEGACY_PROFILE_KEY, legacyProfile);
+    localStorage.setItem(LEGACY_PROGRESS_KEY, legacyProgress);
+
+    const profile = loadProfile();
+    const registry = JSON.parse(localStorage.getItem(USERS_KEY));
+
+    expect(profile).toMatchObject({
+      id: registry.activeId,
+      name: 'Ana Legada',
+      role: 'Analista',
+      schemaVersion: 2,
+    });
+    expect(registry.users).toHaveLength(1);
+    expect(localStorage.getItem(PROGRESS_PREFIX + registry.activeId)).toBe(legacyProgress);
+    expect(localStorage.getItem(LEGACY_PROFILE_KEY)).toBe(legacyProfile);
+    expect(localStorage.getItem(LEGACY_PROGRESS_KEY)).toBe(legacyProgress);
+  });
+
+  it('não converte silenciosamente perfil legado inválido em um perfil vazio', () => {
+    localStorage.clear();
+    const invalidLegacy = '{"name":42,"certificates":"inválido"}';
+    localStorage.setItem(LEGACY_PROFILE_KEY, invalidLegacy);
+
+    let error;
+    try {
+      loadProfile();
+    } catch (caught) {
+      error = caught;
+    }
+
+    expect(error).toMatchObject({
+      name: 'ProfilePersistenceError',
+      code: 'REGISTRY_INVALID',
+      recoverable: true,
+    });
+    expect(localStorage.getItem(USERS_KEY)).toBeNull();
+    expect(localStorage.getItem(LEGACY_PROFILE_KEY)).toBe(invalidLegacy);
+  });
+
+  it('não cria registro novo quando a leitura do perfil legado está indisponível', () => {
+    localStorage.clear();
+    localStorage.failRead = (key) => key === LEGACY_PROFILE_KEY;
+
+    let error;
+    try {
+      loadProfile();
+    } catch (caught) {
+      error = caught;
+    }
+
+    localStorage.failRead = null;
+    expect(error).toMatchObject({
+      name: 'ProfilePersistenceError',
+      code: 'STORAGE_UNAVAILABLE',
+      recoverable: true,
+    });
+    expect(localStorage.getItem(USERS_KEY)).toBeNull();
+  });
+
+  it('reinicia explicitamente um perfil legado inválido e mantém o progresso legado', () => {
+    localStorage.clear();
+    const legacyProgress = '{"completed":["pop-section-001"]}';
+    localStorage.setItem(LEGACY_PROFILE_KEY, '{json inválido');
+    localStorage.setItem(LEGACY_PROGRESS_KEY, legacyProgress);
+
+    const result = resetInvalidProfileRegistry();
+    const registry = JSON.parse(localStorage.getItem(USERS_KEY));
+
+    expect(result).toMatchObject({ ok: true, code: 'REGISTRY_RESET' });
+    expect(localStorage.getItem(LEGACY_PROFILE_KEY)).toBeNull();
+    expect(localStorage.getItem(LEGACY_PROGRESS_KEY)).toBe(legacyProgress);
+    expect(localStorage.getItem(PROGRESS_PREFIX + registry.activeId)).toBe(legacyProgress);
+  });
+
   it('preserva um registro inválido e expõe erro recuperável', () => {
     const invalidRegistry = JSON.stringify({
       activeId: 'forjado',

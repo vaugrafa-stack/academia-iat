@@ -12,7 +12,7 @@ export const LEARNING_PATHS = [
     label: "Trilha Analista",
     audience: "Formação integral pretendida",
     description:
-      "Percorre todos os módulos, práticas e interfaces do POP, sem substituir supervisão e avaliação humana.",
+      "Percorre todos os módulos, práticas e interfaces do POP, sem substituir supervisão e avaliação técnica.",
     trackIds: [
       "m00",
       "m01",

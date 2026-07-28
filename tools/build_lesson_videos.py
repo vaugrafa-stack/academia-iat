@@ -39,7 +39,8 @@ import imageio_ffmpeg  # noqa: E402
 
 W, H, FPS = 960, 540, 15
 OUT = ROOT / "public" / "media" / "aula"
-POP = json.loads((ROOT / "src" / "data" / "pop-content.json").read_text(encoding="utf-8"))
+PUBLIC_POP = ROOT / "src" / "data" / "pop-public-content.json"
+POP = json.loads(PUBLIC_POP.read_text(encoding="utf-8"))
 
 FFMPEG = imageio_ffmpeg.get_ffmpeg_exe()
 TTS = ROOT / "tools" / "tts"
@@ -415,7 +416,7 @@ def specs():
             "cenas": cenas,
             "dur": T_ABERTURA + sum(c[0] for c in cenas) + T_FECHO,
             "rodape": f"{tr['code']} {tr['title'][:52]} · confirme a norma vigente",
-            "fecho": f"Esta é a seção {titulo[:70]} do POP. O texto integral, os quadros e a prática estão na aula.",
+            "fecho": f"Esta é a seção {titulo[:70]} do POP. O conteúdo disponibilizado, os quadros e a prática estão na aula.",
         }
     if fora:
         print("sem roteiro possivel:", len(fora), fora[:6])
@@ -429,7 +430,7 @@ _JS = """
 import('./src/courseData.js').then(async cd=>{
  const {derivarAulas}=await import('./src/lessons.js');
  const fs=await import('node:fs');
- const pop=JSON.parse(fs.readFileSync('src/data/pop-content.json','utf8'));
+ const pop=JSON.parse(fs.readFileSync('src/data/pop-public-content.json','utf8'));
  const {lessons}=derivarAulas(pop,cd.tracks);
  const out={};
  for(const l of lessons){const t=cd.tracks.find(x=>x.id===l.trackId);out[l.id]={code:t.code,title:t.title}}

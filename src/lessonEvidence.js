@@ -1,3 +1,5 @@
+import { getLabSourceIndex } from "./labSourceIndex.js";
+
 export const MIN_ACTIVE_RECALL_CHARS = 80;
 
 export function normalizedResponseLength(value) {
@@ -57,19 +59,41 @@ export function selectLessonQuestion(questionBank, lesson, lessonIndex = 0) {
   };
 }
 
-export function selectLessonScenario(scenarios, trackId, lessonIndex = 0) {
-  const available = (Array.isArray(scenarios) ? scenarios : []).filter(
+export function selectLessonScenario(
+  scenarios,
+  trackId,
+  lessonIndex = 0,
+  lessonId = "",
+) {
+  const allScenarios = Array.isArray(scenarios) ? scenarios : [];
+  const exact = lessonId
+    ? allScenarios.filter((scenario) =>
+        getLabSourceIndex(scenario?.id)?.sourceLessonIds.includes(lessonId),
+      )
+    : [];
+  const moduleScenarios = allScenarios.filter(
     (scenario) => scenario?.track === trackId,
   );
+  const available = exact.length ? exact : moduleScenarios;
   if (!available.length) return null;
   const scenario = available[Math.abs(lessonIndex) % available.length];
   const questionCount = Array.isArray(scenario.questions)
     ? scenario.questions.length
     : 0;
+  const matchingQuestionIndexes = exact.length
+    ? (getLabSourceIndex(scenario.id)?.decisionSourceLessonIds || [])
+        .map((sourceIds, index) => (sourceIds.includes(lessonId) ? index : -1))
+        .filter((index) => index >= 0 && index < questionCount)
+    : [];
   return {
     scenario,
-    questionIndex: questionCount
-      ? Math.abs(lessonIndex) % questionCount
-      : 0,
+    questionIndex: matchingQuestionIndexes.length
+      ? matchingQuestionIndexes[
+          Math.abs(lessonIndex) % matchingQuestionIndexes.length
+        ]
+      : questionCount
+        ? Math.abs(lessonIndex) % questionCount
+        : 0,
+    scope: exact.length ? "section" : "module",
   };
 }

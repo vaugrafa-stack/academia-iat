@@ -1,5 +1,12 @@
 import { describe, expect, it } from 'vitest';
-import { calcularIndicadoresLaboratorio } from './laboratorio.jsx';
+import popData from './data/pop-content.json';
+import { scenarios, tracks } from './courseData.js';
+import { derivarAulas } from './lessons.js';
+import {
+  calcularIndicadoresLaboratorio,
+  resolverProvenienciaDecisao,
+  resolverRemediacaoModulo,
+} from './laboratorio.jsx';
 
 describe('indicadores honestos do laboratório', () => {
   it('mede registros observáveis sem premiar tamanho de texto', () => {
@@ -32,5 +39,134 @@ describe('indicadores honestos do laboratório', () => {
 
     expect(resultado.rubrica.evidence).toBe(100);
     expect(resultado.indiceCompletude).toBe(100);
+  });
+});
+
+describe('remediação canônica do laboratório', () => {
+  const { lessonMap, trackLessons } = derivarAulas(popData, tracks);
+
+  it('resolve os 26 cenários para o código exibido e uma aula existente do módulo', () => {
+    expect(scenarios).toHaveLength(26);
+
+    for (const scenario of scenarios) {
+      const canonicalTrack = tracks.find((track) => track.id === scenario.track);
+      const remediation = resolverRemediacaoModulo(scenario);
+      const lesson = remediation && lessonMap.get(remediation.lessonId);
+
+      expect(remediation, scenario.id).toMatchObject({
+        trackId: canonicalTrack.id,
+        code: canonicalTrack.code,
+        title: canonicalTrack.title,
+        lessonId: canonicalTrack.remediationLessonId,
+        href: `#/aula/${encodeURIComponent(canonicalTrack.remediationLessonId)}`,
+      });
+      expect(lesson?.trackId, scenario.id).toBe(canonicalTrack.id);
+      expect(remediation.lessonId, scenario.id).toBe(trackLessons.get(canonicalTrack.id)[0].id);
+    }
+  });
+
+  it.each([
+    ['uc-apa', 'M12'],
+    ['delegado', 'M13'],
+    ['condicionantes', 'M14'],
+    ['prog-compensacao', 'M08'],
+    ['prog-app', 'M08'],
+    ['condic-triagem', 'M14'],
+    ['revisao', 'M15'],
+    ['integrador', 'M16'],
+  ])('evita regressão de rótulo no cenário %s: remedia em %s', (scenarioId, expectedCode) => {
+    const scenario = scenarios.find((candidate) => candidate.id === scenarioId);
+    expect(resolverRemediacaoModulo(scenario)?.code).toBe(expectedCode);
+  });
+
+  it('falha de modo seguro quando o cenário não pertence ao registro canônico', () => {
+    expect(resolverRemediacaoModulo({ track: 'inexistente' })).toBeNull();
+    expect(resolverRemediacaoModulo(null)).toBeNull();
+  });
+});
+
+describe('limites das decisões sintéticas do laboratório', () => {
+  it.each([
+    ['cp', 0, 'nao', /simples presença.+sem conferir/i],
+    ['cp', 2, 'nao', /assegura prioridade.+confere domínio/i],
+    ['las', 0, 'nao', /potência de 3 MW, isoladamente/i],
+    ['rlo', 0, 'nao', /sem conferir datas e regime aplicável/i],
+    ['rlo-vencida', 0, 'nao', /sem conferir a licença e o comprovante/i],
+    ['rlo-vencida', 4, 'nao', /sem confirmar tempestividade.+é seguro concluir/i],
+    ['prog-semestral', 1, 'nao', /por si só, demonstra abandono ou continuidade/i],
+    ['prog-residuos', 4, 'nao', /sem demonstrar a adequação.+resolve a lacuna/i],
+    ['prog-compensacao', 2, 'nao', /sem confronto com o projeto.+basta para validá-la/i],
+    ['prog-app', 3, 'nao', /sem confrontar projeto.+é possível concluir/i],
+  ])('mantém %s Q%d condicionada à evidência disponível', (scenarioId, questionIndex, answer, text) => {
+    const scenario = scenarios.find((candidate) => candidate.id === scenarioId);
+
+    expect(scenario.questions[questionIndex][1]).toBe(answer);
+    expect(scenario.questions[questionIndex][0]).toMatch(text);
+  });
+
+  it('alinha os casos de acompanhamento ao módulo de relatórios', () => {
+    const cases = Object.fromEntries(
+      scenarios
+        .filter((scenario) => ['prog-compensacao', 'prog-app'].includes(scenario.id))
+        .map((scenario) => [scenario.id, scenario]),
+    );
+
+    expect(cases['prog-compensacao']).toMatchObject({
+      track: 'm08',
+      label: 'Cronologia e comprovação',
+    });
+    expect(cases['prog-app']).toMatchObject({
+      track: 'm08',
+      label: 'Programa de APP e cartografia',
+    });
+  });
+
+  it('não introduz referências editoriais proibidas no conteúdo alterado', () => {
+    const ids = new Set([
+      'cp',
+      'las',
+      'rlo',
+      'rlo-vencida',
+      'prog-semestral',
+      'prog-residuos',
+      'prog-compensacao',
+      'prog-app',
+    ]);
+    const content = JSON.stringify(scenarios.filter((scenario) => ids.has(scenario.id)));
+
+    expect(content).not.toMatch(/\bIA\b|inteligência artificial|revisão humana|validação humana/i);
+  });
+});
+
+describe('proveniência por decisão do laboratório', () => {
+  it('resolve as 130 decisões para trechos do POP e evidências sintéticas explícitas', () => {
+    const decisions = scenarios.flatMap((scenario) =>
+      scenario.questions.map((_, index) => ({
+        scenario,
+        provenance: resolverProvenienciaDecisao(scenario, index),
+      })),
+    );
+
+    expect(decisions).toHaveLength(130);
+    for (const { scenario, provenance } of decisions) {
+      expect(provenance, scenario.id).not.toBeNull();
+      expect(provenance.popSources.length, provenance.id).toBeGreaterThan(0);
+      expect(provenance.evidenceTitles.length, provenance.id).toBeGreaterThan(0);
+      for (const title of provenance.evidenceTitles) {
+        expect(scenario.evidence, `${provenance.id}: ${title}`).toContain(title);
+      }
+    }
+  });
+
+  it('não volta silenciosamente à primeira evidência na quinta decisão', () => {
+    const scenario = scenarios.find((candidate) => candidate.id === 'rlo-vencida');
+    const provenance = resolverProvenienciaDecisao(scenario, 4);
+
+    expect(provenance.evidenceTitles).toEqual([
+      'Relatório de cumprimento de condicionantes',
+      'Notificações anteriores',
+    ]);
+    expect(provenance.evidenceTitles).not.toContain('Requerimento tempestivo');
+    expect(provenance.reviewStatus).toBe('needs-technical-review');
   });
 });

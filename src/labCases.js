@@ -11,8 +11,9 @@
 // a interface diz isso com todas as letras, para ninguem confundir presenca de
 // palavra com qualidade de argumento.
 //
-// Todo o conteudo abaixo vem do POP. As citacoes normativas reproduzem o que o
-// proprio POP indica; nada foi inferido.
+// O conteúdo abaixo combina regras diretamente tratadas no POP com fatos
+// sintéticos de treinamento. Cada conclusão deve ficar limitada ao que os
+// fatos e as evidências do cenário permitem demonstrar.
 
 export const NOVOS_CENARIOS = [
   {
@@ -325,12 +326,12 @@ export const NOVOS_CENARIOS = [
     steps: ['Série', 'Conferência', 'Natureza', 'Consequência', 'Encaminhamento'],
     questions: [
       ['A soma dos três períodos declarados (71, 68 e 76) confere com os 262 acumulados do terceiro relatório?', 'nao'],
-      ['A diferença encontrada, por si só, autoriza concluir que os programas foram abandonados?', 'nao'],
+      ['A diferença aritmética, por si só, demonstra abandono ou continuidade dos programas?', 'nao'],
       ['O status declarado pelo empreendedor equivale ao status validado pelo IAT?', 'nao'],
       ['Cabe exigir série histórica única e conciliada, separando o valor de cada período do acumulado?', 'sim'],
       ['As solicitações dos três relatórios devem ser comunicadas de forma consolidada, em regra de uma única vez?', 'sim'],
     ],
-    outcome: 'A soma dos períodos é 215 e o acumulado declarado é 262: faltam 47 registros sem explicação. Isso é limitação de rastreabilidade, não prova de abandono, porque os três relatórios demonstram continuidade das inspeções, do monitoramento e das estruturas. O encaminhamento é diligência consolidada, exigindo série histórica única e conciliada por semestre e acumulada, sem reapresentação integral dos relatórios já protocolados.',
+    outcome: 'A soma dos períodos é 215 e o acumulado declarado é 262: há 47 registros sem origem demonstrada na série apresentada. A divergência comprova inconsistência quantitativa, mas não demonstra, por si só, abandono nem continuidade dos programas. O encaminhamento é diligência consolidada para conciliar a série por semestre e acumulada e apresentar evidências da execução efetiva, sem reapresentação integral do que já estiver comprovado.',
   },
   {
     // Residuos: o acumulado FECHA e mesmo assim nao e rastreavel. Consistencia
@@ -366,15 +367,15 @@ export const NOVOS_CENARIOS = [
       ['Essa consistência aritmética demonstra, por si só, o método de conversão de litros para massa?', 'nao'],
       ['A série de inspeções fecha, somando 16 e 19 contra o acumulado de 46 informado?', 'nao'],
       ['Uma seção de indicadores que repete o período anterior demonstra os indicadores do período atual?', 'nao'],
-      ['Cabe aceitar os resultados separados por unidade de medida, como alternativa à conversão?', 'sim'],
+      ['Separar os resultados por unidade, sem demonstrar a adequação ao programa aprovado e aos indicadores, resolve a lacuna metodológica?', 'nao'],
     ],
-    outcome: 'O acumulado de resíduos fecha (5.406,5 mais 297,0 dá 5.703,5, e mais 194,5 dá 5.898,0), mas fechar não é ser rastreável: dados primários em litros, quilogramas e unidades viram um número único e depois toneladas, sem critério de conversão declarado. Já a série de inspeções não fecha: 16 mais 19 são 35, contra 46 acumulados. E a seção de indicadores do terceiro relatório reproduz o período anterior, de modo que os indicadores do semestre não ficam demonstrados. Exigir a metodologia de conversão ou a consolidação separada por unidade, conciliar a série de inspeções e refazer a seção de indicadores do período.',
+    outcome: 'O acumulado de resíduos fecha (5.406,5 mais 297,0 dá 5.703,5, e mais 194,5 dá 5.898,0), mas fechar não é ser rastreável: dados primários em litros, quilogramas e unidades viram um número único e depois toneladas, sem critério de conversão declarado. Já a série de inspeções não fecha: 16 mais 19 são 35, contra 46 acumulados. E a seção de indicadores do terceiro relatório reproduz o período anterior. Exigir metodologia rastreável; eventual apresentação separada por unidade precisa demonstrar compatibilidade com o programa aprovado e com seus indicadores, e não deve ser aceita automaticamente.',
   },
   {
     // Compensacao florestal: a acao existiu, mas foi lancada no semestre
     // errado. E o unico cenario em que a resposta certa para uma das fases e
     // "nao ha o que exigir", calibragem que a plataforma nunca treinou.
-    id: 'prog-compensacao', track: 'm12', label: 'Ação no semestre certo', type: 'PCH',
+    id: 'prog-compensacao', track: 'm08', label: 'Cronologia e comprovação', type: 'PCH',
     title: 'Ação física real, atribuída ao período errado',
     facts: [
       'No 1º semestre o programa estava em formalização, sem execução física prevista',
@@ -402,17 +403,17 @@ export const NOVOS_CENARIOS = [
     questions: [
       ['No 1º semestre, a ausência de restauração física caracteriza inconsistência a ser exigida?', 'nao'],
       ['Uma ação de julho de 2025 pode ser contabilizada como executada em relatório que cobre até 30/06/2025?', 'nao'],
-      ['A retirada do povoamento é evolução física relevante, ainda que na etapa preparatória?', 'sim'],
+      ['O registro da retirada do povoamento, sem confronto com o projeto, o cronograma e as evidências, basta para validá-la como execução do programa?', 'nao'],
       ['A postergação sucessiva do início exige justificativa e cronograma atualizado?', 'sim'],
       ['Preparar a área equivale a demonstrar a restauração e seus indicadores?', 'nao'],
     ],
-    outcome: 'No primeiro semestre não há correção material a exigir: o próprio relatório demonstra etapa administrativa e preparatória, e cobrar execução aqui seria exigência sem fundamento. A retirada do povoamento é evolução física real, mas ocorreu em julho de 2025 e pertence ao terceiro semestre, não ao relatório que se encerra em 30/06. Comparando os três, o início da restauração passou de 2025 para 2026, o que exige justificativa e cronograma atualizado. Preparar a área não é restaurar: os indicadores de cobertura, regeneração e diversidade seguem pendentes.',
+    outcome: 'No primeiro semestre, a ausência de restauração física é compatível com a etapa preparatória descrita e com o cronograma apresentado no cenário. A retirada do povoamento foi relatada em julho de 2025 e não pode ser contabilizada no relatório encerrado em 30/06; tampouco deve ser validada como execução do programa sem confronto com o projeto aprovado, o cronograma e as evidências datadas. A postergação do início da restauração exige justificativa e cronograma atualizado. Preparar a área não demonstra restauração nem seus indicadores.',
   },
   {
     // Recomposicao de APP: o total nao fecha com as parcelas nem com a
     // cartografia, e o texto se contradiz sobre o plantio. Ensina o cruzamento
     // mais dificil, numero declarado contra base espacial.
-    id: 'prog-app', track: 'm10', label: 'APP e cartografia', type: 'PCH',
+    id: 'prog-app', track: 'm08', label: 'Programa de APP e cartografia', type: 'PCH',
     title: 'Total de APP que não fecha com as parcelas nem com a cartografia',
     facts: [
       'O texto informa redução total de 1,92 ha de APP',
@@ -441,10 +442,10 @@ export const NOVOS_CENARIOS = [
       ['A soma das parcelas por margem (0,88 e 1,39) confere com o total informado de 1,92 ha?', 'nao'],
       ['A divergência deve ser compatibilizada também com a cartografia do projeto aprovado?', 'sim'],
       ['Indicadores e considerações finais podem afirmar coisas opostas sobre o plantio?', 'nao'],
-      ['A ausência de plantio até o terceiro semestre caracteriza, isoladamente, descumprimento?', 'nao'],
+      ['Sem confrontar projeto, cronograma, licença e evidências, é possível concluir se a ausência de plantio caracteriza descumprimento?', 'nao'],
       ['A avaliação do semestre deve ficar vinculada às ações efetivamente comprovadas?', 'sim'],
     ],
-    outcome: 'As parcelas somam 2,27 ha e o texto declara 1,92 ha: divergência de 0,35 ha que precisa ser corrigida e compatibilizada com a cartografia do projeto, porque número de APP sem base espacial não se valida. O relatório também se contradiz: os indicadores registram que o plantio não ocorreu e as considerações finais afirmam que ocorreu. A ausência de plantio não é, isoladamente, descumprimento, desde que o cronograma permaneça compatível com o projeto e com o prazo vinculado à renovação da Licença de Operação. Mantida a informação de que o plantio não iniciou, a avaliação do semestre fica vinculada ao que foi efetivamente comprovado.',
+    outcome: 'As parcelas somam 2,27 ha e o texto declara 1,92 ha: divergência de 0,35 ha que precisa ser corrigida e compatibilizada com a cartografia do projeto. O relatório também se contradiz: os indicadores registram que o plantio não ocorreu e as considerações finais afirmam que ocorreu. Sem confrontar projeto aprovado, cronograma, licença e evidências, não é possível classificar a ausência de plantio como cumprimento ou descumprimento. A avaliação do semestre deve ficar vinculada às ações efetivamente comprovadas.',
   },
   {
     // Triagem de condicionantes. O POP define seis elementos de qualidade
@@ -556,52 +557,52 @@ export const RUBRICAS = {
       { rot: 'Série de inspeções não concilia', termos: ['16', '19', '46', '35', 'inspec', 'inspeç'] },
       { rot: 'Indicadores do período repetidos', termos: ['repet', 'reproduz', 'periodo anterior', 'período anterior'] },
     ],
-    modelo: 'Análise: os dados primários discriminam resíduos em quilogramas, litros e unidades, e a consolidação por tipologia apresenta valor único por semestre, depois expresso em toneladas. O acumulado declarado corresponde à soma dos consolidados anteriores. Já a série de inspeções não concilia: 16 no primeiro período e 19 no segundo somam 35, contra 46 informados como acumulado. Comentário: a consistência aritmética do acumulado não substitui a demonstração da metodologia de conversão dos volumes em massa, de modo que a consolidação não é rastreável na forma apresentada. A seção de indicadores do terceiro relatório reproduz os dados do período anterior, e por isso os indicadores do semestre não ficam demonstrados. Solicitações: apresentar a metodologia e os critérios de conversão entre volume e massa, ou manter os resultados consolidados separadamente por unidade de medida; conciliar a série de inspeções e esclarecer a diferença; e refazer a seção de indicadores com os registros específicos do período.',
+    modelo: 'Análise: os dados primários discriminam resíduos em quilogramas, litros e unidades, e a consolidação por tipologia apresenta valor único por semestre, depois expresso em toneladas. O acumulado declarado corresponde à soma dos consolidados anteriores. Já a série de inspeções não concilia: 16 no primeiro período e 19 no segundo somam 35, contra 46 informados como acumulado. Comentário: a consistência aritmética do acumulado não substitui a demonstração da metodologia de conversão dos volumes em massa, de modo que a consolidação não é rastreável na forma apresentada. A seção de indicadores do terceiro relatório reproduz os dados do período anterior, e por isso os indicadores do semestre não ficam demonstrados. Solicitações: apresentar metodologia e critérios rastreáveis; se forem propostos resultados separados por unidade, demonstrar a compatibilidade dessa forma de reporte com o programa aprovado e com seus indicadores; conciliar a série de inspeções; e refazer a seção de indicadores com os registros específicos do período.',
   },
   'prog-compensacao': {
     elementos: [
       { rot: 'Etapa preparatória não gera exigência', termos: ['preparat', 'formaliza', 'administrativ', 'nao ha', 'não há'] },
       { rot: 'Ação no semestre em que ocorreu', termos: ['julho', 'periodo', 'período', '30/06', 'cronolog'] },
-      { rot: 'Reprogramação sucessiva', termos: ['reprogram', 'posterg', '2026', 'cronograma atualizado', 'justificativa'] },
+      { rot: 'Ação relatada requer comprovação', termos: ['projeto aprovado', 'cronograma', 'evidencia', 'evidência', 'comprova', 'valid'] },
       { rot: 'Preparar não é restaurar', termos: ['restaura', 'indicador', 'cobertura', 'regenera', 'diversidade'] },
     ],
-    modelo: 'Análise: no primeiro semestre o programa estava em formalização e preparação, etapa em que a ausência de execução física é coerente com o que o próprio relatório demonstra. O segundo relatório cobre até 30/06/2025 e informa a retirada do povoamento de pinus ocorrida no início de julho de 2025, ação que pertence ao terceiro semestre. Comparando os três, a previsão de início da restauração passou de 2025 para o primeiro semestre de 2026. Comentário: não identifico correção material a exigir quanto ao primeiro semestre; a retirada do povoamento é evolução física relevante, mas deve ser contabilizada no período em que efetivamente ocorreu. Preparar a área não equivale a restaurar: os indicadores de cobertura, regeneração e diversidade permanecem pendentes. Solicitações: vincular cada ação ao semestre em que ocorreu, apresentar justificativa e cronograma atualizado para a reprogramação do início, e demonstrar nos relatórios seguintes a execução das medidas de restauração com os respectivos indicadores.',
+    modelo: 'Análise: no primeiro semestre o programa estava em formalização e preparação, etapa em que a ausência de restauração física é compatível com o cronograma apresentado no cenário. O segundo relatório cobre até 30/06/2025 e informa retirada do povoamento ocorrida no início de julho, ação que pertence ao período seguinte. Comparando os três, a previsão de início da restauração passou de 2025 para o primeiro semestre de 2026. Comentário: a retirada é uma ação relatada; só pode ser validada como execução do programa depois do confronto com o projeto aprovado, o cronograma e as evidências datadas. Preparar a área não equivale a restaurar. Solicitações: vincular cada ação ao semestre em que ocorreu, comprovar sua correspondência com o programa aprovado, justificar a reprogramação e apresentar cronograma atualizado e indicadores da restauração.',
   },
   'prog-app': {
     elementos: [
       { rot: 'Total contra as parcelas', termos: ['0,88', '1,39', '2,27', '1,92', '0,35', 'margem'] },
       { rot: 'Compatibilização com a cartografia', termos: ['cartograf', 'projeto aprovado', 'base espacial', 'espacial'] },
       { rot: 'Contradição interna sobre o plantio', termos: ['plantio', 'contradi', 'indicador', 'considera'] },
-      { rot: 'Pendência não é descumprimento', termos: ['descumprimento', 'cronograma', 'renova', 'prazo', 'comprovad'] },
+      { rot: 'Cumprimento depende do confronto documental', termos: ['descumprimento', 'cronograma', 'licenca', 'licença', 'projeto', 'evidencia', 'evidência'] },
     ],
-    modelo: 'Análise: o relatório informa redução total de 1,92 ha de APP e discrimina 0,88 ha na margem direita e 1,39 ha na margem esquerda, cuja soma é 2,27 ha, restando divergência de 0,35 ha. A seção de indicadores registra que o plantio de mudas não foi realizado, enquanto as considerações finais afirmam que houve plantio, monitoramento e manutenção. Comentário: a divergência quantitativa precisa ser corrigida e compatibilizada com a cartografia do projeto aprovado, porque número de APP sem base espacial não se valida. A contradição interna sobre o plantio compromete a leitura do que foi efetivamente executado. A ausência de plantio até este semestre não caracteriza, isoladamente, descumprimento, desde que o cronograma permaneça compatível com o prazo vinculado à renovação da Licença de Operação. Solicitações: corrigir o quantitativo de redução e realocação da APP compatibilizando total, parcelas e cartografia; corrigir a redação sobre a realização do plantio; e manter a avaliação do semestre vinculada às ações efetivamente comprovadas.',
+    modelo: 'Análise: o relatório informa redução total de 1,92 ha de APP e discrimina 0,88 ha na margem direita e 1,39 ha na margem esquerda, cuja soma é 2,27 ha, restando divergência de 0,35 ha. A seção de indicadores registra que o plantio de mudas não foi realizado, enquanto as considerações finais afirmam que houve plantio, monitoramento e manutenção. Comentário: a divergência quantitativa precisa ser corrigida e compatibilizada com a cartografia do projeto aprovado. A contradição interna compromete a leitura do que foi efetivamente executado. Sem confrontar projeto, cronograma, licença e evidências, não é possível classificar a ausência de plantio como cumprimento ou descumprimento. Solicitações: corrigir o quantitativo compatibilizando total, parcelas e cartografia; esclarecer o que foi efetivamente realizado; e manter a avaliação vinculada às ações comprovadas.',
   },
   'prog-semestral': {
     elementos: [
       { rot: 'Conferência aritmética da série', termos: ['215', '262', '47', '71', 'soma', 'acumulad', 'concilia'] },
       { rot: 'Declarado não é validado', termos: ['declarad', 'validad', 'evidencia', 'evidência', 'comprova'] },
-      { rot: 'Rastreabilidade, não abandono', termos: ['rastreab', 'abandono', 'continuidade', 'interrup', 'execucao', 'execução'] },
+      { rot: 'Não concluir abandono nem continuidade', termos: ['abandono', 'continuidade', 'nao demonstra', 'não demonstra', 'evidencia', 'evidência'] },
       { rot: 'Encaminhamento consolidado', termos: ['consolidad', 'uma unica vez', 'uma única vez', 'diligencia', 'diligência'] },
     ],
-    modelo: 'Análise: os três relatórios declaram 71, 68 e 76 registros de inspeção nos respectivos períodos, e o terceiro informa 262 acumulados desde o início da operação. A soma dos períodos é 215, de modo que 47 registros do acumulado não têm origem demonstrada na série apresentada. Comentário: a divergência é de rastreabilidade e não de execução. Os três relatórios demonstram continuidade das inspeções, do monitoramento e das estruturas, e nada indica interrupção ou abandono dos programas; o que não se pode validar é a série quantitativa, porque o status declarado pelo empreendedor não equivale ao status validado pelo IAT. Solicitações: apresentar série histórica única e conciliada desde o primeiro semestre, distinguindo com clareza o valor de cada período do total acumulado, e esclarecer a origem da diferença de 47 registros. Encaminho as solicitações dos três relatórios de forma consolidada, em uma única vez, sem exigir reapresentação integral do que já foi protocolado.',
+    modelo: 'Análise: os três relatórios declaram 71, 68 e 76 registros de inspeção nos respectivos períodos, e o terceiro informa 262 acumulados desde o início da operação. A soma dos períodos é 215, de modo que 47 registros do acumulado não têm origem demonstrada na série apresentada. Comentário: a divergência comprova inconsistência quantitativa, mas não demonstra, por si só, abandono nem continuidade dos programas. O status declarado pelo empreendedor não equivale ao status validado pelo IAT. Solicitações: apresentar série histórica única e conciliada desde o primeiro semestre, esclarecer a origem da diferença de 47 registros e relacionar a série às evidências de execução. Encaminho as solicitações de forma consolidada, sem exigir reapresentação integral do que já estiver comprovado.',
   },
   cp: {
     elementos: [
-      { rot: 'Objeto e localização caracterizados', termos: ['objeto', 'localiza', 'arranjo', 'ada', 'kmz'] },
+      { rot: 'Entrada mínima conferida', termos: ['conteudo', 'conteúdo', 'memorial', 'arranjo', 'ada', 'kmz', 'kml'] },
       { rot: 'Sensibilidade ambiental do entorno', termos: ['unidade de conserva', 'uc', 'sensibilidade', '600'] },
-      { rot: 'Alcance e validade da manifestação', termos: ['24 meses', 'validade', 'orientativ', 'nao prorrog', 'não prorrog'] },
+      { rot: 'Alcance e validade da manifestação', termos: ['24 meses', 'prioridade', 'dominio', 'domínio', 'orientativ', 'nao prorrog', 'não prorrog'] },
       { rot: 'Limites da Consulta Prévia', termos: ['nao substitui', 'não substitui', 'viabilidade', 'prioridade', 'reserva'] },
     ],
-    modelo: 'O objeto e a localização estão caracterizados pelo requerimento, pelo memorial preliminar e pelo KMZ do arranjo, o que permite manifestação orientativa na Consulta Prévia. A proximidade de cerca de 600 m de unidade de conservação integra a manifestação como restrição de sensibilidade a ser aprofundada nos estudos futuros. A manifestação vale 24 meses, não é prorrogável e não gera prioridade nem reserva de disponibilidade hídrica. Registro que a Consulta Prévia orienta a modalidade e o estudo prováveis e não substitui o licenciamento nem o juízo de viabilidade ambiental.',
+    modelo: 'A presença nominal das peças não basta para concluir suficiência. É preciso conferir se o Memorial, o mapa da ADA e o arquivo KML ou KMZ caracterizam o arranjo integral e a localização. A proximidade de cerca de 600 m de unidade de conservação deve integrar a análise de sensibilidade e orientar os estudos futuros. Se a entrada mínima estiver demonstrada, a Consulta Prévia pode orientar modalidade e estudo prováveis. A manifestação vale 24 meses, não é prorrogável, não assegura prioridade, não confere domínio e não substitui o licenciamento nem o juízo de viabilidade ambiental.',
   },
   las: {
     elementos: [
-      { rot: 'Enquadramento no rito simplificado', termos: ['las', 'simplificad', 'porte', '3 mw', 'enquadr'] },
+      { rot: 'Potência isolada não fecha o enquadramento', termos: ['3 mw', 'potencia', 'potência', 'alagamento', 'ida', 'supress', 'territorial'] },
       { rot: 'Insuficiência da base cartográfica', termos: ['ponto', 'poligonal', 'kmz', 'cartograf', 'geoespacial'] },
       { rot: 'Consequência técnica da lacuna', termos: ['app', 'supress', 'ada', 'impede', 'delimit'] },
       { rot: 'Encaminhamento proporcional', termos: ['diligencia', 'diligência', 'complementa', 'exigir'] },
     ],
-    modelo: 'O porte de 3 MW enquadra o pedido no rito simplificado da LAS, mas o rito simplificado não afasta o dever de suficiência documental. O KMZ apresenta apenas o ponto da barragem, e ponto isolado não delimita empreendimento hidrelétrico complexo. Sem as poligonais da ADA, do reservatório e da casa de força não é possível analisar APP, supressão de vegetação e interferências, o que impede a decisão segura. Proponho diligência documental para apresentação das poligonais completas e dos arquivos geoespaciais, com retomada do mérito somente após o saneamento.',
+    modelo: 'A potência de 3 MW, isoladamente, não permite concluir pelo enquadramento em LAS. É necessário conferir também área de alagamento, IDA, supressão, sensibilidade e filtros territoriais. Além disso, o KMZ apresenta apenas o ponto da barragem, e ponto isolado não delimita empreendimento hidrelétrico complexo. Sem as poligonais da ADA, do reservatório e da casa de força não é possível analisar APP, supressão de vegetação e interferências. Proponho diligência para completar a base geoespacial e a memória de enquadramento, mantendo separadas a definição da modalidade e a suficiência documental.',
   },
   lp: {
     elementos: [
@@ -632,12 +633,12 @@ export const RUBRICAS = {
   },
   rlo: {
     elementos: [
-      { rot: 'Tempestividade e efeito do protocolo', termos: ['tempestiv', '130', 'prorrog', 'vigencia', 'vigência'] },
+      { rot: 'Tempestividade e efeitos conferidos', termos: ['tempestiv', '130 dias', 'vencimento', 'regime temporalmente', 'efeitos do protocolo'] },
       { rot: 'Fato novo identificado', termos: ['unidade de conserva', 'uc', 'fato novo', 'decreto'] },
       { rot: 'Reanálise e condicionantes', termos: ['reavalia', 'reanalis', 'reanális', 'condicionante', 'nova'] },
       { rot: 'Validação do declarado', termos: ['declarad', 'validad', 'evidencia', 'evidência', 'automonitor'] },
     ],
-    modelo: 'O protocolo tempestivo, 130 dias antes do vencimento, prorroga a validade da licença até a decisão, mas não aprova a renovação. A criação de unidade de conservação no entorno é fato novo relevante e deve ser considerada na análise desta fase. O fato novo pode gerar novas condicionantes, proporcionais ao impacto e à fase. O automonitoramento em dia não torna a renovação automática: o status declarado pelo empreendedor precisa ser validado por evidência.',
+    modelo: 'A informação de protocolo 130 dias antes do vencimento precisa ser conferida na licença, no comprovante e no regime temporalmente aplicável antes de qualquer conclusão sobre tempestividade e seus efeitos. A criação de unidade de conservação no entorno é fato novo relevante e deve ser considerada na análise desta fase. O fato novo pode gerar reavaliação e condicionantes proporcionais ao impacto e à fase. O automonitoramento em dia não torna a renovação automática: o status declarado pelo empreendedor precisa ser validado por evidência.',
   },
   pacuera: {
     elementos: [
@@ -650,12 +651,12 @@ export const RUBRICAS = {
   },
   'rlo-vencida': {
     elementos: [
-      { rot: 'Efeito da tempestividade', termos: ['tempestiv', '130', 'prorrog', 'vencid'] },
+      { rot: 'Tempestividade e efeitos conferidos', termos: ['tempestiv', '130 dias', 'vencimento', 'regime aplicavel', 'regime aplicável', 'prorrogacao', 'prorrogação'] },
       { rot: 'Declarado não é validado', termos: ['declarad', 'validad', '100', 'status'] },
       { rot: 'Evidência por condicionante', termos: ['evidencia', 'evidência', 'condicionante', 'anexo', 'comprova'] },
-      { rot: 'Histórico de notificações', termos: ['notifica', 'historico', 'histórico', 'anterior'] },
+      { rot: 'Regularidade não presumida', termos: ['regularidade operacional', 'historico de notific', 'histórico de notific', 'eventuais impedimentos'] },
     ],
-    modelo: 'A renovação foi protocolada 130 dias antes do vencimento, de modo que a licença permanece prorrogada até a decisão e a operação segue regular. O relatório declara 100% das condicionantes cumpridas sem anexar evidências, e status declarado não equivale a status validado pelo IAT. A conclusão exige evidência condicionante a condicionante, sendo insuficiente o automonitoramento em dia para suprir as demais obrigações. O histórico de notificações anteriores deve ser confrontado com o declarado antes de qualquer conclusão favorável.',
+    modelo: 'O relatório afirma que a renovação foi protocolada 130 dias antes do vencimento, mas essa informação precisa ser conferida na licença, no comprovante e no regime aplicável antes de concluir sobre tempestividade, prorrogação ou regularidade operacional. O relatório declara 100% das condicionantes cumpridas sem anexar evidências, e status declarado não equivale a status validado pelo IAT. A conclusão exige evidência condicionante a condicionante, sendo insuficiente o automonitoramento em dia para suprir as demais obrigações. O histórico de notificações e eventuais impedimentos deve ser confrontado com o declarado.',
   },
   'geo-insuficiente': {
     elementos: [

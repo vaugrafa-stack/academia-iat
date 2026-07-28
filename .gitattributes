@@ -1,0 +1,3 @@
+*.vtt text eol=lf
+src/data/offline-packages.json text eol=lf
+

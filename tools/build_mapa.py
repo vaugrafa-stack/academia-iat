@@ -9,10 +9,10 @@ Duas fontes, ambas publicas:
 NAO usa a base de processos do IAT. O mapa mostra o que a ANEEL publica sobre
 empreendimentos existentes, nao o andamento de processo de ninguem.
 
-Por que um SVG proprio em vez de mapa de tiles: a aplicacao roda sob CSP
-restrita (`default-src 'self'`) e precisa funcionar sem rede. Tile externo
-seria bloqueado pela politica e sumiria offline. Aqui a geometria vem junto,
-simplificada, e o mapa continua inteiro em campo.
+O SVG proprio continua sendo o nucleo offline do mapa. A geometria vem junto,
+simplificada, e permanece utilizavel sem rede. A projecao visual usa Web
+Mercator para que, quando houver conexao, uma camada remota opcional de imagens
+possa ser alinhada sem alterar as bacias e os pontos embarcados.
 
 Uso:
   python tools/build_mapa.py
@@ -134,6 +134,17 @@ def num(v):
         return None
 
 
+def web_mercator_normalizado(lon, lat):
+    """Converte WGS 84 para a grade Web Mercator normalizada entre 0 e 1."""
+    limite = 85.05112878
+    latitude = max(-limite, min(limite, lat))
+    phi = math.radians(latitude)
+    return (
+        (lon + 180.0) / 360.0,
+        (1.0 - math.asinh(math.tan(phi)) / math.pi) / 2.0,
+    )
+
+
 def perpendicular(p, a, b):
     (px, py), (ax, ay), (bx, by) = p, a, b
     dx, dy = bx - ax, by - ay
@@ -252,20 +263,26 @@ def gerar_documento(caminhos):
     if not usinas:
         raise RuntimeError("A fonte SIGA não produziu nenhuma usina válida para o Paraná.")
 
-    xs = [p[0] for b in bacias for parte in b["partes"] for p in parte] + [u["lon"] for u in usinas]
-    ys = [p[1] for b in bacias for parte in b["partes"] for p in parte] + [u["lat"] for u in usinas]
+    pontos_geo = (
+        [p for b in bacias for parte in b["partes"] for p in parte]
+        + [(u["lon"], u["lat"]) for u in usinas]
+    )
+    pontos_projetados = [web_mercator_normalizado(lon, lat) for lon, lat in pontos_geo]
+    xs = [p[0] for p in pontos_projetados]
+    ys = [p[1] for p in pontos_projetados]
     x0, x1, y0, y1 = min(xs), max(xs), min(ys), max(ys)
 
-    # Equirretangular com correcao de latitude: sem ela o Parana sai esticado.
-    k = math.cos(math.radians((y0 + y1) / 2))
-    larg_geo, alt_geo = (x1 - x0) * k, (y1 - y0)
+    # A mesma projecao dos mosaicos cartograficos online permite sobrepor a
+    # imagem opcional sem sacrificar o SVG proprio quando nao houver conexao.
+    larg_geo, alt_geo = x1 - x0, y1 - y0
     escala = min((LARGURA - 2 * MARGEM) / larg_geo, (ALTURA - 2 * MARGEM) / alt_geo)
     dx = (LARGURA - larg_geo * escala) / 2
     dy = (ALTURA - alt_geo * escala) / 2
 
     def proj(lon, lat):
-        return (round((lon - x0) * k * escala + dx, 1),
-                round((y1 - lat) * escala + dy, 1))
+        x, y = web_mercator_normalizado(lon, lat)
+        return (round((x - x0) * escala + dx, 1),
+                round((y - y0) * escala + dy, 1))
 
     # Atribuicao da bacia a cada usina. Precisa vir antes do laco abaixo, que
     # descarta a geometria: sem a contagem, a bacia so teria nome e area e o
@@ -290,6 +307,15 @@ def gerar_documento(caminhos):
 
     return {
         "largura": LARGURA, "altura": ALTURA,
+        "tileProjection": {
+            "type": "web-mercator",
+            "normalizedExtent": {
+                "xMin": round(x0 - dx / escala, 12),
+                "yMin": round(y0 - dy / escala, 12),
+                "xMax": round(x0 + (LARGURA - dx) / escala, 12),
+                "yMax": round(y0 + (ALTURA - dy) / escala, 12),
+            },
+        },
         "bacias": sorted(bacias, key=lambda b: b["nome"]),
         "usinas": usinas,
         "fontes": [

@@ -10,8 +10,8 @@ export default {
     apply: 'serve',
     transformIndexHtml(html) {
       return html.replace(
-        "connect-src 'self';",
-        "connect-src 'self' ws://127.0.0.1:* ws://localhost:*;",
+        "connect-src 'self' https://services.arcgisonline.com;",
+        "connect-src 'self' https://services.arcgisonline.com ws://127.0.0.1:* ws://localhost:*;",
       );
     },
   }],

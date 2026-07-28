@@ -36,5 +36,7 @@ describe('contratos estáticos da plataforma', () => {
     expect(html).toContain('Content-Security-Policy');
     expect(html).toContain("object-src 'none'");
     expect(html).toContain("font-src 'self'");
+    expect(html).toContain("img-src 'self' data: blob: https://services.arcgisonline.com");
+    expect(html).toContain("connect-src 'self' https://services.arcgisonline.com");
   });
 });

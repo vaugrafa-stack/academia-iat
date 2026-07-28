@@ -117,11 +117,6 @@ import {
 } from "./assessmentDesign.js";
 import { practiceRecordStatus } from "./learningRecords.js";
 import {
-  LEARNING_PATHS,
-  learningPathStats,
-  resolveLearningPath,
-} from "./learningPaths.js";
-import {
   MIN_ACTIVE_RECALL_CHARS,
   lessonEvidenceStatus,
   selectLessonQuestion,
@@ -570,8 +565,6 @@ function App() {
     formacao: (
       <Formation
         state={state}
-        profile={profile}
-        setProfile={setProfile}
         openLesson={openLesson}
       />
     ),
@@ -784,7 +777,6 @@ function Profile({
     name: profile.name || "",
     role: profile.role || "",
     unit: profile.unit || "",
-    persona: resolveLearningPath(profile.persona).id,
   });
   const salvar = (e) => {
     e && e.preventDefault && e.preventDefault();
@@ -795,7 +787,6 @@ function Profile({
       name: nome,
       role: (form.role || "").trim(),
       unit: (form.unit || "").trim(),
-      persona: resolveLearningPath(form.persona).id,
       createdAt: pr.createdAt || new Date().toISOString(),
     }));
     if (saved !== false) setEditando(false);
@@ -939,28 +930,6 @@ function Profile({
               placeholder="Opcional"
             />
           </label>
-          <label>
-            Percurso recomendado
-            <select
-              value={form.persona}
-              onChange={(e) =>
-                setForm((current) => ({
-                  ...current,
-                  persona: e.target.value,
-                }))
-              }
-            >
-              {LEARNING_PATHS.map((path) => (
-                <option value={path.id} key={path.id}>
-                  {path.label} — {path.audience}
-                </option>
-              ))}
-            </select>
-            <small className="profile-field-help">
-              Personaliza a recomendação; todos os módulos continuam
-              disponíveis.
-            </small>
-          </label>
           <div className="profile-actions">
             <button type="submit" className="primary">
               {conta ? "Salvar" : "Criar perfil"} <Check />
@@ -1037,8 +1006,6 @@ function Profile({
             <dd>{profile.role || "-"}</dd>
             <dt>Órgão</dt>
             <dd>{profile.unit || "-"}</dd>
-            <dt>Percurso</dt>
-            <dd>{resolveLearningPath(profile.persona).label}</dd>
             <dt>Desde</dt>
             <dd>
               {profile.createdAt
@@ -1053,7 +1020,6 @@ function Profile({
                 name: profile.name,
                 role: profile.role,
                 unit: profile.unit,
-                persona: resolveLearningPath(profile.persona).id,
               });
               setEditando(true);
             }}
@@ -1952,16 +1918,9 @@ function MiniFlow() {
   );
 }
 
-function Formation({ state, profile, setProfile, openLesson }) {
+function Formation({ state, openLesson }) {
   const [openTrack, setOpenTrack] = useState("m00"),
-    [filter, setFilter] = useState(""),
-    [onlyPath, setOnlyPath] = useState(false);
-  const selectedPath = resolveLearningPath(profile?.persona);
-  const pathStats = learningPathStats(
-    selectedPath.id,
-    trackLessons,
-    state.completed,
-  );
+    [filter, setFilter] = useState("");
   return (
     <div className="page">
       <PageHeader
@@ -1969,58 +1928,6 @@ function Formation({ state, profile, setProfile, openLesson }) {
         subtitle={`${tracks.length} módulos conectam cada seção do POP a objetivos, conteúdo-fonte, prática e avaliação.`}
         icon={GraduationCap}
       />
-      <section className="learning-path-selector" aria-labelledby="learning-path-title">
-        <header>
-          <div>
-            <small>SEU PERCURSO RECOMENDADO</small>
-            <h2 id="learning-path-title">{selectedPath.label}</h2>
-            <p>
-              {selectedPath.audience} · {selectedPath.description}
-            </p>
-          </div>
-          <div className="learning-path-progress">
-            <strong>{pathStats.percent}%</strong>
-            <span>
-              {pathStats.completed}/{pathStats.lessons} tópicos
-            </span>
-            <i>
-              <em style={{ width: `${pathStats.percent}%` }} />
-            </i>
-          </div>
-        </header>
-        <div className="learning-path-options">
-          {LEARNING_PATHS.map((path) => (
-            <button
-              type="button"
-              key={path.id}
-              className={path.id === selectedPath.id ? "active" : ""}
-              aria-pressed={path.id === selectedPath.id}
-              onClick={() =>
-                setProfile((current) => ({
-                  ...current,
-                  persona: path.id,
-                }))
-              }
-            >
-              <strong>{path.label.replace("Trilha ", "")}</strong>
-              <small>{path.trackIds.length} módulos</small>
-            </button>
-          ))}
-        </div>
-        <footer>
-          <p>
-            A recomendação organiza prioridades, mas não bloqueia conteúdo nem
-            comprova competência.
-          </p>
-          <button
-            type="button"
-            aria-pressed={onlyPath}
-            onClick={() => setOnlyPath((current) => !current)}
-          >
-            {onlyPath ? "Mostrar catálogo completo" : "Mostrar somente minha trilha"}
-          </button>
-        </footer>
-      </section>
       <div className="formation-toolbar">
         <div role="search">
           <Search aria-hidden="true" />
@@ -2052,13 +1959,11 @@ function Formation({ state, profile, setProfile, openLesson }) {
             {group.ids.map((id) => {
               const t = tracks.find((x) => x.id === id),
                 full = trackLessons.get(id) || [],
-                recommended = selectedPath.trackIds.includes(id),
                 ls = full.filter((l) =>
                   norm(l.title + " " + (l.number || "")).includes(norm(filter)),
                 ),
                 p = trackProgress(id, state),
                 Icon = TRACK_ICONS[t.icon] || BookOpen;
-              if (onlyPath && !recommended) return null;
               if (
                 filter &&
                 !norm(t.title + " " + t.code).includes(norm(filter)) &&
@@ -2082,10 +1987,7 @@ function Formation({ state, profile, setProfile, openLesson }) {
                       <Icon />
                     </span>
                     <span className="track-copy">
-                      <small>
-                        {t.code}
-                        {recommended && <mark>Na sua trilha</mark>}
-                      </small>
+                      <small>{t.code}</small>
                       <strong>{t.title}</strong>
                       <em>{t.summary}</em>
                     </span>

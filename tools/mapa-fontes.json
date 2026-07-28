@@ -1,0 +1,62 @@
+{
+  "schemaVersion": 1,
+  "auditedAt": "2026-07-27",
+  "sources": [
+    {
+      "id": "iat-bacias-hidrograficas-2007",
+      "layer": "bacias",
+      "title": "Bacias Hidrográficas do Paraná",
+      "provider": "SUDERHSA, disponibilizado pelo Instituto Água e Terra (IAT/PR)",
+      "officialPageUrl": "https://www.iat.pr.gov.br/Pagina/Mapas-e-Dados-Espaciais",
+      "resourceUrl": "https://www.iat.pr.gov.br/sites/agua-terra/arquivos_restritos/files/documento/2020-07/bacias.rar",
+      "accessedAt": "2026-07-27",
+      "sourceDate": "2007",
+      "license": null,
+      "usageNotice": "A página oficial consultada não identifica uma licença aberta. Ela determina crédito à SUDERHSA em trabalhos que utilizem o produto: “SUDERHSA, 2007”.",
+      "attribution": "SUDERHSA, 2007",
+      "localInputName": "bacias_parana.geojson",
+      "localInputFormat": "GeoJSON derivado do shapefile oficial",
+      "sha256": "faad3e47dbd28d72e45e4306e51488324562440bd4d78c0773137253878c3009",
+      "hashScope": "Arquivo GeoJSON derivado usado como entrada do gerador; não é o hash do arquivo RAR oficial.",
+      "transformation": [
+        "Transformação histórica registrada no projeto de dados: extração do RAR e conversão do shapefile de EPSG:31982 para EPSG:4326 com ogr2ogr, codificação ISO-8859-1 e simplificação de 250 m.",
+        "Neste gerador: descarte de duas feições sem nome, simplificação Douglas–Peucker adicional com tolerância de 0,004 grau e projeção visual equiretangular para caminhos SVG."
+      ],
+      "limitations": [
+        "O arquivo de origem possui 18 feições, mas somente 16 têm nome; as duas feições sem nome não são publicadas.",
+        "A geometria foi simplificada para uso didático e offline. Não deve ser usada para medição, delimitação oficial ou decisão locacional.",
+        "A transformação histórica anterior ao GeoJSON está documentada no registro operacional local, mas não foi reproduzida nesta auditoria."
+      ]
+    },
+    {
+      "id": "aneel-siga-2026-06-01",
+      "layer": "usinas",
+      "title": "SIGA — Sistema de Informações de Geração da ANEEL",
+      "provider": "SCE/ANEEL; manutenção CEGDI/ANEEL",
+      "officialPageUrl": "https://dadosabertos.aneel.gov.br/dataset/siga-sistema-de-informacoes-de-geracao-da-aneel",
+      "resourceUrl": "https://dadosabertos.aneel.gov.br/dataset/6d90b77c-c5f5-4d81-bdec-7bc619494bb9/resource/11ec447d-698d-4ab8-977f-b424d5deee6a/download/siga-empreendimentos-geracao.csv",
+      "accessedAt": "2026-07-27",
+      "sourceDate": "2026-06-01",
+      "license": "Open Data Commons Open Database License (ODbL)",
+      "licenseUrl": "https://opendatacommons.org/licenses/odbl/1-0/",
+      "usageNotice": "A licença informada no Portal de Dados Abertos da ANEEL é ODbL. A cópia embarcada é um retrato de 01/06/2026 e não acompanha atualizações posteriores do SIGA.",
+      "attribution": "Agência Nacional de Energia Elétrica (ANEEL), SIGA",
+      "localInputName": "siga_aneel.csv",
+      "localInputFormat": "CSV, delimitador ponto e vírgula, codificação Windows-1252",
+      "sha256": "af7e12d77bcb986beaee56a6e6574ae9022632f37046219f79debc5f4780718c",
+      "hashScope": "Arquivo CSV integral usado como entrada do gerador.",
+      "transformation": [
+        "Filtro por UF principal PR e tipos de geração CGH, PCH e UHE.",
+        "Exclusão de registros sem coordenada utilizável ou fora da janela geográfica de controle do Paraná.",
+        "Potência em MW calculada preferencialmente a partir da potência fiscalizada e, na ausência, da potência outorgada.",
+        "Coordenadas convertidas para a projeção visual do SVG; latitude e longitude originais não são publicadas no artefato."
+      ],
+      "limitations": [
+        "O campo de tipo e a fase exibidos reproduzem o cadastro do SIGA no retrato indicado; não representam situação de licenciamento ambiental.",
+        "Coordenadas do SIGA são pontos cadastrais e não substituem levantamento, memorial, cartografia do processo ou validação de campo.",
+        "O filtro encontrou 151 registros PR dos tipos selecionados; quatro tinham coordenadas zeradas e foram excluídos, resultando em 147 pontos.",
+        "A página oficial foi conferida em 27/07/2026, mas a data exata de download da cópia local não estava registrada no arquivo; a data interna do conjunto é 01/06/2026."
+      ]
+    }
+  ]
+}

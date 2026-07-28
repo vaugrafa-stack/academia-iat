@@ -331,6 +331,21 @@ async function testarRangeEDownloadVerificavel() {
   assert.equal(final.resultado.ok, true);
   assert.equal(final.resultado.baixados, 1);
   assert.ok(await cacheMidia.match(downloadUrl), 'download deve ser verificável no cache');
+
+  const statusResponses = [];
+  await runtime.disparar('message', {
+    data: {
+      tipo: 'IAT_GET_STATUS',
+      urls: [downloadUrl, `${ORIGIN}/academia-iat/media/aula/ausente.mp4`],
+    },
+    ports: [{ postMessage: (mensagem) => statusResponses.push(mensagem) }],
+  });
+  const status = statusResponses.find((mensagem) => mensagem.tipo === 'IAT_RESPONSE');
+  assert.equal(status.resultado.midia.urlsGuardadas[downloadUrl], true);
+  assert.equal(
+    status.resultado.midia.urlsGuardadas[`${ORIGIN}/academia-iat/media/aula/ausente.mp4`],
+    false,
+  );
 }
 
 async function testarFalhasClaras() {
@@ -378,11 +393,82 @@ async function testarFalhasClaras() {
   assert.equal(final.resultado.falhas[0].codigo, 'QUOTA_EXCEEDED');
 }
 
+async function testarNavegacaoSemEnvenenarShell() {
+  const runtime = criarRuntime(codigoDeTeste('navegacao'), async (pedido) => (
+    new Response(`precache:${chaveDoPedido(pedido)}`, {
+      status: 200,
+      headers: { 'Content-Type': 'text/html; charset=utf-8' },
+    })
+  ));
+  await runtime.disparar('install');
+  const cache = await runtime.caches.open('academia-iat:academia-iat:core:navegacao');
+  const indexUrl = `${ORIGIN}/academia-iat/index.html`;
+  const shellAntes = await (await cache.match(indexUrl)).text();
+
+  runtime.rede.manipulador = async () => new Response('{"ok":true}', {
+    status: 200,
+    headers: { 'Content-Type': 'application/json' },
+  });
+  const jsonResponse = await runtime.disparar('fetch', {
+    request: {
+      method: 'GET',
+      mode: 'navigate',
+      url: `${ORIGIN}/academia-iat/data.json`,
+      headers: new Headers(),
+    },
+  });
+  assert.equal(await jsonResponse.text(), '{"ok":true}');
+  assert.equal(
+    await (await cache.match(indexUrl)).text(),
+    shellAntes,
+    'navegar para JSON não pode substituir o shell offline',
+  );
+
+  runtime.rede.manipulador = async () => new Response('<html>shell novo</html>', {
+    status: 200,
+    headers: { 'Content-Type': 'text/html; charset=utf-8' },
+  });
+  const htmlResponse = await runtime.disparar('fetch', {
+    request: {
+      method: 'GET',
+      mode: 'navigate',
+      url: `${ORIGIN}/academia-iat/`,
+      headers: new Headers(),
+    },
+  });
+  assert.equal(await htmlResponse.text(), '<html>shell novo</html>');
+  assert.equal(await (await cache.match(indexUrl)).text(), '<html>shell novo</html>');
+
+  cache.falharPorQuota = true;
+  runtime.rede.manipulador = async () => new Response('<html>rede válida</html>', {
+    status: 200,
+    headers: { 'Content-Type': 'text/html; charset=utf-8' },
+  });
+  const quotaResponse = await runtime.disparar('fetch', {
+    request: {
+      method: 'GET',
+      mode: 'navigate',
+      url: `${ORIGIN}/academia-iat/`,
+      headers: new Headers(),
+    },
+  });
+  assert.equal(
+    await quotaResponse.text(),
+    '<html>rede válida</html>',
+    'falha ao gravar o cache não pode esconder a resposta válida da rede',
+  );
+  assert.ok(
+    runtime.mensagens.some((mensagem) =>
+      mensagem.tipo === 'IAT_PWA_ERROR' && mensagem.codigo === 'QUOTA_EXCEEDED'),
+  );
+}
+
 const testes = [
   ['geração determinística e base do GitHub Pages', testarGeracao],
   ['instalação controlada e upgrade isolado', testarInstalacaoEUpgrade],
   ['Range 206, cache completo e download verificável', testarRangeEDownloadVerificavel],
   ['erros de precache e quota observáveis', testarFalhasClaras],
+  ['navegação não envenena nem mascara o shell', testarNavegacaoSemEnvenenarShell],
 ];
 
 let falhas = 0;

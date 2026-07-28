@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
-"""Gera o mapa do Parana: bacias hidrograficas e usinas hidreletricas.
+"""Gera e audita o mapa do Paraná: bacias e usinas hidrelétricas.
 
 Duas fontes, ambas publicas:
-  - bacias: divisao hidrografica oficial do Parana (18 bacias);
+  - bacias: divisão hidrográfica oficial do Paraná (16 bacias nomeadas);
   - usinas: SIGA, o registro aberto de empreendimentos de geracao da ANEEL,
     filtrado para hidreletricas do Parana com coordenada valida.
 
@@ -14,28 +14,108 @@ restrita (`default-src 'self'`) e precisa funcionar sem rede. Tile externo
 seria bloqueado pela politica e sumiria offline. Aqui a geometria vem junto,
 simplificada, e o mapa continua inteiro em campo.
 
-Uso:  python tools/build_mapa.py
+Uso:
+  python tools/build_mapa.py
+  python tools/build_mapa.py --check
+  python tools/build_mapa.py --data-dir C:\\caminho\\para\\Dashboard\\data
+
+O registro ``tools/mapa-fontes.json`` fixa metadados e SHA-256 dos arquivos de
+entrada. Uma troca de fonte não atualiza o artefato silenciosamente: primeiro é
+necessário revisar e atualizar o registro de proveniência.
 """
 from __future__ import annotations
 
+import argparse
 import csv
+import hashlib
 import json
 import math
+import os
 import re
+import sys
+from collections import Counter
 from pathlib import Path
 
 RAIZ = Path(__file__).resolve().parents[1]
 SAIDA = RAIZ / "src" / "data" / "mapa-parana.json"
+REGISTRO_FONTES = RAIZ / "tools" / "mapa-fontes.json"
 
-# As fontes ficam fora deste repositorio, no projeto de dados do Dashboard.
-BASE_DADOS = Path(r"C:\Users\rafae\Downloads\IAT\Dashboard\data")
-BACIAS = BASE_DADOS / "bacias_parana.geojson"
-SIGA = BASE_DADOS / "external" / "siga_aneel.csv"
+# As fontes integrais ficam fora deste repositório. O caminho pode ser
+# informado sem gravar diretório pessoal no código ou no artefato publicado.
+BASE_DADOS_PADRAO = Path.home() / "Downloads" / "IAT" / "Dashboard" / "data"
 
 LARGURA, ALTURA = 1000, 620
 MARGEM = 14
 TOLERANCIA = 0.004        # graus; simplificacao das bacias
 TIPOS = ("CGH", "PCH", "UHE")
+
+
+def argumentos(argv=None):
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(
+        "--data-dir",
+        type=Path,
+        default=Path(os.environ.get("IAT_DASHBOARD_DATA_DIR", BASE_DADOS_PADRAO)),
+        help="Diretório que contém bacias_parana.geojson e external/siga_aneel.csv.",
+    )
+    parser.add_argument(
+        "--check",
+        action="store_true",
+        help="Valida fontes, regenera em memória e falha se o JSON versionado divergir.",
+    )
+    return parser.parse_args(argv)
+
+
+def sha256(path):
+    h = hashlib.sha256()
+    with path.open("rb") as arquivo:
+        for bloco in iter(lambda: arquivo.read(1024 * 1024), b""):
+            h.update(bloco)
+    return h.hexdigest()
+
+
+def carregar_registro():
+    registro = json.loads(REGISTRO_FONTES.read_text(encoding="utf-8"))
+    if registro.get("schemaVersion") != 1:
+        raise RuntimeError("Versão desconhecida em tools/mapa-fontes.json.")
+    fontes = registro.get("sources")
+    if (
+        not isinstance(fontes, list)
+        or len(fontes) != 2
+        or {f.get("layer") for f in fontes} != {"bacias", "usinas"}
+    ):
+        raise RuntimeError("O registro deve conter exatamente as camadas bacias e usinas.")
+    return registro
+
+
+def caminhos_fontes(data_dir):
+    return {
+        "bacias": data_dir / "bacias_parana.geojson",
+        "usinas": data_dir / "external" / "siga_aneel.csv",
+    }
+
+
+def validar_fontes(registro, caminhos):
+    for fonte in registro["sources"]:
+        camada = fonte["layer"]
+        path = caminhos[camada]
+        if not path.is_file():
+            raise FileNotFoundError(
+                f"Fonte da camada {camada!r} não localizada. Informe --data-dir ou "
+                "IAT_DASHBOARD_DATA_DIR."
+            )
+        esperado = fonte.get("sha256", "").lower()
+        if not re.fullmatch(r"[0-9a-f]{64}", esperado):
+            raise RuntimeError(f"SHA-256 inválido no registro da camada {camada!r}.")
+        observado = sha256(path)
+        if observado != esperado:
+            raise RuntimeError(
+                f"A fonte local da camada {camada!r} mudou.\n"
+                f"  esperado: {esperado}\n"
+                f"  observado: {observado}\n"
+                "Não atualize o hash automaticamente: confira origem, data, licença, "
+                "transformação e impacto antes de revisar tools/mapa-fontes.json."
+            )
 
 
 def num(v):
@@ -113,8 +193,8 @@ def bacia_do_ponto(lon, lat, bacias):
     return None
 
 
-def carregar_bacias():
-    dados = json.loads(BACIAS.read_text(encoding="utf-8"))
+def carregar_bacias(path):
+    dados = json.loads(path.read_text(encoding="utf-8"))
     out = []
     for f in dados.get("features", []):
         nome = (f.get("properties", {}).get("NOME") or "").strip()
@@ -131,11 +211,11 @@ def carregar_bacias():
     return out
 
 
-def carregar_usinas():
+def carregar_usinas(path):
     out = []
     # O SIGA vem em cp1252, nao em UTF-8: lido como UTF-8 com errors=replace,
     # "Foz do Jordao" e "Candoi" chegavam com losango no lugar do acento.
-    with open(SIGA, encoding="cp1252", newline="") as f:
+    with path.open(encoding="cp1252", newline="") as f:
         for row in csv.DictReader(f, delimiter=";"):
             if (row.get("SigUFPrincipal") or "").strip() != "PR":
                 continue
@@ -163,9 +243,14 @@ def carregar_usinas():
     return out
 
 
-def main():
-    bacias = carregar_bacias()
-    usinas = carregar_usinas()
+def gerar_documento(caminhos):
+    bacias = carregar_bacias(caminhos["bacias"])
+    usinas = carregar_usinas(caminhos["usinas"])
+
+    if not bacias:
+        raise RuntimeError("A fonte de bacias não produziu nenhuma geometria nomeada.")
+    if not usinas:
+        raise RuntimeError("A fonte SIGA não produziu nenhuma usina válida para o Paraná.")
 
     xs = [p[0] for b in bacias for parte in b["partes"] for p in parte] + [u["lon"] for u in usinas]
     ys = [p[1] for b in bacias for parte in b["partes"] for p in parte] + [u["lat"] for u in usinas]
@@ -185,7 +270,6 @@ def main():
     # Atribuicao da bacia a cada usina. Precisa vir antes do laco abaixo, que
     # descarta a geometria: sem a contagem, a bacia so teria nome e area e o
     # mapa nao responderia quantas usinas ha nela.
-    from collections import Counter
     for u in usinas:
         u["baciaPR"] = bacia_do_ponto(u["lon"], u["lat"], bacias)
     contagem = Counter(u["baciaPR"] for u in usinas if u["baciaPR"])
@@ -204,7 +288,7 @@ def main():
         u["x"], u["y"] = proj(u["lon"], u["lat"])
         del u["lon"], u["lat"]
 
-    doc = {
+    return {
         "largura": LARGURA, "altura": ALTURA,
         "bacias": sorted(bacias, key=lambda b: b["nome"]),
         "usinas": usinas,
@@ -213,12 +297,48 @@ def main():
             "SIGA, Sistema de Informações de Geração da ANEEL, registro público de empreendimentos.",
         ],
     }
-    SAIDA.write_text(json.dumps(doc, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
-    kb = SAIDA.stat().st_size / 1024
-    print(f"{len(bacias)} bacias e {len(usinas)} usinas | {kb:.0f} kB")
-    from collections import Counter
-    print("por tipo:", dict(Counter(u["tipo"] for u in usinas)))
+
+
+def serializar_documento(documento):
+    return json.dumps(documento, ensure_ascii=False, separators=(",", ":"))
+
+
+def main(argv=None):
+    args = argumentos(argv)
+    try:
+        registro = carregar_registro()
+        caminhos = caminhos_fontes(args.data_dir.expanduser().resolve())
+        validar_fontes(registro, caminhos)
+        documento = gerar_documento(caminhos)
+        serializado = serializar_documento(documento)
+    except (OSError, RuntimeError, ValueError) as erro:
+        print(f"FALHA: {erro}", file=sys.stderr)
+        return 1
+
+    if args.check:
+        if not SAIDA.is_file():
+            print(f"FALHA: artefato versionado não localizado: {SAIDA}", file=sys.stderr)
+            return 1
+        if SAIDA.read_text(encoding="utf-8") != serializado:
+            print(
+                "FALHA: src/data/mapa-parana.json está desatualizado. "
+                "Revise as fontes e execute: python tools/build_mapa.py",
+                file=sys.stderr,
+            )
+            return 1
+        acao = "Validado"
+    else:
+        SAIDA.write_text(serializado, encoding="utf-8")
+        acao = "Atualizado"
+
+    kb = len(serializado.encode("utf-8")) / 1024
+    print(
+        f"{acao}: {len(documento['bacias'])} bacias e "
+        f"{len(documento['usinas'])} usinas | {kb:.0f} kB"
+    )
+    print("por tipo:", dict(Counter(u["tipo"] for u in documento["usinas"])))
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    raise SystemExit(main())

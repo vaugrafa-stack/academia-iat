@@ -2,6 +2,7 @@ node_modules/
 dist/
 *.log
 dist-pages/
+dist-integration-check/
 .playwright-cli/
 .video_tools/
 tools/tts/

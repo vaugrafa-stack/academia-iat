@@ -2,62 +2,124 @@ import fs from 'node:fs';
 import path from 'node:path';
 
 const ROOT = process.cwd();
-const IGNORE_DIRS = new Set(['.git', 'node_modules', 'dist', 'dist-pages', 'coverage']);
+const IGNORE_DIRS = new Set([
+  '.git',
+  '.video_tools',
+  '.playwright-cli',
+  'node_modules',
+  'dist',
+  'dist-pages',
+  'coverage',
+]);
 const TEXT_EXTENSIONS = new Set([
   '.js', '.jsx', '.mjs', '.cjs', '.ts', '.tsx', '.json', '.md', '.html', '.css',
   '.scss', '.txt', '.yml', '.yaml', '.toml', '.xml', '.svg', '.vtt', '.py', '.ps1',
-  '.cmd', '.bat', '.sh', '.env', '.example',
+  '.cmd', '.bat', '.sh', '.example',
+]);
+const GENERIC_EMAIL_ALIASES = new Set([
+  'atendimento',
+  'comunicacao',
+  'contato',
+  'dle',
+  'licenciamento',
+  'ouvidoria',
+  'protocolo',
+  'suporte',
 ]);
 
 const findings = [];
 
-function walk(dir) {
-  for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+function addFinding(rule, file, lineNo = 0) {
+  findings.push({
+    rel: path.relative(ROOT, file).replaceAll('\\', '/'),
+    lineNo,
+    rule,
+  });
+}
+
+function walk(directory) {
+  let entries;
+  try {
+    entries = fs.readdirSync(directory, { withFileTypes: true });
+  } catch {
+    addFinding('unreadable-path', directory);
+    return;
+  }
+
+  for (const entry of entries) {
     if (IGNORE_DIRS.has(entry.name)) continue;
-    const full = path.join(dir, entry.name);
+    const full = path.join(directory, entry.name);
     if (entry.isDirectory()) walk(full);
     else inspect(full);
   }
 }
 
+function isPlaceholder(value) {
+  return /^(?:changeme|dummy|example|exemplo|fake|placeholder|redacted|test)(?:[-_].*)?$/i.test(value);
+}
+
 function inspect(file) {
+  const base = path.basename(file);
   const ext = path.extname(file).toLowerCase();
-  if (!TEXT_EXTENSIONS.has(ext) && !['Dockerfile', 'LICENSE'].includes(path.basename(file))) return;
+
+  if (base === '.env' || (base.startsWith('.env.') && base !== '.env.example')) {
+    addFinding('environment-file-published', file);
+  }
+
+  if (!TEXT_EXTENSIONS.has(ext) && !['Dockerfile', 'LICENSE', '.env.example'].includes(base)) return;
 
   let text;
   try {
     text = fs.readFileSync(file, 'utf8');
   } catch {
+    addFinding('unreadable-text-file', file);
     return;
   }
 
-  const rel = path.relative(ROOT, file).replaceAll('\\', '/');
   const lines = text.split(/\r?\n/);
-
   lines.forEach((line, index) => {
     const lineNo = index + 1;
 
-    // Caminhos de perfil pessoal não devem aparecer em documentação ou código público.
-    if (/\b[A-Za-z]:\\Users\\[^\\\s"']+/i.test(line) || /\/Users\/[^/\s"']+/i.test(line) || /\/home\/[^/\s"']+/i.test(line)) {
-      findings.push({ severity: 'error', rel, lineNo, rule: 'personal-home-path', excerpt: line.trim() });
+    // Aceita uma ou mais barras para também encontrar caminhos escapados em JSON.
+    if (
+      /\b[A-Za-z]:\\+(?:Users|Documents and Settings)\\+/i.test(line)
+      || /\/(?:Users|home)\/[^/\s"']+/i.test(line)
+    ) {
+      addFinding('personal-home-path', file, lineNo);
     }
 
-    // Segredos comuns. Valores de exemplo claramente marcados são tolerados.
-    if (!/(example|exemplo|placeholder|changeme|dummy|fake|test)/i.test(line)) {
-      if (/(api[_-]?key|secret|token|password|passwd)\s*[:=]\s*["'][^"']{8,}["']/i.test(line)) {
-        findings.push({ severity: 'error', rel, lineNo, rule: 'possible-secret', excerpt: line.trim() });
+    if (/"(?:creator|lastModifiedBy|fullPath|manager|company|hyperlinkBase)"\s*:/i.test(line)) {
+      addFinding('personal-document-metadata', file, lineNo);
+    }
+
+    for (const email of line.match(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/gi) || []) {
+      const localPart = email.slice(0, email.indexOf('@')).toLowerCase();
+      if (!GENERIC_EMAIL_ALIASES.has(localPart)) {
+        addFinding('non-generic-email', file, lineNo);
       }
-      if (/-----BEGIN (RSA |EC |OPENSSH |DSA )?PRIVATE KEY-----/.test(line)) {
-        findings.push({ severity: 'error', rel, lineNo, rule: 'private-key', excerpt: line.trim() });
-      }
+    }
+
+    const assignedSecret = line.match(
+      /(api[_-]?key|client[_-]?secret|access[_-]?token|password|passwd)\s*[:=]\s*["']([^"']{8,})["']/i,
+    );
+    if (assignedSecret && !isPlaceholder(assignedSecret[2])) {
+      addFinding('possible-secret', file, lineNo);
+    }
+    if (/-----BEGIN (?:RSA |EC |OPENSSH |DSA )?PRIVATE KEY-----/.test(line)) {
+      addFinding('private-key', file, lineNo);
     }
   });
 }
 
-for (const required of ['AGENTS.md', 'PLANO_EVOLUCAO.md', 'README.md', 'LEARNING_DESIGN.md']) {
-  if (!fs.existsSync(path.join(ROOT, required))) {
-    findings.push({ severity: 'error', rel: required, lineNo: 0, rule: 'required-governance-file', excerpt: 'arquivo ausente' });
-  }
+for (const required of [
+  'AGENTS.md',
+  'CLAUDE.md',
+  'PLANO_EVOLUCAO.md',
+  'README.md',
+  'LEARNING_DESIGN.md',
+]) {
+  const full = path.join(ROOT, required);
+  if (!fs.existsSync(full)) addFinding('required-governance-file', full);
 }
 
 walk(ROOT);
@@ -65,11 +127,14 @@ walk(ROOT);
 if (findings.length) {
   console.error('\nAuditoria premium encontrou problemas:\n');
   for (const finding of findings) {
-    console.error(`[${finding.severity.toUpperCase()}] ${finding.rule} · ${finding.rel}:${finding.lineNo}`);
-    console.error(`  ${finding.excerpt}`);
+    const location = finding.lineNo ? `:${finding.lineNo}` : '';
+    console.error(`[ERRO] ${finding.rule} · ${finding.rel}${location}`);
   }
-  console.error(`\nTotal: ${findings.length} problema(s).`);
+  console.error(`\nTotal: ${findings.length} problema(s). Conteúdo sensível não é reproduzido no log.`);
   process.exitCode = 1;
 } else {
-  console.log('Auditoria premium aprovada: governança presente, sem caminhos pessoais ou segredos evidentes.');
+  console.log(
+    'Auditoria premium aprovada: governança presente e nenhum caminho pessoal, '
+      + 'metadado de autoria, e-mail não genérico ou segredo evidente foi encontrado.',
+  );
 }

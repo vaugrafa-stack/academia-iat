@@ -68,7 +68,7 @@ try {
   const navButtons = [...document.querySelectorAll('.sidebar-v2 nav button')];
   await click(navButtons.find(x => x.textContent.includes('Formação')));
   assert(document.querySelectorAll('.track-row').length === 17, 'percurso formativo com dezessete módulos');
-  assert(document.querySelectorAll('.learning-path-options button').length === 4, 'quatro percursos recomendados sem bloquear o catálogo');
+  assert(!document.querySelector('.learning-path-selector'), 'formação apresenta uma sequência única, sem divisão por trilhas');
   // o M00 ja abre expandido, para o iniciante ver por onde comecar
   assert(Boolean(document.querySelector('.track-row.expanded .lesson-list button')), 'primeiro módulo já vem aberto para quem chega');
   const outro = [...document.querySelectorAll('.track-row:not(.expanded) .track-summary')][0];

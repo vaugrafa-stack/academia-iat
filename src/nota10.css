@@ -511,66 +511,7 @@
   body:has(.sidebar-v2.open){overflow:hidden}
 }
 
-/* Percursos recomendados: personalizam a prioridade sem esconder o catálogo. */
-.learning-path-selector{
-  max-width:1120px;
-  margin:-4px 0 22px;
-  overflow:hidden;
-  border:1px solid color-mix(in srgb,var(--blue) 34%,var(--line));
-  border-radius:12px;
-  background:linear-gradient(120deg,color-mix(in srgb,var(--blue) 8%,var(--surface)),var(--surface));
-}
-.learning-path-selector>header{
-  display:grid;
-  grid-template-columns:minmax(0,1fr) 150px;
-  gap:20px;
-  align-items:center;
-  padding:18px 20px 14px;
-}
-.learning-path-selector>header small{color:var(--blue);font-size:12px;font-weight:900;letter-spacing:.08em}
-.learning-path-selector h2{margin:3px 0 5px;font-size:20px}
-.learning-path-selector header p{margin:0;color:var(--muted);font-size:13px;line-height:1.55}
-.learning-path-progress{display:grid;grid-template-columns:1fr auto;gap:3px 8px;text-align:right}
-.learning-path-progress strong{color:var(--green);font-size:25px}
-.learning-path-progress span{align-self:end;color:var(--muted);font-size:12px}
-.learning-path-progress i{grid-column:1/-1;height:7px;overflow:hidden;border-radius:8px;background:var(--soft)}
-.learning-path-progress em{display:block;height:100%;border-radius:inherit;background:var(--green)}
-.learning-path-options{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));border-block:1px solid var(--line)}
-.learning-path-options button{
-  min-height:66px;
-  display:flex;
-  flex-direction:column;
-  justify-content:center;
-  gap:3px;
-  padding:10px 14px;
-  border:0;
-  border-right:1px solid var(--line);
-  background:transparent;
-  text-align:left;
-}
-.learning-path-options button:last-child{border-right:0}
-.learning-path-options button:hover{background:var(--soft)}
-.learning-path-options button.active{background:color-mix(in srgb,var(--green) 12%,var(--surface));box-shadow:inset 0 -3px var(--green)}
-.learning-path-options strong{font-size:13px}
-.learning-path-options small{color:var(--muted);font-size:12px}
-.learning-path-selector>footer{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:11px 20px}
-.learning-path-selector>footer p{margin:0;color:var(--muted);font-size:12px}
-.learning-path-selector>footer button{min-height:38px;border:0;background:transparent;color:var(--blue);font-size:12px;font-weight:800}
 .track-copy small{display:flex;align-items:center;gap:7px}
-.track-copy mark{padding:2px 7px;border-radius:12px;background:var(--green3);color:var(--green);font-size:10px;font-weight:850}
-.profile-form select{
-  min-height:46px;
-  width:100%;
-  padding:.7rem .85rem;
-  border:1px solid var(--line);
-  border-radius:10px;
-  background:var(--surface);
-  color:var(--ink);
-  font:inherit;
-}
-.profile-form select:focus-visible{outline:3px solid #58a9ef;outline-offset:2px}
-.profile-field-help{color:var(--muted);font-size:12px;font-weight:500;line-height:1.45}
-
 /* Leitura guiada integral: o trecho adicional fica disponível sem abandonar a aula. */
 .lesson-more-prose{margin:10px 0;border-top:1px solid var(--line)}
 .lesson-more-prose summary{padding:11px 0;color:var(--blue);font-size:13px;font-weight:800;cursor:pointer}
@@ -715,13 +656,6 @@
 .fonte-nao-mapeada{margin:0;padding:10px 12px;border-left:3px solid var(--amber);background:color-mix(in srgb,var(--amber) 10%,var(--surface));color:var(--ink2);font-size:12px;line-height:1.5}
 
 @media(max-width:720px){
-  .learning-path-selector>header{grid-template-columns:1fr}
-  .learning-path-progress{text-align:left}
-  .learning-path-options{grid-template-columns:1fr 1fr}
-  .learning-path-options button:nth-child(2){border-right:0}
-  .learning-path-options button:nth-child(-n+2){border-bottom:1px solid var(--line)}
-  .learning-path-selector>footer{align-items:flex-start;flex-direction:column}
-  .learning-path-selector>footer button{padding:0;text-align:left}
   .learning-challenge{grid-template-columns:auto 1fr}
   .learning-challenge>span{grid-column:2;max-width:none;text-align:left}
   .lesson-knowledge-check,.lesson-active-practice{padding:14px}
@@ -733,5 +667,5 @@
 }
 
 @media(prefers-reduced-motion:reduce){
-  .lesson-active-practice,.learning-path-selector,.lesson-knowledge-check{scroll-behavior:auto}
+  .lesson-active-practice,.lesson-knowledge-check{scroll-behavior:auto}
 }

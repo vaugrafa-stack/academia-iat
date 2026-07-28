@@ -38,7 +38,6 @@ visuais da fonte permaneceram idênticos.
 | Nós pesquisáveis da fonte | 3.339 | Extração fiel preservada para auditoria |
 | Nós pesquisáveis públicos | 3.333 | Edição de treinamento derivada e auditável |
 | Tópicos didáticos | 159 | Dois títulos não navegacionais são apenas cabeçalhos estruturais |
-| Percursos recomendados | 4 | Essencial, Analista, PACUERA e Revisor; não bloqueiam conteúdo |
 | Questões | 136 | 82/161 seções com cobertura direta; revisão psicométrica e editorial ainda necessária |
 | Resumos em vídeo | 159 | Não devem ser chamados de videoaulas completas |
 | Casos | 26 | Todos sintéticos; cinco incluem série histórica |
@@ -164,7 +163,8 @@ adequadas ao papel.
 
 - aplicar em cada aula: pré-requisito, objetivo observável, explicação, fonte,
   exemplo, erro frequente, prática, feedback e domínio;
-- criar trilhas e pré-requisitos por nível e persona;
+- manter os 17 módulos em uma sequência única e explicitar pré-requisitos
+  somente quando forem necessários ao conteúdo;
 - adicionar revisão espaçada e retomada de erros;
 - aumentar variações de caso nos módulos críticos;
 - mapear objetivo → atividade → avaliação;
@@ -454,7 +454,8 @@ não foi convertido em alegação de competência ou aprovação institucional.
 
 **Aprendizagem e prática**
 
-- quatro percursos recomendados organizam prioridade por persona sem ocultar o catálogo;
+- a Formação apresenta os 17 módulos diretamente, em uma sequência única,
+  sem divisões por perfil ou tema;
 - todas as 159 aulas possuem checagem comentada, recuperação ativa escrita e autoauditoria;
 - novas conclusões exigem questão correta, 80 caracteres significativos e dois critérios conferidos;
 - o sistema declara que essas travas registram atividade, não qualidade, mérito ou competência;
@@ -506,7 +507,7 @@ não foi convertido em alegação de competência ou aprovação institucional.
 
 **Correções de aprendizagem e acessibilidade em 28/07/2026**
 
-- o debriefing do laboratório deixou de converter a chave interna de trilha em
+- o debriefing do laboratório deixou de converter a chave interna do módulo em
   rótulo de módulo; os 26 cenários agora resolvem código e título pelo registro
   canônico, incluindo as sete regressões entre M12 e M16;
 - cada cenário oferece uma aula real do próprio módulo para retomada e explica
@@ -620,9 +621,18 @@ não foi convertido em alegação de competência ou aprovação institucional.
 - um caso completo foi executado a 380 px no artefato candidato, com cinco
   decisões, duas evidências anotadas, fundamentação, debriefing e citação do POP.
 
+**Formação simplificada por decisão editorial em 28/07/2026**
+
+- o seletor de percursos foi removido porque não esclarecia a progressão e
+  misturava perfis de estudo com um tema técnico específico;
+- os 17 módulos permanecem integralmente disponíveis na ordem formativa do POP,
+  com filtro, expansão por módulo e progresso por tópico;
+- o perfil deixou de pedir ou exibir um percurso recomendado;
+- o smoke test impede que a divisão removida volte à interface.
+
 **Portões finais do lote revalidados em 28/07/2026**
 
-- 28 arquivos de teste e 157 testes automatizados passaram neste lote
+- 27 arquivos de teste e 154 testes automatizados passaram neste lote
   publicável;
 - 136/136 questões mantêm fonte literal verificada, e 159/159 aulas possuem
   mídia, legenda e manifesto consistentes;

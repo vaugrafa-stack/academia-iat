@@ -16,22 +16,24 @@ const norm = (v) => (v || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCa
 
 // Faixas de potencia do Quadro 8 do POP. O limite superior e inclusivo, como no
 // quadro: "ate 75 kW", "superior a 75 kW e ate 500 kW", e assim por diante.
-const FAIXAS = [
+const FAIXAS_DIDATICAS = [
   { sigla: 'MCH', ate: 0.075, rot: 'até 75 kW' },
   { sigla: 'MGH', ate: 0.5, rot: 'acima de 75 kW até 500 kW' },
   { sigla: 'CGH', ate: 5, rot: 'acima de 500 kW até 5 MW' },
   { sigla: 'PCH', ate: 30, rot: 'acima de 5 MW até 30 MW' },
   { sigla: 'UHE', ate: Infinity, rot: 'acima de 30 MW' },
 ];
-const faixaDe = (mw) => FAIXAS.find((f) => mw <= f.ate) || FAIXAS[FAIXAS.length - 1];
+export const faixaDidaticaDe = (mw) => {
+  if (!Number.isFinite(mw) || mw < 0) return null;
+  return FAIXAS_DIDATICAS.find((f) => mw <= f.ate) || FAIXAS_DIDATICAS[FAIXAS_DIDATICAS.length - 1];
+};
 
-// Exercicio de enquadramento sobre o registro publico.
+// Exercicio de comparacao entre duas lentes diferentes: o tipo publicado no
+// registro consultado e a faixa de potencia usada didaticamente no Quadro 8.
 //
-// Por que vale a pena: o erro que o Quadro 8 nomeia e "tratar como CGH sem
-// verificar potencia". O sorteio favorece os casos limitrofes, onde 5 MW e CGH
-// e 5,2 MW ja e PCH, porque e ali que o enquadramento erra. E o feedback
-// insiste no que o POP diz logo em seguida: tipologia e a entrada, nao a
-// modalidade, que ainda depende de alagamento, IDA, supressao e territorio.
+// O resultado do exercicio nao corrige nem reclassifica o registro da ANEEL. A
+// divergencia e uma pista para conferir fonte, data, ato e finalidade de cada
+// classificacao, nunca uma conclusao regulatoria automatica.
 function ExercicioEnquadrar({ usinas, state, setState }) {
   const elegiveis = useMemo(() => (usinas || []).filter((u) => u.mw > 0), [usinas]);
   const sortear = React.useCallback(() => {
@@ -46,7 +48,8 @@ function ExercicioEnquadrar({ usinas, state, setState }) {
   const [alvo, setAlvo] = useState(() => sortear());
   const [resposta, setResposta] = useState(null);
   const placar = state.enquadra || { acertos: 0, total: 0 };
-  const certa = faixaDe(alvo.mw).sigla;
+  const faixaDidatica = faixaDidaticaDe(alvo.mw);
+  const certa = faixaDidatica.sigla;
 
   const responder = (sigla) => {
     if (resposta) return;
@@ -63,8 +66,8 @@ function ExercicioEnquadrar({ usinas, state, setState }) {
       <header>
         <Target size={16} />
         <div>
-          <strong>Enquadre pela potência</strong>
-          <small>Usina do registro público da ANEEL. Diga a tipologia antes de conferir.</small>
+          <strong>Compare registro e faixa por potência</strong>
+          <small>Responda pela faixa didática do Quadro 8 do POP, não pelo tipo cadastrado.</small>
         </div>
         {placar.total > 0 && <b>{placar.acertos}/{placar.total}</b>}
       </header>
@@ -73,12 +76,15 @@ function ExercicioEnquadrar({ usinas, state, setState }) {
         <span className="mp-ex-mw">{alvo.mw.toLocaleString('pt-BR')} MW</span>
         <div>
           <strong>{alvo.nome}</strong>
-          <small>{alvo.mun}{alvo.baciaPR ? ` · bacia ${alvo.baciaPR}` : ''} · {alvo.fase}</small>
+          <small>
+            Registro ANEEL: {alvo.tipo} · {alvo.mun}
+            {alvo.baciaPR ? ` · bacia ${alvo.baciaPR}` : ''} · {alvo.fase}
+          </small>
         </div>
       </div>
 
-      <div className="mp-ex-opcoes" role="group" aria-label="Tipologia">
-        {FAIXAS.map((f) => {
+      <div className="mp-ex-opcoes" role="group" aria-label="Faixa didática de potência do POP">
+        {FAIXAS_DIDATICAS.map((f) => {
           const est = !resposta ? '' : f.sigla === certa ? 'certa' : f.sigla === resposta ? 'errada' : '';
           return (
             <button key={f.sigla} className={est} onClick={() => responder(f.sigla)} disabled={!!resposta}>
@@ -91,13 +97,18 @@ function ExercicioEnquadrar({ usinas, state, setState }) {
       {resposta && (
         <div className={'mp-ex-feedback' + (resposta === certa ? ' ok' : '')}>
           <p>
-            {resposta === certa ? 'Correto. ' : `Não. ${alvo.mw.toLocaleString('pt-BR')} MW é ${certa}. `}
-            Pelo Quadro 8, {certa} é {faixaDe(alvo.mw).rot}.
+            {resposta === certa ? 'Correto para a faixa didática. ' : `Não. Pela faixa didática, ${alvo.mw.toLocaleString('pt-BR')} MW corresponde a ${certa}. `}
+            No Quadro 8 do POP, {certa} abrange {faixaDidatica.rot}.
           </p>
           <p className="mp-ex-limite">
-            A tipologia é a entrada do enquadramento, não a modalidade. Ela ainda depende de área de
-            alagamento, IDA, supressão de vegetação e da compatibilidade territorial com unidades de
-            conservação, e entre critérios prevalece o mais restritivo.
+            O tipo publicado no registro consultado é {alvo.tipo}. Se ele divergir de {certa}, isso não
+            comprova erro nem autoriza reclassificação: registro/ato setorial e faixa didática têm
+            finalidades que devem ser conferidas na fonte oficial e no caso concreto.
+          </p>
+          <p className="mp-ex-limite">
+            Nem o tipo do registro nem a faixa por potência, isoladamente, definem a modalidade ambiental
+            ou a suficiência documental. A análise ainda deve considerar os demais critérios e a norma
+            aplicável à data do protocolo.
           </p>
           <button onClick={proxima}>Próxima usina <ChevronRight size={14} /></button>
         </div>
@@ -272,7 +283,12 @@ export default function MapaParana({ dados, state, setState }) {
               politica de seguranca bloqueia e que sumiriam sem rede,
               justamente em campo. O que se ve aqui e dado publico embarcado. */}
           <p className="mp-limite-camada">Sem camada de satélite: imagem de terceiro exigiria servidor externo, que a política de segurança bloqueia e que não funcionaria sem rede. Tudo aqui é dado público embarcado.</p>
-          <p id="mp-ajuda-teclado" className="mp-ajuda-teclado">Com o mapa em foco: setas deslocam, mais e menos aproximam e afastam, zero volta ao mapa inteiro.</p>
+          <p className="mp-limite-camada">
+            Os rótulos CGH, PCH e UHE dos pontos reproduzem o tipo do registro consultado. A faixa MCH,
+            MGH, CGH, PCH ou UHE calculada no exercício é apenas a leitura didática da potência pelo POP;
+            uma divergência exige conferência oficial e não altera o cadastro automaticamente.
+          </p>
+          <p id="mp-ajuda-teclado" className="mp-ajuda-teclado">Com o mapa em foco: setas deslocam, mais e menos aproximam e afastam, zero volta ao mapa inteiro. Para selecionar uma bacia sem mouse, use a lista “Bacia hidrográfica” no painel.</p>
           <svg ref={svgRef} viewBox={`${v.x} ${v.y} ${v.w} ${v.h}`} role="img" tabIndex={0}
                aria-describedby="mp-ajuda-teclado"
                className={escala > 1.02 ? 'mp-arrastavel' : ''}
@@ -327,14 +343,32 @@ export default function MapaParana({ dados, state, setState }) {
                   : <em>clique para filtrar</em>}
               </>
             ) : (
-              <>Passe sobre uma bacia para identificá-la, clique para filtrar a lista. Clique num ponto para ver a usina.</>
+              <>Passe sobre uma bacia para identificá-la, clique para filtrar a lista ou use a lista “Bacia hidrográfica” no painel. Clique num ponto para ver a usina.</>
             )}
           </figcaption>
         </figure>
 
         <aside className="mp-painel">
           {state && setState && <ExercicioEnquadrar usinas={dados.usinas} state={state} setState={setState} />}
-          <div className="mp-filtros" role="group" aria-label="Filtrar por tipologia">
+          <div className="mp-busca">
+            <Layers3 size={16} aria-hidden="true" />
+            <label htmlFor="mp-bacia-select" className="sr-only">Filtrar usinas por bacia hidrográfica</label>
+            <select
+              id="mp-bacia-select"
+              value={baciaSel || ''}
+              onChange={(e) => setBaciaSel(e.target.value || null)}
+              aria-describedby="mp-ajuda-teclado"
+              style={{ flex: 1, minWidth: 0, border: 0, background: 'transparent', color: 'inherit', font: 'inherit' }}
+            >
+              <option value="">Todas as bacias hidrográficas</option>
+              {(dados.bacias || []).map((item) => (
+                <option key={item.nome} value={item.nome}>{item.nome}</option>
+              ))}
+            </select>
+            {baciaSel && <button onClick={() => setBaciaSel(null)} aria-label="Limpar filtro de bacia"><X size={14} /></button>}
+          </div>
+
+          <div className="mp-filtros" role="group" aria-label="Filtrar pelo tipo do registro ANEEL">
             {ORDEM.map((t) => (
               <button key={t} className={tipos.has(t) ? 'ativo' : ''} onClick={() => alternar(t)}
                       aria-pressed={tipos.has(t)}>
@@ -354,12 +388,22 @@ export default function MapaParana({ dados, state, setState }) {
           {sel && (
             <article className="mp-detalhe">
               <header>
-                <span className="mp-tag" style={{ color: COR[sel.tipo], borderColor: COR[sel.tipo] }}>{sel.tipo}</span>
+                <span
+                  className="mp-tag"
+                  style={{ color: COR[sel.tipo], borderColor: COR[sel.tipo] }}
+                  aria-label={`Tipo no registro ANEEL: ${sel.tipo}`}
+                >{sel.tipo}</span>
                 <strong>{sel.nome}</strong>
                 <button onClick={() => setSel(null)} aria-label="Fechar detalhe"><X size={15} /></button>
               </header>
               <dl>
                 {sel.mw != null && <><dt>Potência</dt><dd>{sel.mw.toLocaleString('pt-BR')} MW</dd></>}
+                {sel.mw != null && faixaDidaticaDe(sel.mw) && (
+                  <>
+                    <dt>Faixa didática do POP</dt>
+                    <dd>{faixaDidaticaDe(sel.mw).sigla} · {faixaDidaticaDe(sel.mw).rot}</dd>
+                  </>
+                )}
                 {sel.fase && <><dt>Situação</dt><dd>{sel.fase}</dd></>}
                 {sel.mun && <><dt>Município</dt><dd>{sel.mun}</dd></>}
                 {sel.bacia && <><dt>Sub-bacia</dt><dd>{sel.bacia}</dd></>}
@@ -390,7 +434,12 @@ export default function MapaParana({ dados, state, setState }) {
         <div>
           <strong>Fontes</strong>
           <ul>{(dados.fontes || []).map((f) => <li key={f}>{f}</li>)}</ul>
-          <p>Registro de empreendimentos de geração, não situação de licenciamento. Confirme a informação vigente na fonte oficial antes de usar em análise.</p>
+          <p>
+            Registro de empreendimentos de geração, não situação de licenciamento. O tipo do registro e a
+            faixa didática calculada por potência são campos distintos e podem divergir; nenhum deles,
+            isoladamente, define modalidade ambiental ou suficiência. Confirme a informação vigente na
+            fonte oficial antes de usar em análise.
+          </p>
         </div>
       </footer>
     </div>

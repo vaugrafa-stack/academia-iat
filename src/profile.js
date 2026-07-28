@@ -15,6 +15,7 @@ const USERS_KEY = 'academia-iat-users-v1';
 const BACKUP_KIND = 'academia-iat-backup';
 const BACKUP_SCHEMA = 1;
 const MAX_BACKUP_BYTES = 4 * 1024 * 1024;
+const MAX_PROFILES = 50;
 const BLOCKED_JSON_KEYS = new Set(['__proto__', 'constructor', 'prototype']);
 export const PROFILE_SCHEMA = 2;
 
@@ -36,19 +37,54 @@ function newId() {
   return 'u' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
 }
 
+function persistenceException(result, cause) {
+  const error = new Error(result.error);
+  error.name = 'ProfilePersistenceError';
+  error.code = result.code;
+  error.recoverable = true;
+  if (cause) error.cause = cause;
+  return error;
+}
+
+function persistenceResult(error) {
+  if (error?.name === 'ProfilePersistenceError' && error.code) {
+    return {
+      ok: false,
+      code: error.code,
+      error: error.message,
+      recoverable: true,
+    };
+  }
+  return storageError(error);
+}
+
 function readRegistry() {
+  let raw;
   try {
-    const raw = localStorage.getItem(USERS_KEY);
-    if (raw) {
-      const reg = JSON.parse(raw);
-      if (reg && Array.isArray(reg.users)) return reg;
-    }
-  } catch { /* cai na migracao */ }
-  return null;
+    raw = localStorage.getItem(USERS_KEY);
+  } catch (error) {
+    throw persistenceException(storageError(error), error);
+  }
+  if (!raw) return null;
+  try {
+    return normalizeStoredRegistry(JSON.parse(raw));
+  } catch (error) {
+    throw persistenceException({
+      ok: false,
+      code: 'REGISTRY_INVALID',
+      error: 'O registro local de perfis está inválido. Os dados originais foram preservados para recuperação.',
+      recoverable: true,
+    }, error);
+  }
 }
 
 function writeRegistry(reg) {
-  try { localStorage.setItem(USERS_KEY, JSON.stringify(reg)); } catch { /* sessao efemera */ }
+  try {
+    localStorage.setItem(USERS_KEY, JSON.stringify(reg));
+    return { ok: true };
+  } catch (error) {
+    return storageError(error);
+  }
 }
 
 function isRecord(value) {
@@ -95,7 +131,7 @@ function validateRecord(value, field) {
   if (value !== undefined && !isRecord(value)) throw new Error(`${field} precisa ser um objeto.`);
 }
 
-function validateProgress(value) {
+export function validateProgress(value) {
   if (value === undefined || value === null) return null;
   if (!isRecord(value)) throw new Error('O progresso do backup está em formato inválido.');
 
@@ -107,6 +143,7 @@ function validateProgress(value) {
   validateRecord(value.labs, 'Resultados do laboratório');
   validateRecord(value.flows, 'Resultados dos fluxogramas');
   validateRecord(value.checks, 'Itens conferidos');
+  validateRecord(value.lessonEvidence, 'Registros de prática ativa');
   validateRecord(value.doneAt, 'Datas de conclusão');
 
   if (value.lastLesson !== undefined && value.lastLesson !== null && typeof value.lastLesson !== 'string') {
@@ -157,6 +194,28 @@ function validateProfile(value) {
   };
 }
 
+function normalizeStoredRegistry(value) {
+  if (!isRecord(value) || !Array.isArray(value.users) ||
+      value.users.length < 1 || value.users.length > MAX_PROFILES) {
+    throw new Error('O registro local de perfis está em formato inválido.');
+  }
+  const users = value.users.map((item) => {
+    if (!isRecord(item)) throw new Error('Há um perfil local inválido.');
+    const id = cleanText(item.id, 'Identificador do perfil', 160);
+    if (!id) throw new Error('Há um perfil local sem identificador.');
+    return {
+      ...validateProfile(item),
+      id,
+      schemaVersion: PROFILE_SCHEMA,
+    };
+  });
+  const requested = cleanText(value.activeId, 'Perfil ativo', 160);
+  const activeId = users.some((user) => user.id === requested)
+    ? requested
+    : users[0].id;
+  return { activeId, users };
+}
+
 function backupSize(text) {
   try { return new TextEncoder().encode(text).byteLength; } catch { return text.length * 2; }
 }
@@ -167,13 +226,24 @@ function storageError(error) {
     return {
       ok: false,
       code: 'STORAGE_QUOTA',
-      error: 'Não há espaço disponível no navegador para restaurar este backup. Nenhum dado foi importado.',
+      error: 'Não há espaço disponível no navegador. Nenhuma alteração foi salva.',
+      recoverable: true,
     };
   }
   return {
     ok: false,
     code: 'STORAGE_UNAVAILABLE',
-    error: 'O navegador não permitiu salvar o backup. Nenhum dado foi importado.',
+    error: 'O navegador não permitiu salvar os perfis. Nenhuma alteração foi salva.',
+    recoverable: true,
+  };
+}
+
+function profileLimitError() {
+  return {
+    ok: false,
+    code: 'PROFILE_LIMIT',
+    error: `Este navegador já possui o limite de ${MAX_PROFILES} perfis. Exclua um perfil antes de criar ou importar outro.`,
+    recoverable: true,
   };
 }
 
@@ -195,8 +265,14 @@ function ensureRegistry() {
   try {
     const legacyProgress = localStorage.getItem(LEGACY_PROGRESS_KEY);
     if (legacyProgress) localStorage.setItem(LEGACY_PROGRESS_KEY + '::' + first.id, legacyProgress);
-  } catch { /* progresso legado permanece onde esta */ }
-  writeRegistry(reg);
+  } catch (error) {
+    throw persistenceException(storageError(error), error);
+  }
+  const writeResult = writeRegistry(reg);
+  if (!writeResult.ok) {
+    try { localStorage.removeItem(LEGACY_PROGRESS_KEY + '::' + first.id); } catch { /* o original legado permanece intacto */ }
+    throw persistenceException(writeResult);
+  }
   return reg;
 }
 
@@ -211,12 +287,61 @@ export function loadProfile() {
   return { ...defaultProfile(), ...(u || {}), schemaVersion: PROFILE_SCHEMA };
 }
 
+export function exportProfileRegistryRecovery() {
+  let raw;
+  try {
+    raw = localStorage.getItem(USERS_KEY);
+  } catch (error) {
+    return storageError(error);
+  }
+  if (!raw) {
+    return {
+      ok: false,
+      code: 'REGISTRY_MISSING',
+      error: 'Não há registro bruto de perfis para exportar.',
+      recoverable: true,
+    };
+  }
+  const blob = new Blob([raw], { type: 'application/json;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = 'academia-iat-perfis-recuperacao.json';
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+  return { ok: true, code: 'REGISTRY_EXPORTED' };
+}
+
+export function resetInvalidProfileRegistry() {
+  let previous;
+  try {
+    previous = localStorage.getItem(USERS_KEY);
+    localStorage.removeItem(USERS_KEY);
+    const profile = loadProfile();
+    return { ok: true, code: 'REGISTRY_RESET', profile };
+  } catch (error) {
+    if (previous !== undefined) {
+      try { restoreStorageValue(USERS_KEY, previous); } catch { /* preserva o erro original */ }
+    }
+    return persistenceResult(error);
+  }
+}
+
 export function saveProfile(profile) {
-  const reg = ensureRegistry();
+  let reg;
+  try {
+    reg = ensureRegistry();
+  } catch (error) {
+    return persistenceResult(error);
+  }
   const i = reg.users.findIndex((x) => x.id === reg.activeId);
   const merged = { ...defaultProfile(), ...profile, id: reg.activeId, schemaVersion: PROFILE_SCHEMA };
-  if (i >= 0) reg.users[i] = merged; else reg.users.push(merged);
-  writeRegistry(reg);
+  const users = [...reg.users];
+  if (i >= 0) users[i] = merged; else users.push(merged);
+  const writeResult = writeRegistry({ ...reg, users });
+  if (!writeResult.ok) return writeResult;
   return merged;
 }
 
@@ -226,28 +351,48 @@ export function listUsers() {
 }
 
 export function switchUser(id) {
-  const reg = ensureRegistry();
+  let reg;
+  try {
+    reg = ensureRegistry();
+  } catch (error) {
+    return persistenceResult(error);
+  }
   if (!reg.users.some((u) => u.id === id)) return false;
-  reg.activeId = id;
-  writeRegistry(reg);
+  const writeResult = writeRegistry({ ...reg, activeId: id });
+  if (!writeResult.ok) return writeResult;
   return true;
 }
 
 export function createUser() {
-  const reg = ensureRegistry();
+  let reg;
+  try {
+    reg = ensureRegistry();
+  } catch (error) {
+    return persistenceResult(error);
+  }
+  if (reg.users.length >= MAX_PROFILES) return profileLimitError();
   const u = { ...defaultProfile(), id: newId() };
-  reg.users.push(u);
-  reg.activeId = u.id;
-  writeRegistry(reg);
+  const writeResult = writeRegistry({
+    ...reg,
+    activeId: u.id,
+    users: [...reg.users, u],
+  });
+  if (!writeResult.ok) return writeResult;
   return u;
 }
 
 export function deleteUser(id) {
-  const reg = ensureRegistry();
+  let reg;
+  try {
+    reg = ensureRegistry();
+  } catch (error) {
+    return persistenceResult(error);
+  }
   if (reg.users.length <= 1) return false; // sempre resta um perfil
-  reg.users = reg.users.filter((u) => u.id !== id);
-  if (reg.activeId === id) reg.activeId = reg.users[0].id;
-  writeRegistry(reg);
+  const users = reg.users.filter((u) => u.id !== id);
+  const activeId = reg.activeId === id ? users[0].id : reg.activeId;
+  const writeResult = writeRegistry({ ...reg, activeId, users });
+  if (!writeResult.ok) return writeResult;
   try { localStorage.removeItem(LEGACY_PROGRESS_KEY + '::' + id); } catch { /* melhor esforco */ }
   return true;
 }
@@ -262,7 +407,11 @@ export function exportBackup() {
   const reg = ensureRegistry();
   const u = reg.users.find((x) => x.id === reg.activeId) || reg.users[0];
   let progress = null;
-  try { progress = JSON.parse(localStorage.getItem(LEGACY_PROGRESS_KEY + '::' + u.id) || 'null'); } catch { /* backup segue sem progresso */ }
+  try {
+    progress = validateProgress(
+      JSON.parse(localStorage.getItem(LEGACY_PROGRESS_KEY + '::' + u.id) || 'null'),
+    );
+  } catch { /* backup segue sem progresso corrompido */ }
   const payload = { kind: BACKUP_KIND, schema: BACKUP_SCHEMA, exportedAt: new Date().toISOString(), profile: u, progress };
   const blob = new Blob([JSON.stringify(payload, null, 1)], { type: 'application/json;charset=utf-8' });
   const url = URL.createObjectURL(blob);
@@ -303,23 +452,37 @@ export function importBackup(text) {
     return { ok: false, code: 'INVALID_DATA', error: error.message || 'O backup contém dados inválidos.' };
   }
 
-  const reg = ensureRegistry();
+  let reg;
+  try {
+    reg = ensureRegistry();
+  } catch (error) {
+    return persistenceResult(error);
+  }
+  if (reg.users.length >= MAX_PROFILES) return profileLimitError();
   const u = { ...cleanProfile, id: newId(), schemaVersion: PROFILE_SCHEMA };
   const nextRegistry = { ...reg, activeId: u.id, users: [...reg.users, u] };
   const importedProgressKey = LEGACY_PROGRESS_KEY + '::' + u.id;
   let previousRegistry;
   let previousProgress;
+  let capturedRegistry = false;
+  let capturedProgress = false;
 
   try {
     previousRegistry = localStorage.getItem(USERS_KEY);
+    capturedRegistry = true;
     previousProgress = localStorage.getItem(importedProgressKey);
+    capturedProgress = true;
     // O progresso entra primeiro. O perfil só fica visível quando as duas
     // gravações terminam, evitando usuário ativo sem o respectivo histórico.
     if (cleanProgress) localStorage.setItem(importedProgressKey, JSON.stringify(cleanProgress));
     localStorage.setItem(USERS_KEY, JSON.stringify(nextRegistry));
   } catch (error) {
-    try { restoreStorageValue(importedProgressKey, previousProgress ?? null); } catch { /* melhor rollback possivel */ }
-    try { restoreStorageValue(USERS_KEY, previousRegistry ?? null); } catch { /* melhor rollback possivel */ }
+    if (capturedProgress) {
+      try { restoreStorageValue(importedProgressKey, previousProgress); } catch { /* melhor rollback possivel */ }
+    }
+    if (capturedRegistry) {
+      try { restoreStorageValue(USERS_KEY, previousRegistry); } catch { /* melhor rollback possivel */ }
+    }
     return storageError(error);
   }
   return { ok: true, name: u.name || 'Sem nome', code: 'IMPORTED' };

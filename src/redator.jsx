@@ -49,9 +49,23 @@ export default function RedatorIT({ scenarios, grupos, state, setState, go }) {
         <div>
           <small className="ph-kicker">PRODUTO TÉCNICO</small>
           <h1>Escrever uma Informação Técnica</h1>
-          <p>As dez seções que o Anexo B do POP exige, uma por vez, com o caso da prática como matéria-prima. O texto fica salvo neste navegador.</p>
+          <p>Os 12 elementos mínimos do item 23.1, um por vez, com o caso da prática como matéria-prima. O texto fica salvo neste navegador.</p>
         </div>
       </header>
+
+      <aside className="rd-divergencia" role="note">
+        <AlertTriangle size={17} aria-hidden="true" />
+        <div>
+          <strong>Diferença interna do POP mantida visível</strong>
+          <p>
+            O item 23.1 enumera 12 elementos, enquanto o modelo do Anexo B os
+            consolida em 10 seções. Este exercício adota os 12 para não omitir a
+            identificação técnica nem o controle de qualidade. Antes de usar
+            qualquer estrutura em processo real, confirme o modelo vigente com
+            a revisão responsável.
+          </p>
+        </div>
+      </aside>
 
       <div className="rd-caso">
         <label htmlFor="rd-sel">Caso de base</label>
@@ -65,10 +79,10 @@ export default function RedatorIT({ scenarios, grupos, state, setState, go }) {
             </optgroup>
           ))}
         </select>
-        <span className="rd-prog">{prog.feitas} de {prog.total} seções escritas</span>
+        <span className="rd-prog">{prog.feitas} de {prog.total} itens com registro mínimo</span>
       </div>
 
-      <div className="rd-trilha" role="tablist" aria-label="Seções da Informação Técnica">
+      <div className="rd-trilha" role="tablist" aria-label="Elementos da Informação Técnica">
         {ESTRUTURA_IT.map((s, i) => {
           const feita = prog.ids.includes(s.id);
           return (
@@ -139,7 +153,7 @@ export default function RedatorIT({ scenarios, grupos, state, setState, go }) {
             <div className="rd-medidor">
               <span>{texto.trim().length} caracteres</span>
               <i><em style={{ width: `${Math.min(100, texto.trim().length / MINIMO_SECAO * 100)}%` }} /></i>
-              <span>{texto.trim().length >= MINIMO_SECAO ? 'seção escrita' : `mínimo ${MINIMO_SECAO}`}</span>
+              <span>{texto.trim().length >= MINIMO_SECAO ? 'mínimo de registro atingido' : `mínimo ${MINIMO_SECAO}`}</span>
             </div>
             <div className="rd-nav">
               <button disabled={passo === 0} onClick={() => setPasso((p) => p - 1)}>
@@ -161,7 +175,7 @@ export default function RedatorIT({ scenarios, grupos, state, setState, go }) {
 
       <footer className="rd-aviso">
         <Circle size={13} />
-        <p>Exercício didático. O texto produzido aqui não é peça processual, não tem validade e não representa manifestação do IAT.</p>
+        <p>Exercício didático. A contagem indica apenas preenchimento mínimo, não suficiência nem qualidade. O texto não é peça processual, não tem validade, depende de revisão humana e não representa manifestação do IAT.</p>
       </footer>
     </div>
   );

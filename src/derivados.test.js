@@ -28,14 +28,23 @@ describe('criarDerivados: mapas do POP', () => {
   });
 
   it('deriva aulas de todas as seções substantivas', () => {
-    // 161 no POP v1.7; o numero exato importa menos que a relacao: toda aula
-    // tem titulo, id unico e uma trilha valida.
+    // O POP v1.7 possui 161 títulos não navegacionais, mas dois deles são
+    // cabeçalhos-contêiner sem bloco próprio. Uma aula precisa ensinar algo.
     expect(d.lessons.length).toBeGreaterThan(150);
     expect(new Set(d.lessons.map((l) => l.id)).size).toBe(d.lessons.length);
     for (const l of d.lessons) {
       expect(l.title).toBeTruthy();
+      expect(l.blockIds.length).toBeGreaterThan(0);
       expect(tracks.some((t) => t.id === l.trackId)).toBe(true);
     }
+  });
+
+  it('não transforma cabeçalho estrutural vazio em aula', () => {
+    const emptyStructuralIds = pop.sections
+      .filter((section) => !section.navigationOnly && section.blockIds.length === 0)
+      .map((section) => section.id);
+    expect(emptyStructuralIds).toEqual(['pop-section-044', 'pop-section-077']);
+    expect(d.lessons.some((lesson) => emptyStructuralIds.includes(lesson.id))).toBe(false);
   });
 
   it('não deixa módulo sem aula', () => {
@@ -66,6 +75,18 @@ describe('criarDerivados: roteamento por prefixo mais específico', () => {
     // O titulo dela e "Titulos, numeracao, sumario e navegacao": uma regra de
     // navegacao ampla demais ja a excluiu do curso uma vez.
     expect(trilhaDe('26.3')).toBeTruthy();
+  });
+
+  it('limita PACUERA a 18.10 e mantém 18.11 a 18.13 em estudos ambientais', () => {
+    const pacuera = tracks.find((track) => track.id === 'm09');
+    const estudos = tracks.find((track) => track.id === 'm08');
+
+    expect(pacuera.sections).toEqual(['18.10']);
+    expect(trilhaDe('18.10.1')).toBe(pacuera.id);
+    expect(trilhaDe('18.10.5')).toBe(pacuera.id);
+    expect(trilhaDe('18.11')).toBe(estudos.id);
+    expect(trilhaDe('18.12')).toBe(estudos.id);
+    expect(trilhaDe('18.13')).toBe(estudos.id);
   });
 });
 

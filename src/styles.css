@@ -764,8 +764,8 @@ button:focus-visible,input:focus-visible,textarea:focus-visible,a:focus-visible,
 /* foco visivel em qualquer tema */
 :focus-visible{outline:3px solid var(--blue);outline-offset:2px}
 /* atalho de teclado para o conteudo */
-.skip-link{position:absolute;left:-9999px;top:0;z-index:100;background:var(--green2);color:var(--sobre-acento);padding:12px 18px;border-radius:0 0 10px 0;font-weight:800;text-decoration:none}
-.skip-link:focus{left:0}
+.skip-link{position:fixed;left:-9999px;top:0;z-index:130;background:#07583b;color:#fff;padding:12px 18px;border-radius:0 0 10px 0;font-weight:800;text-decoration:none}
+.skip-link:focus{left:0;top:0}
 /* respeita quem pediu menos movimento */
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important;scroll-behavior:auto!important}}
 /* impressao: levar a aula ou o checklist para o campo */
@@ -1002,8 +1002,15 @@ a[href^="http"]::after{content:" (" attr(href) ")";font-size:10px;color:#555}
 .update-bar button{border:0;border-radius:8px;padding:7px 13px;font-size:13px;font-weight:800;
  background:var(--green2);color:var(--sobre-acento);cursor:pointer}
 .update-bar .ub-depois{background:transparent;color:var(--muted);padding:7px 6px;text-decoration:underline}
+.data-warning-bar{position:fixed;left:50%;transform:translateX(-50%);top:calc(var(--top) + 12px);z-index:82;
+ display:flex;align-items:flex-start;gap:9px;width:min(680px,calc(100vw - 32px));padding:11px 15px;
+ border:1px solid color-mix(in srgb,var(--amber,#f3bd4f) 55%,var(--line));border-radius:10px;
+ background:color-mix(in srgb,var(--amber,#f3bd4f) 16%,var(--surface2));color:var(--ink);
+ box-shadow:0 12px 28px #0003;font-size:13px;line-height:1.45}
+.data-warning-bar svg{flex:none;color:var(--amber)}
 @media(max-width:560px){
  .offline-bar,.update-bar{bottom:10px;font-size:12px;padding:10px 13px;flex-wrap:wrap}
+ .data-warning-bar{top:calc(var(--top) + 8px);font-size:12px;padding:10px 12px}
 }
 
 /* Rótulos dos esquemas de turbina passam por cima do rotor e das conchas, e

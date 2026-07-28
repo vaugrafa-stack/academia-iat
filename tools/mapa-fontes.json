@@ -20,7 +20,7 @@
       "hashScope": "Arquivo GeoJSON derivado usado como entrada do gerador; não é o hash do arquivo RAR oficial.",
       "transformation": [
         "Transformação histórica registrada no projeto de dados: extração do RAR e conversão do shapefile de EPSG:31982 para EPSG:4326 com ogr2ogr, codificação ISO-8859-1 e simplificação de 250 m.",
-        "Neste gerador: descarte de duas feições sem nome, simplificação Douglas–Peucker adicional com tolerância de 0,004 grau e projeção visual equiretangular para caminhos SVG."
+        "Neste gerador: descarte de duas feições sem nome, simplificação Douglas–Peucker adicional com tolerância de 0,004 grau e projeção visual Web Mercator para caminhos SVG e alinhamento da camada cartográfica online opcional."
       ],
       "limitations": [
         "O arquivo de origem possui 18 feições, mas somente 16 têm nome; as duas feições sem nome não são publicadas.",

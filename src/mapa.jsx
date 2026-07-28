@@ -1,13 +1,16 @@
 // Mapa do Parana: bacias hidrograficas e usinas hidreletricas.
 //
-// SVG proprio, sem tiles externos. A aplicacao roda sob CSP restrita e precisa
-// funcionar sem rede: tile de servidor externo seria bloqueado pela politica e
-// sumiria offline, justamente em campo, que e onde o mapa serve.
+// O SVG proprio continua completo sem rede. Quando a pessoa ativa a camada de
+// satelite, imagens online Web Mercator entram por baixo das geometrias locais.
 //
 // As fontes sao publicas: a divisao hidrografica oficial do Parana e o SIGA da
 // ANEEL. Nada aqui vem da base de processos do IAT.
 import React, { useMemo, useRef, useState } from 'react';
 import { Map as MapIcon, Search, X, Layers3, Zap, ZoomIn, ZoomOut, Maximize2, Target, ChevronRight } from 'lucide-react';
+import {
+  SATELLITE_INFO_URL,
+  useSatelliteLayer,
+} from './satelliteLayer.js';
 
 const COR = { CGH: '#57d8bf', PCH: '#4cc4f5', UHE: '#9fb7ff' };
 const ORDEM = ['CGH', 'PCH', 'UHE'];
@@ -125,10 +128,15 @@ export default function MapaParana({ dados, state, setState }) {
   const [baciaSel, setBaciaSel] = useState(null); // bacia escolhida, filtra a lista
   const listaRef = useRef(null);
   const svgRef = useRef(null);
-  // Zoom por viewBox: sem biblioteca e sem tile externo, continua funcionando
-  // offline e dentro da CSP. `vista` e a janela visivel em coordenadas do mapa.
+  // Zoom por viewBox: a navegacao e as camadas locais continuam funcionando
+  // offline. `vista` e a janela visivel em coordenadas do mapa.
   const [vista, setVista] = useState(null);
-  const [camadas, setCamadas] = useState({ bacias: true, usinas: true, municipios: false });
+  const [camadas, setCamadas] = useState({
+    bacias: true,
+    usinas: true,
+    municipios: false,
+    satelite: false,
+  });
   const arrasto = useRef(null);
 
 
@@ -187,6 +195,14 @@ export default function MapaParana({ dados, state, setState }) {
   const escala = larg / v.w;                     // 1 = mapa inteiro
   const podeAproximar = escala < 8;
   const podeAfastar = escala > 1.02;
+  const satelite = useSatelliteLayer({
+    active: camadas.satelite,
+    projection: dados.tileProjection,
+    largura: larg,
+    altura: alt,
+    vista: v,
+    escala,
+  });
 
   const aplicar = (nx, ny, nw, nh) => {
     // Nunca deixa a janela sair do mapa nem passar do mapa inteiro.
@@ -266,8 +282,9 @@ export default function MapaParana({ dados, state, setState }) {
         <figure className="mp-quadro">
           <div className="mp-controles">
             <div className="mp-camadas" role="group" aria-label="Camadas do mapa">
-              {[['bacias', 'Bacias'], ['usinas', 'Usinas'], ['municipios', 'Municípios']].map(([id, rot]) => (
+              {[['bacias', 'Bacias'], ['usinas', 'Usinas'], ['municipios', 'Municípios'], ['satelite', 'Satélite']].map(([id, rot]) => (
                 <button key={id} className={camadas[id] ? 'on' : ''} aria-pressed={camadas[id]}
+                        title={id === 'satelite' ? 'Imagem de satélite carregada pela internet' : undefined}
                         onClick={() => camada(id)}>{rot}</button>
               ))}
             </div>
@@ -278,59 +295,111 @@ export default function MapaParana({ dados, state, setState }) {
               <span aria-live="polite" aria-atomic="true">{escala.toFixed(1)}x</span>
             </div>
           </div>
-          {/* Dito na tela, nao so no codigo: nao ha camada de imagem de
-              satelite porque ela exigiria tiles de servidor externo, que a
-              politica de seguranca bloqueia e que sumiriam sem rede,
-              justamente em campo. O que se ve aqui e dado publico embarcado. */}
-          <p className="mp-limite-camada">Sem camada de satélite: imagem de terceiro exigiria servidor externo, que a política de segurança bloqueia e que não funcionaria sem rede. Tudo aqui é dado público embarcado.</p>
+          <p className="mp-limite-camada">
+            Bacias, usinas, busca e filtros funcionam sem internet. A camada Satélite é opcional e
+            carrega imagens online somente quando ativada.
+          </p>
           <p className="mp-limite-camada">
             Os rótulos CGH, PCH e UHE dos pontos reproduzem o tipo do registro consultado. A faixa MCH,
             MGH, CGH, PCH ou UHE calculada no exercício é apenas a leitura didática da potência pelo POP;
             uma divergência exige conferência oficial e não altera o cadastro automaticamente.
           </p>
           <p id="mp-ajuda-teclado" className="mp-ajuda-teclado">Com o mapa em foco: setas deslocam, mais e menos aproximam e afastam, zero volta ao mapa inteiro. Para selecionar uma bacia sem mouse, use a lista “Bacia hidrográfica” no painel.</p>
-          <svg ref={svgRef} viewBox={`${v.x} ${v.y} ${v.w} ${v.h}`} role="img" tabIndex={0}
-               aria-describedby="mp-ajuda-teclado"
-               className={escala > 1.02 ? 'mp-arrastavel' : ''}
-               onWheel={roda} onPointerDown={pegar} onPointerMove={mover}
-               onPointerUp={soltar} onPointerCancel={soltar} onKeyDown={tecla}
-               aria-label={`Mapa do Paraná com ${(dados.bacias || []).length} bacias hidrográficas e ${usinas.length} usinas em exibição`}>
-            {camadas.bacias && <g className="mp-bacias">
-              {(dados.bacias || []).map((b, i) => (
-                // Alterna o tom para a divisao ficar legivel: 16 bacias no mesmo
-                // preenchimento viram uma mancha unica e o mapa perde a funcao.
-                // Sem <title>: o tooltip nativo do navegador e feio, chega
-                // atrasado e nao cabe informacao. A bacia passa a falar no
-                // painel abaixo do mapa, e o clique filtra a lista.
-                <path key={b.nome} d={b.d}
-                      className={(baciaSel === b.nome ? 'escolhida' : bacia === b.nome ? 'ativa' : '') + (i % 2 ? ' par' : '')}
-                      onMouseEnter={() => setBacia(b.nome)}
-                      onMouseLeave={() => setBacia(null)}
-                      onClick={() => setBaciaSel((n) => (n === b.nome ? null : b.nome))} />
-              ))}
-            </g>}
-            {camadas.municipios && (
-              <g className="mp-municipios" aria-hidden="true">
-                {municipios
-                  // Com o mapa inteiro so cabem os municipios com mais usinas;
-                  // conforme aproxima, entram os demais sem virar amontoado.
-                  .filter((m, i) => i < Math.round(8 * escala * escala))
-                  .map((m) => (
-                    <text key={m.nome} x={m.x} y={m.y - 9} fontSize={7.5 / Math.sqrt(escala) * 1.35}>{m.nome}</text>
+          <div className="mp-map-stage">
+            <svg ref={svgRef} viewBox={`${v.x} ${v.y} ${v.w} ${v.h}`} role="img" tabIndex={0}
+                 aria-describedby="mp-ajuda-teclado"
+                 className={[
+                   escala > 1.02 ? 'mp-arrastavel' : '',
+                   camadas.satelite && satelite.online ? 'mp-satelite-on' : '',
+                 ].filter(Boolean).join(' ')}
+                 onWheel={roda} onPointerDown={pegar} onPointerMove={mover}
+                 onPointerUp={soltar} onPointerCancel={soltar} onKeyDown={tecla}
+                 aria-label={`Mapa do Paraná com ${(dados.bacias || []).length} bacias hidrográficas e ${usinas.length} usinas em exibição`}>
+              {camadas.satelite && satelite.online && (
+                <g className="mp-satelite" aria-hidden="true">
+                  {satelite.grid.tiles.map((tile, tileIndex) => (
+                    <image
+                      key={`${tile.id}:${satelite.retryKey}`}
+                      href={`${tile.href}${satelite.retryKey ? `?retry=${satelite.retryKey}` : ''}`}
+                      x={tile.x}
+                      y={tile.y}
+                      width={tile.width}
+                      height={tile.height}
+                      preserveAspectRatio="none"
+                      onLoad={() => satelite.registrar('loaded', satelite.currentTileKeys[tileIndex])}
+                      onError={() => satelite.registrar('failed', satelite.currentTileKeys[tileIndex])}
+                    />
                   ))}
-              </g>
+                </g>
+              )}
+              {camadas.bacias && <g className="mp-bacias">
+                {(dados.bacias || []).map((b, i) => (
+                  // Alterna o tom para a divisao ficar legivel: 16 bacias no mesmo
+                  // preenchimento viram uma mancha unica e o mapa perde a funcao.
+                  // Sem <title>: o tooltip nativo do navegador e feio, chega
+                  // atrasado e nao cabe informacao. A bacia passa a falar no
+                  // painel abaixo do mapa, e o clique filtra a lista.
+                  <path key={b.nome} d={b.d}
+                        className={(baciaSel === b.nome ? 'escolhida' : bacia === b.nome ? 'ativa' : '') + (i % 2 ? ' par' : '')}
+                        onMouseEnter={() => setBacia(b.nome)}
+                        onMouseLeave={() => setBacia(null)}
+                        onClick={() => setBaciaSel((n) => (n === b.nome ? null : b.nome))} />
+                ))}
+              </g>}
+              {camadas.municipios && (
+                <g className="mp-municipios" aria-hidden="true">
+                  {municipios
+                    // Com o mapa inteiro so cabem os municipios com mais usinas;
+                    // conforme aproxima, entram os demais sem virar amontoado.
+                    .filter((m, i) => i < Math.round(8 * escala * escala))
+                    .map((m) => (
+                      <text key={m.nome} x={m.x} y={m.y - 9} fontSize={7.5 / Math.sqrt(escala) * 1.35}>{m.nome}</text>
+                    ))}
+                </g>
+              )}
+              {camadas.usinas && <g className="mp-usinas">
+                {usinas.map((u, i) => (
+                  <circle key={`${u.nome}-${i}`} cx={u.x} cy={u.y} r={raio(u)}
+                          fill={COR[u.tipo]}
+                          className={sel && sel.nome === u.nome && sel.x === u.x ? 'ativa' : ''}
+                          onClick={() => escolher(u)}>
+                    <title>{u.nome} · {u.tipo}{u.mw ? ` · ${u.mw} MW` : ''}</title>
+                  </circle>
+                ))}
+              </g>}
+            </svg>
+
+            {camadas.satelite && satelite.status === 'loading' && (
+              <div className="mp-satelite-estado" role="status">Carregando imagens de satélite…</div>
             )}
-            {camadas.usinas && <g className="mp-usinas">
-              {usinas.map((u, i) => (
-                <circle key={`${u.nome}-${i}`} cx={u.x} cy={u.y} r={raio(u)}
-                        fill={COR[u.tipo]}
-                        className={sel && sel.nome === u.nome && sel.x === u.x ? 'ativa' : ''}
-                        onClick={() => escolher(u)}>
-                  <title>{u.nome} · {u.tipo}{u.mw ? ` · ${u.mw} MW` : ''}</title>
-                </circle>
-              ))}
-            </g>}
-          </svg>
+            {camadas.satelite && satelite.status === 'offline' && (
+              <div className="mp-satelite-estado aviso" role="status">
+                A imagem de satélite precisa de internet. O mapa vetorial continua disponível.
+              </div>
+            )}
+            {camadas.satelite && satelite.status === 'error' && (
+              <div className="mp-satelite-estado aviso" role="alert">
+                <span>Não foi possível carregar a imagem de satélite agora.</span>
+                <button type="button" onClick={satelite.retry}>Tentar novamente</button>
+              </div>
+            )}
+            {camadas.satelite && satelite.status === 'partial' && (
+              <div className="mp-satelite-estado aviso" role="status">
+                <span>Algumas imagens de satélite não carregaram.</span>
+                <button type="button" onClick={satelite.retry}>Recarregar</button>
+              </div>
+            )}
+            {camadas.satelite && ['ready', 'partial'].includes(satelite.status) && (
+              <a
+                className="mp-satelite-credito"
+                href={SATELLITE_INFO_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Imagens: {satelite.attribution}
+              </a>
+            )}
+          </div>
           <figcaption>
             {infoBacia ? (
               <>

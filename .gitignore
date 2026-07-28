@@ -6,3 +6,5 @@ dist-integration-check/
 .playwright-cli/
 .video_tools/
 tools/tts/
+__pycache__/
+*.py[cod]

@@ -176,6 +176,10 @@ class BuildMapaTests(unittest.TestCase):
         self.assertEqual(document["usinas"][0]["baciaPR"], "Bacia Teste")
         self.assertNotIn("lat", document["usinas"][0])
         self.assertNotIn("lon", document["usinas"][0])
+        self.assertEqual(document["tileProjection"]["type"], "web-mercator")
+        extent = document["tileProjection"]["normalizedExtent"]
+        self.assertLess(extent["xMin"], extent["xMax"])
+        self.assertLess(extent["yMin"], extent["yMax"])
 
     def test_registered_hash_change_blocks_generation(self):
         self.siga.write_text(

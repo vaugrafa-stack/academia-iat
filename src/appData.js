@@ -16,9 +16,18 @@ function isJsonResponse(response) {
   return !type || type.includes('application/json') || type.includes('+json');
 }
 
-export async function fetchJson(url, label, { fetchImpl = fetch, optional = false } = {}) {
+export async function fetchJson(
+  url,
+  label,
+  { fetchImpl = fetch, optional = false, timeoutMs = 15_000 } = {},
+) {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeoutMs);
   try {
-    const response = await fetchImpl(url, { credentials: 'same-origin' });
+    const response = await fetchImpl(url, {
+      credentials: 'same-origin',
+      signal: controller.signal,
+    });
     if (!response.ok) {
       throw new AppDataError(`${label} respondeu HTTP ${response.status}.`, {
         code: 'HTTP_ERROR',
@@ -33,13 +42,30 @@ export async function fetchJson(url, label, { fetchImpl = fetch, optional = fals
     }
     return await response.json();
   } catch (error) {
-    if (optional) return {};
-    if (error instanceof AppDataError) throw error;
-    throw new AppDataError(`Não foi possível carregar ${label}.`, {
-      code: 'NETWORK_ERROR',
-      cause: error,
-      details: [{ label, url: String(url) }],
-    });
+    const normalized = error instanceof AppDataError
+      ? error
+      : new AppDataError(
+        error?.name === 'AbortError'
+          ? `O carregamento de ${label} excedeu ${Math.round(timeoutMs / 1000)} segundos.`
+          : `Não foi possível carregar ${label}.`,
+        {
+          code: error?.name === 'AbortError' ? 'TIMEOUT_ERROR' : 'NETWORK_ERROR',
+          cause: error,
+          details: [{ label, url: String(url), timeoutMs }],
+        },
+      );
+    if (optional) {
+      return {
+        __loadWarning: {
+          code: normalized.code,
+          message: normalized.message,
+          label,
+        },
+      };
+    }
+    throw normalized;
+  } finally {
+    clearTimeout(timer);
   }
 }
 
@@ -65,7 +91,7 @@ function assertArrays(value, keys, label) {
 export function validateAppData({ popData, flowData, aulaMedia }) {
   assertRecord(popData, 'conteúdo do POP');
   assertRecord(flowData, 'fluxogramas');
-  assertRecord(aulaMedia, 'índice de videoaulas');
+  assertRecord(aulaMedia, 'índice de resumos em vídeo');
   assertArrays(popData, REQUIRED_POP_ARRAYS, 'conteúdo do POP');
   assertArrays(flowData, REQUIRED_FLOW_ARRAYS, 'fluxogramas');
 
@@ -92,25 +118,35 @@ export function validateAppData({ popData, flowData, aulaMedia }) {
 
 export function applyBasePath(value, base = '') {
   const normalizedBase = String(base || '').replace(/\/$/, '');
-  if (!normalizedBase || !value || typeof value !== 'object') return value;
-  const seen = new WeakSet();
+  if (!value || typeof value !== 'object') return value;
+  const seen = new WeakMap();
   const walk = (node) => {
-    if (!node || typeof node !== 'object' || seen.has(node)) return;
-    seen.add(node);
+    if (!node || typeof node !== 'object') return node;
+    if (seen.has(node)) return seen.get(node);
     if (Array.isArray(node)) {
-      node.forEach(walk);
-      return;
+      const clone = [];
+      seen.set(node, clone);
+      clone.push(...node.map(walk));
+      return clone;
     }
-    for (const key of Object.keys(node)) {
-      if (PATH_KEYS.has(key) && typeof node[key] === 'string' && node[key].startsWith('/')) {
-        node[key] = normalizedBase + node[key];
+    const clone = {};
+    seen.set(node, clone);
+    for (const [key, child] of Object.entries(node)) {
+      if (
+        normalizedBase
+        && PATH_KEYS.has(key)
+        && typeof child === 'string'
+        && child.startsWith('/')
+        && !child.startsWith(`${normalizedBase}/`)
+      ) {
+        clone[key] = normalizedBase + child;
       } else {
-        walk(node[key]);
+        clone[key] = walk(child);
       }
     }
+    return clone;
   };
-  walk(value);
-  return value;
+  return walk(value);
 }
 
 export async function loadAppData({
@@ -121,17 +157,24 @@ export async function loadAppData({
   featuredMedia,
   fetchImpl = fetch,
 }) {
-  const [popData, flowData, aulaMedia] = await Promise.all([
+  const [popData, flowData, loadedAulaMedia] = await Promise.all([
     fetchJson(popDataUrl, 'o conteúdo do POP', { fetchImpl }),
     fetchJson(flowDataUrl, 'os fluxogramas', { fetchImpl }),
-    fetchJson(aulaMediaUrl, 'o índice de videoaulas', { fetchImpl, optional: true }),
+    fetchJson(aulaMediaUrl, 'o índice de resumos em vídeo', { fetchImpl, optional: true }),
   ]);
+  const warnings = loadedAulaMedia.__loadWarning
+    ? [loadedAulaMedia.__loadWarning]
+    : [];
+  const aulaMedia = { ...loadedAulaMedia };
+  delete aulaMedia.__loadWarning;
   const validated = validateAppData({ popData, flowData, aulaMedia });
-  applyBasePath(validated.popData, base);
-  applyBasePath(validated.flowData, base);
-  applyBasePath(validated.aulaMedia, base);
-  applyBasePath(featuredMedia, base);
-  return validated;
+  return {
+    popData: applyBasePath(validated.popData, base),
+    flowData: applyBasePath(validated.flowData, base),
+    aulaMedia: applyBasePath(validated.aulaMedia, base),
+    featuredMedia: applyBasePath(featuredMedia, base),
+    warnings,
+  };
 }
 
 export function describeAppDataError(error) {

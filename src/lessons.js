@@ -16,6 +16,10 @@ export function isLessonSection(section) {
   return Boolean(
     section?.title
       && !section.navigationOnly
+      // Alguns títulos do Word são apenas contêineres de subseções. Exibi-los
+      // como aula cria uma tela sem conteúdo e promete mídia que não existe.
+      && Array.isArray(section.blockIds)
+      && section.blockIds.length > 0
       && !TITULO_EXCLUSIVAMENTE_NAVEGACIONAL.test(section.title.trim()),
   );
 }

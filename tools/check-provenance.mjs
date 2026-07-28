@@ -15,11 +15,13 @@ import { derivarAulas } from '../src/lessons.js';
 const root = resolve(import.meta.dirname, '..');
 const EXPECTED = {
   fileName: 'POP ou Manual Hidreletricas IAT Julho de 2026 (Com APA, UCs, RTTA).docx',
-  bytes: 4_418_481,
-  sha256: '67cdac12cb092c2e6e06a009256351f110bb8d1f4717fbf4cd2f0df0d2f36b5c',
+  bytes: 4_408_377,
+  sha256: '8ffa771546c244e194e6d7b41dd91d5ab3f56083e94c081e1e5c9a17f13f2c3c',
   version: '1.7',
   sections: 167,
   learningSections: 161,
+  teachableLessons: 159,
+  structuralHeaders: 2,
   navigationSections: 6,
   tables: 66,
   quadros: 46,
@@ -28,8 +30,8 @@ const EXPECTED = {
   popAssets: 14,
   flowAssets: 21,
   totalAssets: 35,
-  searchableParagraphNodes: 3_345,
-  sourceParagraphNodes: 3_371,
+  searchableParagraphNodes: 3_339,
+  sourceParagraphNodes: 3_365,
 };
 
 let failures = 0;
@@ -102,7 +104,16 @@ if (section263) {
 }
 
 const { lessons } = derivarAulas(pop, tracks);
-same(lessons.length, EXPECTED.learningSections, 'aulas derivadas');
+const structuralHeaders = substantive.filter((section) => !(section.blockIds || []).length);
+same(structuralHeaders.length, EXPECTED.structuralHeaders, 'cabeçalhos estruturais sem bloco próprio');
+same(
+  structuralHeaders.map((section) => section.id).join(','),
+  'pop-section-044,pop-section-077',
+  'IDs dos cabeçalhos estruturais',
+);
+same(lessons.length, EXPECTED.teachableLessons, 'tópicos didáticos derivados');
+check(lessons.every((lesson) => lesson.blockIds?.length > 0),
+  'o percurso contém aula sem bloco de conteúdo');
 check(Boolean(section263 && lessons.some((lesson) => lesson.id === section263.id)),
   'seção 26.3 não virou aula');
 
@@ -191,6 +202,6 @@ if (failures) {
 }
 console.log(
   `OK: POP v${EXPECTED.version} · SHA-256 ${EXPECTED.sha256} · `
-  + `${EXPECTED.learningSections}/${EXPECTED.learningSections} seções substantivas · `
+  + `${EXPECTED.learningSections} títulos substantivos / ${EXPECTED.teachableLessons} tópicos didáticos · `
   + `${EXPECTED.tables} tabelas · ${EXPECTED.figures} figuras · ${EXPECTED.totalAssets} ativos verificados.`,
 );

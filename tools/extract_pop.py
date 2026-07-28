@@ -4,7 +4,7 @@
 O script:
 1. valida a identidade da minuta-fonte v1.7 por nome, tamanho e SHA-256;
 2. preserva os IDs de seção existentes;
-3. extrai texto, tabelas, figuras e metadados;
+3. extrai texto, tabelas, figuras e somente metadados públicos necessários;
 4. atualiza o catálogo, o manifesto de ativos e a validação de fidelidade;
 5. só publica os artefatos se todos os gates passarem.
 
@@ -12,8 +12,8 @@ O material permanece uma minuta técnica, pendente de validação humana e
 institucional. Ele não é tratado por esta rotina como norma ou ato oficial.
 
 Uso:
-    python tools/extract_pop.py
     python tools/extract_pop.py "C:\\caminho\\para\\o POP.docx"
+    IAT_POP_SOURCE="C:\\caminho\\para\\o POP.docx" python tools/extract_pop.py
 """
 from __future__ import annotations
 
@@ -22,6 +22,7 @@ import hashlib
 import io
 import json
 import mimetypes
+import os
 import re
 import sys
 import unicodedata
@@ -45,15 +46,15 @@ VALIDATION_JSON = DATA_DIR / "extraction-validation.json"
 ASSET_DIR = ROOT / "public" / "source-assets"
 ASSET_MANIFEST = ASSET_DIR / "asset-manifest.json"
 
-DEFAULT_POP_SOURCE = Path(
-    r"C:\Users\rafae\Downloads\POP ou Manual Hidreletricas IAT Julho de 2026 (Com APA, UCs, RTTA).docx"
+DEFAULT_POP_SOURCE = (
+    Path(os.environ["IAT_POP_SOURCE"]) if os.environ.get("IAT_POP_SOURCE") else None
 )
 
 PIPELINE_VERSION = "2.0.0"
 EXPECTED = {
     "fileName": "POP ou Manual Hidreletricas IAT Julho de 2026 (Com APA, UCs, RTTA).docx",
-    "bytes": 4_418_481,
-    "sha256": "67cdac12cb092c2e6e06a009256351f110bb8d1f4717fbf4cd2f0df0d2f36b5c",
+    "bytes": 4_408_377,
+    "sha256": "8ffa771546c244e194e6d7b41dd91d5ab3f56083e94c081e1e5c9a17f13f2c3c",
     "version": "1.7",
     "sections": 167,
     "learningSections": 161,
@@ -63,7 +64,7 @@ EXPECTED = {
     "tabelas": 20,
     "figures": 14,
     "assets": 14,
-    "paragraphNodes": 3_345,
+    "paragraphNodes": 3_339,
     "bodyBlocks": 765,
 }
 
@@ -73,6 +74,41 @@ NAVIGATION_ROOTS = {
     "indice de fluxogramas",
     "indice navegavel de quadros e tabelas",
     "indice de anexos",
+}
+
+PUBLIC_CORE_PROPERTIES = {
+    "title",
+    "subject",
+    "keywords",
+    "description",
+    "revision",
+    "created",
+    "modified",
+    "category",
+    "contentStatus",
+    "contentType",
+    "identifier",
+    "language",
+    "version",
+}
+PUBLIC_APPLICATION_PROPERTIES = {
+    "Template",
+    "TotalTime",
+    "Pages",
+    "Words",
+    "Characters",
+    "Application",
+    "DocSecurity",
+    "Lines",
+    "Paragraphs",
+    "ScaleCrop",
+    "HeadingPairs",
+    "TitlesOfParts",
+    "LinksUpToDate",
+    "CharactersWithSpaces",
+    "SharedDoc",
+    "HyperlinksChanged",
+    "AppVersion",
 }
 
 
@@ -119,6 +155,57 @@ def read_zip_properties(archive: zipfile.ZipFile, part_name: str) -> dict:
         else:
             result[key] = value
     return result
+
+
+def public_properties(properties: dict, allowlist: set[str]) -> dict:
+    """Mantém metadados técnicos úteis e descarta autoria/identificadores pessoais."""
+    return {key: value for key, value in properties.items() if key in allowlist}
+
+
+def personal_metadata_values(core: dict, application: dict) -> set[str]:
+    candidates = [
+        core.get("creator"),
+        core.get("lastModifiedBy"),
+        application.get("Manager"),
+    ]
+    return {
+        value.strip()
+        for value in candidates
+        if isinstance(value, str) and len(value.strip()) >= 3
+    }
+
+
+def redact_public_value(value, personal_values: set[str]) -> tuple[object, int]:
+    """Remove valores pessoais derivados dos metadados antes da publicação."""
+    if isinstance(value, str):
+        result = value
+        count = 0
+        for personal_value in sorted(personal_values, key=len, reverse=True):
+            result, replacements = re.subn(
+                re.escape(personal_value),
+                "[nome removido por privacidade]",
+                result,
+                flags=re.IGNORECASE,
+            )
+            count += replacements
+        return result, count
+    if isinstance(value, list):
+        redacted_list = []
+        count = 0
+        for item in value:
+            redacted_item, replacements = redact_public_value(item, personal_values)
+            redacted_list.append(redacted_item)
+            count += replacements
+        return redacted_list, count
+    if isinstance(value, dict):
+        redacted_dict = {}
+        count = 0
+        for key, item in value.items():
+            redacted_item, replacements = redact_public_value(item, personal_values)
+            redacted_dict[key] = redacted_item
+            count += replacements
+        return redacted_dict, count
+    return value, 0
 
 
 def read_supplemental_parts(archive: zipfile.ZipFile) -> list[dict]:
@@ -291,9 +378,20 @@ def extract_pop(source: Path, source_bytes: bytes, previous: dict) -> tuple[dict
     archive = zipfile.ZipFile(io.BytesIO(source_bytes))
     try:
         source_nodes = source_paragraphs(archive)
-        core = read_zip_properties(archive, "docProps/core.xml")
-        application = read_zip_properties(archive, "docProps/app.xml")
-        custom = read_zip_properties(archive, "docProps/custom.xml")
+        raw_core = read_zip_properties(archive, "docProps/core.xml")
+        raw_application = read_zip_properties(archive, "docProps/app.xml")
+        redaction_values = personal_metadata_values(raw_core, raw_application)
+        core = public_properties(
+            raw_core,
+            PUBLIC_CORE_PROPERTIES,
+        )
+        application = public_properties(
+            raw_application,
+            PUBLIC_APPLICATION_PROPERTIES,
+        )
+        # Propriedades customizadas podem conter nomes, caminhos ou identificadores
+        # arbitrários e não são necessárias para a experiência pública.
+        custom = {}
         supplemental = read_supplemental_parts(archive)
     finally:
         archive.close()
@@ -565,10 +663,16 @@ def extract_pop(source: Path, source_bytes: bytes, previous: dict) -> tuple[dict
             "substantiveBlockCount": len(included_blocks),
         },
     }
+    output, privacy_redaction_count = redact_public_value(output, redaction_values)
+    output["metadata"]["provenance"]["privacyRedactionCount"] = privacy_redaction_count
+    output["metadata"]["provenance"]["privacyRedactionPolicy"] = (
+        "nomes presentes em metadados de autoria são substituídos na cópia pública"
+    )
     diagnostics = {
         "fidelity": fidelity,
         "newSections": new_sections,
         "preservedSectionIds": len(used_ids) - len(new_sections),
+        "privacyRedactionCount": privacy_redaction_count,
     }
     return output, asset_payloads, diagnostics
 
@@ -733,6 +837,28 @@ def build_validation(
                 and "desatualizado" in pop["metadata"]["provenance"]["corePropertiesStatus"]
             ),
         ),
+        make_check(
+            "pop-public-metadata-sanitized",
+            True,
+            all(
+                key not in pop["metadata"]["core"]
+                for key in ("creator", "lastModifiedBy")
+            )
+            and all(
+                key not in pop["metadata"]["application"]
+                for key in ("Manager", "Company", "HyperlinkBase")
+            )
+            and pop["metadata"]["custom"] == {},
+        ),
+        make_check(
+            "pop-personal-author-redactions-applied",
+            True,
+            diagnostics.get("privacyRedactionCount", 0) > 0,
+            {
+                "count": diagnostics.get("privacyRedactionCount", 0),
+                "replacement": "[nome removido por privacidade]",
+            },
+        ),
         make_check("pop-section-count", EXPECTED["sections"], len(pop["sections"])),
         make_check(
             "pop-learning-section-count",
@@ -870,6 +996,12 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
 
 def main(argv: list[str] | None = None) -> int:
     args = parse_args(argv or sys.argv[1:])
+    if args.source is None:
+        print(
+            "FALHA: informe o DOCX por argumento ou pela variável IAT_POP_SOURCE.",
+            file=sys.stderr,
+        )
+        return 2
     source = args.source.expanduser().resolve()
     if not source.is_file():
         print(f"FALHA: fonte não localizada: {source}", file=sys.stderr)

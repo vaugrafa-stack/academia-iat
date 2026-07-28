@@ -92,6 +92,38 @@ export function serializeOfflinePayload(payload) {
   return `${JSON.stringify(payload, null, 2)}\n`;
 }
 
+function firstPayloadDifference(actual, expected, path = '$') {
+  if (Object.is(actual, expected)) return null;
+  if (
+    actual === null
+    || expected === null
+    || typeof actual !== 'object'
+    || typeof expected !== 'object'
+  ) {
+    return { path, actual, expected };
+  }
+
+  const actualKeys = Object.keys(actual);
+  const expectedKeys = Object.keys(expected);
+  const keys = [...new Set([...actualKeys, ...expectedKeys])];
+  for (const key of keys) {
+    if (!Object.hasOwn(actual, key) || !Object.hasOwn(expected, key)) {
+      return {
+        path: `${path}.${key}`,
+        actual: actual[key],
+        expected: expected[key],
+      };
+    }
+    const difference = firstPayloadDifference(
+      actual[key],
+      expected[key],
+      Array.isArray(actual) ? `${path}[${key}]` : `${path}.${key}`,
+    );
+    if (difference) return difference;
+  }
+  return null;
+}
+
 async function main(argv = process.argv.slice(2)) {
   const unknown = argv.filter((argument) => argument !== '--check');
   if (unknown.length > 0) {
@@ -117,6 +149,14 @@ async function main(argv = process.argv.slice(2)) {
     }
     if (JSON.stringify(publishedPayload) !== JSON.stringify(payload)) {
       console.error('FALHA: src/data/offline-packages.json está ausente ou desatualizado.');
+      const difference = firstPayloadDifference(publishedPayload, payload);
+      if (difference) {
+        console.error(
+          `Primeira divergência em ${difference.path}: `
+          + `versionado=${JSON.stringify(difference.actual)} · `
+          + `gerado=${JSON.stringify(difference.expected)}`,
+        );
+      }
       console.error('Execute: node tools/build-offline-packages.mjs');
       return 1;
     }

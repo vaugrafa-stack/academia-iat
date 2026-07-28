@@ -1,15 +1,17 @@
-# Academia IAT - Licenciamento Hidrelétrico
+# Academia IAT — Licenciamento Hidrelétrico
 
-Plataforma completa de aprendizagem baseada no `POP-DLE-HID-001`, versão 1.2, julho de 2026, e no documento de proposta de fluxogramas.
+Plataforma de aprendizagem, consulta técnica e prática aplicada baseada no `POP-DLE-HID-001`, versão 1.7, julho de 2026, nos fluxogramas do projeto e nas fontes documentais vinculadas ao repositório.
 
-## Executar
+A plataforma é voltada à formação de analistas, técnicos, revisores, gestores, empreendedores, consultorias ambientais e demais pessoas que precisem compreender o licenciamento ambiental de empreendimentos hidrelétricos no Paraná.
+
+## Executar localmente
 
 Na pasta principal, dê duplo clique em `Abrir Academia IAT.cmd`.
 
 Ou execute manualmente:
 
 ```powershell
-cd "C:\Users\rafae\OneDrive\Documentos\New project\apps\iat_training"
+cd "CAMINHO\PARA\academia-iat"
 pnpm install
 pnpm dev
 ```
@@ -22,42 +24,56 @@ Para criar o pacote de produção:
 pnpm build
 ```
 
-## O que funciona
+## Estado atual
 
-- 15 módulos vinculados às 125 seções e subtópicos estruturados do POP;
-- aulas com resumo guiado, texto-fonte integral, tabelas, figuras e anotações;
-- 3 microvídeos MP4 reais, com pôster e legendas WebVTT;
-- 3 animações SVG complementares;
-- 7 fluxogramas interativos e 21 fluxogramas-fonte comparáveis;
-- 7 cenários de laboratório: CP, LAS, LP, LI, LO, RLO e PACUERA;
-- avaliações comentadas gerais e por módulo;
-- biblioteca pesquisável com 2.690 parágrafos, 61 quadros/tabelas e 33 figuras/fluxos;
-- favoritos, caderno pessoal, progresso, resultados e retomada persistidos em `localStorage`;
-- layout responsivo e suporte a `prefers-reduced-motion`.
+Conforme o plano de evolução vigente, a plataforma possui:
+
+- 17 módulos;
+- 161 aulas;
+- 159 videoaulas;
+- 136 questões;
+- 26 casos práticos;
+- mapa interativo do Paraná com dados públicos;
+- redator orientado de Informação Técnica;
+- diagnóstico de entrada e saída;
+- fluxogramas interativos;
+- biblioteca pesquisável;
+- perfis locais, favoritos, anotações, progresso e certificados pessoais;
+- funcionamento offline com Service Worker;
+- suporte a teclado, foco visível, nomes acessíveis e `prefers-reduced-motion`.
+
+Os quantitativos e estados de execução devem ser conferidos em `PLANO_EVOLUCAO.md`, que é a fonte operacional para continuidade do desenvolvimento.
 
 ## Validação
 
 ```powershell
 pnpm test
 pnpm build
+pnpm audit:premium
 ```
 
-O teste funcional renderiza a aplicação em DOM e percorre painel, formação, aula, vídeo, fluxogramas, laboratório, avaliações e biblioteca.
+Os portões automatizados verificam testes unitários, proveniência, referências, rubricas, questões, videoaulas, cobertura das aulas, fluxo funcional, artefato de produção, governança mínima, caminhos pessoais e indícios simples de segredos publicados.
 
-A extração documental foi validada em 16 verificações: 61 tabelas, 2.690 parágrafos, 12 figuras do POP, 21 fluxogramas e zero divergências textuais normalizadas.
+A aprovação automática não substitui a validação renderizada em navegador, a inspeção responsiva, o teste de interação, a auditoria de acessibilidade nem a revisão técnica do conteúdo.
 
 ## Arquivos principais
 
-- `src/main.jsx`: aplicação e experiências interativas;
+- `AGENTS.md`: goal permanente, limites, prioridades e ciclo obrigatório do Codex;
+- `PLANO_EVOLUCAO.md`: diagnóstico, etapas, critérios de pronto e registro de execução;
+- `LEARNING_DESIGN.md`: desenho pedagógico integral;
+- `src/main.jsx`: composição principal e telas ainda em processo de extração;
+- `src/derivados.js`: dados derivados do POP com dependências explícitas;
 - `src/courseData.js`: módulos, questões, cenários e fluxos;
 - `src/data/pop-content.json`: conteúdo integral estruturado do POP;
-- `src/data/flowcharts-content.json`: 21 fluxogramas estruturados;
-- `public/source-assets`: 33 imagens extraídas dos documentos;
-- `public/media`: vídeos, legendas, animações, pôsteres e ilustração;
-- `LEARNING_DESIGN.md`: desenho pedagógico de referência;
-- `tools/smoke-test.mjs`: teste funcional;
-- `tools/build_training_videos.py`: gerador reproduzível dos microvídeos.
+- `src/data/flowcharts-content.json`: fluxogramas estruturados;
+- `public/source-assets`: imagens extraídas das fontes documentais;
+- `public/media`: vídeos, legendas, animações, pôsteres e ilustrações;
+- `tools/smoke-test.mjs`: teste funcional das áreas principais;
+- `tools/audit-premium.mjs`: portão de governança, privacidade e exposição acidental;
+- `tools/build_training_videos.py`: geração reproduzível das mídias didáticas.
 
-## Uso responsável
+## Privacidade e uso responsável
 
-A plataforma é material de capacitação e apoio operacional. Não substitui a norma vigente, o Termo de Referência aplicável, a análise do caso concreto, a decisão administrativa nem validações jurídica e institucional.
+A plataforma é material de capacitação e apoio operacional. Não substitui norma vigente, Termo de Referência aplicável, análise do caso concreto, decisão administrativa, manifestação jurídica, outorga, ato da ANEEL, manifestação de órgão interveniente ou validação institucional.
+
+Documentos reais somente podem ser transformados em conteúdo didático após triagem de pertinência, anonimização, remoção de metadados e avaliação de risco de reidentificação. Originais sensíveis não devem ser publicados no repositório público.

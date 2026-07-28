@@ -2,30 +2,51 @@
 
 ## 1. Escopo, fontes e compromisso de cobertura
 
-Este documento especifica como transformar o conteúdo integral das duas fontes fornecidas em uma plataforma de aprendizagem operacional, interativa e avaliável:
+Este documento especifica a arquitetura pedagógica pretendida para transformar o conteúdo das duas fontes fornecidas em uma plataforma de aprendizagem operacional, interativa e avaliável:
 
-- `POP_Licenciamento_Hidreletricas_IAT_Julho_2026_PACUERA_Integrado_Auditado_V1.2_Corrigido.docx`;
+- `POP ou Manual Hidreletricas IAT Julho de 2026 (Com APA, UCs, RTTA).docx`;
 - `Proposta de Fluxogramas (Original, Simplificado e Detalhado).docx`.
 
-O desenho cobre os 27 capítulos do POP, os 5 anexos, as referências normativas, os 46 quadros, as 15 tabelas, as 12 figuras do POP e os 7 fluxogramas apresentados em três níveis (original, simplificado e completo). O conteúdo não deve ser reduzido a cartões resumidos: cada tema precisa aparecer como explicação, demonstração visual, decisão simulada, prática com feedback e evidência de domínio.
+O desenho cobre os 27 capítulos do POP, os 6 anexos, as referências normativas, os 46 quadros, as 20 tabelas, as 14 figuras do POP e os 7 fluxogramas apresentados em três níveis (original, simplificado e completo). O conteúdo não deve ser reduzido a cartões resumidos: cada tema precisa aparecer como explicação, demonstração visual, decisão simulada, prática com feedback e evidência de aprendizagem.
+
+### Controle da fonte e status deste documento
+
+- versão operacional: **1.7**, conforme o texto visível da capa;
+- data: julho de 2026;
+- SHA-256 da fonte: `8ffa771546c244e194e6d7b41dd91d5ab3f56083e94c081e1e5c9a17f13f2c3c`;
+- natureza: minuta técnica pendente de validação humana, jurídica e institucional;
+- o valor “1.2” preservado nas propriedades internas do Word é metadado legado e não deve ser exibido como versão operacional;
+- os fluxogramas são uma proposta de treinamento e comparação, não um fluxo institucional automaticamente aprovado.
+
+Este arquivo combina requisitos-alvo e decisões de desenho. Ele não deve ser lido como inventário automático do que já está implementado. O estado verificável da aplicação e da extração é registrado no `README.md`, em `src/data/extraction-validation.json` e nos testes automatizados.
+
+### Cobertura não é competência
+
+| Evidência | O que permite afirmar | O que não permite afirmar |
+|---|---|---|
+| seção vinculada à aula | cobertura e rastreabilidade | compreensão ou retenção |
+| mídia disponível | exposição ao conteúdo | profundidade didática |
+| quiz respondido | desempenho naquela tentativa | competência profissional estável |
+| laboratório sintético concluído | prática guiada no cenário apresentado | aptidão para decidir processo real |
+| registro pessoal de conclusão | percurso e critérios internos atendidos | certificação do IAT ou habilitação profissional |
 
 ### Regra editorial da plataforma
 
-Todo conteúdo normativo deve exibir a faixa: **“Base de treinamento: POP v1.2, julho de 2026. Antes de decidir em processo real, confirme a norma, o Termo de Referência e o fluxo institucional vigentes.”** A plataforma ensina o método do POP; não cria exigência autônoma, não substitui o SGA, a manifestação jurídica, a outorga, o ato da ANEEL, a manifestação do IPHAN, o planejamento municipal, a decisão de unidade especializada ou a autoridade competente.
+Todo conteúdo normativo deve exibir a faixa: **“Base de treinamento: minuta POP v1.7, julho de 2026, pendente de validação institucional. Antes de decidir em processo real, confirme a fonte oficial, a norma, o Termo de Referência e o fluxo institucional vigentes.”** A plataforma ensina o método descrito na minuta; não cria exigência autônoma, não substitui o SGA, a manifestação jurídica, a outorga, o ato da ANEEL, a manifestação do IPHAN, o planejamento municipal, a decisão de unidade especializada ou a autoridade competente.
 
 ### Resultado de aprendizagem final
 
-Ao concluir a formação, a pessoa deverá ser capaz de receber um processo hidrelétrico, identificar objeto e regime temporal, enquadrar tipologia e modalidade, verificar Consulta Prévia, avaliar suficiência e mérito, analisar estudos e PACUERA, reconhecer interfaces e limites de competência, planejar vistoria, classificar achados, redigir diligência ou conclusão, formular condicionantes e executar controle final de qualidade com rastreabilidade.
+O percurso busca desenvolver a capacidade de receber um processo hidrelétrico, identificar objeto e regime temporal, enquadrar tipologia e modalidade, verificar Consulta Prévia, avaliar suficiência e mérito, analisar estudos e PACUERA, reconhecer interfaces e limites de competência, planejar vistoria, classificar achados, redigir diligência ou conclusão, formular condicionantes e executar controle final de qualidade com rastreabilidade. A conclusão automática do percurso não basta para afirmar que essas capacidades foram demonstradas em contexto profissional.
 
 ## 2. Arquitetura de aprendizagem
 
 ### 2.1 Públicos e trilhas
 
-1. **Trilha Essencial - ingresso na unidade:** módulos M00 a M05, M12, M13 e avaliação prática básica.
-2. **Trilha Analista - formação completa:** M00 a M14, todos os laboratórios e caso integrador.
-3. **Trilha PACUERA:** M00, M01, M03, M07, M09, M10, M11, M12, M13 e avaliação específica.
-4. **Trilha Revisor/Coordenação:** diagnóstico de dispensa de conteúdo básico, M01, M06 a M14, exercícios de revisão e banca de parecer.
-5. **Recertificação:** teste adaptativo, atualização normativa, casos de erro crítico e auditoria de um produto técnico.
+1. **Trilha Essencial — ingresso na unidade:** módulos M00 a M05, M14, M15 e avaliação prática básica.
+2. **Trilha Analista — formação integral pretendida:** M00 a M16, laboratórios e caso integrador.
+3. **Trilha PACUERA:** M00, M01, M03, M07, M09, M10, M11, M12, M14, M15 e avaliação específica.
+4. **Trilha Revisor/Coordenação:** diagnóstico de dispensa de conteúdo básico, M01, M06 a M16, exercícios de revisão e banca simulada.
+5. **Revisão periódica pessoal:** teste com formas paralelas, atualização normativa, casos de erro crítico e auditoria de produto sintético. Só deve ser chamada de “recertificação” se existir programa institucional formal e validado.
 
 ### 2.2 Unidade padrão de cada aula
 
@@ -47,6 +68,7 @@ Cada aula deve conter, nesta ordem:
 - Questões podem ser refeitas, mas a segunda tentativa muda os dados do caso.
 - Erros críticos acionam revisão obrigatória: modalidade incorreta, aplicação retroativa automática, deferimento com pendência impeditiva, confusão entre licença e outorga, substituição de competência externa, PACUERA tratado como licença ou declaração de estabilidade estrutural pelo licenciamento.
 - A conclusão da trilha completa exige nota mínima 75/100 no caso integrador e ausência de erro crítico não corrigido.
+- Notas, gates e rubricas são critérios internos de aprendizagem. Não geram certificação do IAT, habilitação profissional ou decisão administrativa.
 
 ## 3. Matriz mestra de módulos
 
@@ -63,10 +85,12 @@ Cada aula deve conter, nesta ordem:
 | M08 | Memorial e estudos ambientais | cap. 18, exceto 18.10; inclui 18.11 a 18.13 | matriz comparativa e análise de um estudo | laboratório de documentos: Memorial, PCA, RAS, RDPA, EIA, RIMA, PBA, RCA/RCE |
 | M09 | PACUERA integral | 18.10.1 a 18.10.5 e interfaces correlatas | parecer de conformidade e mérito do PACUERA | atlas por camadas, zoneamento por UTH e simulação de participação social |
 | M10 | Cartografia, APP, flora, fauna e recursos hídricos | cap. 19 | checklist geoespacial e nota temática | inspeção de mapa com erros e compatibilização de vazões/TVR |
-| M11 | ANEEL, IPHAN, intervenientes e vistoria | caps. 20 e 21 | plano e relatório de vistoria + despacho de interface | fluxo SAIP/SEI e vistoria virtual |
-| M12 | Suficiência, Informação Técnica, pendências, condicionantes e conclusão | caps. 22 a 25 | Informação Técnica curta e minuta de diligência | oficina de redação com feedback por critérios |
-| M13 | Formatação, qualidade e rastreabilidade | caps. 26 e 27 | auditoria final de um DOCX fictício | caça a erros visual, textual e normativo |
-| M14 | Modelos, anexos, referências e caso integrador | Anexos A a E e referências | dossiê completo e defesa técnica | capstone ramificado com banca simulada |
+| M11 | ANEEL, IPHAN, município, intervenientes e vistoria | caps. 20 e 21, exceto aprofundamentos de 20.2 e 20.6 | plano e relatório de vistoria + despacho de interface | fluxo SAIP/SEI e vistoria virtual |
+| M12 | Unidades de conservação, APAs e Planos de Manejo | 9.2 e 20.2 a 20.2.6 | matriz locacional por fase e registro de fonte espacial | triagem guiada de UC/APA e caso da Escarpa Devoniana |
+| M13 | Licenciamento federal delegado: ACT e RTAA | 20.6 a 20.6.6 e Anexo F | ficha do ACT e controle anual do RTAA | linha do tempo de obrigações e oficina de rastreabilidade |
+| M14 | Suficiência, Informação Técnica, pendências, condicionantes e conclusão | caps. 22 a 25 | Informação Técnica curta e minuta de diligência | oficina de redação com feedback por critérios |
+| M15 | Formatação, qualidade e rastreabilidade | caps. 26 e 27 | auditoria final de um DOCX fictício | caça a erros visual, textual e normativo |
+| M16 | Modelos, anexos, referências e caso integrador | Anexos A a E e referências | dossiê completo e defesa técnica simulada | capstone ramificado com banca simulada |
 
 ## 4. Especificação dos módulos e aulas
 
@@ -372,7 +396,34 @@ Uma mesa virtual apresenta excertos e anexos fictícios. O aluno deve localizar 
 
 **Gate prático:** roteiro de vistoria antes do campo e relatório depois do campo, distinguindo fato observado, inferência e limitação.
 
-### M12 - Suficiência, Informação Técnica, pendências, condicionantes e conclusão
+### M12 - Unidades de conservação, APAs e Planos de Manejo
+
+**Aulas**
+
+1. Triagem de interferência direta, zona de amortecimento, entorno e conectividade.
+2. Diferença entre UC, APA, Plano de Manejo e norma de criação.
+3. Efeitos por fase ou modalidade e tratamento proporcional de empreendimentos existentes.
+4. Consulta a GeoPR/GeoParaná, registro de data, camada, escala, geometria e limitações.
+5. Cuidados específicos em APAs e compatibilização com o Plano de Manejo.
+6. Caso didático da APA Estadual da Escarpa Devoniana, sem inferir decisão para empreendimento real.
+
+**Gate prático:** produzir matriz locacional que separe dado espacial, fonte, fase, regra a confirmar, consequência e encaminhamento, sem transformar proximidade cartográfica em conclusão automática.
+
+### M13 - Licenciamento federal delegado: ACT e RTAA
+
+**Aulas**
+
+1. Competência originária e pressupostos da delegação.
+2. Leitura do Acordo de Cooperação Técnica, objeto, vigência, obrigações e limites.
+3. Controle contínuo das obrigações do IAT como delegatário.
+4. Preparação anual do RTAA, formulário vigente, documentação complementar e canal de envio.
+5. Processos de RLO de UHE de grande capacidade e casos descritos na minuta, sempre com conferência do ACT aplicável.
+6. Compensação ambiental, fiscalização, supervisão, retomada e rastreabilidade.
+7. Anexo F como roteiro de controle, não como prova de cumprimento.
+
+**Gate prático:** preencher ficha sintética de ACT e matriz anual do RTAA com evidências, pendências e responsáveis fictícios, sem dados de processo real.
+
+### M14 - Suficiência, Informação Técnica, pendências, condicionantes e conclusão
 
 **Aulas**
 
@@ -400,7 +451,7 @@ O aluno recebe textos ruins e os reescreve. O avaliador automático deve usar re
 
 **Gate prático:** Informação Técnica curta com histórico, método, tabela de análise, duas pendências, conclusão e encaminhamento.
 
-### M13 - Formatação, qualidade e rastreabilidade
+### M15 - Formatação, qualidade e rastreabilidade
 
 **Aulas**
 
@@ -418,7 +469,7 @@ Auditoria em três camadas de um documento fictício: conteúdo reutilizado de o
 
 **Gate prático:** emitir checklist final com correções obrigatórias antes da assinatura.
 
-### M14 - Anexos, referências e caso integrador
+### M16 - Anexos, referências e caso integrador
 
 **Aulas**
 
@@ -427,6 +478,7 @@ Auditoria em três camadas de um documento fictício: conteúdo reutilizado de o
 3. Anexo C como matriz por documento.
 4. Anexo D como exemplos adaptáveis, não texto automático.
 5. Anexo E, glossário e biblioteca normativa com versão/data/fonte.
+6. Relação do Anexo F com o módulo M13, sem duplicar nem presumir evidência de cumprimento.
 
 **Capstone**
 
@@ -434,7 +486,7 @@ O aluno recebe um dossiê completo e precisa gerar: ficha temporal/normativa, en
 
 ## 5. Banco de estudos de caso
 
-Os casos devem usar nomes, CNPJs, coordenadas e municípios fictícios. A solução exibida após a entrega deve seguir sempre o encadeamento `dado -> regra/fonte -> classificação -> consequência -> encaminhamento`, evitando respostas binárias sem motivação.
+Os casos devem usar nomes, CNPJs, coordenadas e municípios fictícios e conter marca visível de **exemplo didático sem validade administrativa**. Não se devem copiar dados pessoais, documentos, mapas ou identificadores de processos reais. A solução exibida após a entrega deve seguir sempre o encadeamento `dado -> regra/fonte -> classificação -> consequência -> encaminhamento`, evitando respostas binárias sem motivação.
 
 ### C01 - MGH de baixo IDA
 
@@ -556,7 +608,9 @@ Os casos devem usar nomes, CNPJs, coordenadas e municípios fictícios. A soluç
 
 ## 6. Estratégia de vídeos, imagens e animações
 
-### 6.1 Série de vídeos curtos
+### 6.1 Série aprofundada pretendida
+
+Os episódios abaixo são requisitos-alvo para explicações de 3 a 8 minutos. Eles não devem ser confundidos com os 159 resumos audiovisuais atualmente disponíveis, que duram entre 9,4 e 23,8 segundos e servem apenas à orientação e à revisão rápida.
 
 | Episódio | Duração | Conteúdo e storyboard | Módulo |
 |---|---:|---|---|
@@ -571,16 +625,19 @@ Os casos devem usar nomes, CNPJs, coordenadas e municípios fictícios. A soluç
 | V09 | 8 min | PACUERA do diagnóstico ao zoneamento, participação, aprovação, implementação e revisão | M09 |
 | V10 | 5 min | anatomia de um mapa tecnicamente verificável e demonstração de erros | M10 |
 | V11 | 4 min | FCA no SAIP, acompanhamento no SEI e protocolo posterior sem duplicar FCA | M11 |
-| V12 | 5 min | condicionante nasce de impacto, ganha prazo/indicador/evidência e passa por teste de qualidade | M12 |
-| V13 | 4 min | renderização e inspeção página a página antes da assinatura | M13 |
+| V12 | 5 min | condicionante nasce de impacto, ganha prazo/indicador/evidência e passa por teste de qualidade | M14 |
+| V13 | 4 min | renderização e inspeção página a página antes da assinatura | M15 |
+| V14 | 5 min | UC, APA, Plano de Manejo e fonte geoespacial são separados por fase e consequência | M12 |
+| V15 | 5 min | competência delegada, ACT, controle contínuo e preparação anual do RTAA | M13 |
+| V16 | 4 min | anexos como modelos adaptáveis e fechamento do caso integrador | M16 |
 
-Todos os vídeos precisam de legenda, transcrição, descrição visual e versão em áudio. O usuário deve poder abrir o trecho do POP que sustenta cada cena. Se o vídeo real ainda não estiver produzido, a plataforma deve exibir o storyboard como “prévia em desenvolvimento”, nunca um botão que simule reprodução sem conteúdo.
+Todos os vídeos aprofundados precisam de legenda, transcrição, descrição visual e versão em áudio. O usuário deve poder abrir o trecho do POP que sustenta cada cena. Se o vídeo aprofundado ainda não estiver produzido, a plataforma deve identificar o recurso curto como “resumo em vídeo” e o storyboard como “prévia em desenvolvimento”, nunca sugerir que um clipe de poucos segundos equivale a uma aula completa.
 
 ### 6.2 Tratamento das imagens de origem
 
-- As 12 figuras do POP devem ser exibidas em alta resolução, com zoom, texto alternativo e versão interativa reconstruída por nós.
+- As 14 figuras do POP devem ser exibidas em alta resolução, com zoom, texto alternativo e versão interativa reconstruída por nós quando isso agregar compreensão.
 - Os 7 fluxos do segundo DOCX devem oferecer abas `Visão resumida`, `Fluxo completo` e `Original de referência`.
-- O fluxo completo, conferido com o POP v1.2, é a base da prática. A versão original serve à comparação de evolução e não deve ser apresentada como decisão automática.
+- O fluxo completo, conferido com a minuta POP v1.7, é a base da prática. A versão original serve à comparação de evolução e não deve ser apresentada como decisão automática nem como fluxo institucional validado.
 - Cada nó deve abrir: pergunta, dado necessário, fonte, risco do erro e próximo passo.
 - Em modo prova, nomes dos nós podem ser ocultados e o usuário deve ordenar ou selecionar a rota.
 
@@ -598,6 +655,8 @@ Todos os vídeos precisam de legenda, transcrição, descrição visual e versã
 10. Auditoria final de documento renderizado.
 
 ## 7. Banco inicial de quizzes com gabarito comentado
+
+Este banco de 64 itens é a linha de base histórica do desenho. A implementação atual possui 136 questões e deve ser auditada no próprio banco executável. Os itens abaixo não comprovam, isoladamente, cobertura avaliativa suficiente nem validade do instrumento.
 
 As alternativas erradas devem ser plausíveis e derivadas de erros descritos no POP. Em produção, valores e ordem das alternativas devem variar. Questões de regra temporal sempre exibem a versão de conteúdo usada no treinamento.
 
@@ -713,7 +772,7 @@ As alternativas erradas devem ser plausíveis e derivadas de erros descritos no 
 | Q051 | Ausência de manifestação de autoridade no prazo equivale a anuência? | Não. | Devem ser observados os efeitos processuais previstos na legislação, sem presumir anuência. |
 | Q052 | Relatório de vistoria pode concluir sobre fato que não foi observado? | Não. | Deve registrar evidências e limitações e não substituir estudo técnico. |
 
-### M12
+### M14
 
 | ID | Questão | Resposta esperada | Feedback essencial |
 |---|---|---|---|
@@ -723,7 +782,7 @@ As alternativas erradas devem ser plausíveis e derivadas de erros descritos no 
 | Q056 | Inadequação de modalidade exige sempre manifestação não favorável? | Não. | Prioriza-se reclassificação/adequação quando juridicamente possível; a conclusão deve ser motivada. |
 | Q057 | Informação Técnica deve copiar integralmente o checklist? | Não. | Deve interpretar o conjunto, explicar relevância, consequências e encaminhamento. |
 
-### M13
+### M15
 
 | ID | Questão | Resposta esperada | Feedback essencial |
 |---|---|---|---|
@@ -732,7 +791,7 @@ As alternativas erradas devem ser plausíveis e derivadas de erros descritos no 
 | Q060 | Cor pode ser o único meio de indicar status? | Não. | O documento precisa de contraste, rótulos e leitura em escala de cinza/acessível. |
 | Q061 | Dados pessoais devem ser reproduzidos integralmente no corpo da manifestação? | Não. | Aplicar necessidade, finalidade, LGPD e prática institucional. |
 
-### M14
+### M16
 
 | ID | Questão | Resposta esperada | Feedback essencial |
 |---|---|---|---|
@@ -740,12 +799,14 @@ As alternativas erradas devem ser plausíveis e derivadas de erros descritos no 
 | Q063 | Modelo de condicionante do Anexo D pode ser copiado sem adaptação? | Não. | Exige verificação de impacto, fase, competência, prazo e comprovação. |
 | Q064 | Sigla de unidade administrativa pode ser usada sem conferir a estrutura vigente? | Não. | Denominação e competência devem corresponder à estrutura atual. |
 
-## 8. Avaliações e certificação
+## 8. Avaliações, evidências e registro pessoal
+
+As avaliações deste desenho servem à aprendizagem e ao autoacompanhamento. Enquanto não houver validação psicométrica, aplicação supervisionada, identidade verificada e governança institucional, seus resultados não constituem certificação do IAT, habilitação profissional ou prova conclusiva de competência.
 
 ### 8.1 Diagnóstico inicial
 
 - 20 questões adaptativas cobrindo escopo, tipologia, fases, status, gravidade, documentos, PACUERA e competência.
-- Resultado por domínio, não apenas nota: `inicial`, `em desenvolvimento`, `proficiente`.
+- Resultado por eixo de conteúdo, não apenas nota: `inicial`, `em desenvolvimento`, `proficiente`. Esses rótulos descrevem o desempenho observado no instrumento, não uma competência profissional validada.
 - A plataforma recomenda aulas específicas; não dispensa automaticamente conteúdo de alto risco.
 
 ### 8.2 Avaliação formativa por módulo
@@ -760,11 +821,11 @@ As alternativas erradas devem ser plausíveis e derivadas de erros descritos no 
 1. **P1 - Triagem e enquadramento (M00-M04):** organizar processo, identificar regime, modalidade potencial e pendências. 30 pontos.
 2. **P2 - Fases e situações especiais (M05-M07):** escolher LP/LI/LO/AA/RLO/regularização/alteração e tratar interfaces. 30 pontos.
 3. **P3 - Estudos e PACUERA (M08-M10):** avaliar conteúdo, mapa e zoneamento. 40 pontos.
-4. **P4 - Manifestação técnica (M11-M13):** vistoria, diligência, condicionantes, conclusão e QA. 40 pontos.
+4. **P4 - Manifestação técnica (M11-M15):** vistoria, interfaces, diligência, condicionantes, conclusão e QA. 40 pontos.
 
 ### 8.4 Rubrica do caso integrador (100 pontos)
 
-| Critério | Pontos | Evidência de domínio |
+| Critério | Pontos | Evidência esperada na atividade |
 |---|---:|---|
 | Identificação, histórico e situação fática | 6 | objeto, titular, fase, protocolos e atos anteriores coerentes |
 | Regime normativo e transição | 10 | datas, etapa, transição estadual/federal e validações registradas |
@@ -794,9 +855,9 @@ As alternativas erradas devem ser plausíveis e derivadas de erros descritos no 
 | Complementações, IA e responsabilidade técnica | 6 |
 | Implementação, indicadores, revisão e conclusão | 6 |
 
-### 8.6 Evidências e painel de aprendizagem
+### 8.6 Evidências, painel de aprendizagem e limites
 
-O painel do aluno deve mostrar domínio por competência e não apenas porcentagem geral: `regime`, `enquadramento`, `documentos`, `fases`, `PACUERA`, `temas ambientais`, `interfaces`, `redação` e `qualidade`. O painel do gestor deve exibir apenas dados necessários à formação: conclusão, resultado, tentativas, competências que precisam de reforço e validade da certificação.
+O painel do aluno deve mostrar desempenho por eixo e não apenas porcentagem geral: `regime`, `enquadramento`, `documentos`, `fases`, `PACUERA`, `temas ambientais`, `interfaces`, `redação` e `qualidade`. O painel de gestão, se vier a existir sob governança institucional, deve exibir apenas dados necessários à formação: conclusão, resultados, tentativas e eixos que precisam de reforço. A plataforma atual deve gerar apenas registro pessoal de conclusão, identificado de forma explícita como não credencial.
 
 ## 9. Mapa de cobertura dos capítulos do POP
 
@@ -837,18 +898,21 @@ O painel do aluno deve mostrar domínio por competência e não apenas porcentag
 | 18.13 Síntese da conclusão | M08.12 | classificação e encaminhamento | parecer de suficiência |
 | 19 Cartografia, APP, flora, fauna e água | M10 | todos os subtemas e normas materiais do capítulo | mapa com erros + nota hídrica |
 | 20 ANEEL, IPHAN e intervenientes | M11.1-M11.4 | interfaces, fluxo IPHAN, autoridades e participação | ordenação SAIP/SEI e despacho |
+| 20.2 Unidades de conservação, APAs e Planos de Manejo | M12 | triagem espacial, efeitos por fase, fontes geoespaciais e limites | matriz locacional rastreável |
+| 20.6 Licenciamento federal delegado | M13 | competência originária, ACT, obrigações, RTAA, fiscalização e retomada | ficha de ACT e controle anual sintético |
 | 21 Vistoria | M11.5-M11.6 | planejamento, campo, relatório, limitações | vistoria virtual |
-| 22 Checklist e suficiência | M12.1-M12.3 | matriz integral e distinção presença/suficiência | checklist preenchido |
-| 23 Informação Técnica e pendências | M12.1-M12.5 | estrutura, diligência e conclusão | Informação Técnica curta |
-| 24 Condicionantes | M12.6-M12.9 | padrão, erros, fases e revisão | construtor de condicionante |
-| 25 Critérios de conclusão | M12.5 | favorável, diligência, não favorável, jurídico e arquivamento | decisão justificada |
-| 26 Formatação e padrão | M13.1-M13.7 | arquivo original, estruturas, texto, visuais, assinaturas e renderização | auditoria de DOCX fictício |
-| 27 Controle de qualidade | M13.7 | checklist técnico, normativo, linguístico, visual e PACUERA | gate final antes da assinatura |
-| Anexo A | M14.1 + ferramenta de checklist | modelo adaptável e campos em branco | checklist de capstone |
-| Anexo B | M14.2 + editor guiado | esqueleto de Informação Técnica | produto final do capstone |
-| Anexo C | M14.3 + M08 | perguntas críticas por documento | matriz de estudo |
-| Anexo D | M14.4 + M12 | exemplos adaptáveis de condicionantes | oficina de reescrita |
-| Anexo E | M14.5 + glossário | siglas e abreviações contextuais | busca e flashcards |
+| 22 Checklist e suficiência | M14.1-M14.3 | matriz integral e distinção presença/suficiência | checklist preenchido |
+| 23 Informação Técnica e pendências | M14.1-M14.5 | estrutura, diligência e conclusão | Informação Técnica curta |
+| 24 Condicionantes | M14.6-M14.9 | padrão, erros, fases e revisão | construtor de condicionante |
+| 25 Critérios de conclusão | M14.5 | favorável, diligência, não favorável, jurídico e arquivamento | decisão justificada |
+| 26 Formatação e padrão | M15.1-M15.7 | arquivo original, estruturas, texto, visuais, assinaturas e renderização | auditoria de DOCX fictício |
+| 27 Controle de qualidade | M15.7 | checklist técnico, normativo, linguístico, visual e PACUERA | gate final antes da assinatura |
+| Anexo A | M16.1 + ferramenta de checklist | modelo adaptável e campos em branco | checklist de capstone |
+| Anexo B | M16.2 + editor guiado | esqueleto de Informação Técnica | produto final do capstone |
+| Anexo C | M16.3 + M08 | perguntas críticas por documento | matriz de estudo |
+| Anexo D | M16.4 + M14 | exemplos adaptáveis de condicionantes | oficina de reescrita |
+| Anexo E | M16.5 + glossário | siglas e abreviações contextuais | busca e flashcards |
+| Anexo F | M13 | roteiro de controle de processos delegados e RTAA | matriz anual sintética com evidências |
 | Referências normativas e técnicas | M01.2 + biblioteca global | fonte, número, ano, tema, vigência a confirmar | pesquisa por tema e histórico de versão |
 
 ## 10. Mapa de cobertura de quadros, tabelas e figuras
@@ -865,9 +929,9 @@ O painel do aluno deve mostrar domínio por competência e não apenas porcentag
 | 6 | Base normativa e atenção do analista | M01 | biblioteca filtrável por tema |
 | 7 | Compatibilização federal-estadual | M01 | cenários LAE/LOC/participação/prazos |
 | 8 | Definições e erros recorrentes | M01 | glossário com “erro a evitar” |
-| 9 | Siglas operacionais complementares | M01/M14 | busca contextual e flashcards |
-| 10 | Classificação documental | M01/M12 | seletor de status com exemplos |
-| 11 | Classificação de gravidade | M01/M12 | classificador pela consequência |
+| 9 | Siglas operacionais complementares | M01/M16 | busca contextual e flashcards |
+| 10 | Classificação documental | M01/M14 | seletor de status com exemplos |
+| 11 | Classificação de gravidade | M01/M14 | classificador pela consequência |
 | 12 | Saídas da triagem | M02 | escolha de rota e produto |
 | 13 | Tipologias e verificações | M03 | cartões MCH/MGH/CGH/PCH/UHE |
 | 14 | Critérios práticos de modalidade | M03/M06 | árvore de decisão por finalidade |
@@ -890,21 +954,21 @@ O painel do aluno deve mostrar domínio por competência e não apenas porcentag
 | 31 | Responsabilidades no PACUERA | M09 | jogo de competência específico |
 | 32 | Participação, complementação e IA | M09 | simulador de rito e prazos |
 | 33 | RCA, RCE e complementares | M08 | seletor de finalidade/documento |
-| 34 | Relatórios de condicionantes/programas | M08/M12 | avaliador de evidências |
+| 34 | Relatórios de condicionantes/programas | M08/M14 | avaliador de evidências |
 | 35 | Síntese da conclusão documental | M08 | gerador de conclusão estruturada |
 | 36 | APP, flora, fauna, ictiofauna e água | M10 | painel temático de riscos |
 | 37 | Normas materiais complementares | M10 | biblioteca contextual por tema |
 | 38 | Interfaces institucionais | M11 | mapa de atores e cuidados |
-| 39 | Elementos da minuta de pendências | M12 | editor em seis campos |
-| 40 | Qualidade das condicionantes | M12 | teste automático de completude |
-| 41 | Condicionantes por fase | M12 | filtro LP/LI/AA/LO/RLO |
-| 42 | Critérios para conclusão | M12 | comparador das cinco saídas |
-| 43 | Estrutura por produto técnico | M13 | modelos guiados por produto |
-| 44 | Matriz por documento | M14/M08 | checklist de criticidade |
-| 45 | Modelos de condicionantes | M14/M12 | exemplos com adaptação obrigatória |
-| 46 | Siglas e abreviações | M14 | glossário global pesquisável |
+| 39 | Elementos da minuta de pendências | M14 | editor em seis campos |
+| 40 | Qualidade das condicionantes | M14 | teste automático de completude |
+| 41 | Condicionantes por fase | M14 | filtro LP/LI/AA/LO/RLO |
+| 42 | Critérios para conclusão | M14 | comparador das cinco saídas |
+| 43 | Estrutura por produto técnico | M15 | modelos guiados por produto |
+| 44 | Matriz por documento | M16/M08 | checklist de criticidade |
+| 45 | Modelos de condicionantes | M16/M14 | exemplos com adaptação obrigatória |
+| 46 | Siglas e abreviações | M16 | glossário global pesquisável |
 
-### 10.2 Tabelas 1 a 15
+### 10.2 Tabelas 1 a 20
 
 | Tabela | Checklist/roteiro | Módulo | Atividade |
 |---:|---|---|---|
@@ -920,11 +984,16 @@ O painel do aluno deve mostrar domínio por competência e não apenas porcentag
 | 10 | Segurança de barragens | M07 | painel PNSB/PSB/PAE |
 | 11 | Cartografia | M10 | mapa com erros |
 | 12 | Vistoria | M11 | roteiro e relatório virtual |
-| 13 | Checklist e suficiência | M12 | matriz de análise integral |
-| 14 | Qualidade final | M13 | gate antes da assinatura |
-| 15 | Checklist consolidado | M14 | formulário adaptável do capstone |
+| 13 | Checklist e suficiência | M14 | matriz de análise integral |
+| 14 | Qualidade final | M15 | gate antes da assinatura |
+| 15 | Checklist consolidado | M16 | formulário adaptável do capstone |
+| 16 | Identificação e controle do ACT e do processo delegado | M13 | ficha sintética com fonte e vigência |
+| 17 | Controle anual das obrigações do ACT | M13 | matriz de evidências e pendências |
+| 18 | Preparação interna do RTAA e do formulário anual | M13 | oficina de montagem do pacote |
+| 19 | Rotina de preparação e entrega do RTAA | M13 | linha do tempo com responsáveis |
+| 20 | Documentos e comprovantes do RTAA | M13 | conferência de completude e rastreabilidade |
 
-### 10.3 Figuras 1 a 12 do POP
+### 10.3 Figuras 1 a 14 do POP
 
 | Figura | Fluxo | Módulo | Conversão interativa |
 |---:|---|---|---|
@@ -936,10 +1005,12 @@ O painel do aluno deve mostrar domínio por competência e não apenas porcentag
 | 6 | Alterações, reformas, ampliações e repotenciações | M06 | comunicação x retificação x AA x nova licença |
 | 7 | Licenciamento e segurança de barragens | M07 | painel de incidência, interface e limites |
 | 8 | Elaboração, análise e participação do PACUERA | M09 | fluxo mestre com diagnóstico, participação e implementação |
-| 9 | Vistoria técnica | M11 | preparação, campo, confronto, relatório e encaminhamento |
-| 10 | Suficiência documental | M12 | classificação e consequência em sete passos |
-| 11 | Formulação de condicionantes | M12 | construtor com validações |
-| 12 | Formatação e controle documental | M13 | checklist animado e inspeção de páginas |
+| 9 | Unidades de conservação, APAs e Planos de Manejo | M12 | triagem espacial por fonte, fase e consequência |
+| 10 | Leitura e controle do ACT | M13 | linha do tempo de vigência, obrigações e evidências |
+| 11 | Vistoria técnica | M11 | preparação, campo, confronto, relatório e encaminhamento |
+| 12 | Suficiência documental | M14 | classificação e consequência em sete passos |
+| 13 | Formulação de condicionantes | M14 | construtor com validações |
+| 14 | Formatação e controle visual do DOCX | M15 | checklist animado e inspeção de páginas |
 
 ### 10.4 Sete fluxogramas em três níveis
 
@@ -1045,68 +1116,72 @@ O usuário pode salvar decisões, justificativas e erros frequentes. Cada anota�
 
 ## 14. Priorização de produção
 
-### Onda 1 - Plataforma funcional completa no essencial
+Esta priorização descreve objetivos pedagógicos e não substitui o inventário verificável da aplicação, os testes ou o plano operacional do projeto.
 
-- M00 a M06, M09, M12 e M13.
-- Sete fluxos simplificados e completos, com nós clicáveis.
-- Figuras 1, 2, 3, 4, 8, 10, 11 e 12 interativas.
-- Casos C01 a C14.
-- Banco Q001 a Q064.
-- Checklists 1 a 8, 13, 14 e 15.
-- Vídeos V01 a V06, V09, V12 e V13 ou storyboards explicitamente marcados enquanto a mídia real é produzida.
-- Progresso, gates, feedback, transcrições e fontes.
+### Onda 1 — Cobertura e rastreabilidade
 
-### Onda 2 - Profundidade técnica e campo
+- manter M00 a M16 vinculados aos 159 tópicos com conteúdo próprio, sem perder a rastreabilidade dos 161 títulos não navegacionais; os 2 cabeçalhos estruturais são representados pela hierarquia e pelas subseções;
+- preservar fonte exata, versão, data e identidade por hash;
+- manter figuras, quadros, tabelas e fluxogramas localizáveis;
+- garantir que todo recurso tenha estado explícito, alternativa textual e navegação funcional;
+- distinguir conteúdo-fonte, explicação didática, exemplo sintético e inferência.
 
-- M07, M08, M10 e M11 completos.
-- Atlas PACUERA avançado, mapa com erros e vistoria virtual.
-- Laboratório de todos os documentos ambientais.
-- Figuras e checklists restantes.
-- Casos C15 a C18 e variantes.
+### Onda 2 — Profundidade e transferência
 
-### Onda 3 - Certificação e governança
+- produzir explicações aprofundadas, exemplos trabalhados e remediação específica para cada módulo;
+- ampliar os resumos audiovisuais com a série V01 a V16 ou marcar claramente a ausência;
+- validar atlas PACUERA, mapa com erros, vistoria virtual e laboratórios documentais;
+- revisar questões quanto a cobertura, dificuldade, independência entre formas e qualidade dos distratores;
+- testar transferência em casos novos com avaliador humano e critérios publicados.
 
-- M14 e capstone com variantes por trilha.
-- Rubricas e banca simulada.
-- Painel de competências para gestores.
-- Recertificação e pacote de atualização normativa.
-- Exportação controlada dos modelos e relatório de conclusão.
+### Onda 3 — Governança e eventual reconhecimento institucional
+
+- revisão humana multidisciplinar e registro de versão das fontes;
+- validação dos instrumentos, rubricas e critérios de correção;
+- proteção de dados, identidade e trilha de auditoria compatíveis com a finalidade;
+- banca simulada e, se institucionalmente autorizada, banca humana;
+- manter apenas registro pessoal de conclusão até existir decisão formal sobre certificação;
+- exportação controlada de modelos sempre marcada como material de treinamento.
 
 ## 15. Critérios de aceite pedagógico e funcional
 
-A plataforma só pode ser considerada “completa em relação ao POP” quando todos os itens abaixo forem demonstráveis:
+A plataforma só pode ser considerada completa quanto à **cobertura documental declarada** quando todos os itens abaixo forem demonstráveis. Mesmo assim, essa classificação não comprova eficácia pedagógica nem competência profissional:
 
-1. Todos os 27 capítulos, 5 anexos e referências têm página/atividade e fonte vinculada.
-2. Os 46 quadros, 15 tabelas e 12 figuras podem ser localizados por número e tema.
+1. Todos os 27 capítulos, 6 anexos e referências têm página/atividade e fonte vinculada.
+2. Os 46 quadros, 20 tabelas e 14 figuras podem ser localizados por número e tema.
 3. Os 7 fluxogramas têm visão simplificada e completa funcional; a versão original está disponível como referência comparativa.
-4. Nenhum botão de vídeo ou áudio é inerte. Mídia ainda não produzida é identificada honestamente como storyboard.
+4. Nenhum botão de vídeo ou áudio é inerte. Resumos de poucos segundos são rotulados como resumos; mídia aprofundada ainda não produzida é identificada honestamente como storyboard ou lacuna.
 5. Fluxos não são apenas imagens: decisões são clicáveis, produzem feedback e registram tentativa.
 6. O enquadrador explica a regra usada e não inventa fórmula de IDA nem emite ato automático.
 7. O módulo PACUERA cobre todos os 27 requisitos da matriz específica da seção 11 deste documento.
 8. Toda questão apresenta resposta e justificativa; todo erro crítico leva a remediação dirigida.
 9. Cada módulo possui objetivo observável, conteúdo, exemplo, atividade e avaliação.
-10. O progresso persiste e pode ser retomado; a conclusão depende de domínio, não apenas de abrir páginas.
+10. O progresso persiste e pode ser retomado; a conclusão depende de evidências mínimas de desempenho, não apenas de abrir páginas.
 11. Vídeos têm legenda, transcrição, descrição e controle; imagens têm texto alternativo e zoom.
 12. Fluxos e status não dependem exclusivamente de cor e funcionam por teclado.
 13. O conteúdo é responsivo e legível em desktop e celular; fluxos grandes oferecem minimapa, zoom e modo focado.
 14. A versão do POP e a data da última revisão aparecem em todas as páginas de conteúdo normativo.
 15. Modelos deixam claro que precisam de adaptação e validação; não geram conclusão institucional automática.
 16. Há teste de ponta a ponta dos casos C03, C05, C10 e C14, pois cobrem limiares, EIA/RIMA, regularização e PACUERA.
-17. A certificação exige caso integrador, rubrica e correção de erros críticos.
+17. Laboratórios e documentos sintéticos exibem marca inequívoca de exemplo didático sem validade e não contêm dados pessoais reais.
+18. O registro pessoal de conclusão exige os critérios internos publicados e deixa claro que não é certificação do IAT.
+19. Alegações de eficácia ou competência são sustentadas por avaliação humana independente em casos novos, não por contagem de páginas, cliques ou mídia.
 
-## 16. Inventário final de cobertura
+## 16. Inventário verificável atual
 
-- 15 módulos (M00 a M14).
-- 102 aulas ou unidades de conteúdo previstas.
-- 13 vídeos curtos com storyboard definido.
-- 10 simuladores/animações obrigatórios.
-- 18 estudos de caso principais, com variações.
-- 64 questões iniciais com gabarito comentado.
-- 4 avaliações práticas intermediárias.
-- 1 caso integrador de 100 pontos.
-- 1 avaliação específica de PACUERA de 100 pontos.
-- 27 capítulos, 5 anexos e referências mapeados.
-- 46 quadros, 15 tabelas e 12 figuras mapeados.
-- 7 fluxogramas em três níveis de leitura mapeados.
+- 17 módulos (M00 a M16).
+- 4 percursos recomendados (Essencial, Analista, PACUERA e Revisor), usados como priorização e não como bloqueio de acesso.
+- 159 tópicos ligados às seções com conteúdo próprio; 2 cabeçalhos estruturais sem bloco próprio não viram telas vazias, e 6 seções exclusivamente navegacionais não viram aula.
+- 159 práticas de recuperação ativa, cada uma com checagem comentada, resposta escrita e autoauditoria. A pergunta é exclusiva da seção quando existe; nos demais casos, a interface identifica explicitamente a recuperação de um conceito do mesmo módulo.
+- 159 resumos audiovisuais de 9,4 a 23,8 segundos e 17 vídeos de abertura de módulo.
+- 26 cenários de laboratório com dados e documentos sintéticos.
+- 136 questões no banco executável, todas com citação literal verificada; 82 das 161 seções didáticas têm cobertura direta. Após a revisão editorial prioritária, 83 respostas corretas ainda são estritamente mais longas, mas nenhuma tem comprimento igual ou superior ao dobro do maior distrator.
+- 27 capítulos, 6 anexos e referências mapeados.
+- 46 quadros, 20 tabelas e 14 figuras do POP mapeados.
+- 7 fluxogramas, com 21 variantes de origem em três níveis de leitura. Cada atividade montável possui seis orientações específicas de evidência, risco e fonte, além de uma decisão final com três opções e feedback.
+- Redator didático com os 12 elementos do item 23.1; a consolidação alternativa em 10 seções do Anexo B é exibida como divergência interna da própria minuta e não é ocultada.
+- 60 referências normativas/técnicas vinculadas a portal oficial: 22 diretamente à íntegra ou página específica e 38 ao índice oficial; vigência, transição e aplicabilidade permanecem pendentes de revisão responsável.
+- 3.339 nós textuais pesquisáveis.
+- 17 pacotes opcionais para estudo offline, com 528 arquivos de mídia e aproximadamente 117,4 MiB no total.
 
-Esse inventário é a linha de base para a produção. Qualquer redução precisa ser registrada como lacuna de cobertura, e não apresentada como plataforma completa do POP.
+Esse inventário mede presença e rastreabilidade de recursos. O mínimo de 80 caracteres, a checagem objetiva e a autoauditoria são evidências de atividade, não de qualidade técnica. Qualquer redução deve ser registrada como lacuna de cobertura; qualquer alegação de aprendizagem, profundidade ou competência precisa de evidência própria e separada, com revisão humana para desempenho avançado.

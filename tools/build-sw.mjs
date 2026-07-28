@@ -145,6 +145,13 @@ function estaNoEscopo(url) {
     (BASE === '/' || url.pathname.startsWith(BASE));
 }
 
+function ehEntradaDaAplicacao(url) {
+  const entrada = new URL(INDEX_URL);
+  const raiz = new URL(BASE, self.location.origin);
+  return url.origin === entrada.origin &&
+    (url.pathname === entrada.pathname || url.pathname === raiz.pathname);
+}
+
 function caminhoNoEscopo(url) {
   return BASE === '/' ? url.pathname.replace(/^\\/+/, '') : url.pathname.slice(BASE.length);
 }
@@ -305,7 +312,7 @@ async function reconciliarRevisoesDeMidia() {
   }
 }
 
-async function estadoDosCaches(urlConsultada) {
+async function estadoDosCaches(urlConsultada, urlsConsultadas) {
   const nomes = await caches.keys();
   const cacheNucleo = await caches.open(CACHE_NUCLEO);
   const cacheMidia = await caches.open(CACHE_MIDIA);
@@ -325,6 +332,16 @@ async function estadoDosCaches(urlConsultada) {
     const url = validarUrlDeMidia(urlConsultada);
     urlGuardada = Boolean(await cacheMidia.match(pedidoCompletoDaUrl(url), { ignoreVary: true }));
   }
+  const urlsGuardadas = {};
+  const consultas = [...new Set(
+    (Array.isArray(urlsConsultadas) ? urlsConsultadas : []).map(String),
+  )].slice(0, 700);
+  for (const item of consultas) {
+    const url = validarUrlDeMidia(item);
+    urlsGuardadas[item] = Boolean(
+      await cacheMidia.match(pedidoCompletoDaUrl(url), { ignoreVary: true }),
+    );
+  }
 
   return {
     versao: VERSAO,
@@ -336,6 +353,7 @@ async function estadoDosCaches(urlConsultada) {
       bytesConhecidos,
       itensSemTamanho,
       urlGuardada,
+      urlsGuardadas,
     },
   };
 }
@@ -460,9 +478,20 @@ self.addEventListener('fetch', (evento) => {
     evento.respondWith((async () => {
       try {
         const resposta = await fetch(request);
-        if (resposta.ok) {
-          const cache = await caches.open(CACHE_NUCLEO);
-          await cache.put(INDEX_URL, resposta.clone());
+        const tipo = resposta.headers.get('content-type') || '';
+        if (resposta.ok && ehEntradaDaAplicacao(url) && tipo.includes('text/html')) {
+          try {
+            const cache = await caches.open(CACHE_NUCLEO);
+            await cache.put(INDEX_URL, resposta.clone());
+          } catch (erro) {
+            const detalhe = serializarErro(erro, 'CORE_SHELL_WRITE_FAILED');
+            await publicar('IAT_PWA_ERROR', {
+              etapa: 'cache-shell',
+              ...detalhe,
+              mensagem: 'A página abriu pela rede, mas a atualização do shell offline falhou.',
+              url: request.url,
+            });
+          }
         }
         return resposta;
       } catch {
@@ -571,7 +600,7 @@ self.addEventListener('message', (evento) => {
     return;
   }
   if (dados.tipo === 'IAT_GET_STATUS') {
-    evento.waitUntil(estadoDosCaches(dados.url)
+    evento.waitUntil(estadoDosCaches(dados.url, dados.urls)
       .then((resultado) => responderMensagem(evento, {
         tipo: 'IAT_RESPONSE', ok: true, resultado,
       }))

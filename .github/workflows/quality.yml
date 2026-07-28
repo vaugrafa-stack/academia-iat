@@ -1,0 +1,153 @@
+name: Qualidade
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: quality-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-and-test:
+    name: Build, testes e artefato
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      CI: "true"
+      PAGES_REPO: ${{ github.event.repository.name }}
+
+    steps:
+      - name: Obter o código
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+
+      - name: Instalar pnpm
+        uses: pnpm/action-setup@b906affcce14559ad1aafd4ab0e942779e9f58b1 # v4
+        with:
+          version: 11.9.0
+          run_install: false
+
+      - name: Instalar Node.js
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 24.14.1
+          cache: pnpm
+          cache-dependency-path: pnpm-lock.yaml
+
+      - name: Confirmar a cadeia de ferramentas
+        run: |
+          test "$(node --version)" = "v24.14.1"
+          test "$(pnpm --version)" = "11.9.0"
+
+      - name: Instalar dependências travadas
+        run: pnpm install --frozen-lockfile
+
+      - name: Auditar vulnerabilidades conhecidas
+        run: pnpm audit --audit-level=moderate
+
+      - name: Executar o portão premium
+        run: pnpm audit:premium
+
+      - name: Compilar para o GitHub Pages
+        run: pnpm build
+
+      - name: Executar a suíte de qualidade
+        run: pnpm test
+
+      - name: Executar regressões autocontidas do tooling
+        run: python3 -B -m unittest tools/test_tooling.py
+
+      - name: Auditar o catálogo offline
+        run: node tools/check-offline-packages.mjs
+
+      - name: Validar o artefato publicável
+        run: |
+          node --input-type=module <<'NODE'
+          import { readFile, readdir, stat } from "node:fs/promises";
+          import { join } from "node:path";
+
+          const dist = "dist";
+          const repo = process.env.PAGES_REPO;
+          const base = `/${repo}/`;
+          const required = [
+            "index.html",
+            "manifest.webmanifest",
+            "sw.js",
+            "icone-192.png",
+            "icone-512.png",
+          ];
+
+          for (const file of required) {
+            const info = await stat(join(dist, file));
+            if (!info.isFile() || info.size === 0) {
+              throw new Error(`Artefato obrigatório vazio ou ausente: ${file}`);
+            }
+          }
+
+          const html = await readFile(join(dist, "index.html"), "utf8");
+          const manifest = JSON.parse(
+            await readFile(join(dist, "manifest.webmanifest"), "utf8"),
+          );
+          const serviceWorker = await readFile(join(dist, "sw.js"), "utf8");
+
+          if (manifest.start_url !== base || manifest.scope !== base) {
+            throw new Error(
+              `Manifesto fora da base do Pages: esperado ${base}, ` +
+              `recebido ${manifest.start_url} / ${manifest.scope}`,
+            );
+          }
+          if (!html.includes(`src="${base}assets/`)) {
+            throw new Error(`index.html não referencia o JavaScript sob ${base}`);
+          }
+          if (!html.includes(`href="${base}manifest.webmanifest"`)) {
+            throw new Error(`index.html não referencia o manifesto sob ${base}`);
+          }
+          if (!serviceWorker.includes(`const BASE = ${JSON.stringify(base)}`)) {
+            throw new Error(`service worker não foi gerado para ${base}`);
+          }
+
+          const scripts = [
+            ...html.matchAll(/<script[^>]+src="([^"]+)"/g),
+          ].map((match) => match[1]);
+          if (scripts.length === 0) {
+            throw new Error("index.html não contém entrada JavaScript");
+          }
+          for (const publicUrl of scripts) {
+            if (!publicUrl.startsWith(base)) {
+              throw new Error(`Entrada fora da base esperada: ${publicUrl}`);
+            }
+            const localPath = publicUrl.slice(base.length);
+            const info = await stat(join(dist, localPath));
+            if (!info.isFile() || info.size === 0) {
+              throw new Error(`Entrada JavaScript inválida: ${localPath}`);
+            }
+          }
+
+          const files = await readdir(join(dist, "assets"));
+          if (!files.some((file) => file.endsWith(".js"))) {
+            throw new Error("dist/assets não contém JavaScript");
+          }
+
+          console.log(
+            `Artefato validado para ${base}: ${scripts.length} entrada(s), ` +
+            `${files.length} arquivo(s) em assets.`,
+          );
+          NODE
+
+      - name: Armazenar dist validado
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: academia-iat-${{ github.sha }}
+          path: dist
+          if-no-files-found: error
+          retention-days: 14
+          compression-level: 0
+

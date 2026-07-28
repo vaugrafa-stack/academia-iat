@@ -5,7 +5,7 @@
 // modulo, entao a proxima leva de telas ja podera receber o que precisa
 // por propriedade em vez de herdar do arquivo.
 import React, { useState } from 'react';
-import { Activity, Check, Circle, CircleHelp, Download, Eye, Mail, MessageSquareText, Moon, Sun, UserCheck } from 'lucide-react';
+import { Activity, Check, Circle, CircleHelp, Download, Eye, MessageSquareText, Moon, Sun, UserCheck } from 'lucide-react';
 import { tracks } from './courseData';
 import { PageHeader } from './ui.jsx';
 
@@ -16,41 +16,43 @@ export function ThemeToggle(){const[t,setT]=useState(()=>(typeof document!=='und
  // barra do topo nao tem espaco: la o title e o aria-label seguem valendo.
  return <button className="theme-toggle" onClick={toggle} title={t==='light'?'Mudar para o modo escuro':'Mudar para o modo claro'} aria-label={t==='light'?'Mudar para o modo escuro':'Mudar para o modo claro'}>{t==='light'?<Moon size={18}/>:<Sun size={18}/>}<span>{t==='light'?'Modo Escuro':'Modo Claro'}</span></button>}
 
-export function Suporte(){return <div className="page suporte-page"><PageHeader icon={CircleHelp} kicker="Fale com quem mantém a plataforma" title="Suporte" subtitle="Dúvidas, sugestões de conteúdo ou correções: escreva diretamente ao responsável."/>
- <section className="suporte-card"><div className="sup-avatar">RV</div><div className="sup-info"><h2>Rafael Valgrande Augusto</h2><p className="sup-cargo">Engenheiro Sanitarista e Ambiental</p><a className="sup-mail" href="mailto:bol.rafaelaugusto@iat.pr.gov.br?subject=Academia%20IAT%3A%20d%C3%BAvida%20ou%20sugest%C3%A3o"><MessageSquareText size={16}/> bol.rafaelaugusto@iat.pr.gov.br</a><p className="sup-note">Ao escrever, diga em qual módulo, aula ou tela está a dúvida ou a sugestão: isso acelera a resposta e a correção.</p></div></section>
+export function Suporte(){return <div className="page suporte-page"><PageHeader icon={CircleHelp} kicker="Fale com quem mantém a plataforma" title="Suporte" subtitle="Dúvidas, sugestões de conteúdo ou correções podem ser registradas no canal público do projeto."/>
+ <section className="suporte-card"><div className="sup-avatar" aria-hidden="true">AI</div><div className="sup-info"><h2>Canal do projeto Academia IAT</h2><p className="sup-cargo">Dúvidas de conteúdo, acessibilidade e funcionamento</p><a className="sup-mail" href="https://github.com/vaugrafa-stack/academia-iat/issues" target="_blank" rel="noopener noreferrer"><MessageSquareText size={16}/> Relatar dúvida ou problema</a><p className="sup-note">Informe o módulo, a aula ou a tela, o que era esperado e o que ocorreu. Não anexe processos reais, dados pessoais nem documentos restritos.</p></div></section>
  <section className="suporte-tipos">{[['Dúvida de conteúdo','Algo no material parece incompleto, confuso ou desatualizado.'],['Sugestão','Ideia de melhoria, novo exercício ou tema a aprofundar.'],['Problema técnico','Algo não abre, não salva ou não funciona como deveria.']].map(([t,d])=><article key={t}><strong>{t}</strong><p>{d}</p></article>)}</section></div>}
 
 export function ComparaDiagnostico({d}){
  const e=d.entrada,x=d.saida;
  const pct=r=>Math.round(r.acertos/r.total*100);
- // Agrega por modulo. Com uma questao por modulo o resultado era binario,
- // acertou ou nao; com tres vira quantas de quantas, e da para dizer o tamanho
- // da mudanca em vez de so o sinal dela.
+ // Agrega por modulo apenas para descrever os dois resultados observados. As
+ // perguntas sao as mesmas nas duas aplicacoes, mas isto nao transforma a
+ // variacao em evidencia causal de aprendizagem.
  const porModulo=(r)=>{const m={};for(const id of Object.keys(r.porQuestao||{})){
    const q=r.porQuestao[id];const a=m[q.track]||(m[q.track]={ok:0,n:0});a.n++;if(q.ok)a.ok++}
   return m};
  const antes=porModulo(e),depois=x?porModulo(x):null;
  const deltas=depois?Object.keys(antes).filter(t=>depois[t]).map(t=>({
    t,de:antes[t].ok,para:depois[t].ok,n:antes[t].n,d:depois[t].ok-antes[t].ok
-  })).filter(z=>z.d!==0).sort((a,b)=>b.d-a.d):[];
+  })).sort((a,b)=>b.d-a.d):[];
  const ganhos=deltas.filter(z=>z.d>0);
  const perdas=deltas.filter(z=>z.d<0);
+ const estaveis=deltas.filter(z=>z.d===0);
  const nome=id=>tracks.find(t=>t.id===id)?.code||id;
  return <section className="diag-compara">
-  <header><Activity size={16}/><h2>Ponto de partida e ponto de chegada</h2></header>
+  <header><Activity size={16}/><h2>Duas aplicações dos mesmos itens-âncora</h2></header>
   <div className="dc-barras">
-   <div><small>Entrada</small><strong>{e.acertos}/{e.total}</strong><i><em style={{width:`${pct(e)}%`}}/></i>
+   <div><small>Primeira aplicação</small><strong>{e.acertos}/{e.total}</strong><i><em style={{width:`${pct(e)}%`}}/></i>
     <span>{new Date(e.data).toLocaleDateString('pt-BR')} · {e.leitura}% do conteúdo lido</span></div>
-   {x?<div><small>Saída</small><strong>{x.acertos}/{x.total}</strong><i><em className="saida" style={{width:`${pct(x)}%`}}/></i>
+   {x?<div><small>Reaplicação</small><strong>{x.acertos}/{x.total}</strong><i><em className="saida" style={{width:`${pct(x)}%`}}/></i>
     <span>{new Date(x.data).toLocaleDateString('pt-BR')} · {x.leitura}% do conteúdo lido</span></div>
-   :<div className="dc-pendente"><small>Saída</small><p>Refaça o diagnóstico depois de estudar para medir o que mudou.</p></div>}
+   :<div className="dc-pendente"><small>Reaplicação</small><p>Responda novamente depois de estudar para obter outra amostra do seu desempenho.</p></div>}
   </div>
-  {x&&<p className="dc-saldo">{x.acertos>e.acertos?`Ganho de ${x.acertos-e.acertos} ${x.acertos-e.acertos===1?'questão':'questões'} entre os dois diagnósticos.`:x.acertos===e.acertos?'Mesmo número de acertos nos dois diagnósticos.':`Queda de ${e.acertos-x.acertos} ${e.acertos-x.acertos===1?'questão':'questões'}: vale rever o que mudou.`}</p>}
+  {x&&<p className="dc-saldo">{x.acertos>e.acertos?`Variação observada: ${x.acertos-e.acertos} ${x.acertos-e.acertos===1?'acerto a mais':'acertos a mais'} na reaplicação.`:x.acertos===e.acertos?'Variação observada: mesma quantidade de acertos nas duas aplicações.':`Variação observada: ${e.acertos-x.acertos} ${e.acertos-x.acertos===1?'acerto a menos':'acertos a menos'} na reaplicação.`}</p>}
   {x&&deltas.length>0&&<div className="dc-modulos">
-   {ganhos.length>0&&<p><b className="ok">Subiu</b> {ganhos.map(z=>nome(z.t)+' '+z.de+'\u2192'+z.para+' de '+z.n).join(' \u00b7 ')}</p>}
-   {perdas.length>0&&<p><b className="nao">Caiu</b> {perdas.map(z=>nome(z.t)+' '+z.de+'\u2192'+z.para+' de '+z.n).join(' \u00b7 ')}</p>}
+   {ganhos.length>0&&<p><b className="ok">Mais acertos</b> {ganhos.map(z=>nome(z.t)+' '+z.de+'\u2192'+z.para+' de '+z.n).join(' \u00b7 ')}</p>}
+   {perdas.length>0&&<p><b className="nao">Menos acertos</b> {perdas.map(z=>nome(z.t)+' '+z.de+'\u2192'+z.para+' de '+z.n).join(' \u00b7 ')}</p>}
+   {estaveis.length>0&&<p><b>Mesmo resultado</b> {estaveis.map(z=>nome(z.t)+' '+z.de+'\u2192'+z.para+' de '+z.n).join(' \u00b7 ')}</p>}
   </div>}
-  <small className="dc-limite">São três questões por módulo, sempre as mesmas nas duas medidas. Três itens dizem se houve mudança e de que tamanho; não são uma nota do módulo.</small>
+  <small className="dc-limite">São três itens-âncora por módulo: as perguntas se repetem, enquanto ordem e alternativas são embaralhadas. A variação é apenas descritiva e pode refletir familiaridade com os itens; não é medida validada, prova de aprendizagem causal nem demonstração de competência.</small>
  </section>
 }
 

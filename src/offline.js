@@ -6,6 +6,7 @@
 
 const BASE = `${(import.meta.env.BASE_URL || '/').replace(/\/+$/, '')}/`;
 const TEMPO_LIMITE_MENSAGEM = 30_000;
+const TEMPO_LIMITE_PRONTIDAO = 10_000;
 
 export class ErroOffline extends Error {
   constructor(codigo, mensagem, detalhes) {
@@ -29,6 +30,14 @@ function ambienteCompativel() {
   return typeof navigator !== 'undefined' && 'serviceWorker' in navigator;
 }
 
+function fecharPorta(porta) {
+  try {
+    porta?.close?.();
+  } catch {
+    // Uma porta transferida pode já ter perdido a propriedade no contexto atual.
+  }
+}
+
 function idDaMensagem() {
   if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
     return crypto.randomUUID();
@@ -36,12 +45,60 @@ function idDaMensagem() {
   return `iat-${Date.now().toString(36)}-${Math.random().toString(36).slice(2)}`;
 }
 
-async function workerAtivo() {
+function aguardarProntidao(container, {
+  signal,
+  timeoutMs = TEMPO_LIMITE_PRONTIDAO,
+} = {}) {
+  return new Promise((resolve, reject) => {
+    let encerrado = false;
+    let timer;
+
+    const terminar = (fn, valor) => {
+      if (encerrado) return;
+      encerrado = true;
+      clearTimeout(timer);
+      signal?.removeEventListener('abort', cancelar);
+      fn(valor);
+    };
+    const cancelar = () => terminar(
+      reject,
+      new ErroOffline('PWA_ABORTED', 'Operação offline cancelada.'),
+    );
+
+    if (signal?.aborted) {
+      cancelar();
+      return;
+    }
+    signal?.addEventListener('abort', cancelar, { once: true });
+    timer = setTimeout(() => terminar(
+      reject,
+      new ErroOffline(
+        'PWA_READY_TIMEOUT',
+        'O Service Worker não ficou pronto dentro do prazo. Recarregue a plataforma online e tente novamente.',
+      ),
+    ), timeoutMs);
+
+    try {
+      Promise.resolve(container.ready).then(
+        (registro) => terminar(resolve, registro),
+        (erro) => terminar(reject, erroNormalizado(erro, 'PWA_READY_FAILED')),
+      );
+    } catch (erro) {
+      terminar(reject, erroNormalizado(erro, 'PWA_READY_FAILED'));
+    }
+  });
+}
+
+async function workerAtivo({
+  signal,
+  timeoutMs = TEMPO_LIMITE_PRONTIDAO,
+} = {}) {
   if (!ambienteCompativel()) {
     throw new ErroOffline('PWA_UNSUPPORTED', 'Este navegador não oferece Service Worker.');
   }
-  const registro = await navigator.serviceWorker.ready;
-  const worker = navigator.serviceWorker.controller || registro.active;
+  const container = navigator.serviceWorker;
+  const registro = await aguardarProntidao(container, { signal, timeoutMs });
+  const worker = container.controller || registro?.active;
   if (!worker) {
     throw new ErroOffline('PWA_NOT_READY', 'O conteúdo offline ainda está sendo preparado.');
   }
@@ -52,8 +109,9 @@ async function enviarMensagem(tipo, dados = {}, {
   onProgresso,
   signal,
   timeoutMs = TEMPO_LIMITE_MENSAGEM,
+  readyTimeoutMs = Math.min(timeoutMs, TEMPO_LIMITE_PRONTIDAO),
 } = {}) {
-  const worker = await workerAtivo();
+  const worker = await workerAtivo({ signal, timeoutMs: readyTimeoutMs });
   return new Promise((resolve, reject) => {
     const canal = new MessageChannel();
     let encerrado = false;
@@ -64,7 +122,9 @@ async function enviarMensagem(tipo, dados = {}, {
       encerrado = true;
       clearTimeout(timer);
       signal?.removeEventListener('abort', cancelar);
-      canal.port1.close();
+      canal.port1.onmessage = null;
+      fecharPorta(canal.port1);
+      fecharPorta(canal.port2);
       fn(valor);
     };
     const cancelar = () => terminar(
@@ -119,14 +179,16 @@ export function criarAplicadorAtualizacao({
 
   return function aplicarAtualizacao() {
     if (emCurso) return emCurso;
-    emCurso = new Promise((resolve, reject) => {
+    const tentativa = new Promise((resolve, reject) => {
       let finalizado = false;
       const canal = new MessageChannel();
       let timer;
 
       const limpar = () => {
         clearTimeout(timer);
-        canal.port1.close();
+        canal.port1.onmessage = null;
+        fecharPorta(canal.port1);
+        fecharPorta(canal.port2);
         serviceWorkerContainer.removeEventListener('controllerchange', aoTrocarControle);
       };
       const falhar = (erro) => {
@@ -134,8 +196,8 @@ export function criarAplicadorAtualizacao({
         finalizado = true;
         limpar();
         const normalizado = erroNormalizado(erro, 'UPDATE_FAILED');
-        onErro?.(normalizado);
         reject(normalizado);
+        onErro?.(normalizado);
       };
       const aoTrocarControle = () => {
         if (finalizado) return;
@@ -167,7 +229,11 @@ export function criarAplicadorAtualizacao({
         falhar(erro);
       }
     });
-    return emCurso;
+    emCurso = tentativa;
+    tentativa.catch(() => {
+      if (emCurso === tentativa) emCurso = null;
+    });
+    return tentativa;
   };
 }
 
@@ -181,6 +247,10 @@ export function registrarOffline({
 
   const limpezas = [];
   let cancelado = false;
+  const limparTudo = () => {
+    cancelado = true;
+    limpezas.splice(0).forEach((fn) => fn());
+  };
   const adicionar = (alvo, evento, fn, opcoes) => {
     alvo.addEventListener(evento, fn, opcoes);
     limpezas.push(() => alvo.removeEventListener(evento, fn, opcoes));
@@ -194,7 +264,7 @@ export function registrarOffline({
   }
 
   if (!ambienteCompativel() || import.meta.env.DEV) {
-    return () => limpezas.splice(0).forEach((fn) => fn());
+    return limparTudo;
   }
 
   const iniciar = async () => {
@@ -254,7 +324,7 @@ export function registrarOffline({
         }
       });
     } catch (erro) {
-      onErro?.(erroNormalizado(erro, 'PWA_REGISTER_FAILED'));
+      if (!cancelado) onErro?.(erroNormalizado(erro, 'PWA_REGISTER_FAILED'));
     }
   };
 
@@ -265,14 +335,21 @@ export function registrarOffline({
     adicionar(window, 'load', carregou, { once: true });
   }
 
-  return () => {
-    cancelado = true;
-    limpezas.splice(0).forEach((fn) => fn());
-  };
+  return limparTudo;
 }
 
-export async function obterEstadoOffline({ url } = {}) {
-  return enviarMensagem('IAT_GET_STATUS', { url });
+export async function obterEstadoOffline({
+  url,
+  urls,
+  signal,
+  timeoutMs,
+  readyTimeoutMs,
+} = {}) {
+  return enviarMensagem(
+    'IAT_GET_STATUS',
+    { url, urls },
+    { signal, timeoutMs, readyTimeoutMs },
+  );
 }
 
 export async function baixarMidiaOffline(urls, {

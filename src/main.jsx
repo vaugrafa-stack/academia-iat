@@ -1,221 +1,2858 @@
-import React,{useEffect,useMemo,useRef,useState}from'react';
-import{Activity,AlertTriangle,ArrowRight,Award,BadgeCheck,BookMarked,BookOpen,Bookmark,BookmarkCheck,Building2,Check,CheckCircle2,ChevronLeft,ChevronRight,Circle,CircleHelp,ClipboardCheck,Clock,Compass,Database,Download,ExternalLink,Eye,FileCheck,FileCheck2,FileText,Files,Filter,FlaskConical,GitBranch,GraduationCap,Home,Image as ImageIcon,Inbox,Info,Layers3,Library,Lightbulb,Lock,Map as MapIcon,Maximize2,Menu,MessageSquareText,Milestone,PanelLeftClose,PanelLeftOpen,Pause,Play,RefreshCw,RotateCcw,Route,Scale,Search,ShieldCheck,Sparkles,StickyNote,Table2,Target,Trees,Moon,Sun,Trophy,X,Zap,CloudOff,ZoomIn,ZoomOut}from'lucide-react';
-import HydroGuide from'./hydro';
-import MapaParana from'./mapa.jsx';
-import RedatorIT from'./redator.jsx';
-import{ThemeToggle,Suporte,ComparaDiagnostico,AutoAvaliacao}from'./painelAluno.jsx';
-import{PageHeader,Empty}from'./ui.jsx';
-import mapaDados from'./data/mapa-parana.json';
-import popDataUrl from'./data/pop-content.json?url';
-import flowDataUrl from'./data/flowcharts-content.json?url';
-import aulaMediaUrl from'./data/aula-media.json?url';
-import{featuredMedia,flowSpecs,questionBank,scenarios,trackGroups,tracks,GRUPOS_LAB}from'./courseData';
-import{loadProfile,saveProfile,hasAccount,registerCertificate,certificateSvg,downloadSvg,listUsers,switchUser,createUser,deleteUser,exportBackup,importBackup,progressKey}from'./profile';
-import{resumoDaNorma}from'./leiResumos';
-import{criarDerivados,norm}from'./derivados.js';
-import{registrarOffline}from'./offline.js';
-import{loadAppData}from'./appData.js';
-import{getLearningDesign}from'./learningDesign.js';
-import{resolveOfficialSource}from'./officialSources.js';
-import'./styles.css';
-import'./nota10.css';
-try{const _t=localStorage.getItem('academia-iat-theme');document.documentElement.dataset.theme=(_t==='light'||_t==='dark')?_t:'dark';}catch{document.documentElement.dataset.theme='dark';}
+import React, {
+  lazy,
+  Suspense,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
+import {
+  AlertTriangle,
+  ArrowRight,
+  Award,
+  BadgeCheck,
+  BookMarked,
+  BookOpen,
+  Bookmark,
+  BookmarkCheck,
+  Building2,
+  Check,
+  CheckCircle2,
+  ChevronLeft,
+  ChevronRight,
+  Circle,
+  CircleHelp,
+  ClipboardCheck,
+  Clock,
+  Compass,
+  Database,
+  Download,
+  ExternalLink,
+  Eye,
+  FileCheck,
+  FileCheck2,
+  FileText,
+  Files,
+  Filter,
+  FlaskConical,
+  GitBranch,
+  GraduationCap,
+  Home,
+  Image as ImageIcon,
+  Inbox,
+  Info,
+  Layers3,
+  Library,
+  Lightbulb,
+  Map as MapIcon,
+  Maximize2,
+  Menu,
+  MessageSquareText,
+  Milestone,
+  PanelLeftClose,
+  PanelLeftOpen,
+  Pause,
+  Play,
+  RefreshCw,
+  RotateCcw,
+  Route,
+  Scale,
+  Search,
+  ShieldCheck,
+  Sparkles,
+  StickyNote,
+  Table2,
+  Target,
+  Trees,
+  Trophy,
+  X,
+  Zap,
+  CloudOff,
+  ZoomIn,
+  ZoomOut,
+} from "lucide-react";
+import TranscriptPanel from "./TranscriptPanel.jsx";
+import {
+  ThemeToggle,
+  Suporte,
+  ComparaDiagnostico,
+} from "./painelAluno.jsx";
+import { PageHeader, Empty } from "./ui.jsx";
+import mapaDados from "./data/mapa-parana.json";
+import popDataUrl from "./data/pop-content.json?url";
+import flowDataUrl from "./data/flowcharts-content.json?url";
+import aulaMediaUrl from "./data/aula-media.json?url";
+import {
+  featuredMedia as featuredMediaSource,
+  flowSpecs,
+  questionBank,
+  scenarios,
+  trackGroups,
+  tracks,
+  GRUPOS_LAB,
+} from "./courseData";
+import {
+  loadProfile,
+  defaultProfile,
+  saveProfile,
+  hasAccount,
+  registerCertificate,
+  certificateSvg,
+  downloadSvg,
+  listUsers,
+  switchUser,
+  createUser,
+  deleteUser,
+  exportBackup,
+  importBackup,
+  exportProfileRegistryRecovery,
+  resetInvalidProfileRegistry,
+  progressKey,
+  validateProgress,
+} from "./profile";
+import { resumoDaNorma } from "./leiResumos";
+import { criarDerivados, norm } from "./derivados.js";
+import { registrarOffline } from "./offline.js";
+import { loadAppData } from "./appData.js";
+import { getLearningDesign } from "./learningDesign.js";
+import { resolveOfficialSource } from "./officialSources.js";
+import {
+  newAssessmentSeed,
+  prepareAssessment,
+  selectDiagnosticAnchors,
+} from "./assessmentDesign.js";
+import { practiceRecordStatus } from "./learningRecords.js";
+import {
+  LEARNING_PATHS,
+  learningPathStats,
+  resolveLearningPath,
+} from "./learningPaths.js";
+import {
+  MIN_ACTIVE_RECALL_CHARS,
+  lessonEvidenceStatus,
+  selectLessonQuestion,
+  selectLessonScenario,
+} from "./lessonEvidence.js";
+import "./styles.css";
+import "./nota10.css";
+
+const HydroGuide = lazy(() => import("./hydro.jsx"));
+const MapaParana = lazy(() => import("./mapa.jsx"));
+const RedatorIT = lazy(() => import("./redator.jsx"));
+const LaboratorioPremium = lazy(() => import("./laboratorio.jsx"));
+const OfflineManager = lazy(() => import("./OfflineManager.jsx"));
+try {
+  const _t = localStorage.getItem("academia-iat-theme");
+  document.documentElement.dataset.theme =
+    _t === "light" || _t === "dark" ? _t : "dark";
+} catch {
+  document.documentElement.dataset.theme = "dark";
+}
 
 // Sob deploy em subcaminho (GitHub Pages), os caminhos absolutos dos dados precisam do prefixo da base
-const BASE=(import.meta.env.BASE_URL||'/').replace(/\/$/,'');
-const wb=p=>typeof p==='string'&&p.startsWith('/')?BASE+p:p;
-const{popData,flowData,aulaMedia}=await loadAppData({popDataUrl,flowDataUrl,aulaMediaUrl,base:BASE,featuredMedia});
+const BASE = (import.meta.env.BASE_URL || "/").replace(/\/$/, "");
+const wb = (p) => (typeof p === "string" && p.startsWith("/") ? BASE + p : p);
+const {
+  popData,
+  flowData,
+  aulaMedia,
+  featuredMedia,
+  warnings: appDataWarnings,
+} = await loadAppData({
+  popDataUrl,
+  flowDataUrl,
+  aulaMediaUrl,
+  base: BASE,
+  featuredMedia: featuredMediaSource,
+});
 
-const TRACK_ICONS={Compass,Scale,Inbox,GitBranch,FileCheck,Milestone,RefreshCw,ShieldCheck,Files,Map:MapIcon,Trees,Building2,ClipboardCheck,BadgeCheck,Library};
+const TRACK_ICONS = {
+  Compass,
+  Scale,
+  Inbox,
+  GitBranch,
+  FileCheck,
+  Milestone,
+  RefreshCw,
+  ShieldCheck,
+  Files,
+  Map: MapIcon,
+  Trees,
+  Building2,
+  ClipboardCheck,
+  BadgeCheck,
+  Library,
+};
 
-const STORAGE_KEY='academia-iat-progress-v2';
+const STORAGE_KEY = "academia-iat-progress-v2";
 // Um so ponto de entrada para o dado derivado do POP. Os nomes seguem os
 // mesmos, entao nenhuma tela precisou mudar nesta etapa.
-const{blockMap,tableMap,figureByBlock,sectionMap,GLOSSARIO,siglasDaAula,
- sectionById,lessons,lessonMap,trackLessons,sectionText,INDICE,firstLesson}=criarDerivados(popData,tracks);
-const NAV=[['dashboard','Visão geral',Home],['hidreletricas','Hidrelétricas',Zap],['mapa','Mapa do Paraná',MapIcon],['formacao','Formação',BookOpen],['fluxos','Fluxogramas',GitBranch],['laboratorio','Laboratório',FlaskConical],['redator','Redigir uma IT',FileText],['avaliacoes','Avaliações',ClipboardCheck],['biblioteca','Biblioteca',Library],['perfil','Meu perfil',BadgeCheck],['suporte','Suporte',CircleHelp]];
+const {
+  blockMap,
+  tableMap,
+  figureByBlock,
+  sectionMap,
+  GLOSSARIO,
+  siglasDaAula,
+  sectionById,
+  lessons,
+  lessonMap,
+  trackLessons,
+  sectionText,
+  INDICE,
+  firstLesson,
+} = criarDerivados(popData, tracks);
+const NAV = [
+  ["dashboard", "Visão geral", Home],
+  ["hidreletricas", "Hidrelétricas", Zap],
+  ["mapa", "Mapa do Paraná", MapIcon],
+  ["formacao", "Formação", BookOpen],
+  ["fluxos", "Fluxogramas", GitBranch],
+  ["laboratorio", "Laboratório", FlaskConical],
+  ["redator", "Redigir uma IT", FileText],
+  ["avaliacoes", "Avaliações", ClipboardCheck],
+  ["biblioteca", "Biblioteca", Library],
+  ["perfil", "Meu perfil", BadgeCheck],
+  ["suporte", "Suporte", CircleHelp],
+];
 
-function useStoredState(){
- const key=useMemo(()=>{try{return progressKey()}catch{return STORAGE_KEY}},[]);
- const initial={completed:[],bookmarks:[],notes:{},quizScores:{},labs:{},lastLesson:null,videoSeen:[],streak:1,doneAt:{},lastVisit:null,its:{},itCasoAtual:null,diagnostico:{},autoaval:{},enquadra:{acertos:0,total:0}};
- const[state,setState]=useState(()=>{try{return{...initial,...JSON.parse(localStorage.getItem(key)||'{}')}}catch{return initial}});
- useEffect(()=>{localStorage.setItem(key,JSON.stringify(state))},[state,key]);
- return[state,setState];
+function useStoredState() {
+  const key = useMemo(() => {
+    try {
+      return progressKey();
+    } catch {
+      return STORAGE_KEY;
+    }
+  }, []);
+  const initialRef = useRef({
+      completed: [],
+      bookmarks: [],
+      notes: {},
+      quizScores: {},
+      labs: {},
+      lastLesson: null,
+      videoSeen: [],
+      streak: 1,
+      doneAt: {},
+      lessonEvidence: {},
+      lastVisit: null,
+      its: {},
+      itCasoAtual: null,
+      diagnostico: {},
+      autoaval: {},
+      enquadra: { acertos: 0, total: 0 },
+    });
+  const loadRef = useRef(null);
+  if (!loadRef.current) {
+    const initial = initialRef.current;
+    let raw = null;
+    let readSucceeded = false;
+    try {
+      raw = localStorage.getItem(key);
+      readSucceeded = true;
+      loadRef.current = {
+        state: {
+          ...initial,
+          ...(validateProgress(JSON.parse(raw || "{}")) || {}),
+        },
+        raw: null,
+        blocked: false,
+        issue: null,
+      };
+    } catch (error) {
+      loadRef.current = {
+        state: initial,
+        raw,
+        blocked: true,
+        issue: {
+          code: readSucceeded ? "STORAGE_CORRUPT" : "STORAGE_UNAVAILABLE",
+          message: readSucceeded
+            ? "O progresso salvo está incompatível ou corrompido. O valor original foi preservado e não será sobrescrito sem sua decisão."
+            : "O navegador não permitiu ler nem salvar o progresso local nesta sessão.",
+          detail: error instanceof Error ? error.message : "Formato inválido.",
+        },
+      };
+    }
+  }
+  const persistenceBlocked = useRef(loadRef.current.blocked);
+  const invalidRaw = useRef(loadRef.current.raw);
+  const [state, setState] = useState(loadRef.current.state);
+  const [storageStatus, setStorageStatus] = useState(loadRef.current.issue);
+  useEffect(() => {
+    if (persistenceBlocked.current) return undefined;
+    const timer = setTimeout(() => {
+      try {
+        const clean = validateProgress(state);
+        localStorage.setItem(key, JSON.stringify(clean));
+        setStorageStatus(null);
+      } catch (error) {
+        const quota =
+          error?.name === "QuotaExceededError" ||
+          error?.name === "NS_ERROR_DOM_QUOTA_REACHED" ||
+          error?.code === 22 ||
+          error?.code === 1014;
+        setStorageStatus({
+          code: quota ? "STORAGE_QUOTA" : "STORAGE_UNAVAILABLE",
+          message: quota
+            ? "O navegador ficou sem espaço. As mudanças mais recentes podem não ter sido salvas."
+            : "O navegador não permitiu salvar o progresso desta sessão.",
+        });
+      }
+    }, 180);
+    return () => clearTimeout(timer);
+  }, [state, key]);
+  function resolveCorruptStorage(action) {
+    if (action === "download") {
+      const blob = new Blob([invalidRaw.current || ""], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "academia-iat-progresso-recuperacao.json";
+      link.click();
+      URL.revokeObjectURL(url);
+      return;
+    }
+    if (action !== "reset") return;
+    if (!window.confirm("Descartar o progresso incompatível e começar um registro local novo?")) return;
+    const fresh = { ...initialRef.current };
+    try {
+      localStorage.setItem(key, JSON.stringify(fresh));
+      persistenceBlocked.current = false;
+      invalidRaw.current = null;
+      setStorageStatus(null);
+      setState(fresh);
+    } catch {
+      setStorageStatus({
+        code: "STORAGE_UNAVAILABLE",
+        message: "O navegador não permitiu reiniciar o progresso local.",
+      });
+    }
+  }
+  return [state, setState, storageStatus, resolveCorruptStorage];
 }
 // Cada aula vai para a trilha cuja secao declarada for o prefixo MAIS ESPECIFICO
 // do numero. Assim 20.2.1 fica no modulo de unidades de conservacao (20.2) e nao
 // no de intervenientes (20), sem precisar de regra especial por modulo.
-function trackProgress(id,state){const ls=trackLessons.get(id)||[];return ls.length?Math.round(ls.filter(l=>state.completed.includes(l.id)).length/ls.length*100):0}
-// Prontidao do modulo: leitura, avaliacao e pratica. O certificado passa a
-// depender de desempenho, nao so de auto-marcacao de leitura.
-function prontidao(trackId,state){
- const leitura=trackProgress(trackId,state)===100;
- const temQuiz=questionBank.some(q=>q.track===trackId);
- const q=state.quizScores&&state.quizScores[trackId];
- const avaliacao=!temQuiz||(q&&q.total&&q.score/q.total>=0.8);
- const cen=scenarios.filter(c=>c.track===trackId);
- const pratica=!cen.length||cen.some(c=>{const r=state.labs&&state.labs[c.id];return r&&r.total&&r.score/r.total>=0.6});
- const feitos=[leitura,!!avaliacao,!!pratica].filter(Boolean).length;
- return{leitura,avaliacao:!!avaliacao,pratica:!!pratica,temQuiz,temPratica:cen.length>0,pronto:leitura&&!!avaliacao&&!!pratica,pct:Math.round(feitos/3*100)};
+function trackProgress(id, state) {
+  const ls = trackLessons.get(id) || [];
+  return ls.length
+    ? Math.round(
+        (ls.filter((l) => state.completed.includes(l.id)).length / ls.length) *
+          100,
+      )
+    : 0;
+}
+// Requisitos automáticos do registro pessoal de autoestudo. O mérito da
+// fundamentação continua separado e depende de revisão humana.
+function requisitosAutoestudo(trackId, state) {
+  const leitura = trackProgress(trackId, state) === 100;
+  const temQuiz = questionBank.some((q) => q.track === trackId);
+  const q = state.quizScores && state.quizScores[trackId];
+  const avaliacao = !temQuiz || (q && q.total && q.score / q.total >= 0.8);
+  const cen = scenarios.filter((c) => c.track === trackId);
+  const praticaRegistro = practiceRecordStatus(cen, state.labs);
+  const pratica = praticaRegistro.objectiveMet;
+  const feitos = [leitura, !!avaliacao, !!pratica].filter(Boolean).length;
+  return {
+    leitura,
+    avaliacao: !!avaliacao,
+    pratica: !!pratica,
+    praticaEntregue: praticaRegistro.submitted,
+    praticaObjetiva: praticaRegistro.objectiveMet,
+    praticaRevisada: praticaRegistro.humanApproved,
+    praticaPercentual: praticaRegistro.bestObjectivePercent,
+    temQuiz,
+    temPratica: praticaRegistro.applies,
+    pronto: leitura && !!avaliacao && !!pratica,
+    pct: Math.round((feitos / 3) * 100),
+  };
 }
 // Indice unico de busca: aulas, quadros e siglas. Antes a busca do topo via so
 // aulas e a da Biblioteca via aulas e quadros, com coberturas diferentes.
 
-const VIEW_IDS=['dashboard','hidreletricas','mapa','formacao','fluxos','laboratorio','redator','avaliacoes','biblioteca','perfil','suporte'];
-function parseHash(){const h=((typeof location!=='undefined'&&location.hash)||'').replace(/^#\/?/,'');if(!h)return{view:'dashboard',lesson:null};const i=h.indexOf('/');const seg=i<0?h:h.slice(0,i);const rest=i<0?'':h.slice(i+1);if(seg==='aula'&&rest)return{view:'lesson',lesson:decodeURIComponent(rest)};if(VIEW_IDS.includes(seg))return{view:seg,lesson:null};return{view:'dashboard',lesson:null};}
-function reloadFade(){document.body.classList.add('page-leave');setTimeout(()=>location.reload(),240)}
-function pushHash(t){if(typeof location==='undefined')return;if(location.hash===t)return;try{history.pushState(null,'',t)}catch{location.hash=t}}
-function App(){
- const [profile,setProfileRaw]=useState(()=>loadProfile());
- const setProfile=(p)=>{const v=typeof p==='function'?p(profile):p;setProfileRaw(v);saveProfile(v);};
- const[state,setState]=useStoredState();
- const _init=parseHash();
- const[view,setView]=useState(_init.view);
- const[selectedLesson,setSelectedLesson]=useState(()=>_init.lesson&&lessonMap.has(_init.lesson)?_init.lesson:(lessonMap.has(state.lastLesson)?state.lastLesson:firstLesson('m00')?.id));
- const[menuOpen,setMenuOpen]=useState(false),[searchOpen,setSearchOpen]=useState(false),[toast,setToast]=useState('');
- // Conexao e versao nova. A atualizacao nao entra sozinha: ela esperaria a
- // pessoa terminar de escrever a fundamentacao no laboratorio, e recarregar
- // no meio disso jogaria fora o que ela digitou.
- const[online,setOnline]=useState(true),[aplicarUpdate,setAplicarUpdate]=useState(null);
- useEffect(()=>{registrarOffline({onConexao:setOnline,onAtualizacao:fn=>setAplicarUpdate(()=>fn)})},[]);
- const progress=Math.round(state.completed.length/lessons.length*100);
- useEffect(()=>{const fn=e=>{if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='k'){e.preventDefault();setSearchOpen(true)}if(e.key==='Escape')setSearchOpen(false)};window.addEventListener('keydown',fn);return()=>window.removeEventListener('keydown',fn)},[]);
- useEffect(()=>{if(toast){const id=setTimeout(()=>setToast(''),2600);return()=>clearTimeout(id)}},[toast]);
- useEffect(()=>{const onNav=()=>{const p=parseHash();if(p.view==='lesson'){if(p.lesson&&lessonMap.has(p.lesson)){setSelectedLesson(p.lesson);setState(s=>s.lastLesson===p.lesson?s:{...s,lastLesson:p.lesson})}setView('lesson')}else setView(p.view);setMenuOpen(false);setSearchOpen(false)};window.addEventListener('popstate',onNav);window.addEventListener('hashchange',onNav);return()=>{window.removeEventListener('popstate',onNav);window.removeEventListener('hashchange',onNav)}},[]);
- function go(next){setView(next);setMenuOpen(false);pushHash(next==='dashboard'?'#/':'#/'+next);scrollTo({top:0,behavior:'smooth'})}
- function openLesson(id){if(!id)return;setSelectedLesson(id);setState(s=>({...s,lastLesson:id}));setView('lesson');setSearchOpen(false);setMenuOpen(false);pushHash('#/aula/'+encodeURIComponent(id));scrollTo({top:0,behavior:'smooth'})}
- function complete(id){const agora=new Date().toISOString();setState(s=>({...s,completed:s.completed.includes(id)?s.completed.filter(x=>x!==id):[...s.completed,id],doneAt:{...(s.doneAt||{}),[id]:s.completed.includes(id)?undefined:agora},lastVisit:agora}));setToast(state.completed.includes(id)?'Aula marcada como não concluída':'Aula concluída e progresso salvo')}
- function bookmark(id){setState(s=>({...s,bookmarks:s.bookmarks.includes(id)?s.bookmarks.filter(x=>x!==id):[...s.bookmarks,id]}));setToast(state.bookmarks.includes(id)?'Favorito removido':'Aula salva nos favoritos')}
- let content={dashboard:<Dashboard state={state} progress={progress} go={go} openLesson={openLesson}/>,hidreletricas:<HydroGuide go={go}/>,mapa:<MapaParana dados={mapaDados} state={state} setState={setState}/>,formacao:<Formation state={state} openLesson={openLesson}/>,fluxos:<Flowcharts state={state} setState={setState}/>,laboratorio:<Laboratory state={state} setState={setState}/>,redator:<RedatorIT scenarios={scenarios} grupos={GRUPOS_LAB} state={state} setState={setState} go={go}/>,avaliacoes:<Assessments state={state} setState={setState} openLesson={openLesson}/>,biblioteca:<KnowledgeLibrary state={state} openLesson={openLesson}/>,perfil:<Profile state={state} progress={progress} profile={profile} setProfile={setProfile} go={go} openLesson={openLesson}/>,suporte:<Suporte/>,lesson:<Lesson lesson={lessonMap.get(selectedLesson)||lessons[0]} state={state} setState={setState} openLesson={openLesson} complete={complete} bookmark={bookmark} go={go}/>}[view];
- return <div className="app-shell"><a className="skip-link" href="#conteudo">Ir para o conteúdo</a>
-  <Topbar onMenu={()=>setMenuOpen(v=>!v)} onSearch={()=>setSearchOpen(true)} progress={progress} profile={profile} onProfile={()=>go('perfil')}/>
-  <Sidebar view={view} go={go} open={menuOpen} openLesson={openLesson}/>
-  {menuOpen&&<button className="nav-scrim" aria-label="Fechar menu" onClick={()=>setMenuOpen(false)}/>} 
-  <main id="conteudo" tabIndex={-1} className={'main '+(view==='lesson'?'lesson-main':'')}><div className="view-anim" key={view==='lesson'?'l:'+selectedLesson:view}>{content}</div></main>
-  {searchOpen&&<GlobalSearch close={()=>setSearchOpen(false)} abrir={r=>{setSearchOpen(false);if(r.type==='seção')return openLesson(r.id);ALVO_BIB=r.type==='sigla'?{tab:'glossario'}:{tab:'tabelas',tabela:r.id};go('biblioteca')}}/>} 
-  {!online&&<div className="offline-bar" role="status"><CloudOff size={15}/> Sem conexão. O procedimento, os quadros, os fluxos e a prática continuam disponíveis; vídeos ainda não abertos ficam indisponíveis.</div>}
-  {aplicarUpdate&&<div className="update-bar" role="status"><RefreshCw size={15}/><span>Há uma versão nova da Academia.</span><button onClick={()=>aplicarUpdate()}>Atualizar agora</button><button className="ub-depois" onClick={()=>setAplicarUpdate(null)}>Depois</button></div>}
-  {toast&&<div className="toast"><CheckCircle2/>{toast}</div>}
- </div>
+const VIEW_IDS = [
+  "dashboard",
+  "hidreletricas",
+  "mapa",
+  "formacao",
+  "fluxos",
+  "laboratorio",
+  "redator",
+  "avaliacoes",
+  "biblioteca",
+  "perfil",
+  "suporte",
+];
+function parseHash() {
+  const h = ((typeof location !== "undefined" && location.hash) || "").replace(
+    /^#\/?/,
+    "",
+  );
+  if (!h) return { view: "dashboard", lesson: null, scenario: null };
+  const i = h.indexOf("/");
+  const seg = i < 0 ? h : h.slice(0, i);
+  const rest = i < 0 ? "" : h.slice(i + 1);
+  if (seg === "aula" && rest)
+    return { view: "lesson", lesson: decodeURIComponent(rest), scenario: null };
+  if (seg === "laboratorio")
+    return {
+      view: "laboratorio",
+      lesson: null,
+      scenario: rest ? decodeURIComponent(rest) : null,
+    };
+  if (VIEW_IDS.includes(seg))
+    return { view: seg, lesson: null, scenario: null };
+  return { view: "dashboard", lesson: null, scenario: null };
+}
+function reloadFade() {
+  document.body.classList.add("page-leave");
+  setTimeout(() => location.reload(), 240);
+}
+function pushHash(t) {
+  if (typeof location === "undefined") return;
+  if (location.hash === t) return;
+  try {
+    history.pushState(null, "", t);
+  } catch {
+    location.hash = t;
+  }
+}
+function useMediaQuery(query) {
+  const [get, setGet] = useState(
+    () => typeof matchMedia !== "undefined" && matchMedia(query).matches,
+  );
+  useEffect(() => {
+    if (typeof matchMedia === "undefined") return;
+    const media = matchMedia(query),
+      sync = () => setGet(media.matches);
+    sync();
+    media.addEventListener("change", sync);
+    return () => media.removeEventListener("change", sync);
+  }, [query]);
+  return get;
+}
+function App() {
+  const profileBoot = useRef(null);
+  if (!profileBoot.current) {
+    try {
+      profileBoot.current = { profile: loadProfile(), issue: null };
+    } catch (error) {
+      profileBoot.current = {
+        profile: defaultProfile(),
+        issue: {
+          ok: false,
+          code: error?.code || "REGISTRY_INVALID",
+          error:
+            error?.message ||
+            "O registro local de perfis não pôde ser lido. Os dados foram preservados.",
+          recoverable: true,
+        },
+      };
+    }
+  }
+  const [profile, setProfileRaw] = useState(profileBoot.current.profile);
+  const [profileStatus, setProfileStatus] = useState(profileBoot.current.issue);
+  const setProfile = (p) => {
+    const v = typeof p === "function" ? p(profile) : p;
+    const result = saveProfile(v);
+    if (result?.ok === false) {
+      setProfileStatus(result);
+      return false;
+    }
+    setProfileRaw(result || v);
+    setProfileStatus(null);
+    return true;
+  };
+  const [state, setState, storageStatus, resolveCorruptStorage] = useStoredState();
+  const _init = parseHash();
+  const [view, setView] = useState(_init.view);
+  const [selectedLesson, setSelectedLesson] = useState(() =>
+    _init.lesson && lessonMap.has(_init.lesson)
+      ? _init.lesson
+      : lessonMap.has(state.lastLesson)
+        ? state.lastLesson
+        : firstLesson("m00")?.id,
+  );
+  const [selectedScenario, setSelectedScenario] = useState(() =>
+    _init.scenario && scenarios.some((x) => x.id === _init.scenario)
+      ? _init.scenario
+      : null,
+  );
+  const [libraryTarget, setLibraryTarget] = useState(null);
+  const [menuOpen, setMenuOpen] = useState(false),
+    [searchOpen, setSearchOpen] = useState(false),
+    [toast, setToast] = useState("");
+  const mobileNav = useMediaQuery("(max-width: 980px)");
+  const searchReturn = useRef(null);
+  // Conexao e versao nova. A atualizacao nao entra sozinha: ela esperaria a
+  // pessoa terminar de escrever a fundamentacao no laboratorio, e recarregar
+  // no meio disso jogaria fora o que ela digitou.
+  const [online, setOnline] = useState(true),
+    [aplicarUpdate, setAplicarUpdate] = useState(null);
+  useEffect(() => {
+    return registrarOffline({
+      onConexao: setOnline,
+      onAtualizacao: (fn) => setAplicarUpdate(() => fn),
+    });
+  }, []);
+  const progress = Math.round((state.completed.length / lessons.length) * 100);
+  function openSearch() {
+    searchReturn.current = document.activeElement;
+    setSearchOpen(true);
+  }
+  function closeSearch() {
+    setSearchOpen(false);
+    setTimeout(() => searchReturn.current?.focus?.(), 0);
+  }
+  useEffect(() => {
+    const fn = (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k") {
+        e.preventDefault();
+        openSearch();
+      }
+      if (e.key === "Escape" && searchOpen) closeSearch();
+    };
+    window.addEventListener("keydown", fn);
+    return () => window.removeEventListener("keydown", fn);
+  }, [searchOpen]);
+  useEffect(() => {
+    if (toast) {
+      const id = setTimeout(() => setToast(""), 2600);
+      return () => clearTimeout(id);
+    }
+  }, [toast]);
+  useEffect(() => {
+    if (!mobileNav || !menuOpen || searchOpen) return undefined;
+    const drawer = document.getElementById("navegacao-lateral");
+    if (!drawer) return undefined;
+    const selector =
+      'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
+    const focusable = () =>
+      [...drawer.querySelectorAll(selector)].filter(
+        (element) =>
+          !element.hasAttribute("inert") &&
+          element.getAttribute("aria-hidden") !== "true" &&
+          element.getClientRects().length > 0,
+      );
+    const focusId = setTimeout(() => focusable()[0]?.focus(), 0);
+    const containFocus = (event) => {
+      if (event.key === "Escape") {
+        event.preventDefault();
+        setMenuOpen(false);
+        setTimeout(() => document.querySelector(".mobile-menu")?.focus(), 0);
+        return;
+      }
+      if (event.key !== "Tab") return;
+      const items = focusable();
+      if (!items.length) return;
+      const first = items[0];
+      const last = items[items.length - 1];
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    };
+    document.addEventListener("keydown", containFocus);
+    return () => {
+      clearTimeout(focusId);
+      document.removeEventListener("keydown", containFocus);
+    };
+  }, [mobileNav, menuOpen, searchOpen]);
+  useEffect(() => {
+    const onNav = () => {
+      const p = parseHash();
+      if (p.view === "lesson") {
+        if (p.lesson && lessonMap.has(p.lesson)) {
+          setSelectedLesson(p.lesson);
+          setState((s) =>
+            s.lastLesson === p.lesson ? s : { ...s, lastLesson: p.lesson },
+          );
+        }
+        setView("lesson");
+      } else {
+        if (
+          p.view === "laboratorio" &&
+          p.scenario &&
+          scenarios.some((x) => x.id === p.scenario)
+        )
+          setSelectedScenario(p.scenario);
+        setView(p.view);
+      }
+      setMenuOpen(false);
+      setSearchOpen(false);
+      scrollRouteToTop();
+      announceRoute();
+    };
+    window.addEventListener("popstate", onNav);
+    window.addEventListener("hashchange", onNav);
+    return () => {
+      window.removeEventListener("popstate", onNav);
+      window.removeEventListener("hashchange", onNav);
+    };
+  }, []);
+  function announceRoute() {
+    setTimeout(() => document.getElementById("conteudo")?.focus(), 0);
+  }
+  function scrollRouteToTop() {
+    const reduced =
+      typeof matchMedia !== "undefined" &&
+      matchMedia("(prefers-reduced-motion: reduce)").matches;
+    scrollTo({ top: 0, behavior: reduced ? "auto" : "smooth" });
+  }
+  function go(next, param) {
+    setView(next);
+    setMenuOpen(false);
+    if (
+      next === "laboratorio" &&
+      param &&
+      scenarios.some((x) => x.id === param)
+    ) {
+      setSelectedScenario(param);
+      pushHash("#/laboratorio/" + encodeURIComponent(param));
+    } else pushHash(next === "dashboard" ? "#/" : "#/" + next);
+    scrollRouteToTop();
+    announceRoute();
+  }
+  function openLesson(id) {
+    if (!id) return;
+    setSelectedLesson(id);
+    setState((s) => ({ ...s, lastLesson: id }));
+    setView("lesson");
+    setSearchOpen(false);
+    setMenuOpen(false);
+    pushHash("#/aula/" + encodeURIComponent(id));
+    scrollRouteToTop();
+    announceRoute();
+  }
+  function complete(id) {
+    const agora = new Date().toISOString();
+    setState((s) => ({
+      ...s,
+      completed: s.completed.includes(id)
+        ? s.completed.filter((x) => x !== id)
+        : [...s.completed, id],
+      doneAt: {
+        ...(s.doneAt || {}),
+        [id]: s.completed.includes(id) ? undefined : agora,
+      },
+      lastVisit: agora,
+    }));
+    setToast(
+      state.completed.includes(id)
+        ? "Aula marcada como não concluída"
+        : "Aula concluída e progresso salvo",
+    );
+  }
+  function bookmark(id) {
+    setState((s) => ({
+      ...s,
+      bookmarks: s.bookmarks.includes(id)
+        ? s.bookmarks.filter((x) => x !== id)
+        : [...s.bookmarks, id],
+    }));
+    setToast(
+      state.bookmarks.includes(id)
+        ? "Favorito removido"
+        : "Aula salva nos favoritos",
+    );
+  }
+  useEffect(() => {
+    const lesson = lessonMap.get(selectedLesson);
+    const label =
+      view === "lesson" && lesson
+        ? `${lesson.number ? lesson.number + " " : ""}${lesson.title}`
+        : NAV.find(([id]) => id === view)?.[1] || "Visão geral";
+    document.title = `${label} · Academia IAT`;
+  }, [view, selectedLesson]);
+  let content = {
+    dashboard: (
+      <Dashboard
+        state={state}
+        progress={progress}
+        go={go}
+        openLesson={openLesson}
+      />
+    ),
+    hidreletricas: <HydroGuide go={go} />,
+    mapa: <MapaParana dados={mapaDados} state={state} setState={setState} />,
+    formacao: (
+      <Formation
+        state={state}
+        profile={profile}
+        setProfile={setProfile}
+        openLesson={openLesson}
+      />
+    ),
+    fluxos: <Flowcharts state={state} setState={setState} />,
+    laboratorio: (
+      <LaboratorioPremium
+        state={state}
+        setState={setState}
+        scenarios={scenarios}
+        grupos={GRUPOS_LAB}
+        initialScenarioId={selectedScenario}
+        onSelectScenario={(id) => {
+          setSelectedScenario(id);
+          pushHash("#/laboratorio/" + encodeURIComponent(id));
+        }}
+      />
+    ),
+    redator: (
+      <RedatorIT
+        scenarios={scenarios}
+        grupos={GRUPOS_LAB}
+        state={state}
+        setState={setState}
+        go={go}
+      />
+    ),
+    avaliacoes: (
+      <Assessments state={state} setState={setState} openLesson={openLesson} />
+    ),
+    biblioteca: (
+      <KnowledgeLibrary
+        state={state}
+        openLesson={openLesson}
+        target={libraryTarget}
+      />
+    ),
+    perfil: (
+      <Profile
+        state={state}
+        progress={progress}
+        profile={profile}
+        setProfile={setProfile}
+        profileStatus={profileStatus}
+        setProfileStatus={setProfileStatus}
+        go={go}
+        openLesson={openLesson}
+      />
+    ),
+    suporte: <Suporte />,
+    lesson: (
+      <Lesson
+        lesson={lessonMap.get(selectedLesson) || lessons[0]}
+        state={state}
+        setState={setState}
+        openLesson={openLesson}
+        complete={complete}
+        bookmark={bookmark}
+        go={go}
+      />
+    ),
+  }[view];
+  return (
+    <div className="app-shell">
+      <a className="skip-link" href="#conteudo">
+        Ir para o conteúdo
+      </a>
+      <Topbar
+        onMenu={() => setMenuOpen((v) => !v)}
+        menuOpen={menuOpen}
+        onSearch={openSearch}
+        progress={progress}
+        profile={profile}
+        onProfile={() => go("perfil")}
+        inert={searchOpen}
+      />
+      <Sidebar
+        view={view}
+        go={go}
+        open={menuOpen}
+        openLesson={openLesson}
+        mobile={mobileNav}
+        modalOpen={searchOpen}
+      />
+      {menuOpen && (
+        <button
+          className="nav-scrim"
+          aria-label="Fechar menu"
+          onClick={() => {
+            setMenuOpen(false);
+            setTimeout(() => document.querySelector(".mobile-menu")?.focus(), 0);
+          }}
+        />
+      )}
+      <main
+        id="conteudo"
+        tabIndex={-1}
+        inert={searchOpen || (mobileNav && menuOpen)}
+        className={"main " + (view === "lesson" ? "lesson-main" : "")}
+      >
+        <div
+          className="view-anim"
+          key={view === "lesson" ? "l:" + selectedLesson : view}
+        >
+          <Suspense fallback={<RouteLoading />}>{content}</Suspense>
+        </div>
+      </main>
+      {searchOpen && (
+        <GlobalSearch
+          close={closeSearch}
+          abrir={(r) => {
+            setSearchOpen(false);
+            if (r.type === "seção") return openLesson(r.id);
+            setLibraryTarget(
+              r.type === "sigla"
+                ? { tab: "glossario", requestId: Date.now() }
+                : { tab: "tabelas", tabela: r.id, requestId: Date.now() },
+            );
+            go("biblioteca");
+          }}
+        />
+      )}
+      {appDataWarnings.length > 0 && (
+        <div className="data-warning-bar" role="alert">
+          <AlertTriangle size={15} />
+          <span>
+            Parte da mídia não pôde ser carregada. As aulas e fontes textuais
+            continuam disponíveis; alguns resumos usarão o material geral do módulo.
+          </span>
+        </div>
+      )}
+      {!online && (
+        <div className="offline-bar" role="status">
+          <CloudOff size={15} /> Sem conexão. O procedimento, os quadros, os
+          fluxos e a prática continuam disponíveis; vídeos ainda não abertos
+          ficam indisponíveis.
+        </div>
+      )}
+      {storageStatus && (
+        <div className="storage-error-bar" role="alert">
+          <AlertTriangle size={15} />
+          <span>
+            {storageStatus.message}
+            {storageStatus.code === "STORAGE_CORRUPT"
+              ? ` ${storageStatus.detail || ""}`
+              : storageStatus.code === "STORAGE_QUOTA"
+                ? " Libere espaço e altere qualquer item para tentar novamente."
+                : " As mudanças desta sessão podem não ser preservadas."}
+          </span>
+          {storageStatus.code === "STORAGE_CORRUPT" && (
+            <div className="storage-recovery-actions">
+              <button type="button" onClick={() => resolveCorruptStorage("download")}>
+                Baixar cópia
+              </button>
+              <button type="button" onClick={() => resolveCorruptStorage("reset")}>
+                Começar novo
+              </button>
+            </div>
+          )}
+        </div>
+      )}
+      {aplicarUpdate && (
+        <div className="update-bar" role="status">
+          <RefreshCw size={15} />
+          <span>Há uma versão nova da Academia.</span>
+          <button onClick={() => aplicarUpdate()}>Atualizar agora</button>
+          <button className="ub-depois" onClick={() => setAplicarUpdate(null)}>
+            Depois
+          </button>
+        </div>
+      )}
+      {toast && (
+        <div className="toast" role="status" aria-live="polite" aria-atomic="true">
+          <CheckCircle2 />
+          {toast}
+        </div>
+      )}
+    </div>
+  );
 }
 
-function Profile({state,progress,profile,setProfile,go,openLesson}){
- const conta=hasAccount(profile);
- const [editando,setEditando]=useState(!conta);
- const [form,setForm]=useState({name:profile.name||'',role:profile.role||'',unit:profile.unit||''});
- const salvar=(e)=>{e&&e.preventDefault&&e.preventDefault();const nome=(form.name||'').trim();if(!nome)return;setProfile(pr=>({...pr,name:nome,role:(form.role||'').trim(),unit:(form.unit||'').trim(),createdAt:pr.createdAt||new Date().toISOString()}));setEditando(false);};
- const mods=tracks.map(t=>({t,p:trackProgress(t.id,state)}));
- const concluidos=mods.filter(m=>m.p===100).length;
- const hoje=()=>new Date().toLocaleDateString('pt-BR',{day:'2-digit',month:'long',year:'numeric'});
- const build=typeof __BUILD_STAMP__!=='undefined'?__BUILD_STAMP__:'local';
- const baixarCert=(label,percent)=>{const nowIso=new Date().toISOString();setProfile(pr=>registerCertificate(pr,label,percent,nowIso));const svg=certificateSvg({name:profile.name,label,dateLabel:'Emitido em '+hoje(),percent,buildId:build});downloadSvg('certificado-'+label.toLowerCase().replace(/[^a-z0-9]+/g,'-').slice(0,40)+'.svg',svg);};
- if(!conta||editando){
-  return <div className="page profile-page"><PageHeader icon={BadgeCheck} kicker="Meu perfil" title={conta?'Editar meu perfil':'Criar meu perfil'} subtitle="Seu progresso e seus certificados ficam vinculados a este perfil."/>
-   <form className="profile-form" onSubmit={salvar}><div className="form-avatar" aria-hidden="true">{((form.name||'').trim().split(/\s+/).filter(Boolean).map(w=>w[0]).slice(0,2).join('').toUpperCase())||'?'}</div><label>Nome<input value={form.name} onChange={e=>setForm(f=>({...f,name:e.target.value}))} placeholder="Como você quer ser identificado" required autoFocus/></label>
-   <label>Cargo ou função<input value={form.role} onChange={e=>setForm(f=>({...f,role:e.target.value}))} placeholder="Opcional"/></label>
-   <label>Órgão ou setor<input value={form.unit} onChange={e=>setForm(f=>({...f,unit:e.target.value}))} placeholder="Opcional"/></label>
-   <div className="profile-actions"><button type="submit" className="primary">{conta?'Salvar':'Criar perfil'} <Check/></button>{conta&&<button type="button" className="text-action" onClick={()=>setEditando(false)}>Cancelar</button>}</div>
-   <p className="profile-note">Registro pessoal de estudo, guardado apenas neste navegador. Não é login seguro nem credencial institucional do IAT.</p></form>
-   <div className="profile-restore-alt"><span>Já estudava em outro computador?</span><label className="text-action file-action">Restaurar backup<input type="file" accept="application/json" onChange={e=>{const f=e.target.files[0];if(!f)return;f.text().then(t=>{const r=importBackup(t);if(r.ok)reloadFade();else alert(r.error)})}}/></label></div></div>;
- }
- return <div className="page profile-page"><PageHeader icon={BadgeCheck} kicker="Meu perfil" title={profile.name} subtitle={[profile.role,profile.unit].filter(Boolean).join(' · ')||'Registro pessoal de estudo'}/>
-  <section className="profile-grid">
-   <article className="profile-card profile-progress"><h3>Progresso do curso</h3><div className="pring" style={{'--v':progress}}><strong>{progress}%</strong></div><small>{state.completed.length} de {lessons.length} tópicos concluídos</small><small>{concluidos} de {tracks.length} módulos completos</small></article>
-   <article className="profile-card profile-personal"><h3>Meus dados</h3><dl><dt>Nome</dt><dd>{profile.name}</dd><dt>Cargo</dt><dd>{profile.role||'-'}</dd><dt>Órgão</dt><dd>{profile.unit||'-'}</dd><dt>Desde</dt><dd>{profile.createdAt?new Date(profile.createdAt).toLocaleDateString('pt-BR'):'-'}</dd></dl><button className="text-action" onClick={()=>{setForm({name:profile.name,role:profile.role,unit:profile.unit});setEditando(true);}}>Editar dados</button></article>
-   <article className="profile-card profile-activity"><h3>Atividade</h3><ul className="profile-activity-list"><li><Bookmark size={15}/> {state.bookmarks.length} favoritos</li><li><StickyNote size={15}/> {Object.values(state.notes||{}).filter(v=>v&&v.trim()).length} anotações</li><li><CheckCircle2 size={15}/> {state.completed.length} tópicos feitos</li></ul>{state.lastLesson&&<button className="text-action" onClick={()=>openLesson(state.lastLesson)}>Continuar de onde parou <ArrowRight size={15}/></button>}</article>
-  </section>
-  <section className="profile-users"><div className="section-title"><div><h2>Perfis neste navegador</h2><p>Troque de usuário, crie um novo perfil ou leve seu estudo para outro computador por backup.</p></div></div>
-   <ul className="user-list">{listUsers().map(u=><li key={u.id} className={u.active?'active':''}><span className="u-ini">{((u.name||'?').trim().split(/\s+/).map(w=>w[0]).slice(0,2).join('').toUpperCase())||'?'}</span><span className="u-name">{u.name}{u.role?<small> · {u.role}</small>:null}</span>{u.active?<em>ativo</em>:<><button className="text-action" onClick={()=>{switchUser(u.id);reloadFade()}}>Entrar</button><button className="u-del" title="Excluir perfil" onClick={()=>{if(confirm(`Excluir o perfil "${u.name}" e o progresso dele neste navegador?`)){deleteUser(u.id);reloadFade()}}}><X size={14}/></button></>}</li>)}</ul>
-   <div className="profile-actions-row"><button className="text-action" onClick={()=>{createUser();reloadFade()}}>+ Novo perfil</button><button className="text-action" onClick={()=>exportBackup()}><Download size={14}/> Baixar backup</button><label className="text-action file-action">Restaurar backup<input type="file" accept="application/json" onChange={e=>{const f=e.target.files[0];if(!f)return;f.text().then(t=>{const r=importBackup(t);if(r.ok)reloadFade();else alert(r.error)})}}/></label></div>
-   <p className="profile-note">Cada perfil guarda progresso próprio, apenas neste navegador. Para continuar em outro computador, baixe o backup aqui e restaure lá.</p></section>
-  <section className="profile-cert-block"><div className="section-title"><div><h2>Certificados</h2><p>Marcos de conclusão que você pode baixar. Cada um é um registro pessoal de estudo.</p></div><Award/></div>
-   <div className="cert-course">{progress===100&&tracks.every(t=>prontidao(t.id,state).pronto)?<button className="primary" onClick={()=>baixarCert('Curso completo do POP',100)}><Download size={16}/> Baixar certificado do curso</button>:<div className="cert-locked-wrap"><p className="cert-locked">{progress<100?<>Conclua os {lessons.length} tópicos para liberar o certificado do curso. Faltam {lessons.length-state.completed.length}.</>:<>Leitura completa. Falta alcançar a prontidão em {tracks.filter(t=>!prontidao(t.id,state).pronto).length} módulos: avaliação com pelo menos 80% e o caso prático, quando houver.</>}</p><i className="cert-bar"><em style={{width:progress+'%'}}/></i><small>{progress}% do percurso concluído</small></div>}</div>
-   {(profile.certificates||[]).length>0&&<div className="cert-history"><h4>Marcos emitidos</h4><ul>{(profile.certificates||[]).map(c=><li key={c.id}><Award size={14}/><span>{c.label}</span><small>{c.at?new Date(c.at).toLocaleDateString('pt-BR'):''} · {c.percent}%</small></li>)}</ul></div>}<h4>Por módulo</h4><ul className="cert-modules">{mods.map(({t,p})=>{const pr=prontidao(t.id,state);return <li key={t.id}><span className="cert-mod-code">{t.code}</span><span className="cert-mod-title">{t.title}</span><span className="cert-sinais" role="img" aria-label={[[pr.leitura,'leitura',true],[pr.avaliacao,'avaliação',pr.temQuiz],[pr.pratica,'prática',pr.temPratica]].map(([ok,rot,aplica])=>aplica?rot+(ok?' concluída':' pendente'):'sem '+rot+' própria').join(', ')}>{[[pr.leitura,'Leitura',true],[pr.avaliacao,pr.temQuiz?'Avaliação':'Sem avaliação própria',pr.temQuiz],[pr.pratica,pr.temPratica?'Prática':'Sem caso próprio',pr.temPratica]].map(([ok,rot,aplica],i)=><i key={i} className={'sin'+(aplica?(ok?' ok':''):' na')} title={rot}/>)}</span><span className="cert-mod-pct">{p}%</span>{pr.pronto?<button className="cert-mod-dl" onClick={()=>baixarCert('Módulo '+t.code+' · '+t.title,100)}><Download size={14}/></button>:<span className="cert-mod-pending">{!pr.leitura?'ler tudo':!pr.avaliacao?'fazer avaliação':'praticar'}</span>}</li>})}</ul></section>
-  <p className="profile-note">Os certificados desta plataforma são registros pessoais de autoestudo. Não são documentos oficiais do Instituto Água e Terra.</p></div>;
-}
-function Topbar({onMenu,onSearch,progress,profile,onProfile}){const _n=((profile&&profile.name)||'').trim();const _acc=hasAccount(profile);const _ini=_acc?(_n.split(/\s+/).filter(Boolean).map(w=>w[0]).slice(0,2).join('').toUpperCase()||'IAT'):'+';return <header className="topbar"><button className="mobile-menu" onClick={onMenu} aria-label="Abrir menu"><Menu/></button><div className="compact-brand"><span className="brand-wave">IAT</span><div><strong>Academia de Licenciamento</strong><small>Hidrelétrico</small></div></div><button className="global-search" onClick={onSearch} aria-label="Buscar no POP, aulas e checklists. Atalho Control K"><Search/><span>Buscar no POP, aulas e checklists</span><kbd aria-hidden="true">Ctrl K</kbd></button><div className="top-progress" title={`${progress}% concluído`} role="progressbar" aria-label="Progresso geral" aria-valuemin="0" aria-valuemax="100" aria-valuenow={progress}><span>{progress}%</span><i><em style={{width:`${progress}%`}}/></i></div><ThemeToggle/><button className="profile" onClick={onProfile} aria-label={_acc?`Abrir perfil de ${_n}`:'Criar meu perfil'} title={_acc?'Ver meu perfil':'Criar meu perfil'}><span aria-hidden="true">{_ini}</span><div><strong>{_acc?_n.split(/\s+/)[0]:'Meu perfil'}</strong><small>{_acc?(profile.role||'Registro pessoal'):'Criar sua conta'}</small></div></button></header>}
-function Sidebar({view,go,open,openLesson}){return <aside className={'sidebar-v2 '+(open?'open':'')}><div className="brand-panel"><strong>Academia IAT</strong><span>Licenciamento<br/>Hidrelétrico</span><svg viewBox="0 0 200 128" aria-hidden="true" className="brand-hydro">
-<rect x="8" y="52" width="62" height="26" rx="3" fill="#57d8bf" opacity=".85"/>
-<path d="M10 56 q8 -4 16 0 t16 0 t16 0 t14 0" stroke="#eafff7" strokeWidth="2.5" fill="none"/>
-<path d="M70 46 L70 92 L92 92 L84 46 Z" fill="#e6efe9" stroke="#a8d5c2" strokeWidth="1.5"/>
-<path d="M74 52 L74 88 M79 56 L80 88 M84 62 L86 88" stroke="#9db8ab" strokeWidth="1.4"/>
-<path d="M86 58 L112 84" stroke="#0b3b2d" strokeWidth="5" strokeLinecap="round"/>
-<path d="M86 58 L112 84" stroke="#57d8bf" strokeWidth="2" strokeLinecap="round" strokeDasharray="4 6"/>
-<rect x="110" y="76" width="30" height="18" rx="2" fill="#fff" stroke="#57d8bf" strokeWidth="1.6"/>
-<path d="M110 76 L125 66 L140 76 Z" fill="#57d8bf"/>
-<path d="M124 80 l-4 7 h4 l-3 7 8 -9 h-4 l4 -5 Z" fill="#f3bd4f"/>
-<path d="M150 44 L150 94 M141 58 L159 58 M143 48 L157 48" stroke="#eafff7" strokeWidth="2.6"/>
-<path d="M140 94 L160 94" stroke="#eafff7" strokeWidth="2.6"/>
-<path d="M150 44 C162 38 174 42 186 34" stroke="#f3bd4f" strokeWidth="2" fill="none"/>
-<circle cx="188" cy="33" r="3.4" fill="#f3bd4f"/>
-<g transform="translate(18 88)">
-<path d="M0 12 C10 4 24 4 34 9 C44 4 58 4 68 12 L68 32 C58 25 44 25 34 29 C24 25 10 25 0 32 Z" fill="#fff" stroke="#57d8bf" strokeWidth="2.4"/>
-<path d="M34 9 L34 29" stroke="#57d8bf" strokeWidth="2.2"/>
-<path d="M7 14 L28 12 M7 19 L28 17 M7 24 L28 22 M40 12 L61 14 M40 17 L61 19 M40 22 L61 24" stroke="#0b3b2d" strokeWidth="1.5" opacity=".55"/>
-<path d="M26 -2 L42 -2 L34 3 Z M34 -2 L34 -8 M30 -8 L38 -8" stroke="#f3bd4f" strokeWidth="2" fill="#f3bd4f"/>
-</g>
-</svg></div><nav aria-label="Navegação principal">{NAV.map(([id,label,Icon])=>{const at=view===id||(view==='lesson'&&id==='formacao');return <button key={id} aria-current={at?'page':undefined} className={at?'active':''} onClick={()=>go(id)}><Icon/>{label}</button>})}</nav><button className="sidebar-help" onClick={()=>openLesson&&openLesson(firstLesson('m00')?.id)}><CircleHelp/><div><strong>Por onde começar?</strong><small>Abra o módulo de Orientação</small></div><ChevronRight/></button><div className="source-lock"><ShieldCheck/><span>Fonte vinculada<br/><b>POP v{popData.metadata?.operational?.version||'—'} · {popData.metadata?.operational?.dateLabel||'data não informada'}</b><small>{lessons.length} seções didáticas · minuta técnica</small></span></div></aside>}
-
-function SourceAssurance({compact=false}){
- const op=popData.metadata?.operational||{};const sha=popData.source?.sha256||popData.source?.hash||'';const generated=popData.generatedAt?new Date(popData.generatedAt):null;const validDate=generated&&!Number.isNaN(generated.getTime());
- return <section className={'source-assurance '+(compact?'compact':'')} aria-label="Estado da fonte e da validação"><ShieldCheck/><div><small>FONTE DO PERCURSO</small><strong>POP {op.version?`v${op.version}`:'sem versão identificada'} · {lessons.length} seções vinculadas</strong><span>{popData.source?.fileName||'Documento-fonte não identificado'}</span></div><dl><div><dt>Extração</dt><dd>{validDate?generated.toLocaleDateString('pt-BR'):'data não registrada'}</dd></div><div><dt>Integridade</dt><dd>{sha?`SHA-256 ${sha.slice(0,10)}…`:'hash pendente'}</dd></div><div><dt>Status</dt><dd>Minuta técnica · validação institucional pendente</dd></div></dl></section>
+function RouteLoading() {
+  return (
+    <section className="route-loading" role="status" aria-live="polite">
+      <span aria-hidden="true" />
+      <div>
+        <strong>Preparando esta área…</strong>
+        <small>O conteúdo e o progresso permanecem no dispositivo.</small>
+      </div>
+    </section>
+  );
 }
 
-function Dashboard({state,progress,go,openLesson}){
- const continueLesson=lessonMap.get(state.lastLesson)||firstLesson('m00')||lessons[0];
- const continueTrack=tracks.find(t=>t.id===continueLesson.trackId);
- const feat={src:wb('/media/tour-usina.mp4'),poster:wb('/media/tour-usina-poster.png'),captions:wb('/media/tour-usina.vtt'),title:'Anatomia de uma usina em operação, tour guiado'};
- return <div className="page dashboard-page"><section className="dashboard-intro"><div><h1>Aprenda o procedimento.<br/>Pratique a decisão.</h1><p>Do primeiro contato ao controle de qualidade: estude a fonte, confronte evidências e treine decisões justificadas.</p></div><div className="intro-stat"><span>Seu progresso</span><strong>{progress}%</strong><i><em style={{width:`${progress}%`}}/></i><small>{state.completed.length} de {lessons.length} tópicos concluídos</small></div></section><SourceAssurance/>
- <section className="river-journey" aria-label="Percurso de aprendizagem"><div className="journey-head"><h2>Seu percurso pelo POP</h2><button onClick={()=>go('formacao')}>Ver formação completa <ArrowRight/></button></div><div className="river-line"><svg viewBox="0 0 1600 140" preserveAspectRatio="none" aria-hidden="true"><path className="river-shadow" d="M0 75 C120 10 230 125 350 62 S590 110 720 55 S950 110 1080 50 S1320 115 1600 52"/><path className="river-water" d="M0 75 C120 10 230 125 350 62 S590 110 720 55 S950 110 1080 50 S1320 115 1600 52"/></svg><div className="journey-track">{tracks.map((t,i)=>{let p=trackProgress(t.id,state);return <button key={t.id} style={{'--i':i}} title={t.code+' · '+t.title} className={p===100?'done':p>0?'current':''} onClick={()=>openLesson(firstLesson(t.id)?.id)}><span>{p===100?<Check/>:i+1}</span><strong>{t.code}</strong><small>{t.title}</small></button>})}</div></div><div className="journey-legend"><span><i className="dot done"/>Concluído</span><span><i className="dot current"/>Em andamento</span><span><i className="dot"/>Não iniciado</span></div></section>
- <section className="dashboard-feature"><div className="feature-media"><video key={feat?.src} poster={feat?.poster||wb("/media/analista-licenciamento.png")} controls preload="metadata" playsInline>{feat?.src&&<source src={feat.src} type="video/mp4"/>}{feat?.captions&&<track kind="captions" srcLang="pt" src={feat.captions} label="Português" default/>}</video><span>Vídeo em destaque{feat?.title?`: ${feat.title}`:""}</span><span className="fm-chip"><Clock/> 1:24 · 10 componentes</span></div><div className="feature-copy"><small>{continueTrack.code} · CONTINUE DE ONDE PAROU</small><h2>{continueLesson.fullTitle||continueLesson.title}</h2><p>{continueTrack.summary}</p><div className="feature-meta"><span><Clock/> {continueLesson.minutes} min</span><span><Layers3/> {trackLessons.get(continueTrack.id).length} tópicos</span></div><button className="primary" onClick={()=>openLesson(continueLesson.id)}>Continuar aula <Play/></button><button className="text-action" onClick={()=>go('formacao')}>Ver todas as aulas <ArrowRight/></button></div><TodayPlan go={go} openLesson={openLesson} continueLesson={continueLesson} state={state}/></section>
- <section className="dashboard-bottom"><article className="flow-preview"><div className="section-title"><div><h2>Prévia do fluxo geral</h2><p>Veja a análise ganhar forma, etapa por etapa.</p></div><button onClick={()=>go('fluxos')}>Explorar <ExternalLink/></button></div><MiniFlow/></article><article className="coverage-card"><div className="section-title"><div><h2>Todo o POP, em um só lugar</h2><p>Extração auditada e vinculada às aulas.</p></div><Database/></div><div className="coverage-stats"><span><strong>{lessons.length}</strong>seções e tópicos</span><span><strong>{popData.tables.filter(t=>!t.navigationOnly).length}</strong>quadros e tabelas</span><span><strong>{popData.figures.length+new Set(flowData.flowcharts.map(f=>f.number)).size}</strong>figuras e fluxos</span><span><strong>{(popData.stats?.allDocumentParagraphNodes||0).toLocaleString('pt-BR')}</strong>trechos pesquisáveis</span></div><button onClick={()=>go('biblioteca')}>Abrir biblioteca integral <ArrowRight/></button></article></section></div>
+function Profile({
+  state,
+  progress,
+  profile,
+  setProfile,
+  profileStatus,
+  setProfileStatus,
+  go,
+  openLesson,
+}) {
+  const conta = hasAccount(profile);
+  const [editando, setEditando] = useState(!conta);
+  const [form, setForm] = useState({
+    name: profile.name || "",
+    role: profile.role || "",
+    unit: profile.unit || "",
+    persona: resolveLearningPath(profile.persona).id,
+  });
+  const salvar = (e) => {
+    e && e.preventDefault && e.preventDefault();
+    const nome = (form.name || "").trim();
+    if (!nome) return;
+    const saved = setProfile((pr) => ({
+      ...pr,
+      name: nome,
+      role: (form.role || "").trim(),
+      unit: (form.unit || "").trim(),
+      persona: resolveLearningPath(form.persona).id,
+      createdAt: pr.createdAt || new Date().toISOString(),
+    }));
+    if (saved !== false) setEditando(false);
+  };
+  const operationFailed = (result, fallback) => {
+    if (result && result.ok !== false) {
+      setProfileStatus(null);
+      return false;
+    }
+    setProfileStatus(
+      result && result.ok === false
+        ? result
+        : {
+            ok: false,
+            code: "PROFILE_OPERATION",
+            error: fallback,
+            recoverable: true,
+          },
+    );
+    return true;
+  };
+  const profileError = profileStatus && (
+    <div className="profile-storage-error" role="alert">
+      <AlertTriangle aria-hidden="true" />
+      <div>
+        <strong>O perfil não foi alterado</strong>
+        <p>{profileStatus.error}</p>
+        {profileStatus.code === "REGISTRY_INVALID" && (
+          <div className="profile-storage-actions">
+            <button
+              type="button"
+              onClick={() => {
+                const result = exportProfileRegistryRecovery();
+                if (result.ok) {
+                  setProfileStatus((current) => ({ ...current, exported: true }));
+                } else {
+                  setProfileStatus(result);
+                }
+              }}
+            >
+              <Download aria-hidden="true" /> Baixar dados preservados
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                if (
+                  !window.confirm(
+                    "Substituir o registro incompatível por um perfil local novo?",
+                  )
+                )
+                  return;
+                const result = resetInvalidProfileRegistry();
+                if (result.ok) reloadFade();
+                else setProfileStatus(result);
+              }}
+            >
+              Começar com registro novo
+            </button>
+          </div>
+        )}
+        {profileStatus.exported && (
+          <small>Cópia bruta baixada para recuperação.</small>
+        )}
+      </div>
+    </div>
+  );
+  const mods = tracks.map((t) => ({ t, p: trackProgress(t.id, state) }));
+  const concluidos = mods.filter((m) => m.p === 100).length;
+  const hoje = () =>
+    new Date().toLocaleDateString("pt-BR", {
+      day: "2-digit",
+      month: "long",
+      year: "numeric",
+    });
+  const build =
+    typeof __BUILD_STAMP__ !== "undefined" ? __BUILD_STAMP__ : "local";
+  const baixarCert = (label, percent) => {
+    const nowIso = new Date().toISOString();
+    setProfile((pr) => registerCertificate(pr, label, percent, nowIso));
+    const svg = certificateSvg({
+      name: profile.name,
+      label,
+      dateLabel: "Emitido em " + hoje(),
+      percent,
+      buildId: build,
+    });
+    downloadSvg(
+      "registro-de-estudo-" +
+        label
+          .toLowerCase()
+          .replace(/[^a-z0-9]+/g, "-")
+          .slice(0, 40) +
+        ".svg",
+      svg,
+    );
+  };
+  if (!conta || editando) {
+    return (
+      <div className="page profile-page">
+        <PageHeader
+          icon={BadgeCheck}
+          kicker="Meu perfil"
+          title={conta ? "Editar meu perfil" : "Criar meu perfil"}
+          subtitle="Seu progresso e seus registros pessoais de estudo ficam vinculados a este perfil."
+        />
+        {profileError}
+        <form className="profile-form" onSubmit={salvar}>
+          <div className="form-avatar" aria-hidden="true">
+            {(form.name || "")
+              .trim()
+              .split(/\s+/)
+              .filter(Boolean)
+              .map((w) => w[0])
+              .slice(0, 2)
+              .join("")
+              .toUpperCase() || "?"}
+          </div>
+          <label>
+            Nome
+            <input
+              value={form.name}
+              onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
+              placeholder="Como você quer ser identificado"
+              required
+              autoFocus
+            />
+          </label>
+          <label>
+            Cargo ou função
+            <input
+              value={form.role}
+              onChange={(e) => setForm((f) => ({ ...f, role: e.target.value }))}
+              placeholder="Opcional"
+            />
+          </label>
+          <label>
+            Órgão ou setor
+            <input
+              value={form.unit}
+              onChange={(e) => setForm((f) => ({ ...f, unit: e.target.value }))}
+              placeholder="Opcional"
+            />
+          </label>
+          <label>
+            Percurso recomendado
+            <select
+              value={form.persona}
+              onChange={(e) =>
+                setForm((current) => ({
+                  ...current,
+                  persona: e.target.value,
+                }))
+              }
+            >
+              {LEARNING_PATHS.map((path) => (
+                <option value={path.id} key={path.id}>
+                  {path.label} — {path.audience}
+                </option>
+              ))}
+            </select>
+            <small className="profile-field-help">
+              Personaliza a recomendação; todos os módulos continuam
+              disponíveis.
+            </small>
+          </label>
+          <div className="profile-actions">
+            <button type="submit" className="primary">
+              {conta ? "Salvar" : "Criar perfil"} <Check />
+            </button>
+            {conta && (
+              <button
+                type="button"
+                className="text-action"
+                onClick={() => setEditando(false)}
+              >
+                Cancelar
+              </button>
+            )}
+          </div>
+          <p className="profile-note">
+            Registro pessoal de estudo, guardado apenas neste navegador. Não é
+            login seguro nem credencial institucional do IAT.
+          </p>
+        </form>
+        <div className="profile-restore-alt">
+          <span>Já estudava em outro computador?</span>
+          <label className="text-action file-action">
+            Restaurar backup
+            <input
+              type="file"
+              accept="application/json"
+              onChange={(e) => {
+                const f = e.target.files[0];
+                if (!f) return;
+                f.text().then((t) => {
+                  const r = importBackup(t);
+                  if (r.ok) reloadFade();
+                  else operationFailed(r, "Não foi possível restaurar o backup.");
+                });
+              }}
+            />
+          </label>
+        </div>
+        <OfflineManager />
+      </div>
+    );
+  }
+  return (
+    <div className="page profile-page">
+      <PageHeader
+        icon={BadgeCheck}
+        kicker="Meu perfil"
+        title={profile.name}
+        subtitle={
+          [profile.role, profile.unit].filter(Boolean).join(" · ") ||
+          "Registro pessoal de estudo"
+        }
+      />
+      {profileError}
+      <section className="profile-grid">
+        <article className="profile-card profile-progress">
+          <h3>Progresso do curso</h3>
+          <div className="pring" style={{ "--v": progress }}>
+            <strong>{progress}%</strong>
+          </div>
+          <small>
+            {state.completed.length} de {lessons.length} tópicos concluídos
+          </small>
+          <small>
+            {concluidos} de {tracks.length} módulos completos
+          </small>
+        </article>
+        <article className="profile-card profile-personal">
+          <h3>Meus dados</h3>
+          <dl>
+            <dt>Nome</dt>
+            <dd>{profile.name}</dd>
+            <dt>Cargo</dt>
+            <dd>{profile.role || "-"}</dd>
+            <dt>Órgão</dt>
+            <dd>{profile.unit || "-"}</dd>
+            <dt>Percurso</dt>
+            <dd>{resolveLearningPath(profile.persona).label}</dd>
+            <dt>Desde</dt>
+            <dd>
+              {profile.createdAt
+                ? new Date(profile.createdAt).toLocaleDateString("pt-BR")
+                : "-"}
+            </dd>
+          </dl>
+          <button
+            className="text-action"
+            onClick={() => {
+              setForm({
+                name: profile.name,
+                role: profile.role,
+                unit: profile.unit,
+                persona: resolveLearningPath(profile.persona).id,
+              });
+              setEditando(true);
+            }}
+          >
+            Editar dados
+          </button>
+        </article>
+        <article className="profile-card profile-activity">
+          <h3>Atividade</h3>
+          <ul className="profile-activity-list">
+            <li>
+              <Bookmark size={15} /> {state.bookmarks.length} favoritos
+            </li>
+            <li>
+              <StickyNote size={15} />{" "}
+              {
+                Object.values(state.notes || {}).filter((v) => v && v.trim())
+                  .length
+              }{" "}
+              anotações
+            </li>
+            <li>
+              <CheckCircle2 size={15} /> {state.completed.length} tópicos feitos
+            </li>
+            <li>
+              <Target size={15} />{" "}
+              {
+                Object.values(state.lessonEvidence || {}).filter((record) =>
+                  lessonEvidenceStatus(record).ready,
+                ).length
+              }{" "}
+              práticas ativas registradas
+            </li>
+          </ul>
+          {state.lastLesson && (
+            <button
+              className="text-action"
+              onClick={() => openLesson(state.lastLesson)}
+            >
+              Continuar de onde parou <ArrowRight size={15} />
+            </button>
+          )}
+        </article>
+      </section>
+      <section className="profile-users">
+        <div className="section-title">
+          <div>
+            <h2>Perfis neste navegador</h2>
+            <p>
+              Troque de usuário, crie um novo perfil ou leve seu estudo para
+              outro computador por backup.
+            </p>
+          </div>
+        </div>
+        <ul className="user-list">
+          {listUsers().map((u) => (
+            <li key={u.id} className={u.active ? "active" : ""}>
+              <span className="u-ini">
+                {(u.name || "?")
+                  .trim()
+                  .split(/\s+/)
+                  .map((w) => w[0])
+                  .slice(0, 2)
+                  .join("")
+                  .toUpperCase() || "?"}
+              </span>
+              <span className="u-name">
+                {u.name}
+                {u.role ? <small> · {u.role}</small> : null}
+              </span>
+              {u.active ? (
+                <em>ativo</em>
+              ) : (
+                <>
+                  <button
+                    className="text-action"
+                    onClick={() => {
+                      const result = switchUser(u.id);
+                      if (!operationFailed(result, "Não foi possível trocar de perfil.")) {
+                        reloadFade();
+                      }
+                    }}
+                  >
+                    Entrar
+                  </button>
+                  <button
+                    className="u-del"
+                    title={`Excluir perfil ${u.name}`}
+                    aria-label={`Excluir perfil ${u.name}`}
+                    onClick={() => {
+                      if (
+                        confirm(
+                          `Excluir o perfil "${u.name}" e o progresso dele neste navegador?`,
+                        )
+                      ) {
+                        const result = deleteUser(u.id);
+                        if (!operationFailed(result, "Não foi possível excluir o perfil.")) {
+                          reloadFade();
+                        }
+                      }
+                    }}
+                  >
+                    <X size={14} />
+                  </button>
+                </>
+              )}
+            </li>
+          ))}
+        </ul>
+        <div className="profile-actions-row">
+          <button
+            className="text-action"
+            onClick={() => {
+              const result = createUser();
+              if (!operationFailed(result, "Não foi possível criar outro perfil.")) {
+                reloadFade();
+              }
+            }}
+          >
+            + Novo perfil
+          </button>
+          <button className="text-action" onClick={() => exportBackup()}>
+            <Download size={14} /> Baixar backup
+          </button>
+          <label className="text-action file-action">
+            Restaurar backup
+            <input
+              type="file"
+              accept="application/json"
+              onChange={(e) => {
+                const f = e.target.files[0];
+                if (!f) return;
+                f.text().then((t) => {
+                  const r = importBackup(t);
+                  if (r.ok) reloadFade();
+                  else operationFailed(r, "Não foi possível restaurar o backup.");
+                });
+              }}
+            />
+          </label>
+        </div>
+        <p className="profile-note">
+          Cada perfil guarda progresso próprio, apenas neste navegador. Para
+          continuar em outro computador, baixe o backup aqui e restaure lá.
+        </p>
+      </section>
+      <OfflineManager />
+      <section className="profile-cert-block">
+        <div className="section-title">
+          <div>
+            <h2>Registros pessoais de conclusão</h2>
+            <p>
+              Marcos locais de autoestudo. Eles não são certificado, credencial
+              profissional nem documento do IAT.
+            </p>
+          </div>
+          <Award />
+        </div>
+        <div className="cert-course">
+          {progress === 100 &&
+          tracks.every((t) => requisitosAutoestudo(t.id, state).pronto) ? (
+            <button
+              className="primary"
+              onClick={() => baixarCert("Percurso de autoestudo do POP", 100)}
+            >
+              <Download size={16} /> Baixar registro do percurso
+            </button>
+          ) : (
+            <div className="cert-locked-wrap">
+              <p className="cert-locked">
+                {progress < 100 ? (
+                  <>
+                    Conclua os {lessons.length} tópicos para liberar o registro
+                    pessoal do percurso. Faltam{" "}
+                    {lessons.length - state.completed.length}.
+                  </>
+                ) : (
+                  <>
+                    Leitura completa. Faltam requisitos automáticos de
+                    autoestudo em{" "}
+                    {
+                      tracks.filter((t) => !requisitosAutoestudo(t.id, state).pronto)
+                        .length
+                    }{" "}
+                    módulos: ao menos 80% na autoavaliação e, quando houver
+                    laboratório, entrega válida com ao menos 80% nas decisões
+                    objetivas. A fundamentação não recebe aprovação automática.
+                  </>
+                )}
+              </p>
+              <i className="cert-bar">
+                <em style={{ width: progress + "%" }} />
+              </i>
+              <small>{progress}% do percurso concluído</small>
+            </div>
+          )}
+        </div>
+        {(profile.certificates || []).length > 0 && (
+          <div className="cert-history">
+            <h4>Marcos emitidos</h4>
+            <ul>
+              {(profile.certificates || []).map((c) => (
+                <li key={c.id}>
+                  <Award size={14} />
+                  <span>{c.label}</span>
+                  <small>
+                    {c.at ? new Date(c.at).toLocaleDateString("pt-BR") : ""} ·{" "}
+                    {c.percent}%
+                  </small>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+        <h4>Por módulo</h4>
+        <ul className="cert-modules">
+          {mods.map(({ t, p }) => {
+            const pr = requisitosAutoestudo(t.id, state);
+            return (
+              <li key={t.id}>
+                <span className="cert-mod-code">{t.code}</span>
+                <span className="cert-mod-title">{t.title}</span>
+                <span
+                  className="cert-sinais"
+                  role="img"
+                  aria-label={[
+                    [pr.leitura, "leitura", true],
+                    [pr.avaliacao, "avaliação", pr.temQuiz],
+                    [
+                      pr.pratica,
+                      "entrega e decisões objetivas da prática",
+                      pr.temPratica,
+                    ],
+                  ]
+                    .map(([ok, rot, aplica]) =>
+                      aplica
+                        ? rot + (ok ? " concluída" : " pendente")
+                        : "sem " + rot + " própria",
+                    )
+                    .join(", ")}
+                >
+                  {[
+                    [pr.leitura, "Leitura", true],
+                    [
+                      pr.avaliacao,
+                      pr.temQuiz ? "Avaliação" : "Sem avaliação própria",
+                      pr.temQuiz,
+                    ],
+                    [
+                      pr.pratica,
+                      pr.temPratica
+                        ? "Entrega + 80% nas decisões objetivas"
+                        : "Sem caso próprio",
+                      pr.temPratica,
+                    ],
+                  ].map(([ok, rot, aplica], i) => (
+                    <i
+                      key={i}
+                      className={"sin" + (aplica ? (ok ? " ok" : "") : " na")}
+                      title={rot}
+                    />
+                  ))}
+                </span>
+                <span className="cert-mod-pct">{p}%</span>
+                {pr.pronto ? (
+                  <button
+                    className="cert-mod-dl"
+                    onClick={() =>
+                      baixarCert("Autoestudo do módulo " + t.code + " · " + t.title, 100)
+                    }
+                  >
+                    <Download size={14} />
+                  </button>
+                ) : (
+                  <span className="cert-mod-pending">
+                    {!pr.leitura
+                      ? "ler tudo"
+                      : !pr.avaliacao
+                        ? "fazer avaliação"
+                        : !pr.praticaEntregue
+                          ? "entregar prática"
+                          : "revisar decisões da prática"}
+                  </span>
+                )}
+              </li>
+            );
+          })}
+        </ul>
+      </section>
+      <p className="profile-note">
+        Estes registros comprovam apenas ações e respostas objetivas salvas
+        neste navegador. A fundamentação prática permanece sem aprovação humana.
+        Eles não comprovam identidade, competência profissional, aprovação
+        institucional ou capacitação oficial do Instituto Água e Terra.
+      </p>
+    </div>
+  );
 }
-function TodayPlan({go,openLesson,continueLesson,state}){
- // revisao: o que foi concluido ha mais tempo volta primeiro
- const dias=iso=>Math.floor((Date.now()-new Date(iso).getTime())/86400000);
- const antigas=Object.entries((state&&state.doneAt)||{}).filter(([id,at])=>at&&lessonMap.has(id)).map(([id,at])=>({l:lessonMap.get(id),d:dias(at)})).filter(x=>x.d>=7).sort((a,b)=>b.d-a.d).slice(0,3);
- const desdeUltima=state&&state.lastVisit?dias(state.lastVisit):null;const items=[[BookOpen,'Continuar aula',continueLesson?(continueLesson.number?`${continueLesson.number} `:'')+continueLesson.title:'Triagem e leitura do processo',()=>continueLesson&&openLesson?openLesson(continueLesson.id):go('formacao')],[FileCheck2,'Checklist','Conferência documental',()=>go('biblioteca')],[FlaskConical,'Laboratório','Simule uma análise',()=>go('laboratorio')],[ClipboardCheck,'Avaliação rápida','Teste seus conhecimentos',()=>go('avaliacoes')]];return <aside className="today-plan"><div><h2>Seu plano de hoje</h2><span>≈ 45 min</span></div>{desdeUltima!==null&&desdeUltima>=3&&<p className="tp-volta"><Clock size={14}/> Última sessão há {desdeUltima} dias. Reveja antes de avançar.</p>}{antigas.length>0&&<div className="tp-revisao"><strong>Revisar o que já viu</strong>{antigas.map(({l,d})=><button key={l.id} onClick={()=>openLesson(l.id)}><span className="tpr-dias">{d}d</span><span className="tpr-tit">{l.number?l.number+' ':''}{l.title}</span><ChevronRight size={14}/></button>)}</div>}{items.map(([Icon,a,b,fn],i)=><button key={a} onClick={fn}><span className={`plan-icon c${i}`}><Icon/></span><span><strong>{a}</strong><small>{b}</small></span><ChevronRight/></button>)}</aside>}
-function MiniFlow(){return <div className="mini-flow">{['Receber','Conferir','Enquadrar','Analisar','Registrar'].map((x,i)=><React.Fragment key={x}><div style={{'--delay':`${i*.35}s`}}><span>{i+1}</span><strong>{x}</strong></div>{i<4&&<i><ArrowRight/></i>}</React.Fragment>)}</div>}
+function Topbar({
+  onMenu,
+  menuOpen,
+  onSearch,
+  progress,
+  profile,
+  onProfile,
+  inert,
+}) {
+  const _n = ((profile && profile.name) || "").trim();
+  const _acc = hasAccount(profile);
+  const _ini = _acc
+    ? _n
+        .split(/\s+/)
+        .filter(Boolean)
+        .map((w) => w[0])
+        .slice(0, 2)
+        .join("")
+        .toUpperCase() || "IAT"
+    : "+";
+  return (
+    <header className="topbar" inert={inert}>
+      <button
+        className="mobile-menu"
+        onClick={onMenu}
+        aria-label={menuOpen ? "Fechar menu" : "Abrir menu"}
+        aria-expanded={menuOpen}
+        aria-controls="navegacao-lateral"
+      >
+        <Menu />
+      </button>
+      <div className="compact-brand">
+        <span className="brand-wave">IAT</span>
+        <div>
+          <strong>Academia de Licenciamento</strong>
+          <small>Hidrelétrico</small>
+        </div>
+      </div>
+      <button
+        className="global-search"
+        onClick={onSearch}
+        aria-label="Buscar no POP, aulas e checklists. Atalho Control K"
+      >
+        <Search />
+        <span>Buscar no POP, aulas e checklists</span>
+        <kbd aria-hidden="true">Ctrl K</kbd>
+      </button>
+      <div
+        className="top-progress"
+        title={`${progress}% concluído`}
+        role="progressbar"
+        aria-label="Progresso geral"
+        aria-valuemin="0"
+        aria-valuemax="100"
+        aria-valuenow={progress}
+      >
+        <span>{progress}%</span>
+        <i>
+          <em style={{ width: `${progress}%` }} />
+        </i>
+      </div>
+      <ThemeToggle />
+      <button
+        className="profile"
+        onClick={onProfile}
+        aria-label={_acc ? `Abrir perfil de ${_n}` : "Criar meu perfil"}
+        title={_acc ? "Ver meu perfil" : "Criar meu perfil"}
+      >
+        <span aria-hidden="true">{_ini}</span>
+        <div>
+          <strong>{_acc ? _n.split(/\s+/)[0] : "Meu perfil"}</strong>
+          <small>
+            {_acc ? profile.role || "Registro pessoal" : "Criar sua conta"}
+          </small>
+        </div>
+      </button>
+    </header>
+  );
+}
+function Sidebar({ view, go, open, openLesson, mobile, modalOpen }) {
+  const hidden = mobile && !open;
+  return (
+    <aside
+      id="navegacao-lateral"
+      aria-hidden={hidden}
+      aria-label={mobile && open ? "Menu principal" : undefined}
+      aria-modal={mobile && open ? "true" : undefined}
+      role={mobile && open ? "dialog" : undefined}
+      inert={hidden || modalOpen}
+      className={"sidebar-v2 " + (open ? "open" : "")}
+    >
+      <div className="brand-panel">
+        <strong>Academia IAT</strong>
+        <span>
+          Licenciamento
+          <br />
+          Hidrelétrico
+        </span>
+        <svg viewBox="0 0 200 128" aria-hidden="true" className="brand-hydro">
+          <rect
+            x="8"
+            y="52"
+            width="62"
+            height="26"
+            rx="3"
+            fill="#57d8bf"
+            opacity=".85"
+          />
+          <path
+            d="M10 56 q8 -4 16 0 t16 0 t16 0 t14 0"
+            stroke="#eafff7"
+            strokeWidth="2.5"
+            fill="none"
+          />
+          <path
+            d="M70 46 L70 92 L92 92 L84 46 Z"
+            fill="#e6efe9"
+            stroke="#a8d5c2"
+            strokeWidth="1.5"
+          />
+          <path
+            d="M74 52 L74 88 M79 56 L80 88 M84 62 L86 88"
+            stroke="#9db8ab"
+            strokeWidth="1.4"
+          />
+          <path
+            d="M86 58 L112 84"
+            stroke="#0b3b2d"
+            strokeWidth="5"
+            strokeLinecap="round"
+          />
+          <path
+            d="M86 58 L112 84"
+            stroke="#57d8bf"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeDasharray="4 6"
+          />
+          <rect
+            x="110"
+            y="76"
+            width="30"
+            height="18"
+            rx="2"
+            fill="#fff"
+            stroke="#57d8bf"
+            strokeWidth="1.6"
+          />
+          <path d="M110 76 L125 66 L140 76 Z" fill="#57d8bf" />
+          <path d="M124 80 l-4 7 h4 l-3 7 8 -9 h-4 l4 -5 Z" fill="#f3bd4f" />
+          <path
+            d="M150 44 L150 94 M141 58 L159 58 M143 48 L157 48"
+            stroke="#eafff7"
+            strokeWidth="2.6"
+          />
+          <path d="M140 94 L160 94" stroke="#eafff7" strokeWidth="2.6" />
+          <path
+            d="M150 44 C162 38 174 42 186 34"
+            stroke="#f3bd4f"
+            strokeWidth="2"
+            fill="none"
+          />
+          <circle cx="188" cy="33" r="3.4" fill="#f3bd4f" />
+          <g transform="translate(18 88)">
+            <path
+              d="M0 12 C10 4 24 4 34 9 C44 4 58 4 68 12 L68 32 C58 25 44 25 34 29 C24 25 10 25 0 32 Z"
+              fill="#fff"
+              stroke="#57d8bf"
+              strokeWidth="2.4"
+            />
+            <path d="M34 9 L34 29" stroke="#57d8bf" strokeWidth="2.2" />
+            <path
+              d="M7 14 L28 12 M7 19 L28 17 M7 24 L28 22 M40 12 L61 14 M40 17 L61 19 M40 22 L61 24"
+              stroke="#0b3b2d"
+              strokeWidth="1.5"
+              opacity=".55"
+            />
+            <path
+              d="M26 -2 L42 -2 L34 3 Z M34 -2 L34 -8 M30 -8 L38 -8"
+              stroke="#f3bd4f"
+              strokeWidth="2"
+              fill="#f3bd4f"
+            />
+          </g>
+        </svg>
+      </div>
+      <nav aria-label="Navegação principal">
+        {NAV.map(([id, label, Icon]) => {
+          const at = view === id || (view === "lesson" && id === "formacao");
+          return (
+            <button
+              key={id}
+              aria-current={at ? "page" : undefined}
+              className={at ? "active" : ""}
+              onClick={() => go(id)}
+            >
+              <Icon />
+              {label}
+            </button>
+          );
+        })}
+      </nav>
+      <button
+        className="sidebar-help"
+        onClick={() => openLesson && openLesson(firstLesson("m00")?.id)}
+      >
+        <CircleHelp />
+        <div>
+          <strong>Por onde começar?</strong>
+          <small>Abra o módulo de Orientação</small>
+        </div>
+        <ChevronRight />
+      </button>
+      <div className="source-lock">
+        <ShieldCheck />
+        <span>
+          Fonte vinculada
+          <br />
+          <b>
+            POP v{popData.metadata?.operational?.version || "—"} ·{" "}
+            {popData.metadata?.operational?.dateLabel || "data não informada"}
+          </b>
+          <small>{lessons.length} tópicos didáticos · minuta técnica</small>
+        </span>
+      </div>
+    </aside>
+  );
+}
 
-function Formation({state,openLesson}){
- const[openTrack,setOpenTrack]=useState('m00'),[filter,setFilter]=useState('');
- return <div className="page"><PageHeader title="Formação completa" subtitle={`${tracks.length} módulos conectam cada seção do POP a objetivos, conteúdo-fonte, prática e avaliação.`} icon={GraduationCap}/><div className="formation-toolbar"><div><Search/><input value={filter} onChange={e=>setFilter(e.target.value)} placeholder="Filtrar módulos ou aulas"/></div><span>{lessons.length} tópicos · {tracks.reduce((a,t)=>a+(trackLessons.get(t.id)?.reduce((x,l)=>x+l.minutes,0)||0),0)} min</span></div><div className="curriculum">{trackGroups.map(group=><section key={group.title}><div className="group-title"><span>{group.title}</span><i/></div>{group.ids.map(id=>{const t=tracks.find(x=>x.id===id),full=trackLessons.get(id)||[],ls=full.filter(l=>norm(l.title+' '+(l.number||'')).includes(norm(filter))),p=trackProgress(id,state),Icon=TRACK_ICONS[t.icon]||BookOpen;if(filter&&!norm(t.title+' '+t.code).includes(norm(filter))&&!ls.length)return null;const show=filter&&!ls.length?full:ls;const expanded=openTrack===id||(!!filter&&show.length>0);return <article className={'track-row '+(expanded?'expanded':'')} key={id}><button className="track-summary" onClick={()=>setOpenTrack(openTrack===id?'':id)}><span className="track-icon" style={{'--track':t.color}}><Icon/></span><span className="track-copy"><small>{t.code}</small><strong>{t.title}</strong><em>{t.summary}</em></span><span className="track-metrics"><b>{p}%</b><i><em style={{width:`${p}%`}}/></i><small>{state.completed.filter(x=>full.some(l=>l.id===x)).length}/{full.length} tópicos</small></span><ChevronRight/></button>{expanded&&<div className="lesson-list">{show.map(l=><button key={l.id} onClick={()=>openLesson(l.id)}><span className={state.completed.includes(l.id)?'complete':''}>{state.completed.includes(l.id)?<Check/>:full.indexOf(l)+1}</span><span><strong>{l.number?`${l.number} `:''}{l.title}</strong><small>{l.minutes} min · Conteúdo integral do POP</small></span>{state.bookmarks.includes(l.id)&&<BookmarkCheck className="saved"/>}<ChevronRight/></button>)}</div>}</article>})}</section>)}</div></div>
+function SourceAssurance({ compact = false }) {
+  const op = popData.metadata?.operational || {};
+  const sha = popData.source?.sha256 || popData.source?.hash || "";
+  const sourceFileName =
+    popData.source?.fileName || "Documento-fonte não identificado";
+  const generated = popData.generatedAt ? new Date(popData.generatedAt) : null;
+  const validDate = generated && !Number.isNaN(generated.getTime());
+  return (
+    <section
+      className={"source-assurance " + (compact ? "compact" : "")}
+      aria-label="Estado da fonte e da validação"
+    >
+      <ShieldCheck />
+      <div>
+        <small>FONTE DO PERCURSO</small>
+        <strong>
+          POP {op.version ? `v${op.version}` : "sem versão identificada"} ·{" "}
+          {lessons.length} tópicos vinculados
+        </strong>
+        <span
+          title={sourceFileName}
+          aria-label={`Documento-fonte: ${sourceFileName}`}
+        >
+          {sourceFileName}
+        </span>
+      </div>
+      <dl>
+        <div>
+          <dt>Extração</dt>
+          <dd>
+            {validDate
+              ? generated.toLocaleDateString("pt-BR")
+              : "data não registrada"}
+          </dd>
+        </div>
+        <div>
+          <dt>Integridade</dt>
+          <dd>{sha ? `SHA-256 ${sha.slice(0, 10)}…` : "hash pendente"}</dd>
+        </div>
+        <div>
+          <dt>Status</dt>
+          <dd>Minuta técnica · validação institucional pendente</dd>
+        </div>
+      </dl>
+    </section>
+  );
 }
 
-function Lesson({lesson,state,setState,openLesson,complete,bookmark,go}){
- const[tab,setTab]=useState('aula'),[outlineOpen,setOutlineOpen]=useState(true);const track=tracks.find(t=>t.id===lesson.trackId)||tracks[0];
- // Antes toda subaula de um modulo mostrava o mesmo video. Agora cada secao tem
- // o seu, montado a partir do texto dela; o video do modulo fica de reserva
- // para as poucas secoes sem conteudo proprio.
- const media=aulaMedia[lesson.id]
-  ?{src:wb(`/media/aula/${lesson.id}.mp4`),poster:wb(`/media/aula/${lesson.id}.jpg`),captions:wb(`/media/aula/${lesson.id}.vtt`),title:((lesson.number?lesson.number+' ':'')+lesson.title),propria:true}
-  :featuredMedia[track.id];const ls=trackLessons.get(track.id)||[];const index=ls.findIndex(l=>l.id===lesson.id);const ORDEM=trackGroups.flatMap(g=>g.ids);const proxTrack=ORDEM[ORDEM.indexOf(track.id)+1];const next=ls[index+1]||(proxTrack?(trackLessons.get(proxTrack)||[])[0]:null)||lessons[lesson.order+1];const blocks=(lesson.blockIds||[]).map(id=>blockMap.get(id)).filter(b=>b&&!b.navigationOnly);const tables=blocks.filter(b=>b.type==='table').map(b=>tableMap.get(b.tableId)).filter(Boolean);const figures=popData.figures.filter(f=>f.blockId&&lesson.blockIds?.includes(f.blockId));const note=state.notes[lesson.id]||'';const design=getLearningDesign(lesson,blocks);const mastery=state.mastery?.[lesson.id]||[];
- useEffect(()=>{scrollTo({top:0})},[lesson.id]);
- function setNote(v){setState(s=>({...s,notes:{...s.notes,[lesson.id]:v}}))}
- return <div className={'lesson-layout '+(!outlineOpen?'outline-collapsed':'')}><aside className="lesson-outline"><button className="outline-toggle" aria-label={outlineOpen?'Recolher sumário da aula':'Abrir sumário da aula'} title={outlineOpen?'Recolher sumário':'Abrir sumário'} onClick={()=>setOutlineOpen(v=>!v)}>{outlineOpen?<PanelLeftClose/>:<PanelLeftOpen/>}</button>{outlineOpen&&<><button className="back-course" onClick={()=>go('formacao')}><ChevronLeft/> Voltar à formação</button><div className="outline-track"><span style={{background:track.color,'--tc':track.color}}>{track.code}</span><div><strong>{track.title}</strong><small>{trackProgress(track.id,state)}% concluído</small></div></div><div className="outline-lessons">{ls.map((l,i)=><button className={l.id===lesson.id?'active':''} aria-current={l.id===lesson.id?'page':undefined} key={l.id} onClick={()=>openLesson(l.id)}><span className={state.completed.includes(l.id)?'done':''}>{state.completed.includes(l.id)?<Check/>:i+1}</span><span>{l.number&&<small>{l.number}</small>}<strong>{l.title}</strong></span></button>)}</div></>}</aside><div className="lesson-content"><div className="breadcrumbs"><button onClick={()=>go('formacao')}>Formação</button><ChevronRight/><span>{track.code}</span><ChevronRight/><span>{lesson.number||'Introdução'}</span></div><header className="lesson-header"><div><h1>{lesson.number&&<span>{lesson.number}</span>} {lesson.title}</h1><p><Target/> {design.objective}</p></div><button className="bookmark-btn" aria-label={state.bookmarks.includes(lesson.id)?'Remover aula dos favoritos':'Salvar aula nos favoritos'} aria-pressed={state.bookmarks.includes(lesson.id)} onClick={()=>bookmark(lesson.id)}>{state.bookmarks.includes(lesson.id)?<BookmarkCheck/>:<Bookmark/>}</button></header><SourceAssurance compact/><LearningContract design={design} checked={mastery} toggle={id=>setState(s=>{const cur=s.mastery?.[lesson.id]||[];const nextMastery=cur.includes(id)?cur.filter(x=>x!==id):[...cur,id];return{...s,mastery:{...(s.mastery||{}),[lesson.id]:nextMastery}}})} openNotes={()=>setTab('notas')}/><VideoLesson media={media} track={track}/><div className="lesson-tabs" role="tablist" aria-label="Recursos da aula">{[['aula','Aula guiada',BookOpen],['fonte','Fonte do POP',FileText],['materiais','Quadros e figuras',Layers3],['notas','Anotações',StickyNote]].map(([id,label,Icon])=><button role="tab" aria-selected={tab===id} className={tab===id?'active':''} onClick={()=>setTab(id)} key={id}><Icon/>{label}{id==='materiais'&&<span>{tables.length+figures.length}</span>}</button>)}</div><div className="tab-panel" role="tabpanel" key={tab}>{tab==='aula'&&<LessonOverview lesson={lesson} design={design} blocks={blocks} setTab={setTab} openLesson={openLesson} caso={index===0?scenarios.find(c=>c.track===track.id):null} go={go} checked={state.checks?.[lesson.id]||[]} toggleCheck={i=>setState(s=>{const cur=s.checks?.[lesson.id]||[];const nx=cur.includes(i)?cur.filter(x=>x!==i):[...cur,i];return{...s,checks:{...(s.checks||{}),[lesson.id]:nx}}})}/>} {tab==='fonte'&&<SourceContent blocks={blocks}/>} {tab==='materiais'&&<LessonMaterials tables={tables} figures={figures}/>} {tab==='notas'&&<Notes value={note} setValue={setNote}/>}</div>{index===ls.length-1&&<section className="modulo-fim"><div className="mf-head"><Trophy size={18}/><div><small>FIM DO MÓDULO {track.code}</small><h3>{track.title}</h3></div><b>{trackProgress(track.id,state)}%</b></div><p className="mf-resumo">{track.summary}</p><div className="mf-acoes">{questionBank.some(q=>q.track===track.id)&&<button className="primary" onClick={()=>go('avaliacoes')}><ClipboardCheck size={16}/> Testar o que aprendi em {track.code}</button>}{scenarios.some(c=>c.track===track.id)&&<button className="text-action" onClick={()=>go('laboratorio')}><FlaskConical size={15}/> Praticar num caso</button>}{trackProgress(track.id,state)<100&&<span className="mf-falta">Faltam {ls.filter(l=>!state.completed.includes(l.id)).length} aulas para fechar o módulo.</span>}</div></section>}<footer className="lesson-footer"><button className={state.completed.includes(lesson.id)?'completed':''} onClick={()=>complete(lesson.id)}>{state.completed.includes(lesson.id)?<CheckCircle2/>:<Circle/>}{state.completed.includes(lesson.id)?'Aula concluída':'Marcar como concluída'}</button>{next&&<button className="next-lesson" onClick={()=>openLesson(next.id)}><span><small>PRÓXIMO TÓPICO</small><strong>{next.number?`${next.number} `:''}{next.title}</strong></span><ArrowRight/></button>}</footer></div><aside className="lesson-context"><div className="context-sticky"><h3>Nesta aula</h3><div className="context-progress"><span>Progresso do módulo</span><b>{trackProgress(track.id,state)}%</b><i><em style={{width:`${trackProgress(track.id,state)}%`}}/></i></div><nav><button className={tab==='aula'?'active':''} onClick={()=>setTab('aula')}><Target/>Aula guiada{tab==='aula'?<CheckCircle2/>:<Circle/>}</button><button className={tab==='fonte'?'active':''} onClick={()=>setTab('fonte')}><FileText/>Fonte da seção{tab==='fonte'?<CheckCircle2/>:<Circle/>}</button><button className={tab==='materiais'?'active':''} onClick={()=>setTab('materiais')}><Layers3/>{tables.length} tabelas · {figures.length} figuras{tab==='materiais'?<CheckCircle2/>:<Circle/>}</button><button className={tab==='notas'?'active':''} onClick={()=>setTab('notas')}><StickyNote/>Caderno pessoal{tab==='notas'?<CheckCircle2/>:<Circle/>}</button></nav><div className="quick-tip"><Lightbulb/><div><strong>Regra de ouro</strong><p>Identifique documento, fundamento, suficiência, consequência e encaminhamento. Não comece pela conclusão.</p></div></div>{(()=>{const sg=siglasDaAula(blocks.map(b=>b&&b.paragraph&&b.paragraph.text||'').join(' '));return sg.length?<div className="siglas-aula"><strong><BookMarked size={15}/> Siglas desta aula</strong><dl>{sg.map(x=><React.Fragment key={x.sig}><dt>{x.sig}</dt><dd>{x.nome}{x.desc?<em>{x.desc}</em>:null}</dd></React.Fragment>)}</dl></div>:null})()}</div></aside></div>
+function Dashboard({ state, progress, go, openLesson }) {
+  const continueLesson =
+    lessonMap.get(state.lastLesson) || firstLesson("m00") || lessons[0];
+  const continueTrack = tracks.find((t) => t.id === continueLesson.trackId);
+  const feat = {
+    src: wb("/media/tour-usina.mp4"),
+    poster: wb("/media/tour-usina-poster.png"),
+    captions: wb("/media/tour-usina.vtt"),
+    title: "Anatomia de uma usina em operação, tour guiado",
+  };
+  return (
+    <div className="page dashboard-page">
+      <section className="dashboard-intro">
+        <div>
+          <h1>
+            Aprenda o procedimento.
+            <br />
+            Pratique a decisão.
+          </h1>
+          <p>
+            Do primeiro contato ao controle de qualidade: estude a fonte,
+            confronte evidências e treine decisões justificadas.
+          </p>
+        </div>
+        <div className="intro-stat">
+          <span>Seu progresso</span>
+          <strong>{progress}%</strong>
+          <i>
+            <em style={{ width: `${progress}%` }} />
+          </i>
+          <small>
+            {state.completed.length} de {lessons.length} tópicos concluídos
+          </small>
+        </div>
+      </section>
+      <SourceAssurance />
+      <section className="river-journey" aria-label="Percurso de aprendizagem">
+        <div className="journey-head">
+          <h2>Seu percurso pelo POP</h2>
+          <button onClick={() => go("formacao")}>
+            Ver percurso formativo <ArrowRight />
+          </button>
+        </div>
+        <div className="river-line">
+          <svg
+            viewBox="0 0 1600 140"
+            preserveAspectRatio="none"
+            aria-hidden="true"
+          >
+            <path
+              className="river-shadow"
+              d="M0 75 C120 10 230 125 350 62 S590 110 720 55 S950 110 1080 50 S1320 115 1600 52"
+            />
+            <path
+              className="river-water"
+              d="M0 75 C120 10 230 125 350 62 S590 110 720 55 S950 110 1080 50 S1320 115 1600 52"
+            />
+          </svg>
+          <div className="journey-track">
+            {tracks.map((t, i) => {
+              let p = trackProgress(t.id, state);
+              return (
+                <button
+                  key={t.id}
+                  style={{ "--i": i }}
+                  title={t.code + " · " + t.title}
+                  className={p === 100 ? "done" : p > 0 ? "current" : ""}
+                  onClick={() => openLesson(firstLesson(t.id)?.id)}
+                >
+                  <span>{p === 100 ? <Check /> : i + 1}</span>
+                  <strong>{t.code}</strong>
+                  <small>{t.title}</small>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+        <div className="journey-legend">
+          <span>
+            <i className="dot done" />
+            Concluído
+          </span>
+          <span>
+            <i className="dot current" />
+            Em andamento
+          </span>
+          <span>
+            <i className="dot" />
+            Não iniciado
+          </span>
+        </div>
+      </section>
+      <section className="dashboard-feature">
+        <div className="feature-media">
+          <video
+            key={feat?.src}
+            poster={feat?.poster || wb("/media/analista-licenciamento.png")}
+            controls
+            preload="metadata"
+            playsInline
+          >
+            {feat?.src && <source src={feat.src} type="video/mp4" />}
+            {feat?.captions && (
+              <track
+                kind="captions"
+                srcLang="pt"
+                src={feat.captions}
+                label="Português"
+                default
+              />
+            )}
+          </video>
+          <span>Vídeo em destaque{feat?.title ? `: ${feat.title}` : ""}</span>
+          <span className="fm-chip">
+            <Clock /> 1:24 · 10 componentes
+          </span>
+        </div>
+        <div className="feature-copy">
+          <small>{continueTrack.code} · CONTINUE DE ONDE PAROU</small>
+          <h2>{continueLesson.fullTitle || continueLesson.title}</h2>
+          <p>{continueTrack.summary}</p>
+          <div className="feature-meta">
+            <span>
+              <Clock /> {continueLesson.minutes} min
+            </span>
+            <span>
+              <Layers3 /> {trackLessons.get(continueTrack.id).length} tópicos
+            </span>
+          </div>
+          <button
+            className="primary"
+            onClick={() => openLesson(continueLesson.id)}
+          >
+            Continuar aula <Play />
+          </button>
+          <button className="text-action" onClick={() => go("formacao")}>
+            Ver todas as aulas <ArrowRight />
+          </button>
+        </div>
+        <TodayPlan
+          go={go}
+          openLesson={openLesson}
+          continueLesson={continueLesson}
+          state={state}
+        />
+      </section>
+      <section className="dashboard-bottom">
+        <article className="flow-preview">
+          <div className="section-title">
+            <div>
+              <h2>Prévia do fluxo geral</h2>
+              <p>Veja a análise ganhar forma, etapa por etapa.</p>
+            </div>
+            <button onClick={() => go("fluxos")}>
+              Explorar <ExternalLink />
+            </button>
+          </div>
+          <MiniFlow />
+        </article>
+        <article className="coverage-card">
+          <div className="section-title">
+            <div>
+              <h2>Todo o POP, em um só lugar</h2>
+              <p>Extração auditada e vinculada às aulas.</p>
+            </div>
+            <Database />
+          </div>
+          <div className="coverage-stats">
+            <span>
+              <strong>{lessons.length}</strong>tópicos didáticos
+            </span>
+            <span>
+              <strong>
+                {popData.tables.filter((t) => !t.navigationOnly).length}
+              </strong>
+              quadros e tabelas
+            </span>
+            <span>
+              <strong>
+                {popData.figures.length +
+                  new Set(flowData.flowcharts.map((f) => f.number)).size}
+              </strong>
+              figuras e fluxos
+            </span>
+            <span>
+              <strong>
+                {(popData.stats?.allDocumentParagraphNodes || 0).toLocaleString(
+                  "pt-BR",
+                )}
+              </strong>
+              trechos pesquisáveis
+            </span>
+          </div>
+          <button onClick={() => go("biblioteca")}>
+            Abrir biblioteca integral <ArrowRight />
+          </button>
+        </article>
+      </section>
+    </div>
+  );
 }
-function LearningContract({design,checked=[],toggle,openNotes}){return <section className="learning-contract" aria-labelledby="learning-contract-title"><header><div><small>PERCURSO DE DOMÍNIO</small><h2 id="learning-contract-title">Da compreensão à auditoria</h2></div><span>{checked.length}/{design.levels.length} autochecagens</span></header><div className="learning-levels">{design.levels.map((level,index)=>{const on=checked.includes(level.id);return <button type="button" key={level.id} className={on?'checked':''} aria-pressed={on} onClick={()=>toggle(level.id)}><span>{on?<Check/>:index+1}</span><div><small>{level.label}</small><p>{level.description}</p></div></button>})}</div><div className="learning-challenge"><Lightbulb/><div><strong>Desafio de transferência</strong><p>{design.challenge}</p></div><button type="button" onClick={openNotes}>Responder no caderno <ArrowRight/></button></div><details><summary>Como demonstrar domínio</summary><ul>{design.mastery.map(item=><li key={item}><CheckCircle2/>{item}</li>)}</ul></details></section>}
-function VideoLesson({media,track}){
- const ref=useRef(null);const[playing,setPlaying]=useState(false);const[rate,setRate]=useState(1);
- const play=()=>{ref.current&&ref.current.play()};
- const setSpeed=r=>{setRate(r);if(ref.current)ref.current.playbackRate=r};
- return <figure className={'video-lesson vl2 '+(playing?'playing':'')}>
-  <div className="vl-stage">
-   <video ref={ref} controls preload="metadata" poster={media.poster} playsInline onPlay={()=>setPlaying(true)} onPause={()=>setPlaying(false)} onEnded={()=>setPlaying(false)}>
-    <source src={media.src} type="video/mp4"/>
-    {/* A legenda ja e desenhada dentro do quadro do video, sempre visivel.
+function TodayPlan({ go, openLesson, continueLesson, state }) {
+  // revisao: o que foi concluido ha mais tempo volta primeiro
+  const dias = (iso) =>
+    Math.floor((Date.now() - new Date(iso).getTime()) / 86400000);
+  const antigas = Object.entries((state && state.doneAt) || {})
+    .filter(([id, at]) => at && lessonMap.has(id))
+    .map(([id, at]) => ({ l: lessonMap.get(id), d: dias(at) }))
+    .filter((x) => x.d >= 7)
+    .sort((a, b) => b.d - a.d)
+    .slice(0, 3);
+  const desdeUltima = state && state.lastVisit ? dias(state.lastVisit) : null;
+  const items = [
+    [
+      BookOpen,
+      "Continuar aula",
+      continueLesson
+        ? (continueLesson.number ? `${continueLesson.number} ` : "") +
+          continueLesson.title
+        : "Triagem e leitura do processo",
+      () =>
+        continueLesson && openLesson
+          ? openLesson(continueLesson.id)
+          : go("formacao"),
+    ],
+    [FileCheck2, "Checklist", "Conferência documental", () => go("biblioteca")],
+    [
+      FlaskConical,
+      "Laboratório",
+      "Simule uma análise",
+      () => go("laboratorio"),
+    ],
+    [
+      ClipboardCheck,
+      "Avaliação rápida",
+      "Teste seus conhecimentos",
+      () => go("avaliacoes"),
+    ],
+  ];
+  return (
+    <aside className="today-plan">
+      <div>
+        <h2>Seu plano de hoje</h2>
+        <span>≈ 45 min</span>
+      </div>
+      {desdeUltima !== null && desdeUltima >= 3 && (
+        <p className="tp-volta">
+          <Clock size={14} /> Última sessão há {desdeUltima} dias. Reveja antes
+          de avançar.
+        </p>
+      )}
+      {antigas.length > 0 && (
+        <div className="tp-revisao">
+          <strong>Revisar o que já viu</strong>
+          {antigas.map(({ l, d }) => (
+            <button key={l.id} onClick={() => openLesson(l.id)}>
+              <span className="tpr-dias">{d}d</span>
+              <span className="tpr-tit">
+                {l.number ? l.number + " " : ""}
+                {l.title}
+              </span>
+              <ChevronRight size={14} />
+            </button>
+          ))}
+        </div>
+      )}
+      {items.map(([Icon, a, b, fn], i) => (
+        <button key={a} onClick={fn}>
+          <span className={`plan-icon c${i}`}>
+            <Icon />
+          </span>
+          <span>
+            <strong>{a}</strong>
+            <small>{b}</small>
+          </span>
+          <ChevronRight />
+        </button>
+      ))}
+    </aside>
+  );
+}
+function MiniFlow() {
+  return (
+    <div className="mini-flow">
+      {["Receber", "Conferir", "Enquadrar", "Analisar", "Registrar"].map(
+        (x, i) => (
+          <React.Fragment key={x}>
+            <div style={{ "--delay": `${i * 0.35}s` }}>
+              <span>{i + 1}</span>
+              <strong>{x}</strong>
+            </div>
+            {i < 4 && (
+              <i>
+                <ArrowRight />
+              </i>
+            )}
+          </React.Fragment>
+        ),
+      )}
+    </div>
+  );
+}
+
+function Formation({ state, profile, setProfile, openLesson }) {
+  const [openTrack, setOpenTrack] = useState("m00"),
+    [filter, setFilter] = useState(""),
+    [onlyPath, setOnlyPath] = useState(false);
+  const selectedPath = resolveLearningPath(profile?.persona);
+  const pathStats = learningPathStats(
+    selectedPath.id,
+    trackLessons,
+    state.completed,
+  );
+  return (
+    <div className="page">
+      <PageHeader
+        title="Formação guiada pelo POP"
+        subtitle={`${tracks.length} módulos conectam cada seção do POP a objetivos, conteúdo-fonte, prática e avaliação.`}
+        icon={GraduationCap}
+      />
+      <section className="learning-path-selector" aria-labelledby="learning-path-title">
+        <header>
+          <div>
+            <small>SEU PERCURSO RECOMENDADO</small>
+            <h2 id="learning-path-title">{selectedPath.label}</h2>
+            <p>
+              {selectedPath.audience} · {selectedPath.description}
+            </p>
+          </div>
+          <div className="learning-path-progress">
+            <strong>{pathStats.percent}%</strong>
+            <span>
+              {pathStats.completed}/{pathStats.lessons} tópicos
+            </span>
+            <i>
+              <em style={{ width: `${pathStats.percent}%` }} />
+            </i>
+          </div>
+        </header>
+        <div className="learning-path-options">
+          {LEARNING_PATHS.map((path) => (
+            <button
+              type="button"
+              key={path.id}
+              className={path.id === selectedPath.id ? "active" : ""}
+              aria-pressed={path.id === selectedPath.id}
+              onClick={() =>
+                setProfile((current) => ({
+                  ...current,
+                  persona: path.id,
+                }))
+              }
+            >
+              <strong>{path.label.replace("Trilha ", "")}</strong>
+              <small>{path.trackIds.length} módulos</small>
+            </button>
+          ))}
+        </div>
+        <footer>
+          <p>
+            A recomendação organiza prioridades, mas não bloqueia conteúdo nem
+            comprova competência.
+          </p>
+          <button
+            type="button"
+            aria-pressed={onlyPath}
+            onClick={() => setOnlyPath((current) => !current)}
+          >
+            {onlyPath ? "Mostrar catálogo completo" : "Mostrar somente minha trilha"}
+          </button>
+        </footer>
+      </section>
+      <div className="formation-toolbar">
+        <div role="search">
+          <Search aria-hidden="true" />
+          <input
+            aria-label="Filtrar módulos ou aulas"
+            value={filter}
+            onChange={(e) => setFilter(e.target.value)}
+            placeholder="Filtrar módulos ou aulas"
+          />
+        </div>
+        <span>
+          {lessons.length} tópicos ·{" "}
+          {tracks.reduce(
+            (a, t) =>
+              a +
+              (trackLessons.get(t.id)?.reduce((x, l) => x + l.minutes, 0) || 0),
+            0,
+          )}{" "}
+          min estimados
+        </span>
+      </div>
+      <div className="curriculum">
+        {trackGroups.map((group) => (
+          <section key={group.title}>
+            <div className="group-title">
+              <span>{group.title}</span>
+              <i />
+            </div>
+            {group.ids.map((id) => {
+              const t = tracks.find((x) => x.id === id),
+                full = trackLessons.get(id) || [],
+                recommended = selectedPath.trackIds.includes(id),
+                ls = full.filter((l) =>
+                  norm(l.title + " " + (l.number || "")).includes(norm(filter)),
+                ),
+                p = trackProgress(id, state),
+                Icon = TRACK_ICONS[t.icon] || BookOpen;
+              if (onlyPath && !recommended) return null;
+              if (
+                filter &&
+                !norm(t.title + " " + t.code).includes(norm(filter)) &&
+                !ls.length
+              )
+                return null;
+              const show = filter && !ls.length ? full : ls;
+              const expanded =
+                openTrack === id || (!!filter && show.length > 0);
+              return (
+                <article
+                  className={"track-row " + (expanded ? "expanded" : "")}
+                  key={id}
+                >
+                  <button
+                    className="track-summary"
+                    aria-expanded={expanded}
+                    onClick={() => setOpenTrack(openTrack === id ? "" : id)}
+                  >
+                    <span className="track-icon" style={{ "--track": t.color }}>
+                      <Icon />
+                    </span>
+                    <span className="track-copy">
+                      <small>
+                        {t.code}
+                        {recommended && <mark>Na sua trilha</mark>}
+                      </small>
+                      <strong>{t.title}</strong>
+                      <em>{t.summary}</em>
+                    </span>
+                    <span className="track-metrics">
+                      <b>{p}%</b>
+                      <i>
+                        <em style={{ width: `${p}%` }} />
+                      </i>
+                      <small>
+                        {
+                          state.completed.filter((x) =>
+                            full.some((l) => l.id === x),
+                          ).length
+                        }
+                        /{full.length} tópicos
+                      </small>
+                    </span>
+                    <ChevronRight />
+                  </button>
+                  {expanded && (
+                    <div className="lesson-list">
+                      {show.map((l) => (
+                        <button key={l.id} onClick={() => openLesson(l.id)}>
+                          <span
+                            className={
+                              state.completed.includes(l.id) ? "complete" : ""
+                            }
+                          >
+                            {state.completed.includes(l.id) ? (
+                              <Check />
+                            ) : (
+                              full.indexOf(l) + 1
+                            )}
+                          </span>
+                          <span>
+                            <strong>
+                              {l.number ? `${l.number} ` : ""}
+                              {l.title}
+                            </strong>
+                            <small>
+                              {l.minutes} min estimados · Fonte vinculada ao POP
+                            </small>
+                          </span>
+                          {state.bookmarks.includes(l.id) && (
+                            <BookmarkCheck className="saved" />
+                          )}
+                          <ChevronRight />
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </article>
+              );
+            })}
+          </section>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function Lesson({
+  lesson,
+  state,
+  setState,
+  openLesson,
+  complete,
+  bookmark,
+  go,
+}) {
+  const [tab, setTab] = useState("aula"),
+    [outlineOpen, setOutlineOpen] = useState(true);
+  const [completionNotice, setCompletionNotice] = useState(false);
+  const track = tracks.find((t) => t.id === lesson.trackId) || tracks[0];
+  // Antes toda subaula de um modulo mostrava o mesmo video. Agora cada secao tem
+  // o seu, montado a partir do texto dela; o video do modulo fica de reserva
+  // para as poucas secoes sem conteudo proprio.
+  const media = aulaMedia[lesson.id]
+    ? {
+        src: wb(`/media/aula/${lesson.id}.mp4`),
+        poster: wb(`/media/aula/${lesson.id}.jpg`),
+        captions: wb(`/media/aula/${lesson.id}.vtt`),
+        title: (lesson.number ? lesson.number + " " : "") + lesson.title,
+        propria: true,
+      }
+    : featuredMedia[track.id];
+  const ls = trackLessons.get(track.id) || [];
+  const index = ls.findIndex((l) => l.id === lesson.id);
+  const ORDEM = trackGroups.flatMap((g) => g.ids);
+  const proxTrack = ORDEM[ORDEM.indexOf(track.id) + 1];
+  const next =
+    ls[index + 1] ||
+    (proxTrack ? (trackLessons.get(proxTrack) || [])[0] : null) ||
+    lessons[lesson.order + 1];
+  const blocks = (lesson.blockIds || [])
+    .map((id) => blockMap.get(id))
+    .filter((b) => b && !b.navigationOnly);
+  const tables = blocks
+    .filter((b) => b.type === "table")
+    .map((b) => tableMap.get(b.tableId))
+    .filter(Boolean);
+  const figures = popData.figures.filter(
+    (f) => f.blockId && lesson.blockIds?.includes(f.blockId),
+  );
+  const note = state.notes[lesson.id] || "";
+  const design = getLearningDesign(lesson, blocks);
+  const evidence = state.lessonEvidence?.[lesson.id] || {};
+  const questionSelection = selectLessonQuestion(questionBank, lesson, index);
+  const question = questionSelection?.question || null;
+  const scenarioSelection = selectLessonScenario(scenarios, track.id, index);
+  const objectiveCorrect =
+    Boolean(question) &&
+    evidence.objectiveQuestionId === question.id &&
+    evidence.objectiveCorrect === true;
+  const evidenceStatus = lessonEvidenceStatus(
+    { ...evidence, objectiveCorrect },
+    {
+      criterionCount: design.mastery.length,
+      hasObjectiveCheck: Boolean(question),
+    },
+  );
+  useEffect(() => {
+    scrollTo({ top: 0 });
+    setCompletionNotice(false);
+  }, [lesson.id]);
+  useEffect(() => {
+    const list = document.querySelector(".lesson-tabs");
+    if (!list) return;
+    const buttons = [...list.querySelectorAll('[role="tab"]')];
+    const keyboard = (event) => {
+      if (!["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key))
+        return;
+      event.preventDefault();
+      const current = buttons.indexOf(document.activeElement);
+      const next =
+        event.key === "Home"
+          ? 0
+          : event.key === "End"
+            ? buttons.length - 1
+            : (current +
+                (event.key === "ArrowRight" ? 1 : -1) +
+                buttons.length) %
+              buttons.length;
+      buttons[next].click();
+      buttons[next].focus();
+    };
+    list.addEventListener("keydown", keyboard);
+    return () => list.removeEventListener("keydown", keyboard);
+  }, [tab, lesson.id]);
+  function setNote(v) {
+    setState((s) => ({ ...s, notes: { ...s.notes, [lesson.id]: v } }));
+  }
+  function updateLessonEvidence(change) {
+    setState((s) => {
+      const current = s.lessonEvidence?.[lesson.id] || {};
+      const next = typeof change === "function" ? change(current) : change;
+      return {
+        ...s,
+        lessonEvidence: {
+          ...(s.lessonEvidence || {}),
+          [lesson.id]: next,
+        },
+      };
+    });
+  }
+  function answerLessonQuestion(optionIndex) {
+    if (!question) return;
+    updateLessonEvidence((current) => ({
+      ...current,
+      objectiveQuestionId: question.id,
+      objectiveSelected: optionIndex,
+      objectiveCorrect: optionIndex === question.answer,
+      objectiveAttempts: (Number(current.objectiveAttempts) || 0) + 1,
+    }));
+  }
+  function retryLessonQuestion() {
+    updateLessonEvidence((current) => ({
+      ...current,
+      objectiveQuestionId: question?.id || "",
+      objectiveSelected: null,
+      objectiveCorrect: false,
+    }));
+  }
+  function toggleEvidenceCriterion(criterionIndex) {
+    updateLessonEvidence((current) => {
+      const criteria = Array.isArray(current.criteria)
+        ? current.criteria.filter(Number.isInteger)
+        : [];
+      return {
+        ...current,
+        criteria: criteria.includes(criterionIndex)
+          ? criteria.filter((item) => item !== criterionIndex)
+          : [...criteria, criterionIndex],
+      };
+    });
+  }
+  function requestCompletion() {
+    if (
+      !state.completed.includes(lesson.id) &&
+      !evidenceStatus.ready
+    ) {
+      setCompletionNotice(true);
+      setTab("aula");
+      setTimeout(() => {
+        const target = document.getElementById(`pratica-ativa-${lesson.id}`);
+        target?.scrollIntoView({
+          behavior:
+            typeof matchMedia !== "undefined" &&
+            matchMedia("(prefers-reduced-motion: reduce)").matches
+              ? "auto"
+              : "smooth",
+          block: "center",
+        });
+        target?.focus?.({ preventScroll: true });
+      }, 0);
+      return;
+    }
+    setCompletionNotice(false);
+    complete(lesson.id);
+  }
+  return (
+    <div
+      className={"lesson-layout " + (!outlineOpen ? "outline-collapsed" : "")}
+    >
+      <aside className="lesson-outline">
+        <button
+          className="outline-toggle"
+          aria-label={
+            outlineOpen ? "Recolher sumário da aula" : "Abrir sumário da aula"
+          }
+          title={outlineOpen ? "Recolher sumário" : "Abrir sumário"}
+          onClick={() => setOutlineOpen((v) => !v)}
+        >
+          {outlineOpen ? <PanelLeftClose /> : <PanelLeftOpen />}
+        </button>
+        {outlineOpen && (
+          <>
+            <button className="back-course" onClick={() => go("formacao")}>
+              <ChevronLeft /> Voltar à formação
+            </button>
+            <div className="outline-track">
+              <span style={{ background: track.color, "--tc": track.color }}>
+                {track.code}
+              </span>
+              <div>
+                <strong>{track.title}</strong>
+                <small>{trackProgress(track.id, state)}% concluído</small>
+              </div>
+            </div>
+            <div className="outline-lessons">
+              {ls.map((l, i) => (
+                <button
+                  className={l.id === lesson.id ? "active" : ""}
+                  aria-current={l.id === lesson.id ? "page" : undefined}
+                  key={l.id}
+                  onClick={() => openLesson(l.id)}
+                >
+                  <span
+                    className={state.completed.includes(l.id) ? "done" : ""}
+                  >
+                    {state.completed.includes(l.id) ? <Check /> : i + 1}
+                  </span>
+                  <span>
+                    {l.number && <small>{l.number}</small>}
+                    <strong>{l.title}</strong>
+                  </span>
+                </button>
+              ))}
+            </div>
+          </>
+        )}
+      </aside>
+      <div className="lesson-content">
+        <div className="breadcrumbs">
+          <button onClick={() => go("formacao")}>Formação</button>
+          <ChevronRight />
+          <span>{track.code}</span>
+          <ChevronRight />
+          <span>{lesson.number || "Introdução"}</span>
+        </div>
+        <header className="lesson-header">
+          <div>
+            <h1>
+              {lesson.number && <span>{lesson.number}</span>} {lesson.title}
+            </h1>
+            <p>
+              <Target /> {design.objective}
+            </p>
+          </div>
+          <button
+            className="bookmark-btn"
+            aria-label={
+              state.bookmarks.includes(lesson.id)
+                ? "Remover aula dos favoritos"
+                : "Salvar aula nos favoritos"
+            }
+            aria-pressed={state.bookmarks.includes(lesson.id)}
+            onClick={() => bookmark(lesson.id)}
+          >
+            {state.bookmarks.includes(lesson.id) ? (
+              <BookmarkCheck />
+            ) : (
+              <Bookmark />
+            )}
+          </button>
+        </header>
+        <SourceAssurance compact />
+        <LearningContract design={design} />
+        <VideoLesson media={media} track={track} />
+        <div
+          className="lesson-tabs"
+          role="tablist"
+          aria-label="Recursos da aula"
+        >
+          {[
+            ["aula", "Aula guiada", BookOpen],
+            ["fonte", "Fonte do POP", FileText],
+            ["materiais", "Quadros e figuras", Layers3],
+            ["notas", "Anotações", StickyNote],
+          ].map(([id, label, Icon]) => (
+            <button
+              role="tab"
+              id={`aba-aula-${lesson.id}-${id}`}
+              aria-controls={`painel-aula-${lesson.id}`}
+              aria-selected={tab === id}
+              tabIndex={tab === id ? 0 : -1}
+              className={tab === id ? "active" : ""}
+              onClick={() => setTab(id)}
+              key={id}
+            >
+              <Icon />
+              {label}
+              {id === "materiais" && (
+                <span>{tables.length + figures.length}</span>
+              )}
+            </button>
+          ))}
+        </div>
+        <div
+          className="tab-panel"
+          id={`painel-aula-${lesson.id}`}
+          role="tabpanel"
+          aria-labelledby={`aba-aula-${lesson.id}-${tab}`}
+          key={tab}
+        >
+          {tab === "aula" && (
+            <LessonOverview
+              lesson={lesson}
+              design={design}
+              blocks={blocks}
+              setTab={setTab}
+              openLesson={openLesson}
+              caso={scenarioSelection?.scenario || null}
+              casoPergunta={scenarioSelection?.questionIndex || 0}
+              go={go}
+              evidence={evidence}
+              evidenceStatus={evidenceStatus}
+              updateEvidence={updateLessonEvidence}
+              toggleEvidenceCriterion={toggleEvidenceCriterion}
+              questionSelection={questionSelection}
+              answerLessonQuestion={answerLessonQuestion}
+              retryLessonQuestion={retryLessonQuestion}
+              checked={state.checks?.[lesson.id] || []}
+              toggleCheck={(i) =>
+                setState((s) => {
+                  const cur = s.checks?.[lesson.id] || [];
+                  const nx = cur.includes(i)
+                    ? cur.filter((x) => x !== i)
+                    : [...cur, i];
+                  return {
+                    ...s,
+                    checks: { ...(s.checks || {}), [lesson.id]: nx },
+                  };
+                })
+              }
+            />
+          )}{" "}
+          {tab === "fonte" && <SourceContent blocks={blocks} />}{" "}
+          {tab === "materiais" && (
+            <LessonMaterials tables={tables} figures={figures} />
+          )}{" "}
+          {tab === "notas" && <Notes value={note} setValue={setNote} />}
+        </div>
+        {index === ls.length - 1 && (
+          <section className="modulo-fim">
+            <div className="mf-head">
+              <Trophy size={18} />
+              <div>
+                <small>FIM DO MÓDULO {track.code}</small>
+                <h3>{track.title}</h3>
+              </div>
+              <b>{trackProgress(track.id, state)}%</b>
+            </div>
+            <p className="mf-resumo">{track.summary}</p>
+            <div className="mf-acoes">
+              {questionBank.some((q) => q.track === track.id) && (
+                <button className="primary" onClick={() => go("avaliacoes")}>
+                  <ClipboardCheck size={16} /> Testar o que aprendi em{" "}
+                  {track.code}
+                </button>
+              )}
+              {scenarios.some((c) => c.track === track.id) && (
+                <button
+                  className="text-action"
+                  onClick={() => go("laboratorio")}
+                >
+                  <FlaskConical size={15} /> Praticar num caso
+                </button>
+              )}
+              {trackProgress(track.id, state) < 100 && (
+                <span className="mf-falta">
+                  Faltam{" "}
+                  {ls.filter((l) => !state.completed.includes(l.id)).length}{" "}
+                  aulas para fechar o módulo.
+                </span>
+              )}
+            </div>
+          </section>
+        )}
+        <footer className="lesson-footer">
+          {completionNotice && !evidenceStatus.ready && (
+            <p
+              className="lesson-completion-notice"
+              id={`conclusao-aviso-${lesson.id}`}
+              role="alert"
+            >
+              Registre a recuperação ativa, confira ao menos dois critérios e
+              acerte a checagem objetiva antes de concluir este tópico.
+            </p>
+          )}
+          {state.completed.includes(lesson.id) && !evidenceStatus.ready && (
+            <p className="lesson-legacy-completion">
+              Conclusão registrada anteriormente. A prática ativa abaixo é
+              recomendada para criar evidência de aprendizagem.
+            </p>
+          )}
+          <button
+            className={
+              state.completed.includes(lesson.id)
+                ? "completed"
+                : evidenceStatus.ready
+                  ? "ready"
+                  : "needs-evidence"
+            }
+            aria-describedby={
+              completionNotice ? `conclusao-aviso-${lesson.id}` : undefined
+            }
+            onClick={requestCompletion}
+          >
+            {state.completed.includes(lesson.id) ? (
+              <CheckCircle2 />
+            ) : (
+              <Circle />
+            )}
+            {state.completed.includes(lesson.id)
+              ? "Aula concluída"
+              : evidenceStatus.ready
+                ? "Concluir aula"
+                : "Fazer prática para concluir"}
+          </button>
+          {next && (
+            <button className="next-lesson" onClick={() => openLesson(next.id)}>
+              <span>
+                <small>PRÓXIMO TÓPICO</small>
+                <strong>
+                  {next.number ? `${next.number} ` : ""}
+                  {next.title}
+                </strong>
+              </span>
+              <ArrowRight />
+            </button>
+          )}
+        </footer>
+      </div>
+      <aside className="lesson-context">
+        <div className="context-sticky">
+          <h3>Nesta aula</h3>
+          <div className="context-progress">
+            <span>Progresso do módulo</span>
+            <b>{trackProgress(track.id, state)}%</b>
+            <i>
+              <em style={{ width: `${trackProgress(track.id, state)}%` }} />
+            </i>
+          </div>
+          <nav>
+            <button
+              className={tab === "aula" ? "active" : ""}
+              onClick={() => setTab("aula")}
+            >
+              <Target />
+              Aula guiada{tab === "aula" ? <CheckCircle2 /> : <Circle />}
+            </button>
+            <button
+              className={tab === "fonte" ? "active" : ""}
+              onClick={() => setTab("fonte")}
+            >
+              <FileText />
+              Fonte da seção{tab === "fonte" ? <CheckCircle2 /> : <Circle />}
+            </button>
+            <button
+              className={tab === "materiais" ? "active" : ""}
+              onClick={() => setTab("materiais")}
+            >
+              <Layers3 />
+              {tables.length} tabelas · {figures.length} figuras
+              {tab === "materiais" ? <CheckCircle2 /> : <Circle />}
+            </button>
+            <button
+              className={tab === "notas" ? "active" : ""}
+              onClick={() => setTab("notas")}
+            >
+              <StickyNote />
+              Caderno pessoal{tab === "notas" ? <CheckCircle2 /> : <Circle />}
+            </button>
+          </nav>
+          <div className="quick-tip">
+            <Lightbulb />
+            <div>
+              <strong>Regra de ouro</strong>
+              <p>
+                Identifique documento, fundamento, suficiência, consequência e
+                encaminhamento. Não comece pela conclusão.
+              </p>
+            </div>
+          </div>
+          {(() => {
+            const sg = siglasDaAula(
+              blocks
+                .map((b) => (b && b.paragraph && b.paragraph.text) || "")
+                .join(" "),
+            );
+            return sg.length ? (
+              <div className="siglas-aula">
+                <strong>
+                  <BookMarked size={15} /> Siglas desta aula
+                </strong>
+                <dl>
+                  {sg.map((x) => (
+                    <React.Fragment key={x.sig}>
+                      <dt>{x.sig}</dt>
+                      <dd>
+                        {x.nome}
+                        {x.desc ? <em>{x.desc}</em> : null}
+                      </dd>
+                    </React.Fragment>
+                  ))}
+                </dl>
+              </div>
+            ) : null;
+          })()}
+        </div>
+      </aside>
+    </div>
+  );
+}
+function LearningContract({ design }) {
+  return (
+    <section
+      className="learning-contract"
+      aria-labelledby="learning-contract-title"
+    >
+      <header>
+        <div>
+          <small>PERCURSO DE RACIOCÍNIO</small>
+          <h2 id="learning-contract-title">Da compreensão à auditoria</h2>
+        </div>
+        <span>{design.levels.length} etapas de raciocínio</span>
+      </header>
+      <div className="learning-levels">
+        {design.levels.map((level, index) => (
+            <article key={level.id}>
+              <span>{index + 1}</span>
+              <div>
+                <small>{level.label}</small>
+                <p>{level.description}</p>
+              </div>
+            </article>
+          ))}
+      </div>
+      <div className="learning-challenge">
+        <Lightbulb />
+        <div>
+          <strong>Desafio de transferência</strong>
+          <p>{design.challenge}</p>
+        </div>
+        <span>Registre sua resposta na prática ativa desta aula.</span>
+      </div>
+      <details>
+        <summary>Critérios para autoauditar o registro</summary>
+        <ul>
+          {design.mastery.map((item) => (
+            <li key={item}>
+              <CheckCircle2 />
+              {item}
+            </li>
+          ))}
+        </ul>
+      </details>
+    </section>
+  );
+}
+function VideoLesson({ media, track }) {
+  const ref = useRef(null);
+  const [playing, setPlaying] = useState(false);
+  const [rate, setRate] = useState(1);
+  const play = () => {
+    ref.current && ref.current.play();
+  };
+  const setSpeed = (r) => {
+    setRate(r);
+    if (ref.current) ref.current.playbackRate = r;
+  };
+  return (
+    <figure className={"video-lesson vl2 " + (playing ? "playing" : "")}>
+      <div className="vl-stage">
+        <video
+          ref={ref}
+          controls
+          preload="metadata"
+          poster={media.poster}
+          playsInline
+          onPlay={() => setPlaying(true)}
+          onPause={() => setPlaying(false)}
+          onEnded={() => setPlaying(false)}
+        >
+          <source src={media.src} type="video/mp4" />
+          {/* A legenda ja e desenhada dentro do quadro do video, sempre visivel.
         A faixa nativa fica disponivel para quem preferir, mas sem `default`,
         senao o mesmo texto aparece duas vezes sobreposto. */}
-    <track kind="captions" src={media.captions} srcLang="pt-BR" label="Português"/>
-    Seu navegador não suporta vídeo HTML5.
-   </video>
-   {!playing&&<button className="vl-play" aria-label="Reproduzir videoaula" onClick={play}><Play/></button>}
-  </div>
-  <figcaption>
-   <span><Play/>{media.title}</span>
-   <span className="vl-tools"><small>{media.propria?'Videoaula desta seção':'Videoaula do módulo'} · {track.code}</small>{[1,1.25,1.5].map(r=><button key={r} className={rate===r?'active':''} onClick={()=>setSpeed(r)} title={'Velocidade '+r+'x'}>{r}x</button>)}</span>
-  </figcaption>
- </figure>
+          <track
+            kind="captions"
+            src={media.captions}
+            srcLang="pt-BR"
+            label="Português"
+          />
+          Seu navegador não suporta vídeo HTML5.
+        </video>
+        {!playing && (
+          <button
+            className="vl-play"
+            aria-label="Reproduzir resumo em vídeo"
+            onClick={play}
+          >
+            <Play aria-hidden="true" />
+          </button>
+        )}
+      </div>
+      <figcaption>
+        <span>
+          <Play />
+          {media.title}
+        </span>
+        <span className="vl-tools">
+          <small>
+            {media.propria
+              ? "Resumo em vídeo desta seção"
+              : "Resumo em vídeo do módulo"}{" "}
+            ·{" "}
+            {track.code}
+          </small>
+          {[1, 1.25, 1.5].map((r) => (
+            <button
+              key={r}
+              className={rate === r ? "active" : ""}
+              onClick={() => setSpeed(r)}
+              title={"Velocidade " + r + "x"}
+            >
+              {r}x
+            </button>
+          ))}
+        </span>
+      </figcaption>
+      <TranscriptPanel
+        captions={media.captions}
+        videoRef={ref}
+        title={media.title}
+      />
+    </figure>
+  );
 }
 // Como o criterio da aula aparece num processo.
 //
@@ -226,107 +2863,2133 @@ function VideoLesson({media,track}){
 //
 // De proposito NAO mostra o desfecho: se mostrasse, o laboratorio viraria
 // leitura. A aula enquadra o problema; a pratica resolve.
-function ExemploNoProcesso({caso,go}){
- if(!caso)return null;
- return <section className="exemplo-processo">
-  <header><Milestone size={16}/><div>
-   <small>COMO ISSO APARECE NUM PROCESSO</small>
-   <h3>{caso.title}</h3>
-  </div></header>
-  <ul className="ep-fatos">{(caso.facts||[]).slice(0,3).map(f=><li key={f}>{f}</li>)}</ul>
-  <p className="ep-pergunta"><CircleHelp size={15}/> {(caso.questions||[])[0]?.[0]}</p>
-  <button onClick={()=>go&&go('laboratorio')}>
-   <FlaskConical size={15}/> Decidir este caso no laboratório <ArrowRight size={14}/>
-  </button>
-  <small className="ep-nota">O desfecho fica no laboratório, de propósito: ler a resposta não treina a decisão.</small>
- </section>
+function ExemploNoProcesso({ caso, questionIndex = 0, go }) {
+  if (!caso) return null;
+  const question = (caso.questions || [])[questionIndex]?.[0];
+  return (
+    <section className="exemplo-processo">
+      <header>
+        <Milestone size={16} />
+        <div>
+          <small>EXEMPLO DO MÓDULO PARA TRANSFERIR O CRITÉRIO</small>
+          <h3>{caso.title}</h3>
+        </div>
+      </header>
+      <ul className="ep-fatos">
+        {(caso.facts || []).slice(0, 3).map((f) => (
+          <li key={f}>{f}</li>
+        ))}
+      </ul>
+      <p className="ep-pergunta">
+        <CircleHelp size={15} /> {question}
+      </p>
+      <button onClick={() => go && go("laboratorio", caso.id)}>
+        <FlaskConical size={15} /> Decidir este caso no laboratório{" "}
+        <ArrowRight size={14} />
+      </button>
+      <small className="ep-nota">
+        O desfecho fica no laboratório, de propósito: ler a resposta não treina
+        a decisão.
+      </small>
+    </section>
+  );
 }
 
-function LessonOverview({lesson,design,blocks,checked=[],toggleCheck,setTab,openLesson,caso,go}){const allParas=blocks.filter(b=>b.type==='paragraph'&&b.paragraph?.text&&b.paragraph.text.trim());const steps=allParas.filter(b=>/^\d+\./.test(b.paragraph.text));const shown=steps.slice(0,10);const doneN=shown.filter((_,i)=>checked.includes(i)).length;const idxPasso=allParas.findIndex(b=>/^\d+\./.test(b.paragraph.text));const naoPasso=b=>!/^\d+\./.test(b.paragraph.text)&&!b.paragraph.headingLevel;const prosa=(idxPasso<0?allParas:allParas.slice(0,idxPasso)).filter(naoPasso);const notas=idxPasso<0?[]:allParas.slice(idxPasso).filter(naoPasso);const nTab=blocks.filter(b=>b.type==='table').length;const kids=lesson.number?lessons.filter(l=>l.number&&l.number!==lesson.number&&l.number.startsWith(lesson.number+'.')&&l.number.slice(lesson.number.length+1).replace(/\.$/,'').split('.').length===1):[];const parent=lesson.number&&lesson.number.includes('.')?lesson.number.slice(0,lesson.number.lastIndexOf('.')):'';const irmaos=parent?lessons.filter(l=>l.id!==lesson.id&&l.number&&l.number.startsWith(parent+'.')&&l.number.slice(parent.length+1).replace(/\.$/,'').split('.').length===1):[];const vazia=allParas.length===0&&nTab===0;return <article className="lesson-article"><h2>{lesson.number?lesson.number+' · ':''}{lesson.title}</h2><p className="lead">{vazia?'Esta seção organiza o percurso; use os tópicos relacionados para demonstrar o objetivo.':(kids.length?'Esta seção reúne os tópicos abaixo. Estude cada um e volte ao desafio de transferência.':design.objective)}</p><blockquote className="learning-source-basis"><small>EVIDÊNCIA-BASE DA SEÇÃO</small><p>{design.sourceBasis}</p><button type="button" onClick={()=>setTab&&setTab('fonte')}>Conferir na fonte <ArrowRight/></button></blockquote>{kids.length>0&&<nav className="lesson-children"><strong><Layers3 size={15}/> Tópicos desta seção</strong>{kids.map(c=><button key={c.id} onClick={()=>openLesson&&openLesson(c.id)}><span>{c.number}</span><em>{c.title}</em><ChevronRight size={15}/></button>)}</nav>}{nTab>0&&prosa.every(b=>/^(Quadro|Tabela|Figura)s*d/.test(b.paragraph.text))&&<div className="kp-quadro"><p className="kp-quadro-nota"><Table2 size={15}/> O conteúdo desta seção é um quadro do POP. Ele está abaixo, e também na aba Quadros e figuras.</p>{blocks.filter(b=>b.type==='table').map(b=>{const t=tableMap.get(b.tableId);return t?<TableRenderer key={b.id} table={t}/>:null})}</div>}{prosa.length>0&&<div className="lesson-keypoints">{prosa.slice(0,3).map(b=><p key={b.id}>{b.paragraph.text}</p>)}{prosa.length>3&&<button className="kp-mais" onClick={()=>setTab&&setTab('fonte')}><FileText size={15}/> Conferir todos os {prosa.length} parágrafos na fonte da seção</button>}</div>}{steps.length>=3?<div className="lesson-checklist"><div className="lc-head"><strong><ClipboardCheck size={16}/> Checklist da aula</strong><span>{doneN}/{shown.length} verificados</span><i><em style={{width:`${shown.length?doneN/shown.length*100:0}%`}}/></i></div>{shown.map((b,i)=>{const on=checked.includes(i);return <button type="button" key={b.id} className={on?'lc-item done':'lc-item'} aria-pressed={on} onClick={()=>toggleCheck&&toggleCheck(i)}>{on?<CheckCircle2/>:<Circle/>}<span>{b.paragraph.text.replace(/^\d+\.\s*/,'')}</span></button>})}{doneN===shown.length&&<div className="lc-complete"><Check/> Checklist percorrido. Agora confronte os itens com a evidência do caso; marcar não prova suficiência.</div>}</div>:null}{notas.length>0&&<div className="lesson-keypoints kp-notas"><strong className="kp-notas-tit"><Info size={15}/> Observações do procedimento</strong>{notas.slice(0,3).map(b=><p key={b.id}>{b.paragraph.text}</p>)}</div>}<ExemploNoProcesso caso={caso} go={go}/>{vazia&&irmaos.length>0&&<nav className="lesson-children lc-related"><strong><GitBranch size={15}/> Tópicos relacionados nesta parte</strong>{irmaos.slice(0,12).map(c=><button key={c.id} onClick={()=>openLesson&&openLesson(c.id)}><span>{c.number}</span><em>{c.title}</em><ChevronRight size={15}/></button>)}</nav>}{!vazia&&<><div className="analysis-alert"><AlertTriangle/><div><strong>Limite de aplicação</strong><p>Este conteúdo ensina a aplicar o POP. Antes de decidir em processo real, confirme norma vigente, regra de transição, competência e orientação institucional aplicável.</p></div></div><div className="example-compare"><div className="bad"><X/><div><strong>Atalho arriscado</strong><p>Assumir a conclusão e procurar documentos apenas para confirmá-la.</p></div></div><div className="good"><Check/><div><strong>Análise rastreável</strong><p>Confrontar evidências, registrar limitações e deixar a conclusão resultar do percurso.</p></div></div></div></>}{(prosa.length>0||steps.length>0||nTab>0)&&<button className="source-jump" onClick={()=>setTab&&setTab('fonte')}><BookMarked/> Conferir o trecho na fonte da seção</button>}</article>}
-function SourceContent({blocks}){if(!blocks.length)return <Empty text="Esta seção funciona como título de organização. O conteúdo substantivo está nos subtópicos vinculados; a ausência de texto aqui não deve ser interpretada como cobertura integral."/>;return <article className="source-content"><div className="source-notice"><ShieldCheck/><p><strong>Trechos vinculados ao documento-fonte.</strong> Esta aba reproduz os blocos associados à seção e suas tabelas. Sumário e elementos de navegação podem estar fora desta visualização; confira o arquivo original antes de usar o conteúdo em decisão real.</p></div>{blocks.map(b=><BlockRenderer block={b} key={b.id}/>)}</article>}
-function BlockRenderer({block}){if(block.type==='table'){const table=tableMap.get(block.tableId);return table?<TableRenderer table={table}/>:null}const p=block.paragraph;if(!p?.text)return null;const figure=figureByBlock.get(block.id);let text=p.text;let cls=p.semanticType==='list-item'||p.list?'source-list':'';return <React.Fragment>{p.headingLevel?<h3>{text}</h3>:<p className={cls}>{text}</p>}{figure&&<figure className="source-figure"><img src={figure.publicPath} alt={figure.altText||figure.title}/><figcaption>{figure.caption}</figcaption></figure>}</React.Fragment>}
-function TableRenderer({table,compact=false}){const[all,setAll]=useState(false);const rows=compact||all?table.rows:table.rows.slice(0,12);return <figure className="data-table"><figcaption><span>{table.labelType} {table.labelNumber}</span><strong>{table.title}</strong><small>{table.rowCount} linhas × {table.columnCount} colunas</small></figcaption><div className="table-scroll"><table><tbody>{rows.map((r,ri)=><tr key={ri} className={r.isHeader?'header-row':''}>{r.cells.map((c,ci)=>{const Tag=r.isHeader?'th':'td';return <Tag key={ci}>{c.text}</Tag>})}</tr>)}</tbody></table></div>{!compact&&table.rows.length>12&&<button onClick={()=>setAll(v=>!v)}>{all?'Mostrar menos':`Mostrar todas as ${table.rows.length} linhas`}<ChevronRight/></button>}</figure>}
-function LessonMaterials({tables,figures}){if(!tables.length&&!figures.length)return <Empty text="Este tópico não possui quadro ou figura próprio. Consulte o conteúdo integral para o texto-fonte."/>;return <div className="materials-view">{figures.map(f=><figure className="material-figure" key={f.id}><img src={f.publicPath} alt={f.altText||f.title}/><figcaption>{f.caption}</figcaption><a href={f.publicPath} download><Download/> Baixar imagem</a></figure>)}{tables.map(t=><TableRenderer table={t} key={t.id}/>)}</div>}
-function Notes({value,setValue}){return <section className="notes-panel"><div><StickyNote/><span><strong>Seu caderno</strong><small>Salvo automaticamente neste dispositivo</small></span></div><textarea value={value} onChange={e=>setValue(e.target.value)} placeholder="Registre dúvidas, exemplos do seu trabalho e pontos para revisar..."/><div className="note-prompts"><button onClick={()=>setValue(value+'\n• Evidência que preciso verificar: ')}>Evidência a verificar</button><button onClick={()=>setValue(value+'\n• Dúvida para validação: ')}>Dúvida para validação</button><button onClick={()=>setValue(value+'\n• Aplicação no meu processo: ')}>Aplicação prática</button></div></section>}
+function LessonKnowledgeCheck({ selection, evidence, answer, retry }) {
+  if (!selection?.question) return null;
+  const question = selection.question;
+  const sameQuestion = evidence.objectiveQuestionId === question.id;
+  const selected = sameQuestion ? evidence.objectiveSelected : null;
+  const answered = Number.isInteger(selected);
+  const correct = answered && selected === question.answer;
+  return (
+    <section
+      className="lesson-knowledge-check"
+      aria-labelledby={`checagem-${question.id}`}
+    >
+      <header>
+        <div>
+          <small>
+            {selection.scope === "section"
+              ? "CHECAGEM DA PRÓPRIA SEÇÃO"
+              : "REVISÃO CONTEXTUAL DO MÓDULO"}
+          </small>
+          <h3 id={`checagem-${question.id}`}>Checagem de compreensão</h3>
+        </div>
+        <span className={correct ? "done" : ""}>
+          {correct ? <CheckCircle2 /> : <Circle />}
+          {correct ? "Compreendida" : "Pendente"}
+        </span>
+      </header>
+      {selection.scope === "module" && (
+        <p className="lesson-check-scope">
+          Esta seção ainda não possui item exclusivo; a pergunta recupera um
+          conceito relacionado do mesmo módulo.
+        </p>
+      )}
+      <fieldset>
+        <legend>{question.question}</legend>
+        <div className="lesson-check-options">
+          {question.options.map((option, index) => (
+            <button
+              type="button"
+              key={option}
+              disabled={answered}
+              aria-pressed={selected === index}
+              aria-label={
+                answered
+                  ? `${String.fromCharCode(65 + index)}. ${option}. ${
+                      index === question.answer
+                        ? "Resposta correta."
+                        : index === selected
+                          ? "Sua resposta, incorreta."
+                          : "Alternativa não selecionada."
+                    }`
+                  : undefined
+              }
+              className={
+                answered
+                  ? index === question.answer
+                    ? "correct"
+                    : index === selected
+                      ? "wrong"
+                      : ""
+                  : selected === index
+                    ? "selected"
+                    : ""
+              }
+              onClick={() => answer(index)}
+            >
+              <span>{String.fromCharCode(65 + index)}</span>
+              {option}
+              {answered && index === question.answer && (
+                <Check aria-hidden="true" />
+              )}
+            </button>
+          ))}
+        </div>
+      </fieldset>
+      {answered && (
+        <div
+          className={`lesson-check-feedback ${correct ? "correct" : "wrong"}`}
+          role="status"
+          aria-live="polite"
+          aria-atomic="true"
+        >
+          {correct ? <CheckCircle2 /> : <AlertTriangle />}
+          <div>
+            <strong>{correct ? "Resposta alinhada" : "Resposta a revisar"}</strong>
+            <p>{question.explanation}</p>
+            {question.source?.quote && (
+              <blockquote>
+                “{question.source.quote}”
+                <cite>POP · trecho vinculado à pergunta</cite>
+              </blockquote>
+            )}
+            {!correct && (
+              <button type="button" onClick={retry}>
+                <RotateCcw /> Tentar novamente
+              </button>
+            )}
+          </div>
+        </div>
+      )}
+    </section>
+  );
+}
 
-function shuffleIdx(n){const a=[...Array(n).keys()];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
-function FlowBuilder({flow,record}){const N=flow.nodes.length;const[pool,setPool]=useState(()=>shuffleIdx(N));const[built,setBuilt]=useState([]);useEffect(()=>{setPool(shuffleIdx(N));setBuilt([])},[flow.id]);const done=built.length===N;const score=built.filter((idx,k)=>idx===k).length;useEffect(()=>{if(done)record&&record(flow.id,score,N)},[done]);function place(idx){setBuilt(b=>[...b,idx]);setPool(p=>p.filter(x=>x!==idx))}function undo(){if(!built.length)return;const last=built[built.length-1];setBuilt(b=>b.slice(0,-1));setPool(p=>[...p,last])}function reset(){setPool(shuffleIdx(N));setBuilt([])}return <div className="flow-builder"><div className="fb-head"><h3>Monte a sequência correta</h3><p>Escolha as etapas na ordem do fluxo. Cada posição informa “correta” ou “incorreta” também em texto.</p></div><ol className="fb-slots" aria-label="Sequência montada">{Array.from({length:N}).map((_,k)=>{const idx=built[k];const filled=idx!==undefined;const ok=filled&&idx===k;return <li key={k} className={filled?(ok?'ok':'bad'):'open'}><span>{k+1}</span>{filled?<><strong>{flow.nodes[idx]}</strong><em className="fb-status">{ok?'Posição correta':'Posição incorreta'}</em>{ok?<Check aria-hidden="true"/>:<X aria-hidden="true"/>}</>:<em>Escolha a etapa {k+1}</em>}</li>})}</ol><div className="fb-pool" aria-label="Etapas disponíveis">{pool.length?pool.map(idx=><button key={idx} onClick={()=>place(idx)} aria-label={`Colocar “${flow.nodes[idx]}” na posição ${built.length+1}`}>{flow.nodes[idx]}</button>):<span className="fb-empty">Todas as etapas foram posicionadas.</span>}</div><div className="fb-actions"><button className="text-action" onClick={undo} disabled={!built.length}><RotateCcw size={15}/> Desfazer</button><button className="text-action" onClick={reset}><RefreshCw size={15}/> Recomeçar</button></div><div aria-live="polite">{done&&<div className={'fb-result '+(score===N?'perfect':'')}>{score===N?<CheckCircle2/>:<AlertTriangle/>}<div><strong>{score} de {N} etapas na posição correta</strong><p>{score===N?'Sequência correta. Explique agora por que cada transição existe.':'Há posições incorretas. Use os rótulos textuais, revise o fluxo-fonte e tente novamente.'}</p></div></div>}</div></div>}
-function Flowcharts({state,setState}){const[selected,setSelected]=useState(flowSpecs[0].id),[variant,setVariant]=useState('simplificado'),[active,setActive]=useState(0),[playing,setPlaying]=useState(true),[zoom,setZoom]=useState(1),[mode,setMode]=useState('explorar'),[fit,setFit]=useState(true);const flow=flowSpecs.find(f=>f.id===selected);useEffect(()=>{setActive(0);setZoom(1)},[selected]);useEffect(()=>{if(!playing||mode!=='explorar')return;const id=setInterval(()=>setActive(a=>(a+1)%flow.nodes.length),1600);return()=>clearInterval(id)},[playing,flow,mode]);const source=flowData.flowcharts.find(f=>f.number===flow.imageNumber&&f.variant===variant);const record=(id,score,total)=>setState&&setState(s=>({...s,flows:{...(s.flows||{}),[id]:{score,total,date:new Date().toISOString()}}}));const best=state&&state.flows&&state.flows[selected];return <div className="page"><PageHeader title="Fluxogramas interativos" subtitle="Explore os sete fluxos em versão original, simplificada e completa, e acompanhe o caminho ativo." icon={Route}/><div className="flow-workspace"><aside className="flow-menu">{flowSpecs.map((f,i)=><button className={selected===f.id?'active':''} key={f.id} onClick={()=>setSelected(f.id)}><span>{i+1}</span><div><strong>{f.title}</strong><small>{state&&state.flows&&state.flows[f.id]?`Montado ${state.flows[f.id].score}/${state.flows[f.id].total}`:'Explorar e montar'}</small></div><ChevronRight/></button>)}</aside><section className="flow-canvas"><div className="flow-mode-tabs"><button className={mode==='explorar'?'active':''} onClick={()=>setMode('explorar')}><Eye/> Explorar</button><button className={mode==='montar'?'active':''} onClick={()=>setMode('montar')}><GitBranch/> Montar o fluxo</button>{best&&<span className="fb-badge"><CheckCircle2/> {best.score}/{best.total}</span>}</div>{mode==='explorar'?<><div className="flow-toolbar"><span className="flow-toolbar-label">Percurso didático em {flow.nodes.length} etapas</span><div><button onClick={()=>setPlaying(v=>!v)}>{playing?<Pause/>:<Play/>}</button><button onClick={()=>setZoom(z=>Math.max(.7,z-.1))}><ZoomOut/></button><span>{Math.round(zoom*100)}%</span><button onClick={()=>setZoom(z=>Math.min(1.4,z+.1))}><ZoomIn/></button></div></div><div className="interactive-flow" style={{transform:`scale(${zoom})`}}>{flow.nodes.map((n,i)=><React.Fragment key={n}><button className={(i===active?'active ':'')+(i<active?'visited ':'')+(n.includes('?')?'decision':'')} onClick={()=>{setActive(i);setPlaying(false)}}><span>{i+1}</span><strong>{n}</strong><small>{i===active?'Etapa em foco':i<active?'Percorrida':'A seguir'}</small></button>{i<flow.nodes.length-1&&<div className={(i<active?'lit':'')}><ArrowRight/></div>}</React.Fragment>)}</div><div className="flow-insight"><Info/><div><small>ETAPA {active+1}</small><h3>{flow.nodes[active]}</h3><p>Abra o conteúdo do POP, confira as evidências e registre a motivação antes de avançar. Clique em qualquer nó para explorar.</p></div></div></>:<FlowBuilder flow={flow} record={record}/>}<section className="source-flow-panel"><div className="sfp-head"><span className="sfp-title"><Eye/> Fluxograma-fonte do POP</span><div className="variant-tabs">{[['original','Original'],['simplificado','Simplificado'],['completo','Completo']].map(([v,l])=><button className={variant===v?'active':''} onClick={()=>setVariant(v)} key={v}>{l}</button>)}</div><button className="sfp-fit" onClick={()=>setFit(f=>!f)}>{fit?'Ver em tamanho real':'Ajustar à largura'}</button>{source&&<a className="sfp-open" href={source.publicPath} target="_blank" rel="noreferrer"><Maximize2/> Nova aba</a>}</div>{source?<div className={'sfp-scroll '+(fit?'fit':'real')}><img key={source.publicPath} src={source.publicPath} alt={`${flow.title}, versão ${variant}`}/></div>:<p className="sfp-missing">Imagem não encontrada para esta versão.</p>}{source&&<small className="sfp-meta">Versão {variant} · {source.widthPx}×{source.heightPx}px · imagem integral do documento</small>}</section></section></div></div>}
+function LessonActivePractice({
+  lesson,
+  design,
+  evidence,
+  status,
+  updateEvidence,
+  toggleCriterion,
+  hasObjectiveCheck,
+}) {
+  return (
+    <section
+      className={`lesson-active-practice ${status.ready ? "complete" : ""}`}
+      id={`pratica-ativa-${lesson.id}`}
+      tabIndex="-1"
+      aria-labelledby={`pratica-ativa-titulo-${lesson.id}`}
+    >
+      <header>
+        <div>
+          <small>RECUPERAÇÃO ATIVA · REGISTRO LOCAL</small>
+          <h3 id={`pratica-ativa-titulo-${lesson.id}`}>
+            Demonstre o percurso, não apenas a leitura
+          </h3>
+        </div>
+        <span className={status.ready ? "done" : ""}>
+          {status.ready ? <CheckCircle2 /> : <Circle />}
+          {status.ready ? "Registro mínimo completo" : "Em construção"}
+        </span>
+      </header>
+      <div className="lesson-active-prompt">
+        <Lightbulb aria-hidden="true" />
+        <div>
+          <strong>Desafio desta seção</strong>
+          <p>{design.challenge}</p>
+        </div>
+      </div>
+      <label className="lesson-active-response">
+        <span>Sua análise em fato → evidência → fundamento → encaminhamento</span>
+        <textarea
+          value={evidence.response || ""}
+          maxLength={2400}
+          rows={6}
+          onChange={(event) =>
+            updateEvidence((current) => ({
+              ...current,
+              response: event.target.value,
+            }))
+          }
+          placeholder="Escreva com suas palavras. Evite apenas copiar o POP: identifique o fato, a evidência necessária, o critério aplicável, a incerteza e o próximo passo."
+        />
+      </label>
+      <div className="lesson-active-counter">
+        <span className={status.responseRecorded ? "done" : ""}>
+          {status.responseRecorded ? <Check /> : <Circle />}
+          {status.responseLength}/{MIN_ACTIVE_RECALL_CHARS} caracteres
+          significativos
+        </span>
+        <small>
+          O limite mede somente existência de registro; não avalia qualidade.
+        </small>
+      </div>
+      <fieldset className="lesson-active-rubric">
+        <legend>Autoauditoria antes de concluir</legend>
+        {design.mastery.map((criterion, index) => {
+          const checked = status.criteria.includes(index);
+          return (
+            <label key={criterion} className={checked ? "checked" : ""}>
+              <input
+                type="checkbox"
+                checked={checked}
+                onChange={() => toggleCriterion(index)}
+              />
+              <span className="lesson-active-criterion">{criterion}</span>
+            </label>
+          );
+        })}
+      </fieldset>
+      <footer>
+        <span className={status.selfAuditRecorded ? "done" : ""}>
+          {status.selfAuditRecorded ? <CheckCircle2 /> : <Circle />}
+          Ao menos 2 critérios conferidos
+        </span>
+        {hasObjectiveCheck && (
+          <span className={status.objectiveMet ? "done" : ""}>
+            {status.objectiveMet ? <CheckCircle2 /> : <Circle />}
+            Checagem objetiva correta
+          </span>
+        )}
+      </footer>
+      <p className="lesson-active-limit">
+        Este é um registro pessoal de autoestudo salvo neste navegador. A
+        fundamentação escrita não foi corrigida nem aprovada por pessoa
+        responsável; use revisão humana quando houver efeito institucional.
+      </p>
+    </section>
+  );
+}
 
-// Confere se a fundamentacao escrita menciona os elementos esperados do caso.
-// E conferencia de TERMO, nao avaliacao do raciocinio, e a interface diz isso.
-// Termo curto (ate 3 caracteres, como TR, UC, ZA ou um numero de artigo) exige
-// limite de palavra, senao "tr" casaria dentro de "outro" e "quatro".
-function bateTermo(texto,termo){const n=norm(termo).trim();if(!n)return false;
- if(n.length<=3)return new RegExp('(^|[^a-z0-9])'+n.replace(/[.*+?^${}()|[]\]/g,'\$&')+'([^a-z0-9]|$)').test(texto);
- return texto.includes(n)}
-function conferirElementos(cenario,txt){const t=norm(txt||'');
- const els=(cenario.elementos||[]).map(e=>({rot:e.rot,ok:e.termos.some(x=>bateTermo(t,x))}));
- return{els,tocados:els.filter(e=>e.ok).length,total:els.length}}
-// Autoavaliacao guiada da fundamentacao.
-//
-// A conferencia por termo chegou ao teto: ela nao distingue "nao citei" de
-// "citei errado", e nenhuma heuristica local vai distinguir. Em vez de fingir
-// que avalia, a plataforma entrega o julgamento a quem escreveu, com o modelo
-// ao lado e uma pergunta objetiva por elemento. O resultado fica registrado e
-// exportavel, que e o que permite avaliacao humana depois.
-function Laboratory({state,setState}){const[selected,setSelected]=useState(scenarios[2].id),[answers,setAnswers]=useState({}),[reason,setReason]=useState(''),[showResult,setShowResult]=useState(false),[showSummary,setShowSummary]=useState(false),[seenEv,setSeenEv]=useState({});const s=scenarios.find(x=>x.id===selected);useEffect(()=>{setAnswers({});setReason((state.labs&&state.labs[selected]&&state.labs[selected].texto)||'');setShowResult(false);setShowSummary(false);setSeenEv({})},[selected]);const answered=Object.keys(answers).length;const score=s.questions.filter((q,i)=>answers[i]===q[1]).length;const conf=conferirElementos(s,reason);function finish(){setShowResult(true);setState(st=>({...st,labs:{...st.labs,[s.id]:{score,total:s.questions.length,date:new Date().toISOString(),texto:reason,elementos:conf.tocados,elementosTotal:conf.total}}}))}return <div className="page lab-page"><PageHeader title="Pratique antes de assinar" subtitle="Laboratório didático: selecione evidências, tome decisões e compare sua fundamentação." icon={FlaskConical}/><div className="lab-acervo"><Database size={16}/><p><strong>Casos de treinamento</strong>: situações construídas a partir dos critérios do POP para exercitar a decisão. Nenhum caso reproduz processo, empreendimento ou dado de acervo.</p></div><div className="lab-grupos">{GRUPOS_LAB.map(g=>{const casos=g.ids.map(id=>scenarios.find(c=>c.id===id)).filter(Boolean);const feitos=casos.filter(c=>state.labs[c.id]).length;return <section className="lab-grupo" key={g.id}><header><div><h3>{g.titulo}</h3><p>{g.resumo}</p></div><span className={'lg-nivel n-'+g.id}>{g.nivel}</span></header><div className="scenario-tabs">{casos.map(x=><button className={selected===x.id?'active':''} onClick={()=>{setSelected(x.id);setTimeout(()=>document.querySelector('.lab-workspace')?.scrollIntoView({behavior:'smooth',block:'start'}),70)}} key={x.id}>{x.label}{state.labs[x.id]&&<CheckCircle2/>}</button>)}</div><small className="lg-progresso">{feitos} de {casos.length} praticados</small></section>})}</div><div className="lab-workspace"><section className="lab-canvas" key={selected}><div className="case-header"><div><small>CENÁRIO · {s.type}</small><h2>{s.title}</h2></div><button className={showSummary?'active':''} onClick={()=>setShowSummary(v=>!v)}><FileText/> Resumo do caso</button></div>{showSummary&&<div className="case-summary"><p><strong>{s.title}</strong>, cenário de {s.type}.</p><ul>{s.facts.map(f=><li key={f}>{f}</li>)}</ul><p>{s.evidence.length} evidências disponíveis · {s.questions.length} decisões no percurso · debriefing ao finalizar.</p></div>}<div className="case-facts">{s.facts.map(f=><span key={f}><Activity/>{f}</span>)}</div>{s.serie&&<figure className="lab-serie"><figcaption><Table2 size={15}/> {s.serie.titulo}</figcaption><div className="ls-rolagem"><table><thead><tr>{s.serie.colunas.map(c=><th key={c}>{c}</th>)}</tr></thead><tbody>{s.serie.linhas.map((l,i)=><tr key={i}>{l.map((c,j)=><td key={j}>{c}</td>)}</tr>)}</tbody></table></div>{s.serie.nota&&<small><Lightbulb size={13}/> {s.serie.nota}</small>}</figure>}<div className="decision-path"><div className="path-node complete"><span>1</span><strong>Triagem</strong><Check/></div>{s.questions.map((q,i)=><React.Fragment key={q[0]}><i className={answers[i]?'active':''}/><button className={'path-node '+(answers[i]?'complete ':'')+(i===answered?'current':'')} onClick={()=>{const el=document.querySelectorAll('.question-stack fieldset')[i];el&&el.scrollIntoView({behavior:'smooth',block:'center'})}}><span>{i+2}</span><strong>{(s.steps&&s.steps[i])||('Etapa '+(i+2))}</strong>{answers[i]?<Check/>:<Circle/>}</button></React.Fragment>)}<i className={answered===s.questions.length?'active':''}/><div className={'path-node '+(showResult?'complete':'')}><span>{s.questions.length+2}</span><strong>Parecer</strong>{showResult?<Check/>:<Circle/>}</div></div><div className="lab-evidence"><div><h3>Evidências disponíveis</h3>{s.evidence.map(e=><button key={e} className={seenEv[e]?'seen':''} onClick={()=>setSeenEv(v=>({...v,[e]:!v[e]}))}><FileText/><span>{e}<small>{seenEv[e]?'Consultada':'Documento do cenário'}</small></span>{seenEv[e]?<CheckCircle2/>:<Eye/>}</button>)}</div><div className="question-stack"><h3>Decisões do percurso</h3>{s.questions.map((q,i)=><fieldset key={q[0]} className={i>answered?'locked':''}><legend>{i+1}. {q[0]}</legend>{i>answered?<span><Lock/> Responda à etapa anterior</span>:<div><button className={answers[i]==='sim'?'selected':''} onClick={()=>setAnswers(a=>({...a,[i]:'sim'}))}>Sim</button><button className={answers[i]==='nao'?'selected':''} onClick={()=>setAnswers(a=>({...a,[i]:'nao'}))}>Não</button></div>}</fieldset>)}</div></div></section><aside className="lab-inspector"><div><small>SEU PARECER DIDÁTICO</small><h2>Fundamente a decisão</h2><p>Relacione evidências, consequência técnica e encaminhamento.</p></div><textarea value={reason} onChange={e=>setReason(e.target.value)} placeholder="Escreva sua fundamentação..."/><div className="decision-readiness"><span>Decisões respondidas <b>{answered}/{s.questions.length}</b></span><i><em style={{width:`${answered/s.questions.length*100}%`}}/></i><span>Fundamentação <b>{reason.length}/30 mín.</b></span><i><em style={{width:`${Math.min(100,reason.length/30*100)}%`}}/></i></div><button className="primary" disabled={answered<s.questions.length||reason.length<30} onClick={finish}>Finalizar e ver debriefing <ArrowRight/></button><div className="lab-tip"><Lightbulb/><p><strong>Dica do laboratório</strong> Não procure apenas “sim” ou “não”: explicite por que a evidência é suficiente ou insuficiente.</p></div>{showResult&&<div className="debrief"><Trophy/><small>DEBRIEFING</small><h3>{score}/{s.questions.length} decisões alinhadas</h3><p>{s.outcome}</p>{s.elementos&&<div className="fund-check"><strong>Sua fundamentação mencionou {conf.tocados} de {conf.total} elementos esperados</strong><ul>{conf.els.map(e=><li key={e.rot} className={e.ok?'ok':''}>{e.ok?<Check size={14}/>:<Circle size={14}/>}<span>{e.rot}</span></li>)}</ul><p className="fund-nota">Conferência de termos: ela verifica se o elemento foi citado, não se o argumento está correto. Quem julga o raciocínio é você, comparando com a redação modelo abaixo.</p><details className="fund-modelo" open><summary>Redação modelo deste caso</summary><p>{s.modelo}</p></details><AutoAvaliacao caso={s} texto={reason} conf={conf} state={state} setState={setState}/></div>}<button onClick={()=>{setAnswers({});setShowResult(false)}}><RotateCcw/> Tentar novamente</button></div>}</aside></div></div>}
+function LessonOverview({
+  lesson,
+  design,
+  blocks,
+  checked = [],
+  toggleCheck,
+  setTab,
+  openLesson,
+  caso,
+  casoPergunta = 0,
+  go,
+  evidence,
+  evidenceStatus,
+  updateEvidence,
+  toggleEvidenceCriterion,
+  questionSelection,
+  answerLessonQuestion,
+  retryLessonQuestion,
+}) {
+  const allParas = blocks.filter(
+    (b) =>
+      b.type === "paragraph" && b.paragraph?.text && b.paragraph.text.trim(),
+  );
+  const steps = allParas.filter((b) => /^\d+\./.test(b.paragraph.text));
+  const shown = steps.slice(0, 10);
+  const doneN = shown.filter((_, i) => checked.includes(i)).length;
+  const idxPasso = allParas.findIndex((b) => /^\d+\./.test(b.paragraph.text));
+  const naoPasso = (b) =>
+    !/^\d+\./.test(b.paragraph.text) && !b.paragraph.headingLevel;
+  const prosa = (idxPasso < 0 ? allParas : allParas.slice(0, idxPasso)).filter(
+    naoPasso,
+  );
+  const notas = idxPasso < 0 ? [] : allParas.slice(idxPasso).filter(naoPasso);
+  const nTab = blocks.filter((b) => b.type === "table").length;
+  const kids = lesson.number
+    ? lessons.filter(
+        (l) =>
+          l.number &&
+          l.number !== lesson.number &&
+          l.number.startsWith(lesson.number + ".") &&
+          l.number
+            .slice(lesson.number.length + 1)
+            .replace(/\.$/, "")
+            .split(".").length === 1,
+      )
+    : [];
+  const parent =
+    lesson.number && lesson.number.includes(".")
+      ? lesson.number.slice(0, lesson.number.lastIndexOf("."))
+      : "";
+  const irmaos = parent
+    ? lessons.filter(
+        (l) =>
+          l.id !== lesson.id &&
+          l.number &&
+          l.number.startsWith(parent + ".") &&
+          l.number
+            .slice(parent.length + 1)
+            .replace(/\.$/, "")
+            .split(".").length === 1,
+      )
+    : [];
+  const vazia = allParas.length === 0 && nTab === 0;
+  return (
+    <article className="lesson-article">
+      <h2>
+        {lesson.number ? lesson.number + " · " : ""}
+        {lesson.title}
+      </h2>
+      <p className="lead">
+        {vazia
+          ? "Esta seção organiza o percurso; use os tópicos relacionados para demonstrar o objetivo."
+          : kids.length
+            ? "Esta seção reúne os tópicos abaixo. Estude cada um e volte ao desafio de transferência."
+            : design.objective}
+      </p>
+      <blockquote className="learning-source-basis">
+        <small>EVIDÊNCIA-BASE DA SEÇÃO</small>
+        <p>{design.sourceBasis}</p>
+        <button type="button" onClick={() => setTab && setTab("fonte")}>
+          Conferir na fonte <ArrowRight />
+        </button>
+      </blockquote>
+      {kids.length > 0 && (
+        <nav className="lesson-children">
+          <strong>
+            <Layers3 size={15} /> Tópicos desta seção
+          </strong>
+          {kids.map((c) => (
+            <button key={c.id} onClick={() => openLesson && openLesson(c.id)}>
+              <span>{c.number}</span>
+              <em>{c.title}</em>
+              <ChevronRight size={15} />
+            </button>
+          ))}
+        </nav>
+      )}
+      {nTab > 0 &&
+        prosa.every((b) =>
+          /^(Quadro|Tabela|Figura)\s*\d/i.test(b.paragraph.text),
+        ) && (
+          <div className="kp-quadro">
+            <p className="kp-quadro-nota">
+              <Table2 size={15} /> O conteúdo desta seção é um quadro do POP.
+              Ele está abaixo, e também na aba Quadros e figuras.
+            </p>
+            {blocks
+              .filter((b) => b.type === "table")
+              .map((b) => {
+                const t = tableMap.get(b.tableId);
+                return t ? <TableRenderer key={b.id} table={t} /> : null;
+              })}
+          </div>
+        )}
+      {prosa.length > 0 && (
+        <div className="lesson-keypoints">
+          {prosa.slice(0, 4).map((b) => (
+            <p key={b.id}>{b.paragraph.text}</p>
+          ))}
+          {prosa.length > 4 && (
+            <details className="lesson-more-prose">
+              <summary>
+                Continuar leitura guiada · {prosa.length - 4} trechos
+              </summary>
+              <div>
+                {prosa.slice(4).map((block) => (
+                  <p key={block.id}>{block.paragraph.text}</p>
+                ))}
+              </div>
+            </details>
+          )}
+          <button
+            className="kp-mais"
+            onClick={() => setTab && setTab("fonte")}
+          >
+            <FileText size={15} /> Conferir a posição e a versão integral na
+            fonte
+          </button>
+        </div>
+      )}
+      {steps.length >= 3 ? (
+        <div className="lesson-checklist">
+          <div className="lc-head">
+            <strong>
+              <ClipboardCheck size={16} /> Checklist da aula
+            </strong>
+            <span>
+              {doneN}/{shown.length} verificados
+            </span>
+            <i>
+              <em
+                style={{
+                  width: `${shown.length ? (doneN / shown.length) * 100 : 0}%`,
+                }}
+              />
+            </i>
+          </div>
+          {shown.map((b, i) => {
+            const on = checked.includes(i);
+            return (
+              <button
+                type="button"
+                key={b.id}
+                className={on ? "lc-item done" : "lc-item"}
+                aria-pressed={on}
+                onClick={() => toggleCheck && toggleCheck(i)}
+              >
+                {on ? <CheckCircle2 /> : <Circle />}
+                <span>{b.paragraph.text.replace(/^\d+\.\s*/, "")}</span>
+              </button>
+            );
+          })}
+          {doneN === shown.length && (
+            <div className="lc-complete">
+              <Check /> Checklist percorrido. Agora confronte os itens com a
+              evidência do caso; marcar não prova suficiência.
+            </div>
+          )}
+        </div>
+      ) : null}
+      {notas.length > 0 && (
+        <div className="lesson-keypoints kp-notas">
+          <strong className="kp-notas-tit">
+            <Info size={15} /> Observações do procedimento
+          </strong>
+          {notas.slice(0, 3).map((b) => (
+            <p key={b.id}>{b.paragraph.text}</p>
+          ))}
+          {notas.length > 3 && (
+            <details className="lesson-more-prose">
+              <summary>
+                Ver as outras {notas.length - 3} observações
+              </summary>
+              <div>
+                {notas.slice(3).map((block) => (
+                  <p key={block.id}>{block.paragraph.text}</p>
+                ))}
+              </div>
+            </details>
+          )}
+        </div>
+      )}
+      <ExemploNoProcesso
+        caso={caso}
+        questionIndex={casoPergunta}
+        go={go}
+      />
+      {vazia && irmaos.length > 0 && (
+        <nav className="lesson-children lc-related">
+          <strong>
+            <GitBranch size={15} /> Tópicos relacionados nesta parte
+          </strong>
+          {irmaos.slice(0, 12).map((c) => (
+            <button key={c.id} onClick={() => openLesson && openLesson(c.id)}>
+              <span>{c.number}</span>
+              <em>{c.title}</em>
+              <ChevronRight size={15} />
+            </button>
+          ))}
+        </nav>
+      )}
+      {!vazia && (
+        <>
+          <div className="analysis-alert">
+            <AlertTriangle />
+            <div>
+              <strong>Limite de aplicação</strong>
+              <p>
+                Este conteúdo ensina a aplicar o POP. Antes de decidir em
+                processo real, confirme norma vigente, regra de transição,
+                competência e orientação institucional aplicável.
+              </p>
+            </div>
+          </div>
+          <div className="example-compare">
+            <div className="bad">
+              <X />
+              <div>
+                <strong>Atalho arriscado</strong>
+                <p>
+                  Assumir a conclusão e procurar documentos apenas para
+                  confirmá-la.
+                </p>
+              </div>
+            </div>
+            <div className="good">
+              <Check />
+              <div>
+                <strong>Análise rastreável</strong>
+                <p>
+                  Confrontar evidências, registrar limitações e deixar a
+                  conclusão resultar do percurso.
+                </p>
+              </div>
+            </div>
+          </div>
+        </>
+      )}
+      <LessonKnowledgeCheck
+        selection={questionSelection}
+        evidence={evidence}
+        answer={answerLessonQuestion}
+        retry={retryLessonQuestion}
+      />
+      <LessonActivePractice
+        lesson={lesson}
+        design={design}
+        evidence={evidence}
+        status={evidenceStatus}
+        updateEvidence={updateEvidence}
+        toggleCriterion={toggleEvidenceCriterion}
+        hasObjectiveCheck={Boolean(questionSelection?.question)}
+      />
+      {(prosa.length > 0 || steps.length > 0 || nTab > 0) && (
+        <button
+          className="source-jump"
+          onClick={() => setTab && setTab("fonte")}
+        >
+          <BookMarked /> Conferir o trecho na fonte da seção
+        </button>
+      )}
+    </article>
+  );
+}
+function SourceContent({ blocks }) {
+  if (!blocks.length)
+    return (
+      <Empty text="Esta seção funciona como título de organização. O conteúdo substantivo está nos subtópicos vinculados; a ausência de texto aqui não deve ser interpretada como cobertura integral." />
+    );
+  return (
+    <article className="source-content">
+      <div className="source-notice">
+        <ShieldCheck />
+        <p>
+          <strong>Trechos vinculados ao documento-fonte.</strong> Esta aba
+          reproduz os blocos associados à seção e suas tabelas. Sumário e
+          elementos de navegação podem estar fora desta visualização; confira o
+          arquivo original antes de usar o conteúdo em decisão real.
+        </p>
+      </div>
+      {blocks.map((b) => (
+        <BlockRenderer block={b} key={b.id} />
+      ))}
+    </article>
+  );
+}
+function BlockRenderer({ block }) {
+  if (block.type === "table") {
+    const table = tableMap.get(block.tableId);
+    return table ? <TableRenderer table={table} /> : null;
+  }
+  const p = block.paragraph;
+  if (!p?.text) return null;
+  const figure = figureByBlock.get(block.id);
+  let text = p.text;
+  let cls = p.semanticType === "list-item" || p.list ? "source-list" : "";
+  return (
+    <React.Fragment>
+      {p.headingLevel ? <h3>{text}</h3> : <p className={cls}>{text}</p>}
+      {figure && (
+        <figure className="source-figure">
+          <img src={figure.publicPath} alt={figure.altText || figure.title} />
+          <figcaption>{figure.caption}</figcaption>
+        </figure>
+      )}
+    </React.Fragment>
+  );
+}
+function TableRenderer({ table, compact = false }) {
+  const [all, setAll] = useState(false);
+  const rows = compact || all ? table.rows : table.rows.slice(0, 12);
+  return (
+    <figure className="data-table">
+      <figcaption>
+        <span>
+          {table.labelType} {table.labelNumber}
+        </span>
+        <strong>{table.title}</strong>
+        <small>
+          {table.rowCount} linhas × {table.columnCount} colunas
+        </small>
+      </figcaption>
+      <div className="table-scroll">
+        <table>
+          <tbody>
+            {rows.map((r, ri) => (
+              <tr key={ri} className={r.isHeader ? "header-row" : ""}>
+                {r.cells.map((c, ci) => {
+                  const Tag = r.isHeader ? "th" : "td";
+                  return (
+                    <Tag key={ci} scope={r.isHeader ? "col" : undefined}>
+                      {c.text}
+                    </Tag>
+                  );
+                })}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      {!compact && table.rows.length > 12 && (
+        <button onClick={() => setAll((v) => !v)}>
+          {all
+            ? "Mostrar menos"
+            : `Mostrar todas as ${table.rows.length} linhas`}
+          <ChevronRight />
+        </button>
+      )}
+    </figure>
+  );
+}
+function LessonMaterials({ tables, figures }) {
+  if (!tables.length && !figures.length)
+    return (
+      <Empty text="Este tópico não possui quadro ou figura próprio. Consulte o conteúdo integral para o texto-fonte." />
+    );
+  return (
+    <div className="materials-view">
+      {figures.map((f) => (
+        <figure className="material-figure" key={f.id}>
+          <img src={f.publicPath} alt={f.altText || f.title} />
+          <figcaption>{f.caption}</figcaption>
+          <a href={f.publicPath} download>
+            <Download /> Baixar imagem
+          </a>
+        </figure>
+      ))}
+      {tables.map((t) => (
+        <TableRenderer table={t} key={t.id} />
+      ))}
+    </div>
+  );
+}
+function Notes({ value, setValue }) {
+  return (
+    <section className="notes-panel">
+      <div>
+        <StickyNote />
+        <span>
+          <strong>Seu caderno</strong>
+          <small>Salvo automaticamente neste dispositivo</small>
+        </span>
+      </div>
+      <textarea
+        value={value}
+        onChange={(e) => setValue(e.target.value)}
+        placeholder="Registre dúvidas, exemplos do seu trabalho e pontos para revisar..."
+      />
+      <div className="note-prompts">
+        <button
+          onClick={() =>
+            setValue(value + "\n• Evidência que preciso verificar: ")
+          }
+        >
+          Evidência a verificar
+        </button>
+        <button onClick={() => setValue(value + "\n• Dúvida para validação: ")}>
+          Dúvida para validação
+        </button>
+        <button
+          onClick={() => setValue(value + "\n• Aplicação no meu processo: ")}
+        >
+          Aplicação prática
+        </button>
+      </div>
+    </section>
+  );
+}
 
-// Comparacao entre o diagnostico de entrada e o de saida.
-//
-// Uma questao por modulo mede DIRECAO, nao magnitude: por modulo o resultado e
-// acertou ou nao acertou. O numero que tem significado e o total, e a lista
-// abaixo dele serve para dizer onde mudou. O cartao diz isso em vez de fingir
-// precisao que dezessete questoes nao dao.
-// Quantas questoes de cada modulo entram no diagnostico geral.
-const DIAG_POR_MODULO=3;
-function Assessments({state,setState,openLesson}){const[track,setTrack]=useState('geral'),[started,setStarted]=useState(false),[index,setIndex]=useState(0),[answers,setAnswers]=useState({}),[revealed,setRevealed]=useState(false),[done,setDone]=useState(false);// Diagnostico geral: TRES questoes por modulo, sempre as mesmas e na mesma
- // ordem. Com uma so por modulo o resultado por modulo era binario, acertou ou
- // nao, e nao dava para dizer o quanto mudou. Com tres, vira proporcao.
- // A selecao e deterministica de proposito: entrada e saida precisam comparar
- // o mesmo instrumento, senao a diferenca mede sorteio, nao aprendizagem.
- const questions=useMemo(()=>{
-  if(track!=='geral')return questionBank.filter(q=>q.track===track);
-  const porTrilha=new Map();
-  for(const q of questionBank){if(!porTrilha.has(q.track))porTrilha.set(q.track,[]);porTrilha.get(q.track).push(q)}
-  const escolhidas=[];
-  for(const t of tracks)for(const q of (porTrilha.get(t.id)||[]).slice(0,DIAG_POR_MODULO))escolhidas.push(q);
-  return escolhidas},[track]);const q=questions[index];const score=questions.filter((x,i)=>answers[i]===x.answer).length;function reset(id=track){setTrack(id);setStarted(false);setIndex(0);setAnswers({});setRevealed(false);setDone(false)}function next(){if(index===questions.length-1){setDone(true);setState(s=>{
-   const base={...s,quizScores:{...s.quizScores,[track]:{score,total:questions.length,date:new Date().toISOString()}}};
-   if(track!=='geral')return base;
-   // O diagnostico geral vira medida: a primeira vez e a ENTRADA e nunca e
-   // sobrescrita; as seguintes atualizam a SAIDA. Sem as duas pontas, dizer
-   // que a plataforma ensina e afirmacao sem evidencia.
-   const porQuestao={};questions.forEach((x,i)=>{porQuestao[x.id]={track:x.track,ok:answers[i]===x.answer}});
-   const registro={data:new Date().toISOString(),acertos:score,total:questions.length,
-    leitura:Math.round(s.completed.length/lessons.length*100),porQuestao};
-   const d=s.diagnostico||{};
-   return{...base,diagnostico:d.entrada?{...d,saida:registro}:{...d,entrada:registro}};
-  })}else{setIndex(i=>i+1);setRevealed(false)}}return <div className="page"><PageHeader title="Avaliações e domínio" subtitle="Questões comentadas transformam erro em revisão direcionada, sem esconder o fundamento." icon={ClipboardCheck}/>{!started?<div className="assessment-select">{(()=>{const d=state.diagnostico||{};if(!d.entrada)return null;return <ComparaDiagnostico d={d}/>})()}<section className="diagnostic"><div><Award/><span><small>AVALIAÇÃO INTEGRADORA</small><h2>Diagnóstico geral do POP</h2><p>Três questões por módulo, dos fundamentos à conclusão técnica. A primeira vez marca o ponto de partida; refazer depois de estudar mostra o que mudou, módulo a módulo.</p></span></div><div className="assessment-meta"><span><Clock/> {tracks.length*DIAG_POR_MODULO} questões · cerca de {Math.round(tracks.length*DIAG_POR_MODULO*0.5)} min</span><span><MessageSquareText/> Feedback imediato</span><span><Trophy/> Vale como medida: refaça depois de estudar</span></div><button onClick={()=>{reset('geral');setStarted(true)}}>{(state.diagnostico||{}).entrada?'Refazer como diagnóstico de saída':'Iniciar diagnóstico de entrada'} <ArrowRight/></button>{state.quizScores.geral&&<small>Último resultado: {state.quizScores.geral.score}/{state.quizScores.geral.total}</small>}</section><h2>Avaliações por módulo</h2><div className="module-tests">{tracks.filter(t=>questionBank.some(q=>q.track===t.id)).map(t=>{let qs=questionBank.filter(q=>q.track===t.id),last=state.quizScores[t.id];return <button key={t.id} onClick={()=>{reset(t.id);setStarted(true)}}><span style={{background:t.color,'--tc':t.color}}>{t.code}</span><div><strong>{t.title}</strong><small>{qs.length} questões · feedback comentado</small></div>{last?<b>{last.score}/{last.total}</b>:<ChevronRight/>}</button>})}</div></div>:<section className="quiz-stage">{done?<div className="quiz-result"><div className="score-ring" style={{'--score':`${score/questions.length*100}%`}}><span><strong>{score}</strong>/{questions.length}</span></div><h2>{score/questions.length>=.8?'Domínio consistente':'Há pontos para revisar'}</h2><p>Você acertou {Math.round(score/questions.length*100)}%. Use o feedback abaixo para voltar às trilhas relacionadas.</p>{(()=>{const erradas=questions.map((q,i)=>({q,i})).filter(({q,i})=>answers[i]!==q.answer);return erradas.length?<div className="revisao-erros"><h3><AlertTriangle size={16}/> Volte ao conteúdo destas {erradas.length===1?'questão':erradas.length+' questões'}</h3><ul>{erradas.map(({q,i})=>{const t=tracks.find(x=>x.id===q.track);const exata=q.source&&q.source.sec?lessonMap.get(q.source.sec):null;const aula=exata||firstLesson(q.track);const rot=exata?((exata.number?exata.number+' ':'')+exata.title).slice(0,42):(t?t.code:'módulo');return <li key={i}><span className="re-mod">{t?t.code:''}</span><span className="re-q">{q.question}</span>{aula&&<button className="re-ir" onClick={()=>openLesson&&openLesson(aula.id)}>Rever {rot} <ArrowRight size={14}/></button>}</li>})}</ul></div>:<div className="revisao-ok"><CheckCircle2/> Você acertou todas. Pode seguir para o próximo módulo.</div>})()}<div className="result-actions"><button onClick={()=>{reset();setStarted(true)}}><RotateCcw/> Refazer</button><button className="primary" onClick={()=>setStarted(false)}>Escolher outra avaliação</button></div></div>:<><div className="quiz-top"><button onClick={()=>setStarted(false)}><ChevronLeft/> Sair</button><span>Questão {index+1} de {questions.length}</span><i><em style={{width:`${(index+1)/questions.length*100}%`}}/></i></div><div className="quiz-question"><small>{tracks.find(t=>t.id===q.track)?.code} · CONHECIMENTO APLICADO</small><h2>{q.question}</h2><div className="quiz-options">{q.options.map((o,i)=><button disabled={revealed} className={(answers[index]===i?'selected ':'')+(revealed&&i===q.answer?'correct ':'')+(revealed&&answers[index]===i&&i!==q.answer?'wrong':'')} onClick={()=>setAnswers(a=>({...a,[index]:i}))} key={o}><span>{String.fromCharCode(65+i)}</span>{o}{revealed&&i===q.answer&&<Check/>}</button>)}</div>{revealed&&<div className={answers[index]===q.answer?'answer-feedback correct':'answer-feedback'}><Lightbulb/><div><strong>{answers[index]===q.answer?'Resposta correta':'Ponto de revisão'}</strong><p>{q.explanation}</p>{q.source&&(()=>{const sec=lessonMap.get(q.source.sec);return <figure className="quiz-fonte"><blockquote>{q.source.quote}</blockquote><figcaption>POP{sec?`, ${(sec.number?sec.number+' ':'')}${sec.title}`:''}{sec&&openLesson&&<button onClick={()=>openLesson(sec.id)}>abrir a aula <ArrowRight size={13}/></button>}</figcaption></figure>})()}</div></div>}<div className="quiz-actions">{!revealed?<button className="primary" disabled={answers[index]===undefined} onClick={()=>setRevealed(true)}>Confirmar resposta</button>:<button className="primary" onClick={next}>{index===questions.length-1?'Ver resultado':'Próxima questão'}<ArrowRight/></button>}</div></div></>}</section>}</div>}
+function shuffleIdx(n) {
+  const a = [...Array(n).keys()];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
 
-const LEI_DOMINIOS=[['BRASIL','planalto.gov.br'],['CONAMA','conama.mma.gov.br'],['PARANÁ','legislacao.pr.gov.br'],['INSTITUTO ÁGUA E TERRA','iat.pr.gov.br'],['AGÊNCIA NACIONAL','aneel.gov.br'],['INSTITUTO DO PATRIMÔNIO','gov.br/iphan'],['ABNT','abnt.org.br']];
-function leiDominio(ref){const hit=LEI_DOMINIOS.find(([org])=>ref.toUpperCase().startsWith(org));return hit?hit[1]:null}
-function leiTokens(ref){const toks=[];const m=ref.match(/n[ºo°]\s*([\d.]+)/);if(m)toks.push(m[1]);const iat=ref.match(/IN(?:strução Normativa)?\s+IAT\s+n[ºo°]\s*(\d+)/i);if(iat)toks.push('IN IAT nº '+iat[1].replace(/^0/,''),'IN IAT nº '+iat[1]);return toks.filter(t=>t.length>2)}
-// A busca do topo abre a Biblioteca ja na aba certa: um quadro cai em Quadros e
-// tabelas com ele selecionado, uma sigla cai no Glossario.
-let ALVO_BIB=null;
-function KnowledgeLibrary({state,openLesson}){const alvo=ALVO_BIB;ALVO_BIB=null;const[tab,setTab]=useState(alvo?.tab||'buscar'),[query,setQuery]=useState(''),[selectedTable,setSelectedTable]=useState(alvo?.tabela||popData.tables.find(t=>!t.navigationOnly)?.id);
- const leis=useMemo(()=>{const s=popData.sections.find(x=>/refer[eê]ncias normativas/i.test(x.title||''));return((s?.blockIds)||[]).map(id=>blockMap.get(id)?.paragraph?.text||'').filter(Boolean)},[]);
- const[leiSel,setLeiSel]=useState(0);
- const leiCitacoes=useMemo(()=>{const ref=leis[leiSel]||'';const toks=leiTokens(ref);if(!toks.length)return[];const out=[];for(const l of lessons){for(const id of(l.blockIds||[])){const t=blockMap.get(id)?.paragraph?.text||'';if(t&&toks.some(tk=>t.includes(tk))&&!/^(BRASIL|CONAMA|PARANÁ|INSTITUTO|AGÊNCIA|ABNT)/.test(t)){out.push({lesson:l,text:t});if(out.length>=10)return out}}}return out},[leiSel,leis]);const index=useMemo(()=>INDICE.get(),[]);const matches=query.length>1?ordenaBusca(index.filter(x=>norm(x.title+' '+x.text).includes(norm(query))),query):[];const results=matches.slice(0,50);const table=tableMap.get(selectedTable);const glossary=popData.tables.find(t=>/siglas e abreviações/i.test(t.title));return <div className="page"><PageHeader title="Biblioteca operacional" subtitle={`Pesquise no texto integral, abra os ${popData.tables.filter(t=>!t.navigationOnly).length} quadros e tabelas e consulte todas as imagens do material-fonte.`} icon={Library}/><div className="library-tabs">{[['buscar','Buscar no POP',Search],['tabelas','Quadros e tabelas',Table2],['figuras','Figuras e fluxos',ImageIcon],['glossario','Glossário',BookMarked],['legislacoes','Legislações',Scale],['favoritos','Meus favoritos',Bookmark],['anotacoes','Minhas anotações',StickyNote]].map(([id,l,I])=><button className={tab===id?'active':''} onClick={()=>setTab(id)} key={id}><I/>{l}</button>)}</div>{tab==='buscar'&&<section className="library-search"><div className="big-search"><Search/><input autoFocus value={query} onChange={e=>setQuery(e.target.value)} placeholder="Ex.: transferência de titularidade, PACUERA, APP, condicionante..."/><kbd>{matches.length>results.length?`${results.length} de ${matches.length}`:matches.length} resultados</kbd></div>{query.length<2?<div className="search-start"><Database/><h2>{(popData.stats?.allDocumentParagraphNodes||0).toLocaleString('pt-BR')} parágrafos pesquisáveis</h2><p>A busca percorre todas as seções e o conteúdo das tabelas, preservando o vínculo com a aula correspondente.</p><div>{['PACUERA','regra de transição','Licença de Operação','cartografia','condicionantes'].map(x=><button onClick={()=>setQuery(x)} key={x}>{x}</button>)}</div></div>:<div className="search-results">{results.map(r=><button key={r.id} onClick={()=>r.type==='seção'?openLesson(r.id):r.type==='sigla'?setTab('glossario'):(setSelectedTable(r.id),setTab('tabelas'))}><span>{r.type}</span><div><strong>{r.title}</strong><p>{snippet(r.text,query)}</p></div><ChevronRight/></button>)}</div>}</section>}{tab==='tabelas'&&<div className="table-library"><aside><div><Filter/><span>{popData.tables.length} tabelas · {popData.tables.filter(t=>t.navigationOnly).length} índices ocultos na trilha</span></div>{popData.tables.filter(t=>!t.navigationOnly).map(t=><button className={selectedTable===t.id?'active':''} onClick={()=>setSelectedTable(t.id)} key={t.id}><span>{t.labelType} {t.labelNumber}</span><strong>{t.title}</strong></button>)}</aside><section>{table&&<TableRenderer table={table}/>}</section></div>}{tab==='figuras'&&<div className="figure-library"><h2>Figuras do POP</h2><div className="figure-grid">{popData.figures.map(f=><figure key={f.id}><button onClick={()=>window.open(f.publicPath,'_blank')}><img src={f.publicPath} alt={f.altText||f.title}/><span><Maximize2/></span></button><figcaption>{f.caption}</figcaption></figure>)}</div><h2>Fluxogramas comparados</h2><div className="flow-gallery">{flowData.flowcharts.map(f=><figure key={f.id}><a href={f.publicPath} target="_blank" rel="noreferrer"><img src={f.publicPath} alt={`${f.title} · ${f.variant}`}/></a><figcaption><span>{f.variant}</span><strong>{f.number}. {f.title}</strong></figcaption></figure>)}</div></div>}{tab==='glossario'&&<div className="glossary-view"><div><h2>Siglas e abreviações</h2><p>Consulta rápida do Anexo E do POP. Filtre pela sigla ou pelo termo por extenso.</p></div><div className="big-search glossario-busca"><Search/><input value={query} onChange={e=>setQuery(e.target.value)} placeholder="Ex.: PACUERA, ADA, TVR, RTAA..."/><kbd>{glossary?(query.length>1?glossary.rows.slice(1).filter(r=>norm(r.cells.map(c=>c.text).join(' ')).includes(norm(query))).length:glossary.rows.length-1):0} siglas</kbd></div>{glossary&&<TableRenderer table={query.length>1?{...glossary,rows:[glossary.rows[0],...glossary.rows.slice(1).filter(r=>norm(r.cells.map(c=>c.text).join(' ')).includes(norm(query)))]}:glossary} compact/>}</div>}{tab==='legislacoes'&&<div className="leis-view"><aside className="leis-list"><div className="leis-head"><Scale/><span>{leis.length} normas referenciadas no POP</span></div>{leis.map((l,i)=><button key={i} className={leiSel===i?'active':''} onClick={()=>{setLeiSel(i);if(window.innerWidth<980)setTimeout(()=>document.querySelector('.leis-detail')?.scrollIntoView({behavior:'smooth',block:'start'}),60)}}><small>{l.split('.')[0]}</small><strong>{l.replace(/^[^.]+\.\s*/,'').split('. ')[0]}</strong></button>)}</aside><section className="leis-detail">{leis[leiSel]&&<><h2>{leis[leiSel].replace(/^[^.]+\.\s*/,'').split('. ')[0]}</h2><p className="leis-ref"><BookMarked size={15}/> Referência integral registrada no POP: <em>{leis[leiSel]}</em></p><div className="leis-actions">{(()=>{const fonte=resolveOfficialSource(leis[leiSel]);if(!fonte)return null;return <><a className={fonte.kind==='direct'?'primary':'fonte-busca'} href={fonte.url} target="_blank" rel="noreferrer"><ExternalLink size={15}/> {fonte.label}</a><small className="fonte-nota">{fonte.note}</small></>})()}</div>{resumoDaNorma(leis[leiSel])&&<div className="leis-resumo"><h3>Sobre esta norma</h3><p>{resumoDaNorma(leis[leiSel])}</p></div>}<h3>Onde o POP aplica esta norma</h3>{leiCitacoes.length?<ul className="leis-cites">{leiCitacoes.map((c,k)=><li key={k}><button onClick={()=>openLesson(c.lesson.id)}><small>{c.lesson.number?c.lesson.number+' · ':''}{c.lesson.title}</small><p>{c.text.length>260?c.text.slice(0,260)+'…':c.text}</p></button></li>)}</ul>:<p className="leis-none">Esta norma consta da lista de referências do POP; o resumo acima orienta o contexto de aplicação.</p>}</>}</section></div>}{tab==='anotacoes'&&<div className="notas-view">{(()=>{const notas=Object.entries(state.notes||{}).map(([id,txt])=>({l:lessonMap.get(id),txt:(txt||'').trim()})).filter(n=>n.l&&n.txt);return notas.length?<>{notas.map(({l,txt})=><article key={l.id} className="nota-card"><button className="nota-head" onClick={()=>openLesson(l.id)}><small>{tracks.find(t=>t.id===l.trackId)?.code}</small><strong>{l.number?l.number+' ':''}{l.title}</strong><ChevronRight size={15}/></button><p>{txt}</p></article>)}</>:<Empty text="Você ainda não escreveu anotações. Abra uma aula e use a aba Anotações para registrar dúvidas e exemplos do seu trabalho."/>})()}</div>}{tab==='favoritos'&&<div className="favorites-view">{(()=>{const favs=state.bookmarks.map(id=>lessonMap.get(id)).filter(Boolean);return favs.length?favs.map(l=><button key={l.id} onClick={()=>openLesson(l.id)}><BookmarkCheck/><span><small>{tracks.find(t=>t.id===l.trackId)?.code}</small><strong>{l.number?`${l.number} `:''}{l.title}</strong></span><ChevronRight/></button>):<Empty text="Você ainda não salvou nenhuma aula. Use o ícone de favorito no cabeçalho de uma aula."/>})()}</div>}</div>}
+function FlowDecisionGate({ flow, record }) {
+  const [choice, setChoice] = useState(null);
+  const decision = flow.decision;
+  if (!decision) return null;
+  const answered = choice !== null;
+  const correct = choice === decision.answer;
 
-function GlobalSearch({close,abrir}){const[q,setQ]=useState('');const input=useRef();useEffect(()=>input.current?.focus(),[]);const results=q.length>1?ordenaBusca(INDICE.get().filter(x=>norm(x.title+' '+x.text).includes(norm(q))),q).slice(0,14):[];return <div className="search-modal" role="dialog" aria-modal="true"><button className="modal-scrim" onClick={close} aria-label="Fechar busca"/><section><div className="modal-input"><Search/><input ref={input} value={q} onChange={e=>setQ(e.target.value)} onKeyDown={e=>{if(e.key==='Enter'&&results.length)abrir(results[0])}} placeholder="Buscar aulas, quadros e siglas do POP..."/><kbd>ESC</kbd></div>{q.length<2?<div className="modal-empty"><Sparkles/><p>Pesquise uma fase, documento, norma, sigla ou critério. A busca cobre as aulas, os quadros e o glossário.</p></div>:<div className="modal-results">{results.map(r=><button onClick={()=>abrir(r)} key={r.id}><span className={'gs-tipo t-'+r.type}>{r.type}</span><div><strong>{r.title}</strong><small>{snippet(r.text,q)}</small></div><ChevronRight/></button>)}{!results.length&&<Empty text="Nenhum tópico encontrado. Tente outro termo."/>}</div>}<footer><span><kbd>↵</kbd> abrir</span><span><kbd>ESC</kbd> fechar</span><small>Busca local: nenhum dado é enviado</small></footer></section></div>}
+  function answer(index) {
+    if (answered) return;
+    setChoice(index);
+    record?.(`${flow.id}:decisao`, index === decision.answer ? 1 : 0, 1);
+  }
+
+  return (
+    <section className="flow-decision-gate" aria-labelledby={`fd-${flow.id}`}>
+      <small>DECISÃO RAMIFICADA · CASO DIDÁTICO</small>
+      <h3 id={`fd-${flow.id}`}>{decision.prompt}</h3>
+      <div className="flow-decision-options">
+        {decision.options.map((option, index) => (
+          <button
+            type="button"
+            key={option}
+            disabled={answered}
+            aria-pressed={choice === index}
+            aria-label={
+              answered
+                ? `${String.fromCharCode(65 + index)}. ${option}. ${
+                    index === decision.answer
+                      ? "Resposta correta."
+                      : index === choice
+                        ? "Sua resposta, incorreta."
+                        : "Alternativa não selecionada."
+                  }`
+                : undefined
+            }
+            className={
+              answered
+                ? index === decision.answer
+                  ? "correct"
+                  : index === choice
+                    ? "wrong"
+                    : ""
+                : ""
+            }
+            onClick={() => answer(index)}
+          >
+            <span>{String.fromCharCode(65 + index)}</span>
+            {option}
+          </button>
+        ))}
+      </div>
+      {answered && (
+        <div
+          className={`flow-decision-feedback ${correct ? "correct" : "wrong"}`}
+          role="status"
+          aria-live="polite"
+          aria-atomic="true"
+        >
+          {correct ? <CheckCircle2 aria-hidden="true" /> : <AlertTriangle aria-hidden="true" />}
+          <div>
+            <strong>{correct ? "Decisão alinhada" : "Decisão a revisar"}</strong>
+            <p>{decision.feedback}</p>
+            <small>Fonte didática: {decision.source}</small>
+            <button type="button" onClick={() => setChoice(null)}>
+              Tentar novamente
+            </button>
+          </div>
+        </div>
+      )}
+    </section>
+  );
+}
+
+function FlowBuilder({ flow, record }) {
+  const N = flow.nodes.length;
+  const [pool, setPool] = useState(() => shuffleIdx(N));
+  const [built, setBuilt] = useState([]);
+  useEffect(() => {
+    setPool(shuffleIdx(N));
+    setBuilt([]);
+  }, [flow.id]);
+  const done = built.length === N;
+  const score = built.filter((idx, k) => idx === k).length;
+  useEffect(() => {
+    if (done) record && record(flow.id, score, N);
+  }, [done]);
+  function place(idx) {
+    setBuilt((b) => [...b, idx]);
+    setPool((p) => p.filter((x) => x !== idx));
+  }
+  function undo() {
+    if (!built.length) return;
+    const last = built[built.length - 1];
+    setBuilt((b) => b.slice(0, -1));
+    setPool((p) => [...p, last]);
+  }
+  function reset() {
+    setPool(shuffleIdx(N));
+    setBuilt([]);
+  }
+  return (
+    <div className="flow-builder">
+      <div className="fb-head">
+        <h3>Monte a sequência correta</h3>
+        <p>
+          Escolha as etapas na ordem do fluxo. Cada posição informa “correta” ou
+          “incorreta” também em texto.
+        </p>
+      </div>
+      <ol className="fb-slots" aria-label="Sequência montada">
+        {Array.from({ length: N }).map((_, k) => {
+          const idx = built[k];
+          const filled = idx !== undefined;
+          const ok = filled && idx === k;
+          return (
+            <li key={k} className={filled ? (ok ? "ok" : "bad") : "open"}>
+              <span>{k + 1}</span>
+              {filled ? (
+                <>
+                  <strong>{flow.nodes[idx]}</strong>
+                  <em className="fb-status">
+                    {ok ? "Posição correta" : "Posição incorreta"}
+                  </em>
+                  {ok ? <Check aria-hidden="true" /> : <X aria-hidden="true" />}
+                </>
+              ) : (
+                <em>Escolha a etapa {k + 1}</em>
+              )}
+            </li>
+          );
+        })}
+      </ol>
+      <div className="fb-pool" aria-label="Etapas disponíveis">
+        {pool.length ? (
+          pool.map((idx) => (
+            <button
+              key={idx}
+              onClick={() => place(idx)}
+              aria-label={`Colocar “${flow.nodes[idx]}” na posição ${built.length + 1}`}
+            >
+              {flow.nodes[idx]}
+            </button>
+          ))
+        ) : (
+          <span className="fb-empty">Todas as etapas foram posicionadas.</span>
+        )}
+      </div>
+      <div className="fb-actions">
+        <button className="text-action" onClick={undo} disabled={!built.length}>
+          <RotateCcw size={15} /> Desfazer
+        </button>
+        <button className="text-action" onClick={reset}>
+          <RefreshCw size={15} /> Recomeçar
+        </button>
+      </div>
+      <div aria-live="polite">
+        {done && (
+          <div className={"fb-result " + (score === N ? "perfect" : "")}>
+            {score === N ? <CheckCircle2 /> : <AlertTriangle />}
+            <div>
+              <strong>
+                {score} de {N} etapas na posição correta
+              </strong>
+              <p>
+                {score === N
+                  ? "Sequência correta. Explique agora por que cada transição existe."
+                  : "Há posições incorretas. Use os rótulos textuais, revise o fluxo-fonte e tente novamente."}
+              </p>
+            </div>
+          </div>
+        )}
+      </div>
+      {done && <FlowDecisionGate flow={flow} record={record} />}
+    </div>
+  );
+}
+function Flowcharts({ state, setState }) {
+  const [selected, setSelected] = useState(flowSpecs[0].id),
+    [variant, setVariant] = useState("simplificado"),
+    [active, setActive] = useState(0),
+    [playing, setPlaying] = useState(true),
+    [zoom, setZoom] = useState(1),
+    [mode, setMode] = useState("explorar"),
+    [fit, setFit] = useState(true);
+  const reduceMotion = useMediaQuery("(prefers-reduced-motion: reduce)");
+  const flow = flowSpecs.find((f) => f.id === selected);
+  useEffect(() => {
+    setActive(0);
+    setZoom(1);
+  }, [selected]);
+  useEffect(() => {
+    if (reduceMotion) {
+      setPlaying(false);
+      return undefined;
+    }
+    if (!playing || mode !== "explorar") return undefined;
+    const id = setInterval(
+      () => setActive((a) => (a + 1) % flow.nodes.length),
+      1600,
+    );
+    return () => clearInterval(id);
+  }, [playing, flow, mode, reduceMotion]);
+  const source = flowData.flowcharts.find(
+    (f) => f.number === flow.imageNumber && f.variant === variant,
+  );
+  const guidance = flow.guidance?.[active];
+  const record = (id, score, total) =>
+    setState &&
+    setState((s) => ({
+      ...s,
+      flows: {
+        ...(s.flows || {}),
+        [id]: { score, total, date: new Date().toISOString() },
+      },
+    }));
+  const best = state && state.flows && state.flows[selected];
+  return (
+    <div className="page">
+      <PageHeader
+        title="Fluxos: proposta e atividade"
+        subtitle="Compare as sete propostas em versão original, simplificada e completa e pratique a ordem de suas etapas."
+        icon={Route}
+      />
+      <aside className="flow-source-warning" role="note">
+        <AlertTriangle aria-hidden="true" />
+        <p>
+          <strong>Material de proposta.</strong> Os diagramas vêm do documento
+          separado “Proposta de Fluxogramas” e não representam, por si, fluxo
+          institucional aprovado. A atividade interativa simplifica a sequência:
+          confirme decisões, retornos e fundamentos no POP vigente.
+        </p>
+      </aside>
+      <div className="flow-workspace">
+        <aside className="flow-menu">
+          {flowSpecs.map((f, i) => (
+            <button
+              className={selected === f.id ? "active" : ""}
+              aria-pressed={selected === f.id}
+              key={f.id}
+              onClick={() => setSelected(f.id)}
+            >
+              <span>{i + 1}</span>
+              <div>
+                <strong>{f.title}</strong>
+                <small>
+                  {state && state.flows && state.flows[f.id]
+                    ? `Montado ${state.flows[f.id].score}/${state.flows[f.id].total}`
+                    : "Explorar e montar"}
+                </small>
+              </div>
+              <ChevronRight />
+            </button>
+          ))}
+        </aside>
+        <section className="flow-canvas">
+          <div className="flow-mode-tabs">
+            <button
+              className={mode === "explorar" ? "active" : ""}
+              aria-pressed={mode === "explorar"}
+              onClick={() => setMode("explorar")}
+            >
+              <Eye /> Explorar
+            </button>
+            <button
+              className={mode === "montar" ? "active" : ""}
+              aria-pressed={mode === "montar"}
+              onClick={() => setMode("montar")}
+            >
+              <GitBranch /> Montar o fluxo
+            </button>
+            {best && (
+              <span className="fb-badge">
+                <CheckCircle2 /> {best.score}/{best.total}
+              </span>
+            )}
+          </div>
+          {mode === "explorar" ? (
+            <>
+              <div className="flow-toolbar">
+                <span className="flow-toolbar-label">
+                  Percurso didático em {flow.nodes.length} etapas
+                </span>
+                <div>
+                  <button
+                    aria-label={
+                      playing
+                        ? "Pausar animação do fluxo"
+                        : "Reproduzir animação do fluxo"
+                    }
+                    aria-pressed={playing}
+                    onClick={() => setPlaying((v) => !v)}
+                  >
+                    {playing ? <Pause /> : <Play />}
+                  </button>
+                  <button
+                    aria-label="Reduzir zoom do fluxo"
+                    onClick={() => setZoom((z) => Math.max(0.7, z - 0.1))}
+                  >
+                    <ZoomOut />
+                  </button>
+                  <span role="status" aria-live="polite">
+                    {Math.round(zoom * 100)}%
+                  </span>
+                  <button
+                    aria-label="Aumentar zoom do fluxo"
+                    onClick={() => setZoom((z) => Math.min(1.4, z + 0.1))}
+                  >
+                    <ZoomIn />
+                  </button>
+                </div>
+              </div>
+              <div
+                className="interactive-flow"
+                style={{ transform: `scale(${zoom})` }}
+              >
+                {flow.nodes.map((n, i) => (
+                  <React.Fragment key={n}>
+                    <button
+                      className={
+                        (i === active ? "active " : "") +
+                        (i < active ? "visited " : "") +
+                        (n.includes("?") ? "decision" : "")
+                      }
+                      aria-current={i === active ? "step" : undefined}
+                      onClick={() => {
+                        setActive(i);
+                        setPlaying(false);
+                      }}
+                    >
+                      <span>{i + 1}</span>
+                      <strong>{n}</strong>
+                      <small>
+                        {i === active
+                          ? "Etapa em foco"
+                          : i < active
+                            ? "Percorrida"
+                            : "A seguir"}
+                      </small>
+                    </button>
+                    {i < flow.nodes.length - 1 && (
+                      <div className={i < active ? "lit" : ""}>
+                        <ArrowRight />
+                      </div>
+                    )}
+                  </React.Fragment>
+                ))}
+              </div>
+              <div className="flow-insight">
+                <Info />
+                <div>
+                  <small>ETAPA {active + 1}</small>
+                  <h3>{flow.nodes[active]}</h3>
+                  {guidance ? (
+                    <>
+                      <p><strong>Pergunta de controle:</strong> {guidance.question}</p>
+                      <dl className="flow-guidance">
+                        <div>
+                          <dt>Evidência necessária</dt>
+                          <dd>{guidance.evidence}</dd>
+                        </div>
+                        <div>
+                          <dt>Risco se ignorar</dt>
+                          <dd>{guidance.risk}</dd>
+                        </div>
+                        <div>
+                          <dt>Onde conferir</dt>
+                          <dd>{guidance.source}</dd>
+                        </div>
+                      </dl>
+                    </>
+                  ) : (
+                    <p>
+                      Esta é uma sequência didática resumida. Confira a proposta
+                      completa abaixo e registre a motivação antes de avançar.
+                    </p>
+                  )}
+                </div>
+              </div>
+            </>
+          ) : (
+            <FlowBuilder key={flow.id} flow={flow} record={record} />
+          )}
+          <section className="source-flow-panel">
+            <div className="sfp-head">
+              <span className="sfp-title">
+                <Eye /> Proposta de fluxograma vinculada
+              </span>
+              <div className="variant-tabs">
+                {[
+                  ["original", "Original"],
+                  ["simplificado", "Simplificado"],
+                  ["completo", "Completo"],
+                ].map(([v, l]) => (
+                  <button
+                    className={variant === v ? "active" : ""}
+                    aria-pressed={variant === v}
+                    onClick={() => setVariant(v)}
+                    key={v}
+                  >
+                    {l}
+                  </button>
+                ))}
+              </div>
+              <button
+                className="sfp-fit"
+                aria-pressed={!fit}
+                onClick={() => setFit((f) => !f)}
+              >
+                {fit ? "Ver em tamanho real" : "Ajustar à largura"}
+              </button>
+              {source && (
+                <a
+                  className="sfp-open"
+                  href={source.publicPath}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  <Maximize2 /> Nova aba
+                </a>
+              )}
+            </div>
+            {source ? (
+              <div className={"sfp-scroll " + (fit ? "fit" : "real")}>
+                <img
+                  key={source.publicPath}
+                  src={source.publicPath}
+                  alt={`${flow.title}, versão ${variant}`}
+                />
+              </div>
+            ) : (
+              <p className="sfp-missing">
+                Imagem não encontrada para esta versão.
+              </p>
+            )}
+            {source && (
+              <small className="sfp-meta">
+                Versão {variant} · {source.widthPx}×{source.heightPx}px · imagem
+                vinculada ao documento de fluxogramas
+              </small>
+            )}
+          </section>
+        </section>
+      </div>
+    </div>
+  );
+}
+
+// Duas aplicações dos mesmos itens-âncora. A comparação é descritiva: mesmo
+// com itens iguais, efeito de memória e familiaridade impedem atribuir a
+// variação causalmente ao estudo.
+// Quantas questões de cada módulo entram na amostra diagnóstica geral.
+const DIAG_POR_MODULO = 3;
+function Assessments({ state, setState, openLesson }) {
+  const [track, setTrack] = useState("geral"),
+    [started, setStarted] = useState(false),
+    [index, setIndex] = useState(0),
+    [answers, setAnswers] = useState({}),
+    [revealed, setRevealed] = useState(false),
+    [done, setDone] = useState(false),
+    [attemptSeed, setAttemptSeed] = useState(() => newAssessmentSeed()),
+    [diagnosticForm, setDiagnosticForm] = useState(() =>
+      state.diagnostico?.entrada ? "B" : "A",
+    ); // Diagnostico geral: TRES questoes ancora por modulo. Entrada e saida
+  // usam os mesmos itens, mas ordem e posicao das alternativas mudam para
+  // reduzir memorizacao mecanica sem perder comparabilidade por item.
+  const questions = useMemo(() => {
+    let base;
+    if (track !== "geral") base = questionBank.filter((q) => q.track === track);
+    else {
+      base = selectDiagnosticAnchors(questionBank, tracks, DIAG_POR_MODULO);
+    }
+    return prepareAssessment(base, attemptSeed);
+  }, [track, attemptSeed, diagnosticForm]);
+  const q = questions[index];
+  const score = questions.filter((x, i) => answers[i] === x.answer).length;
+  useLayoutEffect(() => {
+    if (track === "geral" && revealed) {
+      setRevealed(false);
+      next();
+    }
+  }, [track, revealed]);
+  function reset(id = track) {
+    setTrack(id);
+    setAttemptSeed(newAssessmentSeed());
+    setDiagnosticForm(state.diagnostico?.entrada ? "B" : "A");
+    setStarted(false);
+    setIndex(0);
+    setAnswers({});
+    setRevealed(false);
+    setDone(false);
+  }
+  function next() {
+    if (index === questions.length - 1) {
+      setDone(true);
+      setState((s) => {
+        const base = {
+          ...s,
+          quizScores: {
+            ...s.quizScores,
+            [track]: {
+              score,
+              total: questions.length,
+              date: new Date().toISOString(),
+            },
+          },
+        };
+        if (track !== "geral") return base;
+        // A primeira aplicação é preservada e as seguintes atualizam a
+        // reaplicação. São duas amostras descritivas dos mesmos itens, não uma
+        // medida validada de ganho ou prova causal de aprendizagem.
+        const porQuestao = {};
+        questions.forEach((x, i) => {
+          porQuestao[x.id] = { track: x.track, ok: answers[i] === x.answer };
+        });
+        const registro = {
+          data: new Date().toISOString(),
+          acertos: score,
+          total: questions.length,
+          forma: diagnosticForm,
+          leitura: Math.round((s.completed.length / lessons.length) * 100),
+          porQuestao,
+        };
+        const d = s.diagnostico || {};
+        return {
+          ...base,
+          diagnostico: d.entrada
+            ? { ...d, saida: registro }
+            : { ...d, entrada: registro },
+        };
+      });
+    } else {
+      setIndex((i) => i + 1);
+      setRevealed(false);
+    }
+  }
+  return (
+    <div className="page">
+      <PageHeader
+        title="Autoavaliações e revisão"
+        subtitle="Questões comentadas transformam erro em revisão direcionada, sem confundir resultado de quiz com competência profissional."
+        icon={ClipboardCheck}
+      />
+      {!started ? (
+        <div className="assessment-select">
+          {(() => {
+            const d = state.diagnostico || {};
+            if (!d.entrada) return null;
+            return <ComparaDiagnostico d={d} />;
+          })()}
+          <section className="diagnostic">
+            <div>
+              <Award />
+              <span>
+                <small>AVALIAÇÃO INTEGRADORA</small>
+                <h2>Amostra diagnóstica do POP</h2>
+                <p>
+                  Três questões por módulo, dos fundamentos à conclusão técnica.
+                  A reaplicação usa os mesmos itens-âncora em outra ordem e
+                  descreve os dois resultados sem atribuir a variação ao curso.
+                </p>
+              </span>
+            </div>
+            <div className="assessment-meta">
+              <span>
+                <Clock /> {tracks.length * DIAG_POR_MODULO} questões · cerca de{" "}
+                {Math.round(tracks.length * DIAG_POR_MODULO * 0.5)} min
+              </span>
+              <span>
+                <MessageSquareText /> Feedback imediato
+              </span>
+              <span>
+                <Trophy /> Autoacompanhamento não validado
+              </span>
+            </div>
+            <button
+              onClick={() => {
+                reset("geral");
+                setStarted(true);
+              }}
+            >
+              {(state.diagnostico || {}).entrada
+                ? "Reaplicar os itens-âncora"
+                : "Fazer a primeira aplicação"}{" "}
+              <ArrowRight />
+            </button>
+            {state.quizScores.geral && (
+              <small>
+                Último resultado: {state.quizScores.geral.score}/
+                {state.quizScores.geral.total}
+              </small>
+            )}
+          </section>
+          <h2>Avaliações por módulo</h2>
+          <div className="module-tests">
+            {tracks
+              .filter((t) => questionBank.some((q) => q.track === t.id))
+              .map((t) => {
+                let qs = questionBank.filter((q) => q.track === t.id),
+                  last = state.quizScores[t.id];
+                return (
+                  <button
+                    key={t.id}
+                    onClick={() => {
+                      reset(t.id);
+                      setStarted(true);
+                    }}
+                  >
+                    <span style={{ background: t.color, "--tc": t.color }}>
+                      {t.code}
+                    </span>
+                    <div>
+                      <strong>{t.title}</strong>
+                      <small>{qs.length} questões · feedback comentado</small>
+                    </div>
+                    {last ? (
+                      <b>
+                        {last.score}/{last.total}
+                      </b>
+                    ) : (
+                      <ChevronRight />
+                    )}
+                  </button>
+                );
+              })}
+          </div>
+        </div>
+      ) : (
+        <section className="quiz-stage">
+          {done ? (
+            <div className="quiz-result">
+              <div
+                className="score-ring"
+                style={{ "--score": `${(score / questions.length) * 100}%` }}
+              >
+                <span>
+                  <strong>{score}</strong>/{questions.length}
+                </span>
+              </div>
+              <h2>
+                {score / questions.length >= 0.8
+                  ? "Bom desempenho nesta tentativa"
+                  : "Há pontos para revisar"}
+              </h2>
+              <p>
+                Você acertou {Math.round((score / questions.length) * 100)}%.
+                Use o feedback abaixo para voltar às trilhas relacionadas. Este
+                resultado não comprova domínio nem competência profissional.
+              </p>
+              {(() => {
+                const erradas = questions
+                  .map((q, i) => ({ q, i }))
+                  .filter(({ q, i }) => answers[i] !== q.answer);
+                return erradas.length ? (
+                  <div className="revisao-erros">
+                    <h3>
+                      <AlertTriangle size={16} /> Volte ao conteúdo destas{" "}
+                      {erradas.length === 1
+                        ? "questão"
+                        : erradas.length + " questões"}
+                    </h3>
+                    <ul>
+                      {erradas.map(({ q, i }) => {
+                        const t = tracks.find((x) => x.id === q.track);
+                        const exata =
+                          q.source && q.source.sec
+                            ? lessonMap.get(q.source.sec)
+                            : null;
+                        const aula = exata || firstLesson(q.track);
+                        const rot = exata
+                          ? (
+                              (exata.number ? exata.number + " " : "") +
+                              exata.title
+                            ).slice(0, 42)
+                          : t
+                            ? t.code
+                            : "módulo";
+                        return (
+                          <li key={i}>
+                            <span className="re-mod">{t ? t.code : ""}</span>
+                            <span className="re-q">{q.question}</span>
+                            {aula && (
+                              <button
+                                className="re-ir"
+                                onClick={() =>
+                                  openLesson && openLesson(aula.id)
+                                }
+                              >
+                                Rever {rot} <ArrowRight size={14} />
+                              </button>
+                            )}
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  </div>
+                ) : (
+                  <div className="revisao-ok">
+                    <CheckCircle2 /> Você acertou todas. Pode seguir para o
+                    próximo módulo.
+                  </div>
+                );
+              })()}
+              <div className="result-actions">
+                <button
+                  onClick={() => {
+                    reset();
+                    setStarted(true);
+                  }}
+                >
+                  <RotateCcw /> Refazer
+                </button>
+                <button className="primary" onClick={() => setStarted(false)}>
+                  Escolher outra avaliação
+                </button>
+              </div>
+            </div>
+          ) : (
+            <>
+              <div className="quiz-top">
+                <button onClick={() => setStarted(false)}>
+                  <ChevronLeft /> Sair
+                </button>
+                <span>
+                  Questão {index + 1} de {questions.length}
+                </span>
+                <i>
+                  <em
+                    style={{
+                      width: `${((index + 1) / questions.length) * 100}%`,
+                    }}
+                  />
+                </i>
+              </div>
+              <div className="quiz-question">
+                <small>
+                  {tracks.find((t) => t.id === q.track)?.code} · AUTOAVALIAÇÃO
+                  COMENTADA
+                </small>
+                <h2>{q.question}</h2>
+                <div className="quiz-options">
+                  {q.options.map((o, i) => (
+                    <button
+                      disabled={revealed}
+                      className={
+                        (answers[index] === i ? "selected " : "") +
+                        (revealed && i === q.answer ? "correct " : "") +
+                        (revealed && answers[index] === i && i !== q.answer
+                          ? "wrong"
+                          : "")
+                      }
+                      onClick={() => setAnswers((a) => ({ ...a, [index]: i }))}
+                      key={o}
+                    >
+                      <span>{String.fromCharCode(65 + i)}</span>
+                      {o}
+                      {revealed && i === q.answer && <Check />}
+                    </button>
+                  ))}
+                </div>
+                {revealed && (
+                  <div
+                    className={
+                      answers[index] === q.answer
+                        ? "answer-feedback correct"
+                        : "answer-feedback"
+                    }
+                  >
+                    <Lightbulb />
+                    <div>
+                      <strong>
+                        {answers[index] === q.answer
+                          ? "Resposta correta"
+                          : "Ponto de revisão"}
+                      </strong>
+                      <p>{q.explanation}</p>
+                      {q.source &&
+                        (() => {
+                          const sec = lessonMap.get(q.source.sec);
+                          return (
+                            <figure className="quiz-fonte">
+                              <blockquote>{q.source.quote}</blockquote>
+                              <figcaption>
+                                POP
+                                {sec
+                                  ? `, ${sec.number ? sec.number + " " : ""}${sec.title}`
+                                  : ""}
+                                {sec && openLesson && (
+                                  <button onClick={() => openLesson(sec.id)}>
+                                    abrir a aula <ArrowRight size={13} />
+                                  </button>
+                                )}
+                              </figcaption>
+                            </figure>
+                          );
+                        })()}
+                    </div>
+                  </div>
+                )}
+                <div className="quiz-actions">
+                  {!revealed ? (
+                    <button
+                      className="primary"
+                      disabled={answers[index] === undefined}
+                      onClick={() => setRevealed(true)}
+                    >
+                      Confirmar resposta
+                    </button>
+                  ) : (
+                    <button className="primary" onClick={next}>
+                      {index === questions.length - 1
+                        ? "Ver resultado"
+                        : "Próxima questão"}
+                      <ArrowRight />
+                    </button>
+                  )}
+                </div>
+              </div>
+            </>
+          )}
+        </section>
+      )}
+    </div>
+  );
+}
+
+const LEI_DOMINIOS = [
+  ["BRASIL", "planalto.gov.br"],
+  ["CONAMA", "conama.mma.gov.br"],
+  ["PARANÁ", "legislacao.pr.gov.br"],
+  ["INSTITUTO ÁGUA E TERRA", "iat.pr.gov.br"],
+  ["AGÊNCIA NACIONAL", "aneel.gov.br"],
+  ["INSTITUTO DO PATRIMÔNIO", "gov.br/iphan"],
+  ["ABNT", "abnt.org.br"],
+];
+function leiDominio(ref) {
+  const hit = LEI_DOMINIOS.find(([org]) => ref.toUpperCase().startsWith(org));
+  return hit ? hit[1] : null;
+}
+function leiTokens(ref) {
+  const toks = [];
+  const m = ref.match(/n[ºo°]\s*([\d.]+)/);
+  if (m) toks.push(m[1]);
+  const iat = ref.match(/IN(?:strução Normativa)?\s+IAT\s+n[ºo°]\s*(\d+)/i);
+  if (iat)
+    toks.push("IN IAT nº " + iat[1].replace(/^0/, ""), "IN IAT nº " + iat[1]);
+  return toks.filter((t) => t.length > 2);
+}
+// A busca do topo abre a Biblioteca na aba certa mesmo quando a tela já está
+// montada; o alvo é estado explícito do App, não uma variável global consumível.
+function KnowledgeLibrary({ state, openLesson, target }) {
+  const [tab, setTab] = useState("buscar"),
+    [query, setQuery] = useState(""),
+    [selectedTable, setSelectedTable] = useState(
+      popData.tables.find((t) => !t.navigationOnly)?.id,
+    );
+  useEffect(() => {
+    if (!target) return;
+    if (target.tab) setTab(target.tab);
+    if (target.tabela) setSelectedTable(target.tabela);
+  }, [target]);
+  const leis = useMemo(() => {
+    const s = popData.sections.find((x) =>
+      /refer[eê]ncias normativas/i.test(x.title || ""),
+    );
+    return (s?.blockIds || [])
+      .map((id) => blockMap.get(id)?.paragraph?.text || "")
+      .filter(Boolean);
+  }, []);
+  const [leiSel, setLeiSel] = useState(0);
+  const leiCitacoes = useMemo(() => {
+    const ref = leis[leiSel] || "";
+    const toks = leiTokens(ref);
+    if (!toks.length) return [];
+    const out = [];
+    for (const l of lessons) {
+      for (const id of l.blockIds || []) {
+        const t = blockMap.get(id)?.paragraph?.text || "";
+        if (
+          t &&
+          toks.some((tk) => t.includes(tk)) &&
+          !/^(BRASIL|CONAMA|PARANÁ|INSTITUTO|AGÊNCIA|ABNT)/.test(t)
+        ) {
+          out.push({ lesson: l, text: t });
+          if (out.length >= 10) return out;
+        }
+      }
+    }
+    return out;
+  }, [leiSel, leis]);
+  const index = useMemo(() => INDICE.get(), []);
+  const matches =
+    query.length > 1
+      ? ordenaBusca(
+          index.filter((x) =>
+            norm(x.title + " " + x.text).includes(norm(query)),
+          ),
+          query,
+        )
+      : [];
+  const results = matches.slice(0, 50);
+  const table = tableMap.get(selectedTable);
+  const glossary = popData.tables.find((t) =>
+    /siglas e abreviações/i.test(t.title),
+  );
+  return (
+    <div className="page">
+      <PageHeader
+        title="Biblioteca operacional"
+        subtitle={`Pesquise no texto integral, abra os ${popData.tables.filter((t) => !t.navigationOnly).length} quadros e tabelas e consulte todas as imagens do material-fonte.`}
+        icon={Library}
+      />
+      <nav className="library-tabs" aria-label="Áreas da biblioteca">
+        {[
+          ["buscar", "Buscar no POP", Search],
+          ["tabelas", "Quadros e tabelas", Table2],
+          ["figuras", "Figuras e fluxos", ImageIcon],
+          ["glossario", "Glossário", BookMarked],
+          ["legislacoes", "Legislações", Scale],
+          ["favoritos", "Meus favoritos", Bookmark],
+          ["anotacoes", "Minhas anotações", StickyNote],
+        ].map(([id, l, I]) => (
+          <button
+            type="button"
+            aria-pressed={tab === id}
+            className={tab === id ? "active" : ""}
+            onClick={() => setTab(id)}
+            key={id}
+          >
+            <I aria-hidden="true" />
+            {l}
+          </button>
+        ))}
+      </nav>
+      {tab === "buscar" && (
+        <section className="library-search">
+          <div className="big-search">
+            <Search aria-hidden="true" />
+            <input
+              aria-label="Buscar no conteúdo integral do POP"
+              autoFocus
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Ex.: transferência de titularidade, PACUERA, APP, condicionante..."
+            />
+            <kbd aria-hidden="true">
+              {matches.length > results.length
+                ? `${results.length} de ${matches.length}`
+                : matches.length}{" "}
+              resultados
+            </kbd>
+          </div>
+          {query.length < 2 ? (
+            <div className="search-start">
+              <Database />
+              <h2>
+                {(popData.stats?.allDocumentParagraphNodes || 0).toLocaleString(
+                  "pt-BR",
+                )}{" "}
+                parágrafos pesquisáveis
+              </h2>
+              <p>
+                A busca percorre todas as seções e o conteúdo das tabelas,
+                preservando o vínculo com a aula correspondente.
+              </p>
+              <div>
+                {[
+                  "PACUERA",
+                  "regra de transição",
+                  "Licença de Operação",
+                  "cartografia",
+                  "condicionantes",
+                ].map((x) => (
+                  <button onClick={() => setQuery(x)} key={x}>
+                    {x}
+                  </button>
+                ))}
+              </div>
+            </div>
+          ) : (
+            <div className="search-results">
+              {results.map((r) => (
+                <button
+                  key={r.id}
+                  onClick={() =>
+                    r.type === "seção"
+                      ? openLesson(r.id)
+                      : r.type === "sigla"
+                        ? setTab("glossario")
+                        : (setSelectedTable(r.id), setTab("tabelas"))
+                  }
+                >
+                  <span>{r.type}</span>
+                  <div>
+                    <strong>{r.title}</strong>
+                    <p>{snippet(r.text, query)}</p>
+                  </div>
+                  <ChevronRight />
+                </button>
+              ))}
+            </div>
+          )}
+        </section>
+      )}
+      {tab === "tabelas" && (
+        <div className="table-library">
+          <aside>
+            <div>
+              <Filter />
+              <span>
+                {popData.tables.length} tabelas ·{" "}
+                {popData.tables.filter((t) => t.navigationOnly).length} índices
+                ocultos na trilha
+              </span>
+            </div>
+            {popData.tables
+              .filter((t) => !t.navigationOnly)
+              .map((t) => (
+                <button
+                  className={selectedTable === t.id ? "active" : ""}
+                  onClick={() => setSelectedTable(t.id)}
+                  key={t.id}
+                >
+                  <span>
+                    {t.labelType} {t.labelNumber}
+                  </span>
+                  <strong>{t.title}</strong>
+                </button>
+              ))}
+          </aside>
+          <section>{table && <TableRenderer table={table} />}</section>
+        </div>
+      )}
+      {tab === "figuras" && (
+        <div className="figure-library">
+          <h2>Figuras do POP</h2>
+          <div className="figure-grid">
+            {popData.figures.map((f) => (
+              <figure key={f.id}>
+                <button
+                  onClick={() =>
+                    window.open(
+                      f.publicPath,
+                      "_blank",
+                      "noopener,noreferrer",
+                    )
+                  }
+                >
+                  <img src={f.publicPath} alt={f.altText || f.title} />
+                  <span>
+                    <Maximize2 />
+                  </span>
+                </button>
+                <figcaption>{f.caption}</figcaption>
+              </figure>
+            ))}
+          </div>
+          <h2>Fluxogramas comparados</h2>
+          <div className="flow-gallery">
+            {flowData.flowcharts.map((f) => (
+              <figure key={f.id}>
+                <a href={f.publicPath} target="_blank" rel="noreferrer">
+                  <img src={f.publicPath} alt={`${f.title} · ${f.variant}`} />
+                </a>
+                <figcaption>
+                  <span>{f.variant}</span>
+                  <strong>
+                    {f.number}. {f.title}
+                  </strong>
+                </figcaption>
+              </figure>
+            ))}
+          </div>
+        </div>
+      )}
+      {tab === "glossario" && (
+        <div className="glossary-view">
+          <div>
+            <h2>Siglas e abreviações</h2>
+            <p>
+              Consulta rápida do Anexo E do POP. Filtre pela sigla ou pelo termo
+              por extenso.
+            </p>
+          </div>
+          <div className="big-search glossario-busca">
+            <Search aria-hidden="true" />
+            <input
+              aria-label="Filtrar siglas e abreviações do POP"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Ex.: PACUERA, ADA, TVR, RTAA..."
+            />
+            <kbd aria-hidden="true">
+              {glossary
+                ? query.length > 1
+                  ? glossary.rows
+                      .slice(1)
+                      .filter((r) =>
+                        norm(r.cells.map((c) => c.text).join(" ")).includes(
+                          norm(query),
+                        ),
+                      ).length
+                  : glossary.rows.length - 1
+                : 0}{" "}
+              siglas
+            </kbd>
+          </div>
+          {glossary && (
+            <TableRenderer
+              table={
+                query.length > 1
+                  ? {
+                      ...glossary,
+                      rows: [
+                        glossary.rows[0],
+                        ...glossary.rows
+                          .slice(1)
+                          .filter((r) =>
+                            norm(r.cells.map((c) => c.text).join(" ")).includes(
+                              norm(query),
+                            ),
+                          ),
+                      ],
+                    }
+                  : glossary
+              }
+              compact
+            />
+          )}
+        </div>
+      )}
+      {tab === "legislacoes" && (
+        <div className="leis-view">
+          <aside className="leis-list">
+            <div className="leis-head">
+              <Scale />
+              <span>{leis.length} normas referenciadas no POP</span>
+            </div>
+            {leis.map((l, i) => (
+              <button
+                key={i}
+                className={leiSel === i ? "active" : ""}
+                onClick={() => {
+                  setLeiSel(i);
+                  if (window.innerWidth < 980)
+                    setTimeout(
+                      () =>
+                        document
+                          .querySelector(".leis-detail")
+                          ?.scrollIntoView({
+                            behavior: "smooth",
+                            block: "start",
+                          }),
+                      60,
+                    );
+                }}
+              >
+                <small>{l.split(".")[0]}</small>
+                <strong>{l.replace(/^[^.]+\.\s*/, "").split(". ")[0]}</strong>
+              </button>
+            ))}
+          </aside>
+          <section className="leis-detail">
+            {leis[leiSel] && (
+              <>
+                <h2>
+                  {leis[leiSel].replace(/^[^.]+\.\s*/, "").split(". ")[0]}
+                </h2>
+                <p className="leis-ref">
+                  <BookMarked size={15} /> Referência integral registrada no
+                  POP: <em>{leis[leiSel]}</em>
+                </p>
+                <div className="leis-actions">
+                  {(() => {
+                    const fonte = resolveOfficialSource(leis[leiSel]);
+                    if (!fonte)
+                      return (
+                        <p className="fonte-nao-mapeada" role="status">
+                          Esta referência ainda não possui vínculo oficial
+                          mapeado. Confirme a fonte com a revisão responsável
+                          antes de aplicar.
+                        </p>
+                      );
+                    return (
+                      <>
+                        <a
+                          className={
+                            fonte.kind === "direct" ? "primary" : "fonte-busca"
+                          }
+                          href={fonte.url}
+                          target="_blank"
+                          rel="noreferrer"
+                        >
+                          <ExternalLink size={15} /> {fonte.label}
+                        </a>
+                        <div className="fonte-governanca" aria-label="Governança da fonte">
+                          <span>
+                            {fonte.kind === "direct"
+                              ? "Fonte oficial vinculada"
+                              : "Índice oficial — localizar o ato"}
+                          </span>
+                          <span>
+                            Link conferido em{" "}
+                            {new Date(`${fonte.checkedAt}T12:00:00`).toLocaleDateString(
+                              "pt-BR",
+                            )}
+                          </span>
+                          <span>Revisão humana de vigência: pendente</span>
+                        </div>
+                        <small className="fonte-nota">{fonte.note}</small>
+                      </>
+                    );
+                  })()}
+                </div>
+                {resumoDaNorma(leis[leiSel]) && (
+                  <div className="leis-resumo">
+                    <h3>Sobre esta norma</h3>
+                    <p>{resumoDaNorma(leis[leiSel])}</p>
+                  </div>
+                )}
+                <h3>Onde o POP aplica esta norma</h3>
+                {leiCitacoes.length ? (
+                  <ul className="leis-cites">
+                    {leiCitacoes.map((c, k) => (
+                      <li key={k}>
+                        <button onClick={() => openLesson(c.lesson.id)}>
+                          <small>
+                            {c.lesson.number ? c.lesson.number + " · " : ""}
+                            {c.lesson.title}
+                          </small>
+                          <p>
+                            {c.text.length > 260
+                              ? c.text.slice(0, 260) + "…"
+                              : c.text}
+                          </p>
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p className="leis-none">
+                    Esta norma consta da lista de referências do POP; o resumo
+                    acima orienta o contexto de aplicação.
+                  </p>
+                )}
+              </>
+            )}
+          </section>
+        </div>
+      )}
+      {tab === "anotacoes" && (
+        <div className="notas-view">
+          {(() => {
+            const notas = Object.entries(state.notes || {})
+              .map(([id, txt]) => ({
+                l: lessonMap.get(id),
+                txt: (txt || "").trim(),
+              }))
+              .filter((n) => n.l && n.txt);
+            return notas.length ? (
+              <>
+                {notas.map(({ l, txt }) => (
+                  <article key={l.id} className="nota-card">
+                    <button
+                      className="nota-head"
+                      onClick={() => openLesson(l.id)}
+                    >
+                      <small>
+                        {tracks.find((t) => t.id === l.trackId)?.code}
+                      </small>
+                      <strong>
+                        {l.number ? l.number + " " : ""}
+                        {l.title}
+                      </strong>
+                      <ChevronRight size={15} />
+                    </button>
+                    <p>{txt}</p>
+                  </article>
+                ))}
+              </>
+            ) : (
+              <Empty text="Você ainda não escreveu anotações. Abra uma aula e use a aba Anotações para registrar dúvidas e exemplos do seu trabalho." />
+            );
+          })()}
+        </div>
+      )}
+      {tab === "favoritos" && (
+        <div className="favorites-view">
+          {(() => {
+            const favs = state.bookmarks
+              .map((id) => lessonMap.get(id))
+              .filter(Boolean);
+            return favs.length ? (
+              favs.map((l) => (
+                <button key={l.id} onClick={() => openLesson(l.id)}>
+                  <BookmarkCheck />
+                  <span>
+                    <small>
+                      {tracks.find((t) => t.id === l.trackId)?.code}
+                    </small>
+                    <strong>
+                      {l.number ? `${l.number} ` : ""}
+                      {l.title}
+                    </strong>
+                  </span>
+                  <ChevronRight />
+                </button>
+              ))
+            ) : (
+              <Empty text="Você ainda não salvou nenhuma aula. Use o ícone de favorito no cabeçalho de uma aula." />
+            );
+          })()}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function GlobalSearch({ close, abrir }) {
+  const [q, setQ] = useState("");
+  const input = useRef();
+  const dialog = useRef();
+  useEffect(() => input.current?.focus(), []);
+  function trapFocus(event) {
+    if (event.key !== "Tab") return;
+    const focusable = [
+      ...dialog.current.querySelectorAll(
+        'button:not(:disabled),input:not(:disabled),a[href],[tabindex]:not([tabindex="-1"])',
+      ),
+    ];
+    if (!focusable.length) return;
+    const first = focusable[0],
+      last = focusable[focusable.length - 1];
+    if (event.shiftKey && document.activeElement === first) {
+      event.preventDefault();
+      last.focus();
+    } else if (!event.shiftKey && document.activeElement === last) {
+      event.preventDefault();
+      first.focus();
+    }
+  }
+  const results =
+    q.length > 1
+      ? ordenaBusca(
+          INDICE.get().filter((x) =>
+            norm(x.title + " " + x.text).includes(norm(q)),
+          ),
+          q,
+        ).slice(0, 14)
+      : [];
+  return (
+    <div className="search-modal">
+      <div className="modal-scrim" onClick={close} aria-hidden="true" />
+      <section
+        ref={dialog}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="busca-global-titulo"
+        onKeyDown={trapFocus}
+      >
+        <h2 id="busca-global-titulo" className="sr-only">
+          Buscar na Academia IAT
+        </h2>
+        <div className="modal-input">
+          <Search aria-hidden="true" />
+          <input
+            aria-label="Buscar aulas, quadros e siglas do POP"
+            ref={input}
+            value={q}
+            onChange={(e) => setQ(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && results.length) abrir(results[0]);
+            }}
+            placeholder="Buscar aulas, quadros e siglas do POP..."
+          />
+          <kbd aria-hidden="true">ESC</kbd>
+          <button
+            type="button"
+            className="modal-close"
+            onClick={close}
+            aria-label="Fechar busca"
+          >
+            <X aria-hidden="true" />
+          </button>
+        </div>
+        {q.length < 2 ? (
+          <div className="modal-empty">
+            <Sparkles />
+            <p>
+              Pesquise uma fase, documento, norma, sigla ou critério. A busca
+              cobre as aulas, os quadros e o glossário.
+            </p>
+          </div>
+        ) : (
+          <div className="modal-results">
+            {results.map((r) => (
+              <button onClick={() => abrir(r)} key={r.id}>
+                <span className={"gs-tipo t-" + r.type}>{r.type}</span>
+                <div>
+                  <strong>{r.title}</strong>
+                  <small>{snippet(r.text, q)}</small>
+                </div>
+                <ChevronRight />
+              </button>
+            ))}
+            {!results.length && (
+              <Empty text="Nenhum tópico encontrado. Tente outro termo." />
+            )}
+          </div>
+        )}
+        <footer>
+          <span>
+            <kbd>↵</kbd> abrir
+          </span>
+          <span>
+            <kbd>ESC</kbd> fechar
+          </span>
+          <small>Busca local: nenhum dado é enviado</small>
+        </footer>
+      </section>
+    </div>
+  );
+}
 // Ordena o resultado da busca. Sem isto as secoes, que sao a maioria, empurram
 // quadros e siglas para fora do corte e a busca unificada nao mostra o que
 // unificou. Casamento no titulo vem antes do casamento no corpo.
-function ordenaBusca(itens,q){const n=norm(q);
- const pont=x=>{const t=norm(x.title);return t.startsWith(n)?0:t.includes(n)?1:2};
- const por={'sigla':[],'quadro':[],'seção':[]};
- for(const x of itens)(por[x.type]||por['seção']).push(x);
- for(const t of Object.keys(por))por[t].sort((a,b)=>pont(a)-pont(b));
- const cota={sigla:1,quadro:1,'seção':3},out=[];
- while(true){let mexeu=false;
-  for(const t of ['sigla','quadro','seção'])for(let i=0;i<cota[t];i++){const x=por[t].shift();if(x){out.push(x);mexeu=true}}
-  if(!mexeu)return out}}
-function snippet(text,q){let clean=(text||'').replace(/\s+/g,' ').trim();let pos=norm(clean).indexOf(norm(q));if(pos<0)return clean.slice(0,180)+(clean.length>180?'…':'');return(pos>45?'…':'')+clean.slice(Math.max(0,pos-45),pos+145)+(pos+145<clean.length?'…':'')}
+function ordenaBusca(itens, q) {
+  const n = norm(q);
+  const pont = (x) => {
+    const t = norm(x.title);
+    return t.startsWith(n) ? 0 : t.includes(n) ? 1 : 2;
+  };
+  const por = { sigla: [], quadro: [], seção: [] };
+  for (const x of itens) (por[x.type] || por["seção"]).push(x);
+  for (const t of Object.keys(por)) por[t].sort((a, b) => pont(a) - pont(b));
+  const cota = { sigla: 1, quadro: 1, seção: 3 },
+    out = [];
+  while (true) {
+    let mexeu = false;
+    for (const t of ["sigla", "quadro", "seção"])
+      for (let i = 0; i < cota[t]; i++) {
+        const x = por[t].shift();
+        if (x) {
+          out.push(x);
+          mexeu = true;
+        }
+      }
+    if (!mexeu) return out;
+  }
+}
+function snippet(text, q) {
+  let clean = (text || "").replace(/\s+/g, " ").trim();
+  let pos = norm(clean).indexOf(norm(q));
+  if (pos < 0) return clean.slice(0, 180) + (clean.length > 180 ? "…" : "");
+  return (
+    (pos > 45 ? "…" : "") +
+    clean.slice(Math.max(0, pos - 45), pos + 145) +
+    (pos + 145 < clean.length ? "…" : "")
+  );
+}
 export default App;

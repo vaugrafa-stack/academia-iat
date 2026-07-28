@@ -3,7 +3,7 @@
 import React, { useState, useMemo } from 'react';
 import {
   Waves, Zap, Droplets, Factory, Mountain, Gauge, ArrowRight, Info,
-  Layers3, Activity, CircleHelp, Sparkles, TowerControl, Wind, MapPin,
+  Layers3, Activity, CircleHelp, TowerControl, Wind, MapPin,
 } from 'lucide-react';
 import { TurbineGallery, PRCasesSection, ArrangementSchematics, LicensingPath } from './hydroCases';
 
@@ -68,11 +68,20 @@ const TURBINAS = [
   { nome: 'Bulbo', tipo: 'Reação', queda: 'Queda muito baixa: abaixo de ~15 m', vazao: 'Vazão muito alta', nota: 'Unidade horizontal submersa. Típica de usinas a fio d\'água em rios de grande vazão e pouca queda.', hMin: 2, hMax: 15 },
 ];
 
-function turbinaPorQueda(h) {
-  if (h < 15) return 'Bulbo';
-  if (h < 70) return 'Kaplan';
-  if (h <= 400) return 'Francis';
-  return 'Pelton';
+export function faixaDidaticaPorPotencia(potMW) {
+  if (!Number.isFinite(potMW) || potMW < 0) return null;
+  if (potMW <= 0.075) return { sigla: 'MCH', faixa: 'até 75 kW' };
+  if (potMW <= 0.5) return { sigla: 'MGH', faixa: 'acima de 75 kW até 500 kW' };
+  if (potMW <= 5) return { sigla: 'CGH', faixa: 'acima de 500 kW até 5 MW' };
+  if (potMW <= 30) return { sigla: 'PCH', faixa: 'acima de 5 MW até 30 MW' };
+  return { sigla: 'UHE', faixa: 'acima de 30 MW' };
+}
+
+export function turbinasCompativeisPorQueda(h) {
+  if (!Number.isFinite(h)) return [];
+  return TURBINAS
+    .filter((t) => h >= t.hMin && h <= t.hMax)
+    .map((t) => t.nome);
 }
 
 function DamMini({ kind }) {
@@ -185,14 +194,15 @@ function CrossSection({ selected, onSelect }) {
   );
 }
 
-function PowerCalc() {
+export function PowerCalc() {
   const [q, setQ] = useState(120);
   const [h, setH] = useState(60);
   const [ef, setEf] = useState(90);
   const potKW = 9.81 * q * h * (ef / 100);
   const potMW = potKW / 1000;
   const casas = Math.round(potKW / 0.2); // ~0,2 kW medios por domicilio, cerca de 150 kWh/mes (ilustrativo)
-  const classe = potMW <= 5 ? 'CGH' : potMW <= 30 ? 'PCH' : 'UHE';
+  const faixaDidatica = faixaDidaticaPorPotencia(potMW);
+  const turbinasPorQueda = turbinasCompativeisPorQueda(h);
   return (
     <div className="power-calc">
       <div className="pc-formula"><Zap /> <span>P = ρ · g · Q · H · η</span> <small>densidade × gravidade × vazão × queda × rendimento</small></div>
@@ -203,17 +213,34 @@ function PowerCalc() {
       </div>
       <div className="pc-out">
         <div><span>Potência estimada</span><strong>{potMW >= 1 ? potMW.toFixed(1) + ' MW' : Math.round(potKW) + ' kW'}</strong></div>
-        <div><span>Turbina indicada pela queda</span><strong>{turbinaPorQueda(h)}</strong></div>
-        <div><span>Classe pela potência</span><strong>{classe}</strong></div>
+        <div>
+          <span>Faixas de turbina compatíveis somente pela queda</span>
+          <strong>{turbinasPorQueda.length ? turbinasPorQueda.join(' ou ') : 'Fora das faixas ilustradas'}</strong>
+        </div>
+        <div>
+          <span>Faixa didática por potência (POP)</span>
+          <strong>{faixaDidatica?.sigla}</strong>
+          <small> · {faixaDidatica?.faixa}</small>
+        </div>
       </div>
-      <p className="pc-note">Estimativa didática. A potência real depende do arranjo, das perdas hidráulicas e da curva de rendimento da máquina; a classificação (CGH/PCH/UHE) segue a regulação da ANEEL.</p>
+      <p className="pc-note">
+        Estimativa didática, não enquadramento automático. A faixa MCH, MGH, CGH, PCH ou UHE reproduz
+        apenas o recorte de potência do Quadro 8 do POP; não determina nem altera cadastro, registro ou
+        ato setorial da ANEEL, modalidade ambiental ou suficiência documental. A potência real depende
+        do arranjo, das perdas hidráulicas e das curvas de rendimento.
+      </p>
+      <p className="pc-note">
+        A lista de turbinas cruza somente a queda H com as faixas ilustradas acima. A vazão Q participa
+        do cálculo de potência, mas não é usada para escolher a máquina. A seleção de projeto exige,
+        entre outros dados, faixa operativa de vazões, rotação, cavitação e curvas do fabricante.
+      </p>
     </div>
   );
 }
 
 function TurbinePicker() {
   const [h, setH] = useState(60);
-  const rec = turbinaPorQueda(h);
+  const compativeis = turbinasCompativeisPorQueda(h);
   return (
     <div className="turb-picker">
       <label className="tp-slider">Arraste a queda de projeto, H <b>{h} m</b>
@@ -221,13 +248,17 @@ function TurbinePicker() {
       </label>
       <div className="tp-scale">
         {[['Bulbo', 2, 15], ['Kaplan', 10, 70], ['Francis', 30, 400], ['Pelton', 250, 800]].map(([nome, a, b]) => (
-          <div key={nome} className={'tp-band' + (rec === nome ? ' rec' : '')}>
+          <div key={nome} className={'tp-band' + (compativeis.includes(nome) ? ' rec' : '')}>
             <span className="tp-name">{nome}</span>
             <span className="tp-range">{a} a {b} m</span>
           </div>
         ))}
       </div>
-      <div className="tp-rec"><Sparkles /> Para {h} m de queda, a escolha típica é <strong>{rec}</strong>.</div>
+      <div className="tp-rec">
+        <Info /> Para {h} m, as faixas compatíveis por queda são{' '}
+        <strong>{compativeis.length ? compativeis.join(' e ') : 'nenhuma das faixas ilustradas'}</strong>.
+        Esta triagem não usa vazão nem substitui o dimensionamento da máquina.
+      </div>
     </div>
   );
 }
@@ -373,12 +404,12 @@ export default function HydroGuide({ go }) {
       </section>
 
       <section className="hydro-block">
-        <div className="section-title"><div><h2>A conta da potência</h2><p>Ajuste vazão, queda e rendimento e veja a usina mudar de classe.</p></div><Gauge /></div>
+        <div className="section-title"><div><h2>A conta da potência</h2><p>Ajuste vazão, queda e rendimento e compare a estimativa com as faixas didáticas do POP.</p></div><Gauge /></div>
         <PowerCalc />
       </section>
 
       <section className="hydro-block">
-        <div className="section-title"><div><h2>Tipos por potência</h2><p>Classificação da ANEEL: muda porte, outorga e exigência de estudo.</p></div><Factory /></div>
+        <div className="section-title"><div><h2>Faixas didáticas por potência</h2><p>Quadro 8 do POP: ponto de partida para estudo, sem substituir a conferência do registro e do ato setorial da ANEEL.</p></div><Factory /></div>
         <div className="pot-grid">{TIPOS_POTENCIA.map((t) => (
           <article key={t.sigla} className="pot-card" style={{ '--pc': t.cor }}>
             <div className="pot-sigla">{t.sigla}</div>
@@ -404,7 +435,7 @@ export default function HydroGuide({ go }) {
       </section>
 
       <section className="hydro-block">
-        <div className="section-title"><div><h2>Turbinas: escolha por queda e vazão</h2><p>Cada máquina rende melhor em uma faixa de queda e de vazão.</p></div><Wind /></div>
+        <div className="section-title"><div><h2>Turbinas: faixas de aplicação</h2><p>O projeto cruza queda e vazão; o seletor abaixo destaca somente as faixas de queda e explicita essa limitação.</p></div><Wind /></div>
         <TurbinePicker />
         <TurbineGallery />
       </section>

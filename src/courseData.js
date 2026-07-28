@@ -15,7 +15,7 @@ export const tracks = [
   {id:'m06',code:'M06',title:'AA, renovação, regularização, transferência e alterações',sections:['12','13','14','15'],icon:'RefreshCw',color:'#b57b08',summary:'Situações transitórias e especiais, sem misturar objetos, títulos ou fases.'},
   {id:'m07',code:'M07',title:'Sistemas associados e segurança de barragens',sections:['16','17'],icon:'ShieldCheck',color:'#2c718d',summary:'Áreas de apoio, linhas e acessos, PNSB, PSB, PAE, ZAS e interfaces de competência.'},
   {id:'m08',code:'M08',title:'Memorial e estudos ambientais',sections:['18'],icon:'Files',color:'#4f6f5f',summary:'Memorial, PCA, RAS, RDPA, EIA, RIMA, PBA e demais estudos, com critérios de suficiência.'},
-  {id:'m09',code:'M09',title:'PACUERA integral',sections:['18.10','18.11','18.12','18.13'],icon:'Map',color:'#0f79a8',summary:'Exigibilidade, TR, diagnóstico, UTHs, zoneamento, participação social, implementação e revisão.'},
+  {id:'m09',code:'M09',title:'PACUERA integral',sections:['18.10'],icon:'Map',color:'#0f79a8',summary:'Exigibilidade, TR, diagnóstico, UTHs, zoneamento, participação social, implementação e revisão.'},
   {id:'m10',code:'M10',title:'Cartografia, APP, flora, fauna e recursos hídricos',sections:['19'],icon:'Trees',color:'#278454',summary:'Base espacial da análise e verificações ambientais integradas.'},
   {id:'m11',code:'M11',title:'ANEEL, IPHAN, município e vistoria',sections:['20','21'],icon:'Building2',color:'#795e2e',summary:'Interfaces institucionais, limites de competência e evidência de campo.'},
   {id:'m15',code:'M12',title:'Unidades de conservação, APAs e Planos de Manejo',sections:['20.2','9.2'],icon:'Trees',color:'#2f9e6e',summary:'Triagem e análise de UC e APA por fase, Plano de Manejo, GeoPR e o caso da Escarpa Devoniana.'},
@@ -45,6 +45,156 @@ export const featuredMedia = {
   m16: { src: '/media/m16.mp4', poster: '/media/m16-poster.png', captions: '/media/m16.vtt', title: "Licenciamento federal delegado" },
 };
 
+const FLOW_LEARNING = {
+  enquadramento: {
+    guidance: [
+      { question: 'Qual é o arranjo integral que realmente será licenciado?', evidence: 'Memorial, potência instalada, reservatório, sistema de adução, TVR e estruturas associadas.', risk: 'Classificar pelo nome declarado e ignorar a configuração física.', source: 'POP 8.1 a 8.3' },
+      { question: 'Potência e alagamento apontam para a mesma faixa?', evidence: 'Valores compatíveis entre Memorial, cartografia, outorga, SGA e ato setorial.', risk: 'Usar apenas o critério menos restritivo.', source: 'POP 8.2 e Quadro 1' },
+      { question: 'Os dados permitem reproduzir o cálculo do IDA?', evidence: 'Alagamento, supressão por estágio, adução, TVR, propriedades inviabilizadas e potência.', risk: 'Aceitar índice informado sem conferir as entradas.', source: 'POP 8.2' },
+      { question: 'Há restrição territorial ou ambiental que afaste o rito sugerido?', evidence: 'UC, APA, Plano de Manejo, APP, supressão, cavidades e demais bases oficiais.', risk: 'Tratar o porte como único critério de modalidade.', source: 'POP 8.3, 9.2 e 20.2' },
+      { question: 'Qual modalidade e estudo resultam do conjunto mais restritivo?', evidence: 'Matriz de enquadramento, regra vigente, fase e sensibilidade locacional.', risk: 'Confundir tipologia setorial da ANEEL com modalidade ambiental.', source: 'POP 8.4 e Quadro 1' },
+      { question: 'Outra pessoa consegue refazer o caminho decisório?', evidence: 'Valores, fontes, data de consulta, regra aplicada, divergências e justificativa.', risk: 'Registrar apenas a conclusão sem memória de cálculo.', source: 'POP 8.5 e 27' },
+    ],
+    decision: {
+      prompt: 'CGH de 0,8 MW, alagamento de 4 ha e IDA 2,2, sem supressão declarada, tem o arranjo dentro de uma APA estadual. Qual é a saída segura?',
+      options: [
+        'Concluir pela LAC somente porque os quatro critérios numéricos foram atendidos.',
+        'Não concluir automaticamente pela LAC; identificar o procedimento estadual aplicável e conferir ato de criação, Plano de Manejo e zoneamento.',
+        'Emitir DLAM porque a potência é inferior a 1 MW.',
+      ],
+      answer: 1,
+      feedback: 'O enquadramento numérico é apenas inicial. Segundo o POP, a localização em UC, inclusive APA, afasta a conclusão automática pela LAC no regime estadual considerado.',
+      source: 'POP 10.2 · Decreto Estadual nº 9.541/2025',
+    },
+  },
+  temas: {
+    guidance: [
+      { question: 'Quais intervenções físicas e operacionais compõem o objeto?', evidence: 'Poligonais de barragem, reservatório, adução, casa de força, acessos, linhas e áreas de apoio.', risk: 'Analisar só a estrutura principal.', source: 'POP 16 e 19.1' },
+      { question: 'Que temas materiais cada intervenção aciona?', evidence: 'APP, vegetação, fauna, água, UC, patrimônio, município e segurança.', risk: 'Usar lista genérica sem vínculo espacial.', source: 'POP 19 e 20' },
+      { question: 'Qual ato é necessário e qual órgão o emite?', evidence: 'Outorga, AF, ato ANEEL, manifestação IPHAN, anuência ou ciência cabível.', risk: 'Pressupor que uma licença ambiental substitui atos externos.', source: 'POP 2 e 20' },
+      { question: 'Existe gatilho normativo para participação de interveniente?', evidence: 'ADA, zona de amortecimento, impacto direto, fase, fato novo e regra específica.', risk: 'Exigir manifestação automática ou dispensá-la sem motivação.', source: 'POP 20.2 e 20.3' },
+      { question: 'Os atos externos descrevem o mesmo empreendimento?', evidence: 'Titular, potência, coordenadas, arranjo, corpo hídrico, fase e validade.', risk: 'Tratar documento existente como documento compatível.', source: 'POP 20.1 a 20.5' },
+      { question: 'A interface e seu limite ficaram explícitos na IT?', evidence: 'Órgão competente, ato conferido, pendência, consequência e encaminhamento.', risk: 'Declarar validade ou segurança que compete a outro órgão.', source: 'POP 20.7 e 23' },
+    ],
+    decision: {
+      prompt: 'O arranjo cruza APP, exige supressão nativa e está próximo de UC. Qual abordagem preserva as competências?',
+      options: [
+        'Emitir a licença ambiental e considerar automaticamente supridas as demais autorizações.',
+        'Tratar APP, flora, UC e recursos hídricos em processos totalmente isolados, sem compatibilizar os dados.',
+        'Mapear os gatilhos, verificar cada ato no órgão competente e compatibilizar objeto, fase e limites sem substituir decisões externas.',
+      ],
+      answer: 2,
+      feedback: 'A análise é integrada, mas as competências não se fundem. O IAT verifica existência e compatibilidade dos atos e registra limites e pendências.',
+      source: 'POP 2, 19 e 20',
+    },
+  },
+  las: {
+    guidance: [
+      { question: 'O pedido identifica fase, objeto e arranjo completos?', evidence: 'Requerimento, Memorial e arquivos espaciais coerentes.', risk: 'Começar pelo mérito com objeto indefinido.', source: 'POP 7 e 10.3' },
+      { question: 'Porte, IDA, localização e supressão sustentam LAS?', evidence: 'Memória de enquadramento e matriz vigente.', risk: 'Usar LAS como rito residual automático.', source: 'POP 8 e 10.3' },
+      { question: 'O RAS permite avaliar impactos e controles?', evidence: 'Diagnóstico proporcional, impactos, medidas, programas, mapas e ART.', risk: 'Confundir documento protocolado com documento suficiente.', source: 'POP 18.5' },
+      { question: 'A lacuna impede decisão segura ou pode ficar para depois?', evidence: 'Nexo entre informação faltante, impacto e conclusão.', risk: 'Converter impedimento prévio em condicionante.', source: 'POP 22, 24 e 25' },
+      { question: 'Modalidade e suficiência foram julgadas separadamente?', evidence: 'Conclusão em dois juízos e matriz de achados.', risk: 'Deferir porque o enquadramento está correto, apesar do estudo insuficiente.', source: 'POP 23.1 e 25' },
+      { question: 'A saída concentra exigências e explica a consequência?', evidence: 'Diligência única, base, lacuna, providência e forma de atendimento.', risk: 'Fragmentar complementações ou usar texto genérico.', source: 'POP 24 e 25' },
+    ],
+    decision: {
+      prompt: 'A LAS está bem enquadrada, mas o KMZ contém apenas o ponto da barragem e não delimita ADA, casa de força nem reservatório. O que fazer?',
+      options: [
+        'Emitir a LAS e pedir as poligonais como condicionante futura.',
+        'Consolidar diligência para completar a cartografia antes de concluir o mérito.',
+        'Mudar automaticamente o processo para licenciamento trifásico.',
+      ],
+      answer: 1,
+      feedback: 'A modalidade pode estar correta e a documentação, insuficiente. Sem delimitação não há análise segura de APP, supressão e impactos; a lacuna deve ser sanada antes da decisão.',
+      source: 'POP 7, 19.1, 24 e 25',
+    },
+  },
+  lp: {
+    guidance: [
+      { question: 'O pedido corresponde à fase de localização e concepção?', evidence: 'Requerimento, Consulta Prévia quando existente e caracterização do projeto.', risk: 'Antecipar autorização de obra na LP.', source: 'POP 11.1' },
+      { question: 'Qual estudo é exigível para porte, localização e impacto?', evidence: 'Enquadramento, TR vigente e justificativa da seleção do estudo.', risk: 'Aplicar gatilho numérico como lista exaustiva.', source: 'POP 8 e 11.1' },
+      { question: 'Alternativas e restrições territoriais foram realmente confrontadas?', evidence: 'EIA/RAS, mapas, outorga preventiva, UC, APA e Plano de Manejo.', risk: 'Transferir inviabilidade locacional para a LI.', source: 'POP 11.1 e 19' },
+      { question: 'O conjunto permite juízo motivado de viabilidade?', evidence: 'Impactos, medidas, riscos, participação e compatibilidades.', risk: 'Usar ausência de documento como único argumento de mérito.', source: 'POP 18 e 22' },
+      { question: 'O parecer liga cada conclusão às evidências?', evidence: 'Matriz de achados, base normativa e consequências.', risk: 'Produzir conclusão opinativa ou contraditória.', source: 'POP 23 e 25' },
+      { question: 'A decisão respeita participação e próxima fase?', evidence: 'Audiência/consulta quando cabível, condicionantes proporcionais e requisitos da LI.', risk: 'Decidir antes de participação obrigatória ou autorizar instalação.', source: 'POP 11.2 e 20.8' },
+    ],
+    decision: {
+      prompt: 'O EIA foi apresentado, mas ainda falta alternativa locacional essencial. A audiência já está no cronograma. Qual é a sequência segura?',
+      options: [
+        'Realizar a audiência para cumprir prazo e complementar o EIA depois.',
+        'Declarar o estudo materialmente apto porque o documento existe.',
+        'Sanear a insuficiência material antes de submeter o estudo à participação e à decisão de LP.',
+      ],
+      answer: 2,
+      feedback: 'Participação não corrige estudo materialmente inapto. O conteúdo mínimo deve permitir compreensão e contribuição social antes da audiência e do juízo de viabilidade.',
+      source: 'POP 11.2, 18.7, 18.8 e 20.8',
+    },
+  },
+  li: {
+    guidance: [
+      { question: 'Há LP válida e o objeto da LI corresponde a ela?', evidence: 'LP, condicionantes, projeto aprovado e histórico.', risk: 'Instalar configuração diferente da concebida.', source: 'POP 11.3' },
+      { question: 'O projeto executivo preserva eixo, cota, ADA e estruturas?', evidence: 'Comparativo de versões, plantas, memoriais e arquivos vetoriais.', risk: 'Tratar alteração material como mero detalhe executivo.', source: 'POP 11.3 e 19.1' },
+      { question: 'PBA ou RDPA tornam os programas executáveis?', evidence: 'Metas, métodos, cronograma, responsáveis, indicadores e reporte.', risk: 'Aceitar reprodução genérica do estudo da LP.', source: 'POP 18.6 e 18.9' },
+      { question: 'As condicionantes da LP foram atendidas ou justificadamente tratadas?', evidence: 'Comprovantes, análise de suficiência e pendências.', risk: 'Marcar como cumprida obrigação apenas declarada.', source: 'POP 11.3 e 24.1' },
+      { question: 'A instalação pode ocorrer sem criar impacto não avaliado?', evidence: 'Compatibilidade entre projeto, programas, autorizações e restrições.', risk: 'Autorizar obra antes da reanálise proporcional de alteração relevante.', source: 'POP 15 e 19' },
+      { question: 'A decisão diz exatamente o que pode ser instalado?', evidence: 'Escopo, versão dos projetos, condicionantes verificáveis e limites.', risk: 'Emitir ato aberto que não permita fiscalização posterior.', source: 'POP 11.3, 23 e 25' },
+    ],
+    decision: {
+      prompt: 'Na LI, o eixo deslocou 40 m, a cota subiu 1,5 m e a ADA aumentou em relação à LP. Qual é a resposta?',
+      options: [
+        'Autorizar, pois toda mudança posterior à LP é detalhe executivo.',
+        'Fazer reanálise proporcional da alteração antes de autorizar a instalação.',
+        'Ignorar a divergência e conferir apenas o PBA.',
+      ],
+      answer: 1,
+      feedback: 'Mudanças capazes de alterar área e impactos reabrem a análise na proporção necessária. O projeto instalado deve corresponder ao que foi ambientalmente apreciado.',
+      source: 'POP 11.3 e 15',
+    },
+  },
+  lo: {
+    guidance: [
+      { question: 'O pedido demonstra conclusão da implantação autorizada?', evidence: 'Requerimento, LI, histórico e relatório de implantação.', risk: 'Tratar obra concluída como operação automaticamente autorizada.', source: 'POP 11.4' },
+      { question: 'O executado corresponde às licenças e projetos?', evidence: 'As built, imagens, medições, cartografia e comparativo com LI.', risk: 'Aceitar divergência sem avaliar efeito ambiental.', source: 'POP 11.4 e 19.1' },
+      { question: 'O as built permite localizar e quantificar cada alteração?', evidence: 'Plantas, coordenadas, cotas, estruturas e ART.', risk: 'Usar documento genérico que não permite confronto.', source: 'POP 11.4' },
+      { question: 'Programas e condicionantes têm evidência de execução e resultado?', evidence: 'Relatórios, indicadores, desvios, medidas corretivas e comprovantes.', risk: 'Confundir cronograma ou intenção com execução.', source: 'POP 18.12 e 24.1' },
+      { question: 'A vistoria é necessária para resolver incerteza relevante?', evidence: 'Plano de vistoria vinculado aos pontos controvertidos.', risk: 'Vistoriar sem objetivo ou concluir além do observado.', source: 'POP 21' },
+      { question: 'A operação pode começar com segurança documental e técnica?', evidence: 'Correspondência, autorizações, condicionantes e controles verificados.', risk: 'Emitir LO apesar de impedimento da fase anterior.', source: 'POP 11.4 e 25' },
+    ],
+    decision: {
+      prompt: 'O as built diverge da LI e duas condicionantes de instalação não têm comprovação. Qual é a saída antes da LO?',
+      options: [
+        'Emitir a LO e solicitar tudo no primeiro relatório de operação.',
+        'Tratar as condicionantes como cumpridas porque a obra terminou.',
+        'Esclarecer a divergência e exigir comprovação suficiente antes de concluir pela operação.',
+      ],
+      answer: 2,
+      feedback: 'A LO verifica correspondência e cumprimento das fases anteriores. Pendência impeditiva não deve ser empurrada para condicionante de operação.',
+      source: 'POP 11.4, 18.12, 24 e 25',
+    },
+  },
+  rlo: {
+    guidance: [
+      { question: 'O requerimento foi protocolado no prazo aplicável?', evidence: 'Data de protocolo, validade da LO e regra vigente.', risk: 'Confundir tempestividade com aprovação automática.', source: 'POP 13' },
+      { question: 'A operação atual permanece compatível com o ato vigente?', evidence: 'Licença, titularidade, outorga, ANEEL e situação fática.', risk: 'Revisar só a data de validade.', source: 'POP 13.2' },
+      { question: 'Relatórios demonstram execução e efetividade?', evidence: 'Séries temporais, metas, desvios, eventos e ações corretivas.', risk: 'Aceitar declaração sem lastro ou dado isolado.', source: 'POP 13.2 e 18.12' },
+      { question: 'Há fato novo, alteração ou inconsistência relevante?', evidence: 'Nova UC, mudança operacional, impacto, incidente ou norma aplicável.', risk: 'Reabrir tudo sem fato novo ou ignorar mudança material.', source: 'POP 13.2 e 20' },
+      { question: 'As condicionantes continuam necessárias e proporcionais?', evidence: 'Histórico de cumprimento, risco atual e indicadores.', risk: 'Copiar condicionantes sem revisar objeto e verificabilidade.', source: 'POP 24.1' },
+      { question: 'A decisão distingue continuidade, ajustes e pendências?', evidence: 'Conclusão motivada, fatos novos, prazos e forma de comprovação.', risk: 'Tratar renovação como ato meramente cartorial.', source: 'POP 13.2, 23 e 25' },
+    ],
+    decision: {
+      prompt: 'A RLO foi pedida 130 dias antes do vencimento, mas surgiu uma nova UC no entorno. Como analisar?',
+      options: [
+        'Renovar automaticamente porque o pedido foi tempestivo.',
+        'Reconhecer o efeito processual da tempestividade e analisar o fato novo de forma proporcional antes da decisão.',
+        'Recomeçar toda a LP sem verificar se a nova UC afeta o empreendimento.',
+      ],
+      answer: 1,
+      feedback: 'Tempestividade preserva a continuidade prevista, não aprova o mérito. Fato novo relevante deve ser analisado sem reabrir automaticamente tudo o que já foi validado.',
+      source: 'POP 13.2 e 20.2',
+    },
+  },
+};
+
 export const flowSpecs = [
   {id:'enquadramento',track:'m03',title:'Enquadramento e modalidade',imageNumber:1,nodes:['Caracterizar empreendimento','Aplicar potência e alagamento','Calcular IDA','Verificar supressão e sensibilidade','Definir modalidade','Registrar motivação']},
   {id:'temas',track:'m11',title:'Temas e autorizações associadas',imageNumber:2,nodes:['Identificar intervenções','Mapear temas ambientais','Verificar autorizações','Consultar intervenientes','Compatibilizar atos','Registrar interfaces']},
@@ -53,7 +203,7 @@ export const flowSpecs = [
   {id:'li',track:'m05',title:'Licença de Instalação',imageNumber:5,nodes:['Receber LI','Confirmar LP válida','Analisar projetos e PBA','Verificar condicionantes','Avaliar instalação','Encaminhar decisão']},
   {id:'lo',track:'m05',title:'Licença de Operação',imageNumber:6,nodes:['Receber LO','Confirmar implantação','Conferir as built','Avaliar programas e condicionantes','Vistoria quando cabível','Encaminhar decisão']},
   {id:'rlo',track:'m06',title:'Renovação da Licença de Operação',imageNumber:7,nodes:['Receber RLO','Verificar tempestividade','Avaliar regularidade atual','Identificar fatos novos','Revisar condicionantes','Encaminhar decisão']},
-];
+].map((flow) => ({ ...flow, ...FLOW_LEARNING[flow.id] }));
 
 const CENARIOS_BASE = [
   {"id":"cp","track":"m03","label":"Consulta Prévia","type":"CGH","title":"CGH com sensibilidade locacional na Consulta Prévia","facts":["Potência de 2,4 MW","Área de alagamento de 18 ha","ADA a cerca de 600 m de unidade de conservação","Requerimento e KMZ do arranjo apresentados"],"evidence":["Memorial preliminar","Mapa da ADA em KMZ","Consulta de restrições (UC, cavidades, terras indígenas)","Carta dos cursos d'água"],"steps":["Objeto","Localização","Sensibilidade","Alcance da CP","Encaminhamento"],"questions":[["O objeto e a localização estão suficientemente caracterizados para a CP?","sim"],["A proximidade de unidade de conservação deve integrar a manifestação?","sim"],["A CP confere prioridade ou reserva de disponibilidade hídrica ao requerente?","nao"],["A manifestação da CP substitui o licenciamento e o juízo de viabilidade ambiental?","nao"],["A validade de 24 meses da manifestação é prorrogável?","nao"]],"outcome":"Emitir manifestação orientativa da Consulta Prévia (modalidade e estudo prováveis, com as restrições de sensibilidade), lembrando que vale 24 meses, não é prorrogável, não gera prioridade nem juízo de viabilidade."},
@@ -73,12 +223,32 @@ const CENARIOS_BASE = [
 export{GRUPOS_LAB};
 export const scenarios = [...CENARIOS_BASE, ...NOVOS_CENARIOS].map(c => ({ ...c, ...(RUBRICAS[c.id] || {}) }));
 
+const QUESTION_ORDINALS = new Map();
+function buildQuestion(q, i) {
+  const track = q[0];
+  const ordinal = QUESTION_ORDINALS.get(track) || 0;
+  QUESTION_ORDINALS.set(track, ordinal + 1);
+  const options = [...q[2]];
+  const target = ordinal % options.length;
+  const originalAnswer = q[3];
+  [options[target], options[originalAnswer]] = [options[originalAnswer], options[target]];
+  return {
+    id: `q${String(i + 1).padStart(3, '0')}`,
+    track,
+    question: q[1],
+    options,
+    answer: target,
+    explanation: q[4],
+    ...(q[5] ? { source: q[5] } : {}),
+  };
+}
+
 export const questionBank = [
-  ['m00','O POP cria exigência documental autônoma?',['Sim, em qualquer caso','Não; a exigência precisa de fundamento aplicável','Somente para UHE'],1,'O POP organiza o método, mas não cria exigência autônoma.',{"sec":"pop-section-003","quote":"Este procedimento não cria exigência documental autônoma."}],
-  ['m01','Qual registro é indispensável em processo sujeito a transição?',['Apenas a data atual','Datas, estágio, regime aplicado e justificativa','Somente a norma nova'],1,'A motivação precisa separar e documentar as transições aplicáveis.',{"sec":"pop-section-006","quote":"devem ser registrados a data do protocolo, a data de entrada em vigor considerada conforme o art. 67, o estágio processual existente nessa data, o regime jurídico aplicado e a justificativa"}],
-  ['m01','Quando há conflito aparente de modalidades ou competência, o técnico deve:',['Criar uma solução própria','Ignorar o conflito','Registrar pendência e buscar validação jurídica ou institucional'],2,'Dúvida normativa relevante exige validação, não criação de regra pelo analista.',{"sec":"pop-section-008","quote":"registrar a pendência como Pendente de validação"}],
+  ['m00','O POP cria exigência documental autônoma?',['Sim, quando o documento não estiver previsto no Termo de Referência aplicável','Não; a exigência precisa de fundamento aplicável','Sim, quando a equipe justificar a exigência apenas com base em sua prática interna'],1,'O POP organiza o método, mas não cria exigência autônoma.',{"sec":"pop-section-003","quote":"Este procedimento não cria exigência documental autônoma."}],
+  ['m01','Qual registro é indispensável em processo sujeito a transição?',['Somente a data do protocolo e a norma vigente na data da decisão','Datas, estágio, regime aplicado e justificativa','Apenas o estágio atual e a identificação da regra mais recente'],1,'A motivação precisa separar e documentar as transições aplicáveis.',{"sec":"pop-section-006","quote":"devem ser registrados a data do protocolo, a data de entrada em vigor considerada conforme o art. 67, o estágio processual existente nessa data, o regime jurídico aplicado e a justificativa"}],
+  ['m01','Quando há conflito aparente de modalidades ou competência, o técnico deve:',['Escolher a modalidade considerada mais cautelosa e registrar sua interpretação no parecer','Adotar a competência indicada no requerimento e seguir a análise até haver contestação','Registrar pendência e buscar validação jurídica ou institucional'],2,'Dúvida normativa relevante exige validação, não criação de regra pelo analista.',{"sec":"pop-section-008","quote":"registrar a pendência como Pendente de validação"}],
   ['m02','A leitura inicial recomendada é:',['Cronológica e temática','Apenas pelo documento mais recente','Começando pela conclusão anterior'],0,'O objeto e o histórico vêm antes do juízo de suficiência.',{"sec":"pop-section-017","quote":"A leitura do processo deve ser feita de forma cronológica e temática."}],
-  ['m02','Documento de outro empreendimento tende a ser classificado como:',['Suficiente','Inconsistente e geralmente crítico','Apenas vencido'],1,'A incompatibilidade de objeto impede o uso seguro do documento.',{"sec":"pop-section-019","quote":"Documento de outro empreendimento ou outro corpo hídrico deve ser classificado como inconsistente, com gravidade geralmente crítica."}],
+  ['m02','Documento de outro empreendimento tende a ser classificado como:',['Vencido, desde que esteja formalmente assinado pelo responsável técnico','Inconsistente e geralmente crítico','Insuficiente, com gravidade definida apenas pela ausência de atualização'],1,'A incompatibilidade de objeto impede o uso seguro do documento.',{"sec":"pop-section-019","quote":"Documento de outro empreendimento ou outro corpo hídrico deve ser classificado como inconsistente, com gravidade geralmente crítica."}],
   ['m03','No enquadramento estadual, potência e área de alagamento são aplicadas:',['Pelo critério menos restritivo','Pelo critério mais restritivo','Somente após a decisão'],1,'O POP orienta a prevalência do critério mais restritivo.',{"sec":"pop-section-020","quote":"primeiro potência e área de alagamento, com prevalência do critério mais restritivo"}],
   ['m03','A modalidade adequada significa que a documentação é suficiente?',['Sempre','Nunca existe relação','Não necessariamente'],2,'Enquadramento e suficiência documental são análises distintas.',{"sec":"pop-section-020","quote":"A modalidade pode estar adequada, mas a documentação ainda ser insuficiente para deferimento."}],
   ['m04','A DLAM substitui outorga e autorizações específicas?',['Sim','Não','Somente em MCH'],1,'Dispensa ambiental não elimina outros atos exigíveis.',{"sec":"pop-section-029","quote":"Conferir se a dispensa estadual não afasta obrigações de outorga, ANEEL, município, dominialidade, APP, fauna, flora"}],
@@ -88,13 +258,13 @@ export const questionBank = [
   ['m06','Repotenciação deve ser analisada:',['Apenas pelo nome dado pelo requerente','Pelos efeitos técnicos e ambientais concretos','Sempre como renovação'],1,'A materialidade da alteração define o tratamento.',{"sec":"pop-section-050","quote":"Alterações em empreendimentos hidrelétricos devem ser avaliadas conforme natureza, escala, fase, impactos adicionais e relação com a licença vigente."}],
   ['m07','O licenciamento ambiental substitui o órgão fiscalizador da barragem?',['Sim','Não','Somente na ZAS'],1,'A análise integra evidências, respeitando limites de competência.',{"sec":"pop-section-053","quote":"sem substituir a competência do órgão fiscalizador"}],
   ['m08','Plano de trabalho substitui relatório de execução?',['Sim','Não','Se tiver ART'],1,'O plano descreve futuro; o relatório comprova execução e resultados.',{"sec":"pop-section-074","quote":"Plano de trabalho, cronograma futuro ou descrição de intenção não substituem relatório de execução."}],
-  ['m08','Documento assinado é automaticamente suficiente?',['Sim','Não; conteúdo e compatibilidade precisam ser avaliados','Apenas o EIA'],1,'Formalidade não substitui suficiência material.',{"sec":"pop-section-057","quote":"Este capítulo orienta a análise do conteúdo técnico, e não apenas a presença formal do arquivo."}],
-  ['m09','As UTHs do PACUERA devem derivar de:',['Escolha arbitrária','Diagnóstico integrado de fragilidades e potencialidades','Somente limites municipais'],1,'As unidades sustentam tecnicamente o zoneamento.',{"sec":"pop-section-070","quote":"Unidades Territoriais Homogêneas resultantes da síntese das fragilidades e potencialidades naturais e antrópicas"}],
+  ['m08','Documento assinado é automaticamente suficiente?',['Sim; assinatura e ART válidas demonstram, por si sós, a suficiência material','Não; conteúdo e compatibilidade precisam ser avaliados','Somente quando se tratar de EIA/RIMA aprovado em fase anterior do processo'],1,'Formalidade não substitui suficiência material.',{"sec":"pop-section-057","quote":"Este capítulo orienta a análise do conteúdo técnico, e não apenas a presença formal do arquivo."}],
+  ['m09','As UTHs do PACUERA devem derivar de:',['Da divisão do entorno conforme limites municipais e matrículas dominiais disponíveis','Diagnóstico integrado de fragilidades e potencialidades','Da repetição das zonas de uso adotadas no Plano Diretor municipal incidente'],1,'As unidades sustentam tecnicamente o zoneamento.',{"sec":"pop-section-070","quote":"Unidades Territoriais Homogêneas resultantes da síntese das fragilidades e potencialidades naturais e antrópicas"}],
   ['m09','Como a conclusão técnica deve classificar o PACUERA?',['Somente como aprovado ou reprovado','Como Apresenta, Insuficiente, Inconsistente, Pendente de validação ou Não se aplica','Apenas pela quantidade de itens do TR atendidos'],1,'A conclusão separa conformidade ao TR, suficiência do diagnóstico, consistência do zoneamento, cartografia, participação social e possibilidade de implementação. A gravidade decorre da consequência sobre a gestão territorial e a decisão segura.',{"sec":"pop-section-072","quote":"O PACUERA pode ser classificado como Apresenta, Insuficiente, Inconsistente, Pendente de validação ou Não se aplica"}],
   ['m10','Um ponto isolado no mapa delimita empreendimento complexo?',['Sim','Não','Sempre que houver escala'],1,'Poligonais e arquivos geoespaciais são necessários quando a análise depende da área.',{"sec":"pop-section-076","quote":"O analista deve verificar se mapas e arquivos digitais permitem localizar, delimitar e quantificar impactos."}],
   ['m11','O analista do IAT pode substituir manifestação do IPHAN?',['Sim','Não','Somente em LAS'],1,'A interface deve ser verificada sem invadir competência externa.',{"sec":"pop-section-082","quote":"A atuação do IAT deve respeitar competências setoriais"}],
-  ['m11','A vistoria deve registrar:',['Somente fotografias','Achados, localização, evidências e relação com o processo','A opinião do empreendedor'],1,'Rastreabilidade de campo é parte do produto técnico.',{"sec":"pop-section-087","quote":"O relatório de vistoria deve registrar fatos observados"}],
-  ['m12','Uma boa pendência indica:',['Apenas “complementar”','Lacuna, fundamento, consequência e providência','Somente prazo'],1,'A redação deve permitir compreender e sanear a lacuna.',{"sec":"pop-section-092","quote":"Cada item deve manter nexo com a fase, o impacto e a decisão."}],
+  ['m11','A vistoria deve registrar:',['Somente registros fotográficos georreferenciados e a lista de participantes','Achados, localização, evidências e relação com o processo','As conclusões finais de viabilidade, ainda que não estejam apoiadas em fatos observados'],1,'Rastreabilidade de campo é parte do produto técnico.',{"sec":"pop-section-087","quote":"O relatório de vistoria deve registrar fatos observados"}],
+  ['m12','Uma boa pendência indica:',['A identificação do documento faltante, acompanhada apenas de prazo padronizado para entrega','Lacuna, fundamento, consequência e providência','O pedido genérico de complementação, desde que repita a lista integral do Termo de Referência'],1,'A redação deve permitir compreender e sanear a lacuna.',{"sec":"pop-section-092","quote":"Cada item deve manter nexo com a fase, o impacto e a decisão."}],
   ['m12','Condicionante de qualidade deve ser:',['Genérica e aberta','Clara, verificável, proporcional e ligada ao impacto','Copiada de qualquer processo'],1,'Objeto, entrega, prazo e critério de verificação precisam ser definidos.',{"sec":"pop-section-094","quote":"Devem ser claras, mensuráveis, verificáveis, proporcionais e acompanhadas de prazo e forma de comprovação."}],
   ['m13','A revisão final deve conferir coerência entre:',['Somente título e assinatura','Análise, conclusão, pendências e condicionantes','Apenas anexos'],1,'Inconsistências internas comprometem a decisão e a rastreabilidade.',{"sec":"pop-section-108","quote":"toda manifestação deve passar por auditoria interna de coerência técnica, normativa, documental, linguística e visual"}],
   ['m14','Os modelos dos anexos devem ser usados:',['Sem adaptação','Como base adaptável ao caso concreto','Somente por coordenadores'],1,'Modelos apoiam padronização, mas não substituem análise específica.',{"sec":"pop-section-123","quote":"Os modelos abaixo são exemplos e devem ser adaptados ao caso concreto."}],
@@ -113,7 +283,7 @@ export const questionBank = [
   ["m04","Segundo o POP, quais critérios uma CGH deve atender para ser elegível à LAC?",["Potência de até 1 MW, alagamento inferior a 5 ha, IDA menor que 3 e ausência de necessidade de autorização de supressão","Potência de até 5 MW, alagamento inferior a 10 ha e IDA maior ou igual a 3","Apenas potência de até 1 MW, independentemente de alagamento, IDA ou supressão","IDA maior ou igual a 3, desde que haja autorização de supressão já emitida"],0,"Para CGH, a LAC exige a combinação dos quatro critérios: potência, alagamento, IDA e ausência de supressão; qualquer divergência afasta a conclusão automática pela adesão.",{"sec":"pop-section-030","quote":"Para CGH, a IN prevê LAC para potência de até 1 MW, alagamento inferior a 5 ha, IDA menor que 3"}],
   ["m04","Na análise de um pedido de DLAM, quando não for possível confirmar a hipótese normativa de dispensa, o que o POP determina?",["Encaminhar como DLAM mesmo assim, desde que a potência declarada seja baixa","Não encaminhar o processo como DLAM apenas com base na potência declarada","Converter automaticamente o processo em licenciamento trifásico","Aceitar a dispensa mediante simples declaração do empreendedor"],1,"A potência declarada, isoladamente, não sustenta a dispensa: a hipótese normativa precisa ser confirmada, inclusive quanto à inexistência de supressão compatível com o arranjo e a cartografia.",{"sec":"pop-section-029","quote":"Quando não for possível confirmar a hipótese de dispensa, o processo não deve ser encaminhado como DLAM apenas com base na potência declarada."}],
   ["m04","Quanto à natureza dos institutos, como o POP classifica DLAM, LAC e LAS?",["As três são modalidades monofásicas de licenciamento","A DLAM é ato de dispensa; LAC e LAS são modalidades monofásicas","A DLAM é modalidade monofásica; LAC e LAS são atos de dispensa"],1,"O POP distingue a natureza jurídica dos institutos: a DLAM não é licença, e sim ato de dispensa, enquanto LAC e LAS são modalidades de licenciamento em fase única.",{"sec":"pop-section-028","quote":"A DLAM deve ser tratada como ato de dispensa, enquanto LAC e LAS constituem modalidades monofásicas."}],
-  ["m05","Segundo o POP, além das UHEs, a exigência de EIA e RIMA na fase de LP aplica-se às PCHs quando:",["A potência ultrapassa 10 MW ou o alagamento supera 100 ha","Há qualquer outorga de uso da água vigente","O alagamento supera 1.000 ha, independentemente da potência","O empreendedor solicita voluntariamente o estudo"],0,"O POP fixa dois gatilhos alternativos para PCHs: potência acima de 10 MW ou alagamento superior a 100 ha. Fora dessas hipóteses, o estudo exigível decorre do enquadramento e do Termo de Referência vigente.",{"sec":"pop-section-034","quote":"A exigência de EIA e RIMA aplica-se às UHEs, às PCHs com potência acima de 10 MW ou alagamento superior a 100 ha"}],
+  ["m05","Qual é o gatilho tipológico numérico que o POP explicita para exigir EIA e RIMA de uma PCH na fase de LP?",["Potência acima de 10 MW ou alagamento superior a 100 ha","Qualquer outorga de uso da água vigente, sem considerar porte ou impacto","Alagamento superior a 1.000 ha, independentemente da potência","Solicitação voluntária do estudo pelo empreendedor"],0,"Esses são os dois gatilhos numéricos expressos para PCH. Eles não esgotam as hipóteses: a exigência também alcança UHE e empreendimento inicialmente simplificado que o IAT considere potencialmente impactante; nos demais casos, devem ser consultados o enquadramento e o TR vigente.",{"sec":"pop-section-034","quote":"A exigência de EIA e RIMA aplica-se às UHEs, às PCHs com potência acima de 10 MW ou alagamento superior a 100 ha e aos empreendimentos inicialmente simplificados que o IAT considere potencialmente impactantes"}],
   ["m05","Na análise da Licença de Instalação, o projeto apresentado deve ter nível de detalhamento suficiente para:",["Demonstrar alternativas locacionais e tecnológicas do empreendimento","Controlar impactos de obra e executar os programas ambientais","Comprovar o desempenho ambiental da operação já iniciada","Substituir as condicionantes estabelecidas na LP"],1,"A LI é a fase de controle da implantação: o projeto precisa detalhar como os impactos de obra serão controlados e os programas executados. Alternativas locacionais pertencem à LP e desempenho da operação, à LO.",{"sec":"pop-section-036","quote":"A LI depende de projeto com nível de detalhamento suficiente para controlar impactos de obra, executar programas ambientais"}],
   ["m05","Nos processos sujeitos a EIA, qual regra de participação pública o POP estabelece antes da decisão sobre a LP?",["EIA e RIMA disponíveis ao público por, no mínimo, 45 dias antes da audiência pública","Audiência pública realizada somente após a emissão da LI","Disponibilização dos estudos por 15 dias, contados após a decisão final","A audiência pública do PACUERA substitui a audiência da LP"],0,"Deve haver pelo menos uma audiência pública antes da decisão final sobre a LP, com EIA e RIMA acessíveis ao público por no mínimo 45 dias antes dela. Esse rito não se confunde com a participação social do PACUERA.",{"sec":"pop-section-040","quote":"O EIA e o RIMA devem permanecer disponíveis ao público por, no mínimo, 45 dias antes da audiência."}],
   ["m06","Segundo o POP, qual é o alcance correto da Autorização Ambiental (AA) na IN IAT nº 09/2025?",["A AA pode substituir a licença principal quando o empreendedor demonstrar urgência na operação.","A AA tem aplicação expressa para enchimento de reservatório e testes de comissionamento, mas não substitui a licença principal nem a outorga.","A AA dispensa a manifestação de intervenientes e a Autorização Florestal durante a fase de comissionamento."],1,"A AA é restrita às hipóteses previstas, como enchimento de reservatório e testes de comissionamento, e não substitui os demais títulos e autorizações exigíveis.",{"sec":"pop-section-041","quote":"A AA não substitui licença principal, Autorização Florestal, outorga, manifestação de interveniente ou licenciamento de ampliação quando houver alteração substancial."}],
@@ -132,11 +302,11 @@ export const questionBank = [
   ["m10","Um estudo de fauna foi protocolado antes da vigência da Portaria IAT nº 012/2024. Nos termos do art. 52 citado no POP, qual regra se aplica?",["O estudo deve ser integralmente refeito conforme os Anexos I a VIII da nova Portaria","O estudo passa a seguir as IN IAT nº 01/2023 e nº 02/2023, que continuam vigentes","O estudo segue a norma vigente à época do protocolo","O estudo é automaticamente invalidado e o processo deve ser arquivado"],2,"A regra de transição do art. 52 preserva a norma da época do protocolo; além disso, monitoramentos em instalação ou operação mantêm o desenho amostral aprovado, salvo alteração formal.",{"sec":"pop-section-079","quote":"estudos protocolados antes da vigência da Portaria seguem a norma vigente à época do protocolo"}],
   ["m10","De acordo com o POP, como o analista deve tratar a ausência de outorga vigente ou equivalente em um processo de hidrelétrica?",["Pode ser pendência crítica para licença de instalação, operação e renovação, conforme o caso","É irrelevante, pois a outorga só é exigida na fase de licença prévia","É sanada automaticamente pela apresentação do memorial descritivo"],0,"O POP determina compatibilizar recursos hídricos entre outorga, memorial, estudo ambiental, SGA e operação, e classifica a falta de outorga vigente como possível pendência crítica nas fases de LI, LO e renovação.",{"sec":"pop-section-080","quote":"Ausência de outorga vigente ou equivalente pode ser pendência crítica para licença de instalação, operação e renovação, conforme o caso."}],
   ["m11","Em pedido de renovação de licença, quanto às manifestações de intervenientes (IPHAN, município, unidades de conservação), o POP orienta que:",["Nova manifestação deve ser exigida automaticamente a cada renovação","Nova manifestação não deve ser exigida sem fato novo, alteração, condicionante ou inconsistência relevante","As manifestações anteriores perdem validade e o processo deve reiniciar do zero"],1,"A renovação aproveita as manifestações já emitidas; só se exige nova manifestação quando houver fato novo, alteração, condicionante ou inconsistência relevante.",{"sec":"pop-section-082","quote":"Em renovação, nova manifestação não deve ser exigida sem fato novo, alteração, condicionante ou inconsistência relevante."}],
-  ["m11","Ao verificar a participação das autoridades envolvidas, o que o analista deve distinguir?",["Participação de autoridade envolvida, ciência prevista em norma específica, aprovação do art. 46 do SNUC e observância material do Plano de Manejo","Apenas se houve ou não manifestação escrita no processo","Somente a competência do órgão gestor da unidade de conservação"],0,"Cada hipótese tem gatilho próprio: não caracterizada uma delas, as demais continuam exigíveis. Os arts. 43 e 44 da Lei nº 15.190/2025 consideram UC ou zona de amortecimento na ADA e excluem a APA desse gatilho específico.",{"sec":"pop-section-086","quote":"A ausência de uma dessas hipóteses não deve ser interpretada como dispensa automática das demais."}],
+  ["m11","Ao verificar a participação das autoridades envolvidas, o que o analista deve distinguir?",["Participação de autoridade envolvida, ciência prevista em norma específica, aprovação do art. 46 do SNUC e observância material do Plano de Manejo","Se houve manifestação escrita e tempestiva do órgão gestor, tratando esse documento como suficiente para participação, ciência, aprovação do art. 46 e compatibilidade com o Plano de Manejo","Apenas a competência administrativa do órgão gestor da UC, pois a ciência normativa, a aprovação do art. 46 e a observância material do Plano de Manejo decorreriam automaticamente dessa competência"],0,"Cada hipótese tem gatilho próprio: não caracterizada uma delas, as demais continuam exigíveis. Os arts. 43 e 44 da Lei nº 15.190/2025 consideram UC ou zona de amortecimento na ADA e excluem a APA desse gatilho específico.",{"sec":"pop-section-086","quote":"A ausência de uma dessas hipóteses não deve ser interpretada como dispensa automática das demais."}],
   ["m11","Nos processos sujeitos a EIA, qual é a regra do POP sobre a audiência pública e a disponibilização dos estudos?",["A audiência é facultativa e pode ocorrer depois da emissão da LP","A audiência substitui a análise técnica das contribuições recebidas","A audiência é obrigatória antes da decisão final sobre a LP, com EIA e RIMA disponíveis por pelo menos 45 dias"],2,"A participação pública precede a decisão sobre a LP, com disponibilização mínima de 45 dias do EIA e do RIMA; as contribuições ainda devem ser analisadas e registradas.",{"sec":"pop-section-142","quote":"A audiência pública é obrigatória nos processos sujeitos a EIA antes da decisão final sobre a LP"}],
   ["m12","Segundo o POP, qual é a divisão de papéis entre o checklist, a Informação Técnica e o Parecer Técnico Conclusivo?",["O checklist controla a instrução, a Informação Técnica interpreta o conjunto e o Parecer Técnico Conclusivo apresenta conclusão motivada","A Informação Técnica deve reproduzir integralmente o checklist para garantir rastreabilidade da análise","O Parecer Técnico Conclusivo controla a instrução documental e dispensa a elaboração de Informação Técnica"],0,"Cada produto tem função própria: o checklist é matriz de controle, a Informação Técnica explica relevância e compatibilidade dos documentos, e o parecer conclui com motivação, dentro da competência do signatário.",{"sec":"pop-section-090","quote":"O checklist controla a instrução; a Informação Técnica interpreta o conjunto; o Parecer Técnico Conclusivo deve observar a competência institucional e apresentar conclusão motivada."}],
   ["m12","Como o POP orienta a comunicação da diligência (minuta de pendências) ao interessado?",["Em etapas sucessivas, à medida que cada documento for sendo analisado pelo técnico","Consolidada após análise integrada e comunicada, em regra, de uma única vez, ressalvados fatos novos ou fundamento superveniente registrado","Somente após a emissão da licença, em conjunto com as condicionantes"],1,"A regra é a exigência única e consolidada, evitando diligências fracionadas; novas exigências só se justificam por fato novo ou fundamento superveniente devidamente registrado.",{"sec":"pop-section-092","quote":"A diligência deve ser consolidada após análise integrada do processo e comunicada, em regra, de uma única vez"}],
-  ["m12","Diante de uma lacuna documental sanável, qual conduta o POP recomenda na conclusão técnica?",["Emitir manifestação não favorável de imediato, como medida de segurança","Encerrar a análise e devolver o processo sem qualquer encaminhamento","Tratar a lacuna por diligência ou condicionante, reservando a manifestação não favorável a casos com motivação técnica suficiente"],2,"A conclusão deve decorrer da gravidade e da possibilidade de saneamento: pendência sanável pede diligência ou condicionante, e o não favorável exige motivação técnica, não podendo ser resposta automática.",{"sec":"pop-section-098","quote":"manifestação não favorável exige motivação técnica suficiente e não deve ser utilizada como resposta automática a lacuna sanável"}],
+  ["m12","Se uma lacuna sanável impede a conclusão segura, mas não indica inviabilidade definitiva, qual é o encaminhamento previsto no Quadro 42 do POP?",["Emitir manifestação não favorável de imediato, sem oportunidade de saneamento","Registrar a lacuna apenas como condicionante para cumprimento depois da licença","Formular diligência ou complementação objetiva, com base normativa e consequência técnica"],2,"Quando a lacuna impede decidir com segurança, o saneamento deve ocorrer antes da licença por diligência ou complementação. Condicionante só cabe quando os documentos essenciais já são suficientes e a pendência remanescente pode ser tratada de forma proporcional.",{"sec":"pop-section-098","quote":"Há lacuna sanável que impede conclusão segura, mas não indica inviabilidade definitiva."}],
   ["m13","Segundo o padrão documental do IAT, enquanto não houver elaboração, revisão e aprovação formalmente identificadas, como o arquivo deve ser tratado?",["Como versão final, apta a declarar validação institucional","Como minuta técnica, sem declarar validação institucional concluída","Como documento oficial, desde que siga o modelo visual do IAT"],1,"A denominação minuta técnica protege a rastreabilidade: só há validação institucional quando elaboração, revisão e aprovação estão formalmente identificadas no documento.",{"sec":"pop-section-099","quote":"o arquivo deve ser denominado minuta técnica e não pode declarar validação institucional concluída"}],
   ["m13","Nas tabelas de checklist e análise técnica, o que fundamenta a classificação de um achado como gravidade crítica?",["A simples ausência formal de um arquivo listado no checklist","O número total de pendências acumuladas no processo","O efeito do achado sobre decisão, viabilidade, modalidade, outorga, APP e demais pontos sensíveis","A avaliação subjetiva do revisor sobre a qualidade do documento"],2,"A gravidade decorre da consequência técnica do achado, não da mera falta formal de um arquivo; apresentar um documento tampouco significa que ele seja suficiente.",{"sec":"pop-section-105","quote":"Gravidade crítica deve decorrer do efeito sobre decisão, viabilidade, modalidade, titularidade, outorga, ANEEL, APP, supressão, interveniente ou segurança jurídica"}],
   ["m13","Qual controle visual é obrigatório antes da entrega de um DOCX técnico do IAT?",["Conferir apenas o texto extraído, pois o conteúdo prevalece sobre a forma","Renderizar o arquivo para PDF ou imagens e inspecionar todas as páginas","Imprimir a primeira e a última página para verificação por amostragem"],1,"A inspeção página a página do arquivo renderizado detecta cortes, sobreposições, quebras indevidas de tabelas e imagens deslocadas que o texto extraído não revela.",{"sec":"pop-section-107","quote":"o arquivo deve ser renderizado para PDF ou imagens e todas as páginas devem ser inspecionadas"}],
@@ -154,7 +324,7 @@ export const questionBank = [
   ["m12","Segundo o POP, a compensação por impactos não mitigáveis segue qual procedimento?",["Negociação direta com o empreendedor","O procedimento do Decreto Estadual nº 7.150/2024","Livre arbítrio do analista"],1,"A compensação ambiental por impactos negativos não mitigáveis segue o procedimento do Decreto Estadual nº 7.150/2024.",{"sec":"pop-section-155","quote":"O art. 2º do Decreto Estadual nº 7.150/2024 alcança pessoas físicas ou jurídicas responsáveis por empreendimentos"}],
   ["m12","Impacto não mitigável identificado em fase posterior ou em ampliação:",["Não gera compensação, por ser superveniente","Deve ser tratado conforme o regime aplicável, inclusive em fases posteriores","Só é tratado na renovação"],1,"O POP trata expressamente processos em fases posteriores, ampliações e impactos supervenientes.",{"sec":"pop-section-157","quote":"O art. 13 estabelece regra específica para empreendimentos ou atividades causadores de impactos negativos não mitigáveis que não tiveram a compensação definida na fase de LI ou LAS"}],
   ...QUESTOES_EXTRA,
-].map((q,i)=>({id:`q${String(i+1).padStart(2,'0')}`,track:q[0],question:q[1],options:q[2],answer:q[3],explanation:q[4],...(q[5]?{source:q[5]}:{})}));
+].map(buildQuestion);
 
 export const trackGroups = [
   {title:'Fundamentos e método',ids:['m00','m01','m02']},

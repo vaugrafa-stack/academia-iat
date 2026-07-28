@@ -21,14 +21,14 @@ const dir = resolve(process.argv[2] || 'dist');
 const MARCAS = [
   ['painel inicial', 'Aprenda o procedimento'],
   ['hidrelétricas', 'Microcentral'],
-  ['mapa', 'Enquadre pela potência'],
-  ['formação', 'Formação completa'],
-  ['fluxogramas', 'Fluxogramas interativos'],
+  ['mapa', 'Faixa didática do POP'],
+  ['formação', 'Formação guiada pelo POP'],
+  ['fluxogramas', 'Fluxos: proposta e atividade'],
   ['laboratório', 'Pratique antes de assinar'],
   ['redator de IT', 'Escrever uma Informação Técnica'],
-  ['avaliações', 'CONHECIMENTO APLICADO'],
+  ['avaliações', 'AUTOAVALIAÇÃO COMENTADA'],
   ['biblioteca', 'Biblioteca operacional'],
-  ['suporte', 'bol.rafaelaugusto@iat.pr.gov.br'],
+  ['suporte', 'Relatar dúvida ou problema'],
 ];
 
 const PISO_KB = 380;   // soma dos .js do build; hoje passa de 600 kB

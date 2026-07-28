@@ -1,5 +1,12 @@
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
-import { certificateSvg, importBackup } from './profile.js';
+import {
+  certificateSvg,
+  createUser,
+  importBackup,
+  loadProfile,
+  resetInvalidProfileRegistry,
+  saveProfile,
+} from './profile.js';
 
 const USERS_KEY = 'academia-iat-users-v1';
 const PROGRESS_PREFIX = 'academia-iat-progress-v2::';
@@ -60,6 +67,20 @@ function seedRegistry(storage) {
   const raw = JSON.stringify(registry);
   storage.setItem(USERS_KEY, raw);
   return raw;
+}
+
+function profileRecord(index) {
+  return {
+    schemaVersion: 2,
+    id: `u-${index}`,
+    createdAt: '2026-07-01T00:00:00.000Z',
+    name: `Perfil ${index}`,
+    role: '',
+    unit: '',
+    persona: 'analista',
+    theme: 'auto',
+    certificates: [],
+  };
 }
 
 function backup(overrides = {}) {
@@ -171,6 +192,100 @@ describe('importBackup', () => {
     expect(result).toMatchObject({ ok: false, code: 'STORAGE_QUOTA' });
     expect(localStorage.getItem(USERS_KEY)).toBe(original);
     expect([...localStorage.values.keys()].filter((key) => key.startsWith(PROGRESS_PREFIX))).toHaveLength(0);
+  });
+
+  it('recusa importação acima do limite de 50 perfis sem alterar o registro', () => {
+    const registry = {
+      activeId: 'u-0',
+      users: Array.from({ length: 50 }, (_, index) => profileRecord(index)),
+    };
+    const original = JSON.stringify(registry);
+    localStorage.setItem(USERS_KEY, original);
+
+    expect(importBackup(backup())).toMatchObject({
+      ok: false,
+      code: 'PROFILE_LIMIT',
+      recoverable: true,
+    });
+    expect(localStorage.getItem(USERS_KEY)).toBe(original);
+    expect([...localStorage.values.keys()].filter((key) => key.startsWith(PROGRESS_PREFIX))).toHaveLength(0);
+  });
+});
+
+describe('registro local de perfis', () => {
+  it('preserva um registro inválido e expõe erro recuperável', () => {
+    const invalidRegistry = JSON.stringify({
+      activeId: 'forjado',
+      users: Array.from({ length: 51 }, (_, index) => ({
+        id: `u-${index}`,
+        name: 'Perfil',
+        certificates: [],
+      })),
+    });
+    localStorage.setItem(USERS_KEY, invalidRegistry);
+
+    let error;
+    try {
+      loadProfile();
+    } catch (caught) {
+      error = caught;
+    }
+
+    expect(error).toMatchObject({
+      name: 'ProfilePersistenceError',
+      code: 'REGISTRY_INVALID',
+      recoverable: true,
+    });
+    expect(localStorage.getItem(USERS_KEY)).toBe(invalidRegistry);
+  });
+
+  it('só substitui o registro inválido após recuperação explícita', () => {
+    const invalidRegistry = '{"activeId":"forjado","users":[]}';
+    localStorage.setItem(USERS_KEY, invalidRegistry);
+
+    const result = resetInvalidProfileRegistry();
+
+    expect(result).toMatchObject({ ok: true, code: 'REGISTRY_RESET' });
+    expect(localStorage.getItem(USERS_KEY)).not.toBe(invalidRegistry);
+    expect(loadProfile()).toMatchObject({ schemaVersion: 2 });
+  });
+
+  it('recusa a criação do 51º perfil sem alterar o registro', () => {
+    const registry = {
+      activeId: 'u-0',
+      users: Array.from({ length: 50 }, (_, index) => profileRecord(index)),
+    };
+    const original = JSON.stringify(registry);
+    localStorage.setItem(USERS_KEY, original);
+
+    expect(createUser()).toMatchObject({
+      ok: false,
+      code: 'PROFILE_LIMIT',
+      recoverable: true,
+    });
+    expect(localStorage.getItem(USERS_KEY)).toBe(original);
+  });
+
+  it('retorna falha de escrita ao salvar sem anunciar sucesso silencioso', () => {
+    const original = localStorage.getItem(USERS_KEY);
+    localStorage.failNext = (key) => key === USERS_KEY;
+
+    expect(saveProfile({ name: 'Não persistido' })).toMatchObject({
+      ok: false,
+      code: 'STORAGE_QUOTA',
+      recoverable: true,
+    });
+    expect(localStorage.getItem(USERS_KEY)).toBe(original);
+  });
+
+  it('remove chaves de poluição de protótipo ao importar o progresso', () => {
+    const payload = JSON.parse(backup());
+    payload.progress = JSON.parse(
+      '{"completed":[],"notes":{},"__proto__":{"polluted":true}}',
+    );
+
+    expect(importBackup(JSON.stringify(payload))).toMatchObject({ ok: true });
+    expect({}.polluted).toBeUndefined();
   });
 });
 

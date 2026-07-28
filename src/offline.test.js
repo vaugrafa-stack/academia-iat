@@ -1,8 +1,17 @@
 // @vitest-environment node
-import { describe, expect, it, vi } from 'vitest';
-import { criarAplicadorAtualizacao, ErroOffline } from './offline.js';
+import { afterEach, describe, expect, it, vi } from 'vitest';
+import {
+  criarAplicadorAtualizacao,
+  ErroOffline,
+  obterEstadoOffline,
+} from './offline.js';
 
 class ContainerServiceWorker extends EventTarget {}
+
+afterEach(() => {
+  vi.useRealTimers();
+  vi.unstubAllGlobals();
+});
 
 describe('atualização controlada do PWA', () => {
   it('só recarrega depois de controllerchange e não duplica a ativação', async () => {
@@ -28,6 +37,9 @@ describe('atualização controlada do PWA', () => {
     await expect(primeira).resolves.toEqual({ atualizado: true });
     await expect(segunda).resolves.toEqual({ atualizado: true });
     expect(recarregar).toHaveBeenCalledTimes(1);
+
+    container.dispatchEvent(new Event('controllerchange'));
+    expect(recarregar).toHaveBeenCalledTimes(1);
   });
 
   it('expõe falha de ativação sem recarregar a página', async () => {
@@ -48,6 +60,76 @@ describe('atualização controlada do PWA', () => {
 
     await expect(aplicar()).rejects.toBeInstanceOf(ErroOffline);
     expect(onErro).toHaveBeenCalledTimes(1);
+    container.dispatchEvent(new Event('controllerchange'));
     expect(recarregar).not.toHaveBeenCalled();
+  });
+
+  it('libera uma nova tentativa depois que a ativação falha', async () => {
+    const container = new ContainerServiceWorker();
+    const onErro = vi.fn();
+    const postMessage = vi.fn(() => {
+      throw new Error('worker redundante');
+    });
+    const aplicar = criarAplicadorAtualizacao({
+      worker: { postMessage },
+      serviceWorkerContainer: container,
+      onErro,
+      timeoutMs: 50,
+    });
+
+    const primeira = aplicar();
+    await expect(primeira).rejects.toMatchObject({ codigo: 'UPDATE_FAILED' });
+
+    const segunda = aplicar();
+    expect(segunda).not.toBe(primeira);
+    await expect(segunda).rejects.toMatchObject({ codigo: 'UPDATE_FAILED' });
+
+    expect(postMessage).toHaveBeenCalledTimes(2);
+    expect(onErro).toHaveBeenCalledTimes(2);
+  });
+});
+
+describe('prontidão do Service Worker', () => {
+  it('encerra a espera por navigator.serviceWorker.ready no prazo configurado', async () => {
+    vi.useFakeTimers();
+    let resolverProntidao;
+    const postMessage = vi.fn();
+    vi.stubGlobal('navigator', {
+      serviceWorker: {
+        controller: null,
+        ready: new Promise((resolve) => {
+          resolverProntidao = resolve;
+        }),
+      },
+    });
+
+    const consulta = obterEstadoOffline({ readyTimeoutMs: 25 });
+    const expectativa = expect(consulta).rejects.toMatchObject({
+      codigo: 'PWA_READY_TIMEOUT',
+    });
+    await vi.advanceTimersByTimeAsync(25);
+    await expectativa;
+
+    resolverProntidao({ active: { postMessage } });
+    await Promise.resolve();
+    expect(postMessage).not.toHaveBeenCalled();
+  });
+
+  it('cancela também enquanto aguarda a prontidão do Service Worker', async () => {
+    const controller = new AbortController();
+    vi.stubGlobal('navigator', {
+      serviceWorker: {
+        controller: null,
+        ready: new Promise(() => {}),
+      },
+    });
+
+    const consulta = obterEstadoOffline({
+      signal: controller.signal,
+      readyTimeoutMs: 1_000,
+    });
+    controller.abort();
+
+    await expect(consulta).rejects.toMatchObject({ codigo: 'PWA_ABORTED' });
   });
 });

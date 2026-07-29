@@ -1,16 +1,19 @@
 WEBVTT
 
-00:03.000 --> 00:06.800
+00:00.550 --> 00:02.587
+Checklist de Consulta Prévia
+
+00:03.067 --> 00:11.067
 Checklist de Consulta Prévia: o quadro do POP relaciona Item, O que verificar, Status, Gravidade e Encaminhamento padrão
 
-00:06.800 --> 00:10.400
+00:11.067 --> 00:21.733
 Requerimento ou cadastro no SGA: Interessado, CNPJ, empreendimento, município, corpo hídrico, potência, modalidade pretendida e responsável
 
-00:10.400 --> 00:14.000
-Memorial descritivo: Arranjo, potência, vazões, barramento, casa de força, restituição, reservatório, TVR, acessos …
+00:21.733 --> 00:33.733
+Memorial descritivo: Arranjo, potência, vazões, barramento, casa de força, restituição, reservatório, TVR, acessos, áreas de apoio e sistemas associados
 
-00:14.000 --> 00:17.600
+00:33.733 --> 00:41.733
 Mapa da ADA: Delimitação da área diretamente afetada, estruturas, acessos, margem, corpo hídrico e interferências
 
-00:17.600 --> 00:21.200
+00:41.733 --> 00:51.667
 KML, KMZ ou shapefile: Poligonais e linhas do arranjo, canal, TVR, reservatório, restituição, acessos e estruturas

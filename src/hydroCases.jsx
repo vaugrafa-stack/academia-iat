@@ -230,10 +230,10 @@ const PAPEIS = [
 export function LicensingPath({ go }) {
   return (
     <div className="lic-path">
-      <p className="prc-note"><Info size={15} /> Roteiro didático baseado no POP e na IN IAT nº 09/2025 (trilha ambiental) e no regime setorial da ANEEL (trilha energética). Os dois trilhos correm em paralelo e precisam conversar: titularidade, arranjo e potência devem coincidir.</p>
+      <p className="prc-note"><Info size={15} /> Roteiro didático baseado no POP e na IN IAT nº 09/2025 (fluxo ambiental) e no regime setorial da ANEEL (fluxo energético). Os dois processos avançam em paralelo e precisam ser compatíveis: titularidade, arranjo e potência devem coincidir.</p>
       <div className="lic-cols">
-        <section className="lic-col lic-aneel"><h3><Zap size={17} /> Trilha setorial · ANEEL</h3><ol>{TRILHA_ANEEL.map(([t, d], i) => <li key={t}><span>{i + 1}</span><div><strong>{t}</strong><p>{d}</p></div></li>)}</ol></section>
-        <section className="lic-col lic-iat"><h3><Factory size={17} /> Trilha ambiental · IAT</h3><ol>{TRILHA_IAT.map(([t, d], i) => <li key={t}><span>{i + 1}</span><div><strong>{t}</strong><p>{d}</p></div></li>)}</ol></section>
+        <section className="lic-col lic-aneel"><h3><Zap size={17} /> Fluxo setorial · ANEEL</h3><ol>{TRILHA_ANEEL.map(([t, d], i) => <li key={t}><span>{i + 1}</span><div><strong>{t}</strong><p>{d}</p></div></li>)}</ol></section>
+        <section className="lic-col lic-iat"><h3><Factory size={17} /> Fluxo ambiental · IAT</h3><ol>{TRILHA_IAT.map(([t, d], i) => <li key={t}><span>{i + 1}</span><div><strong>{t}</strong><p>{d}</p></div></li>)}</ol></section>
       </div>
       <h3 className="lic-papeis-h">Quem faz o quê</h3>
       <div className="lic-papeis">{PAPEIS.map(([t, d]) => <article key={t}><strong>{t}</strong><p>{d}</p></article>)}</div>

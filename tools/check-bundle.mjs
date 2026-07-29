@@ -16,7 +16,11 @@ export const BUNDLE_BUDGETS = Object.freeze({
   entry: Object.freeze({ raw: 205 * KIB, gzip: 66 * KIB }),
   largestJs: Object.freeze({ raw: 265 * KIB, gzip: 85 * KIB }),
   totalJs: Object.freeze({ raw: 850 * KIB, gzip: 270 * KIB }),
-  totalCss: Object.freeze({ raw: 185 * KIB, gzip: 34 * KIB }),
+  // As folhas-resposta, o catálogo guiado do Laboratório e o palco acessível
+  // de vídeo são carregados em CSS separado por rota. O teto continua estreito
+  // o suficiente para impedir crescimento acidental, mas inclui esse novo
+  // estado funcional completo (191,4 KiB / 35,3 KiB no release de referência).
+  totalCss: Object.freeze({ raw: 200 * KIB, gzip: 37 * KIB }),
   largestCompressibleAsset: Object.freeze({
     raw: 960 * KIB,
     gzip: 150 * KIB,

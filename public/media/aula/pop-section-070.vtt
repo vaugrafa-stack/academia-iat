@@ -1,16 +1,19 @@
 WEBVTT
 
-00:03.000 --> 00:06.800
+00:00.550 --> 00:05.158
+18.10.3 Zoneamento, cartografia e segurança
+
+00:05.667 --> 00:15.133
 O zoneamento deve ser estruturado por Unidades Territoriais Homogêneas resultantes da síntese das fragilidades e potencialidades naturais e antrópicas
 
-00:06.800 --> 00:10.400
+00:15.133 --> 00:24.867
 Cada zona deve apresentar delimitação, fundamento técnico, capacidade de suporte e diretrizes para usos permitidos, permissíveis e não permitidos
 
-00:10.400 --> 00:14.000
+00:24.867 --> 00:33.400
 A classificação do PACUERA não autoriza automaticamente atividade sujeita a licenciamento, aprovação municipal, outorga ou ato de outro órgão
 
-00:14.000 --> 00:17.600
+00:33.400 --> 00:41.000
 Os mapas devem utilizar a mesma base vetorial entregue, com tabela de atributos e arquivos de estilo compatíveis
 
-00:17.600 --> 00:21.200
-O TR prevê entrega em Geopackage ou ESRI File Geodatabase com arquivos de simbologia, controle de topologia, referência geodésica …
+00:41.000 --> 00:54.467
+O TR prevê entrega em Geopackage ou ESRI File Geodatabase com arquivos de simbologia, controle de topologia, referência geodésica, coerência temática e resolução mínima de 300 dpi para mapas inseridos no relatório

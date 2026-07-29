@@ -1,4 +1,10 @@
-import React, { useEffect, useLayoutEffect, useMemo, useState } from 'react';
+import React, {
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import {
   Activity,
   ArrowRight,
@@ -9,8 +15,10 @@ import {
   FileText,
   FlaskConical,
   Lightbulb,
+  ListFilter,
   Lock,
   RotateCcw,
+  Search,
   ShieldCheck,
   Table2,
   Trophy,
@@ -18,12 +26,145 @@ import {
 } from 'lucide-react';
 import { PageHeader } from './ui.jsx';
 import { AutoAvaliacao } from './painelAluno.jsx';
+import CaseAnswerSheet from './CaseAnswerSheet.jsx';
 import { buildScenarioDocument, minimumEvidenceRequired } from './scenarioDocuments.js';
 import { tracks } from './courseData.js';
 import { getLabSources, LAB_SOURCE_POLICY } from './labSources.js';
+import './laboratorio.css';
 
 function normalizar(valor = '') {
   return valor.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+}
+
+const LAB_DRAFT_VERSION = 1;
+const LAB_COMPLETION_HISTORY_LIMIT = 5;
+
+function ehRegistro(valor) {
+  return Boolean(valor) && typeof valor === 'object' && !Array.isArray(valor);
+}
+
+function conclusaoLaboratorioValida(registro) {
+  return Boolean(
+    ehRegistro(registro)
+    && registro.versao >= 3
+    && registro.status === 'concluido',
+  );
+}
+
+/**
+ * O progresso global aceita objetos extensíveis em `labs`. O rascunho continua
+ * aninhado e passa por uma normalização restrita ao caso antes de voltar à UI:
+ * respostas desconhecidas, títulos de evidência alheios e tipos incompatíveis
+ * são descartados.
+ */
+export function normalizarRascunhoLaboratorio(registro, scenario) {
+  const raw = registro?.rascunho;
+  if (!ehRegistro(raw) || raw.versao !== LAB_DRAFT_VERSION || !scenario) return null;
+
+  const respostas = {};
+  if (ehRegistro(raw.respostas)) {
+    (scenario.questions || []).forEach((_, index) => {
+      const resposta = raw.respostas[index];
+      if (resposta === 'sim' || resposta === 'nao') respostas[index] = resposta;
+    });
+  }
+
+  const evidenciasPermitidas = new Set(scenario.evidence || []);
+  const evidenciasConsultadas = Array.isArray(raw.evidenciasConsultadas)
+    ? [...new Set(raw.evidenciasConsultadas.filter(
+      (titulo) => typeof titulo === 'string' && evidenciasPermitidas.has(titulo),
+    ))]
+    : [];
+  const evidenciasAnotadas = {};
+  if (ehRegistro(raw.evidenciasAnotadas)) {
+    for (const titulo of evidenciasPermitidas) {
+      if (typeof raw.evidenciasAnotadas[titulo] === 'string') {
+        evidenciasAnotadas[titulo] = raw.evidenciasAnotadas[titulo];
+      }
+    }
+  }
+
+  const atualizadoEm = typeof raw.atualizadoEm === 'string'
+    && Number.isFinite(Date.parse(raw.atualizadoEm))
+    ? raw.atualizadoEm
+    : null;
+
+  return {
+    versao: LAB_DRAFT_VERSION,
+    atualizadoEm,
+    respostas,
+    texto: typeof raw.texto === 'string' ? raw.texto : '',
+    evidenciasConsultadas,
+    evidenciasAnotadas,
+    modo: raw.modo === 'desafio' ? 'desafio' : 'guiado',
+    nivelAjuda: Math.max(0, Math.min(3, Number(raw.nivelAjuda) || 0)),
+  };
+}
+
+function criarRascunhoLaboratorio({
+  answers,
+  reason,
+  seenEvidence,
+  evidenceNotes,
+  mode,
+  helpLevel,
+  atualizadoEm,
+}) {
+  return {
+    versao: LAB_DRAFT_VERSION,
+    atualizadoEm,
+    respostas: Object.fromEntries(
+      Object.entries(answers || {}).filter(([, value]) => value === 'sim' || value === 'nao'),
+    ),
+    texto: typeof reason === 'string' ? reason : '',
+    evidenciasConsultadas: Object.keys(seenEvidence || {}).filter((key) => seenEvidence[key]),
+    evidenciasAnotadas: Object.fromEntries(
+      Object.entries(evidenceNotes || {}).filter(([, value]) => typeof value === 'string'),
+    ),
+    modo: mode === 'desafio' ? 'desafio' : 'guiado',
+    nivelAjuda: Math.max(0, Math.min(3, Number(helpLevel) || 0)),
+  };
+}
+
+export function registrarRascunhoLaboratorio(registroAnterior, rascunho) {
+  if (conclusaoLaboratorioValida(registroAnterior)) {
+    return {
+      ...registroAnterior,
+      rascunho,
+    };
+  }
+  return {
+    versao: 3,
+    status: 'em_andamento',
+    date: rascunho.atualizadoEm,
+    rascunho,
+  };
+}
+
+function snapshotConclusaoLaboratorio(registro) {
+  const {
+    rascunho: _rascunho,
+    historicoConclusoes: _historico,
+    ...conclusao
+  } = registro;
+  return conclusao;
+}
+
+export function registrarConclusaoLaboratorio(registroAnterior, conclusaoAtual) {
+  const historicoExistente = Array.isArray(registroAnterior?.historicoConclusoes)
+    ? registroAnterior.historicoConclusoes.filter(ehRegistro)
+    : [];
+  const historicoConclusoes = conclusaoLaboratorioValida(registroAnterior)
+    ? [
+      ...historicoExistente,
+      snapshotConclusaoLaboratorio(registroAnterior),
+    ].slice(-LAB_COMPLETION_HISTORY_LIMIT)
+    : historicoExistente.slice(-LAB_COMPLETION_HISTORY_LIMIT);
+
+  return {
+    ...conclusaoAtual,
+    ...(historicoConclusoes.length ? { historicoConclusoes } : {}),
+  };
 }
 
 function bateTermo(texto, termo) {
@@ -51,6 +192,125 @@ function conferirElementos(cenario, texto) {
 
 function percentual(parte, total) {
   return total ? Math.round((parte / total) * 100) : 0;
+}
+
+export function criarCatalogoLaboratorio(scenarios = [], grupos = []) {
+  const scenarioById = new Map(scenarios.map((scenario) => [scenario.id, scenario]));
+  return grupos.flatMap((group) => (
+    group.ids
+      .map((id) => scenarioById.get(id))
+      .filter(Boolean)
+      .map((scenario) => ({
+        scenario,
+        group,
+        searchableText: normalizar([
+          scenario.label,
+          scenario.title,
+          scenario.type,
+          group.titulo,
+          group.nivel,
+          ...(scenario.facts || []),
+          ...(scenario.evidence || []),
+        ].join(' ')),
+      }))
+  ));
+}
+
+export function filtrarCatalogoLaboratorio(
+  catalogo = [],
+  { query = '', categoria = 'todas', complexidade = 'todas' } = {},
+) {
+  const normalizedQuery = normalizar(query).trim();
+  return catalogo.filter(({ group, searchableText }) => {
+    const matchesCategory = categoria === 'todas' || group.id === categoria;
+    const matchesComplexity = complexidade === 'todas' || group.nivel === complexidade;
+    const matchesQuery = !normalizedQuery || searchableText.includes(normalizedQuery);
+    return matchesCategory && matchesComplexity && matchesQuery;
+  });
+}
+
+export function resolverCasoInicialLaboratorio({
+  scenarios = [],
+  grupos = [],
+  labs = {},
+  initialScenarioId,
+} = {}) {
+  const validIds = new Set(scenarios.map((scenario) => scenario.id));
+  if (initialScenarioId && validIds.has(initialScenarioId)) return initialScenarioId;
+
+  let lastSavedId = null;
+  let lastSavedTime = Number.NEGATIVE_INFINITY;
+  for (const [id, attempt] of Object.entries(labs || {})) {
+    if (!validIds.has(id) || !attempt) continue;
+    const scenario = scenarios.find((candidate) => candidate.id === id);
+    const draft = normalizarRascunhoLaboratorio(attempt, scenario);
+    const parsed = Date.parse(draft?.atualizadoEm || attempt.date || '');
+    const timestamp = Number.isFinite(parsed) ? parsed : Number.NEGATIVE_INFINITY;
+    if (lastSavedId === null || timestamp >= lastSavedTime) {
+      lastSavedId = id;
+      lastSavedTime = timestamp;
+    }
+  }
+  if (lastSavedId) return lastSavedId;
+
+  const introductoryId = grupos
+    .flatMap((group) => group.ids)
+    .find((id) => validIds.has(id));
+  return introductoryId || scenarios[0]?.id || null;
+}
+
+export function conteudoAjudaLaboratorio(scenario, level = 0) {
+  const safeLevel = Math.max(0, Math.min(3, Number(level) || 0));
+  return {
+    level: safeLevel,
+    facts: safeLevel >= 1 ? [...(scenario?.facts || [])] : [],
+    evidence: safeLevel >= 1 ? [...(scenario?.evidence || [])] : [],
+    questions: safeLevel >= 2
+      ? (scenario?.questions || []).map((question) => question[0])
+      : [],
+    criteria: safeLevel >= 3
+      ? (scenario?.elementos || []).map((element) => element.rot)
+      : [],
+  };
+}
+
+export function perguntaBloqueadaLaboratorio(mode, questionIndex, answers = {}) {
+  if (mode === 'desafio') return false;
+  return Array.from(
+    { length: questionIndex },
+    (_, index) => Boolean(answers[index]),
+  ).some((answered) => !answered);
+}
+
+export function scrollLaboratorio(target, block = 'start') {
+  const reduceMotion = globalThis.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches;
+  target?.scrollIntoView({
+    behavior: reduceMotion ? 'auto' : 'smooth',
+    block,
+  });
+}
+
+function scrollToWorkspace() {
+  scrollLaboratorio(document.querySelector('.lab-workspace'));
+}
+
+function moveCatalogFocus(event, index) {
+  const keys = ['ArrowDown', 'ArrowRight', 'ArrowUp', 'ArrowLeft', 'Home', 'End'];
+  if (!keys.includes(event.key)) return;
+  const buttons = [...event.currentTarget
+    .closest('.lab-case-catalog')
+    ?.querySelectorAll('[data-lab-case]') || []];
+  if (!buttons.length) return;
+  event.preventDefault();
+  let nextIndex = index;
+  if (event.key === 'Home') nextIndex = 0;
+  else if (event.key === 'End') nextIndex = buttons.length - 1;
+  else if (event.key === 'ArrowDown' || event.key === 'ArrowRight') {
+    nextIndex = Math.min(buttons.length - 1, index + 1);
+  } else {
+    nextIndex = Math.max(0, index - 1);
+  }
+  buttons[nextIndex]?.focus();
 }
 
 export function calcularIndicadoresLaboratorio({
@@ -169,13 +429,24 @@ function DecisionProvenance({ provenance, lessonMap }) {
   );
 }
 
-function EvidenceDocument({ document, note, onNote, onClose, readOnly = false }) {
+function EvidenceDocument({
+  document,
+  note,
+  onNote,
+  onClose,
+  panelId,
+  panelRef,
+  readOnly = false,
+}) {
   if (!document) return null;
   return (
     <article
+      id={panelId}
+      ref={panelRef}
       className="evidence-document"
       data-watermark={document.watermark}
       aria-labelledby={`evidence-${document.id}`}
+      tabIndex={-1}
     >
       <header>
         <div>
@@ -263,6 +534,97 @@ function DecisionReview({ scenario, answers, lessonMap }) {
   );
 }
 
+const HELP_LEVELS = [
+  {
+    action: 'Ver o que observar',
+    description: 'Reúne os fatos declarados e as peças que precisam ser confrontadas.',
+  },
+  {
+    action: 'Abrir perguntas-guia',
+    description: 'Transforma o percurso em perguntas, sem indicar respostas.',
+  },
+  {
+    action: 'Mostrar critérios mínimos',
+    description: 'Exibe os pontos que uma fundamentação defensável precisa abordar.',
+  },
+];
+
+function ProgressiveHelp({ scenario, level, onAdvance, mode }) {
+  const content = conteudoAjudaLaboratorio(scenario, level);
+  const next = HELP_LEVELS[level];
+  return (
+    <section className={`lab-help-ladder mode-${mode}`} aria-labelledby="lab-help-title">
+      <header>
+        <div>
+          <Lightbulb aria-hidden="true" />
+          <div>
+            <h3 id="lab-help-title">Ajuda progressiva</h3>
+            <p>
+              Consulte somente o apoio necessário. As respostas esperadas continuam
+              reservadas para o debriefing.
+            </p>
+          </div>
+        </div>
+        <span aria-label={`Nível de ajuda ${content.level} de 3`}>
+          {content.level}/3
+        </span>
+      </header>
+
+      {content.level === 0 && (
+        <p className="lab-help-empty">
+          {mode === 'desafio'
+            ? 'No modo Desafio, o apoio começa fechado.'
+            : 'Comece pelas peças do caso. Se travar, abra a orientação em etapas.'}
+        </p>
+      )}
+
+      {content.level >= 1 && (
+        <div className="lab-help-section">
+          <strong>1. Fatos e peças a confrontar</strong>
+          <div className="lab-help-columns">
+            <ul>
+              {content.facts.map((fact) => <li key={fact}>{fact}</li>)}
+            </ul>
+            <ul>
+              {content.evidence.map((title) => <li key={title}>{title}</li>)}
+            </ul>
+          </div>
+        </div>
+      )}
+
+      {content.level >= 2 && (
+        <div className="lab-help-section">
+          <strong>2. Perguntas para organizar o raciocínio</strong>
+          <ol>
+            {content.questions.map((question) => <li key={question}>{question}</li>)}
+          </ol>
+        </div>
+      )}
+
+      {content.level >= 3 && (
+        <div className="lab-help-section">
+          <strong>3. Conteúdo mínimo da fundamentação</strong>
+          <ul className="lab-help-criteria">
+            {content.criteria.map((criterion) => (
+              <li key={criterion}><Circle aria-hidden="true" /> {criterion}</li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      {next && (
+        <button type="button" onClick={onAdvance}>
+          <span>
+            <strong>{next.action}</strong>
+            <small>{next.description}</small>
+          </span>
+          <ArrowRight aria-hidden="true" />
+        </button>
+      )}
+    </section>
+  );
+}
+
 export default function Laboratorio({
   state,
   setState,
@@ -272,10 +634,12 @@ export default function Laboratorio({
   initialScenarioId,
   onSelectScenario,
 }) {
-  const initialId = scenarios.some((item) => item.id === initialScenarioId)
-    ? initialScenarioId
-    : scenarios[2]?.id || scenarios[0]?.id;
-  const [selected, setSelected] = useState(initialId);
+  const [selected, setSelected] = useState(() => resolverCasoInicialLaboratorio({
+    scenarios,
+    grupos,
+    labs: state.labs,
+    initialScenarioId,
+  }));
   const [answers, setAnswers] = useState({});
   const [reason, setReason] = useState('');
   const [showResult, setShowResult] = useState(false);
@@ -283,9 +647,52 @@ export default function Laboratorio({
   const [seenEvidence, setSeenEvidence] = useState({});
   const [evidenceNotes, setEvidenceNotes] = useState({});
   const [activeEvidence, setActiveEvidence] = useState(null);
+  const [query, setQuery] = useState('');
+  const [categoryFilter, setCategoryFilter] = useState('todas');
+  const [complexityFilter, setComplexityFilter] = useState('todas');
+  const [mode, setMode] = useState('guiado');
+  const [helpLevels, setHelpLevels] = useState({});
+  const evidencePanelRef = useRef(null);
+  const evidenceTriggerRef = useRef(null);
 
-  const scenario = scenarios.find((item) => item.id === selected) || scenarios[0];
-  const group = grupos.find((item) => item.ids.includes(scenario.id));
+  const catalog = useMemo(
+    () => criarCatalogoLaboratorio(scenarios, grupos),
+    [scenarios, grupos],
+  );
+  const filteredCatalog = useMemo(
+    () => filtrarCatalogoLaboratorio(catalog, {
+      query,
+      categoria: categoryFilter,
+      complexidade: complexityFilter,
+    }),
+    [catalog, query, categoryFilter, complexityFilter],
+  );
+  const catalogProgress = useMemo(
+    () => catalog.reduce((summary, entry) => {
+      const saved = state.labs?.[entry.scenario.id];
+      if (normalizarRascunhoLaboratorio(saved, entry.scenario)) {
+        summary.inProgress += 1;
+      } else if (
+        conclusaoLaboratorioValida(saved)
+        || (saved && saved.status == null)
+      ) {
+        summary.completed += 1;
+      }
+      return summary;
+    }, { completed: 0, inProgress: 0 }),
+    [catalog, state.labs],
+  );
+  const selectedEntry = catalog.find((entry) => entry.scenario.id === selected) || catalog[0];
+  const scenario = selectedEntry?.scenario || scenarios[0];
+  const group = selectedEntry?.group
+    || grupos.find((item) => item.ids.includes(scenario.id));
+  const selectedSaved = state.labs?.[scenario.id];
+  const selectedDraft = normalizarRascunhoLaboratorio(selectedSaved, scenario);
+  const complexities = useMemo(
+    () => [...new Set(grupos.map((item) => item.nivel))],
+    [grupos],
+  );
+  const helpLevel = helpLevels[selected] || 0;
   const requiresAllEvidence = ['Avançado', 'Especialista'].includes(group?.nivel);
   const minimumEvidence = requiresAllEvidence
     ? scenario.evidence.length
@@ -304,6 +711,27 @@ export default function Laboratorio({
   const ready = answered === scenario.questions.length
     && reviewedCount >= minimumEvidence
     && reason.trim().length >= minimumReasonLength;
+  const nextUnanswered = scenario.questions.findIndex((_, index) => !answers[index]);
+  const readiness = [
+    {
+      label: 'Responder às decisões',
+      detail: `${answered}/${scenario.questions.length}`,
+      done: answered === scenario.questions.length,
+      percent: percentual(answered, scenario.questions.length),
+    },
+    {
+      label: 'Analisar as evidências mínimas',
+      detail: `${reviewedCount}/${minimumEvidence}`,
+      done: reviewedCount >= minimumEvidence,
+      percent: Math.min(100, percentual(reviewedCount, minimumEvidence)),
+    },
+    {
+      label: 'Registrar a fundamentação',
+      detail: `${reason.trim().length}/${minimumReasonLength}`,
+      done: reason.trim().length >= minimumReasonLength,
+      percent: Math.min(100, percentual(reason.trim().length, minimumReasonLength)),
+    },
+  ];
 
   const { rubrica: rubric, indiceCompletude: rubricTotal } = calcularIndicadoresLaboratorio({
     decisoesAlinhadas: score,
@@ -326,59 +754,176 @@ export default function Laboratorio({
 
   useLayoutEffect(() => {
     const saved = state.labs?.[selected];
-    const savedAnswers = saved?.versao >= 3 && saved?.respostas
-      ? saved.respostas
-      : {};
+    const draft = normalizarRascunhoLaboratorio(saved, scenario);
+    const source = draft || saved;
+    const savedAnswers = draft?.respostas
+      || (saved?.versao >= 3 && saved?.respostas
+        ? saved.respostas
+        : {});
     setAnswers(savedAnswers);
-    setReason(saved?.texto || '');
-    setShowResult(Boolean(saved?.versao >= 3 && saved?.status === 'concluido'));
+    setReason(source?.texto || '');
+    setShowResult(Boolean(
+      !draft
+      && saved?.versao >= 3
+      && saved?.status === 'concluido',
+    ));
     setShowSummary(false);
     setSeenEvidence(Object.fromEntries(
-      (saved?.evidenciasConsultadas || []).map((title) => [title, true]),
+      (source?.evidenciasConsultadas || []).map((title) => [title, true]),
     ));
-    setEvidenceNotes(saved?.evidenciasAnotadas || {});
+    setEvidenceNotes(source?.evidenciasAnotadas || {});
     setActiveEvidence(null);
+    evidenceTriggerRef.current = null;
+    setMode(source?.modo === 'desafio' ? 'desafio' : 'guiado');
+    setHelpLevels((current) => ({
+      ...current,
+      [selected]: Math.max(0, Math.min(3, source?.nivelAjuda || 0)),
+    }));
   }, [selected]);
+
+  useEffect(() => {
+    if (!activeEvidence) return undefined;
+    const frame = requestAnimationFrame(() => evidencePanelRef.current?.focus());
+    return () => cancelAnimationFrame(frame);
+  }, [activeEvidence]);
+
+  function salvarRascunho(patch = {}) {
+    const atualizadoEm = new Date().toISOString();
+    const rascunho = criarRascunhoLaboratorio({
+      answers: patch.answers ?? answers,
+      reason: patch.reason ?? reason,
+      seenEvidence: patch.seenEvidence ?? seenEvidence,
+      evidenceNotes: patch.evidenceNotes ?? evidenceNotes,
+      mode: patch.mode ?? mode,
+      helpLevel: patch.helpLevel ?? helpLevel,
+      atualizadoEm,
+    });
+    setState((current) => ({
+      ...current,
+      labs: {
+        ...(current.labs || {}),
+        [scenario.id]: registrarRascunhoLaboratorio(
+          current.labs?.[scenario.id],
+          rascunho,
+        ),
+      },
+    }));
+  }
+
+  function selecionarModo(nextMode) {
+    setMode(nextMode);
+    salvarRascunho({ mode: nextMode });
+  }
+
+  function responder(index, value) {
+    const nextAnswers = { ...answers, [index]: value };
+    setAnswers(nextAnswers);
+    salvarRascunho({ answers: nextAnswers });
+  }
+
+  function atualizarFundamentacao(value) {
+    setReason(value);
+    salvarRascunho({ reason: value });
+  }
+
+  function avancarAjuda() {
+    const nextLevel = Math.min(3, helpLevel + 1);
+    setHelpLevels((current) => ({
+      ...current,
+      [selected]: nextLevel,
+    }));
+    salvarRascunho({ helpLevel: nextLevel });
+  }
+
+  function reiniciarTentativa() {
+    const nextAnswers = {};
+    const nextSeenEvidence = {};
+    const nextEvidenceNotes = {};
+    setAnswers(nextAnswers);
+    setReason('');
+    setShowResult(false);
+    setShowSummary(false);
+    setSeenEvidence(nextSeenEvidence);
+    setEvidenceNotes(nextEvidenceNotes);
+    setActiveEvidence(null);
+    setMode('guiado');
+    setHelpLevels((current) => ({ ...current, [selected]: 0 }));
+    salvarRascunho({
+      answers: nextAnswers,
+      reason: '',
+      seenEvidence: nextSeenEvidence,
+      evidenceNotes: nextEvidenceNotes,
+      mode: 'guiado',
+      helpLevel: 0,
+    });
+  }
 
   function selectScenario(id) {
     setSelected(id);
     onSelectScenario?.(id);
   }
 
-  function openEvidence(title, index) {
-    setSeenEvidence((current) => ({ ...current, [title]: true }));
+  function openEvidence(title, index, trigger) {
+    const nextSeenEvidence = { ...seenEvidence, [title]: true };
+    evidenceTriggerRef.current = trigger || null;
+    setSeenEvidence(nextSeenEvidence);
     setActiveEvidence(buildScenarioDocument(scenario, title, index));
+    salvarRascunho({ seenEvidence: nextSeenEvidence });
+  }
+
+  function closeEvidence() {
+    const trigger = evidenceTriggerRef.current;
+    setActiveEvidence(null);
+    requestAnimationFrame(() => trigger?.focus?.());
+  }
+
+  function atualizarNotaEvidencia(title, value) {
+    const nextEvidenceNotes = {
+      ...evidenceNotes,
+      [title]: value,
+    };
+    setEvidenceNotes(nextEvidenceNotes);
+    salvarRascunho({ evidenceNotes: nextEvidenceNotes });
   }
 
   function finish() {
     if (!ready) return;
     const now = new Date().toISOString();
     setShowResult(true);
-    setState((current) => ({
-      ...current,
-      labs: {
-        ...current.labs,
-        [scenario.id]: {
-          score,
-          total: scenario.questions.length,
-          date: now,
-          status: 'concluido',
-          respostas: { ...answers },
-          texto: reason,
-          elementos: conference.tocados,
-          elementosTotal: conference.total,
-          evidenciasConsultadas: Object.keys(seenEvidence).filter((key) => seenEvidence[key]),
-          evidenciasAnotadas: Object.fromEntries(
-            Object.entries(evidenceNotes).filter(([, value]) => value.trim().length >= 40),
+    setState((current) => {
+      const conclusaoAtual = {
+        score,
+        total: scenario.questions.length,
+        date: now,
+        status: 'concluido',
+        respostas: { ...answers },
+        texto: reason,
+        elementos: conference.tocados,
+        elementosTotal: conference.total,
+        evidenciasConsultadas: Object.keys(seenEvidence).filter((key) => seenEvidence[key]),
+        evidenciasAnotadas: Object.fromEntries(
+          Object.entries(evidenceNotes).filter(([, value]) => value.trim().length >= 40),
+        ),
+        rubrica: rubric,
+        rubricaTotal: rubricTotal,
+        indiceCompletude: rubricTotal,
+        conferenciaTecnicaPendente: true,
+        modo: mode,
+        apoioUtilizado: helpLevel > 0,
+        nivelAjuda: helpLevel,
+        versao: 3,
+      };
+      return {
+        ...current,
+        labs: {
+          ...(current.labs || {}),
+          [scenario.id]: registrarConclusaoLaboratorio(
+            current.labs?.[scenario.id],
+            conclusaoAtual,
           ),
-          rubrica: rubric,
-          rubricaTotal: rubricTotal,
-          indiceCompletude: rubricTotal,
-          conferenciaTecnicaPendente: true,
-          versao: 3,
         },
-      },
-    }));
+      };
+    });
   }
 
   return (
@@ -399,76 +944,233 @@ export default function Laboratorio({
         </p>
       </div>
 
-      <div className="lab-grupos">
-        {grupos.map((item) => {
-          const cases = item.ids.map((id) => scenarios.find((candidate) => candidate.id === id)).filter(Boolean);
-          const completed = cases.filter((candidate) => state.labs?.[candidate.id]).length;
-          return (
-            <section className="lab-grupo" key={item.id}>
-              <header>
-                <div>
-                  <h3>{item.titulo}</h3>
-                  <p>{item.resumo}</p>
-                </div>
-                <span className={`lg-nivel n-${item.id}`}>{item.nivel}</span>
-              </header>
-              <div className="scenario-tabs" role="list" aria-label={`Casos de ${item.titulo}`}>
-                {cases.map((candidate) => (
+      <section className="lab-catalog" aria-labelledby="lab-catalog-title">
+        <header className="lab-catalog-header">
+          <div>
+            <span className="lab-eyebrow"><ListFilter aria-hidden="true" /> Biblioteca de casos</span>
+            <h2 id="lab-catalog-title">Escolha o caso certo para praticar</h2>
+            <p>
+              Pesquise um tema ou combine categoria e complexidade. Seu último caso
+              praticado é retomado automaticamente.
+            </p>
+          </div>
+          <span className="lab-catalog-total">
+            {catalogProgress.completed}
+            <small>
+              de {catalog.length} concluídos · {catalogProgress.inProgress} em andamento
+            </small>
+          </span>
+        </header>
+
+        <div className="lab-catalog-toolbar">
+          <label className="lab-catalog-search" htmlFor="lab-case-search">
+            <span>Pesquisar casos</span>
+            <div>
+              <Search aria-hidden="true" />
+              <input
+                id="lab-case-search"
+                type="search"
+                value={query}
+                onChange={(event) => setQuery(event.target.value)}
+                placeholder="Ex.: transição, PACUERA, condicionantes"
+              />
+            </div>
+          </label>
+          <label htmlFor="lab-category-filter">
+            <span>Categoria</span>
+            <select
+              id="lab-category-filter"
+              value={categoryFilter}
+              onChange={(event) => setCategoryFilter(event.target.value)}
+            >
+              <option value="todas">Todas as categorias</option>
+              {grupos.map((item) => (
+                <option value={item.id} key={item.id}>{item.titulo}</option>
+              ))}
+            </select>
+          </label>
+          <label htmlFor="lab-complexity-filter">
+            <span>Complexidade</span>
+            <select
+              id="lab-complexity-filter"
+              value={complexityFilter}
+              onChange={(event) => setComplexityFilter(event.target.value)}
+            >
+              <option value="todas">Todas as complexidades</option>
+              {complexities.map((complexity) => (
+                <option value={complexity} key={complexity}>{complexity}</option>
+              ))}
+            </select>
+          </label>
+        </div>
+
+        <div className="lab-catalog-results">
+          <p aria-live="polite">
+            <strong>{filteredCatalog.length}</strong>
+            {' '}{filteredCatalog.length === 1 ? 'caso encontrado' : 'casos encontrados'}
+          </p>
+          {(query || categoryFilter !== 'todas' || complexityFilter !== 'todas') && (
+            <button
+              type="button"
+              onClick={() => {
+                setQuery('');
+                setCategoryFilter('todas');
+                setComplexityFilter('todas');
+              }}
+            >
+              Limpar filtros
+            </button>
+          )}
+        </div>
+
+        {filteredCatalog.length > 0 ? (
+          <ol className="lab-case-catalog" aria-label="Catálogo de casos">
+            {filteredCatalog.map(({ scenario: candidate, group: candidateGroup }, index) => {
+              const saved = state.labs?.[candidate.id];
+              const draft = normalizarRascunhoLaboratorio(saved, candidate);
+              const practiced = conclusaoLaboratorioValida(saved)
+                || Boolean(saved && saved.status == null);
+              const isSelected = selected === candidate.id;
+              return (
+                <li key={candidate.id}>
                   <button
                     type="button"
-                    className={selected === candidate.id ? 'active' : ''}
-                    aria-pressed={selected === candidate.id}
-                    onClick={() => {
-                      selectScenario(candidate.id);
-                      setTimeout(
-                        () => document.querySelector('.lab-workspace')?.scrollIntoView({ behavior: 'smooth', block: 'start' }),
-                        70,
-                      );
-                    }}
-                    key={candidate.id}
+                    data-lab-case={candidate.id}
+                    className={isSelected ? 'active' : ''}
+                    aria-pressed={isSelected}
+                    onKeyDown={(event) => moveCatalogFocus(event, index)}
+                    onClick={() => selectScenario(candidate.id)}
                   >
-                    {candidate.label}
-                    {state.labs?.[candidate.id] && <CheckCircle2 aria-label="Caso já praticado" />}
+                    <span>
+                      <small>{candidateGroup.titulo} · {candidateGroup.nivel}</small>
+                      <strong>{candidate.label}</strong>
+                    </span>
+                    {draft ? (
+                      <span className="lab-case-status in-progress">
+                        <Activity aria-hidden="true" />
+                        Em andamento
+                      </span>
+                    ) : practiced ? (
+                      <span className="lab-case-status">
+                        <CheckCircle2 aria-hidden="true" />
+                        {saved.nivelAjuda > 0 ? 'Praticado com apoio' : 'Praticado'}
+                      </span>
+                    ) : (
+                      <ArrowRight aria-hidden="true" />
+                    )}
                   </button>
-                ))}
-              </div>
-              <small className="lg-progresso">{completed} de {cases.length} praticados</small>
-            </section>
-          );
-        })}
-      </div>
+                </li>
+              );
+            })}
+          </ol>
+        ) : (
+          <div className="lab-catalog-empty" role="status">
+            <Search aria-hidden="true" />
+            <strong>Nenhum caso corresponde aos filtros.</strong>
+            <span>Experimente remover um filtro ou buscar por outro termo.</span>
+          </div>
+        )}
 
-      <div className="lab-workspace">
+        <article className="lab-selected-overview" aria-live="polite">
+          <div>
+            <span className="lab-eyebrow">Caso selecionado · {group?.titulo}</span>
+            <h3>{scenario.label}</h3>
+            <p>{scenario.title}</p>
+            <ul>
+              {scenario.facts.slice(0, 2).map((fact) => <li key={fact}>{fact}</li>)}
+            </ul>
+          </div>
+          <div className="lab-selected-meta" aria-label="Resumo do caso selecionado">
+            <span><strong>{group?.nivel || 'Prática'}</strong>complexidade</span>
+            <span><strong>{scenario.evidence.length}</strong>evidências</span>
+            <span><strong>{scenario.questions.length}</strong>decisões</span>
+            <button type="button" onClick={scrollToWorkspace}>
+              {selectedDraft
+                ? 'Continuar caso'
+                : selectedSaved
+                  ? 'Rever caso'
+                  : 'Começar caso'}
+              <ArrowRight aria-hidden="true" />
+            </button>
+          </div>
+        </article>
+      </section>
+
+      <section className="lab-mode-bar" aria-labelledby="lab-mode-title">
+        <div>
+          <span className="lab-eyebrow">Formato da prática</span>
+          <h2 id="lab-mode-title">Como você quer resolver este caso?</h2>
+          <p>
+            {mode === 'guiado'
+              ? 'No modo Guiado, as decisões são liberadas em sequência e o apoio pode ser aberto por etapas.'
+              : 'No modo Desafio, todas as decisões ficam disponíveis desde o início e o apoio começa fechado.'}
+          </p>
+        </div>
+        <div className="lab-mode-options" role="group" aria-label="Modo de resolução">
+          <button
+            type="button"
+            className={mode === 'guiado' ? 'active' : ''}
+            aria-pressed={mode === 'guiado'}
+            onClick={() => selecionarModo('guiado')}
+          >
+            Guiado
+            <small>Sequência orientada</small>
+          </button>
+          <button
+            type="button"
+            className={mode === 'desafio' ? 'active' : ''}
+            aria-pressed={mode === 'desafio'}
+            onClick={() => selecionarModo('desafio')}
+          >
+            Desafio
+            <small>Decisões livres</small>
+          </button>
+        </div>
+      </section>
+
+      <div className={`lab-workspace mode-${mode}`}>
         <section className="lab-canvas" key={selected}>
           <div className="case-header">
             <div>
               <small>CENÁRIO · {scenario.type} · {group?.nivel || 'Prática'}</small>
               <h2>{scenario.title}</h2>
             </div>
-            <button
-              type="button"
-              className={showSummary ? 'active' : ''}
-              aria-expanded={showSummary}
-              onClick={() => setShowSummary((current) => !current)}
-            >
-              <FileText aria-hidden="true" /> Resumo do caso
-            </button>
+            <div className="case-header-actions">
+              <button
+                type="button"
+                className={showSummary ? 'active' : ''}
+                aria-expanded={showSummary}
+                onClick={() => setShowSummary((current) => !current)}
+              >
+                <FileText aria-hidden="true" /> Resumo do caso
+              </button>
+              <div
+                className="lab-answer-sheet-slot"
+                data-answer-sheet-slot={scenario.id}
+              >
+                <CaseAnswerSheet
+                  caseData={scenario}
+                  groups={grupos}
+                  lessonMap={lessonMap}
+                />
+              </div>
+            </div>
           </div>
 
           {showSummary && (
             <div className="case-summary">
               <p><strong>{scenario.title}</strong>, cenário de {scenario.type}.</p>
-              <ul>{scenario.facts.slice(0, 2).map((fact) => <li key={fact}>{fact}</li>)}</ul>
+              <ul>{scenario.facts.map((fact) => <li key={fact}>{fact}</li>)}</ul>
               <p>
                 {scenario.evidence.length} evidências · {scenario.questions.length} decisões ·
-                debriefing e rubrica ao finalizar. Os demais dados estão deliberadamente
-                distribuídos nas peças para evitar antecipar o achado.
+                debriefing e rubrica ao finalizar. As peças reúnem os dados complementares
+                que precisam ser confrontados durante a análise.
               </p>
             </div>
           )}
 
           <div className="case-facts" aria-label="Fatos declarados no caso">
-            {scenario.facts.slice(0, 2).map((fact) => (
+            {scenario.facts.map((fact) => (
               <span key={fact}><Activity aria-hidden="true" />{fact}</span>
             ))}
           </div>
@@ -492,6 +1194,13 @@ export default function Laboratorio({
             </figure>
           )}
 
+          <ProgressiveHelp
+            scenario={scenario}
+            level={helpLevel}
+            mode={mode}
+            onAdvance={avancarAjuda}
+          />
+
           <div className="decision-path" aria-label="Percurso de decisão">
             <div className="path-node complete"><span>1</span><strong>Triagem</strong><Check aria-hidden="true" /></div>
             {scenario.questions.map((question, index) => (
@@ -499,9 +1208,12 @@ export default function Laboratorio({
                 <i className={answers[index] ? 'active' : ''} aria-hidden="true" />
                 <button
                   type="button"
-                  className={`path-node ${answers[index] ? 'complete ' : ''}${index === answered ? 'current' : ''}`}
+                  className={`path-node ${answers[index] ? 'complete ' : ''}${index === nextUnanswered ? 'current' : ''}`}
                   aria-label={`Ir para a decisão ${index + 1}: ${scenario.steps?.[index] || `Etapa ${index + 2}`}`}
-                  onClick={() => document.getElementById(`lab-question-${index}`)?.scrollIntoView({ behavior: 'smooth', block: 'center' })}
+                  onClick={() => scrollLaboratorio(
+                    document.getElementById(`lab-question-${index}`),
+                    'center',
+                  )}
                 >
                   <span>{index + 2}</span>
                   <strong>{scenario.steps?.[index] || `Etapa ${index + 2}`}</strong>
@@ -528,8 +1240,9 @@ export default function Laboratorio({
                   type="button"
                   key={title}
                   className={seenEvidence[title] ? 'seen' : ''}
-                  aria-pressed={Boolean(seenEvidence[title])}
-                  onClick={() => openEvidence(title, index)}
+                  aria-expanded={activeEvidence?.title === title}
+                  aria-controls={`evidence-panel-${scenario.id}`}
+                  onClick={(event) => openEvidence(title, index, event.currentTarget)}
                 >
                   <FileText aria-hidden="true" />
                   <span>{title}<small>{reviewedEvidence.includes(title) ? 'Análise registrada' : seenEvidence[title] ? 'Aberta · falta registrar a análise' : 'Documento sintético do cenário'}</small></span>
@@ -540,49 +1253,51 @@ export default function Laboratorio({
                 document={activeEvidence}
                 note={activeEvidence ? evidenceNotes[activeEvidence.title] || '' : ''}
                 readOnly={showResult}
-                onNote={(value) => setEvidenceNotes((current) => ({
-                  ...current,
-                  [activeEvidence.title]: value,
-                }))}
-                onClose={() => setActiveEvidence(null)}
+                panelId={`evidence-panel-${scenario.id}`}
+                panelRef={evidencePanelRef}
+                onNote={(value) => atualizarNotaEvidencia(activeEvidence.title, value)}
+                onClose={closeEvidence}
               />
             </div>
 
             <div className="question-stack">
               <h3>Decisões do percurso</h3>
-              {scenario.questions.map((question, index) => (
-                <fieldset
-                  id={`lab-question-${index}`}
-                  key={question[0]}
-                  className={index > answered ? 'locked' : ''}
-                >
-                  <legend>{index + 1}. {question[0]}</legend>
-                  {index > answered ? (
-                    <span><Lock aria-hidden="true" /> Responda à etapa anterior</span>
-                  ) : (
-                    <div>
-                      <button
-                        type="button"
-                        disabled={showResult}
-                        className={answers[index] === 'sim' ? 'selected' : ''}
-                        aria-pressed={answers[index] === 'sim'}
-                        onClick={() => setAnswers((current) => ({ ...current, [index]: 'sim' }))}
-                      >
-                        Sim
-                      </button>
-                      <button
-                        type="button"
-                        disabled={showResult}
-                        className={answers[index] === 'nao' ? 'selected' : ''}
-                        aria-pressed={answers[index] === 'nao'}
-                        onClick={() => setAnswers((current) => ({ ...current, [index]: 'nao' }))}
-                      >
-                        Não
-                      </button>
-                    </div>
-                  )}
-                </fieldset>
-              ))}
+              {scenario.questions.map((question, index) => {
+                const locked = perguntaBloqueadaLaboratorio(mode, index, answers);
+                return (
+                  <fieldset
+                    id={`lab-question-${index}`}
+                    key={question[0]}
+                    className={locked ? 'locked' : ''}
+                  >
+                    <legend>{index + 1}. {question[0]}</legend>
+                    {locked ? (
+                      <span><Lock aria-hidden="true" /> Responda à etapa anterior</span>
+                    ) : (
+                      <div>
+                        <button
+                          type="button"
+                          disabled={showResult}
+                          className={answers[index] === 'sim' ? 'selected' : ''}
+                          aria-pressed={answers[index] === 'sim'}
+                          onClick={() => responder(index, 'sim')}
+                        >
+                          Sim
+                        </button>
+                        <button
+                          type="button"
+                          disabled={showResult}
+                          className={answers[index] === 'nao' ? 'selected' : ''}
+                          aria-pressed={answers[index] === 'nao'}
+                          onClick={() => responder(index, 'nao')}
+                        >
+                          Não
+                        </button>
+                      </div>
+                    )}
+                  </fieldset>
+                );
+              })}
             </div>
           </div>
         </section>
@@ -598,17 +1313,25 @@ export default function Laboratorio({
             id="lab-reason"
             value={reason}
             readOnly={showResult}
-            onChange={(event) => setReason(event.target.value)}
+            onChange={(event) => atualizarFundamentacao(event.target.value)}
             placeholder="Escreva uma fundamentação rastreável. Cite as peças consultadas e explique o efeito das lacunas..."
           />
 
           <div className="decision-readiness">
-            <span>Decisões <b>{answered}/{scenario.questions.length}</b></span>
-            <i><em style={{ width: `${percentual(answered, scenario.questions.length)}%` }} /></i>
-            <span>Evidências analisadas <b>{reviewedCount}/{minimumEvidence} mín.</b></span>
-            <i><em style={{ width: `${Math.min(100, percentual(reviewedCount, minimumEvidence))}%` }} /></i>
-            <span>Fundamentação <b>{reason.trim().length}/{minimumReasonLength} caracteres</b></span>
-            <i><em style={{ width: `${Math.min(100, percentual(reason.trim().length, minimumReasonLength))}%` }} /></i>
+            <strong>Critérios para finalizar</strong>
+            <ul>
+              {readiness.map((item) => (
+                <li className={item.done ? 'complete' : ''} key={item.label}>
+                  {item.done
+                    ? <CheckCircle2 aria-hidden="true" />
+                    : <Circle aria-hidden="true" />}
+                  <span>
+                    <span>{item.label}<b>{item.detail}</b></span>
+                    <i><em style={{ width: `${item.percent}%` }} /></i>
+                  </span>
+                </li>
+              ))}
+            </ul>
           </div>
 
           <p className="lab-readiness-note" aria-live="polite">
@@ -674,10 +1397,7 @@ export default function Laboratorio({
               )}
               <button
                 type="button"
-                onClick={() => {
-                  setShowResult(false);
-                  setActiveEvidence(null);
-                }}
+                onClick={reiniciarTentativa}
               >
                 <RotateCcw aria-hidden="true" /> Revisar e iniciar nova tentativa
               </button>

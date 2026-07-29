@@ -22,15 +22,28 @@ function normalizePublicPath(relativePath) {
 async function mediaItem(relativePath) {
   const { normalized, absolutePath } = normalizePublicPath(relativePath);
   try {
-    const info = await stat(absolutePath);
-    if (!info.isFile()) {
-      throw new Error(`Mídia esperada não é arquivo: ${normalized}`);
-    }
-    return { path: normalized, bytes: info.size };
+    const bytes = await measureMediaBytes(normalized, absolutePath);
+    return { path: normalized, bytes };
   } catch (error) {
     if (error?.code === 'ENOENT' || error?.code === 'ENOTDIR') return null;
     throw error;
   }
+}
+
+export function normalizedVttByteLength(contents) {
+  const normalized = String(contents).replace(/\r\n?/g, '\n');
+  return Buffer.byteLength(normalized, 'utf8');
+}
+
+export async function measureMediaBytes(relativePath, absolutePath) {
+  const info = await stat(absolutePath);
+  if (!info.isFile()) {
+    throw new Error(`Mídia esperada não é arquivo: ${relativePath}`);
+  }
+  if (!relativePath.toLowerCase().endsWith('.vtt')) return info.size;
+
+  const contents = await readFile(absolutePath, 'utf8');
+  return normalizedVttByteLength(contents);
 }
 
 export async function buildOfflinePayload() {

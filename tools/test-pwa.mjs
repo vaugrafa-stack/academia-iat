@@ -163,6 +163,8 @@ function codigoDeTeste(versao = 'build-a', revisoesMidia = {
       `${base}manifest.webmanifest`,
       `${base}icone-192.png`,
       `${base}icone-512.png`,
+      `${base}media/learning-stage/professor-sprite.webp`,
+      `${base}media/learning-stage/thematic-atlas.webp`,
     ],
     cachePrefix: prefixo,
     cacheMidia: `${prefixo}media:v1`,
@@ -182,6 +184,15 @@ async function testarGeracao() {
     await writeFile(join(temporario, 'assets', 'app-abc.js'), 'console.log("ok")');
     await writeFile(join(temporario, 'icone-192.png'), 'icone-192');
     await writeFile(join(temporario, 'icone-512.png'), 'icone-512');
+    await mkdir(join(temporario, 'media', 'learning-stage'), { recursive: true });
+    await writeFile(
+      join(temporario, 'media', 'learning-stage', 'professor-sprite.webp'),
+      'professor',
+    );
+    await writeFile(
+      join(temporario, 'media', 'learning-stage', 'thematic-atlas.webp'),
+      'cenarios',
+    );
 
     const primeira = await gerarArtefatosPwa({
       diretorio: temporario,
@@ -229,6 +240,17 @@ async function testarInstalacaoEUpgrade() {
   const nomesAposInstall = await runtime.caches.keys();
   const nucleoAtual = nomesAposInstall.find((nome) => nome.endsWith('core:build-a'));
   assert.ok(nucleoAtual, 'núcleo atual deve estar em cache');
+  const respostaProfessor = await runtime.disparar('fetch', {
+    request: new Request(
+      `${ORIGIN}/academia-iat/media/learning-stage/professor-sprite.webp`,
+    ),
+  });
+  assert.equal(respostaProfessor.status, 200);
+  assert.match(
+    await respostaProfessor.text(),
+    /núcleo:/,
+    'palco compartilhado deve abrir a partir do núcleo offline',
+  );
 
   await runtime.caches.open('outro-app:core:123');
   await runtime.caches.open('academia-iat:academia-iat:core:build-antigo');
@@ -278,10 +300,24 @@ async function testarInstalacaoEUpgrade() {
 
 async function testarRangeEDownloadVerificavel() {
   const bytes = Uint8Array.from({ length: 10 }, (_, indice) => indice);
+  let requisicoesParciais = 0;
   let requisicoesCompletas = 0;
   const runtime = criarRuntime(codigoDeTeste(), async (pedido) => {
     const url = chaveDoPedido(pedido);
-    if (url.includes('/media/')) {
+    if (url.includes('/media/aula/')) {
+      const range = pedido.headers.get('range');
+      if (range) {
+        requisicoesParciais += 1;
+        assert.equal(range, 'bytes=2-5', 'reprodução on-line deve preservar Range');
+        return new Response(bytes.slice(2, 6), {
+          status: 206,
+          headers: {
+            'Content-Type': 'video/mp4',
+            'Content-Length': '4',
+            'Content-Range': 'bytes 2-5/10',
+          },
+        });
+      }
       requisicoesCompletas += 1;
       assert.equal(pedido.headers.get('range'), null, 'download persistente deve remover Range');
       return new Response(bytes, {
@@ -304,8 +340,9 @@ async function testarRangeEDownloadVerificavel() {
 
   const cacheMidia = await runtime.caches.open('academia-iat:academia-iat:media:v1');
   const completo = await cacheMidia.match(urlVideo);
-  assert.equal(completo.status, 200, 'cache deve conter resposta completa, nunca 206');
-  assert.equal(requisicoesCompletas, 1);
+  assert.equal(completo, undefined, 'reprodução on-line não deve ocupar o cache offline');
+  assert.equal(requisicoesParciais, 1);
+  assert.equal(requisicoesCompletas, 0);
 
   runtime.rede.manipulador = async () => {
     throw new TypeError('offline');
@@ -313,8 +350,8 @@ async function testarRangeEDownloadVerificavel() {
   const segunda = await runtime.disparar('fetch', {
     request: new Request(urlVideo, { headers: { Range: 'bytes=6-9' } }),
   });
-  assert.equal(segunda.status, 206);
-  assert.deepEqual([...new Uint8Array(await segunda.arrayBuffer())], [6, 7, 8, 9]);
+  assert.equal(segunda.status, 504);
+  assert.equal(segunda.headers.get('x-academia-iat-offline'), 'media-miss');
 
   const downloadUrl = `${ORIGIN}/academia-iat/media/aula/download.mp4`;
   runtime.rede.manipulador = async () => new Response(Uint8Array.from([8, 9, 10]), {
@@ -331,6 +368,15 @@ async function testarRangeEDownloadVerificavel() {
   assert.equal(final.resultado.ok, true);
   assert.equal(final.resultado.baixados, 1);
   assert.ok(await cacheMidia.match(downloadUrl), 'download deve ser verificável no cache');
+
+  runtime.rede.manipulador = async () => {
+    throw new TypeError('offline');
+  };
+  const faixaGuardada = await runtime.disparar('fetch', {
+    request: new Request(downloadUrl, { headers: { Range: 'bytes=1-2' } }),
+  });
+  assert.equal(faixaGuardada.status, 206);
+  assert.deepEqual([...new Uint8Array(await faixaGuardada.arrayBuffer())], [9, 10]);
 
   const statusResponses = [];
   await runtime.disparar('message', {
@@ -466,7 +512,7 @@ async function testarNavegacaoSemEnvenenarShell() {
 const testes = [
   ['geração determinística e base do GitHub Pages', testarGeracao],
   ['instalação controlada e upgrade isolado', testarInstalacaoEUpgrade],
-  ['Range 206, cache completo e download verificável', testarRangeEDownloadVerificavel],
+  ['Range via rede, cache explícito e download verificável', testarRangeEDownloadVerificavel],
   ['erros de precache e quota observáveis', testarFalhasClaras],
   ['navegação não envenena nem mascara o shell', testarNavegacaoSemEnvenenarShell],
 ];

@@ -69,6 +69,7 @@ import {
   CloudOff,
 } from "lucide-react";
 import TranscriptPanel from "./TranscriptPanel.jsx";
+import VideoLearningStage from "./VideoLearningStage.jsx";
 import {
   ThemeToggle,
   Suporte,
@@ -1709,24 +1710,17 @@ function Dashboard({ state, progress, go, openLesson }) {
       </section>
       <section className="dashboard-feature">
         <div className="feature-media">
-          <video
+          <VideoLearningStage
             key={feat?.src}
-            poster={feat?.poster || wb("/media/analista-licenciamento.png")}
-            controls
-            preload="metadata"
-            playsInline
-          >
-            {feat?.src && <source src={feat.src} type="video/mp4" />}
-            {feat?.captions && (
-              <track
-                kind="captions"
-                srcLang="pt"
-                src={feat.captions}
-                label="Português"
-                default
-              />
-            )}
-          </video>
+            media={{
+              ...feat,
+              poster:
+                feat?.poster || wb("/media/analista-licenciamento.png"),
+            }}
+            track={continueTrack}
+            lesson={continueLesson}
+            compact
+          />
           <span>Vídeo em destaque{feat?.title ? `: ${feat.title}` : ""}</span>
           <span className="fm-chip">
             <Clock /> 1:24 · 10 componentes
@@ -2301,7 +2295,12 @@ function Lesson({
         </header>
         <SourceAssurance compact />
         <LearningContract design={design} />
-        <VideoLesson media={media} track={track} />
+        <VideoLesson
+          key={media?.src || lesson.id}
+          media={media}
+          track={track}
+          lesson={lesson}
+        />
         <div
           className="lesson-tabs"
           role="tablist"
@@ -2595,52 +2594,21 @@ function LearningContract({ design }) {
     </section>
   );
 }
-function VideoLesson({ media, track }) {
+function VideoLesson({ media, track, lesson }) {
   const ref = useRef(null);
-  const [playing, setPlaying] = useState(false);
   const [rate, setRate] = useState(1);
-  const play = () => {
-    ref.current && ref.current.play();
-  };
   const setSpeed = (r) => {
     setRate(r);
     if (ref.current) ref.current.playbackRate = r;
   };
   return (
-    <figure className={"video-lesson vl2 " + (playing ? "playing" : "")}>
-      <div className="vl-stage">
-        <video
-          ref={ref}
-          controls
-          preload="metadata"
-          poster={media.poster}
-          playsInline
-          onPlay={() => setPlaying(true)}
-          onPause={() => setPlaying(false)}
-          onEnded={() => setPlaying(false)}
-        >
-          <source src={media.src} type="video/mp4" />
-          {/* A legenda ja e desenhada dentro do quadro do video, sempre visivel.
-        A faixa nativa fica disponivel para quem preferir, mas sem `default`,
-        senao o mesmo texto aparece duas vezes sobreposto. */}
-          <track
-            kind="captions"
-            src={media.captions}
-            srcLang="pt-BR"
-            label="Português"
-          />
-          Seu navegador não suporta vídeo HTML5.
-        </video>
-        {!playing && (
-          <button
-            className="vl-play"
-            aria-label="Reproduzir resumo em vídeo"
-            onClick={play}
-          >
-            <Play aria-hidden="true" />
-          </button>
-        )}
-      </div>
+    <figure className="video-lesson vl2">
+      <VideoLearningStage
+        media={media}
+        track={track}
+        lesson={lesson}
+        videoRef={ref}
+      />
       <figcaption>
         <span>
           <Play />
@@ -3556,7 +3524,7 @@ function Assessments({ state, setState, openLesson }) {
               </h2>
               <p>
                 Você acertou {Math.round((score / questions.length) * 100)}%.
-                Use o feedback abaixo para voltar às trilhas relacionadas. Este
+                Use o feedback abaixo para voltar aos módulos relacionados. Este
                 resultado não comprova domínio nem competência profissional.
               </p>
               {(() => {
@@ -3922,7 +3890,7 @@ function KnowledgeLibrary({ state, openLesson, target }) {
               <span>
                 {popData.tables.length} tabelas ·{" "}
                 {popData.tables.filter((t) => t.navigationOnly).length} índices
-                ocultos na trilha
+                estruturais ocultos
               </span>
             </div>
             {popData.tables

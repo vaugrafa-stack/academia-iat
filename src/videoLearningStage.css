@@ -1,0 +1,370 @@
+.video-lesson {
+  container-type: inline-size;
+}
+
+.vls-stage {
+  --vls-theme-position: 100% 100%;
+  container-type: inline-size;
+  isolation: isolate;
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) clamp(138px, 22%, 188px);
+  width: 100%;
+  overflow: hidden;
+  background: #06271f;
+  transition: grid-template-columns 240ms ease;
+}
+
+.vls-stage.vls-theme-dam {
+  --vls-theme-position: 0% 0%;
+}
+
+.vls-stage.vls-theme-map {
+  --vls-theme-position: 100% 0%;
+}
+
+.vls-stage.vls-theme-field {
+  --vls-theme-position: 0% 100%;
+}
+
+.vls-stage.vls-theme-office {
+  --vls-theme-position: 100% 100%;
+}
+
+.vls-atlas {
+  position: absolute;
+  z-index: -2;
+  inset: -2px;
+  background-image: var(--vls-thematic-atlas);
+  background-repeat: no-repeat;
+  background-size: 200% 200%;
+  background-position: var(--vls-theme-position);
+  filter: saturate(.86) contrast(1.02);
+  transform: scale(1.015);
+}
+
+.vls-stage::after {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(90deg, #04261cf2 0%, #04261c9e 66%, #04261c5c 100%),
+    linear-gradient(0deg, #041d19b8, transparent 45%);
+}
+
+.vls-screen {
+  position: relative;
+  min-width: 0;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  background: #071d1966;
+}
+
+.vls-stage .vls-video {
+  position: relative;
+  z-index: 1;
+  display: block;
+  width: 100%;
+  height: 100% !important;
+  aspect-ratio: auto !important;
+  object-fit: contain !important;
+  background: transparent !important;
+  mix-blend-mode: screen;
+}
+
+.vls-stage .vls-video::cue {
+  color: #fff;
+  background: #031d18dc;
+  font-size: 78%;
+  line-height: 1.15;
+}
+
+.vls-professor-rail {
+  position: relative;
+  z-index: 2;
+  min-width: 0;
+  overflow: hidden;
+  border-left: 1px solid #b5ddcf40;
+  background:
+    radial-gradient(circle at 50% 18%, #67c7a833, transparent 38%),
+    linear-gradient(180deg, #043b2da6, #031b17e8);
+}
+
+.vls-professor-rail::before {
+  content: "";
+  position: absolute;
+  inset: auto 12% 5% 12%;
+  height: 12%;
+  border-radius: 50%;
+  background: #0008;
+  filter: blur(11px);
+}
+
+.vls-professor {
+  position: absolute;
+  left: 50%;
+  bottom: -2%;
+  width: 112%;
+  aspect-ratio: 543 / 724;
+  background-image: var(--vls-professor-sprite);
+  background-repeat: no-repeat;
+  background-size: 400% 100%;
+  background-position: 0% 0%;
+  filter: drop-shadow(0 12px 20px #0008);
+  transform: translateX(-50%) translateY(calc(var(--vls-mouth-level) * -1.5px));
+  transform-origin: 50% 84%;
+  transition: background-position 45ms steps(1, end);
+  animation: vls-breathe 4.8s ease-in-out infinite;
+}
+
+.vls-professor[data-mouth-frame="1"] {
+  background-position: 33.333% 0%;
+}
+
+.vls-professor[data-mouth-frame="2"] {
+  background-position: 66.667% 0%;
+}
+
+.vls-professor[data-mouth-frame="3"] {
+  background-position: 100% 0%;
+}
+
+.vls-professor-label {
+  position: absolute;
+  z-index: 3;
+  left: 50%;
+  bottom: 10px;
+  transform: translateX(-50%);
+  padding: 4px 10px;
+  border: 1px solid #d9f6ec42;
+  border-radius: 999px;
+  color: #e8fff7;
+  background: #03241ecc;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+}
+
+.vls-stage-actions {
+  position: absolute;
+  z-index: 5;
+  top: 9px;
+  right: 9px;
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.vls-professor-toggle,
+.vls-fullscreen-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  min-height: 32px;
+  padding: 5px 9px;
+  border: 1px solid #d4eee575;
+  border-radius: 6px;
+  color: #fff;
+  background: #03271fe6;
+  box-shadow: 0 3px 10px #0003;
+  font-size: 11px;
+  font-weight: 750;
+}
+
+.vls-professor-toggle:hover,
+.vls-fullscreen-toggle:hover {
+  background: #075d46;
+}
+
+.vls-stage:fullscreen {
+  width: 100vw;
+  height: 100vh;
+  background: #031914;
+}
+
+.vls-stage:fullscreen .vls-screen {
+  align-self: center;
+  width: 100%;
+  max-height: 100vh;
+}
+
+.vls-stage:fullscreen .vls-video {
+  object-fit: contain !important;
+}
+
+.vls-play {
+  position: absolute;
+  z-index: 4;
+  left: 50%;
+  top: 50%;
+  display: grid;
+  width: 62px;
+  height: 62px;
+  place-items: center;
+  padding: 0;
+  border: 3px solid #fff;
+  border-radius: 50%;
+  color: #fff;
+  background: #063f32d9;
+  box-shadow: 0 10px 30px #0006;
+  transform: translate(-50%, -50%);
+  transition: transform 160ms ease, background 160ms ease;
+}
+
+.vls-play:hover {
+  background: #087b5a;
+  transform: translate(-50%, -50%) scale(1.06);
+}
+
+.vls-play span {
+  margin-left: 3px;
+  font-size: 24px;
+  line-height: 1;
+}
+
+.vls-professor-hidden {
+  grid-template-columns: minmax(0, 1fr) 0;
+}
+
+.vls-professor-hidden .vls-professor-rail {
+  visibility: hidden;
+}
+
+.vls-compact {
+  display: block;
+  height: 100%;
+  min-height: inherit;
+}
+
+.vls-compact .vls-screen {
+  height: 100%;
+  min-height: inherit;
+  aspect-ratio: auto;
+}
+
+.vls-compact .vls-video {
+  object-fit: cover !important;
+}
+
+.vls-compact .vls-professor-rail {
+  position: absolute;
+  inset: auto 0 0 auto;
+  width: clamp(82px, 23%, 126px);
+  height: 78%;
+  border: 0;
+  border-left: 1px solid #b5ddcf32;
+  border-radius: 45% 0 0 0;
+}
+
+.vls-compact .vls-professor {
+  width: 118%;
+}
+
+.vls-compact .vls-professor-label {
+  display: none;
+}
+
+.vls-compact .vls-stage-actions {
+  top: 46px;
+}
+
+.vls-compact.vls-professor-hidden .vls-professor-rail {
+  display: none;
+}
+
+@container (max-width: 640px) {
+  .vls-stage:not(.vls-compact) {
+    display: block;
+  }
+
+  .vls-stage:not(.vls-compact) .vls-professor-rail {
+    position: relative;
+    inset: auto;
+    width: 100%;
+    height: 82px;
+    border: 0;
+    border-top: 1px solid #b5ddcf40;
+    border-radius: 0;
+  }
+
+  .vls-stage:not(.vls-compact) .vls-professor {
+    left: 12px;
+    bottom: -34px;
+    width: 88px;
+    transform: translateY(calc(var(--vls-mouth-level) * -1.5px));
+  }
+
+  .vls-stage:not(.vls-compact) .vls-professor-label {
+    display: block;
+    left: 90px;
+    bottom: 25px;
+    transform: none;
+  }
+
+  .vls-stage:not(.vls-compact).vls-professor-hidden .vls-professor-rail {
+    display: none;
+  }
+}
+
+@keyframes vls-breathe {
+  0%,
+  100% {
+    scale: 1;
+  }
+  50% {
+    scale: 1.006;
+  }
+}
+
+@media (max-width: 720px) {
+  .vls-stage:not(.vls-compact) {
+    grid-template-columns: minmax(0, 1fr) clamp(92px, 22%, 126px);
+  }
+
+  .vls-stage:not(.vls-compact).vls-professor-hidden {
+    grid-template-columns: minmax(0, 1fr) 0;
+  }
+
+  .vls-stage-actions {
+    top: 6px;
+    right: 6px;
+    gap: 4px;
+  }
+
+  .vls-professor-toggle,
+  .vls-fullscreen-toggle {
+    min-height: 30px;
+    padding-inline: 7px;
+    font-size: 10px;
+  }
+
+  .vls-fullscreen-toggle span {
+    display: none;
+  }
+
+  .vls-professor-label {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .vls-stage,
+  .vls-play,
+  .vls-professor {
+    transition: none;
+  }
+
+  .vls-professor {
+    animation: none;
+    transform: translateX(-50%);
+  }
+}
+
+@media print {
+  .vls-stage {
+    display: none !important;
+  }
+}

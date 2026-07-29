@@ -76,7 +76,7 @@ try {
   const lessonButton = document.querySelector('.track-row.expanded .lesson-list button');
   assert(Boolean(lessonButton), 'lista de aulas expande por módulo');
   await click(lessonButton);
-  assert(Boolean(document.querySelector('.video-lesson video source[src$=".mp4"]')), 'aula usa vídeo MP4 real');
+  assert(Boolean(document.querySelector('.video-lesson video[src$=".mp4"]')), 'aula usa vídeo MP4 real');
   assert(document.querySelectorAll('.lesson-tabs button').length === 4, 'abas de aula, fonte, materiais e notas');
   assert(Boolean(document.querySelector('.lesson-knowledge-check')), 'aula inclui checagem comentada');
   assert(Boolean(document.querySelector('.lesson-active-practice textarea')), 'aula exige recuperação ativa escrita');
@@ -104,11 +104,20 @@ try {
 
   await click(navButtons.find(x => x.textContent.includes('Laboratório')));
   await waitFor(
-    () => document.querySelectorAll('.scenario-tabs button').length === 26,
+    () => document.querySelectorAll('.lab-case-catalog [data-lab-case]').length === 26,
     'laboratório não terminou de carregar os vinte e seis cenários',
   );
-  assert(document.querySelectorAll('.scenario-tabs button').length === 26, 'vinte e seis cenários práticos disponíveis');
-  assert(document.querySelector('.lab-serie table') || [...document.querySelectorAll('.scenario-tabs button')].some(b => /Programas semestrais/.test(b.textContent)), 'caso longitudinal com série histórica disponível');
+  assert(document.querySelectorAll('.lab-case-catalog [data-lab-case]').length === 26, 'vinte e seis cenários práticos disponíveis');
+  assert(Boolean(document.querySelector('#lab-case-search')), 'catálogo permite pesquisar casos');
+  assert(document.querySelectorAll('#lab-category-filter option').length === 6, 'catálogo filtra pelas cinco categorias');
+  assert(document.querySelectorAll('.lab-mode-options button').length === 2, 'laboratório oferece os modos Guiado e Desafio');
+  assert(Boolean(document.querySelector('.lab-help-ladder')), 'caso oferece ajuda progressiva sem antecipar o debriefing');
+  assert(document.querySelector('.lab-serie table') || [...document.querySelectorAll('.lab-case-catalog [data-lab-case]')].some(b => /Programas semestrais/.test(b.textContent)), 'caso longitudinal com série histórica disponível');
+  const challengeMode = [...document.querySelectorAll('.lab-mode-options button')].find(x => /Desafio/.test(x.textContent));
+  await click(challengeMode);
+  assert(document.querySelectorAll('.question-stack fieldset.locked').length === 0, 'modo Desafio libera todas as decisões');
+  const guidedMode = [...document.querySelectorAll('.lab-mode-options button')].find(x => /Guiado/.test(x.textContent));
+  await click(guidedMode);
   const answerButton = document.querySelector('.question-stack fieldset:not(.locked) button');
   await click(answerButton);
   await waitFor(
@@ -137,7 +146,18 @@ try {
   assert(document.querySelectorAll('.rd-trilha button').length === 12, 'redator abre os doze elementos do item 23.1');
   assert(Boolean(document.querySelector('.rd-divergencia')), 'redator mantém visível a diferença entre o item 23.1 e o Anexo B');
   assert(/O que o POP exige/i.test(document.querySelector('.rd-exige')?.textContent || ''), 'cada seção mostra o que o POP exige');
-  assert(document.querySelectorAll('.rd-caso select option').length >= 26, 'redator oferece todos os casos como base');
+  const casePicker = document.querySelector('#rd-sel[role="combobox"]');
+  assert(Boolean(casePicker), 'redator usa seleção pesquisável de casos');
+  assert(
+    document.querySelector('label[for="rd-sel"] strong')?.textContent.trim()
+      === 'Escolha seu caso de base',
+    'redator destaca o rótulo solicitado para seleção do caso',
+  );
+  await click(casePicker);
+  assert(
+    document.querySelectorAll('.case-combobox-option[role="option"]').length >= 26,
+    'redator oferece todos os casos como base sem dropdown nativo gigante',
+  );
 
   await click(navButtons.find(x => x.textContent.includes('Mapa do Paraná')));
   await waitFor(

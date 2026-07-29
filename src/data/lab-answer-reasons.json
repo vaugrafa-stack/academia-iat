@@ -1,0 +1,184 @@
+{
+  "cp": [
+    "Não. A presença das peças na lista comprova apenas que há arquivos relacionados; a caracterização do objeto e da localização depende da conferência do conteúdo do Memorial e da cartografia.",
+    "Sim. A unidade de conservação próxima integra a triagem locacional e precisa ser considerada antes da manifestação sobre restrições e intervenientes.",
+    "Não. A manifestação da Consulta Prévia não assegura prioridade no licenciamento ou no aproveitamento do potencial de geração e não confere domínio sobre os imóveis afetados.",
+    "Não. A Consulta Prévia é uma manifestação inicial e não substitui o licenciamento nem o juízo de viabilidade ambiental próprio da fase aplicável.",
+    "Não. A manifestação da Consulta Prévia vale por 24 meses e não admite prorrogação."
+  ],
+  "las": [
+    "Não. A potência de 3 MW, isoladamente, não fecha o enquadramento; também precisam ser verificados alagamento, IDA, supressão, APP e filtros territoriais.",
+    "Não. Um ponto isolado indica apenas uma posição e não delimita a ADA nem as demais estruturas do empreendimento.",
+    "Sim. Como o ponto isolado não delimita o arranjo, cabe diligência para apresentação das poligonais e dos arquivos geoespaciais completos antes da análise de mérito.",
+    "Sim. Sem as poligonais da ADA e das estruturas, não é possível localizar e quantificar a intervenção em APP nem a supressão de vegetação.",
+    "Não. O rito simplificado reduz etapas, mas não elimina o enquadramento correto, a suficiência documental e a análise dos impactos pertinentes."
+  ],
+  "lp": [
+    "Sim. A LP examina a localização e a concepção do empreendimento para decidir sua viabilidade ambiental; a autorização para instalar pertence à fase seguinte.",
+    "Não. As alternativas locacionais e tecnológicas fazem parte da análise de viabilidade e não podem ser ignoradas quando integram o estudo apresentado.",
+    "Sim. Nos processos sujeitos a EIA, a audiência pública exigível integra a instrução antes da decisão final sobre a LP.",
+    "Não. A LP reconhece a viabilidade ambiental da localização e da concepção; somente a LI autoriza a instalação conforme os projetos aprovados.",
+    "Não. A viabilidade reconhecida na LP não dispensa condicionantes proporcionais que preparem os projetos, programas e controles exigíveis na fase seguinte."
+  ],
+  "li": [
+    "Sim. A LI deve verificar se o projeto executivo corresponde à concepção aprovada na LP. Divergências materiais do arranjo precisam ser registradas e avaliadas antes da instalação.",
+    "Sim. A ampliação da ADA e a elevação da cota alteram o arranjo e podem produzir impactos adicionais, por isso são alterações relevantes.",
+    "Sim. Alteração relevante do arranjo exige reavaliação proporcional à sua natureza, escala, impactos adicionais e relação com a licença vigente.",
+    "Não. A existência da LP não autoriza aceitar divergência material sem registro, comparação e avaliação de suas consequências ambientais.",
+    "Não. A LI autoriza a instalação; o início da operação depende de LO e da verificação da implantação e das condicionantes aplicáveis."
+  ],
+  "lo": [
+    "Sim. A LO deve comparar o as built com a LI e com o projeto aprovado para verificar se o empreendimento foi implantado como licenciado.",
+    "Não. A condicionante só pode ser considerada cumprida quando houver evidência suficiente de atendimento; o status declarado não equivale ao status validado.",
+    "Sim. A IN IAT nº 09/2025 prevê Autorização Ambiental específica para o enchimento do reservatório e os testes de comissionamento nas tipologias aplicáveis.",
+    "Não. Condicionante pendente da LI precisa ser avaliada e encaminhada; a LO não pode simplesmente ignorá-la.",
+    "Sim. A operação regular pressupõe que o cumprimento das condicionantes tenha sido verificado com as respectivas evidências."
+  ],
+  "rlo": [
+    "Não. A alegação de protocolo 130 dias antes só produz conclusão depois da conferência das datas, da licença e do regime temporal aplicável.",
+    "Sim. A criação de unidade de conservação no entorno altera a situação territorial e constitui fato novo relevante para a renovação.",
+    "Não. O automonitoramento em dia é apenas parte da instrução; a renovação depende da regularidade atual, das condicionantes, dos fatos novos e das demais evidências do processo.",
+    "Sim. Fato novo relevante pode justificar condicionante nova ou ajustada, desde que haja relação com o impacto e motivação proporcional.",
+    "Não. O status informado pelo empreendedor é uma declaração; a validação depende da conferência técnica das evidências do processo."
+  ],
+  "pacuera": [
+    "Sim. O PACUERA precisa integrar diagnóstico ambiental e socioeconômico, usos existentes, fragilidades e potencialidades do entorno do reservatório.",
+    "Não. O zoneamento deve ser estruturado por Unidades Territoriais Homogêneas, com delimitação, fundamento técnico, capacidade de suporte e diretrizes de uso por zona.",
+    "Sim. A participação social integra a elaboração e a validação das diretrizes de uso e dos conflitos tratados pelo PACUERA.",
+    "Não. Usos consolidados não dispensam o zoneamento: as UTHs e as regras de uso continuam necessárias para organizar fragilidades, potencialidades e capacidade de suporte.",
+    "Sim. A aprovação deve prever implementação, responsabilidades, indicadores, cronograma, forma de reporte e revisão periódica, inclusive a revisão decenal prevista no TR."
+  ],
+  "rlo-vencida": [
+    "Não. A afirmação de tempestividade precisa ser confrontada com a licença anterior, o comprovante do protocolo e a norma aplicável antes de reconhecer seus efeitos.",
+    "Não. Declarar 100% de cumprimento não comprova o atendimento; cada condicionante precisa ser confrontada com sua evidência.",
+    "Sim. Cada condicionante deve ser analisada com a evidência correspondente; uma declaração global de 100% de cumprimento não basta.",
+    "Não. Automonitoramento em dia comprova apenas esse conjunto de obrigações e não substitui as evidências das demais condicionantes.",
+    "Não. Sem confirmar tempestividade, validade, condicionantes, notificações e eventuais impedimentos, não é seguro concluir que a operação permanece regular."
+  ],
+  "geo-insuficiente": [
+    "Não. Um ponto isolado localiza apenas parte do empreendimento e não delimita reservatório, estruturas, ADA ou trecho de vazão reduzida.",
+    "Sim. A análise de APP, supressão e interferências exige geometrias completas que permitam localizar, delimitar e quantificar cada intervenção.",
+    "Não. A descrição textual do TVR não substitui sua poligonal, necessária para reproduzir o trecho e avaliar suas interferências.",
+    "Sim. Como as estruturas e o TVR não possuem poligonais, cabe diligência para apresentação dos arquivos geoespaciais completos antes do mérito.",
+    "Não. Sem a delimitação espacial completa do arranjo, não é possível analisar APP, supressão e interferências nem concluir com segurança sobre o mérito locacional."
+  ],
+  "cp-antiga": [
+    "Não. A manifestação tem quatro anos, mas a validade da Consulta Prévia é de 24 meses e não admite prorrogação; ela não vincula o enquadramento atual.",
+    "Sim. O enquadramento da LP deve observar a norma aplicável à data de seu protocolo e registrar a regra de transição pertinente.",
+    "Sim. A mudança normativa precisa ser registrada com as datas consideradas, o estágio do processo, o regime aplicado e a justificativa.",
+    "Sim. A Consulta Prévia anterior pode integrar o histórico processual, desde que sua validade vencida e seu caráter não vinculante fiquem explícitos.",
+    "Não. Consulta Prévia vencida não equivale a aprovação de viabilidade ambiental e não pode substituir a análise da LP."
+  ],
+  "escopo": [
+    "Não. O POP organiza o trabalho, mas não cria sozinho obrigação documental; a exigência precisa de fundamento aplicável ao caso.",
+    "Sim. A exigência deve decorrer de norma, Termo de Referência, SGA, condicionante anterior, fato novo ou inconsistência que impeça decisão segura.",
+    "Não. O licenciamento deve verificar a existência e a compatibilidade da outorga e do ato setorial, mas não pode substituir a decisão do órgão competente.",
+    "Sim. Quando faltarem elementos para concluir, a manifestação deve registrar de forma explícita a limitação, sua consequência e o encaminhamento proporcional.",
+    "Não. Dúvida sobre alcance normativo deve ser registrada como pendência de validação, sem criação de solução normativa própria."
+  ],
+  "transicao": [
+    "Sim. A definição do regime aplicável começa pela norma vigente pertinente e pela data do protocolo do processo.",
+    "Não. Exigência nova não se aplica retroativamente de forma automática; é preciso verificar a regra de transição e eventual fundamento específico.",
+    "Sim. A motivação deve separar a transição estadual da federal para deixar claros os fundamentos e efeitos de cada regime.",
+    "Sim. A etapa já em curso preserva as obrigações e os cronogramas estabelecidos até sua conclusão, sem afastar a legislação aplicável às etapas seguintes.",
+    "Não. Termos de Referência e orientações internas detalham a instrução, mas não prevalecem sobre lei ou regulamento."
+  ],
+  "triagem": [
+    "Sim. A leitura começa pelo objeto do requerimento e pelo histórico porque somente depois é possível avaliar a suficiência dos documentos para aquele processo.",
+    "Sim. Documento de outro empreendimento ou corpo hídrico rompe a correspondência com o objeto e deve ser tratado como inconsistência geralmente crítica.",
+    "Sim. Estudo antigo só pode ser aproveitado depois de demonstrada sua compatibilidade com projeto, fase, área de influência e realidade ambiental atuais.",
+    "Não. Mudança de titularidade sem ato formal e sem assunção das obrigações é pendência crítica, não simples observação.",
+    "Não. O deferimento só pode ser considerado depois da conferência dos sistemas e documentos e da resolução das inconsistências cadastrais e documentais identificadas."
+  ],
+  "barragem": [
+    "Sim. Sistemas associados exigem registro do vínculo funcional, área, titularidade, competência, impactos cumulativos e justificativa para análise conjunta ou separada.",
+    "Não. A incidência da PNSB depende das características e dos critérios legais da estrutura, não apenas da sigla PCH ou UHE.",
+    "Não. O licenciamento ambiental não substitui PSB, PAE, inspeções, revisões periódicas nem a atuação do órgão fiscalizador da segurança da barragem.",
+    "Sim. Canteiro, jazida e bota-fora podem integrar a licença principal ou exigir processo próprio, conforme localização, vínculo funcional e impactos.",
+    "Não. A manifestação ambiental avalia documentos, riscos e interfaces ambientais, mas não declara estabilidade estrutural fora da competência da unidade."
+  ],
+  "estudos": [
+    "Sim. O RDPA deve converter as propostas do RAS em programas executáveis, com ações, responsabilidades, cronograma, indicadores e comprovação.",
+    "Não. Mesmo atualizado, o estudo ambiental não substitui nem corrige o Memorial Descritivo, que deve retratar o arranjo efetivamente analisado.",
+    "Sim. A cartografia deve seguir o TR aplicável e indicar, entre outros elementos, projeção, datum, data e responsável técnico.",
+    "Não. Plano de trabalho ou cronograma futuro informa intenção, mas não comprova a execução já realizada.",
+    "Sim. A conclusão deve ligar cada achado à sua classificação de suficiência, consequência técnica e encaminhamento proporcional."
+  ],
+  "intervenientes": [
+    "Não. Para CGH deve ser exigida a documentação setorial vigente e compatível com titular, potência e fase, não uma autorização própria de PCH por automatismo.",
+    "Sim. A manifestação só serve ao caso quando corresponde ao mesmo empreendimento, fase, ADA e arranjo analisados.",
+    "Sim. O fluxo exige cadastro no SAIP, preenchimento da FCA e, depois da finalização, acompanhamento do processo no SEI, com juntada das manifestações pertinentes.",
+    "Não. Manifestação de outra fase e outra ADA não pode ser aproveitada sem verificar compatibilidade e registrar a ressalva ou a necessidade de atualização.",
+    "Não. O IAT verifica a existência e a compatibilidade dos atos, mas não substitui a decisão técnica ou administrativa do órgão setorial competente."
+  ],
+  "condicionantes": [
+    "Não. Condicionante genérica, sem prazo, indicador ou comprovação, não é mensurável nem verificável e precisa ser reescrita ou suprimida.",
+    "Não. Pendência crítica que impede decisão segura deve ser resolvida antes do deferimento e não pode ser transferida para condicionante.",
+    "Sim. A diligência deve reunir as exigências após análise integrada e ser comunicada, em regra, de uma única vez, ressalvado fundamento superveniente registrado.",
+    "Não. Compensação por impacto não mitigável depende da demonstração do impacto residual e não decorre automaticamente da potência ou tipologia.",
+    "Não. Lacuna sanável deve receber diligência proporcional; manifestação não favorável não é resposta automática quando a complementação é possível."
+  ],
+  "revisao": [
+    "Sim. Referência a outro empreendimento compromete a rastreabilidade da peça e deve ser eliminada antes da assinatura.",
+    "Não. Coordenadas sem sistema, zona, datum e unidade não são reproduzíveis nem tecnicamente completas.",
+    "Não. O arquivo simplificado não preserva a estrutura institucional; deve-se editar o original ou uma cópia fiel do modelo.",
+    "Sim. Sem identificação formal de elaboração, revisão e aprovação, o documento continua sendo minuta técnica.",
+    "Não. A extração de texto não revela todos os problemas de paginação e layout; o arquivo renderizado precisa ser inspecionado visualmente."
+  ],
+  "integrador": [
+    "Não. “Apresentado” registra a presença do arquivo; a suficiência exige avaliar seu conteúdo e a compatibilidade com empreendimento, titular, fase, modalidade e demais documentos.",
+    "Sim. Modelos dos anexos são estruturas de apoio e precisam ser adaptados aos fatos, à fase, aos impactos e às competências do caso concreto.",
+    "Não. Restrição material do Plano de Manejo que torne a localização incompatível não pode ser adiada artificialmente como condicionante.",
+    "Não. O checklist controla a instrução; a Informação Técnica interpreta o conjunto, relaciona achados e explica suas consequências.",
+    "Não. Condicionante da LP só pode ser considerada cumprida na LI quando houver evidência suficiente de atendimento ou justificativa tecnicamente registrada."
+  ],
+  "uc-apa": [
+    "Não. O art. 25 do SNUC exclui APA e RPPN da obrigatoriedade de zona de amortecimento.",
+    "Não. A exceção federal para APA não torna automaticamente cabível a LAC estadual diante das restrições do regime estadual aplicável.",
+    "Sim. O Plano de Manejo vigente e as regras da zona incidente precisam ser lidos antes da conclusão sobre modalidade e compatibilidade locacional.",
+    "Não. Um raio de 10 km é apenas uma distância de análise e não pode ser tratado como zona de amortecimento presumida de APA.",
+    "Não. As camadas do GeoPR apoiam a localização, mas não substituem o ato de criação, o Plano de Manejo e o zoneamento oficialmente aprovados."
+  ],
+  "delegado": [
+    "Sim. A competência administrativa e a regra de transição precisam ser definidas antes da modalidade, da suficiência documental e do mérito.",
+    "Não. O ACT apenas delega a execução nos limites pactuados e não transforma o licenciamento federal em processo estadual originário.",
+    "Sim. O ACT delimita a execução delegada; por isso, objeto, vigência, fases abrangidas, termos aditivos e demais condições devem ser confirmados antes do ato decisório.",
+    "Não. Em processo federal delegado, a compensação só deve ser direcionada após leitura do ACT específico; salvo previsão expressa, a matéria permanece sob responsabilidade do Ibama.",
+    "Sim. Enquanto o ACT for aplicável, o RTAA deve ser encaminhado ao Ibama até 31 de março de cada ano com base no registro contínuo dos atos."
+  ],
+  "prog-semestral": [
+    "Não. 71 + 68 + 76 = 215, enquanto o terceiro relatório declara 262 acumulados; há 47 registros sem origem demonstrada.",
+    "Não. A diferença de 47 demonstra inconsistência quantitativa, mas não comprova sozinha abandono nem continuidade dos programas.",
+    "Não. O status informado pelo empreendedor continua sendo declaração até que as evidências de execução sejam conferidas.",
+    "Sim. Uma série única, discriminada por período e também acumulada, permite localizar a diferença de 47 registros e relacioná-la às evidências.",
+    "Sim. As solicitações decorrentes da leitura dos três relatórios devem ser consolidadas e comunicadas, em regra, de uma única vez."
+  ],
+  "prog-residuos": [
+    "Sim. 5.406,5 + 297,0 = 5.703,5 e, acrescentando 194,5, chega-se a 5.898,0.",
+    "Não. O total fecha aritmeticamente, mas os dados primários em litros, quilogramas e unidades não informam o critério usado para convertê-los em massa.",
+    "Não. 16 + 19 = 35, e não 46; a série de inspeções não está conciliada.",
+    "Não. Repetir os dados do período anterior não demonstra os indicadores do semestre atual.",
+    "Não. Resultados separados por unidade só resolvem a lacuna se sua forma de reporte for compatível com o programa aprovado e com os indicadores aplicáveis."
+  ],
+  "prog-compensacao": [
+    "Não. No primeiro semestre, o programa estava em etapa preparatória e a restauração física não estava prevista no cronograma apresentado.",
+    "Não. Uma ação ocorrida no início de julho de 2025 pertence ao período seguinte, não ao relatório encerrado em 30/06/2025.",
+    "Não. A retirada relatada só pode ser validada como execução depois do confronto com o projeto aprovado, o cronograma e as evidências datadas.",
+    "Sim. A mudança sucessiva de 2025 para o primeiro semestre de 2026 precisa de justificativa e cronograma atualizado.",
+    "Não. A preparação da área é uma etapa anterior; restauração exige execução e indicadores de cobertura, regeneração e diversidade."
+  ],
+  "prog-app": [
+    "Não. 0,88 ha + 1,39 ha = 2,27 ha, diferença de 0,35 ha em relação ao total declarado de 1,92 ha.",
+    "Sim. O total e as parcelas precisam ser reconciliados com a cartografia do projeto aprovado para definir a área efetivamente afetada.",
+    "Não. Indicadores e considerações finais devem ser coerentes; a contradição impede saber se o plantio efetivamente ocorreu.",
+    "Não. Sem confrontar projeto, cronograma, licença e evidências, não é possível classificar a ausência de plantio como cumprimento ou descumprimento.",
+    "Sim. A avaliação do semestre deve se limitar às ações comprovadas por registros coerentes com o projeto, o cronograma e a licença."
+  ],
+  "condic-triagem": [
+    "Não. A condicionante 1 repete obrigação genérica e a 5 apenas manda manter o monitoramento; ambas carecem de elementos que as tornem mensuráveis e verificáveis.",
+    "Sim. A condicionante 2 identifica o titular responsável, o verbo de ação, o programa, a periodicidade, os indicadores e a comprovação por relatório com ART.",
+    "Não. A condicionante 3 transfere ao empreendedor uma decisão sobre autorização que pertence ao órgão ambiental.",
+    "Não. A condicionante 4 tenta adiar para depois do deferimento uma pendência crítica que precisa ser resolvida por diligência.",
+    "Não. A condicionante 6 conserva redação transitória superada pelo Decreto Estadual nº 7.150/2024 e deve ser retirada ou atualizada."
+  ]
+}

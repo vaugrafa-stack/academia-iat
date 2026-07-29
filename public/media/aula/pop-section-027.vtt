@@ -1,16 +1,22 @@
 WEBVTT
 
-00:03.000 --> 00:06.800
+00:00.550 --> 00:05.481
+9.2 Triagem de unidades de conservação, APAs e Planos de Manejo
+
+00:05.933 --> 00:14.667
 Na Consulta Prévia, a análise de unidades de conservação deve ocorrer antes de qualquer conclusão sobre intervenientes ou restrições locacionais
 
-00:06.800 --> 00:10.400
-O analista deve trabalhar com o arranjo integral do empreendimento, incluindo barramento, reservatório ou área potencialmente alagável, tomada d'água, adução, TVR, casa de força …
+00:14.667 --> 00:29.200
+O analista deve trabalhar com o arranjo integral do empreendimento, incluindo barramento, reservatório ou área potencialmente alagável, tomada d'água, adução, TVR, casa de força, restituição, acessos, áreas de apoio,
 
-00:10.400 --> 00:14.000
+00:29.200 --> 00:32.533
+subestação e linha ou ramal de conexão
+
+00:32.533 --> 00:36.933
 A simples consulta de um ponto de localização não é suficiente
 
-00:14.000 --> 00:17.600
-Fluxo mínimo de análise na Consulta Prévia: Conferir se o mapa da ADA e o KML …
+00:36.933 --> 00:49.133
+Fluxo mínimo de análise na Consulta Prévia: Conferir se o mapa da ADA e o KML, KMZ ou shapefile representam o arranjo completo e correspondem ao Memorial Descritivo e ao SGA
 
-00:17.600 --> 00:21.200
-Consultar as bases oficiais do IAT e do GeoPR para identificar unidades de conservação estaduais, federais ou municipais, áreas em sobreposição …
+00:49.133 --> 01:03.600
+Consultar as bases oficiais do IAT e do GeoPR para identificar unidades de conservação estaduais, federais ou municipais, áreas em sobreposição, zonas de amortecimento quando existentes e zoneamentos de Planos de Manejo

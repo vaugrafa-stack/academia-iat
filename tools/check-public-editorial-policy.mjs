@@ -40,11 +40,11 @@ const FORBIDDEN = [
 const LOCKED_PUBLIC_MEDIA = new Map([
   [
     'public/media/aula/pop-section-072.mp4',
-    '09bd9fe5462ebee2cdae90eade7a9c7200ea3523b0afb2fcb54846654dc16a7c',
+    '1e1c7710cb272b4763af713e67a55316a23b84316497f5cae3597abe6bd21592',
   ],
   [
     'public/media/aula/pop-section-072.jpg',
-    '2d2a87d1ffae5236d8b5f9fd984c2e29414d49362d2aa403e688515ec9bc6f36',
+    'e1b8e8902b992bb123461751bba3fb3647f0c39ded7652baefc4e97b72c0cad3',
   ],
 ]);
 

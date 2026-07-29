@@ -87,7 +87,7 @@ export const NOVOS_CENARIOS = [
       ['Documento de outro empreendimento ou outro corpo hídrico é inconsistência geralmente crítica?', 'sim'],
       ['Estudo antigo só é aproveitável se compatível com projeto, fase, área de influência e realidade atual?', 'sim'],
       ['Mudança de titularidade sem ato formal pode ser tratada como simples observação?', 'nao'],
-      ['Cabe concluir por deferimento antes de confrontar SGA, memorial, outorga, ANEEL e cartografia?', 'nao'],
+      ['Cabe deferir antes de concluir a conferência do SGA/e-Protocolo e resolver as inconsistências cadastrais e documentais identificadas?', 'nao'],
     ],
     outcome: 'Classificar o anexo divergente como inconsistência crítica, tratar a titularidade sem ato formal como pendência crítica e diligenciar antes do mérito. O estudo de 2016 só serve se demonstrada a compatibilidade com o projeto e com a realidade ambiental atuais.',
   },
@@ -104,7 +104,7 @@ export const NOVOS_CENARIOS = [
       'Memorial do arranjo e dos sistemas associados',
       'Titularidade da linha e da subestação',
       'Classificação por categoria de risco e dano potencial',
-      'IN IAT nº 10/2026 e Resolução Normativa ANEEL nº 1.064/2023',
+      'Sistemas associados: IN IAT nº 10/2026; segurança de barragens: PNSB e Resolução Normativa ANEEL nº 1.064/2023',
     ],
     steps: ['Vínculo', 'Titularidade', 'PNSB', 'Documentos', 'Encaminhamento'],
     questions: [
@@ -226,9 +226,9 @@ export const NOVOS_CENARIOS = [
       'Modelo de condicionante do anexo foi aplicado sem ajuste ao caso',
     ],
     evidence: [
-      'Modelo de checklist consolidado (Anexo A)',
+      'Checklist, matriz de suficiência e controle de evidências das condicionantes da LP',
       'Estrutura de Informação Técnica (Anexo B)',
-      'Matriz de análise por documento (Anexo C)',
+      'Plano de Manejo vigente, zoneamento e mapa da zona incidente',
       'Modelos de condicionantes (Anexo D)',
     ],
     steps: ['Checklist', 'Matriz', 'Restrição territorial', 'Condicionantes', 'Informação Técnica'],
@@ -349,7 +349,7 @@ export const NOVOS_CENARIOS = [
       'Tabelas primárias por tipo de resíduo e unidade de medida',
       'Consolidação por tipologia de cada semestre',
       'Série de inspeções relacionadas ao programa',
-      'Ato autorizativo de coleta e transporte de óleo lubrificante usado',
+      'Programa de gerenciamento de resíduos aprovado e matriz de indicadores',
     ],
     serie: {
       titulo: 'Duas séries do mesmo programa, lado a lado',
@@ -471,7 +471,7 @@ export const NOVOS_CENARIOS = [
       colunas: ['Nº', 'Texto proposto'],
       linhas: [
         ['1', 'Cumprir a legislação ambiental vigente.'],
-        ['2', 'Apresentar, a cada 6 meses contados da emissão desta licença, relatório de execução do programa de monitoramento da qualidade da água, com ART e laudos laboratoriais dos parâmetros previstos.'],
+        ['2', 'O titular da licença deverá apresentar, a cada seis meses contados da emissão desta licença, relatório de execução do Programa de Monitoramento da Qualidade da Água, com ART e laudos laboratoriais dos parâmetros previstos.'],
         ['3', 'O empreendedor deverá definir se a supressão adicional identificada é ou não passível de autorização.'],
         ['4', 'Apresentar as poligonais da ADA e da casa de força, ausentes no processo, necessárias para analisar APP e supressão.'],
         ['5', 'Manter o monitoramento de fauna.'],
@@ -481,13 +481,13 @@ export const NOVOS_CENARIOS = [
     },
     steps: ['Padrão', 'Genérica', 'Competência', 'Pendência', 'Redação'],
     questions: [
-      ['A condicionante 1 atende ao padrão de qualidade, com prazo, indicador e forma de comprovação?', 'nao'],
-      ['A condicionante 2 reúne verbo de ação, objeto definido, prazo, indicador e forma de comprovação?', 'sim'],
+      ['As condicionantes 1 e 5 atendem ao padrão de qualidade, com objeto, prazo, indicador, responsabilidade e forma de comprovação?', 'nao'],
+      ['A condicionante 2 reúne verbo de ação, objeto definido, prazo, indicador, responsabilidade e forma de comprovação?', 'sim'],
       ['A condicionante 3 é admissível, mandando o empreendedor decidir se cabe autorização?', 'nao'],
       ['A condicionante 4 pode substituir a diligência de uma pendência crítica que impede a decisão?', 'nao'],
       ['A condicionante 6 pode manter a redação transitória depois do Decreto Estadual nº 7.150/2024?', 'nao'],
     ],
-    outcome: 'Só a condicionante 2 sobrevive: ela tem verbo de ação, objeto definido, prazo, indicador e forma de comprovação. A 1 repete obrigação legal sem relação direta com o empreendimento e sem nada verificável. A 3 transfere ao empreendedor competência decisória do órgão. A 4 tenta resolver por condicionante uma pendência crítica que precisa ser sanada antes do deferimento, e por isso volta para diligência. A 5 não tem prazo, indicador nem forma de comprovação. A 6 mantém redação transitória que não deve mais ser utilizada depois da publicação do Decreto Estadual nº 7.150/2024.',
+    outcome: 'Só a condicionante 2 sobrevive: ela tem verbo de ação, objeto definido, prazo, indicador, responsabilidade do titular da licença e forma de comprovação. A 1 repete obrigação legal sem relação direta com o empreendimento e sem nada verificável. A 3 transfere ao empreendedor competência decisória do órgão. A 4 tenta resolver por condicionante uma pendência crítica que precisa ser sanada antes do deferimento, e por isso volta para diligência. A 5 não tem prazo, indicador, responsabilidade nem forma de comprovação. A 6 mantém redação transitória que não deve mais ser utilizada depois da publicação do Decreto Estadual nº 7.150/2024.',
   },
 ];
 
@@ -548,7 +548,7 @@ export const RUBRICAS = {
       { rot: 'Competência decisória não se transfere', termos: ['competenc', 'competênc', 'transfer', 'decisor', 'decisór', 'orgao', 'órgão'] },
       { rot: 'Pendência crítica volta para diligência', termos: ['critic', 'crític', 'diligencia', 'diligência', 'antes do deferimento', 'impede'] },
     ],
-    modelo: 'Análise: das seis condicionantes propostas, apenas a segunda reúne os elementos do Quadro 40, porque traz verbo de ação, objeto definido, prazo de seis meses, indicador na forma de laudos laboratoriais e forma de comprovação com ART. A primeira repete obrigação legal genérica, sem relação direta com o empreendimento e sem nada verificável; a quinta não tem prazo, indicador nem forma de comprovação. Comentário: a terceira transfere ao empreendedor competência decisória do órgão ambiental, o que o item 24.1 veda expressamente. A quarta tenta resolver por condicionante uma pendência crítica que impede a decisão segura e que, por isso, deve ser sanada antes do deferimento. A sexta mantém redação transitória que não deve mais ser utilizada depois da publicação do Decreto Estadual nº 7.150/2024. Solicitações: manter apenas a segunda condicionante; reescrever a primeira e a quinta com prazo, indicador e forma de comprovação, ou suprimi-las; devolver a quarta para diligência; e retirar a terceira e a sexta da minuta.',
+    modelo: 'Análise: das seis condicionantes propostas, apenas a segunda reúne os elementos do Quadro 40, porque identifica o titular da licença como responsável e traz verbo de ação, objeto definido, prazo de seis meses, indicador na forma de laudos laboratoriais e forma de comprovação com ART. A primeira repete obrigação legal genérica, sem relação direta com o empreendimento e sem nada verificável; a quinta não tem prazo, indicador, responsabilidade nem forma de comprovação. Comentário: a terceira transfere ao empreendedor competência decisória do órgão ambiental, o que o item 24.1 veda expressamente. A quarta tenta resolver por condicionante uma pendência crítica que impede a decisão segura e que, por isso, deve ser sanada antes do deferimento. A sexta mantém redação transitória que não deve mais ser utilizada depois da publicação do Decreto Estadual nº 7.150/2024. Solicitações: manter apenas a segunda condicionante; reescrever a primeira e a quinta com os seis elementos do padrão, ou suprimi-las; devolver a quarta para diligência; e retirar a terceira e a sexta da minuta.',
   },
   'prog-residuos': {
     elementos: [
@@ -719,7 +719,7 @@ export const RUBRICAS = {
       { rot: 'RDPA com programas verificáveis', termos: ['rdpa', 'programa', 'executav', 'executáv', 'verificav', 'verificáv', 'ras'] },
       { rot: 'Padrão cartográfico', termos: ['datum', 'projec', 'projeç', 'responsavel tecnic', 'responsável técnic', 'cartograf'] },
     ],
-    modelo: 'Registro a versão do Termo de Referência aplicável, confirmada no processo e na fonte oficial, sem combinação automática de requisitos. O Memorial Descritivo descreve arranjo anterior ao projeto atual e precisa ser atualizado, porque estudo ambiental não corrige memorial desatualizado. O RDPA reproduz o diagnóstico do RAS e não transforma as propostas em programas executáveis e verificáveis, o que caracteriza insuficiência de conteúdo. A cartografia deve observar o padrão do TR, com projeção, datum, data e responsável técnico, e o cronograma futuro apresentado não substitui relatório de execução. Concluo por diligência, indicando a consequência técnica de cada lacuna e o encaminhamento proporcional à fase.',
+    modelo: 'Deve-se confirmar e registrar a versão do Termo de Referência aplicável no processo e na fonte oficial, sem combinar requisitos automaticamente. O Memorial Descritivo descreve arranjo anterior ao projeto atual e precisa ser atualizado, porque estudo ambiental não corrige memorial desatualizado. O RDPA reproduz o diagnóstico do RAS e não transforma as propostas em programas executáveis e verificáveis, o que caracteriza insuficiência de conteúdo. A cartografia deve observar o padrão do TR, com projeção, datum, data e responsável técnico, e o cronograma futuro apresentado não substitui relatório de execução. Concluo por diligência, indicando a consequência técnica de cada lacuna e o encaminhamento proporcional à fase.',
   },
   intervenientes: {
     elementos: [
@@ -766,7 +766,7 @@ export const RUBRICAS = {
       { rot: 'Zona de amortecimento não presumida', termos: ['amortecimento', ' za ', '25', 'snuc', '10 km', 'presum'] },
       { rot: 'Plano de Manejo e rastreabilidade', termos: ['plano de manejo', 'zoneamento', 'geopr', 'camada', 'fonte', 'data'] },
     ],
-    modelo: 'A APA integra o grupo de Uso Sustentável e a existência de propriedade privada não elimina as restrições estabelecidas pelo Poder Público, devendo ser observados o ato de criação, o Plano de Manejo e o zoneamento. O art. 64, I, e, do Decreto Estadual nº 9.541/2025 afasta a LAC em Unidade de Conservação, inclusive APA, e a exceção federal do art. 22 da Lei nº 15.190/2025 não torna a LAC estadual automaticamente cabível. O raio de 10 km aplicado no estudo não pode ser tratado como zona de amortecimento, pois o art. 25 do SNUC exclui a APA da exigência de zona de amortecimento e valores de raio não a substituem. O zoneamento do Plano de Manejo vigente veda o uso pretendido naquela zona, o que é questão de compatibilidade locacional e não de condicionante. As camadas do GeoPR apoiam a conferência, mas não substituem a leitura do ato legal, e registro camada, fonte e data da consulta.',
+    modelo: 'A APA integra o grupo de Uso Sustentável e a existência de propriedade privada não elimina as restrições estabelecidas pelo Poder Público, devendo ser observados o ato de criação, o Plano de Manejo e o zoneamento. O art. 64, I, e, do Decreto Estadual nº 9.541/2025 afasta a LAC em Unidade de Conservação, inclusive APA, e a exceção federal do art. 22 da Lei nº 15.190/2025 não torna a LAC estadual automaticamente cabível. O raio de 10 km aplicado no estudo não pode ser tratado como zona de amortecimento, pois o art. 25 do SNUC exclui a APA da exigência de zona de amortecimento e valores de raio não a substituem. O zoneamento do Plano de Manejo vigente veda o uso pretendido naquela zona, o que é questão de compatibilidade locacional e não de condicionante. As camadas do GeoPR apoiam a conferência, mas não substituem a leitura do ato legal, devendo-se registrar a camada, a fonte e a data da consulta.',
   },
   delegado: {
     elementos: [

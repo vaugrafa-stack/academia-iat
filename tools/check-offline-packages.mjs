@@ -1,8 +1,9 @@
-import { readFile, stat } from 'node:fs/promises';
+import { readFile } from 'node:fs/promises';
 import { posix, resolve, sep } from 'node:path';
 
 import {
   buildOfflinePayload,
+  measureMediaBytes,
 } from './build-offline-packages.mjs';
 
 const root = resolve(import.meta.dirname, '..');
@@ -92,11 +93,11 @@ for (const item of catalog.packages || []) {
       `${item.id}: tamanho inválido para ${media.path}`,
     );
     const absolutePath = resolveMediaPath(media.path);
-    const info = absolutePath
-      ? await stat(absolutePath).catch(() => null)
+    const measuredBytes = absolutePath
+      ? await measureMediaBytes(media.path, absolutePath).catch(() => null)
       : null;
     check(
-      info?.isFile() && info.size === media.bytes,
+      measuredBytes === media.bytes,
       `${item.id}: arquivo ausente ou tamanho divergente: ${media.path}`,
     );
     packageBytes += media.bytes || 0;

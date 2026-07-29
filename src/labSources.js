@@ -8,10 +8,12 @@ import { LAB_SOURCE_INDEX } from './labSourceIndex.js';
 // a interface deve resolvê-los pelo lessonMap usando `sec`.
 export const LAB_SOURCE_POLICY = Object.freeze({
   schemaVersion: 1,
+  sourceTitle: 'POP de Licenciamento Ambiental de Empreendimentos Hidrelétricos',
   sourceDocument: 'POP ou Manual Hidreletricas IAT Julho de 2026 (Com APA, UCs, RTTA).docx',
   sourceVersion: '1.7 — julho de 2026',
   sourceSha256: '8ffa771546c244e194e6d7b41dd91d5ab3f56083e94c081e1e5c9a17f13f2c3c',
   institutionalStatus: 'technical-draft',
+  institutionalStatusLabel: 'Minuta técnica',
   supportModes: Object.freeze({
     direct: 'A minuta do POP contém regra diretamente relacionada à decisão.',
     mixed: 'A decisão combina a minuta do POP com fatos do caso, cálculo, interpretação ou norma que ainda requer conferência técnica.',
@@ -138,31 +140,31 @@ const QUOTE_OVERRIDES = Object.freeze({
 });
 
 const CASE_EVIDENCE_ORDINALS = Object.freeze({
-  cp: [[1, 2], [2, 3], [1, 4], [1, 3], [4]],
+  cp: [[2, 3], [4], [], [], []],
   las: [[1, 3], [2], [2, 3], [2, 3], [2, 3, 4]],
-  lp: [[1, 2], [2], [1, 4], [1], [2, 4]],
-  li: [[1, 2], [2, 3], [2, 3], [2, 3, 4], [2, 4]],
+  lp: [[1, 2], [2], [1, 4], [], []],
+  li: [[1, 2], [2, 3], [2, 3], [2, 3, 4], []],
   lo: [[1], [2], [4], [2, 4], [2, 3, 4]],
   rlo: [[1], [3], [2, 4], [3, 4], [2, 4]],
-  pacuera: [[1, 2], [1, 2], [1, 4], [3], [2, 4]],
-  'rlo-vencida': [[1], [2], [2], [2, 3], [2, 4]],
+  pacuera: [[1, 2], [1, 2], [1, 4], [3], [1, 4]],
+  'rlo-vencida': [[1], [2], [2], [2, 3], [1, 2, 3, 4]],
   'geo-insuficiente': [[2], [2, 3], [3, 4], [2, 3], [2, 3, 4]],
-  'cp-antiga': [[1], [1, 2, 3], [3, 4], [1, 4], [3, 4]],
+  'cp-antiga': [[1], [1, 2, 3], [3, 4], [1, 4], [1, 3, 4]],
   escopo: [[1, 2], [1, 2], [4], [3], [2, 4]],
   transicao: [[1], [1, 2], [3, 4], [2, 3, 4], [3, 4]],
-  triagem: [[1, 4], [3], [2], [1, 4], [4]],
+  triagem: [[1, 4], [3], [2], [1, 4], [1, 2, 3, 4]],
   barragem: [[1, 2], [3], [3, 4], [1], [3, 4]],
-  estudos: [[2, 3], [1, 2], [3, 4], [2], [2, 3, 4]],
-  intervenientes: [[1], [2, 4], [2, 3], [2], [2, 3, 4]],
+  estudos: [[2, 3], [1, 2], [3, 4], [2], [1, 2, 3, 4]],
+  intervenientes: [[1], [2, 4], [2, 3], [2], [1, 2, 3, 4]],
   condicionantes: [[1, 3], [2, 3], [2], [4], [2, 3]],
   revisao: [[1], [1, 2], [1, 2], [1, 4], [2, 3, 4]],
-  integrador: [[1, 3], [1, 2, 3, 4], [4], [1, 2, 3], [2, 3, 4]],
+  integrador: [[1], [4], [3], [1, 2], [1]],
   'uc-apa': [[1, 2], [1, 2, 4], [1, 2], [1, 3], [2, 3]],
   delegado: [[1, 3], [2, 3], [1, 2], [2, 4], [2, 4]],
-  'prog-semestral': [[1, 2, 3], [1, 2, 3], [1, 2, 3], [1, 2, 3], [2, 3, 4]],
-  'prog-residuos': [[1, 2], [1, 2], [3], [2, 3], [2, 3, 4]],
-  'prog-compensacao': [[1, 3], [2, 3], [2, 3], [1, 3], [2, 3, 4]],
-  'prog-app': [[2], [1, 2], [3, 4], [3, 4], [2, 3, 4]],
+  'prog-semestral': [[1, 2, 3], [1, 2, 3], [1, 2, 3], [1, 2, 3], [1, 2, 3]],
+  'prog-residuos': [[1, 2], [1, 2], [3], [2, 3], [1, 2, 4]],
+  'prog-compensacao': [[1, 3], [2, 3], [2, 3], [1, 3], [1, 2, 4]],
+  'prog-app': [[2], [1, 2], [3, 4], [3, 4], [1, 2, 3, 4]],
   'condic-triagem': [[1, 2], [1], [2], [4], [2, 3, 4]],
 });
 
@@ -192,6 +194,23 @@ const TECHNICAL_REVIEW_REASONS = Object.freeze({
   'lab-prog-app-q4': 'A ausência de plantio só caracteriza descumprimento depois de confrontada com prazo, cronograma, obrigação e evidências.',
 });
 
+const CASE_APPLIED_DECISIONS = new Set([
+  'lab-prog-semestral-q1',
+  'lab-prog-semestral-q4',
+  'lab-prog-residuos-q1',
+  'lab-prog-residuos-q2',
+  'lab-prog-residuos-q3',
+  'lab-prog-residuos-q4',
+  'lab-prog-compensacao-q1',
+  'lab-prog-compensacao-q2',
+  'lab-prog-compensacao-q4',
+  'lab-prog-compensacao-q5',
+  'lab-prog-app-q1',
+  'lab-prog-app-q2',
+  'lab-prog-app-q3',
+  'lab-prog-app-q5',
+]);
+
 function freezeDecision(scenarioId, questionIndex, sourceLessonIds, evidenceOrdinals) {
   const id = `lab-${scenarioId}-q${questionIndex + 1}`;
   const popSources = sourceLessonIds.map((sec) => {
@@ -201,14 +220,16 @@ function freezeDecision(scenarioId, questionIndex, sourceLessonIds, evidenceOrdi
     return Object.freeze({ id: sourceId, sec, quote });
   });
   const needsTechnicalReview = NEEDS_TECHNICAL_REVIEW.has(id);
+  const usesCaseApplication = CASE_APPLIED_DECISIONS.has(id);
   return Object.freeze({
     id,
     questionIndex: questionIndex + 1,
+    answerReasonId: id,
     popSources: Object.freeze(popSources),
     caseEvidenceRefs: Object.freeze(
       evidenceOrdinals.map((ordinal) => `lab-${scenarioId}-e${ordinal}`),
     ),
-    supportMode: needsTechnicalReview ? 'mixed' : 'direct',
+    supportMode: needsTechnicalReview || usesCaseApplication ? 'mixed' : 'direct',
     reviewStatus: needsTechnicalReview ? 'needs-technical-review' : 'mapped-draft',
     reviewReason: needsTechnicalReview ? TECHNICAL_REVIEW_REASONS[id] : null,
   });

@@ -40,13 +40,26 @@ O percurso busca desenvolver a capacidade de receber um processo hidrelétrico, 
 
 ## 2. Arquitetura de aprendizagem
 
-### 2.1 Públicos e trilhas
+### 2.1 Progressão formativa única
 
-1. **Trilha Essencial — ingresso na unidade:** módulos M00 a M05, M14, M15 e avaliação prática básica.
-2. **Trilha Analista — formação integral pretendida:** M00 a M16, laboratórios e caso integrador.
-3. **Trilha PACUERA:** M00, M01, M03, M07, M09, M10, M11, M12, M14, M15 e avaliação específica.
-4. **Trilha Revisor/Coordenação:** diagnóstico de dispensa de conteúdo básico, M01, M06 a M16, exercícios de revisão e banca simulada.
-5. **Revisão periódica pessoal:** teste com formas paralelas, atualização normativa, casos de erro crítico e auditoria de produto sintético. Só deve ser chamada de “recertificação” se existir programa institucional formal e validado.
+A Formação apresenta os módulos M00 a M16 em uma única sequência, do controle
+documental ao caso integrador. A pessoa pode pesquisar, abrir qualquer módulo e
+retomar o último tópico, mas a interface não divide o catálogo em percursos
+paralelos por cargo ou assunto.
+
+1. **Fundamentos:** M00 a M02 — fonte, papéis, método, recebimento e triagem.
+2. **Enquadramento e fases:** M03 a M07 — modalidade, licenças, situações
+   administrativas, sistemas associados e segurança de barragens.
+3. **Estudos e território:** M08 a M13 — estudos, PACUERA, cartografia,
+   intervenientes, unidades de conservação e processos federais delegados.
+4. **Decisão e produto técnico:** M14 a M16 — suficiência, redação, controle de
+   qualidade, anexos e caso integrador.
+5. **Revisão periódica pessoal:** diagnóstico, avaliações por módulo,
+   laboratórios e retomada dos erros. Só deve ser chamada de “recertificação”
+   se existir programa institucional formal e validado.
+
+PACUERA permanece como conteúdo técnico do módulo M09 e de suas interfaces; não
+é tratado como um percurso separado.
 
 ### 2.2 Unidade padrão de cada aula
 
@@ -69,6 +82,31 @@ Cada aula deve conter, nesta ordem:
 - Erros críticos acionam revisão obrigatória: modalidade incorreta, aplicação retroativa automática, deferimento com pendência impeditiva, confusão entre licença e outorga, substituição de competência externa, PACUERA tratado como licença ou declaração de estabilidade estrutural pelo licenciamento.
 - A conclusão da trilha completa exige nota mínima 75/100 no caso integrador e ausência de erro crítico não corrigido.
 - Notas, gates e rubricas são critérios internos de aprendizagem. Não geram certificação do IAT, habilitação profissional ou decisão administrativa.
+
+### 2.4 Estado implementado em 29/07/2026
+
+- as 159 seções didáticas possuem resumo audiovisual próprio: 746 cenas de
+  conteúdo, 905 entradas de legenda, duração de 10,5 a 102,5 segundos, média de
+  48,3 segundos e 128,0 minutos no total;
+- cada player oferece voz em português, texto aberto no quadro, faixa WebVTT
+  opcional, transcrição navegável, velocidade de reprodução, tela cheia e um
+  professor ilustrado cuja fala acompanha a intensidade da própria narração;
+- os cenários visuais mudam entre barragem, território, vistoria de campo e
+  análise documental, sem carregar informação essencial que não exista no
+  texto ou na transcrição;
+- o Laboratório reúne os 26 casos em catálogo pesquisável, com modos Guiado e
+  Desafio, ajuda em três níveis, quatro fatos visíveis, evidências anotáveis,
+  rubrica de prontidão, rascunho retomável e histórico de conclusões;
+- cada caso possui uma folha-resposta de consulta. No conjunto, são 130 decisões
+  com resposta, justificativa específica, evidências relacionadas, trechos de
+  apoio do POP, conteúdo mínimo, desfecho, glossário e dados a confirmar;
+- o Redator usa os mesmos 26 casos em um seletor pesquisável e mantém a folha de
+  consulta ao lado da prática dos 12 elementos da Informação Técnica;
+- o estado permanece local e versionado no navegador. Um servidor de aplicação
+  só deve ser introduzido quando houver requisito aprovado de identidade
+  institucional, sincronização entre dispositivos, turmas, devolutiva de
+  instrutor ou trilha de auditoria, acompanhado de governança, segurança,
+  privacidade, migração e operação.
 
 ## 3. Matriz mestra de módulos
 
@@ -336,7 +374,7 @@ Uma mesa virtual apresenta excertos e anexos fictícios. O aluno deve localizar 
 7. Fragilidades, potencialidades, UTHs e zoneamento.
 8. PAE, mapa de inundação, ZAS/ZSS e limites de competência.
 9. Participação social por tipologia e Plano de Comunicação Social.
-10. Complementações, prazos, uso de IA, conclusão, decisão, implementação e monitoramento.
+10. Complementações, prazos, conclusão, decisão, implementação e monitoramento.
 
 **Conteúdo obrigatório, sem simplificação indevida**
 
@@ -348,7 +386,6 @@ Uma mesa virtual apresenta excertos e anexos fictícios. O aluno deve localizar 
 - O zoneamento decorre da síntese espacial de fragilidades e potencialidades e de UTHs. Cada zona precisa de delimitação, fundamento, capacidade de suporte e usos permitidos, permissíveis e não permitidos.
 - Participação: MGH/CGH por Consulta Pública, salvo Audiência tecnicamente justificada; PCH por Consulta ou Audiência fundamentada; UHE por Audiência Pública conforme o TR consultado. Consulta remota; audiência presencial ou híbrida; rito do PACUERA não se confunde com audiência de EIA/RIMA.
 - O estudo só vai à participação quando materialmente apto. Admite-se uma reapresentação formal; o TR especifica 120 dias corridos, suspensão da análise e prorrogação motivada antes do vencimento. Após participação, ajustes não contam como reapresentação e pode haver uma complementação final limitada às contribuições.
-- Declaração sobre IA é obrigatória mesmo sem uso ou apenas com revisão linguística. IA pode apoiar revisão, padronização, organização, transcrição, programação ou visualização; não pode ser autora de diagnóstico, prognóstico, metodologia, resultados, zoneamento, PAE, dados, fontes ou conclusões técnicas. Autoria e responsabilidade permanecem humanas.
 
 **Experiências centrais**
 
@@ -578,7 +615,7 @@ Os casos devem usar nomes, CNPJs, coordenadas e municípios fictícios e conter 
 
 ### C14 - PACUERA de UHE materialmente incompleto
 
-**Dados:** zoneamento sem nexo com fragilidades, base vetorial divergente dos mapas, PAE não compatibilizado e ausência da declaração de IA.
+**Dados:** zoneamento sem nexo com fragilidades, base vetorial divergente dos mapas e PAE não compatibilizado.
 
 **Decisão esperada:** estudo não apto à participação. Consolidar uma complementação formal com fundamento, consequência e prazo; depois reanalisar. A audiência obrigatória para UHE no rito do PACUERA não corrige falta de conteúdo mínimo.
 
@@ -751,8 +788,8 @@ As alternativas erradas devem ser plausíveis e derivadas de erros descritos no 
 | Q040 | Qual periodicidade de revisão aparece no TR PACUERA analisado? | 10 anos. | A versão do TR precisa ser confirmada na data do protocolo. |
 | Q041 | A totalidade do TVR integra a área de estudo mínima indicada? | Sim. | Além da faixa do entorno e das extensões a jusante/em cascata. |
 | Q042 | UHE usa qual instrumento no rito do PACUERA do TR consultado? | Audiência Pública. | Esse rito é distinto da audiência de EIA/RIMA. |
-| Q043 | É preciso declarar uso de IA quando não houve uso? | Sim. | A declaração é obrigatória mesmo sem uso ou apenas em revisão linguística. |
-| Q044 | IA pode produzir a conclusão técnica do PACUERA sob revisão humana? | Não. | O TR limita IA a suporte; autoria e julgamento técnico são humanos. |
+| Q043 | Consulta Pública e Audiência Pública são equivalentes? | Não. | Instrumento, formato, motivação e rito dependem da tipologia e do TR aplicável. |
+| Q044 | O PACUERA pode substituir o Plano de Manejo da unidade de conservação? | Não. | O plano do reservatório deve respeitar o ato de criação, o zoneamento e o Plano de Manejo vigente. |
 | Q045 | Estudo materialmente incompleto deve ir à participação para cumprir prazo? | Não. | Primeiro precisa estar apto quanto ao conteúdo mínimo. |
 | Q046 | Quantas reapresentações formais o TR consultado admite? | Uma. | Ajustes pontuais e complemento final restrito às contribuições têm tratamento específico. |
 
@@ -832,7 +869,7 @@ As avaliações deste desenho servem à aprendizagem e ao autoacompanhamento. En
 | Tipologia, modalidade e Consulta Prévia | 12 | critérios aplicados e separação de enquadramento/suficiência |
 | Matriz documental | 12 | exigibilidade, status, gravidade, achado, consequência e encaminhamento |
 | Análise de Memorial/estudo | 12 | fase/TR/versão, método, compatibilidade e rastreabilidade |
-| PACUERA, quando aplicável | 14 | TR, área, diagnóstico, UTH/zonas, cartografia, participação, IA, competências e revisão |
+| PACUERA, quando aplicável | 14 | TR, área, diagnóstico, UTH/zonas, cartografia, participação, competências e revisão |
 | Temas ambientais e interfaces | 10 | APP, flora, fauna, água, sistemas, barragens e intervenientes tratados nos limites corretos |
 | Vistoria/evidências | 6 | fatos, fotos/coordenação, confronto e limitações claras |
 | Pendências ou condicionantes | 8 | específicas, proporcionais e verificáveis; crítico não é postergado |
@@ -852,7 +889,7 @@ As avaliações deste desenho servem à aprendizagem e ao autoacompanhamento. En
 | Fragilidades, potencialidades, UTHs e zoneamento | 20 |
 | PAE, ZAS/ZSS e limites institucionais | 8 |
 | Participação social e tratamento das contribuições | 10 |
-| Complementações, IA e responsabilidade técnica | 6 |
+| Complementações e responsabilidade técnica | 6 |
 | Implementação, indicadores, revisão e conclusão | 6 |
 
 ### 8.6 Evidências, painel de aprendizagem e limites
@@ -952,7 +989,7 @@ O painel do aluno deve mostrar desempenho por eixo e não apenas porcentagem ger
 | 29 | PBA | M08 | rastreador impacto-medida-programa |
 | 30 | Conteúdo mínimo do PACUERA | M09 | checklist mestre e atlas vinculado |
 | 31 | Responsabilidades no PACUERA | M09 | jogo de competência específico |
-| 32 | Participação, complementação e IA | M09 | simulador de rito e prazos |
+| 32 | Participação, complementação e responsabilidade | M09 | simulador de rito e prazos |
 | 33 | RCA, RCE e complementares | M08 | seletor de finalidade/documento |
 | 34 | Relatórios de condicionantes/programas | M08/M14 | avaliador de evidências |
 | 35 | Síntese da conclusão documental | M08 | gerador de conclusão estruturada |
@@ -1052,7 +1089,7 @@ O painel do aluno deve mostrar desempenho por eixo e não apenas porcentagem ger
 | Aptidão material antes da participação | M09.9 | caso C14 |
 | Uma complementação formal, 120 dias e suspensão | M09.10 | simulação de prazo e reapresentação |
 | Ajustes após participação | M09.10 | classificar ajuste pontual/final |
-| Declaração e limites de IA | M09.10 | classificar usos permitidos/proibidos |
+| Autoria, responsabilidade e controle de versões | M09.10 | conferir responsáveis, fontes e histórico documental |
 | Implementação, indicadores, reporte e conflitos | M09.10 | plano de monitoramento |
 | Conclusão separada por seis blocos | gate PACUERA | parecer avaliado por rubrica |
 
@@ -1071,7 +1108,7 @@ A biblioteca deve permitir filtro por `tema`, `ente`, `tipo de ato`, `fase`, `ci
 | Publicidade, setor elétrico e água | CONAMA nº 06/1986; nº 06/1987; nº 09/1987; nº 357/2005; nº 430/2011 | publicação, obras elétricas, audiência, classe e efluentes |
 | Unidades de conservação e infrações | Lei nº 9.985/2000; Lei nº 9.605/1998; Decreto nº 6.514/2008 | UC, compensação, passivos e interface com fiscalização |
 | Fauna | Portaria IAT nº 012/2024, Anexos I a VIII | autorização, métodos, Anexo II e transição do art. 52 |
-| PACUERA | Portaria nº 069/2015 quando vigente/pertinente; IN IAT nº 64/2025; TR PACUERA 2026 | APP de reservatório, plano, participação, IA, implementação e revisão |
+| PACUERA | Portaria nº 069/2015 quando vigente/pertinente; IN IAT nº 64/2025; TR PACUERA 2026 | APP de reservatório, plano, participação, implementação e revisão |
 | Sistemas elétricos e baixo risco | IN IAT nº 10/2026; IN IAT nº 11/2026 | linhas, distribuição, subestações e baixo risco |
 | Patrimônio cultural | IN IPHAN nº 06/2025 | FCA, SAIP, SEI e Protocolo Digital |
 | Regime setorial | RN ANEEL nº 875/2020 e alterações | inventário, DRI, DRS, comunicação, autorização e concessão |
@@ -1086,7 +1123,7 @@ Cada registro precisa conter `título`, `número/ano`, `tema`, `resumo no contex
 
 ### 13.1 Busca operacional
 
-A busca deve aceitar perguntas e termos como `CGH 1 MW`, `LOC`, `TVR`, `uma complementação PACUERA`, `transferência`, `bota-fora`, `RIMA`, `IA no PACUERA` e retornar, em ordem:
+A busca deve aceitar perguntas e termos como `CGH 1 MW`, `LOC`, `TVR`, `uma complementação PACUERA`, `transferência`, `bota-fora`, `RIMA` e `participação no PACUERA` e retornar, em ordem:
 
 1. resposta curta contextual;
 2. alerta de limite/competência;

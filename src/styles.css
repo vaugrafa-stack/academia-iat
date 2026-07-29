@@ -275,14 +275,6 @@ button.primary:active{transform:translateY(0);box-shadow:0 2px 8px #07583b33}
 .quiz-options button:not(:disabled):hover{transform:translateX(3px);border-color:var(--green2)}
 .answer-feedback{animation:viewIn .3s var(--ease)}
 .quiz-result{animation:viewIn .4s var(--ease)}
-/* player de video premium */
-.vl2 .vl-stage{position:relative;background:#04231c}
-.vl2 video{display:block;width:100%}
-.vl-play{position:absolute;inset:0;margin:auto;width:76px;height:76px;border-radius:50%;border:none;background:#07583be6;color:#fff;display:grid;place-items:center;cursor:pointer;box-shadow:0 8px 30px #04231c66;backdrop-filter:blur(2px);transition:transform .2s var(--ease),background .2s var(--ease)}
-.vl-play:hover{transform:scale(1.08);background:var(--green2)}
-.vl-play svg{width:30px;height:30px;margin-left:4px}
-.vl2 .vl-stage::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,#04231c26,transparent 30%);pointer-events:none;opacity:1;transition:opacity .3s}
-.vl2.playing .vl-stage::after{opacity:0}
 .vl-tools{display:flex;align-items:center;gap:8px}
 .vl-tools small{margin-right:4px}
 .vl-tools button{border:1px solid #ffffff42;background:transparent;color:#cfe8dd;border-radius:6px;padding:3px 8px;font-size:11px;font-weight:800;cursor:pointer}

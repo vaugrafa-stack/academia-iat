@@ -643,6 +643,105 @@ não foi convertido em alegação de competência ou aprovação institucional.
 - a publicação e a revalidação do GitHub Pages continuam sendo a prova restante
   deste lote.
 
+## Ciclo integrado de Laboratório, folhas-resposta e videoaulas — 29/07/2026
+
+### Problemas comprovados
+
+- os 26 casos ofereciam prática e debriefing, mas não uma consulta intermediária
+  com o conteúdo mínimo esperado para quem ainda não compreendesse o exercício;
+- a lista longa do Laboratório dificultava escolher caso, nível e assunto, e o
+  rascunho não comunicava com clareza o que estava em andamento;
+- as mídias por seção eram curtas demais para desenvolver o conteúdo selecionado,
+  repetiam um fundo visual pouco contextual e não possuíam professor sincronizado;
+- no celular, a primeira versão do professor cobria parte do texto e da legenda;
+- reproduzir uma mídia online fazia o Service Worker buscar e tentar persistir o
+  arquivo completo, mesmo sem pedido de download;
+- a seleção de caso do Redator não destacava suficientemente a ação esperada.
+
+### Entregas realizadas
+
+**Folhas-resposta e Redator**
+
+- 26 folhas-resposta cobrem os 26 casos e as 130 decisões;
+- cada decisão possui resposta, justificativa editorial própria, evidências
+  relacionadas, citação literal do POP, indicação do tipo de apoio e ressalva de
+  aplicação separada da resposta;
+- cada folha reúne fatos, evidências, conteúdo mínimo, desfecho, modelo recolhido,
+  glossário, lacunas a confirmar, proveniência, exportação TXT e impressão;
+- o seletor do Redator virou combobox pesquisável e o rótulo em destaque passou a
+  ser “Escolha seu caso de base”;
+- falha de carregamento da folha agora aparece visualmente e como alerta
+  programático, inclusive no celular.
+
+**Laboratório**
+
+- catálogo único pesquisável com filtros por categoria e complexidade;
+- modos Guiado e Desafio, ajuda progressiva, percurso de decisão, rubrica de
+  prontidão e quatro fatos integralmente visíveis;
+- rascunho versionado por caso, retomada automática, estado “Em andamento”,
+  reinício real da tentativa e histórico limitado das conclusões anteriores;
+- evidências usam estado de expansão, relação por `aria-controls`, foco no
+  documento aberto e retorno ao acionador ao fechar;
+- a folha-resposta pode ser consultada diretamente no caso sem bloquear a
+  tentativa.
+
+**Palco e mídia**
+
+- 159 MP4, 159 pôsteres e 159 WebVTT foram regenerados para todas as aulas;
+- 746 cenas de conteúdo e 905 entradas de legenda totalizam 128,0 minutos;
+- duração de 10,5 a 102,5 segundos, média de 48,3 segundos e máximo observado de
+  16,73 caracteres por segundo;
+- pronúncia de siglas e unidades, frases completas, pausas e segmentação visual
+  foram revistas para português;
+- professor fictício com quatro estados de fala acompanha a intensidade do áudio
+  do próprio vídeo, pode ser ocultado e respeita movimento reduzido;
+- cenários contextuais de barragem, território, campo e análise documental,
+  controles de velocidade, transcrição e tela cheia;
+- no celular, o professor ocupa faixa própria abaixo do quadro e não encobre
+  texto nem legenda;
+- o WebVTT permanece disponível, mas não abre duplicado por padrão porque o
+  quadro já apresenta texto aberto.
+
+**PWA, desempenho e arquitetura**
+
+- reprodução online preserva solicitações `Range` e não preenche o cache offline
+  de forma implícita;
+- somente o comando explícito de download persiste a mídia completa e verificável;
+- professor e atlas visual integram o núcleo offline, enquanto os 17 pacotes de
+  módulo permanecem opcionais e somam aproximadamente 194,0 MiB;
+- o catálogo de 130 justificativas é carregado sob demanda, fora do JavaScript
+  inicial;
+- o estado continua local, versionado e sem coleta remota. Backend permanece
+  adiado até existir requisito institucional aprovado e governança correspondente.
+
+### Evidências desta etapa
+
+- 189 testes unitários passaram antes do último lote de documentação;
+- 26/26 casos, 130/130 justificativas únicas e 159/159 mídias verificadas;
+- os 159 MP4 foram decodificados integralmente sem falha;
+- os 159 pôsteres possuem 960 × 540 px e nenhum arquivo de mídia está vazio;
+- política editorial, proveniência, referências, rubricas, questões, segurança,
+  PWA e smoke funcional passaram durante o ciclo;
+- inspeção em navegador móvel confirmou rascunho restaurado, folha-resposta
+  rolável, professor sem sobreposição, fundo contextual, reprodução e tela cheia.
+
+Os portões completos são reexecutados no commit candidato; estes números devem
+ser atualizados se algum teste adicional for incorporado antes da publicação.
+
+### Próximas melhorias priorizadas
+
+1. piloto moderado com analistas iniciantes e revisores, medindo tempo, erros,
+   compreensão e transferência entre casos;
+2. revisão técnica e normativa formal das 130 decisões, das transcrições e das
+   136 questões, com registro de responsável e data;
+3. ampliar casos com segunda variação de dados e feedback comparativo, evitando
+   memorização da chave;
+4. extrair novas superfícies de `main.jsx` e reduzir o grafo inicial antes de
+   acrescentar funcionalidades de grande porte;
+5. validar leitor de tela real, zoom de 200%, impressão multipágina e Safari/iOS;
+6. somente projetar backend quando identidade, sincronização, turmas, devolutiva,
+   relatórios ou auditoria tiverem finalidade, autorização e operação definidas.
+
 ## Registro resumido
 
 | Etapa | Estado | Próxima prova |

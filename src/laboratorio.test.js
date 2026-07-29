@@ -139,7 +139,7 @@ describe('limites das decisões sintéticas do laboratório', () => {
 });
 
 describe('proveniência por decisão do laboratório', () => {
-  it('resolve as 130 decisões para trechos do POP e evidências sintéticas explícitas', () => {
+  it('resolve as 130 decisões para trechos do POP e referências de evidência semanticamente opcionais', () => {
     const decisions = scenarios.flatMap((scenario) =>
       scenario.questions.map((_, index) => ({
         scenario,
@@ -151,22 +151,26 @@ describe('proveniência por decisão do laboratório', () => {
     for (const { scenario, provenance } of decisions) {
       expect(provenance, scenario.id).not.toBeNull();
       expect(provenance.popSources.length, provenance.id).toBeGreaterThan(0);
-      expect(provenance.evidenceTitles.length, provenance.id).toBeGreaterThan(0);
+      expect(Array.isArray(provenance.evidenceTitles), provenance.id).toBe(true);
       for (const title of provenance.evidenceTitles) {
         expect(scenario.evidence, `${provenance.id}: ${title}`).toContain(title);
       }
     }
   });
 
-  it('não volta silenciosamente à primeira evidência na quinta decisão', () => {
+  it('usa a evidência 1 quando ela é pertinente e nenhuma quando a decisão é normativa', () => {
     const scenario = scenarios.find((candidate) => candidate.id === 'rlo-vencida');
     const provenance = resolverProvenienciaDecisao(scenario, 4);
 
     expect(provenance.evidenceTitles).toEqual([
+      'Licença anterior e comprovante de protocolo',
       'Relatório de cumprimento de condicionantes',
+      'Automonitoramento dos últimos 2 anos',
       'Notificações anteriores',
     ]);
-    expect(provenance.evidenceTitles).not.toContain('Requerimento tempestivo');
     expect(provenance.reviewStatus).toBe('needs-technical-review');
+
+    const cp = scenarios.find((candidate) => candidate.id === 'cp');
+    expect(resolverProvenienciaDecisao(cp, 4).evidenceTitles).toEqual([]);
   });
 });

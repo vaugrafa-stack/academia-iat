@@ -1,8 +1,10 @@
 import { describe, expect, it } from 'vitest';
 import pop from './data/pop-content.json';
+import answerReasons from './data/lab-answer-reasons.json';
 import { scenarios } from './courseData.js';
 import { isLessonSection } from './lessons.js';
 import { LAB_SOURCE_INDEX, getLabSourceIndex } from './labSourceIndex.js';
+import { validateLabAnswerReasons } from './labAnswerReasons.js';
 import {
   LAB_SOURCE_POLICY,
   LAB_SOURCES,
@@ -68,7 +70,7 @@ describe('proveniência estruturada dos cenários do laboratório', () => {
         expect(decision.id).toBe(`lab-${record.scenarioId}-q${index + 1}`);
         expect(decision.questionIndex).toBe(index + 1);
         expect(decision.popSources.length).toBeGreaterThan(0);
-        expect(decision.caseEvidenceRefs.length).toBeGreaterThan(0);
+        expect(Array.isArray(decision.caseEvidenceRefs)).toBe(true);
         expect(decision.caseEvidenceRefs.every((id) => record.caseEvidenceIds.includes(id))).toBe(true);
         expect(decision.popSources.map((source) => source.sec)).toEqual(
           LAB_SOURCE_INDEX[record.scenarioId].decisionSourceLessonIds[index],
@@ -114,16 +116,73 @@ describe('proveniência estruturada dos cenários do laboratório', () => {
     expect(new Set(Object.keys(POP_LAB_QUOTES))).toEqual(usedSections);
   });
 
-  it('não cria a associação circular Q5 → evidência 1', () => {
+  it('mapeia evidências por pertinência sem impor regra global à quinta decisão', () => {
+    const expected = {
+      'lab-cp-q5': [],
+      'lab-pacuera-q5': ['lab-pacuera-e1', 'lab-pacuera-e4'],
+      'lab-rlo-vencida-q5': [
+        'lab-rlo-vencida-e1',
+        'lab-rlo-vencida-e2',
+        'lab-rlo-vencida-e3',
+        'lab-rlo-vencida-e4',
+      ],
+      'lab-cp-antiga-q5': [
+        'lab-cp-antiga-e1',
+        'lab-cp-antiga-e3',
+        'lab-cp-antiga-e4',
+      ],
+      'lab-prog-semestral-q5': [
+        'lab-prog-semestral-e1',
+        'lab-prog-semestral-e2',
+        'lab-prog-semestral-e3',
+      ],
+      'lab-prog-residuos-q5': [
+        'lab-prog-residuos-e1',
+        'lab-prog-residuos-e2',
+        'lab-prog-residuos-e4',
+      ],
+      'lab-integrador-q3': ['lab-integrador-e3'],
+      'lab-integrador-q5': ['lab-integrador-e1'],
+    };
+
+    const decisions = new Map(
+      LAB_SOURCES.flatMap((record) => record.decisions)
+        .map((decision) => [decision.id, decision]),
+    );
+    for (const [id, refs] of Object.entries(expected)) {
+      expect(decisions.get(id)?.caseEvidenceRefs, id).toEqual(refs);
+    }
+  });
+
+  it('possui uma explicação editorial explícita, específica e separada da citação para cada decisão', () => {
+    expect(validateLabAnswerReasons(answerReasons)).toBe(answerReasons);
+    expect(Object.keys(answerReasons)).toHaveLength(26);
+    const allAnswerReasons = Object.values(answerReasons).flat();
+    expect(allAnswerReasons).toHaveLength(130);
+    expect(new Set(allAnswerReasons).size).toBe(130);
+    expect(JSON.stringify(answerReasons)).not.toMatch(
+      /\bIA\b|intelig[eê]ncia artificial|chatgpt|claude|openai/i,
+    );
+
     for (const record of LAB_SOURCES) {
-      const fifthDecision = record.decisions[4];
-      expect(fifthDecision.questionIndex).toBe(5);
-      expect(fifthDecision.caseEvidenceRefs).not.toContain(`lab-${record.scenarioId}-e1`);
+      for (const [index, decision] of record.decisions.entries()) {
+        const answerReason = answerReasons[record.scenarioId][index];
+        expect(decision.answerReasonId, decision.id).toBe(decision.id);
+        expect(answerReason, decision.id).toMatch(/^(Sim|Não)\./);
+        expect(answerReason.length, decision.id).toBeGreaterThanOrEqual(35);
+        expect(
+          decision.popSources.some((source) => source.quote === answerReason),
+          decision.id,
+        ).toBe(false);
+        if (decision.reviewReason) {
+          expect(answerReason, decision.id).not.toBe(decision.reviewReason);
+        }
+      }
     }
   });
 
   it('mantém inferências frágeis em modo misto e revisão técnica', () => {
-    const expected = new Set([
+    const reviewExpected = new Set([
       'lab-cp-q1',
       'lab-cp-q3',
       'lab-las-q1',
@@ -135,20 +194,36 @@ describe('proveniência estruturada dos cenários do laboratório', () => {
       'lab-prog-compensacao-q3',
       'lab-prog-app-q4',
     ]);
+    const caseApplied = new Set([
+      'lab-prog-semestral-q1',
+      'lab-prog-semestral-q4',
+      'lab-prog-residuos-q1',
+      'lab-prog-residuos-q2',
+      'lab-prog-residuos-q3',
+      'lab-prog-residuos-q4',
+      'lab-prog-compensacao-q1',
+      'lab-prog-compensacao-q2',
+      'lab-prog-compensacao-q4',
+      'lab-prog-compensacao-q5',
+      'lab-prog-app-q1',
+      'lab-prog-app-q2',
+      'lab-prog-app-q3',
+      'lab-prog-app-q5',
+    ]);
     const actual = new Set(
       LAB_SOURCES.flatMap((record) => record.decisions)
         .filter((decision) => decision.reviewStatus === 'needs-technical-review')
         .map((decision) => decision.id),
     );
 
-    expect(actual).toEqual(expected);
+    expect(actual).toEqual(reviewExpected);
     for (const decision of LAB_SOURCES.flatMap((record) => record.decisions)) {
-      if (expected.has(decision.id)) {
+      if (reviewExpected.has(decision.id)) {
         expect(decision.supportMode).toBe('mixed');
         expect(decision.reviewStatus).toBe('needs-technical-review');
         expect(decision.reviewReason.length).toBeGreaterThanOrEqual(30);
       } else {
-        expect(decision.supportMode).toBe('direct');
+        expect(decision.supportMode).toBe(caseApplied.has(decision.id) ? 'mixed' : 'direct');
         expect(decision.reviewStatus).toBe('mapped-draft');
         expect(decision.reviewReason).toBeNull();
       }

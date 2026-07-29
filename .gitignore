@@ -6,5 +6,8 @@ dist-integration-check/
 .playwright-cli/
 .video_tools/
 tools/tts/
+public/media/.aula.staging-*/
+public/media/.aula.staging/
+public/media/.aula.backup-*/
 __pycache__/
 *.py[cod]

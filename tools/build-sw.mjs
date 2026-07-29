@@ -12,6 +12,10 @@ import { pathToFileURL } from 'node:url';
 
 const APP_ID = 'academia-iat';
 const MEDIA_SCHEMA = 'v1';
+const LEARNING_STAGE_CORE = [
+  'media/learning-stage/professor-sprite.webp',
+  'media/learning-stage/thematic-atlas.webp',
+];
 
 export function normalizarBase(repo = '') {
   const limpo = String(repo).trim().replace(/^\/+|\/+$/g, '');
@@ -201,26 +205,6 @@ async function guardarRespostaCompleta(cache, request, response) {
     throw Object.assign(new Error('O arquivo não pôde ser confirmado no armazenamento offline.'), {
       code: 'MEDIA_CACHE_VERIFY_FAILED',
     });
-  }
-}
-
-async function obterMidiaCompleta(request, { forcarRede = false } = {}) {
-  const cache = await caches.open(CACHE_MIDIA);
-  const completo = pedidoCompleto(request);
-  const guardado = await cache.match(completo, { ignoreVary: true });
-  if (guardado && !forcarRede) return { response: guardado, guardado: true };
-
-  const resposta = await fetch(completo);
-  if (!resposta.ok || resposta.status !== 200) {
-    throw new Error('A origem não forneceu o arquivo completo (HTTP ' + resposta.status + ').');
-  }
-  try {
-    await guardarRespostaCompleta(cache, completo, resposta);
-    const confirmado = await cache.match(completo, { ignoreVary: true });
-    return { response: confirmado || resposta, guardado: true };
-  } catch (erro) {
-    // A reprodução on-line continua possível mesmo quando a quota está cheia.
-    return { response: resposta, guardado: false, erro };
   }
 }
 
@@ -520,40 +504,35 @@ self.addEventListener('fetch', (evento) => {
         };
       }
 
-      try {
-        const obtido = await obterMidiaCompleta(request);
+      const cacheNucleo = await caches.open(CACHE_NUCLEO);
+      const guardadoNoNucleo = await cacheNucleo.match(request, { ignoreVary: true });
+      if (guardadoNoNucleo) {
         return {
           resposta: request.headers.has('range')
-            ? await respostaParcial(request, obtido.response)
-            : obtido.response,
+            ? await respostaParcial(request, guardadoNoNucleo)
+            : guardadoNoNucleo,
         };
-      } catch (erroCompleto) {
-        try {
-          const parcial = await fetch(request);
-          if (parcial.status === 206) {
-            await publicar('IAT_PWA_WARNING', {
-              etapa: 'cache-midia',
-              codigo: 'MEDIA_PARTIAL_NOT_CACHED',
-              mensagem: 'A mídia foi reproduzida, mas a origem não permitiu guardar o arquivo completo.',
-              url: request.url,
-            });
-          }
-          return { resposta: parcial };
-        } catch {
-          const detalhe = serializarErro(erroCompleto, 'MEDIA_OFFLINE_MISS');
-          await publicar('IAT_PWA_ERROR', {
-            etapa: 'buscar-midia',
-            url: request.url,
-            ...detalhe,
-          });
-          return {
-            resposta: new Response('', {
-              status: 504,
-              statusText: 'Mídia não disponível offline',
-              headers: { 'X-Academia-IAT-Offline': 'media-miss' },
-            }),
-          };
-        }
+      }
+
+      try {
+        // Reprodução normal preserva Range e não transforma uma visualização
+        // on-line em download persistente. O cache de mídia só é preenchido
+        // pelo comando explícito IAT_CACHE_MEDIA.
+        return { resposta: await fetch(request) };
+      } catch (erroRede) {
+        const detalhe = serializarErro(erroRede, 'MEDIA_OFFLINE_MISS');
+        await publicar('IAT_PWA_ERROR', {
+          etapa: 'buscar-midia',
+          url: request.url,
+          ...detalhe,
+        });
+        return {
+          resposta: new Response('', {
+            status: 504,
+            statusText: 'Mídia não disponível offline',
+            headers: { 'X-Academia-IAT-Offline': 'media-miss' },
+          }),
+        };
       }
     })();
     evento.respondWith(processo.then(({ resposta }) => resposta));
@@ -675,6 +654,7 @@ export async function gerarArtefatosPwa({
     'manifest.webmanifest',
     'icone-192.png',
     'icone-512.png',
+    ...LEARNING_STAGE_CORE,
   ];
   const ausentes = [];
   let bytes = 0;

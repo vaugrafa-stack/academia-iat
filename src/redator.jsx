@@ -13,6 +13,8 @@
 import React, { useMemo, useState } from 'react';
 import { FileText, ChevronRight, ChevronLeft, Download, Check, Circle, Lightbulb, AlertTriangle, Eye } from 'lucide-react';
 import { ESTRUTURA_IT, MINIMO_SECAO, progressoIT, montarIT } from './redatorIT.js';
+import CaseAnswerSheet from './CaseAnswerSheet.jsx';
+import CaseCombobox from './CaseCombobox.jsx';
 
 export default function RedatorIT({ scenarios, grupos, state, setState, go }) {
   const [casoId, setCasoId] = useState(() => state.itCasoAtual || scenarios[0]?.id);
@@ -31,15 +33,21 @@ export default function RedatorIT({ scenarios, grupos, state, setState, go }) {
     its: { ...(s.its || {}), [caso.id]: { ...((s.its || {})[caso.id] || {}), [secao.id]: v } },
   }));
 
-  const trocarCaso = (id) => { setCasoId(id); setPasso(0); setVerTexto(false); };
+  const trocarCaso = (id) => {
+    setCasoId(id);
+    setPasso(0);
+    setVerTexto(false);
+    setState((s) => ({ ...s, itCasoAtual: id }));
+  };
 
   const baixar = () => {
     const blob = new Blob([montarIT(caso, rascunho)], { type: 'text/plain;charset=utf-8' });
     const a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
+    const url = URL.createObjectURL(blob);
+    a.href = url;
     a.download = `IT-exercicio-${caso.id}.txt`;
     a.click();
-    URL.revokeObjectURL(a.href);
+    window.setTimeout(() => URL.revokeObjectURL(url), 1_000);
   };
 
   return (
@@ -68,17 +76,17 @@ export default function RedatorIT({ scenarios, grupos, state, setState, go }) {
       </aside>
 
       <div className="rd-caso">
-        <label htmlFor="rd-sel">Caso de base</label>
-        <select id="rd-sel" value={caso.id} onChange={(e) => trocarCaso(e.target.value)}>
-          {grupos.map((g) => (
-            <optgroup key={g.id} label={`${g.titulo} · ${g.nivel}`}>
-              {g.ids.map((id) => {
-                const c = scenarios.find((x) => x.id === id);
-                return c ? <option key={id} value={id}>{c.label} — {c.title.slice(0, 58)}</option> : null;
-              })}
-            </optgroup>
-          ))}
-        </select>
+        <label className="case-combobox-label" htmlFor="rd-sel">
+          <strong>Escolha seu caso de base</strong>
+        </label>
+        <CaseCombobox
+          id="rd-sel"
+          scenarios={scenarios}
+          groups={grupos}
+          value={caso.id}
+          onChange={trocarCaso}
+        />
+        <CaseAnswerSheet caseData={caso} groups={grupos} />
         <span className="rd-prog">{prog.feitas} de {prog.total} itens com registro mínimo</span>
       </div>
 

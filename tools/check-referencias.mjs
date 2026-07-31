@@ -18,7 +18,7 @@ import { resolve } from 'node:path';
 const raiz = resolve(import.meta.dirname, '..');
 // Modulos de UI fora de main.jsx. main.jsx nao entra: la tudo divide o mesmo
 // escopo e o verificador so acusaria ruido.
-const ARQUIVOS = ['src/ui.jsx', 'src/painelAluno.jsx', 'src/redator.jsx', 'src/mapa.jsx', 'src/hydro.jsx', 'src/hydroCases.jsx', 'src/laboratorio.jsx', 'src/OfflineManager.jsx', 'src/Flowcharts.jsx'];
+const ARQUIVOS = ['src/ui.jsx', 'src/painelAluno.jsx', 'src/redator.jsx', 'src/mapa.jsx', 'src/hydro.jsx', 'src/hydroCases.jsx', 'src/laboratorio.jsx', 'src/OfflineManager.jsx', 'src/Flowcharts.jsx', 'src/biblioteca.jsx'];
 
 // Globais e nativos que nao precisam de import.
 const AMBIENTE = new Set([
@@ -59,6 +59,16 @@ for (const rel of ARQUIVOS) {
   // renome em desestruturacao, como ({ icon: Icon }): o nome novo existe no
   // escopo da funcao e nao vem de import.
   for (const m of s.matchAll(/:\s*([A-Z][A-Za-z0-9_]*)/g)) definidos.add(m[1]);
+  // desestruturacao de ARRAY em parametro de arrow, o padrao das tabelas de
+  // navegacao:  [["buscar", "Buscar", Search]].map(([id, rotulo, I]) => <I/>)
+  // Sem isto o verificador acusa "I" como referencia solta, que foi o unico
+  // achado da extracao da Biblioteca e era falso.
+  for (const m of s.matchAll(/\(\s*\[([^\]]+)\]\s*\)\s*=>/g)) {
+    for (const p of m[1].split(',')) {
+      const nome = p.trim();
+      if (/^[A-Z][A-Za-z0-9_]*$/.test(nome)) definidos.add(nome);
+    }
+  }
 
   const faltando = [...usados].filter((u) => !definidos.has(u) && !AMBIENTE.has(u));
   if (faltando.length) {

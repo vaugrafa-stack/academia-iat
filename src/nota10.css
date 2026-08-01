@@ -669,3 +669,22 @@
 @media(prefers-reduced-motion:reduce){
   .lesson-active-practice,.lesson-knowledge-check{scroll-behavior:auto}
 }
+
+/* Navegacao agrupada por natureza da atividade.
+   Onze itens irmaos nao formam hierarquia: quem chega le todos para descobrir
+   por onde comecar. Quatro grupos de dois ou tres reduzem a leitura a uma
+   pergunta de cada vez. O rotulo e discreto de proposito: ele organiza, nao
+   compete com os destinos. */
+.sidebar-v2 nav .side-group{display:flex;flex-direction:column;gap:6px}
+.sidebar-v2 nav .side-group+.side-group{margin-top:14px}
+.sidebar-v2 nav .side-group:first-of-type{margin-top:16px}
+/* A cor vem de --ink2, o MESMO token dos botoes de navegacao, e nao de branco
+   fixo. A primeira versao usava #ffffffa8 por analogia com a regra antiga
+   `color:#fff`: no tema escuro ficava com 7,97:1 e no claro com 1:1, invisivel,
+   porque a barra e branca no tema claro. Medir nos dois temas nao e zelo, e o
+   unico jeito de saber. */
+.sidebar-v2 nav .side-group-label{
+  margin:0 0 2px;padding:0 14px;font-size:11px;font-weight:800;
+  letter-spacing:.09em;text-transform:uppercase;
+  color:var(--ink2);opacity:.78;
+}

@@ -221,19 +221,41 @@ const DADOS_BIBLIOTECA = Object.freeze({
   lessonMap,
   INDICE,
 });
-const NAV = [
-  ["dashboard", "Visão geral", Home],
-  ["hidreletricas", "Hidrelétricas", Zap],
-  ["mapa", "Mapa do Paraná", MapIcon],
-  ["formacao", "Formação", BookOpen],
-  ["fluxos", "Fluxogramas", GitBranch],
-  ["laboratorio", "Laboratório", FlaskConical],
-  ["redator", "Redigir uma IT", FileText],
-  ["avaliacoes", "Avaliações", ClipboardCheck],
-  ["biblioteca", "Biblioteca", Library],
-  ["perfil", "Meu perfil", BadgeCheck],
-  ["suporte", "Suporte", CircleHelp],
+// Navegacao agrupada por NATUREZA DA ATIVIDADE, nao por ordem de criacao.
+//
+// Eram onze itens irmaos na mesma lista. Onze escolhas no mesmo nivel nao
+// formam hierarquia: quem chega precisa ler todas para descobrir por onde
+// comecar, e quem ja usa nao consegue prever onde uma area fica. Agrupar em
+// quatro blocos de dois ou tres reduz a leitura a uma pergunta de cada vez:
+// quero aprender, praticar, consultar ou mexer na minha conta?
+//
+// "Visao geral" fica fora de grupo de proposito: ela e o ponto de partida, e
+// nao concorre com as outras.
+const NAV_GRUPOS = [
+  [null, [["dashboard", "Visão geral", Home]]],
+  ["Aprender", [
+    ["hidreletricas", "Hidrelétricas", Zap],
+    ["formacao", "Formação", BookOpen],
+    ["fluxos", "Fluxogramas", GitBranch],
+  ]],
+  ["Praticar", [
+    ["laboratorio", "Laboratório", FlaskConical],
+    ["redator", "Redigir uma IT", FileText],
+    ["avaliacoes", "Avaliações", ClipboardCheck],
+  ]],
+  ["Consultar", [
+    ["mapa", "Mapa do Paraná", MapIcon],
+    ["biblioteca", "Biblioteca", Library],
+  ]],
+  ["Sua conta", [
+    ["perfil", "Meu perfil", BadgeCheck],
+    ["suporte", "Suporte", CircleHelp],
+  ]],
 ];
+
+// Lista plana derivada dos grupos, para o titulo da pagina e qualquer consulta
+// por id continuarem funcionando sem saber do agrupamento.
+const NAV = NAV_GRUPOS.flatMap(([, itens]) => itens);
 
 // Cada aula vai para a trilha cuja secao declarada for o prefixo MAIS ESPECIFICO
 // do numero. Assim 20.2.1 fica no modulo de unidades de conservacao (20.2) e nao
@@ -1589,18 +1611,31 @@ function Sidebar({
         </svg>
       </div>
       <nav aria-label="Navegação principal">
-        {NAV.map(([id, label, Icon]) => {
-          const at = view === id || (view === "lesson" && id === "formacao");
+        {NAV_GRUPOS.map(([grupo, itens]) => {
+          const rotuloId = grupo ? `nav-grupo-${norm(grupo).replace(/\s+/g, "-")}` : undefined;
+          const botoes = itens.map(([id, label, Icon]) => {
+            const at = view === id || (view === "lesson" && id === "formacao");
+            return (
+              <button
+                key={id}
+                aria-current={at ? "page" : undefined}
+                className={at ? "active" : ""}
+                onClick={() => go(id)}
+              >
+                <Icon />
+                {label}
+              </button>
+            );
+          });
+          if (!grupo) return botoes;
           return (
-            <button
-              key={id}
-              aria-current={at ? "page" : undefined}
-              className={at ? "active" : ""}
-              onClick={() => go(id)}
-            >
-              <Icon />
-              {label}
-            </button>
+            // O rotulo do grupo e visivel e tambem nomeia o conjunto para quem
+            // usa leitor de tela, por aria-labelledby. Repetir o nome num
+            // aria-label faria o texto ser anunciado duas vezes.
+            <div className="side-group" role="group" aria-labelledby={rotuloId} key={grupo}>
+              <p className="side-group-label" id={rotuloId}>{grupo}</p>
+              {botoes}
+            </div>
           );
         })}
       </nav>

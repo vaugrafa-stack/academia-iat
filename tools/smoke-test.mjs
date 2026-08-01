@@ -32,6 +32,7 @@ globalThis.fetch = async input => {
   // no orcamento de JS de quem nunca abre o Laboratorio. Sem este ramo, as
   // duas telas que dependem dele ficam presas no estado de carregamento.
   else if (url.includes('lab-corpos')) file = 'src/data/lab-corpos.json';
+  else if (url.includes('question-bank')) file = 'src/data/question-bank.json';
   if (file) {
     const body = await readFile(resolve(root, file));
     return new Response(body, { headers: { 'content-type': 'application/json' } });

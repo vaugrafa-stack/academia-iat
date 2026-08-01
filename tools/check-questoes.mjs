@@ -14,7 +14,8 @@ import { resolve } from 'node:path';
 
 const root = resolve(import.meta.dirname, '..');
 const pop = JSON.parse(await readFile(resolve(root, 'src/data/pop-content.json'), 'utf8'));
-const { questionBank, tracks } = await import('../src/courseData.js');
+const { questionBank } = await import('../src/questions.js');
+const { tracks } = await import('../src/courseData.js');
 
 const MINIMO = 8;
 const blocos = new Map(pop.blocks.map((b) => [b.id, b]));

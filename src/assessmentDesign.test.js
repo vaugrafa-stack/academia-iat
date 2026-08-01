@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { prepareAssessment, selectDiagnosticAnchors } from './assessmentDesign.js';
-import { questionBank, tracks } from './courseData.js';
+import { questionBank } from './questions.js';
+import { tracks } from './courseData.js';
 
 describe('preparação de tentativas', () => {
   it('mantém os mesmos itens-âncora no diagnóstico e muda apenas a apresentação', () => {

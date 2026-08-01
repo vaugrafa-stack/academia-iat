@@ -56,7 +56,7 @@ etapa recebe ✅ com base em inspeção estática: precisa de build, teste e nav
 
 ## Frente A. Destravar o orçamento
 
-### A1. Índice leve na frente, corpo pesado sob demanda 🟨
+### A1. Índice leve na frente, corpo pesado sob demanda ✅
 
 **Por quê.** O JS total está em 99,6% de 270 KiB gzip. O próximo commit trava o build.
 Dividir chunk não resolve: o orçamento é do total, e chunk adiado continua contando.
@@ -90,12 +90,15 @@ próximas etapas, e nenhuma tela dependendo de dado que ela não busca.
 de estado vazio decente e de tratamento de falha de rede, senão a área fica em branco
 sem explicação.
 
-**Feito em 01/08/2026, para os casos. Falta o banco de questões.**
+**Concluído em 01/08/2026, em duas passadas: casos e banco de questões.**
 
-| | Antes | Depois |
-|---|---:|---:|
-| JS total (gzip) | 269,0 KiB (99,6%) | **257,0 KiB (95,2%)** |
-| Chunk `ui`, sempre carregado | 50,3 KiB gzip | **30,8 KiB gzip** |
+| | Antes | Casos | Casos e questões |
+|---|---:|---:|---:|
+| JS total (gzip) | 269,0 KiB (99,6%) | 257,0 KiB (95,2%) | **235,5 KiB (87,2%)** |
+| JS total (bruto) | 847,6 KiB (99,7%) | 798,9 KiB (94,0%) | **721,9 KiB (84,9%)** |
+| Chunk `ui`, sempre carregado | 50,3 KiB gzip | 30,8 KiB gzip | **deixou de existir** |
+
+O aviso do orçamento desapareceu: as duas medidas voltaram para a faixa OK.
 
 A causa exata: `courseData.js` importava `labCases.js` na primeira linha, e como
 `main.jsx` importa `tracks`, `questionBank` e `trackGroups` de `courseData`, os 70 kB
@@ -120,8 +123,25 @@ Verificado no navegador: depois de navegar pela Formação, o corpo dos casos te
 **zero downloads**; ao abrir o Laboratório, um download e os 26 casos completos; o
 Redator mostra as evidências, que só existem no corpo.
 
-**Para fechar a etapa** falta o mesmo tratamento em `questionsExtra.js`, que continua
-no `ui` junto com `courseData`. É o que leva o orçamento de 95,2% para a meta de 85%.
+Segunda passada, o banco de questões. Mesma separação, com uma diferença de projeto:
+o banco entra na **busca de arranque**, não sob demanda, porque a tela de aula usa uma
+questão comentada em cada tópico. Adiar só trocaria o custo de lugar. Ele viaja no
+mesmo `Promise.all` que já busca o POP, então não acrescenta uma ida à rede em série.
+
+- `src/questions.js` passou a ser a fonte de autoria, lida pelos testes e pelo
+  `check-questoes`;
+- `tools/build-question-data.mjs` deriva `src/data/question-bank.json` (84,9 kB), com
+  `--check` na bateria;
+- `loadAppData` ganhou `questionBankUrl` e valida que a resposta veio como lista.
+
+Verificado no navegador: uma busca do banco no arranque, zero busca do corpo dos casos
+enquanto o Laboratório não abre, checagem comentada com alternativas na aula e
+Avaliações renderizando, console limpo.
+
+**Detalhe que vale registrar.** O portão de segurança reprovou um comentário meu que
+dizia "saiu do JavaScript: vem por busca": a sequência casa com o padrão de URL
+`javascript:`. O portão estava certo em ser literal. Ao escrever comentário perto de
+`href`, `src` ou `url`, evite a palavra seguida de dois-pontos.
 
 ### A2. Extrair `Lesson` e `Profile` de `main.jsx` ⬜
 

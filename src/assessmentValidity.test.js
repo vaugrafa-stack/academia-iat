@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { questionBank, tracks } from './courseData.js';
+import { questionBank } from './questions.js';
+import { tracks } from './courseData.js';
 
 function blindRate(questions, position) {
   return questions.filter((question) => question.answer === position).length

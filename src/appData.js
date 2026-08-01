@@ -153,14 +153,23 @@ export async function loadAppData({
   popDataUrl,
   flowDataUrl,
   aulaMediaUrl,
+  // O banco de questoes deixou de ser modulo JavaScript e virou arquivo
+  // buscado, para sair do orcamento de JS. Entra aqui, e nao sob demanda,
+  // porque a tela de aula usa uma questao comentada em cada topico: adiar so
+  // trocaria o custo de lugar. Vai no mesmo Promise.all, entao nao acrescenta
+  // uma ida a rede em serie.
+  questionBankUrl,
   base = '',
   featuredMedia,
   fetchImpl = fetch,
 }) {
-  const [popData, flowData, loadedAulaMedia] = await Promise.all([
+  const [popData, flowData, loadedAulaMedia, loadedQuestionBank] = await Promise.all([
     fetchJson(popDataUrl, 'o conteúdo do POP', { fetchImpl }),
     fetchJson(flowDataUrl, 'os fluxogramas', { fetchImpl }),
     fetchJson(aulaMediaUrl, 'o índice de resumos em vídeo', { fetchImpl, optional: true }),
+    questionBankUrl
+      ? fetchJson(questionBankUrl, 'o banco de questões', { fetchImpl })
+      : Promise.resolve([]),
   ]);
   const warnings = loadedAulaMedia.__loadWarning
     ? [loadedAulaMedia.__loadWarning]
@@ -168,11 +177,18 @@ export async function loadAppData({
   const aulaMedia = { ...loadedAulaMedia };
   delete aulaMedia.__loadWarning;
   const validated = validateAppData({ popData, flowData, aulaMedia });
+  if (questionBankUrl && !Array.isArray(loadedQuestionBank)) {
+    throw new AppDataError('O banco de questões não veio como lista.', {
+      code: 'SCHEMA_ERROR',
+      details: [{ label: 'o banco de questões', expected: 'array' }],
+    });
+  }
   return {
     popData: applyBasePath(validated.popData, base),
     flowData: applyBasePath(validated.flowData, base),
     aulaMedia: applyBasePath(validated.aulaMedia, base),
     featuredMedia: applyBasePath(featuredMedia, base),
+    questionBank: loadedQuestionBank,
     warnings,
   };
 }

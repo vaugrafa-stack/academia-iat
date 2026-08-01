@@ -83,10 +83,13 @@ import flowDataUrl from "./data/flowcharts-content.json?url";
 import aulaMediaUrl from "./data/aula-media.json?url";
 import {
   featuredMedia as featuredMediaSource,
-  questionBank,
   trackGroups,
   tracks,
 } from "./courseData";
+// O banco de questoes deixou de ser modulo e virou arquivo buscado no
+// arranque, junto com o conteudo do POP, para sair do orcamento de JS. Fica em
+// `questionBank`, desestruturado de loadAppData mais abaixo.
+import questionBankUrl from "./data/question-bank.json?url";
 // Indice LEVE dos casos: id, trilha, titulo, os tres primeiros fatos e o
 // enunciado de cada pergunta. O corpo (evidencias, documentos, serie, rubrica,
 // desfecho e alternativas) e buscado pelo Laboratorio e pelo Redator quando o
@@ -157,11 +160,13 @@ const {
   flowData,
   aulaMedia,
   featuredMedia,
+  questionBank,
   warnings: appDataWarnings,
 } = await loadAppData({
   popDataUrl,
   flowDataUrl,
   aulaMediaUrl,
+  questionBankUrl,
   base: BASE,
   featuredMedia: featuredMediaSource,
 });

@@ -100,6 +100,15 @@ export const NOVOS_CENARIOS = [
       'Barramento com características que atraem a PNSB',
       'PSB e PAE não constam do processo',
     ],
+    // Documentos que o caso afirma AUSENTES. Ficam listados de proposito: o
+    // analista precisa perceber a falta olhando o conjunto de pecas, e nao
+    // deduzir de um fato solto. Campo separado de `evidence` porque evidencia
+    // e consumida como texto puro em oito lugares, do painel do laboratorio a
+    // folha-resposta e ao portao de rubricas.
+    ausentes: [
+      'Plano de Segurança de Barragem (PSB)',
+      'Plano de Ação de Emergência (PAE)',
+    ],
     evidence: [
       'Memorial do arranjo e dos sistemas associados',
       'Titularidade da linha e da subestação',
@@ -224,6 +233,12 @@ export const NOVOS_CENARIOS = [
       'O checklist marca todos os documentos como apresentados',
       'Duas condicionantes da LP estão sem evidência anexada',
       'Modelo de condicionante do anexo foi aplicado sem ajuste ao caso',
+    ],
+    // O checklist marca tudo como apresentado; estas duas nao estao. E o ponto
+    // do caso: apresentar nao e sinonimo de suficiente, e checklist marcado
+    // nao e sinonimo de evidencia anexada.
+    ausentes: [
+      'Evidência anexada de duas condicionantes da LP',
     ],
     evidence: [
       'Checklist, matriz de suficiência e controle de evidências das condicionantes da LP',

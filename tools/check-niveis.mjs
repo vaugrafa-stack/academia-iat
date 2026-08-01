@@ -20,10 +20,10 @@ const { scenarios, GRUPOS_LAB } = await import('../src/scenarios.js');
 // 4 evidencias, 5 perguntas de sim ou nao, 4 elementos de rubrica, 5 passos.
 // Cinco tinham serie historica, e so por isso alcancavam o degrau `integrar`.
 // Nenhum caso exercitava `aplicar`, `decidir` ou `fundamentar`.
-const PISO = { reconhecer: 21, aplicar: 0, decidir: 0, integrar: 5, fundamentar: 0 };
+const PISO = { reconhecer: 18, aplicar: 0, decidir: 3, integrar: 5, fundamentar: 0 };
 // Quantos degraus a escada precisa ter ocupados para deixar de ser rotulo. Sobe
 // junto com o material; nao baixe para o portao passar.
-const DEGRAUS_MINIMOS = 2;
+const DEGRAUS_MINIMOS = 3;
 
 let erros = 0;
 const fail = (m) => { erros += 1; console.log('FALHA ' + m); };

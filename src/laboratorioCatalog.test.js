@@ -110,11 +110,13 @@ describe('ajuda progressiva e modos de resolução', () => {
       level: 0,
       facts: [],
       evidence: [],
+      ausentes: [],
       questions: [],
       criteria: [],
     });
     expect(observation.facts).toEqual(scenario.facts);
     expect(observation.evidence).toEqual(scenario.evidence);
+    expect(observation.ausentes).toEqual(scenario.ausentes || []);
     expect(observation.questions).toEqual([]);
     expect(questions.questions).toEqual(scenario.questions.map(([prompt]) => prompt));
     expect(questions.criteria).toEqual([]);
@@ -222,6 +224,23 @@ describe('rolagem acessível do laboratório', () => {
       });
     } finally {
       globalThis.matchMedia = originalMatchMedia;
+    }
+  });
+
+  it('mostra o documento ausente junto das pecas, e nao escondido num fato', () => {
+    // O caso 'barragem' afirma nos fatos que PSB e PAE nao constam do processo,
+    // mas a lista de evidencias nao os mencionava: quem estudava via quatro
+    // documentos, todos presentes, e precisava deduzir a falta. Perceber o que
+    // falta e parte da decisao, entao a falta tem que estar visivel na lista.
+    const comAusencia = scenarios.find((caso) => caso.id === 'barragem');
+    expect(comAusencia).toBeTruthy();
+    expect(comAusencia.ausentes.length).toBeGreaterThan(0);
+
+    const ajuda = conteudoAjudaLaboratorio(comAusencia, 1);
+    expect(ajuda.ausentes).toEqual(comAusencia.ausentes);
+    // O documento ausente nao pode aparecer como evidencia disponivel.
+    for (const faltante of comAusencia.ausentes) {
+      expect(ajuda.evidence).not.toContain(faltante);
     }
   });
 });

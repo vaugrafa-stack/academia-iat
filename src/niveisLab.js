@@ -39,7 +39,7 @@ export const NIVEIS = [
     titulo: 'Decidir',
     tarefa: 'julgar com informação incompleta',
     recebe: 'caso em que falta evidência, e perceber a falta é parte da resposta',
-    marca: 'ao menos uma evidência marcada com `ausente: true`',
+    marca: 'campo `ausentes` com ao menos um documento que o caso afirma faltar',
   },
   {
     id: 'integrar',
@@ -74,6 +74,11 @@ export function temDistrator(caso) {
 }
 
 export function temEvidenciaAusente(caso) {
+  // `ausentes` e campo proprio, e nao uma marca dentro de `evidence`, porque
+  // evidencia e consumida como texto puro em oito lugares: painel do
+  // laboratorio, folha-resposta, provenance e portao de rubricas. Transformar
+  // string em objeto quebraria todos eles de uma vez.
+  if ((caso.ausentes || []).length) return true;
   return (caso.evidence || []).some((e) => marcas(e).ausente === true);
 }
 

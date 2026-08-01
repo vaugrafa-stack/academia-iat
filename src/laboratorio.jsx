@@ -265,6 +265,10 @@ export function conteudoAjudaLaboratorio(scenario, level = 0) {
     level: safeLevel,
     facts: safeLevel >= 1 ? [...(scenario?.facts || [])] : [],
     evidence: safeLevel >= 1 ? [...(scenario?.evidence || [])] : [],
+    // Documentos que o caso afirma nao constarem do processo. Aparecem junto
+    // das pecas, e nao escondidos num fato solto, porque perceber a falta faz
+    // parte da decisao: apresentar nao e sinonimo de suficiente.
+    ausentes: safeLevel >= 1 ? [...(scenario?.ausentes || [])] : [],
     questions: safeLevel >= 2
       ? (scenario?.questions || []).map((question) => question[0])
       : [],
@@ -587,6 +591,11 @@ function ProgressiveHelp({ scenario, level, onAdvance, mode }) {
             </ul>
             <ul>
               {content.evidence.map((title) => <li key={title}>{title}</li>)}
+              {content.ausentes.map((title) => (
+                <li key={title} className="lab-ausente">
+                  <span>não consta</span> {title}
+                </li>
+              ))}
             </ul>
           </div>
         </div>

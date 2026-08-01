@@ -830,3 +830,16 @@
     transition: none;
   }
 }
+
+/* Documento que o caso afirma NAO constar do processo.
+   Fica na mesma lista das demais pecas de proposito: perceber a falta e parte
+   da decisao, e um fato solto no texto nao produz essa percepcao. A tarja usa
+   a cor de alerta e tambem a palavra, porque informacao so em cor nao sobrevive
+   a daltonismo nem a impressao. */
+.lab-help-columns li.lab-ausente{color:var(--muted);text-decoration:line-through;text-decoration-color:var(--red)}
+.lab-help-columns li.lab-ausente span{
+  margin-right:6px;padding:1px 6px;border-radius:10px;
+  background:var(--red);color:#fff;font-size:9px;font-weight:900;
+  letter-spacing:.06em;text-transform:uppercase;text-decoration:none;
+  display:inline-block;vertical-align:middle;
+}

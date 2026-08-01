@@ -430,11 +430,64 @@ laboratório e o redator de IT.
 
 ## Frente E. Aprendizagem e prática
 
-### E1. Escada de níveis explícita nos casos ⬜
+### E1. Escada de níveis explícita nos casos 🟨
 
-**Por quê.** Só 5 dos 26 casos declaram nível, e a escala é improvisada
-(`Primeiro contato`, `Aplicação`, `Avançado`, `Especialista`). Sem escada, a pessoa
-não sabe onde está nem o que vem depois.
+**Correção do diagnóstico.** Eu havia escrito que 5 dos 26 casos declaravam nível.
+Errado: **nenhum caso declara nível.** As cinco ocorrências eram dos **grupos**, e o
+rótulo é herdado por todos os casos do grupo.
+
+**O que a medição de 01/08/2026 encontrou, e é pior do que parecia.** Os 26 casos têm
+exatamente a mesma forma:
+
+| | Todos os 26 casos |
+|---|---|
+| Fatos | 4 |
+| Evidências | 4 |
+| Perguntas | 5, **todas de sim ou não** |
+| Elementos de rubrica | 4 |
+| Passos | 5 |
+| Série histórica | só em 5 casos |
+
+Quem resolve o caso 26 faz o mesmo tipo de raciocínio do caso 1. O catálogo exibe
+"Primeiro contato", "Aplicação", "Avançado" e "Especialista", mas isso é assunto, não
+dificuldade. **O rótulo promete uma progressão que o material não entrega.**
+
+**Feito: o instrumento que mede, antes de qualquer rótulo novo.**
+
+`src/niveisLab.js` define os cinco degraus pela natureza da tarefa, e cada um exige uma
+marca verificável no dado do caso:
+
+| Degrau | Tarefa | Marca exigida |
+|---|---|---|
+| Reconhecer | identificar o que a norma pede | nenhuma, é a partida |
+| Aplicar | usar o critério | evidência com `distrator: true` |
+| Decidir | julgar com informação incompleta | evidência com `ausente: true` |
+| Integrar | conciliar fontes que não fecham | `serie`, ou evidência com `conflito: true` |
+| Fundamentar | sustentar por escrito | pergunta cuja resposta não é sim nem não |
+
+`tools/check-niveis.mjs` entrou na bateria e mede a distribuição real:
+
+```
+1. Reconhecer   21  #####################
+2. Aplicar       0
+3. Decidir       0
+4. Integrar      5  #####
+5. Fundamentar   0
+```
+
+O portão falha se um degrau perder casos, se a escada ficar com menos de dois degraus
+ocupados, ou se um grupo anunciar "Avançado" ou "Especialista" sem nenhum caso acima da
+partida. Ele não exige a escada pronta: exige que ela não regrida nem passe a prometer
+mais do que entrega.
+
+**Falta a mudança de conteúdo, e ela precisa da sua conferência.** Seis casos **já
+narram** evidência ausente nos fatos ("PSB e PAE não constam do processo", "duas
+condicionantes da LP estão sem evidência anexada", "sem comprovação conferida"), mas
+nada no dado distingue documento presente de documento faltante. Marcar isso seria fiel
+ao caso, não invenção. O que segura: a lista `evidence` é hoje um vetor de textos
+renderizado direto, e mexer nela toca seis portões e a tela do Laboratório. É trabalho
+de conteúdo, com raio de alcance maior do que aparenta, e merece ser visto antes de
+chegar a quem estuda.
 
 **O que fazer.** Adotar cinco níveis, definidos pela **natureza da tarefa**, não pelo
 tamanho:

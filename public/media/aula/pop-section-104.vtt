@@ -1,43 +1,19 @@
 WEBVTT
 
 00:00.550 --> 00:05.957
-26.5 Tabelas, quadros, figuras,
-fotografias e cartografia
+26.5 Tabelas, quadros, figuras, fotografias e cartografia
 
-00:06.467 --> 00:09.066
-Tabelas e quadros devem conter título,
+00:06.467 --> 00:12.600
+Tabelas e quadros devem conter título, cabeçalho claro, unidade quando aplicável e fonte
 
-00:09.146 --> 00:12.600
-cabeçalho claro,
-unidade quando aplicável e fonte
+00:12.600 --> 00:19.733
+Cabeçalhos devem repetir em páginas subsequentes e as linhas não devem ser divididas quando isso prejudicar a leitura
 
-00:12.600 --> 00:16.209
-Cabeçalhos devem repetir em páginas
-subsequentes e as linhas
+00:19.733 --> 00:27.067
+Figuras, fluxogramas e fotografias devem ter legenda, numeração, fonte e relação explícita com o texto
 
-00:16.289 --> 00:19.733
-não devem ser divididas
-quando isso prejudicar a leitura
+00:27.067 --> 00:33.600
+Fotografias técnicas devem indicar data, local, estrutura e coordenadas quando pertinentes
 
-00:19.733 --> 00:23.502
-Figuras, fluxogramas
-e fotografias devem ter legenda,
-
-00:23.582 --> 00:27.067
-numeração, fonte e relação
-explícita com o texto
-
-00:27.067 --> 00:30.437
-Fotografias técnicas devem
-indicar data, local,
-
-00:30.517 --> 00:33.600
-estrutura e coordenadas quando pertinentes
-
-00:33.600 --> 00:38.345
-Mapas devem atender aos Termos
-de Referência aplicáveis, com título,
-
-00:38.425 --> 00:43.533
-legenda, escala, orientação, projeção,
-datum, data e responsável técnico
+00:33.600 --> 00:43.533
+Mapas devem atender aos Termos de Referência aplicáveis, com título, legenda, escala, orientação, projeção, datum, data e responsável técnico

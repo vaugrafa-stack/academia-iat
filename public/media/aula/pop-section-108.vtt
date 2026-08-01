@@ -1,33 +1,16 @@
 WEBVTT
 
 00:00.550 --> 00:05.083
-27 Controle de qualidade,
-revisão final e rastreabilidade
+27 Controle de qualidade, revisão final e rastreabilidade
 
-00:05.533 --> 00:10.183
-Antes da assinatura, toda manifestação
-deve passar por auditoria interna
+00:05.533 --> 00:14.533
+Antes da assinatura, toda manifestação deve passar por auditoria interna de coerência técnica, normativa, documental, linguística e visual
 
-00:10.263 --> 00:14.533
-de coerência técnica, normativa,
-documental, linguística e visual
-
-00:14.533 --> 00:18.252
-A revisão deve eliminar referências
-a outro empreendimento,
-
-00:18.332 --> 00:21.535
-normas revogadas sem ressalva,
-datas incompatíveis,
-
-00:21.615 --> 00:25.800
-listas com numeração contínua indevida,
-condicionantes genéricas,
+00:14.533 --> 00:25.800
+A revisão deve eliminar referências a outro empreendimento, normas revogadas sem ressalva, datas incompatíveis, listas com numeração contínua indevida, condicionantes genéricas,
 
 00:25.800 --> 00:29.333
-dados sem fonte
-e conclusões não suportadas
+dados sem fonte e conclusões não suportadas
 
 00:29.333 --> 00:34.200
-A checagem deve incluir o arquivo
-renderizado, não apenas o texto extraído
+A checagem deve incluir o arquivo renderizado, não apenas o texto extraído

@@ -3,22 +3,8 @@ WEBVTT
 00:00.550 --> 00:04.354
 26.8 Controle visual obrigatório do DOCX
 
-00:04.867 --> 00:08.656
-Antes da entrega,
-o arquivo deve ser renderizado para PDF
+00:04.867 --> 00:12.333
+Antes da entrega, o arquivo deve ser renderizado para PDF ou imagens e todas as páginas devem ser inspecionadas
 
-00:08.736 --> 00:12.333
-ou imagens e todas as páginas
-devem ser inspecionadas
-
-00:12.333 --> 00:17.345
-Verificar cortes, sobreposições, fontes
-incompatíveis, cabeçalhos e rodapés,
-
-00:17.425 --> 00:21.364
-quebras indevidas de tabelas,
-numeração, imagens deslocadas,
-
-00:21.444 --> 00:26.000
-páginas em branco, atualização
-de campos e legibilidade em impressão
+00:12.333 --> 00:26.000
+Verificar cortes, sobreposições, fontes incompatíveis, cabeçalhos e rodapés, quebras indevidas de tabelas, numeração, imagens deslocadas, páginas em branco, atualização de campos e legibilidade em impressão

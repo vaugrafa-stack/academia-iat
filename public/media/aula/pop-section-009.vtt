@@ -1,55 +1,22 @@
 WEBVTT
 
 00:00.550 --> 00:04.526
-4 Definições,
-siglas e distinção entre documentos
+4 Definições, siglas e distinção entre documentos
 
-00:05.000 --> 00:07.897
-Definições operacionais
-e erros recorrentes:
+00:05.000 --> 00:14.133
+Definições operacionais e erros recorrentes: o quadro do POP relaciona Termo, Definição operacional para o POP e Erro recorrente a evitar
 
-00:07.977 --> 00:10.062
-o quadro do POP relaciona Termo,
+00:14.133 --> 00:23.400
+MCH: Microcentral Hidrelétrica, unidade de geração a partir de potencial hidráulico com potência igual ou inferior a 75 kW
 
-00:10.142 --> 00:14.133
-Definição operacional para o POP
-e Erro recorrente a evitar
+00:23.400 --> 00:30.667
+MGH: Minigeradora Hidrelétrica com potência superior a 75 kW e até 500 kW
 
-00:14.133 --> 00:18.572
-MCH: Microcentral Hidrelétrica,
-unidade de geração a partir
+00:30.667 --> 00:37.600
+CGH: Central Geradora Hidrelétrica com potência superior a 500 kW e até 5 MW
 
-00:18.652 --> 00:23.400
-de potencial hidráulico com potência
-igual ou inferior a 75 kW
+00:37.600 --> 00:49.867
+PCH: Pequena Central Hidrelétrica com potência superior a 5 MW e igual ou inferior a 30 MW e área de reservatório de até 3 km², excluída a calha do leito regular,
 
-00:23.400 --> 00:26.348
-MGH: Minigeradora Hidrelétrica
-
-00:26.428 --> 00:30.667
-com potência superior a 75 kW e até 500 kW
-
-00:30.667 --> 00:33.730
-CGH: Central Geradora Hidrelétrica
-
-00:33.810 --> 00:37.600
-com potência superior a 500 kW e até 5 MW
-
-00:37.600 --> 00:41.737
-PCH: Pequena Central Hidrelétrica
-com potência superior
-
-00:41.817 --> 00:46.107
-a 5 MW e igual ou inferior
-a 30 MW e área de reservatório
-
-00:46.187 --> 00:49.867
-de até 3 km²,
-excluída a calha do leito regular,
-
-00:49.867 --> 00:52.691
-ressalvadas as hipóteses
-de dimensionamento
-
-00:52.771 --> 00:55.067
-por objetivos distintos da geração
+00:49.867 --> 00:55.067
+ressalvadas as hipóteses de dimensionamento por objetivos distintos da geração

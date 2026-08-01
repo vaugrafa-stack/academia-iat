@@ -71,7 +71,7 @@ T_ABERTURA, T_ESSENCIA, T_PONTO, T_FECHO = 3.0, 3.8, 3.6, 2.6
 MAX_CPS = 17.0
 MAX_SCENE_CHARS = 220
 MAX_CARD_LINES = 4
-GENERATOR_VERSION = 2
+GENERATOR_VERSION = 3
 
 
 def font(size, bold=False):
@@ -311,6 +311,27 @@ def segmentar_para_cartao(
     return segmentos
 
 
+def bloco_ativo(spec, indice_cena, decorrido):
+    """Texto do bloco de legenda visivel em `decorrido` segundos desta cena.
+
+    A cena e sintetizada como uma fala so, mas a legenda dela e repartida em
+    blocos legiveis por legendas.dividir_fala. O cartao do video precisa
+    mostrar o mesmo bloco que a faixa .vtt mostra naquele instante, senao os
+    dois textos divergem na tela.
+
+    Cai no texto inteiro da cena quando a reparticao nao se aplica, para o
+    gerador continuar funcionando com spec montado a mao em teste.
+    """
+    dur, legenda, _fala = spec["cenas"][indice_cena]
+    blocos = dividir_fala(legenda, 0.0, max(dur, 0.2))
+    if not blocos:
+        return legenda
+    for inicio, fim, linhas in blocos:
+        if decorrido < fim or (inicio, fim, linhas) == blocos[-1]:
+            return " ".join(linhas)
+    return " ".join(blocos[-1][2])
+
+
 def ease(t):
     t = max(0.0, min(1.0, t))
     return 1 - (1 - t) ** 3
@@ -400,8 +421,15 @@ def frame(spec, n):
     dy = int((1 - local) * 16)
     d.rounded_rectangle((44, y0 + dy, W - 44, y0 + 150 + dy), 14, DEEP, outline="#276b60", width=1)
     d.rectangle((44, y0 + dy, 50, y0 + 150 + dy), fill=accent)
-    rot = cenas[idx][1]  # legenda da cena atual
-    lines = wrap(d, rot, F["cap"], W - 130)[:5]
+    # O cartao mostra o BLOCO DE LEGENDA ativo neste instante, nao a cena
+    # inteira. Antes ele despejava a fala toda de uma vez, ficava parada por
+    # ate 11 segundos e a pessoa lia adiantada em vez de acompanhar a narracao.
+    #
+    # Isto tambem conserta uma incoerencia: o .vtt reparte a fala em blocos, e
+    # o cartao repartia nada. Quem ligasse a faixa de legenda via dois textos
+    # diferentes ao mesmo tempo. Agora os dois saem da MESMA segmentacao.
+    rot = bloco_ativo(spec, idx, tc - acum)
+    lines = wrap(d, rot, F["cap"], W - 130)[:3]
     for i, ln in enumerate(lines):
         c = int(255 * min(1.0, local * 1.4))
         d.text((70, y0 + 24 + dy + i * 26), ln, font=F["cap"], fill=(c, c, c))

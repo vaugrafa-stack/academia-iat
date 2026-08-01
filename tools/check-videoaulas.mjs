@@ -111,6 +111,8 @@ const segundos = (valor) => {
 };
 
 let cuesLegadosAcimaDoTeto = 0;
+// Linhas longas do acervo v2, onde cartao e faixa concordam entre si.
+let legadoLinhasLongas = 0;
 let maiorCpsLegado = { cps: 0, id: '' };
 const linhasLongas = [];
 
@@ -166,16 +168,26 @@ for (const [id, meta] of Object.entries(manifesto)) {
     }
 
     // Legibilidade: comprimento de linha, numero de linhas e tempo na tela.
-    // A cue de titulo (indice 0) tem regra propria, declarada nas constantes.
+    //
+    // Vale so a partir do gerador 3, e a razao importa. O cartao da legenda e
+    // DESENHADO dentro do MP4. No acervo v2, cartao e faixa .vtt mostram a cena
+    // inteira, e concordam. Reparticionar so o .vtt deixaria os dois textos
+    // divergentes na tela para quem liga a faixa, que e pior do que a linha
+    // longa. Os dois passam a sair da mesma segmentacao no gerador 3, e ai o
+    // teto e exigido. Ate la, o acervo publicado e contado como legado.
     const ehTitulo = cueIndex === 0;
+    const novaSegmentacao = meta.generatorVersion >= 3;
     const maxLinhas = ehTitulo ? MAX_LINHAS_TITULO : MAX_LINHAS_CUE;
-    if ((cue.corpo?.length || 1) > maxLinhas) {
+    if (novaSegmentacao && (cue.corpo?.length || 1) > maxLinhas) {
       fail(`${id}: cue com ${cue.corpo.length} linhas (maximo ${maxLinhas})`);
     }
     for (const linha of cue.corpo || []) {
-      if (linha.length > MAX_LINHA_CHARS) linhasLongas.push({ id, chars: linha.length });
+      if (linha.length > MAX_LINHA_CHARS) {
+        if (novaSegmentacao) linhasLongas.push({ id, chars: linha.length });
+        else legadoLinhasLongas += 1;
+      }
     }
-    if (!ehTitulo && cue.fim - cue.inicio > MAX_CUE_SEG + 0.01) {
+    if (novaSegmentacao && !ehTitulo && cue.fim - cue.inicio > MAX_CUE_SEG + 0.01) {
       fail(`${id}: cue de ${(cue.fim - cue.inicio).toFixed(1)}s na tela (maximo ${MAX_CUE_SEG}s)`);
     }
 
@@ -196,6 +208,12 @@ if (linhasLongas.length > TOLERANCIA_LINHA_LONGA) {
   fail(
     `${linhasLongas.length} linhas de legenda acima de ${MAX_LINHA_CHARS} caracteres `
     + `(tolerancia ${TOLERANCIA_LINHA_LONGA}); a maior tem ${maior.chars} em ${maior.id}`,
+  );
+} else if (legadoLinhasLongas) {
+  console.log(
+    `AVISO: acervo legado tem ${legadoLinhasLongas} linhas acima de ${MAX_LINHA_CHARS} caracteres. `
+    + 'No acervo v2 o cartao desenhado no MP4 e a faixa .vtt mostram a cena inteira e concordam entre si; '
+    + 'o gerador 3 reparticiona os DOIS a partir da mesma segmentacao.',
   );
 } else if (linhasLongas.length) {
   console.log(

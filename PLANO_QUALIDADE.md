@@ -226,23 +226,35 @@ que a legenda precisa mudar de novo.
 
 ## Frente C. Ilustração técnica e identidade visual
 
-### C1. Esquemas SVG passam a seguir o tema ⬜
+### C1. Esquemas SVG legíveis nos dois temas ✅
 
-**Por quê.** `hydro.jsx` tem zero ocorrências de `currentColor` ou `var(--)`: toda cor
-é literal (`fill="#0a4a38"`, `fill="#2fa07a"`, `fill="#7f918a"`). Os esquemas foram
-escurecidos por script quando o tema escuro entrou, e hoje eles não acompanham a troca
-de tema. No tema claro, o desenho continua com a paleta do escuro.
+**A premissa original estava parcialmente errada, e a execução corrigiu o rumo.**
 
-**O que fazer.** Trocar as cores literais por variáveis CSS com significado
-(`--agua`, `--concreto`, `--rocha`, `--turbina`, `--terreno`), definidas nos dois
-temas. Traço com `currentColor` onde couber. Conferir contraste de elemento gráfico
-(mínimo 3:1) nos dois temas.
+O plano dizia: `hydro.jsx` tem zero `currentColor` ou `var(--)`, logo os esquemas não
+seguem o tema, logo trocar 167 cores literais por variáveis semânticas. Isso foi
+inferido de um `grep`, não observado.
 
-**Como verificar.** Abrir a área Hidrelétricas nos dois temas e comparar. Medir
-contraste de traço contra fundo em cada esquema.
+Ao abrir no navegador, o quadro real apareceu. O esquema principal (`.hydro-gif`) já
+declarava tela própria (`background:#04231c`) e por isso sempre funcionou nos dois
+temas. **Cor literal ali não é defeito: é desenho técnico sobre tela escura, uma
+decisão de projeto.** O defeito estava em outro lugar: dos 7 esquemas grandes, **5
+não declaravam tela** e, no tema claro, caíam sobre branco.
 
-**Pronto quando.** Nenhuma cor literal nos SVG de conteúdo, e contraste conferido nos
-dois temas.
+Medido no tema claro, antes: **16 cores abaixo de 3:1** de contraste, a pior em
+**1,29:1** (`#dce5e0`), a água em 1,34:1 e o acento principal em 1,69:1. Elemento
+gráfico exige 3:1.
+
+**O que foi feito.** Aplicar aos cinco a mesma tela que o sexto já tinha, em vez de
+retematizar 167 cores. Uma regra de CSS no lugar de um mutirão, e com um ganho a
+mais: os esquemas ficaram coerentes entre si, o que não eram.
+
+Depois: **zero esquema sobre fundo claro**, e os dois temas passaram a medir
+exatamente igual. As 9 cores que continuam abaixo de 3:1 contra a tela são
+preenchimentos internos escuros do próprio desenho, não marcas de leitura.
+
+**Lição registrada.** `grep` mostra o que o código escreve, não o que a tela mostra.
+A proposta certa só apareceu depois de medir o fundo efetivo de cada esquema
+renderizado.
 
 ### C2. Animar o que é processo ⬜
 

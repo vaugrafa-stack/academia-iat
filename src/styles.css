@@ -1397,3 +1397,41 @@ button:disabled{cursor:not-allowed}
    quais teclas existem, e esconder a informação só ajuda quem já sabe. */
 .mp-ajuda-teclado{margin:0;padding:6px 11px;border-bottom:1px solid var(--line);
  background:var(--surface2);font-size:11.5px;line-height:1.5;color:var(--muted)}
+
+/* Esquema tecnico sobre tela escura, em qualquer tema.
+   ----------------------------------------------------
+   Os desenhos de arranjo, turbina e corte usam uma paleta propria, montada
+   para fundo escuro: agua em #bfe3ff, acento em #3fe0a6, alerta em #f3bd4f.
+   O .hydro-gif ja declarava essa tela (background #04231c) e por isso sempre
+   funcionou nos dois temas. Os demais esquemas nao declaravam, e no tema
+   claro caiam sobre branco.
+
+   Medido em 31/07/2026, no tema claro: cinco esquemas sobre fundo branco e
+   16 cores abaixo de 3:1 de contraste, a pior em 1,29:1 (#dce5e0), com a
+   agua em 1,34:1 e o acento principal em 1,69:1. Elemento grafico exige 3:1.
+
+   A correcao nao e retematizar 167 cores literais: e aplicar aos cinco a
+   mesma tela que o sexto ja tinha. Alem de resolver o contraste, deixa os
+   esquemas coerentes entre si, o que hoje nao eram. */
+.tg-schema,
+.arr-grid > figure,
+.prc-fotos > figure{
+  background:#04231c;
+  border:1px solid var(--line);
+  border-radius:12px;
+  overflow:hidden;
+}
+.tg-schema > svg,
+.arr-grid > figure > svg,
+.prc-fotos > figure > svg{display:block;width:100%;height:auto}
+/* Filho direto de proposito: `figure svg` alcancaria o icone da legenda e o
+   esticaria. Ja aconteceu uma vez, no icone do mapa. */
+.tg-schema figcaption,
+.arr-grid > figure figcaption,
+.prc-fotos > figure figcaption{
+  padding:9px 13px;
+  background:#04231c;
+  color:#c8dcd3;
+  font-size:12.5px;
+  line-height:1.5;
+}

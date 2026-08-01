@@ -112,7 +112,7 @@ e contrato próprios.
 
 ## Frente B. Legenda e narração
 
-### B1. Reescrever o gerador de legenda ⬜
+### B1. Reescrever o gerador de legenda ✅
 
 **Por quê.** É o defeito mais generalizado da plataforma, e é medido:
 88% dos blocos têm linha acima de 42 caracteres, a maior com 220; 64% ficam acima de
@@ -140,9 +140,35 @@ Assistir três peças inteiras com o som desligado.
 
 **Pronto quando.** Os três alvos zerados e `check-videoaulas` verde.
 
-**Nota.** Regenerar a legenda não exige regerar o vídeo, se a legenda for um passo
-separado. Se hoje ela sai acoplada à montagem, separar primeiro: economiza horas de
-codificação em toda iteração futura.
+**Feito em 31/07/2026.** Medição final sobre os mesmos 159 arquivos:
+
+| | Antes | Depois |
+|---|---:|---:|
+| Blocos | 905 | 1.855 |
+| Linhas acima de 42 caracteres | 794 (88%) | **6** |
+| Blocos acima de 6 s | 582 (64%) | **10** |
+| Maior linha | 220 | 46 |
+
+Os 10 blocos longos restantes são todos a cue de título, que não pode ser dividida
+porque o portão compara o texto dela com o título da aula. As 6 linhas restantes
+ficam entre 43 e 46 caracteres, em trechos onde nenhuma fronteira de palavra divide
+o bloco dentro do teto.
+
+A segmentação virou `tools/legendas.py`, compartilhada pelo gerador e pelo
+refazedor. Duas passadas: primeiro por comprimento, depois por duração, e uma
+terceira que redistribui o tempo para nenhum bloco passar de 17 caracteres por
+segundo. Essa terceira passada apareceu na execução: dividir revela picos locais de
+velocidade que a média da cena escondia.
+
+O portão `check-videoaulas` deixou de exigir `cues === cenas + 1`, que era o que
+impedia legenda legível, e passou a cobrar comprimento de linha, número de linhas e
+tempo na tela, para o ganho não regredir.
+
+**Efeito colateral tratado.** O painel de transcrição lê o mesmo arquivo, e com o
+dobro de blocos virou lista de meias frases. Ele agora reagrupa por frase. A regra
+olha o **início** do bloco seguinte, não o fim do anterior: as falas saem do POP sem
+ponto final, e testar pontuação no anterior colapsava a transcrição inteira num item
+só. Resíduo conhecido: um bloco que começa com sigla maiúscula abre item novo.
 
 ### B2. Prosódia da narração ⬜
 
@@ -389,7 +415,7 @@ mínimo de 3:1. Não inferir por estilo computado: `getComputedStyle` não lê
 
 ## Frente G. Ferramentas de autoria
 
-### G1. Regenerar uma peça só ⬜
+### G1. Regenerar uma peça só ✅ (legenda) · 🟨 (narração e montagem)
 
 **Por quê.** Hoje mexer no gerador implica reprocessar o acervo. Isso torna cada
 melhoria de vídeo cara e desencoraja iteração.
@@ -398,6 +424,15 @@ melhoria de vídeo cara e desencoraja iteração.
 narração e montagem sejam passos separáveis, para regerar legenda sem recodificar vídeo.
 
 **Pronto quando.** Trocar a legenda de uma seção leva segundos, não minutos.
+
+**Feito em 31/07/2026, para a legenda.** `tools/refazer_legendas.py` recorta o
+acervo inteiro sem sintetizar nem recodificar nada, porque o tempo nas VTT já está
+certo: ele vem da duração real de cada WAV medida na geração. Só a segmentação
+estava errada. Os 159 arquivos são reescritos em segundos, contra horas de
+recodificação. Tem `--conferir` para relatar sem gravar, e aceita IDs específicos.
+
+Narração e montagem continuam acopladas: mudar prosódia ainda exige recodificar.
+Separar isso é o que falta para fechar a etapa.
 
 ### G2. Conferência de link normativo ⬜
 

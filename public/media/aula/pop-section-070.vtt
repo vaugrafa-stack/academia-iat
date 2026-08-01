@@ -1,19 +1,57 @@
 WEBVTT
 
 00:00.550 --> 00:05.158
-18.10.3 Zoneamento, cartografia e segurança
+18.10.3 Zoneamento,
+cartografia e segurança
 
-00:05.667 --> 00:15.133
-O zoneamento deve ser estruturado por Unidades Territoriais Homogêneas resultantes da síntese das fragilidades e potencialidades naturais e antrópicas
+00:05.667 --> 00:10.064
+O zoneamento deve ser estruturado
+por Unidades Territoriais Homogêneas
 
-00:15.133 --> 00:24.867
-Cada zona deve apresentar delimitação, fundamento técnico, capacidade de suporte e diretrizes para usos permitidos, permissíveis e não permitidos
+00:10.144 --> 00:12.559
+resultantes da síntese das fragilidades
 
-00:24.867 --> 00:33.400
-A classificação do PACUERA não autoriza automaticamente atividade sujeita a licenciamento, aprovação municipal, outorga ou ato de outro órgão
+00:12.639 --> 00:15.133
+e potencialidades naturais e antrópicas
 
-00:33.400 --> 00:41.000
-Os mapas devem utilizar a mesma base vetorial entregue, com tabela de atributos e arquivos de estilo compatíveis
+00:15.133 --> 00:19.001
+Cada zona deve apresentar delimitação,
+fundamento técnico,
 
-00:41.000 --> 00:54.467
-O TR prevê entrega em Geopackage ou ESRI File Geodatabase com arquivos de simbologia, controle de topologia, referência geodésica, coerência temática e resolução mínima de 300 dpi para mapas inseridos no relatório
+00:19.081 --> 00:22.813
+capacidade de suporte e diretrizes
+para usos permitidos,
+
+00:22.893 --> 00:24.867
+permissíveis e não permitidos
+
+00:24.867 --> 00:29.236
+A classificação do PACUERA não autoriza
+automaticamente atividade sujeita
+
+00:29.316 --> 00:33.400
+a licenciamento, aprovação municipal,
+outorga ou ato de outro órgão
+
+00:33.400 --> 00:37.086
+Os mapas devem utilizar a mesma
+base vetorial entregue,
+
+00:37.166 --> 00:41.000
+com tabela de atributos
+e arquivos de estilo compatíveis
+
+00:41.000 --> 00:45.409
+O TR prevê entrega em Geopackage
+ou ESRI File Geodatabase com arquivos
+
+00:45.489 --> 00:49.193
+de simbologia, controle de topologia,
+referência geodésica,
+
+00:49.273 --> 00:51.565
+coerência temática e resolução mínima
+
+00:51.645 --> 00:54.467
+de 300 dpi para mapas
+inseridos no relatório

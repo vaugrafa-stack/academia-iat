@@ -49,7 +49,42 @@ export function parseWebVtt(source) {
       text,
     });
   }
-  return cues;
+  return agruparEmFrases(cues);
+}
+
+// Legenda e transcricao querem coisas opostas.
+//
+// Na tela, o bloco precisa ser curto: no maximo duas linhas de 42 caracteres e
+// seis segundos, senao quem le nao acompanha. Por isso, desde 31/07/2026, uma
+// fala longa vira varios blocos no arquivo VTT.
+//
+// Na transcricao, o mesmo corte vira uma lista de meias frases, que se le pior
+// do que o texto corrido. Entao aqui os blocos voltam a ser frase: enquanto o
+// anterior nao terminar em ponto, interrogacao ou exclamacao, o seguinte e
+// continuacao dele. A regra e a mesma que check-videoaulas usa para decidir se
+// uma legenda pode comecar em minuscula.
+//
+// O criterio e o INICIO do bloco seguinte, nao o fim do anterior. As falas do
+// roteiro saem do POP sem ponto final, entao testar `/[.!?]$/` no anterior dava
+// verdadeiro sempre e a transcricao inteira colapsava num item so. Bloco que
+// comeca em minuscula e continuacao; bloco que comeca em maiuscula ou em
+// numero de secao e fala nova.
+//
+// A primeira cue e o titulo da aula e nunca absorve a seguinte.
+const CONTINUACAO = /^[a-zà-öø-ÿ(]/;
+
+function agruparEmFrases(cues) {
+  const saida = [];
+  for (const cue of cues) {
+    const anterior = saida[saida.length - 1];
+    if (saida.length > 1 && anterior && CONTINUACAO.test(cue.text)) {
+      anterior.text = `${anterior.text} ${cue.text}`;
+      anterior.end = cue.end;
+      continue;
+    }
+    saida.push({ ...cue });
+  }
+  return saida;
 }
 
 function minuteLabel(seconds) {

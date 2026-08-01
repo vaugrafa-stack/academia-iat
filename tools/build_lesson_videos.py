@@ -42,6 +42,14 @@ sys.path.insert(0, str(ROOT / ".video_tools"))
 from PIL import Image, ImageDraw, ImageFont  # noqa: E402
 import imageio_ffmpeg  # noqa: E402
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from legendas import (  # noqa: E402
+    LIMITE_LINHA,
+    dividir_fala,
+    envolver,
+    escrever_vtt,
+)
+
 W, H, FPS = 960, 540, 15
 DEFAULT_OUT = ROOT / "public" / "media" / "aula"
 OUT = DEFAULT_OUT
@@ -616,19 +624,39 @@ def trilha(clips, dur, out_wav: Path):
 # --------------------------------------------------------------- montagem
 
 def vtt(spec, path: Path):
-    linhas = ["WEBVTT", ""]
-    titulo_inicio, titulo_fim, titulo = spec["titulo_cue"]
-    linhas += [
-        f"{titulo_inicio//60:02.0f}:{titulo_inicio%60:06.3f} --> "
-        f"{titulo_fim//60:02.0f}:{titulo_fim%60:06.3f}",
-        titulo,
-        "",
-    ]
-    t = spec.get("t_abertura", T_ABERTURA)
-    for dur, legenda, _fala in spec["cenas"]:
-        linhas += [f"{t//60:02.0f}:{t%60:06.3f} --> {(t+dur)//60:02.0f}:{(t+dur)%60:06.3f}", legenda, ""]
+    """Escreve a legenda ja segmentada para leitura.
+
+    Ate 31/07/2026 esta funcao escrevia uma cue por cena com a fala inteira
+    numa linha so. A medicao dos 159 arquivos encontrou 88 por cento dos
+    blocos com linha acima de 42 caracteres, a maior com 220, e 64 por cento
+    acima de 6 segundos na tela. O tempo estava certo, porque vem da duracao
+    real do WAV; a segmentacao e que faltava. Ela agora mora em legendas.py,
+    compartilhada com refazer_legendas.py.
+
+    A cue de titulo continua inteira: o portao check-videoaulas compara o
+    texto dela com o titulo da aula. Quebrar em linhas mantem a comparacao
+    valida, porque o portao junta as linhas com espaco; dividir em cues nao.
+    """
+    blocos = blocos_da_legenda(spec)
+    path.write_text(escrever_vtt(blocos), encoding="utf-8")
+    return len(blocos)
+
+
+def blocos_da_legenda(preparado):
+    """A segmentacao, num lugar so.
+
+    O manifesto declara a quantidade de cues e o pico de caracteres por
+    segundo, e o portao confere os dois contra o arquivo. Se a contagem for
+    calculada aqui e a legenda escrita ali, os dois divergem no primeiro
+    ajuste. Uma fonte, dois consumidores.
+    """
+    titulo_inicio, titulo_fim, titulo = preparado["titulo_cue"]
+    blocos = [(titulo_inicio, titulo_fim, envolver(titulo, LIMITE_LINHA, 3))]
+    t = preparado.get("t_abertura", T_ABERTURA)
+    for dur, legenda, _fala in preparado["cenas"]:
+        blocos.extend(dividir_fala(legenda, t, dur))
         t += dur
-    path.write_text("\n".join(linhas), encoding="utf-8")
+    return blocos
 
 
 def montar(spec):
@@ -797,21 +825,21 @@ def executavel_disponivel(valor) -> bool:
 
 
 def metadados_da_narracao(preparado):
-    titulo_inicio, titulo_fim, titulo_legenda = preparado["titulo_cue"]
+    # Medido sobre os BLOCOS que vao para o arquivo, nao sobre as cenas: desde
+    # que uma cena pode virar varios blocos, contar cena subestima as cues e
+    # mede o cps errado, e o portao acusa a divergencia.
+    blocos = blocos_da_legenda(preparado)
     taxas_cps = [
-        len(re.sub(r"\s+", " ", titulo_legenda).strip())
-        / (titulo_fim - titulo_inicio),
-        *[
-            len(re.sub(r"\s+", " ", legenda).strip()) / duracao
-            for duracao, legenda, _fala in preparado["cenas"]
-        ],
+        len(re.sub(r"\s+", " ", " ".join(linhas)).strip()) / (fim - inicio)
+        for inicio, fim, linhas in blocos
+        if fim > inicio
     ]
     return {
         "dur": round(preparado["dur"], 3),
         "cenas": len(preparado["cenas"]),
-        "cues": len(preparado["cenas"]) + 1,
+        "cues": len(blocos),
         "generatorVersion": GENERATOR_VERSION,
-        "maxCps": round(max(taxas_cps), 3),
+        "maxCps": round(max(taxas_cps), 3) if taxas_cps else 0.0,
     }
 
 

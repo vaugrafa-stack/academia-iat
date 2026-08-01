@@ -22,6 +22,23 @@ const { lessons } = derivarAulas(pop, tracks);
 const TOLERANCIA_SEM_VIDEO = 4;
 const MAX_CPS = 17;
 const MAX_CUE_CHARS = 220;
+
+// Legibilidade da legenda, travada em 31/07/2026. A medicao anterior a essa
+// data encontrou 88% dos blocos com uma linha acima de 42 caracteres (a maior
+// com 220) e 64% acima de 6 segundos na tela, porque o gerador escrevia a fala
+// inteira numa linha so. Estes tetos existem para isso nao voltar.
+const MAX_LINHA_CHARS = 42;
+const MAX_LINHAS_CUE = 2;
+const MAX_CUE_SEG = 6.0;
+// A cue de titulo e a excecao declarada: o portao compara o texto dela com o
+// titulo da aula, entao ela nao pode ser dividida em varias cues. Titulo longo
+// do POP fica em ate 3 linhas e pode passar do teto de tempo.
+const MAX_LINHAS_TITULO = 3;
+// Tolerancia de linha: sobram poucos casos em que nenhuma fronteira de palavra
+// divide o bloco em duas linhas dentro do teto. Hoje sao 6 linhas em cerca de
+// 3.700, todas entre 43 e 46 caracteres. Se este numero crescer, a segmentacao
+// regrediu.
+const TOLERANCIA_LINHA_LONGA = 8;
 const TAMANHO_MINIMO = { mp4: 100_000, vtt: 40, jpg: 20_000 };
 
 let manifesto = {};
@@ -53,11 +70,17 @@ for (const [id, meta] of Object.entries(manifesto)) {
   }
   if (!Number.isFinite(meta.dur) || meta.dur <= 0) fail(`${id}: duracao invalida no manifesto`);
   if (!Number.isInteger(meta.cenas) || meta.cenas < 1) fail(`${id}: quantidade de cenas invalida`);
+  // Uma cue de titulo alem das cenas, e agora POSSIVELMENTE mais de uma cue
+  // por cena. A regra era igualdade estrita (cues === cenas + 1), o que
+  // impedia legenda legivel: uma fala de 11 segundos com 170 caracteres nao
+  // cabe num bloco so. Desde 31/07/2026 a fala e reparticionada em blocos de
+  // ate 2 linhas de 42 caracteres e no maximo 6 segundos, entao a relacao
+  // vira "pelo menos uma por cena, mais o titulo".
   if (
     meta.generatorVersion >= 2
-    && (!Number.isInteger(meta.cues) || meta.cues !== meta.cenas + 1)
+    && (!Number.isInteger(meta.cues) || meta.cues < meta.cenas + 1)
   ) {
-    fail(`${id}: gerador v2 deve declarar uma cue de titulo alem das cenas visuais`);
+    fail(`${id}: gerador v2 deve declarar o titulo e ao menos uma cue por cena`);
   }
   if (meta.generatorVersion != null && meta.generatorVersion < 2) {
     fail(`${id}: versao de gerador declarada, mas anterior ao contrato atual`);
@@ -89,6 +112,7 @@ const segundos = (valor) => {
 
 let cuesLegadosAcimaDoTeto = 0;
 let maiorCpsLegado = { cps: 0, id: '' };
+const linhasLongas = [];
 
 for (const [id, meta] of Object.entries(manifesto)) {
   let vtt = '';
@@ -107,8 +131,9 @@ for (const [id, meta] of Object.entries(manifesto)) {
     const fimTexto = fimComOpcoes?.split(/\s+/)[0];
     const inicio = segundos(inicioTexto);
     const fim = segundos(fimTexto || '');
-    const texto = linhas.slice(indiceTempo + 1).join(' ').trim();
-    cues.push({ inicio, fim, texto });
+    const corpo = linhas.slice(indiceTempo + 1);
+    const texto = corpo.join(' ').trim();
+    cues.push({ inicio, fim, texto, corpo });
   }
   const cuesEsperadas = meta.cues ?? meta.cenas;
   if (cues.length !== cuesEsperadas) {
@@ -140,6 +165,20 @@ for (const [id, meta] of Object.entries(manifesto)) {
       fail(`${id}: legenda comeca no meio da frase -> "${c.slice(0, 60)}"`);
     }
 
+    // Legibilidade: comprimento de linha, numero de linhas e tempo na tela.
+    // A cue de titulo (indice 0) tem regra propria, declarada nas constantes.
+    const ehTitulo = cueIndex === 0;
+    const maxLinhas = ehTitulo ? MAX_LINHAS_TITULO : MAX_LINHAS_CUE;
+    if ((cue.corpo?.length || 1) > maxLinhas) {
+      fail(`${id}: cue com ${cue.corpo.length} linhas (maximo ${maxLinhas})`);
+    }
+    for (const linha of cue.corpo || []) {
+      if (linha.length > MAX_LINHA_CHARS) linhasLongas.push({ id, chars: linha.length });
+    }
+    if (!ehTitulo && cue.fim - cue.inicio > MAX_CUE_SEG + 0.01) {
+      fail(`${id}: cue de ${(cue.fim - cue.inicio).toFixed(1)}s na tela (maximo ${MAX_CUE_SEG}s)`);
+    }
+
     const cps = c.replace(/\s+/g, ' ').length / (cue.fim - cue.inicio);
     if (meta.generatorVersion >= 2) {
       if (cps > MAX_CPS + 0.01) fail(`${id}: legenda com ${cps.toFixed(1)} cps (maximo ${MAX_CPS})`);
@@ -150,6 +189,20 @@ for (const [id, meta] of Object.entries(manifesto)) {
     }
     fimAnterior = cue.fim;
   }
+}
+
+if (linhasLongas.length > TOLERANCIA_LINHA_LONGA) {
+  const maior = linhasLongas.reduce((a, b) => (b.chars > a.chars ? b : a));
+  fail(
+    `${linhasLongas.length} linhas de legenda acima de ${MAX_LINHA_CHARS} caracteres `
+    + `(tolerancia ${TOLERANCIA_LINHA_LONGA}); a maior tem ${maior.chars} em ${maior.id}`,
+  );
+} else if (linhasLongas.length) {
+  console.log(
+    `${linhasLongas.length} linha(s) entre ${MAX_LINHA_CHARS + 1} e `
+    + `${linhasLongas.reduce((a, b) => (b.chars > a.chars ? b : a)).chars} caracteres: `
+    + 'nenhuma fronteira de palavra divide o bloco dentro do teto.',
+  );
 }
 
 const sem = lessons.filter((l) => !manifesto[l.id]);

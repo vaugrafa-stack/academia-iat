@@ -191,5 +191,80 @@ class BuildMapaTests(unittest.TestCase):
         self.assertEqual(self.output.read_text(encoding="utf-8"), "unchanged")
 
 
+def _carregar_gerador_de_aulas():
+    """Importa build_lesson_videos sem executar o main nem exigir Piper.
+
+    O modulo le argumentos e monta caminhos de ferramenta ao ser carregado, e
+    nenhuma das duas coisas interessa para testar a normalizacao de fala.
+    """
+    import importlib.util
+    import sys
+
+    caminho = Path(__file__).resolve().parent / "build_lesson_videos.py"
+    spec = importlib.util.spec_from_file_location("_blv_para_teste", caminho)
+    modulo = importlib.util.module_from_spec(spec)
+    argv = sys.argv
+    sys.argv = [str(caminho), "--dry-run"]
+    try:
+        with contextlib.suppress(SystemExit):
+            spec.loader.exec_module(modulo)
+    finally:
+        sys.argv = argv
+    return modulo
+
+
+class TextoFaladoTests(unittest.TestCase):
+    """Normalizacao da entrada do sintetizador.
+
+    Piper nao tem SSML: toda a prosodia vem de como o texto chega a ele. Estes
+    casos saem de uma varredura do acervo real de 159 legendas, que encontrou
+    54 numeros de ato com separador de milhar, 25 ordinais, 13 siglas com barra
+    e 4 paragrafos. A legenda continua fiel ao POP; so a fala e adaptada.
+    """
+
+    @classmethod
+    def setUpClass(cls):
+        cls.blv = _carregar_gerador_de_aulas()
+
+    def falado(self, texto):
+        return self.blv.texto_falado(texto)
+
+    def test_numero_de_ato_perde_o_ponto_e_ganha_de(self):
+        # Padrao mais frequente do acervo. Escrito como esta, o sintetizador
+        # decide sozinho o que fazer com o ponto de milhar e com a barra, e
+        # nenhuma das leituras possiveis e a certa.
+        self.assertIn("15190, de 2025", self.falado("Lei Federal nº 15.190/2025"))
+        self.assertIn("7150, de 2024", self.falado("Decreto nº 7.150/2024"))
+
+    def test_numero_de_ato_sem_milhar_tambem_perde_a_barra(self):
+        self.assertIn("9, de 2025", self.falado("IN IAT nº 09/2025"))
+
+    def test_ordinal_juridico_ate_o_nono(self):
+        # Convencao brasileira: ordinal ate o nono, cardinal do decimo em diante.
+        self.assertIn("artigo quinto", self.falado("art. 5º"))
+        self.assertIn("parágrafo segundo", self.falado("§ 2º"))
+        self.assertIn("artigos terceiro e quarto", self.falado("arts. 3º e 4º"))
+
+    def test_ordinal_do_decimo_em_diante_fica_cardinal(self):
+        self.assertIn("artigo 12", self.falado("artigo 12º"))
+        self.assertNotIn("décimo", self.falado("artigo 12º"))
+
+    def test_ordinal_feminino(self):
+        self.assertIn("primeira etapa", self.falado("a 1ª etapa"))
+        self.assertIn("segunda campanha", self.falado("a 2ª campanha"))
+
+    def test_inciso_romano_vira_ordinal(self):
+        self.assertIn("inciso terceiro", self.falado("inciso III"))
+
+    def test_sigla_com_barra_ganha_conjuncao(self):
+        self.assertIn(" e ", self.falado("processo no SEI/IBAMA"))
+        self.assertNotIn("/", self.falado("processo no SEI/IBAMA"))
+
+    def test_a_fala_nunca_termina_sem_pontuacao(self):
+        # Sem ponto final o sintetizador nao fecha a entonacao e a frase soa
+        # cortada na emenda com a cena seguinte.
+        self.assertTrue(self.falado("texto sem ponto").endswith("."))
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -223,7 +223,7 @@ olha o **início** do bloco seguinte, não o fim do anterior: as falas saem do P
 ponto final, e testar pontuação no anterior colapsava a transcrição inteira num item
 só. Resíduo conhecido: um bloco que começa com sigla maiúscula abre item novo.
 
-### B2. Prosódia da narração ⬜
+### B2. Prosódia da narração 🟨
 
 **Por quê.** Piper não tem SSML: toda a prosódia vem de como o texto é segmentado e
 pontuado antes de chegar nele. Hoje a leitura é corrida, com pausa uniforme entre
@@ -245,6 +245,42 @@ uma com sigla.
 
 **Pronto quando.** Nenhuma frase começa com minúscula por corte de abreviação, e a
 duração da trilha bate exatamente com a do vídeo.
+
+**Normalização feita em 01/08/2026. A pausa variável continua aberta.**
+
+Boa parte já existia: `art.`, `inc.`, `nº`, `km²`, `km`, `MW`, `ha`, `%`, siglas
+soletradas e travessão virando vírgula. Em vez de supor o que faltava, varri o acervo
+de 159 legendas e contei:
+
+| Padrão | Ocorrências | Estava tratado? |
+|---|---:|---|
+| Número de ato com milhar (`15.190/2025`) | 54 | não |
+| Ordinal (`5º`, `1ª`) | 25 | não |
+| Sigla com barra (`SEI/IBAMA`) | 13 | só `EIA/RIMA` |
+| Parágrafo (`§`) | 4 | não |
+| Inciso em romano | 1 | não |
+| `m³/s`, `Q7,10`, data `30/06` | **0** | a suposição do plano estava errada |
+
+O que entrou, com sete testes em `tools/test_tooling.py`:
+
+- `15.190/2025` vira `15190, de 2025`. Escrito como estava, o sintetizador decidia
+  sozinho o que fazer com o ponto de milhar e com a barra, e nenhuma das leituras
+  possíveis é a certa.
+- Ordinal jurídico pela convenção brasileira: **ordinal até o nono** (`art. 5º` vira
+  "artigo quinto"), **cardinal do décimo em diante** (`artigo 12º` vira "artigo 12",
+  não "artigo décimo segundo").
+- `§` vira "parágrafo", `§§` vira "parágrafos", `inciso III` vira "inciso terceiro".
+- Sigla com barra ganha conjunção, generalizando a escolha que já valia para
+  `EIA/RIMA`.
+
+**Limite honesto.** `texto_falado` só alimenta o sintetizador, não a legenda. O ganho
+aparece na **próxima regeneração** do acervo, porque mudar a duração do áudio muda a
+linha do tempo das cenas e exige recodificar o vídeo. Os 159 arquivos atuais mantêm o
+áudio antigo.
+
+**Falta** a pausa variável por situação. Hoje ela é uniforme: 0,62 s de cauda por cena
+mais 0,16 s de intervalo mínimo na trilha. Variar exige o gerador saber o papel de cada
+cena (definição, critério, número decisivo), o que ele ainda não sabe.
 
 ### B3. Composição: de slide narrado para videoaula ⬜
 

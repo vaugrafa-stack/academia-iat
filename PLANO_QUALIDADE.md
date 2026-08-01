@@ -56,7 +56,7 @@ etapa recebe ✅ com base em inspeção estática: precisa de build, teste e nav
 
 ## Frente A. Destravar o orçamento
 
-### A1. Índice leve na frente, corpo pesado sob demanda ⬜
+### A1. Índice leve na frente, corpo pesado sob demanda 🟨
 
 **Por quê.** O JS total está em 99,6% de 270 KiB gzip. O próximo commit trava o build.
 Dividir chunk não resolve: o orçamento é do total, e chunk adiado continua contando.
@@ -89,6 +89,39 @@ próximas etapas, e nenhuma tela dependendo de dado que ela não busca.
 **Risco.** O Laboratório passa a ter estado de carregamento onde não tinha. Precisa
 de estado vazio decente e de tratamento de falha de rede, senão a área fica em branco
 sem explicação.
+
+**Feito em 01/08/2026, para os casos. Falta o banco de questões.**
+
+| | Antes | Depois |
+|---|---:|---:|
+| JS total (gzip) | 269,0 KiB (99,6%) | **257,0 KiB (95,2%)** |
+| Chunk `ui`, sempre carregado | 50,3 KiB gzip | **30,8 KiB gzip** |
+
+A causa exata: `courseData.js` importava `labCases.js` na primeira linha, e como
+`main.jsx` importa `tracks`, `questionBank` e `trackGroups` de `courseData`, os 70 kB
+de casos entravam no caminho crítico de quem só queria abrir uma aula.
+
+O que foi feito:
+
+- a montagem dos cenários saiu para `src/scenarios.js`, que continua sendo a fonte de
+  autoria lida pelos testes e pelo `check-rubricas`;
+- `tools/build-lab-data.mjs` deriva dela dois artefatos, com modo `--check` no
+  `npm test` e no `npm run build` para nunca divergirem:
+  `src/data/lab-index.json` (20,5 kB, entra no pacote) e `src/data/lab-corpos.json`
+  (68,3 kB, buscado), ou seja **77% do peso sai do orçamento de JS**;
+- o índice usa os **mesmos nomes de campo** do caso completo, inclusive `questions`
+  em formato de tupla, então as telas que só precisam de título, fatos e enunciado
+  não mudaram uma linha;
+- `useCasosSobDemanda` busca o corpo só quando o Laboratório ou o Redator abrem, com
+  estado de carregamento e uma tela de erro explícita, porque arquivo buscado falha e
+  em subcaminho um 404 deixaria a área em branco sem aviso.
+
+Verificado no navegador: depois de navegar pela Formação, o corpo dos casos tem
+**zero downloads**; ao abrir o Laboratório, um download e os 26 casos completos; o
+Redator mostra as evidências, que só existem no corpo.
+
+**Para fechar a etapa** falta o mesmo tratamento em `questionsExtra.js`, que continua
+no `ui` junto com `courseData`. É o que leva o orçamento de 95,2% para a meta de 85%.
 
 ### A2. Extrair `Lesson` e `Profile` de `main.jsx` ⬜
 

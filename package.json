@@ -11,8 +11,8 @@
   },
   "scripts": {
     "dev": "node tools/build-public-content.mjs --check && node tools/check-public-editorial-policy.mjs && vite --host 127.0.0.1 --port 5173 --strictPort --open",
-    "build": "node tools/build-public-content.mjs --check && node tools/check-public-editorial-policy.mjs && node tools/sanitize-public-data.mjs --check && node tools/build-offline-packages.mjs --check && vite build && node tools/check-public-editorial-policy.mjs --dist=dist && node tools/build-sw.mjs dist && node tools/check-bundle.mjs dist",
-    "test": "vitest run && node tools/build-public-content.mjs --check && node tools/check-public-editorial-policy.mjs && node tools/sanitize-public-data.mjs --check && node tools/test-pwa.mjs && node tools/build-offline-packages.mjs --check && node tools/security-check.mjs && node tools/check-provenance.mjs && node tools/check-referencias.mjs && node tools/check-rubricas.mjs && node tools/check-questoes.mjs && node tools/check-videoaulas.mjs && node tools/audit-lessons.mjs && node tools/smoke-test.mjs",
+    "build": "node tools/build-public-content.mjs --check && node tools/check-public-editorial-policy.mjs && node tools/sanitize-public-data.mjs --check && node tools/build-lab-data.mjs --check && node tools/build-offline-packages.mjs --check && vite build && node tools/check-public-editorial-policy.mjs --dist=dist && node tools/build-sw.mjs dist && node tools/check-bundle.mjs dist",
+    "test": "vitest run && node tools/build-public-content.mjs --check && node tools/check-public-editorial-policy.mjs && node tools/sanitize-public-data.mjs --check && node tools/test-pwa.mjs && node tools/build-lab-data.mjs --check && node tools/build-offline-packages.mjs --check && node tools/security-check.mjs && node tools/check-provenance.mjs && node tools/check-referencias.mjs && node tools/check-rubricas.mjs && node tools/check-questoes.mjs && node tools/check-videoaulas.mjs && node tools/audit-lessons.mjs && node tools/smoke-test.mjs",
     "audit": "node tools/audit-lessons.mjs",
     "audit:premium": "node tools/audit-premium.mjs",
     "extract:pop": "python tools/extract_pop.py && node tools/build-public-content.mjs",
@@ -33,7 +33,8 @@
     "check:referencias": "node tools/check-referencias.mjs",
     "check:security": "node tools/security-check.mjs",
     "sanitize:data": "node tools/sanitize-public-data.mjs",
-    "check:sanitization": "node tools/sanitize-public-data.mjs --check"
+    "check:sanitization": "node tools/sanitize-public-data.mjs --check",
+    "lab:data": "node tools/build-lab-data.mjs"
   },
   "dependencies": {
     "lucide-react": "1.25.0",

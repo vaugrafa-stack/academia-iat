@@ -2,7 +2,7 @@
 import React, { act } from 'react';
 import { createRoot } from 'react-dom/client';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { GRUPOS_LAB, scenarios } from './courseData.js';
+import { GRUPOS_LAB, scenarios } from './scenarios.js';
 import Laboratorio from './laboratorio.jsx';
 
 let host;

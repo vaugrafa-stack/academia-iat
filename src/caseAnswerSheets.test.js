@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import answerReasons from './data/lab-answer-reasons.json';
-import { GRUPOS_LAB, scenarios } from './courseData.js';
+import { GRUPOS_LAB, scenarios } from './scenarios.js';
 import {
   buildCaseAnswerSheet,
   CASE_ANSWER_SHEET_TITLE,

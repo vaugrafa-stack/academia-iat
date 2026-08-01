@@ -143,7 +143,7 @@ describe('vínculo aula ↔ caso (exemplo trabalhado)', () => {
   it('todo caso aponta para um módulo que existe e tem aula de abertura', async () => {
     // O bloco "Como isso aparece num processo" so aparece na primeira aula do
     // modulo. Se um caso apontar para modulo sem aula, o bloco some em silencio.
-    const { scenarios } = await import('./courseData.js');
+    const { scenarios } = await import('./scenarios.js');
     for (const c of scenarios) {
       const t = tracks.find((x) => x.id === c.track);
       expect(t, `caso ${c.id} aponta para módulo inexistente ${c.track}`).toBeTruthy();
@@ -152,7 +152,7 @@ describe('vínculo aula ↔ caso (exemplo trabalhado)', () => {
   });
 
   it('todo caso tem o que o bloco precisa mostrar', () => {
-    return import('./courseData.js').then(({ scenarios }) => {
+    return import('./scenarios.js').then(({ scenarios }) => {
       for (const c of scenarios) {
         expect(c.title, `${c.id} sem título`).toBeTruthy();
         expect((c.facts || []).length, `${c.id} com menos de 3 fatos`).toBeGreaterThanOrEqual(3);

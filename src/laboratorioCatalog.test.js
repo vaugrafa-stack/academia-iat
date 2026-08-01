@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
-import { GRUPOS_LAB, scenarios } from './courseData.js';
+import { GRUPOS_LAB, scenarios } from './scenarios.js';
 import {
   conteudoAjudaLaboratorio,
   criarCatalogoLaboratorio,

@@ -7,7 +7,7 @@
 //      escolhido e largo demais e a conferencia vira ruido.
 //
 // Uso:  node tools/check-rubricas.mjs
-import { scenarios, GRUPOS_LAB } from '../src/courseData.js';
+import { scenarios, GRUPOS_LAB } from '../src/scenarios.js';
 
 const norm = (v) => (v || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
 

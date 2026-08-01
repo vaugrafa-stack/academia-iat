@@ -84,11 +84,16 @@ import aulaMediaUrl from "./data/aula-media.json?url";
 import {
   featuredMedia as featuredMediaSource,
   questionBank,
-  scenarios,
   trackGroups,
   tracks,
-  GRUPOS_LAB,
 } from "./courseData";
+// Indice LEVE dos casos: id, trilha, titulo, os tres primeiros fatos e o
+// enunciado de cada pergunta. O corpo (evidencias, documentos, serie, rubrica,
+// desfecho e alternativas) e buscado pelo Laboratorio e pelo Redator quando o
+// caso abre, e por isso nao pesa no orcamento de JS nem no carregamento de
+// quem so quer ler uma aula. Os nomes dos campos sao os mesmos do caso
+// completo, entao esta tela nao precisa saber da separacao.
+import { scenarios, GRUPOS_LAB, useCasosSobDemanda } from "./labData.js";
 import {
   loadProfile,
   defaultProfile,
@@ -569,6 +574,14 @@ function App() {
         : NAV.find(([id]) => id === view)?.[1] || "Visão geral";
     document.title = `${label} · Academia IAT`;
   }, [view, selectedLesson]);
+  // O Laboratorio e o Redator sao as unicas telas que usam o caso inteiro
+  // (evidencias, documentos, serie, rubrica, desfecho e alternativas). O corpo
+  // e buscado so quando uma das duas abre, e ate chegar elas mostram
+  // carregamento em vez de caso pela metade.
+  const precisaCasoInteiro = view === "laboratorio" || view === "redator";
+  const { casos: casosInteiros, erro: erroCasos } =
+    useCasosSobDemanda(precisaCasoInteiro);
+
   let content = {
     dashboard: (
       <Dashboard
@@ -589,11 +602,15 @@ function App() {
     fluxos: (
       <Flowcharts state={state} setState={setState} flowData={flowData} />
     ),
-    laboratorio: (
+    laboratorio: erroCasos ? (
+      <CasosIndisponiveis erro={erroCasos} />
+    ) : !casosInteiros ? (
+      <RouteLoading />
+    ) : (
       <LaboratorioPremium
         state={state}
         setState={setState}
-        scenarios={scenarios}
+        scenarios={casosInteiros}
         grupos={GRUPOS_LAB}
         lessonMap={lessonMap}
         initialScenarioId={selectedScenario}
@@ -603,9 +620,13 @@ function App() {
         }}
       />
     ),
-    redator: (
+    redator: erroCasos ? (
+      <CasosIndisponiveis erro={erroCasos} />
+    ) : !casosInteiros ? (
+      <RouteLoading />
+    ) : (
       <RedatorIT
-        scenarios={scenarios}
+        scenarios={casosInteiros}
         grupos={GRUPOS_LAB}
         state={state}
         setState={setState}
@@ -775,6 +796,25 @@ function RouteLoading() {
       <div>
         <strong>Preparando esta área…</strong>
         <small>O conteúdo e o progresso permanecem no dispositivo.</small>
+      </div>
+    </section>
+  );
+}
+
+// O corpo dos casos e um arquivo buscado, e arquivo buscado falha. Sem esta
+// tela, a area ficaria em branco sem dizer por que, que e como um 404 de
+// deploy em subcaminho se manifesta.
+function CasosIndisponiveis({ erro }) {
+  return (
+    <section className="route-loading" role="alert">
+      <span aria-hidden="true" />
+      <div>
+        <strong>Não foi possível carregar os casos</strong>
+        <small>
+          O catálogo de casos é baixado à parte para a plataforma abrir mais
+          rápido. Recarregue a página; se persistir, verifique a conexão.
+          {erro?.message ? ` Detalhe técnico: ${erro.message}.` : ""}
+        </small>
       </div>
     </section>
   );

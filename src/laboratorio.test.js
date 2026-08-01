@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import popData from './data/pop-content.json';
-import { scenarios, tracks } from './courseData.js';
+import { scenarios } from './scenarios.js';
+import { tracks } from './courseData.js';
 import { derivarAulas } from './lessons.js';
 import {
   calcularIndicadoresLaboratorio,

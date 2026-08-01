@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { scenarios } from './courseData.js';
+import { scenarios } from './scenarios.js';
 import {
   buildScenarioDocument,
   minimumEvidenceRequired,

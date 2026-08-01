@@ -4,3 +4,5 @@ src/data/pop-public-content.json text eol=lf
 src/data/flowcharts-content.json text eol=lf
 src/data/offline-packages.json text eol=lf
 
+src/data/lab-index.json text eol=lf
+src/data/lab-corpos.json text eol=lf

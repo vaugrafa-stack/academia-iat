@@ -7,7 +7,7 @@ import CaseAnswerSheet from './CaseAnswerSheet.jsx';
 import CaseCombobox from './CaseCombobox.jsx';
 import RedatorIT from './redator.jsx';
 import answerReasons from './data/lab-answer-reasons.json';
-import { GRUPOS_LAB, scenarios } from './courseData.js';
+import { GRUPOS_LAB, scenarios } from './scenarios.js';
 
 const answerSheetsCss = readFileSync(
   'src/answerSheets.css',

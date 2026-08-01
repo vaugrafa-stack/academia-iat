@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import pop from './data/pop-content.json';
 import answerReasons from './data/lab-answer-reasons.json';
-import { scenarios } from './courseData.js';
+import { scenarios } from './scenarios.js';
 import { isLessonSection } from './lessons.js';
 import { LAB_SOURCE_INDEX, getLabSourceIndex } from './labSourceIndex.js';
 import { validateLabAnswerReasons } from './labAnswerReasons.js';

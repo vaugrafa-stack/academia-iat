@@ -77,6 +77,7 @@ import {
 } from "./painelAluno.jsx";
 import { PageHeader, Empty, TableRenderer } from "./ui.jsx";
 import { ordenaBusca, snippet } from "./busca.js";
+import { elementoDaAula, precisaDeComplemento } from "./aulasAnexoB.js";
 import mapaDados from "./data/mapa-parana.json";
 import popDataUrl from "./data/pop-public-content.json?url";
 import flowDataUrl from "./data/flowcharts-content.json?url";
@@ -2749,6 +2750,57 @@ function VideoLesson({ media, track, lesson }) {
 //
 // De proposito NAO mostra o desfecho: se mostrasse, o laboratorio viraria
 // leitura. A aula enquadra o problema; a pratica resolve.
+// As dez aulas do Anexo B sao rotulos de um modelo: no POP, "Conclusao" tem 74
+// caracteres. Quem abria essas aulas via um titulo e quase nada, em dez das
+// dezessete aulas do modulo de suficiencia, pendencias e conclusao, que e o
+// mais importante do curso.
+//
+// O conteudo didatico delas ja existia dentro do Redator de IT: o que o POP
+// exige em cada secao e o erro que mais aparece. Aqui as duas coisas se ligam.
+// Nada inventado, e a pessoa sai da leitura para a pratica de escrever aquela
+// secao no caso real.
+function ComoEscreverEstaSecao({ lesson, blocks = [], go }) {
+  const texto = blocks
+    .map((b) => b?.paragraph?.text || "")
+    .join(" ");
+  if (!precisaDeComplemento(texto, lesson)) return null;
+  const elemento = elementoDaAula(lesson);
+  if (!elemento) return null;
+  return (
+    <section className="anexo-b-guia">
+      <header>
+        <FileText size={16} aria-hidden="true" />
+        <div>
+          <small>ESTA SEÇÃO NA INFORMAÇÃO TÉCNICA</small>
+          <h3>
+            Elemento {elemento.n} do item 23.1: {elemento.titulo}
+          </h3>
+        </div>
+      </header>
+      <div className="abg-exige">
+        <strong>O que o POP exige aqui</strong>
+        <p>{elemento.exige}</p>
+      </div>
+      <div className="abg-armadilha">
+        <AlertTriangle size={15} aria-hidden="true" />
+        <div>
+          <strong>Erro recorrente</strong>
+          <p>{elemento.armadilha}</p>
+        </div>
+      </div>
+      <button type="button" onClick={() => go && go("redator")}>
+        <FileText size={15} aria-hidden="true" /> Escrever esta seção no Redator
+        <ArrowRight size={14} aria-hidden="true" />
+      </button>
+      <small>
+        O texto do POP nesta seção é curto porque ela é um rótulo do modelo do
+        Anexo B. A orientação acima vem do item 23.1, que descreve o conteúdo
+        exigido em cada elemento.
+      </small>
+    </section>
+  );
+}
+
 function ExemploNoProcesso({
   caso,
   questionIndex = 0,
@@ -3193,6 +3245,7 @@ function LessonOverview({
           )}
         </div>
       )}
+      <ComoEscreverEstaSecao lesson={lesson} blocks={blocks} go={go} />
       <ExemploNoProcesso
         caso={caso}
         questionIndex={casoPergunta}

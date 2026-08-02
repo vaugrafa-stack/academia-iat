@@ -682,3 +682,20 @@
   letter-spacing:.09em;text-transform:uppercase;
   color:var(--ink2);opacity:.78;
 }
+
+/* Guia da seção do Anexo B dentro da aula.
+   Dez aulas do M14 sao rotulos de um modelo e tem quase nada de texto no POP.
+   Este bloco traz o que o item 23.1 exige naquela secao e o erro recorrente,
+   reaproveitando o conteudo ja escrito no Redator de IT. */
+.anexo-b-guia{margin:18px 0;padding:14px 16px;border:1px solid var(--line);border-left:3px solid var(--blue);border-radius:7px;background:var(--surface)}
+.anexo-b-guia>header{display:flex;gap:10px;align-items:flex-start;margin-bottom:11px}
+.anexo-b-guia>header>svg{flex:none;color:var(--blue)}
+.anexo-b-guia>header small{color:var(--blue);font-size:10px;font-weight:900;letter-spacing:.08em}
+.anexo-b-guia>header h3{margin:2px 0 0;font-size:14px}
+.anexo-b-guia .abg-exige strong,.anexo-b-guia .abg-armadilha strong{display:block;font-size:12px}
+.anexo-b-guia .abg-exige p{margin:3px 0 11px;color:var(--ink2);font-size:13px;line-height:1.55}
+.anexo-b-guia .abg-armadilha{display:flex;gap:9px;padding:10px 12px;border-left:3px solid var(--amber);background:var(--amber2)}
+.anexo-b-guia .abg-armadilha svg{flex:none;color:var(--amber)}
+.anexo-b-guia .abg-armadilha p{margin:3px 0 0;color:var(--ink2);font-size:12px;line-height:1.5}
+.anexo-b-guia>button{display:inline-flex;align-items:center;gap:7px;margin-top:12px;min-height:40px;padding:0 14px;border:1px solid var(--blue);border-radius:6px;background:transparent;color:var(--blue);font-size:12px;font-weight:850;cursor:pointer}
+.anexo-b-guia>small{display:block;margin-top:10px;color:var(--muted);font-size:11px;line-height:1.45}

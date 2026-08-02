@@ -30,6 +30,7 @@ import CaseAnswerSheet from './CaseAnswerSheet.jsx';
 import { buildScenarioDocument, minimumEvidenceRequired } from './scenarioDocuments.js';
 import { tracks } from './courseData.js';
 import { getLabSources, LAB_SOURCE_POLICY } from './labSources.js';
+import { nivelDoCaso } from './niveisLab.js';
 import './laboratorio.css';
 
 function normalizar(valor = '') {
@@ -203,14 +204,22 @@ export function criarCatalogoLaboratorio(scenarios = [], grupos = []) {
       .map((scenario) => ({
         scenario,
         group,
+        // Nivel MEDIDO pelo que o caso pede, e nao o rotulo que o grupo
+        // anuncia. Ate 01/08/2026 o cartao exibia o nivel do grupo, e a
+        // medicao mostrou que ele nao correspondia a nada: os 26 casos tinham
+        // a mesma forma, entao "Especialista" e "Primeiro contato" pediam o
+        // mesmo tipo de raciocinio. Rotulo que promete progressao inexistente
+        // e pior do que rotulo nenhum.
+        nivel: nivelDoCaso(scenario),
         searchableText: normalizar([
           scenario.label,
           scenario.title,
           scenario.type,
           group.titulo,
-          group.nivel,
+          nivelDoCaso(scenario).titulo,
           ...(scenario.facts || []),
           ...(scenario.evidence || []),
+          ...(scenario.ausentes || []),
         ].join(' ')),
       }))
   ));
@@ -221,9 +230,12 @@ export function filtrarCatalogoLaboratorio(
   { query = '', categoria = 'todas', complexidade = 'todas' } = {},
 ) {
   const normalizedQuery = normalizar(query).trim();
-  return catalogo.filter(({ group, searchableText }) => {
+  return catalogo.filter(({ group, nivel, searchableText }) => {
     const matchesCategory = categoria === 'todas' || group.id === categoria;
-    const matchesComplexity = complexidade === 'todas' || group.nivel === complexidade;
+    // Filtra pelo que o caso EXIGE, nao pelo que o grupo anuncia. Assim
+    // escolher "Decidir" devolve os casos em que falta evidencia, e nao os que
+    // alguem rotulou de avancados.
+    const matchesComplexity = complexidade === 'todas' || nivel?.id === complexidade;
     const matchesQuery = !normalizedQuery || searchableText.includes(normalizedQuery);
     return matchesCategory && matchesComplexity && matchesQuery;
   });
@@ -697,10 +709,16 @@ export default function Laboratorio({
     || grupos.find((item) => item.ids.includes(scenario.id));
   const selectedSaved = state.labs?.[scenario.id];
   const selectedDraft = normalizarRascunhoLaboratorio(selectedSaved, scenario);
-  const complexities = useMemo(
-    () => [...new Set(grupos.map((item) => item.nivel))],
-    [grupos],
-  );
+  // Complexidades oferecidas no filtro sao as que EXISTEM no catalogo, na
+  // ordem da escada. Listar degrau vazio faria o filtro devolver zero caso e
+  // parecer defeito.
+  const complexities = useMemo(() => {
+    const presentes = new Map();
+    for (const item of catalog) {
+      if (item.nivel && !presentes.has(item.nivel.id)) presentes.set(item.nivel.id, item.nivel);
+    }
+    return [...presentes.values()].sort((a, b) => a.ordem - b.ordem);
+  }, [catalog]);
   const helpLevel = helpLevels[selected] || 0;
   const requiresAllEvidence = ['Avançado', 'Especialista'].includes(group?.nivel);
   const minimumEvidence = requiresAllEvidence
@@ -1007,7 +1025,9 @@ export default function Laboratorio({
             >
               <option value="todas">Todas as complexidades</option>
               {complexities.map((complexity) => (
-                <option value={complexity} key={complexity}>{complexity}</option>
+                <option value={complexity.id} key={complexity.id}>
+                  {complexity.ordem}. {complexity.titulo} — {complexity.tarefa}
+                </option>
               ))}
             </select>
           </label>
@@ -1034,7 +1054,7 @@ export default function Laboratorio({
 
         {filteredCatalog.length > 0 ? (
           <ol className="lab-case-catalog" aria-label="Catálogo de casos">
-            {filteredCatalog.map(({ scenario: candidate, group: candidateGroup }, index) => {
+            {filteredCatalog.map(({ scenario: candidate, group: candidateGroup, nivel: candidateNivel }, index) => {
               const saved = state.labs?.[candidate.id];
               const draft = normalizarRascunhoLaboratorio(saved, candidate);
               const practiced = conclusaoLaboratorioValida(saved)
@@ -1051,7 +1071,7 @@ export default function Laboratorio({
                     onClick={() => selectScenario(candidate.id)}
                   >
                     <span>
-                      <small>{candidateGroup.titulo} · {candidateGroup.nivel}</small>
+                      <small>{candidateGroup.titulo} · {candidateNivel?.titulo || candidateGroup.nivel}</small>
                       <strong>{candidate.label}</strong>
                     </span>
                     {draft ? (
@@ -1090,7 +1110,7 @@ export default function Laboratorio({
             </ul>
           </div>
           <div className="lab-selected-meta" aria-label="Resumo do caso selecionado">
-            <span><strong>{group?.nivel || 'Prática'}</strong>complexidade</span>
+            <span><strong>{nivelDoCaso(scenario)?.titulo || group?.nivel || 'Prática'}</strong>complexidade</span>
             <span><strong>{scenario.evidence.length}</strong>evidências</span>
             <span><strong>{scenario.questions.length}</strong>decisões</span>
             <button type="button" onClick={scrollToWorkspace}>

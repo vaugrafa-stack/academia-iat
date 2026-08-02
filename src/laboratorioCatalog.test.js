@@ -30,13 +30,27 @@ describe('catálogo pesquisável do laboratório', () => {
     expect(byCategory).toHaveLength(4);
     expect(byCategory.every(({ group }) => group.id === 'programas')).toBe(true);
 
+    // A complexidade filtra pelo nivel MEDIDO no caso, e nao pelo rotulo que o
+    // grupo anuncia. Ate 01/08/2026 era 'Aplicação', rotulo do grupo, que 15
+    // dos 26 casos carregavam sem pedir nada diferente uns dos outros.
     const combined = filtrarCatalogoLaboratorio(catalog, {
       categoria: 'fases',
-      complexidade: 'Aplicação',
+      complexidade: 'reconhecer',
       query: 'licenca',
     });
     expect(combined.length).toBeGreaterThan(0);
     expect(combined.every(({ group }) => group.id === 'fases')).toBe(true);
+  });
+
+  it('filtrar por "decidir" devolve exatamente os casos com documento ausente', () => {
+    const decidir = filtrarCatalogoLaboratorio(catalog, { complexidade: 'decidir' });
+    expect(decidir.length).toBeGreaterThan(0);
+    for (const { scenario } of decidir) {
+      expect(scenario.ausentes?.length || 0).toBeGreaterThan(0);
+    }
+    // E o inverso: nenhum caso com documento ausente pode ficar de fora.
+    const comAusencia = catalog.filter(({ scenario }) => scenario.ausentes?.length);
+    expect(decidir).toHaveLength(comAusencia.length);
   });
 });
 

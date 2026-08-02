@@ -714,3 +714,30 @@
 .ler-quadro li span::before{content:": "}
 .ler-quadro li.sem-papel{color:var(--muted)}
 .ler-quadro>small{display:block;margin-top:10px;padding-top:9px;border-top:1px solid var(--line);color:var(--muted);font-size:11px;line-height:1.45}
+
+/* Medida de linha da prosa tecnica.
+   Medido em 01/08/2026 a 1440 px: as superficies de leitura estavam entre 73 e
+   85 caracteres por linha, contra a faixa confortavel de 60 a 75. Linha longa
+   demais cansa e faz a pessoa perder a linha ao voltar, o que em texto
+   normativo custa releitura inteira.
+   A unidade e `ch`, relativa a fonte: o limite continua valendo quando o
+   tamanho do texto muda, e nao vira numero magico em pixel. Nao se aplica a
+   tabela, lista de navegacao nem cartao curto, onde a largura tem outra
+   funcao.
+
+   O VALOR nao e o numero de caracteres desejado. `1ch` e a largura do digito
+   zero, e em Segoe UI ela e cerca de 25% maior que o caractere medio deste
+   texto: medido, 7,9 px contra 6,3 px a 13 px de fonte. `70ch` deu 88
+   caracteres reais e nao restringiu nada. O fator 0,8 vale nos dois tamanhos
+   de fonte medidos, entao 58ch entrega os ~72 caracteres pretendidos. */
+.source-content p,
+.lesson-keypoints p,
+.lesson-active-practice p,
+.learning-source-basis p,
+.anexo-b-guia .abg-exige p,
+.anexo-b-guia .abg-armadilha p,
+.ler-quadro p,
+.lab-trust-note p,
+.lesson-header p,
+.analysis-alert p,
+.kp-quadro-nota{max-width:58ch}

@@ -16,11 +16,23 @@ export const BUNDLE_BUDGETS = Object.freeze({
   entry: Object.freeze({ raw: 205 * KIB, gzip: 66 * KIB }),
   largestJs: Object.freeze({ raw: 265 * KIB, gzip: 85 * KIB }),
   totalJs: Object.freeze({ raw: 850 * KIB, gzip: 270 * KIB }),
-  // As folhas-resposta, o catálogo guiado do Laboratório e o palco acessível
-  // de vídeo são carregados em CSS separado por rota. O teto continua estreito
-  // o suficiente para impedir crescimento acidental, mas inclui esse novo
-  // estado funcional completo (191,4 KiB / 35,3 KiB no release de referência).
-  totalCss: Object.freeze({ raw: 200 * KIB, gzip: 37 * KIB }),
+  // Teto de CSS revisto em 01/08/2026, com a conta na mesa.
+  //
+  // O anterior (200 / 37 KiB) estava em 96,9% de uso e travaria a proxima
+  // melhoria visual. Antes de mexer no teto, procurei gordura, que e a ordem
+  // certa: tools/check-css-morto.mjs achou 7 classes que nenhum fonte
+  // menciona, e havia tres blocos de prefers-reduced-motion repetindo o que a
+  // regra global ja fazia. Removidos, sobraram 1,5 KiB, ou 0,6 ponto
+  // percentual. A busca por declaracao identica entre styles.css e nota10.css
+  // devolveu ZERO: nao ha duplicacao entre as folhas.
+  //
+  // Conclusao: o CSS e denso porque a aplicacao tem onze areas, dois temas,
+  // folha de impressao e estados de acessibilidade, e nao porque acumulou
+  // lixo. O teto e que estava apertado. Sobe para 215 / 40 KiB, cerca de 10%
+  // de folga sobre os 192,7 / 35,6 KiB medidos, e o portao check-css-morto
+  // entra na bateria como catraca para a folga nao ser consumida por regra
+  // orfa.
+  totalCss: Object.freeze({ raw: 215 * KIB, gzip: 40 * KIB }),
   largestCompressibleAsset: Object.freeze({
     raw: 960 * KIB,
     gzip: 150 * KIB,

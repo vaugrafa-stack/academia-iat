@@ -203,11 +203,6 @@
 .lab-case-evidence strong{font-size:10px;color:var(--ink)}
 .lab-case-evidence ul{margin:5px 0 0;padding-left:17px;color:var(--ink2);font-size:10px;line-height:1.5}
 .lab-source-body>.fund-nota{margin:0}
-
-.official-source-card{display:grid;gap:7px}
-.official-source-card a{width:max-content;max-width:100%}
-.official-source-card small{max-width:720px;color:var(--muted);font-size:11px;line-height:1.45}
-.official-source-card.search small{color:var(--amber)}
 .source-registry-summary{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 12px}
 .source-registry-summary span{padding:4px 7px;border:1px solid var(--line);border-radius:12px;color:var(--muted);font-size:10px}
 .sr-only{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important}
@@ -466,7 +461,6 @@
 .lab-readiness-note,
 .lab-rubric div,
 .lab-answer-review li,
-.official-source-card small,
 .source-registry-summary span,
 .route-loading small,
 .transcript-panel>summary strong,

@@ -43,6 +43,7 @@ import {
   Inbox,
   Info,
   Layers3,
+  ListChecks,
   Library,
   Lightbulb,
   Map as MapIcon,
@@ -78,6 +79,7 @@ import {
 import { PageHeader, Empty, TableRenderer } from "./ui.jsx";
 import { ordenaBusca, snippet } from "./busca.js";
 import { elementoDaAula, precisaDeComplemento } from "./aulasAnexoB.js";
+import { comoLerQuadro } from "./comoLerQuadro.js";
 import mapaDados from "./data/mapa-parana.json";
 import popDataUrl from "./data/pop-public-content.json?url";
 import flowDataUrl from "./data/flowcharts-content.json?url";
@@ -2750,6 +2752,47 @@ function VideoLesson({ media, track, lesson }) {
 //
 // De proposito NAO mostra o desfecho: se mostrasse, o laboratorio viraria
 // leitura. A aula enquadra o problema; a pratica resolve.
+// A maioria dos quadros do POP nao e lista de referencia: e instrumento de
+// decisao. A medicao dos 64 achou o mesmo esqueleto repetido, 17 com Status,
+// 16 com Gravidade, 14 com "O que verificar" e 13 com "Encaminhamento padrao".
+// O metodo do POP inteiro esta dentro das tabelas, e a tabela era renderizada
+// crua: uma grade de celulas sem dizer para que serve.
+//
+// A leitura sai das colunas que o quadro REALMENTE tem, em tempo de execucao,
+// entao nunca diverge do POP. Quadro sem esse esqueleto nao recebe nada.
+function ComoLerEsteQuadro({ table }) {
+  const guia = useMemo(() => comoLerQuadro(table), [table]);
+  if (!guia) return null;
+  return (
+    <aside className="ler-quadro" aria-label="Como ler este quadro">
+      <strong>
+        <ListChecks size={15} aria-hidden="true" /> Como ler este quadro
+      </strong>
+      <p>
+        Não é uma lista de referência: é um instrumento de decisão, com{" "}
+        {guia.linhas} {guia.linhas === 1 ? "linha" : "linhas"}. Percorra as
+        colunas na ordem.
+      </p>
+      <ol>
+        {guia.colunas.map((c) => (
+          <li key={c.nome} className={c.papel ? "" : "sem-papel"}>
+            <b>{c.nome}</b>
+            {c.papel ? <span>{c.papel}</span> : null}
+          </li>
+        ))}
+      </ol>
+      {guia.separaStatusDeGravidade && (
+        <small>
+          Status e gravidade são colunas diferentes de propósito. Um documento
+          pode estar apresentado e ainda assim ser insuficiente, e a gravidade
+          mede o efeito da lacuna sobre a decisão, não a falta formal do
+          arquivo.
+        </small>
+      )}
+    </aside>
+  );
+}
+
 // As dez aulas do Anexo B sao rotulos de um modelo: no POP, "Conclusao" tem 74
 // caracteres. Quem abria essas aulas via um titulo e quase nada, em dez das
 // dezessete aulas do modulo de suficiencia, pendencias e conclusao, que e o
@@ -3153,7 +3196,13 @@ function LessonOverview({
               .filter((b) => b.type === "table")
               .map((b) => {
                 const t = tableMap.get(b.tableId);
-                return t ? <TableRenderer key={b.id} table={t} /> : null;
+                if (!t) return null;
+                return (
+                  <React.Fragment key={b.id}>
+                    <ComoLerEsteQuadro table={t} />
+                    <TableRenderer table={t} />
+                  </React.Fragment>
+                );
               })}
           </div>
         )}

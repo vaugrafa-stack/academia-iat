@@ -699,3 +699,18 @@
 .anexo-b-guia .abg-armadilha p{margin:3px 0 0;color:var(--ink2);font-size:12px;line-height:1.5}
 .anexo-b-guia>button{display:inline-flex;align-items:center;gap:7px;margin-top:12px;min-height:40px;padding:0 14px;border:1px solid var(--blue);border-radius:6px;background:transparent;color:var(--blue);font-size:12px;font-weight:850;cursor:pointer}
 .anexo-b-guia>small{display:block;margin-top:10px;color:var(--muted);font-size:11px;line-height:1.45}
+
+/* Leitura guiada de quadro do POP.
+   A maioria dos quadros e instrumento de decisao, nao lista de referencia: o
+   esqueleto "o que verificar, status, gravidade, encaminhamento" se repete em
+   dezenas deles. Este bloco torna o esqueleto visivel antes da tabela. */
+.ler-quadro{margin:14px 0 8px;padding:12px 14px;border:1px solid var(--line);border-left:3px solid var(--green);border-radius:7px;background:var(--surface)}
+.ler-quadro>strong{display:flex;align-items:center;gap:7px;font-size:12px}
+.ler-quadro>strong svg{color:var(--green)}
+.ler-quadro>p{margin:5px 0 9px;color:var(--ink2);font-size:12px;line-height:1.5}
+.ler-quadro ol{display:grid;gap:5px;margin:0;padding-left:19px}
+.ler-quadro li{color:var(--ink2);font-size:12px;line-height:1.45}
+.ler-quadro li b{color:var(--ink)}
+.ler-quadro li span::before{content:": "}
+.ler-quadro li.sem-papel{color:var(--muted)}
+.ler-quadro>small{display:block;margin-top:10px;padding-top:9px;border-top:1px solid var(--line);color:var(--muted);font-size:11px;line-height:1.45}

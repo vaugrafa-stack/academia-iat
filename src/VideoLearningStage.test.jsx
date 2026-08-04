@@ -7,6 +7,9 @@ import VideoLearningStage, {
   fallbackNarrationLevel,
   learningStageTheme,
   mouthFrameForLevel,
+  mouthVisibilityForLevel,
+  naturalVisemeAtTime,
+  naturalVisemePoseAtTime,
   presenterActiveAtTime,
   visemeAtTime,
 } from "./VideoLearningStage.jsx";
@@ -49,6 +52,48 @@ describe("lógica do palco das videoaulas", () => {
     expect(presenterActiveAtTime([[0, 0.3], [0.7, 1]], 0.2)).toBe(true);
     expect(presenterActiveAtTime([[0, 0.3], [0.7, 1]], 0.5)).toBe(false);
     expect(presenterActiveAtTime(undefined, 0.5)).toBe(true);
+  });
+
+  it("reduz a cadência visual, preserva pausas reais e evita formas exageradas", () => {
+    const entries = [
+      { start: 0, end: 0.083, viseme: 3, phonemes: "a" },
+      { start: 0.083, end: 0.166, viseme: 0, phonemes: " " },
+      { start: 0.166, end: 0.25, viseme: 8, phonemes: "ʃ" },
+      { start: 0.25, end: 0.5, viseme: 0, phonemes: "." },
+    ];
+
+    expect(naturalVisemeAtTime(entries, 0.1)).toBe(3);
+    expect(naturalVisemeAtTime(entries, 0.19)).toBe(10);
+    expect(naturalVisemeAtTime(entries, 0.3)).toBe(0);
+
+    const rapid = Array.from({ length: 30 }, (_, index) => ({
+      start: index * 0.02,
+      end: (index + 1) * 0.02,
+      viseme: index % 2 ? 3 : 4,
+      phonemes: index % 2 ? "a" : "o",
+    }));
+    const poses = Array.from({ length: 51 }, (_, index) =>
+      naturalVisemePoseAtTime(rapid, index / 100).current);
+    const changes = poses.reduce(
+      (total, viseme, index) => total + (index > 0 && viseme !== poses[index - 1] ? 1 : 0),
+      0,
+    );
+    expect(changes).toBeLessThanOrEqual(6);
+  });
+
+  it("mistura quadros por uma janela curta e usa o volume sem deslocar a cabeça", () => {
+    const entries = [
+      { start: 0, end: 0.083, viseme: 1, phonemes: "m" },
+      { start: 0.083, end: 0.3, viseme: 4, phonemes: "o" },
+    ];
+    const beginning = naturalVisemePoseAtTime(entries, 0.084);
+    const settled = naturalVisemePoseAtTime(entries, 0.16);
+    expect(beginning).toMatchObject({ previous: 1, current: 4 });
+    expect(beginning.blend).toBeLessThan(0.1);
+    expect(settled.blend).toBe(1);
+    expect(mouthVisibilityForLevel(0)).toBe(0);
+    expect(mouthVisibilityForLevel(0.5)).toBeGreaterThan(0.8);
+    expect(mouthVisibilityForLevel(1)).toBeLessThanOrEqual(0.92);
   });
 
   it("seleciona contexto visual pelo módulo e permite ajuste pelo tema da aula", () => {
@@ -162,7 +207,36 @@ describe("controles do palco das videoaulas", () => {
       expect.objectContaining({ signal: expect.any(AbortSignal) }),
     );
     expect(host.querySelector(".vls-professor")?.getAttribute("data-viseme")).toBe("0");
+    expect(host.querySelectorAll(".vls-professor-mouth")).toHaveLength(2);
+    expect(host.querySelector(".vls-professor-mouth-current")?.style.getPropertyValue("--vls-mouth-opacity")).toBe("0.000");
     expect(host.querySelector(".vls-stage")?.classList.contains("vls-presenter-active")).toBe(true);
+  });
+
+  it("mantém os lábios em repouso quando a pessoa prefere movimento reduzido", async () => {
+    vi.stubGlobal("matchMedia", vi.fn(() => ({
+      matches: true,
+      addEventListener: vi.fn(),
+      removeEventListener: vi.fn(),
+    })));
+    const host = document.createElement("div");
+    document.body.append(host);
+    root = createRoot(host);
+
+    await act(async () => {
+      root.render(
+        <VideoLearningStage
+          media={{ src: "/media/piloto/reduzido.mp4", title: "Piloto" }}
+          track={{ id: "m00" }}
+          lesson={{ title: "Piloto" }}
+        />,
+      );
+    });
+    await act(async () => host.querySelector("video").dispatchEvent(new Event("play")));
+
+    expect(host.querySelector(".vls-stage")?.classList.contains("vls-reduced-motion")).toBe(true);
+    expect(host.querySelector(".vls-professor")?.getAttribute("data-viseme")).toBe("0");
+    expect(host.querySelector(".vls-professor")?.getAttribute("data-mouth-active")).toBe("false");
+    expect(host.querySelector(".vls-professor-mouth-current")?.style.getPropertyValue("--vls-mouth-opacity")).toBe("0.000");
   });
 
   it("fecha o contexto de áudio se a desmontagem ocorrer durante a ativação", async () => {

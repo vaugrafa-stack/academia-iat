@@ -84,6 +84,26 @@ describe('contratos de acessibilidade das superfícies principais', () => {
     );
   });
 
+  it('mantém Suporte alcançável por rolagem e identifica o GeoPR como destino externo', async () => {
+    const [main, css] = await Promise.all([
+      readFile(mainUrl, 'utf8'),
+      readFile(cssUrl, 'utf8'),
+    ]);
+
+    const mapa = main.indexOf('["mapa", "Mapa do Paraná", MapIcon]');
+    const geopr = main.indexOf('"https://geopr.iat.pr.gov.br/portal/home/gallery.html?sortField=title&sortOrder=asc"');
+    const biblioteca = main.indexOf('["biblioteca", "Biblioteca", Library]');
+    expect(mapa).toBeGreaterThan(-1);
+    expect(geopr).toBeGreaterThan(mapa);
+    expect(biblioteca).toBeGreaterThan(geopr);
+    expect(main).toContain('target="_blank"');
+    expect(main).toContain('rel="noopener noreferrer"');
+    expect(main).toContain('aria-label={`Abrir ${label} em nova aba (site externo)`}');
+    expect(css).toMatch(/\.sidebar-v2 nav\{[^}]*flex:1 1 auto;[^}]*min-height:0;[^}]*overflow-y:auto/);
+    expect(css).toContain('.sidebar-v2{overflow:clip}');
+    expect(css).toContain('.sidebar-v2>.sidebar-help{margin-top:12px}');
+  });
+
   it('reposiciona o foco no historico e mantem contraste forte no link de salto', async () => {
     const [main, baseCss] = await Promise.all([
       readFile(mainUrl, 'utf8'),

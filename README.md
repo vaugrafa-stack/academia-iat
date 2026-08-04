@@ -65,7 +65,7 @@ nos registros gerados. Builds locais usam o SHA atual com o sufixo `-local`.
 - aulas com orientação, texto-fonte, quadros, tabelas, figuras, anotações e referências;
 - cada aula oferece checagem comentada, recuperação ativa escrita e autoauditoria; para novas conclusões, a checagem deve estar correta, o registro deve ter ao menos 80 caracteres significativos e dois de três critérios devem ser conferidos;
 - 159 resumos audiovisuais por seção, com 10,5 a 102,5 segundos, voz em português, pôster, texto aberto, legenda WebVTT opcional e transcrição;
-- seis microaulas piloto usam professor fictício, voz, legenda, transcrição e cenários de barragem, território, campo e análise documental; a sincronização labial desses pilotos ainda usa tempos estimados e não possui comprovação formal de precisão de até 100 ms;
+- seis microaulas piloto usam professor fictício, voz, legenda, transcrição e cenários de barragem, território, campo e análise documental; a boca é exibida em cadência visual reduzida, com transições curtas, pausas neutras e cabeça estável, mas os tempos continuam estimados e não possuem comprovação formal de precisão de até 100 ms;
 - 17 vídeos de abertura de módulo e três animações SVG complementares;
 - 7 fluxogramas interativos e 21 fluxogramas-fonte para comparação; cada atividade interativa explicita evidência, risco e fonte em seis etapas e termina em uma decisão ramificada comentada;
 - 26 cenários de laboratório com documentos e dados exclusivamente sintéticos, distribuídos em cinco níveis objetivos: 10 para Reconhecer, 5 para Aplicar, 2 para Decidir, 5 para Integrar e 4 para Fundamentar;
@@ -78,18 +78,19 @@ nos registros gerados. Builds locais usam o SHA atual com o sufixo `-local`.
 - favoritos, caderno pessoal, progresso, resultados e retomada no navegador;
 - PWA com 17 pacotes opcionais de mídia para estudo offline, totalizando aproximadamente 194,0 MiB; a reprodução online usa streaming e só persiste mídia após comando explícito;
 - quatro catálogos volumosos — mapa, índice do laboratório, mídia piloto e pacotes offline — são carregados como JSON externos validados, somente quando necessários;
+- o menu lateral possui rolagem própria para manter o Suporte alcançável em telas baixas e oferece acesso externo ao portal GeoPR logo após o Mapa do Paraná;
 - layout responsivo, navegação por teclado e suporte a `prefers-reduced-motion`.
 
 Os números demonstram presença e rastreabilidade, não eficácia pedagógica nem competência profissional. Os vídeos são resumos para orientação e revisão; não substituem a leitura, a consulta à fonte, a prática deliberada ou uma demonstração técnica aprofundada. Os pacotes offline atuais cobrem a mídia catalogada de cada módulo e os recursos compartilhados do palco, mas não equivalem a uma cópia integral de todos os recursos da plataforma.
 
-As travas de conclusão das aulas comprovam apenas que uma resposta foi registrada, dois critérios foram autodeclarados e uma questão objetiva foi respondida corretamente. Comprimento de texto e autoauditoria não medem qualidade técnica. Quando uma seção ainda não possui item exclusivo, a checagem usa uma questão claramente rotulada do mesmo módulo. O banco cobre diretamente 82 das 161 seções didáticas; 83 das 136 respostas corretas ainda são estritamente mais longas que os distratores, embora nenhuma tenha o dobro do maior distrator. Revisão editorial, psicométrica e humana continua obrigatória.
+As travas de conclusão das aulas comprovam apenas que uma resposta foi registrada, dois critérios foram autodeclarados e uma questão objetiva foi respondida corretamente. Comprimento de texto e autoauditoria não medem qualidade técnica. As 159 aulas possuem questão exclusiva, dentro de um banco de 213 questões com fonte verificada. Em 41 delas, a alternativa correta ainda é a mais longa; o portão de qualidade mede essa pista para impedir regressão. Revisão editorial, psicométrica e especializada continua necessária.
 
 Os laboratórios usam casos e documentos sintéticos marcados como exemplos didáticos sem validade administrativa. Nenhum processo real ou dado pessoal deve ser inserido na plataforma.
 
-No artefato medido deste ciclo, o JavaScript soma 645,1 KiB de um orçamento de
-850 KiB em tamanho bruto e 215,4 KiB de 270 KiB compactado. A entrada principal
+No artefato medido deste ciclo, o JavaScript soma 647,5 KiB de um orçamento de
+850 KiB em tamanho bruto e 216,3 KiB de 270 KiB compactado. A entrada principal
 mede 179,3 KiB de 205 KiB em tamanho bruto e 56,5 KiB de 66 KiB compactado. O
-CSS permanece próximo do limite: 206,6 KiB de 215 KiB em tamanho bruto e 37,6
+CSS permanece próximo do limite: 207,0 KiB de 215 KiB em tamanho bruto e 37,8
 KiB de 40 KiB compactado. A próxima redução deve separar e consolidar o CSS por
 rota; esse trabalho ainda não está concluído.
 

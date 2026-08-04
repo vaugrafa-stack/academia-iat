@@ -29,6 +29,7 @@ import {
   Compass,
   Database,
   Download,
+  ExternalLink,
   FileCheck,
   FileCheck2,
   FileText,
@@ -275,6 +276,12 @@ const NAV_GRUPOS = [
   ["Consultar", [
     ["fluxos", "Fluxogramas", GitBranch],
     ["mapa", "Mapa do Paraná", MapIcon],
+    [
+      "geopr",
+      "GeoPR",
+      Layers3,
+      "https://geopr.iat.pr.gov.br/portal/home/gallery.html?sortField=title&sortOrder=asc",
+    ],
     ["biblioteca", "Biblioteca", Library],
   ]],
   ["Neste dispositivo", [
@@ -285,7 +292,9 @@ const NAV_GRUPOS = [
 
 // Lista plana derivada dos grupos, para o titulo da pagina e qualquer consulta
 // por id continuarem funcionando sem saber do agrupamento.
-const NAV = NAV_GRUPOS.flatMap(([, itens]) => itens);
+const NAV = NAV_GRUPOS.flatMap(([, itens]) => itens).filter(
+  ([, , , externalUrl]) => !externalUrl,
+);
 
 // O painel inicial e a aula precisam resolver a mídia pela mesma regra. Isso
 // impede que "Continue de onde parou" associe o título de uma aula a um vídeo
@@ -1159,17 +1168,38 @@ function Sidebar({
       <nav aria-label="Navegação principal">
         {NAV_GRUPOS.map(([grupo, itens]) => {
           const rotuloId = grupo ? `nav-grupo-${norm(grupo).replace(/\s+/g, "-")}` : undefined;
-          const botoes = itens.map(([id, label, Icon]) => {
+          const botoes = itens.map(([id, label, Icon, externalUrl]) => {
+            if (externalUrl) {
+              return (
+                <a
+                  key={id}
+                  className="side-destination side-external"
+                  href={externalUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={`Abrir ${label} em nova aba (site externo)`}
+                  title="Abrir o portal geográfico do IAT em nova aba"
+                >
+                  <Icon aria-hidden="true" />
+                  <span>{label}</span>
+                  <ExternalLink
+                    className="external-indicator"
+                    aria-hidden="true"
+                  />
+                </a>
+              );
+            }
             const at = view === id || (view === "lesson" && id === "formacao");
             return (
               <button
+                type="button"
                 key={id}
                 aria-current={at ? "page" : undefined}
-                className={at ? "active" : ""}
+                className={`side-destination${at ? " active" : ""}`}
                 onClick={() => go(id)}
               >
-                <Icon />
-                {label}
+                <Icon aria-hidden="true" />
+                <span>{label}</span>
               </button>
             );
           });

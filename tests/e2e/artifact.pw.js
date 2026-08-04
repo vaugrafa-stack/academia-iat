@@ -104,6 +104,27 @@ test('experiência responsiva prioriza aprender e praticar sem overflow', async 
   }
   await expectHealthyPage(page, runtimeIssues);
 
+  const menuButton = page.getByRole('button', { name: 'Abrir menu' });
+  if (mobile) await menuButton.click();
+  const sidebar = page.locator('#navegacao-lateral');
+  const geopr = sidebar.getByRole('link', {
+    name: 'Abrir GeoPR em nova aba (site externo)',
+  });
+  await expect(geopr).toHaveAttribute(
+    'href',
+    'https://geopr.iat.pr.gov.br/portal/home/gallery.html?sortField=title&sortOrder=asc',
+  );
+  await expect(geopr).toHaveAttribute('target', '_blank');
+  await expect(geopr).toHaveAttribute('rel', 'noopener noreferrer');
+  await geopr.scrollIntoViewIfNeeded();
+  await expect(geopr).toBeVisible();
+  const suporte = sidebar.getByRole('button', { name: 'Suporte' });
+  await suporte.scrollIntoViewIfNeeded();
+  await expect(suporte).toBeVisible();
+  await suporte.click();
+  await expect(page.getByRole('heading', { name: 'Central de Suporte' })).toBeVisible();
+  await expectHealthyPage(page, runtimeIssues);
+
   await page.goto(appUrl(baseURL, '#/aula/pop-section-001'), {
     waitUntil: 'domcontentloaded',
   });

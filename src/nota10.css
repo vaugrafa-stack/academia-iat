@@ -687,6 +687,37 @@
   color:var(--ink2);opacity:.78;
 }
 
+/* A marca e os atalhos auxiliares permanecem estáveis, enquanto a lista de
+   destinos ganha sua própria rolagem. Antes, `overflow:hidden` no contêiner
+   cortava os últimos itens (inclusive Suporte) em notebooks e celulares de
+   menor altura. */
+.sidebar-v2>.brand-panel,.sidebar-v2>.sidebar-help,.sidebar-v2>.source-lock{flex:none}
+.sidebar-v2{overflow:clip}
+.sidebar-v2 nav{
+  flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain;
+  padding:0 4px 12px 0;scrollbar-gutter:stable;
+  scrollbar-width:thin;scrollbar-color:color-mix(in srgb,var(--ink2) 45%,transparent) transparent;
+}
+.sidebar-v2>.sidebar-help{margin-top:12px}
+.sidebar-v2 nav .side-destination{
+  width:100%;min-height:42px;flex:none;display:flex;align-items:center;gap:13px;
+  padding:12px 14px;border-radius:7px;text-align:left;text-decoration:none;
+}
+.sidebar-v2 nav a.side-destination{
+  border:0;background:transparent;color:var(--ink2);cursor:pointer;
+  transition:background .18s var(--ease),color .18s var(--ease);
+}
+.sidebar-v2 nav .side-destination>svg:first-child{width:20px;height:20px;flex:none}
+.sidebar-v2 nav .side-destination>span{min-width:0;flex:1}
+.sidebar-v2 nav a.side-destination:hover{background:rgba(255,255,255,.05);color:var(--ink)}
+.sidebar-v2 nav .side-external .external-indicator{
+  width:14px;height:14px;flex:none;opacity:.72;
+}
+@media(max-width:980px){
+  .sidebar-v2 nav{-webkit-overflow-scrolling:touch}
+  .sidebar-v2 nav .side-destination{min-height:46px}
+}
+
 /* Guia da seção do Anexo B dentro da aula.
    Dez aulas do M14 sao rotulos de um modelo e tem quase nada de texto no POP.
    Este bloco traz o que o item 23.1 exige naquela secao e o erro recorrente,

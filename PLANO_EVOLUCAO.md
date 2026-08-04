@@ -840,6 +840,27 @@ dependente da execução verde do mesmo conjunto de portões no workflow.
    analistas do domínio;
 5. avaliar os seis pilotos antes de iniciar produção audiovisual em escala.
 
+## Ciclo 4 — navegação operacional e movimento do professor — 04/08/2026
+
+- a lista do menu lateral passou a ter altura limitada e rolagem própria. A
+  marca e os controles auxiliares permanecem estáveis, enquanto GeoPR,
+  Biblioteca, progresso local e Suporte continuam alcançáveis em notebook e
+  celular;
+- um acesso externo ao portal GeoPR foi inserido imediatamente depois de Mapa do
+  Paraná, com abertura em nova aba, indicação visual e proteção do contexto da
+  plataforma;
+- a animação da boca dos seis pilotos passou a amostrar a linha temporal em 12
+  quadros por segundo, agrupar formas próximas, preservar pausas reais e misturar
+  transições por 65 ms;
+- o volume controla apenas a visibilidade da região dos lábios e não desloca
+  mais a cabeça. A preferência por movimento reduzido mantém a boca neutra;
+- os arquivos de áudio, vídeo e voz não foram regenerados. A linha temporal
+  continua estimada e não constitui prova de alinhamento fonético de até 100 ms.
+
+Próxima prova audiovisual: comparar os seis pilotos com usuários em reprodução
+normal e em velocidade reduzida antes de alterar o ativo visual ou ampliar a
+produção.
+
 ## Registro resumido
 
 | Etapa | Estado | Próxima prova |

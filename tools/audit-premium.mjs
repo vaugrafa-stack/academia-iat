@@ -1,6 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { isPermittedPublicEmail } from './audit-premium-email-policy.mjs';
+import { containsPersonalHomePath } from './audit-premium-path-policy.mjs';
 
 const ROOT = process.cwd();
 const IGNORE_DIRS = new Set([
@@ -71,10 +72,7 @@ function inspect(file) {
     const lineNo = index + 1;
 
     // Aceita uma ou mais barras para também encontrar caminhos escapados em JSON.
-    if (
-      /\b[A-Za-z]:\\+(?:Users|Documents and Settings)\\+/i.test(line)
-      || /\/(?:Users|home)\/[^/\s"']+/i.test(line)
-    ) {
+    if (containsPersonalHomePath(line)) {
       addFinding('personal-home-path', file, lineNo);
     }
 

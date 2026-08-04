@@ -10,6 +10,33 @@ const PROFESSOR_SPRITE_FALLBACK =
 const THEMATIC_ATLAS =
   `${PUBLIC_BASE}media/learning-stage/thematic-atlas.webp`;
 const PROFESSOR_PREFERENCE = "academia-iat-video-professor";
+const VISUAL_VISEME_RATE = 12;
+const VISUAL_VISEME_STEP = 1 / VISUAL_VISEME_RATE;
+const VISEME_BLEND_SECONDS = 0.065;
+const MEANINGFUL_NEUTRAL_SECONDS = 0.14;
+
+// A grade é uma aproximação editorial. No palco, formas muito próximas são
+// agrupadas para evitar uma sucessão exagerada de poses.
+const RESTRAINED_VISEMES = [0, 1, 2, 3, 4, 4, 6, 7, 10, 9, 10, 0];
+const SPRITE_FRAME_POSITIONS = [
+  ["0%", "0%"],
+  ["50%", "0%"],
+  ["100%", "0%"],
+  ["0%", "33.333%"],
+  ["50%", "33.333%"],
+  ["100%", "33.333%"],
+  ["0%", "66.667%"],
+  ["50%", "66.667%"],
+  ["100%", "66.667%"],
+  ["0%", "100%"],
+  ["50%", "100%"],
+  ["100%", "100%"],
+];
+const FALLBACK_FRAME_POSITIONS = [
+  "0%", "0%", "33.333%", "100%", "66.667%", "66.667%",
+  "33.333%", "33.333%", "66.667%", "66.667%", "33.333%", "0%",
+];
+const PAUSE_MARKS = /[.,;:!?\-]/;
 
 const TRACK_THEMES = {
   m00: "office",
@@ -71,10 +98,9 @@ export function mouthFrameForLevel(level) {
   return 3;
 }
 
-/** Retorna o quadro de boca vigente no relógio do próprio vídeo. */
-export function visemeAtTime(entries, currentTime) {
+function visemeEntryAtTime(entries, currentTime) {
   if (!Array.isArray(entries) || !entries.length || !Number.isFinite(currentTime)) {
-    return 0;
+    return null;
   }
   let low = 0;
   let high = entries.length - 1;
@@ -83,9 +109,76 @@ export function visemeAtTime(entries, currentTime) {
     const entry = entries[middle];
     if (currentTime < entry.start) high = middle - 1;
     else if (currentTime >= entry.end) low = middle + 1;
-    else return Number.isInteger(entry.viseme) ? clamp(entry.viseme, 0, 11) : 0;
+    else return { entry, index: middle };
+  }
+  return null;
+}
+
+/** Retorna o quadro de boca vigente no relógio do próprio vídeo. */
+export function visemeAtTime(entries, currentTime) {
+  const match = visemeEntryAtTime(entries, currentTime);
+  return Number.isInteger(match?.entry?.viseme)
+    ? clamp(match.entry.viseme, 0, 11)
+    : 0;
+}
+
+function restrainedVisemeForEntry(entries, match) {
+  if (!match) return 0;
+  const { entry, index } = match;
+  const raw = Number.isInteger(entry.viseme) ? clamp(entry.viseme, 0, 11) : 0;
+  const restrained = RESTRAINED_VISEMES[raw] ?? 0;
+  if (restrained !== 0) return restrained;
+
+  const duration = Math.max(0, Number(entry.end) - Number(entry.start));
+  const phonemes = typeof entry.phonemes === "string" ? entry.phonemes : "";
+  const isRealPause = raw === 11
+    || duration >= MEANINGFUL_NEUTRAL_SECONDS
+    || PAUSE_MARKS.test(phonemes);
+  if (isRealPause) return 0;
+
+  // Um espaço muito curto entre palavras não deve fechar completamente a boca.
+  // Mantemos a articulação anterior até a próxima amostra visual.
+  for (let cursor = index - 1; cursor >= Math.max(0, index - 3); cursor -= 1) {
+    const previousRaw = Number.isInteger(entries[cursor]?.viseme)
+      ? clamp(entries[cursor].viseme, 0, 11)
+      : 0;
+    const previous = RESTRAINED_VISEMES[previousRaw] ?? 0;
+    if (previous) return previous;
   }
   return 0;
+}
+
+/**
+ * Limita a cadência visual da boca a 12 amostras por segundo.
+ * A fonte temporal continua sendo currentTime; não se trata de alinhamento
+ * fonético medido.
+ */
+export function naturalVisemeAtTime(entries, currentTime) {
+  if (!Number.isFinite(currentTime) || currentTime < 0) return 0;
+  const sampleTime = Math.floor(currentTime * VISUAL_VISEME_RATE) / VISUAL_VISEME_RATE;
+  return restrainedVisemeForEntry(entries, visemeEntryAtTime(entries, sampleTime));
+}
+
+/** Retorna dois quadros e uma mistura curta, sempre derivada do relógio do vídeo. */
+export function naturalVisemePoseAtTime(entries, currentTime) {
+  if (!Number.isFinite(currentTime) || currentTime < 0) {
+    return { current: 0, previous: 0, blend: 1 };
+  }
+  const bucket = Math.floor(currentTime * VISUAL_VISEME_RATE);
+  const bucketStart = bucket * VISUAL_VISEME_STEP;
+  const current = naturalVisemeAtTime(entries, bucketStart);
+  const previous = bucket > 0
+    ? naturalVisemeAtTime(entries, (bucket - 1) * VISUAL_VISEME_STEP)
+    : current;
+  if (current === previous) return { current, previous, blend: 1 };
+  const linear = clamp((currentTime - bucketStart) / VISEME_BLEND_SECONDS);
+  const blend = linear * linear * (3 - 2 * linear);
+  return { current, previous, blend };
+}
+
+export function mouthVisibilityForLevel(level) {
+  const linear = clamp((Number(level) - 0.045) / 0.5);
+  return (linear * linear * (3 - 2 * linear)) * 0.92;
 }
 
 /** Limita a presença visual do professor às janelas editoriais do roteiro. */
@@ -291,13 +384,16 @@ function useNarrationLevel(videoRef, active, reducedMotion) {
     let animationFrame = 0;
     let smoothed = 0;
     let lastSampleAt = 0;
-    let lastFrame = 0;
+    let lastPublishedLevel = 0;
 
     const publishIfChanged = (nextLevel) => {
-      const nextFrame = mouthFrameForLevel(nextLevel);
-      if (nextFrame === lastFrame) return;
-      lastFrame = nextFrame;
-      setLevel(nextLevel);
+      const normalized = clamp(nextLevel);
+      if (
+        Math.abs(normalized - lastPublishedLevel) < 0.045 &&
+        !(normalized === 0 && lastPublishedLevel !== 0)
+      ) return;
+      lastPublishedLevel = normalized;
+      setLevel(normalized);
     };
 
     const updateFallback = (timestamp = 0) => {
@@ -390,12 +486,19 @@ export default function VideoLearningStage({
   );
   const mouthFrame = mouthFrameForLevel(narrationLevel);
   const fallbackVisemes = [0, 10, 9, 3];
-  const scheduledViseme = visemeAtTime(visemeEntries, currentTime);
-  const viseme = reducedMotion
-    ? 0
-    : visemeEntries.length
-      ? mouthFrame === 0 ? 0 : scheduledViseme
-      : fallbackVisemes[mouthFrame];
+  const scheduledPose = visemeEntries.length
+    ? naturalVisemePoseAtTime(visemeEntries, currentTime)
+    : {
+        current: fallbackVisemes[mouthFrame],
+        previous: fallbackVisemes[mouthFrame],
+        blend: 1,
+      };
+  const mouthVisibility = playing && !reducedMotion
+    ? mouthVisibilityForLevel(narrationLevel)
+    : 0;
+  const pose = mouthVisibility > 0
+    ? scheduledPose
+    : { current: 0, previous: 0, blend: 1 };
   const presenterActive = presenterActiveAtTime(
     media?.presenterWindows,
     currentTime,
@@ -423,6 +526,16 @@ export default function VideoLearningStage({
     "--vls-professor-fallback": `url("${PROFESSOR_SPRITE_FALLBACK}")`,
     "--vls-thematic-atlas": `url("${THEMATIC_ATLAS}")`,
     "--vls-mouth-level": narrationLevel.toFixed(3),
+  };
+
+  const mouthLayerStyle = (viseme, opacity) => {
+    const safeViseme = Number.isInteger(viseme) ? clamp(viseme, 0, 11) : 0;
+    const [x, y] = SPRITE_FRAME_POSITIONS[safeViseme];
+    return {
+      "--vls-mouth-sprite-position": `${x} ${y}`,
+      "--vls-mouth-fallback-position": `${FALLBACK_FRAME_POSITIONS[safeViseme]} 0%`,
+      "--vls-mouth-opacity": clamp(opacity).toFixed(3),
+    };
   };
 
   const updatePreference = () => {
@@ -534,9 +647,26 @@ export default function VideoLearningStage({
         <div
           className="vls-professor"
           data-mouth-frame={mouthFrame}
-          data-viseme={viseme}
+          data-viseme={pose.current}
+          data-previous-viseme={pose.previous}
+          data-mouth-active={mouthVisibility > 0.02 ? "true" : "false"}
           aria-hidden="true"
-        />
+        >
+          <span
+            className="vls-professor-mouth vls-professor-mouth-previous"
+            style={mouthLayerStyle(
+              pose.previous,
+              mouthVisibility * (1 - pose.blend),
+            )}
+          />
+          <span
+            className="vls-professor-mouth vls-professor-mouth-current"
+            style={mouthLayerStyle(
+              pose.current,
+              mouthVisibility * pose.blend,
+            )}
+          />
+        </div>
         <span className="vls-professor-label">Professor</span>
       </div>
 

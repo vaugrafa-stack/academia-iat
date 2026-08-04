@@ -40,7 +40,7 @@ export const QUESTOES_EXTRA = [
     'O critério de 300 MW é um dos caminhos para a competência federal, que também pode decorrer de outros critérios da LC 140/2011 ou de situação jurídica específica.',
     { sec: 'pop-section-132', quote: 'licenciamento de usinas hidrelétricas com capacidade instalada igual ou superior a 300 MW' }],
   ['m01', 'Diante de dúvida relevante sobre alcance normativo ainda não firmado, o técnico deve:',
-    ['Adotar a interpretação que considerar mais segura e seguir', 'Registrar a pendência como Pendente de validação, sem criar solução normativa própria', 'Indeferir o pedido até que a dúvida seja resolvida'], 1,
+    ['Adotar a interpretação que a equipe considerar mais segura no caso e seguir com a análise', 'Registrar a pendência como Pendente de validação, sem criar solução normativa própria', 'Indeferir o pedido até que a dúvida seja resolvida'], 1,
     'Criar regra própria transfere para o analista uma competência que não é dele. O registro da pendência mantém o processo rastreável enquanto a definição não vem.',
     { sec: 'pop-section-008', quote: 'registrar a pendência como Pendente de validação, sem criar solução normativa própria' }],
 
@@ -106,7 +106,7 @@ export const QUESTOES_EXTRA = [
 
   // ---------- M06 AA, renovacao, regularizacao, transferencia ----------
   ['m06', 'Quais hipóteses de Autorização Ambiental a IN IAT nº 09/2025 prevê expressamente?',
-    ['Qualquer intervenção de pequeno porte', 'Enchimento de reservatório e testes de comissionamento', 'Supressão de vegetação em APP'], 1,
+    ['Qualquer intervenção considerada de pequeno porte pela equipe', 'Enchimento de reservatório e testes de comissionamento', 'Supressão de vegetação em APP'], 1,
     'A AA tem objeto delimitado e não substitui licença principal, Autorização Florestal, outorga nem manifestação de interveniente.',
     { sec: 'pop-section-041', quote: 'possui aplicação expressa para enchimento de reservatório e testes de comissionamento' }],
   ['m06', 'Qual prazo a Lei Federal nº 15.190/2025 estabelece para decidir o pedido de alteração de titularidade?',
@@ -114,7 +114,7 @@ export const QUESTOES_EXTRA = [
     'A transferência é ato administrativo próprio: exige comprovação de poderes, assunção de condicionantes e compatibilidade com outorga e ANEEL.',
     { sec: 'pop-section-048', quote: 'o pedido de alteração de titularidade deve ser decidido em até 30 dias e não pode resultar em majoração de condicionantes' }],
   ['m06', 'Como se calcula o porte na ampliação definitiva de um empreendimento?',
-    ['Considerando apenas a estrutura nova pretendida', 'Considerando o somatório da estrutura existente e da pretendida', 'Considerando a maior das duas estruturas'], 1,
+    ['Considerando apenas a estrutura nova que se pretende implantar', 'Considerando o somatório da estrutura existente e da pretendida', 'Considerando a maior das duas estruturas'], 1,
     'O somatório evita que ampliações sucessivas mantenham artificialmente o empreendimento em faixa de menor exigência.',
     { sec: 'pop-section-050', quote: 'A ampliação definitiva considera o somatório da estrutura existente e da estrutura pretendida.' }],
 
@@ -128,7 +128,7 @@ export const QUESTOES_EXTRA = [
     'A ResNorm 875/2020 trata dos procedimentos setoriais de PCH e UHE; a 1.064/2023 é a referência de segurança de barragens sob fiscalização da ANEEL.',
     { sec: 'pop-section-054', quote: 'Resolução Normativa ANEEL nº 1.064, de 2 de maio de 2023' }],
   ['m07', 'O que a decisão deve registrar ao tratar sistemas associados e áreas de apoio?',
-    ['Apenas a área total ocupada e a distância até o empreendimento', 'Vínculo funcional, área de intervenção, titularidade, competência e impactos cumulativos', 'Somente a titularidade do empreendedor e a fase em curso'], 1,
+    ['Apenas a área total ocupada e a distância até o empreendimento principal em análise', 'Vínculo funcional, área de intervenção, titularidade, competência e impactos cumulativos', 'Somente a titularidade do empreendedor e a fase em curso'], 1,
     'Esse registro é o que permite justificar a análise conjunta ou separada de linhas, subestações, canteiros, jazidas e bota-fora.',
     { sec: 'pop-section-051', quote: 'A decisão deve registrar o vínculo funcional, a área de intervenção, a titularidade, a competência, os impactos cumulativos' }],
   ['m07', 'O que a manifestação do licenciamento não deve declarar sobre a barragem?',
@@ -184,7 +184,7 @@ export const QUESTOES_EXTRA = [
 
   // ---------- M11 ANEEL, IPHAN, municipio e vistoria ----------
   ['m11', 'Já existindo processo IPHAN em andamento para o empreendimento, o que não se deve fazer?',
-    ['Acompanhar o processo administrativo no SEI', 'Abrir nova Ficha de Caracterização da Atividade para o mesmo empreendimento', 'Encaminhar documentos posteriores pelo Protocolo Digital'], 1,
+    ['Acompanhar o processo administrativo no SEI', 'Abrir nova Ficha de Caracterização da Atividade para o mesmo empreendimento', 'Encaminhar os documentos posteriores por meio do sistema de Protocolo Digital'], 1,
     'O SAIP é usado para a FCA; a partir dela o processo segue no SEI, e abrir nova ficha duplica a instrução.',
     { sec: 'pop-section-083', quote: 'Não abrir nova FCA para o mesmo empreendimento quando já houver processo IPHAN em andamento.' }],
   ['m11', 'Qual é o gatilho de entorno para ciência ao órgão gestor da UC em processos não sujeitos a EIA/RIMA?',
@@ -222,7 +222,7 @@ export const QUESTOES_EXTRA = [
 
   // ---------- M14 Anexos, referencias e caso integrador ----------
   ['m14', 'O que os campos "A conferir" e "A definir" indicam no modelo de checklist consolidado?',
-    ['Itens já auditados e pendentes de assinatura', 'Modelo em branco, que não representa resultado de auditoria', 'Itens dispensados para aquele empreendimento'], 1,
+    ['Itens que já foram auditados e ainda aguardam assinatura', 'Modelo em branco, que não representa resultado de auditoria', 'Itens dispensados para aquele empreendimento'], 1,
     'O modelo é ponto de partida a ser adaptado ao processo concreto, e seus campos vazios não podem ser lidos como conclusão.',
     { sec: 'pop-section-110', quote: 'identificam modelo em branco e não representam resultado de auditoria' }],
   ['m14', 'Itens críticos podem ser convertidos em condicionantes?',

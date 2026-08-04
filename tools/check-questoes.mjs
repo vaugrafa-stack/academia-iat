@@ -81,16 +81,18 @@ for (const q of questionBank) {
 // significa que parte do resultado da autoavaliacao media leitura de formato,
 // e nao dominio do POP.
 //
-// Este portao nao exige o ideal de 33% de uma vez: exige que o numero NAO
-// PIORE. O teto abaixo e o valor medido, e desce conforme as questoes forem
-// reescritas com alternativas de comprimento parecido.
+// Em 04/08/2026 a meta foi ATINGIDA: 41 de 136, ou 30,1%, contra 32,8% do
+// acaso. Escolher a alternativa mais longa deixou de dar vantagem sobre
+// chutar. O teto fica em 45, um pouco acima do medido, para uma questao nova
+// legitimamente longa nao reprovar o build sozinha; acima disso o padrao
+// voltou e precisa de correcao.
 // A pista so existe quando a correta e VISIVELMENTE a maior. Empate, ou
 // vantagem de poucos caracteres, nao orienta ninguem: a primeira versao deste
 // portao contava "47, 47, 44" como pista porque pegava o primeiro maximo, e
 // media formato do array em vez de percepcao de quem responde. A margem de 10%
 // e o que separa "a maior" de "uma das maiores".
 const MARGEM = 1.10;
-const TETO_CHUTADOR = 53;
+const TETO_CHUTADOR = 45;
 
 // Palavra portuguesa comum escrita sem acento. Entrou porque eu mesmo escrevi
 // dezenove alternativas sem acentuacao ao reescrever distratores em 04/08/2026,

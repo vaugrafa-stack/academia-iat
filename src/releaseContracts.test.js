@@ -19,6 +19,17 @@ describe('contrato de release imutável', () => {
     expect(quality).toContain('include-hidden-files: true');
   });
 
+  it('aceita o marcador vazio exigido pelo GitHub Pages sem afrouxar os demais arquivos', () => {
+    expect(quality).toContain('const requiredNonEmpty = [');
+    expect(quality).toContain('const noJekyll = await stat(join(dist, ".nojekyll"));');
+    expect(quality).toContain('if (!noJekyll.isFile())');
+    const requiredBlock = quality.slice(
+      quality.indexOf('const requiredNonEmpty = ['),
+      quality.indexOf('for (const file of requiredNonEmpty)'),
+    );
+    expect(requiredBlock).not.toContain('".nojekyll"');
+  });
+
   it('não recompila dentro do job que publica', () => {
     const publisher = quality.slice(quality.indexOf('\n  publicar:'));
     expect(publisher).not.toContain('pnpm build');

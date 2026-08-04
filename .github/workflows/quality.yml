@@ -81,20 +81,27 @@ jobs:
           const dist = "dist";
           const repo = process.env.PAGES_REPO;
           const base = `/${repo}/`;
-          const required = [
+          const requiredNonEmpty = [
             "index.html",
-            ".nojekyll",
             "manifest.webmanifest",
             "sw.js",
             "icone-192.png",
             "icone-512.png",
           ];
 
-          for (const file of required) {
+          for (const file of requiredNonEmpty) {
             const info = await stat(join(dist, file));
             if (!info.isFile() || info.size === 0) {
               throw new Error(`Artefato obrigatório vazio ou ausente: ${file}`);
             }
+          }
+
+          // O marcador oficial do GitHub Pages é, por definição, um arquivo
+          // vazio. Ele precisa existir, mas exigir bytes dele tornaria o
+          // próprio formato válido impossível de publicar.
+          const noJekyll = await stat(join(dist, ".nojekyll"));
+          if (!noJekyll.isFile()) {
+            throw new Error("Marcador .nojekyll ausente do artefato");
           }
 
           const html = await readFile(join(dist, "index.html"), "utf8");

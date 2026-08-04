@@ -9,6 +9,7 @@ import {
   persistStoredState,
   useStoredState,
 } from "./storedState.js";
+import { createStorageEnvelope, decodeStorageValue } from "./storageContracts.js";
 
 class ControlledStorage {
   constructor() {
@@ -40,12 +41,13 @@ function quotaError() {
   return error;
 }
 
-function StatusHarness({ storage, explicitKey, resolveKey }) {
+function StatusHarness({ storage, explicitKey, resolveKey, eventTarget, writeDelay = 0 }) {
   const [state, setState, status, resolveCorruptStorage] = useStoredState({
     storage,
     key: explicitKey,
     resolveKey,
-    writeDelay: 0,
+    eventTarget,
+    writeDelay,
   });
   return (
     <div>
@@ -70,8 +72,31 @@ function StatusHarness({ storage, explicitKey, resolveKey }) {
       >
         reset
       </button>
+      <button type="button" data-use-remote onClick={() => resolveCorruptStorage("use-remote")}>
+        use remote
+      </button>
+      <button type="button" data-keep-local onClick={() => resolveCorruptStorage("keep-local")}>
+        keep local
+      </button>
     </div>
   );
+}
+
+function progressEnvelope(completed, revision = 1) {
+  return JSON.stringify(createStorageEnvelope(
+    { ...createDefaultProgressState(), completed },
+    { revision, updatedAt: `2026-08-04T12:00:0${revision}.000Z` },
+  ));
+}
+
+function dispatchStorage(target, key, newValue, oldValue = null) {
+  const event = new Event("storage");
+  Object.defineProperties(event, {
+    key: { value: key },
+    newValue: { value: newValue },
+    oldValue: { value: oldValue },
+  });
+  target.dispatchEvent(event);
 }
 
 let root;
@@ -186,6 +211,62 @@ describe("leitura segura do progresso local", () => {
 });
 
 describe("gravação observável do progresso local", () => {
+  it("migra o estado legado para envelope somente durante uma gravação segura", () => {
+    const storage = new ControlledStorage();
+    const legacy = '{"completed":["legada"]}';
+    storage.values.set("progresso", legacy);
+
+    const loaded = loadStoredState(storage, "progresso");
+    expect(loaded).toMatchObject({ needsMigration: true, envelope: { revision: 0 } });
+    expect(storage.values.get("progresso")).toBe(legacy);
+    expect(storage.writeCount).toBe(0);
+
+    const saved = persistStoredState(storage, "progresso", loaded.state, {
+      expectedRevision: 0,
+      now: () => "2026-08-04T12:00:00.000Z",
+    });
+    expect(saved).toMatchObject({ ok: true, envelope: { schemaVersion: 1, revision: 1 } });
+    expect(decodeStorageValue(storage.values.get("progresso"))).toMatchObject({
+      migrated: false,
+      envelope: { revision: 1, data: { completed: ["legada"] } },
+    });
+  });
+
+  it("não incrementa a revisão apenas por abrir um estado já normalizado", async () => {
+    vi.useFakeTimers();
+    const storage = new ControlledStorage();
+    const raw = progressEnvelope([], 2);
+    storage.values.set("progresso", raw);
+    const host = document.createElement("div");
+    document.body.append(host);
+    root = createRoot(host);
+
+    await act(async () => {
+      root.render(<StatusHarness storage={storage} explicitKey="progresso" />);
+    });
+    await act(async () => vi.runAllTimers());
+
+    expect(storage.values.get("progresso")).toBe(raw);
+    expect(storage.writeCount).toBe(0);
+  });
+
+  it("recusa gravação baseada em revisão vencida", () => {
+    const storage = new ControlledStorage();
+    const raw = progressEnvelope(["outra-aba"], 4);
+    storage.values.set("progresso", raw);
+
+    const result = persistStoredState(
+      storage,
+      "progresso",
+      { ...createDefaultProgressState(), completed: ["local"] },
+      { expectedRevision: 3 },
+    );
+
+    expect(result).toMatchObject({ ok: false, issue: { code: "STORAGE_CONFLICT", conflictAvailable: true } });
+    expect(storage.values.get("progresso")).toBe(raw);
+    expect(storage.writeCount).toBe(0);
+  });
+
   it("classifica quota sem alterar o último valor persistido", () => {
     const storage = new ControlledStorage();
     const previous = '{"completed":["anterior"]}';
@@ -264,5 +345,82 @@ describe("gravação observável do progresso local", () => {
     });
     expect(storage.values.get("progresso")).toBe(previous);
     expect(storage.writeCount).toBe(0);
+  });
+});
+
+describe("sincronização segura entre abas", () => {
+  it("adota automaticamente uma revisão externa quando não há edição local", async () => {
+    const storage = new ControlledStorage();
+    const events = new EventTarget();
+    storage.values.set("progresso", progressEnvelope([], 1));
+    const host = document.createElement("div");
+    document.body.append(host);
+    root = createRoot(host);
+
+    await act(async () => {
+      root.render(<StatusHarness storage={storage} explicitKey="progresso" eventTarget={events} />);
+    });
+    const remote = progressEnvelope(["a", "b"], 2);
+    storage.values.set("progresso", remote);
+    await act(async () => dispatchStorage(events, "progresso", remote));
+
+    expect(host.querySelector("[data-state]")?.textContent).toBe("2");
+    expect(host.querySelector("[data-state]")?.dataset.status).toBe("OK");
+    expect(storage.writeCount).toBe(0);
+  });
+
+  it("bloqueia sobrescrita quando uma edição local concorre com outra aba", async () => {
+    vi.useFakeTimers();
+    const storage = new ControlledStorage();
+    const events = new EventTarget();
+    storage.values.set("progresso", progressEnvelope([], 1));
+    const host = document.createElement("div");
+    document.body.append(host);
+    root = createRoot(host);
+
+    await act(async () => {
+      root.render(
+        <StatusHarness storage={storage} explicitKey="progresso" eventTarget={events} writeDelay={500} />,
+      );
+    });
+    await act(async () => host.querySelector("[data-state]").click());
+    const remote = progressEnvelope(["remota-1", "remota-2"], 2);
+    storage.values.set("progresso", remote);
+    await act(async () => dispatchStorage(events, "progresso", remote));
+    await act(async () => vi.runAllTimers());
+
+    expect(host.querySelector("[data-state]")?.dataset.status).toBe("STORAGE_CONFLICT");
+    expect(host.querySelector("[data-state]")?.textContent).toBe("1");
+    expect(storage.values.get("progresso")).toBe(remote);
+    expect(storage.writeCount).toBe(0);
+
+    await act(async () => host.querySelector("[data-use-remote]").click());
+    expect(host.querySelector("[data-state]")?.dataset.status).toBe("OK");
+    expect(host.querySelector("[data-state]")?.textContent).toBe("2");
+  });
+
+  it("permite manter explicitamente a edição local sobre a revisão mais recente", async () => {
+    vi.useFakeTimers();
+    const storage = new ControlledStorage();
+    const events = new EventTarget();
+    storage.values.set("progresso", progressEnvelope([], 1));
+    const host = document.createElement("div");
+    document.body.append(host);
+    root = createRoot(host);
+
+    await act(async () => {
+      root.render(
+        <StatusHarness storage={storage} explicitKey="progresso" eventTarget={events} writeDelay={500} />,
+      );
+    });
+    await act(async () => host.querySelector("[data-state]").click());
+    const remote = progressEnvelope(["remota-1", "remota-2"], 2);
+    storage.values.set("progresso", remote);
+    await act(async () => dispatchStorage(events, "progresso", remote));
+    await act(async () => host.querySelector("[data-keep-local]").click());
+
+    const saved = decodeStorageValue(storage.values.get("progresso"));
+    expect(saved.envelope).toMatchObject({ revision: 3, data: { completed: ["pop-section-001"] } });
+    expect(host.querySelector("[data-state]")?.dataset.status).toBe("OK");
   });
 });

@@ -11,11 +11,13 @@
 // Uso:  node tools/check-questoes.mjs
 import { readFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
+import { derivarAulas } from '../src/lessons.js';
 
 const root = resolve(import.meta.dirname, '..');
 const pop = JSON.parse(await readFile(resolve(root, 'src/data/pop-content.json'), 'utf8'));
 const { questionBank } = await import('../src/questions.js');
 const { tracks } = await import('../src/courseData.js');
+const { lessons } = derivarAulas(pop, tracks);
 
 const MINIMO = 8;
 const blocos = new Map(pop.blocks.map((b) => [b.id, b]));
@@ -47,6 +49,22 @@ for (const q of questionBank) porTrilha[q.track] = (porTrilha[q.track] || 0) + 1
 for (const t of tracks) {
   const n = porTrilha[t.id] || 0;
   if (n < MINIMO) fail(`${t.code}: ${n} questoes, minimo ${MINIMO} (com ${n}, 80% exige ${Math.ceil(n * 0.8)}/${n})`);
+}
+
+// Uma pergunta apenas relacionada ao modulo nao comprova o objetivo da aula.
+// A tela distingue esse fallback de uma checagem objetiva e, por isso, cada
+// secao didatica precisa ter ao menos uma questao do mesmo modulo cuja fonte
+// seja exatamente o id da secao. Quando uma nova aula entrar no POP sem sua
+// avaliacao, este portao interrompe a publicacao.
+const coberturaExclusiva = new Set(
+  questionBank
+    .filter((q) => q?.source?.sec)
+    .map((q) => `${q.track}:${q.source.sec}`),
+);
+for (const lesson of lessons) {
+  if (!coberturaExclusiva.has(`${lesson.trackId}:${lesson.id}`)) {
+    fail(`${lesson.id}: aula sem questao exclusiva alinhada ao modulo ${lesson.trackId}`);
+  }
 }
 
 const ids = new Set();
@@ -142,7 +160,11 @@ if (acertosDoChutador > TETO_CHUTADOR) {
 }
 
 const comFonte = questionBank.filter((q) => q.source).length;
-console.log(`\n${questionBank.length} questoes | ${comFonte} com fonte verificada | minimo por modulo: ${Math.min(...tracks.map((t) => porTrilha[t.id] || 0))}`);
+console.log(
+  `\n${questionBank.length} questoes | ${comFonte} com fonte verificada | `
+  + `${lessons.length}/${lessons.length} aulas com questao exclusiva | `
+  + `minimo por modulo: ${Math.min(...tracks.map((t) => porTrilha[t.id] || 0))}`,
+);
 console.log(
   `pista de comprimento: chutador acerta ${acertosDoChutador} (${percentual}%), `
   + `acaso ${acaso}%, teto ${TETO_CHUTADOR}`,

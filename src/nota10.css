@@ -348,6 +348,9 @@
 }
 .transcript-tools svg{width:14px}
 .transcript-context{margin:10px 0;color:var(--muted);font-size:9px;line-height:1.45}
+.transcript-source-scenes{margin:10px 0;border:1px solid var(--line);border-radius:6px;background:var(--soft)}
+.transcript-source-scenes>button{width:100%;padding:10px 12px;border:0;background:transparent;color:var(--blue);font-size:10px;font-weight:850;text-align:left;cursor:pointer}
+.transcript-source-scenes pre{max-height:320px;margin:0;padding:12px;overflow:auto;border-top:1px solid var(--line);color:var(--ink2);font:10px/1.55 Manrope,Arial,sans-serif;white-space:pre-wrap}
 .transcript-cues{display:grid;gap:5px;max-height:260px;margin:0;padding:0;overflow:auto;list-style:none}
 .transcript-cues li{display:grid;grid-template-columns:52px 1fr;gap:8px;align-items:start;padding:7px;border-radius:5px;background:var(--soft)}
 .transcript-cues li>button{min-height:34px;border:0;border-radius:5px;background:var(--surface);color:var(--blue);font-size:10px;font-weight:900}

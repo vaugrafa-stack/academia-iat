@@ -93,10 +93,12 @@ function minuteLabel(seconds) {
   return `${minutes}:${String(total % 60).padStart(2, "0")}`;
 }
 
-export default function TranscriptPanel({ captions, videoRef, title }) {
+export default function TranscriptPanel({ captions, transcript, videoRef, title }) {
   const [opened, setOpened] = useState(false);
+  const [sourceOpened, setSourceOpened] = useState(false);
   const [status, setStatus] = useState("idle");
   const [cues, setCues] = useState([]);
+  const [sourceText, setSourceText] = useState("");
   const [query, setQuery] = useState("");
   const [copied, setCopied] = useState(false);
 
@@ -104,10 +106,16 @@ export default function TranscriptPanel({ captions, videoRef, title }) {
     if (status === "loading" || status === "ready") return;
     setStatus("loading");
     try {
-      const response = await fetch(captions, { credentials: "same-origin" });
+      const [response, sourceResponse] = await Promise.all([
+        fetch(captions, { credentials: "same-origin" }),
+        transcript
+          ? fetch(transcript, { credentials: "same-origin" }).catch(() => null)
+          : Promise.resolve(null),
+      ]);
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
       const parsed = parseWebVtt(await response.text());
       if (!parsed.length) throw new Error("A faixa não contém trechos legíveis.");
+      if (sourceResponse?.ok) setSourceText(await sourceResponse.text());
       setCues(parsed);
       setStatus("ready");
     } catch {
@@ -123,7 +131,7 @@ export default function TranscriptPanel({ captions, videoRef, title }) {
   }, [cues, query]);
 
   async function copyTranscript() {
-    const text = cues.map((cue) => cue.text).join("\n");
+    const text = sourceText.trim() || cues.map((cue) => cue.text).join("\n");
     try {
       await navigator.clipboard.writeText(text);
       setCopied(true);
@@ -190,11 +198,31 @@ export default function TranscriptPanel({ captions, videoRef, title }) {
                 <Download aria-hidden="true" />
                 Baixar VTT
               </a>
+              {transcript && (
+                <a href={transcript} download>
+                  <Download aria-hidden="true" />
+                  Baixar TXT com fontes
+                </a>
+              )}
             </div>
             <p className="transcript-context">
               Transcrição do resumo “{title}”. Para o procedimento integral,
               consulte a aula guiada e a aba Fonte do POP.
             </p>
+            {sourceText && (
+              <section className="transcript-source-scenes">
+                <button
+                  type="button"
+                  aria-expanded={sourceOpened}
+                  onClick={() => setSourceOpened((current) => !current)}
+                >
+                  {sourceOpened
+                    ? "Ocultar roteiro e fontes por cena"
+                    : "Ver roteiro e fontes por cena"}
+                </button>
+                {sourceOpened && <pre>{sourceText}</pre>}
+              </section>
+            )}
             <ol className="transcript-cues">
               {filtered.map((cue) => (
                 <li key={cue.id}>

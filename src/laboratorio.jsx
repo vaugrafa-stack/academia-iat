@@ -31,6 +31,7 @@ import { buildScenarioDocument, minimumEvidenceRequired } from './scenarioDocume
 import { tracks } from './courseData.js';
 import { getLabSources, LAB_SOURCE_POLICY } from './labSources.js';
 import { nivelDoCaso } from './niveisLab.js';
+import { useMediaQuery } from './useMediaQuery.js';
 import './laboratorio.css';
 
 function normalizar(valor = '') {
@@ -673,8 +674,12 @@ export default function Laboratorio({
   const [complexityFilter, setComplexityFilter] = useState('todas');
   const [mode, setMode] = useState('guiado');
   const [helpLevels, setHelpLevels] = useState({});
+  const [catalogOpen, setCatalogOpen] = useState(false);
   const evidencePanelRef = useRef(null);
   const evidenceTriggerRef = useRef(null);
+  const catalogRef = useRef(null);
+  const catalogTriggerRef = useRef(null);
+  const mobileCatalog = useMediaQuery('(max-width: 760px)');
 
   const catalog = useMemo(
     () => criarCatalogoLaboratorio(scenarios, grupos),
@@ -814,6 +819,51 @@ export default function Laboratorio({
     return () => cancelAnimationFrame(frame);
   }, [activeEvidence]);
 
+  useEffect(() => {
+    if (!mobileCatalog || !catalogOpen) return undefined;
+    const dialog = catalogRef.current;
+    const selector = [
+      'button:not([disabled])',
+      'input:not([disabled])',
+      'select:not([disabled])',
+      '[tabindex]:not([tabindex="-1"])',
+    ].join(',');
+    const focusable = () => [...(dialog?.querySelectorAll(selector) || [])]
+      .filter((element) => element.getClientRects().length > 0);
+    const frame = requestAnimationFrame(() => {
+      dialog?.querySelector('#lab-case-search')?.focus();
+    });
+    const containFocus = (event) => {
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        setCatalogOpen(false);
+        requestAnimationFrame(() => catalogTriggerRef.current?.focus());
+        return;
+      }
+      if (event.key !== 'Tab') return;
+      const elements = focusable();
+      if (!elements.length) return;
+      const first = elements[0];
+      const last = elements[elements.length - 1];
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    };
+    document.addEventListener('keydown', containFocus);
+    return () => {
+      cancelAnimationFrame(frame);
+      document.removeEventListener('keydown', containFocus);
+    };
+  }, [catalogOpen, mobileCatalog]);
+
+  useEffect(() => {
+    if (!mobileCatalog && catalogOpen) setCatalogOpen(false);
+  }, [catalogOpen, mobileCatalog]);
+
   function salvarRascunho(patch = {}) {
     const atualizadoEm = new Date().toISOString();
     const rascunho = criarRascunhoLaboratorio({
@@ -888,6 +938,15 @@ export default function Laboratorio({
   function selectScenario(id) {
     setSelected(id);
     onSelectScenario?.(id);
+    if (mobileCatalog) {
+      setCatalogOpen(false);
+      setTimeout(scrollToWorkspace, 0);
+    }
+  }
+
+  function closeCatalog() {
+    setCatalogOpen(false);
+    requestAnimationFrame(() => catalogTriggerRef.current?.focus());
   }
 
   function openEvidence(title, index, trigger) {
@@ -971,7 +1030,41 @@ export default function Laboratorio({
         </p>
       </div>
 
-      <section className="lab-catalog" aria-labelledby="lab-catalog-title">
+      <button
+        type="button"
+        className="lab-catalog-open"
+        ref={catalogTriggerRef}
+        aria-expanded={catalogOpen}
+        aria-controls="lab-case-catalog-drawer"
+        onClick={() => setCatalogOpen(true)}
+      >
+        <ListFilter aria-hidden="true" />
+        <span>
+          <strong>Escolher outro caso</strong>
+          <small>{scenario.label} · {scenario.title}</small>
+        </span>
+        <ArrowRight aria-hidden="true" />
+      </button>
+
+      {mobileCatalog && catalogOpen && (
+        <button
+          type="button"
+          className="lab-catalog-scrim"
+          aria-label="Fechar catálogo de casos"
+          onClick={closeCatalog}
+        />
+      )}
+
+      <section
+        id="lab-case-catalog-drawer"
+        ref={catalogRef}
+        className={`lab-catalog ${catalogOpen ? 'mobile-open' : ''}`}
+        aria-labelledby="lab-catalog-title"
+        aria-hidden={mobileCatalog && !catalogOpen}
+        aria-modal={mobileCatalog && catalogOpen ? 'true' : undefined}
+        role={mobileCatalog ? 'dialog' : undefined}
+        inert={mobileCatalog && !catalogOpen}
+      >
         <header className="lab-catalog-header">
           <div>
             <span className="lab-eyebrow"><ListFilter aria-hidden="true" /> Biblioteca de casos</span>
@@ -987,6 +1080,14 @@ export default function Laboratorio({
               de {catalog.length} concluídos · {catalogProgress.inProgress} em andamento
             </small>
           </span>
+          <button
+            type="button"
+            className="lab-catalog-close"
+            aria-label="Fechar catálogo de casos"
+            onClick={closeCatalog}
+          >
+            <X aria-hidden="true" />
+          </button>
         </header>
 
         <div className="lab-catalog-toolbar">

@@ -29,7 +29,6 @@ import {
   Compass,
   Database,
   Download,
-  ExternalLink,
   FileCheck,
   FileCheck2,
   FileText,
@@ -72,6 +71,7 @@ import {
 } from "lucide-react";
 import TranscriptPanel from "./TranscriptPanel.jsx";
 import VideoLearningStage from "./VideoLearningStage.jsx";
+import { resolveAudiovisualPilot } from "./audiovisualPilotRuntime.js";
 import {
   ThemeToggle,
   Suporte,
@@ -287,16 +287,19 @@ const NAV = NAV_GRUPOS.flatMap(([, itens]) => itens);
 // genérico sem relação com ela.
 function mediaForLesson(lesson) {
   if (!lesson) return null;
+  let fallback = null;
   if (aulaMedia[lesson.id]) {
-    return {
+    fallback = {
       src: wb(`/media/aula/${lesson.id}.mp4`),
       poster: wb(`/media/aula/${lesson.id}.jpg`),
       captions: wb(`/media/aula/${lesson.id}.vtt`),
       title: (lesson.number ? lesson.number + " " : "") + lesson.title,
       propria: true,
     };
+  } else {
+    fallback = featuredMedia[lesson.trackId] || null;
   }
-  return featuredMedia[lesson.trackId] || null;
+  return resolveAudiovisualPilot(lesson, fallback, `${BASE || ""}/`);
 }
 
 // Cada aula vai para a trilha cuja secao declarada for o prefixo MAIS ESPECIFICO
@@ -785,6 +788,11 @@ function App() {
           <Suspense fallback={<RouteLoading />}>{content}</Suspense>
         </div>
       </main>
+      <MobileBottomNav
+        view={view}
+        go={go}
+        inert={searchOpen || (mobileNav && menuOpen)}
+      />
       {searchOpen && (
         <GlobalSearch
           close={closeSearch}
@@ -823,6 +831,8 @@ function App() {
             {storageStatus.message}
             {storageStatus.code === "STORAGE_CORRUPT"
               ? ` ${storageStatus.detail || ""}`
+              : storageStatus.code === "STORAGE_CONFLICT"
+                ? ` ${storageStatus.detail || "Escolha qual versão deseja manter."}`
               : storageStatus.code === "STORAGE_QUOTA"
                 ? " Libere espaço e altere qualquer item para tentar novamente."
                 : " As mudanças desta sessão podem não ser preservadas."}
@@ -834,6 +844,16 @@ function App() {
               </button>
               <button type="button" onClick={() => resolveCorruptStorage("reset")}>
                 Começar novo
+              </button>
+            </div>
+          )}
+          {storageStatus.conflictAvailable && (
+            <div className="storage-recovery-actions">
+              <button type="button" onClick={() => resolveCorruptStorage("use-remote")}>
+                Usar versão mais recente
+              </button>
+              <button type="button" onClick={() => resolveCorruptStorage("keep-local")}>
+                Manter minhas mudanças
               </button>
             </div>
           )}
@@ -1163,6 +1183,59 @@ function Sidebar({
   );
 }
 
+function MobileBottomNav({ view, go, inert }) {
+  const destinations = [
+    {
+      id: "dashboard",
+      label: "Início",
+      Icon: Home,
+      views: ["dashboard"],
+    },
+    {
+      id: "formacao",
+      label: "Aprender",
+      Icon: BookOpen,
+      views: ["hidreletricas", "formacao", "lesson"],
+    },
+    {
+      id: "laboratorio",
+      label: "Praticar",
+      Icon: FlaskConical,
+      views: ["laboratorio", "redator", "avaliacoes"],
+    },
+    {
+      id: "biblioteca",
+      label: "Consultar",
+      Icon: Library,
+      views: ["fluxos", "mapa", "biblioteca"],
+    },
+  ];
+
+  return (
+    <nav
+      className="mobile-bottom-nav"
+      aria-label="Navegação principal no celular"
+      inert={inert}
+    >
+      {destinations.map(({ id, label, Icon, views }) => {
+        const active = views.includes(view);
+        return (
+          <button
+            type="button"
+            key={id}
+            className={active ? "active" : ""}
+            aria-current={active ? "page" : undefined}
+            onClick={() => go(id)}
+          >
+            <Icon aria-hidden="true" />
+            <span>{label}</span>
+          </button>
+        );
+      })}
+    </nav>
+  );
+}
+
 function SourceAssurance({ compact = false }) {
   const op = popData.metadata?.operational || {};
   const sha = popData.source?.sha256 || popData.source?.hash || "";
@@ -1214,7 +1287,8 @@ function SourceAssurance({ compact = false }) {
 function Dashboard({ state, progress, go, openLesson }) {
   const continueLesson =
     lessonMap.get(state.lastLesson) || firstLesson("m00") || lessons[0];
-  const continueTrack = tracks.find((t) => t.id === continueLesson.trackId);
+  const continueTrack =
+    tracks.find((t) => t.id === continueLesson.trackId) || tracks[0];
   const feat = mediaForLesson(continueLesson);
   return (
     <div className="page dashboard-page">
@@ -1229,73 +1303,6 @@ function Dashboard({ state, progress, go, openLesson }) {
             Do primeiro contato ao controle de qualidade: estude a fonte,
             confronte evidências e treine decisões justificadas.
           </p>
-        </div>
-        <div className="intro-stat">
-          <span>Seu progresso</span>
-          <strong>{progress}%</strong>
-          <i>
-            <em style={{ width: `${progress}%` }} />
-          </i>
-          <small>
-            {state.completed.length} de {lessons.length} tópicos concluídos
-          </small>
-        </div>
-      </section>
-      <SourceAssurance />
-      <section className="river-journey" aria-label="Percurso de aprendizagem">
-        <div className="journey-head">
-          <h2>Seu percurso pelo POP</h2>
-          <button onClick={() => go("formacao")}>
-            Ver percurso formativo <ArrowRight />
-          </button>
-        </div>
-        <div className="river-line">
-          <svg
-            viewBox="0 0 1600 140"
-            preserveAspectRatio="none"
-            aria-hidden="true"
-          >
-            <path
-              className="river-shadow"
-              d="M0 75 C120 10 230 125 350 62 S590 110 720 55 S950 110 1080 50 S1320 115 1600 52"
-            />
-            <path
-              className="river-water"
-              d="M0 75 C120 10 230 125 350 62 S590 110 720 55 S950 110 1080 50 S1320 115 1600 52"
-            />
-          </svg>
-          <div className="journey-track">
-            {tracks.map((t, i) => {
-              let p = trackProgress(t.id, state);
-              return (
-                <button
-                  key={t.id}
-                  style={{ "--i": i }}
-                  title={t.code + " · " + t.title}
-                  className={p === 100 ? "done" : p > 0 ? "current" : ""}
-                  onClick={() => openLesson(firstLesson(t.id)?.id)}
-                >
-                  <span>{p === 100 ? <Check /> : i + 1}</span>
-                  <strong>{t.code}</strong>
-                  <small>{t.title}</small>
-                </button>
-              );
-            })}
-          </div>
-        </div>
-        <div className="journey-legend">
-          <span>
-            <i className="dot done" />
-            Concluído
-          </span>
-          <span>
-            <i className="dot current" />
-            Em andamento
-          </span>
-          <span>
-            <i className="dot" />
-            Não iniciado
-          </span>
         </div>
       </section>
       <section className="dashboard-feature">
@@ -1328,6 +1335,24 @@ function Dashboard({ state, progress, go, openLesson }) {
               <Layers3 /> {trackLessons.get(continueTrack.id).length} tópicos
             </span>
           </div>
+          <div
+            className="feature-progress"
+            role="progressbar"
+            aria-label="Progresso geral"
+            aria-valuemin="0"
+            aria-valuemax="100"
+            aria-valuenow={progress}
+          >
+            <span>
+              Seu progresso <b>{progress}%</b>
+            </span>
+            <i>
+              <em style={{ width: `${progress}%` }} />
+            </i>
+            <small>
+              {state.completed.length} de {lessons.length} tópicos concluídos
+            </small>
+          </div>
           <button
             className="primary"
             onClick={() => openLesson(continueLesson.id)}
@@ -1338,167 +1363,243 @@ function Dashboard({ state, progress, go, openLesson }) {
             Ver todas as aulas <ArrowRight />
           </button>
         </div>
-        <TodayPlan
-          go={go}
-          openLesson={openLesson}
-          continueLesson={continueLesson}
-          state={state}
-        />
+        <CurrentObjectiveCard lesson={continueLesson} />
       </section>
       <section className="dashboard-bottom">
-        <article className="flow-preview">
-          <div className="section-title">
-            <div>
-              <h2>Prévia do fluxo geral</h2>
-              <p>Veja a análise ganhar forma, etapa por etapa.</p>
-            </div>
-            <button onClick={() => go("fluxos")}>
-              Explorar <ExternalLink />
-            </button>
-          </div>
-          <MiniFlow />
-        </article>
-        <article className="coverage-card">
-          <div className="section-title">
-            <div>
-              <h2>Conteúdo do POP organizado para estudo</h2>
-              <p>Edição de treinamento auditada e vinculada às aulas.</p>
-            </div>
-            <Database />
-          </div>
-          <div className="coverage-stats">
-            <span>
-              <strong>{lessons.length}</strong>tópicos didáticos
-            </span>
-            <span>
-              <strong>
-                {popData.tables.filter((t) => !t.navigationOnly).length}
-              </strong>
-              quadros e tabelas
-            </span>
-            <span>
-              <strong>
-                {popData.figures.length +
-                  new Set(flowData.flowcharts.map((f) => f.number)).size}
-              </strong>
-              figuras e fluxos
-            </span>
-            <span>
-              <strong>
-                {(popData.stats?.allDocumentParagraphNodes || 0).toLocaleString(
-                  "pt-BR",
-                )}
-              </strong>
-              trechos pesquisáveis
-            </span>
-          </div>
-          <button onClick={() => go("biblioteca")}>
-            Abrir biblioteca de treinamento <ArrowRight />
-          </button>
-        </article>
+        <NextPracticeCard
+          state={state}
+          currentTrackId={continueTrack.id}
+          go={go}
+        />
+        <ReviewErrorsCard state={state} go={go} openLesson={openLesson} />
       </section>
+      <DashboardPhases
+        state={state}
+        currentTrackId={continueTrack.id}
+        openLesson={openLesson}
+        go={go}
+      />
+      <DashboardSourceDetails go={go} />
     </div>
   );
 }
-function TodayPlan({ go, openLesson, continueLesson, state }) {
-  // revisao: o que foi concluido ha mais tempo volta primeiro
-  const dias = (iso) =>
-    Math.floor((Date.now() - new Date(iso).getTime()) / 86400000);
-  const antigas = Object.entries((state && state.doneAt) || {})
-    .filter(([id, at]) => at && lessonMap.has(id))
-    .map(([id, at]) => ({ l: lessonMap.get(id), d: dias(at) }))
-    .filter((x) => x.d >= 7)
-    .sort((a, b) => b.d - a.d)
-    .slice(0, 3);
-  const desdeUltima = state && state.lastVisit ? dias(state.lastVisit) : null;
-  const items = [
-    [
-      BookOpen,
-      "Continuar aula",
-      continueLesson
-        ? (continueLesson.number ? `${continueLesson.number} ` : "") +
-          continueLesson.title
-        : "Triagem e leitura do processo",
-      () =>
-        continueLesson && openLesson
-          ? openLesson(continueLesson.id)
-          : go("formacao"),
-    ],
-    [FileCheck2, "Checklist", "Conferência documental", () => go("biblioteca")],
-    [
-      FlaskConical,
-      "Laboratório",
-      "Simule uma análise",
-      () => go("laboratorio"),
-    ],
-    [
-      ClipboardCheck,
-      "Avaliação rápida",
-      "Teste seus conhecimentos",
-      () => go("avaliacoes"),
-    ],
-  ];
+function CurrentObjectiveCard({ lesson }) {
+  const blocks = (lesson.blockIds || [])
+    .map((id) => blockMap.get(id))
+    .filter((block) => block && !block.navigationOnly);
+  const design = getLearningDesign(lesson, blocks);
+
   return (
-    <aside className="today-plan">
-      <div>
-        <h2>Seu plano de hoje</h2>
-        <span>≈ 45 min</span>
-      </div>
-      {desdeUltima !== null && desdeUltima >= 3 && (
-        <p className="tp-volta">
-          <Clock size={14} /> Última sessão há {desdeUltima} dias. Reveja antes
-          de avançar.
-        </p>
-      )}
-      {antigas.length > 0 && (
-        <div className="tp-revisao">
-          <strong>Revisar o que já viu</strong>
-          {antigas.map(({ l, d }) => (
-            <button key={l.id} onClick={() => openLesson(l.id)}>
-              <span className="tpr-dias">{d}d</span>
-              <span className="tpr-tit">
-                {l.number ? l.number + " " : ""}
-                {l.title}
-              </span>
-              <ChevronRight size={14} />
-            </button>
-          ))}
-        </div>
-      )}
-      {items.map(([Icon, a, b, fn], i) => (
-        <button key={a} onClick={fn}>
-          <span className={`plan-icon c${i}`}>
-            <Icon />
-          </span>
-          <span>
-            <strong>{a}</strong>
-            <small>{b}</small>
-          </span>
-          <ChevronRight />
-        </button>
-      ))}
+    <aside className="current-objective-card">
+      <span>
+        <Target aria-hidden="true" /> Objetivo atual
+      </span>
+      <h2>O que você deve conseguir fazer</h2>
+      <p>{design.objective}</p>
+      <small>
+        Ao concluir, registre a recuperação ativa e confira os critérios da
+        própria aula.
+      </small>
     </aside>
   );
 }
-function MiniFlow() {
+
+function NextPracticeCard({ state, currentTrackId, go }) {
+  const labs = state.labs || {};
+  const inProgress = scenarios.find(
+    (scenario) => labs[scenario.id]?.status === "em_andamento",
+  );
+  const nextPractice =
+    inProgress ||
+    scenarios.find(
+      (scenario) => scenario.track === currentTrackId && !labs[scenario.id],
+    ) ||
+    scenarios.find((scenario) => !labs[scenario.id]) ||
+    scenarios[0];
+  const continuing = labs[nextPractice.id]?.status === "em_andamento";
+
   return (
-    <div className="mini-flow">
-      {["Receber", "Conferir", "Enquadrar", "Analisar", "Registrar"].map(
-        (x, i) => (
-          <React.Fragment key={x}>
-            <div style={{ "--delay": `${i * 0.35}s` }}>
-              <span>{i + 1}</span>
-              <strong>{x}</strong>
-            </div>
-            {i < 4 && (
-              <i>
-                <ArrowRight />
-              </i>
-            )}
-          </React.Fragment>
-        ),
+    <article className="dashboard-action-card practice">
+      <header>
+        <FlaskConical aria-hidden="true" />
+        <span>Próxima prática</span>
+      </header>
+      <small>{nextPractice.label}</small>
+      <h2>{nextPractice.title}</h2>
+      <p>
+        {continuing
+          ? "Retome as evidências e decisões que ficaram salvas neste dispositivo."
+          : "Aplique o que estudou a um caso sintético e fundamente a decisão."}
+      </p>
+      <button type="button" onClick={() => go("laboratorio", nextPractice.id)}>
+        {continuing ? "Continuar caso" : "Praticar este caso"} <ArrowRight />
+      </button>
+    </article>
+  );
+}
+
+function ReviewErrorsCard({ state, go, openLesson }) {
+  const diagnostic = state.diagnostico?.saida || state.diagnostico?.entrada;
+  const errors = Object.values(diagnostic?.porQuestao || {}).filter(
+    (record) => record?.ok === false,
+  );
+  const firstErrorTrack = errors.find((record) => record.track)?.track;
+  const reviewTrack = tracks.find((track) => track.id === firstErrorTrack);
+  const reviewLesson = reviewTrack
+    ? lessonMap.get(reviewTrack.remediationLessonId) || firstLesson(reviewTrack.id)
+    : null;
+
+  return (
+    <article className="dashboard-action-card review">
+      <header>
+        <AlertTriangle aria-hidden="true" />
+        <span>Erros para revisar</span>
+      </header>
+      {!diagnostic ? (
+        <>
+          <h2>Nenhum erro registrado ainda</h2>
+          <p>Faça a autoavaliação para receber pontos de revisão direcionados.</p>
+          <button type="button" onClick={() => go("avaliacoes")}>
+            Fazer autoavaliação <ArrowRight />
+          </button>
+        </>
+      ) : errors.length === 0 ? (
+        <>
+          <h2>Nenhum erro na última aplicação</h2>
+          <p>Continue o percurso e reaplique os itens no momento de revisão.</p>
+          <button type="button" onClick={() => go("avaliacoes")}>
+            Abrir avaliações <ArrowRight />
+          </button>
+        </>
+      ) : (
+        <>
+          <strong className="dashboard-error-count">{errors.length}</strong>
+          <h2>{errors.length === 1 ? "ponto pede revisão" : "pontos pedem revisão"}</h2>
+          <p>
+            {reviewTrack
+              ? `Comece por ${reviewTrack.code} · ${reviewTrack.title}.`
+              : "Abra a avaliação para revisar o feedback comentado."}
+          </p>
+          <button
+            type="button"
+            onClick={() =>
+              reviewLesson ? openLesson(reviewLesson.id) : go("avaliacoes")
+            }
+          >
+            Revisar agora <ArrowRight />
+          </button>
+        </>
       )}
-    </div>
+    </article>
+  );
+}
+
+function DashboardPhases({ state, currentTrackId, openLesson, go }) {
+  return (
+    <section className="dashboard-phases-section" aria-labelledby="dashboard-phases-title">
+      <div className="dashboard-section-heading">
+        <div>
+          <h2 id="dashboard-phases-title">Quatro fases do percurso</h2>
+          <p>A sequência permanece única, de M00 a M16.</p>
+        </div>
+        <button type="button" onClick={() => go("formacao")}>
+          Ver formação completa <ArrowRight />
+        </button>
+      </div>
+      <ol className="dashboard-phases">
+        {trackGroups.map((group, index) => {
+          const phaseTracks = group.ids
+            .map((id) => tracks.find((track) => track.id === id))
+            .filter(Boolean);
+          const phaseLessons = group.ids.flatMap(
+            (id) => trackLessons.get(id) || [],
+          );
+          const completed = phaseLessons.filter((lesson) =>
+            state.completed.includes(lesson.id),
+          ).length;
+          const percent = phaseLessons.length
+            ? Math.round((completed / phaseLessons.length) * 100)
+            : 0;
+          const destination =
+            phaseLessons.find((lesson) => !state.completed.includes(lesson.id)) ||
+            phaseLessons[0];
+          const current = group.ids.includes(currentTrackId);
+          return (
+            <li key={group.title} className={current ? "current" : ""}>
+              <button
+                type="button"
+                aria-current={current ? "step" : undefined}
+                onClick={() => destination && openLesson(destination.id)}
+              >
+                <span className="dashboard-phase-number">
+                  {percent === 100 ? <Check aria-hidden="true" /> : index + 1}
+                </span>
+                <span className="dashboard-phase-copy">
+                  <small>
+                    Fase {index + 1} · {phaseTracks[0]?.code}–
+                    {phaseTracks.at(-1)?.code}
+                  </small>
+                  <strong>{group.title}</strong>
+                </span>
+                <span className="dashboard-phase-progress">
+                  <b>{percent}%</b>
+                  <i>
+                    <em style={{ width: `${percent}%` }} />
+                  </i>
+                </span>
+                <ChevronRight aria-hidden="true" />
+              </button>
+            </li>
+          );
+        })}
+      </ol>
+    </section>
+  );
+}
+
+function DashboardSourceDetails({ go }) {
+  return (
+    <details className="dashboard-source-details">
+      <summary>
+        <Database aria-hidden="true" />
+        <span>
+          <strong>Sobre a fonte</strong>
+          <small>Versão, integridade e cobertura documental</small>
+        </span>
+        <ChevronRight aria-hidden="true" />
+      </summary>
+      <div>
+        <SourceAssurance />
+        <dl className="dashboard-source-metrics">
+          <div>
+            <dt>Tópicos didáticos</dt>
+            <dd>{lessons.length}</dd>
+          </div>
+          <div>
+            <dt>Quadros e tabelas</dt>
+            <dd>{popData.tables.filter((table) => !table.navigationOnly).length}</dd>
+          </div>
+          <div>
+            <dt>Figuras e fluxos</dt>
+            <dd>
+              {popData.figures.length +
+                new Set(flowData.flowcharts.map((flow) => flow.number)).size}
+            </dd>
+          </div>
+          <div>
+            <dt>Trechos pesquisáveis</dt>
+            <dd>
+              {(popData.stats?.allDocumentParagraphNodes || 0).toLocaleString(
+                "pt-BR",
+              )}
+            </dd>
+          </div>
+        </dl>
+        <button type="button" onClick={() => go("biblioteca")}>
+          Abrir biblioteca <ArrowRight />
+        </button>
+      </div>
+    </details>
   );
 }
 
@@ -1876,14 +1977,14 @@ function Lesson({
             )}
           </button>
         </header>
-        <SourceAssurance compact />
-        <LearningContract design={design} />
         <VideoLesson
           key={media?.src || lesson.id}
           media={media}
           track={track}
           lesson={lesson}
         />
+        <SourceAssurance compact />
+        <LearningContract design={design} />
         <div
           className="lesson-tabs"
           role="tablist"
@@ -2220,6 +2321,7 @@ function VideoLesson({ media, track, lesson }) {
       </figcaption>
       <TranscriptPanel
         captions={media.captions}
+        transcript={media.transcript}
         videoRef={ref}
         title={media.title}
       />

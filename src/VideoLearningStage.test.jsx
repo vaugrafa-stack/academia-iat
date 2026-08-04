@@ -7,6 +7,8 @@ import VideoLearningStage, {
   fallbackNarrationLevel,
   learningStageTheme,
   mouthFrameForLevel,
+  presenterActiveAtTime,
+  visemeAtTime,
 } from "./VideoLearningStage.jsx";
 
 let root;
@@ -34,6 +36,19 @@ describe("lógica do palco das videoaulas", () => {
     const samples = [0, 0.1, 1.7, 12.4].map(fallbackNarrationLevel);
     expect(samples.every((value) => value >= 0 && value <= 1)).toBe(true);
     expect(fallbackNarrationLevel(1.7)).toBe(fallbackNarrationLevel(1.7));
+  });
+
+  it("seleciona visemas e janelas editoriais pelo relógio do vídeo", () => {
+    const entries = [
+      { start: 0, end: 0.2, viseme: 1 },
+      { start: 0.2, end: 0.6, viseme: 4 },
+    ];
+    expect(visemeAtTime(entries, 0.1)).toBe(1);
+    expect(visemeAtTime(entries, 0.4)).toBe(4);
+    expect(visemeAtTime(entries, 0.8)).toBe(0);
+    expect(presenterActiveAtTime([[0, 0.3], [0.7, 1]], 0.2)).toBe(true);
+    expect(presenterActiveAtTime([[0, 0.3], [0.7, 1]], 0.5)).toBe(false);
+    expect(presenterActiveAtTime(undefined, 0.5)).toBe(true);
   });
 
   it("seleciona contexto visual pelo módulo e permite ajuste pelo tema da aula", () => {
@@ -101,13 +116,53 @@ describe("controles do palco das videoaulas", () => {
     );
     expect(toggle?.getAttribute("aria-pressed")).toBe("true");
     expect(toggle?.getAttribute("aria-label")).toBe(
-      "Exibir professor no palco da videoaula",
+      "Ocultar professor do palco da videoaula",
     );
 
     await act(async () => toggle.click());
     expect(toggle.textContent).toContain("Mostrar professor");
     expect(toggle.getAttribute("aria-pressed")).toBe("false");
     expect(localStorage.getItem("academia-iat-video-professor")).toBe("hidden");
+  });
+
+  it("carrega a linha do tempo e mantém a boca em repouso enquanto o vídeo está pausado", async () => {
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        entries: [
+          { start: 0, end: 0.2, viseme: 1 },
+          { start: 0.2, end: 0.8, viseme: 5 },
+        ],
+      }),
+    }));
+    const host = document.createElement("div");
+    document.body.append(host);
+    root = createRoot(host);
+    await act(async () => {
+      root.render(
+        <VideoLearningStage
+          media={{
+            src: "/media/piloto/teste.mp4",
+            visemes: "/media/piloto/teste.visemes.json",
+            presenterWindows: [[0, 0.8]],
+            title: "Piloto",
+          }}
+          track={{ id: "m00" }}
+          lesson={{ title: "Piloto" }}
+        />,
+      );
+      await Promise.resolve();
+      await Promise.resolve();
+    });
+    const video = host.querySelector("video");
+    Object.defineProperty(video, "currentTime", { value: 0.4, configurable: true });
+    await act(async () => video.dispatchEvent(new Event("timeupdate")));
+    expect(fetch).toHaveBeenCalledWith(
+      "/media/piloto/teste.visemes.json",
+      expect.objectContaining({ signal: expect.any(AbortSignal) }),
+    );
+    expect(host.querySelector(".vls-professor")?.getAttribute("data-viseme")).toBe("0");
+    expect(host.querySelector(".vls-stage")?.classList.contains("vls-presenter-active")).toBe(true);
   });
 
   it("fecha o contexto de áudio se a desmontagem ocorrer durante a ativação", async () => {

@@ -831,6 +831,170 @@
   }
 }
 
+.lab-catalog-open,
+.lab-catalog-close,
+.lab-catalog-scrim {
+  display: none;
+}
+
+@media (max-width: 760px) {
+  .lab-page {
+    animation: none !important;
+    padding-top: 22px;
+    transform: none !important;
+  }
+
+  .lab-page .page-header {
+    margin-bottom: 14px;
+  }
+
+  .lab-page .lab-trust-note {
+    margin-bottom: 10px;
+  }
+
+  .lab-catalog-open {
+    display: grid;
+    grid-template-columns: 28px minmax(0, 1fr) 18px;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    min-height: 58px;
+    margin: 0 0 10px;
+    padding: 9px 12px;
+    border: 1px solid var(--green);
+    border-radius: 10px;
+    background: var(--green3);
+    color: var(--green);
+    text-align: left;
+  }
+
+  .lab-catalog-open > svg {
+    width: 19px;
+  }
+
+  .lab-catalog-open > span {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+  }
+
+  .lab-catalog-open strong {
+    font-size: 12px;
+  }
+
+  .lab-catalog-open small {
+    overflow: hidden;
+    color: var(--ink2);
+    font-size: 11px;
+    font-weight: 600;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .lab-catalog:not(.mobile-open) {
+    display: none;
+  }
+
+  .lab-catalog.mobile-open {
+    position: fixed;
+    z-index: 91;
+    inset: var(--top) 0 calc(66px + env(safe-area-inset-bottom));
+    display: block;
+    margin: 0;
+    overflow-x: hidden;
+    overflow-y: auto;
+    border: 0;
+    border-radius: 0;
+    background: var(--surface);
+    box-shadow: 0 20px 55px #0006;
+    overscroll-behavior: contain;
+  }
+
+  .lab-catalog-scrim {
+    position: fixed;
+    z-index: 90;
+    inset: 0;
+    display: block;
+    width: 100%;
+    border: 0;
+    background: #06140f99;
+    backdrop-filter: blur(3px);
+  }
+
+  .lab-catalog.mobile-open .lab-catalog-header {
+    position: sticky;
+    z-index: 2;
+    top: 0;
+    padding-right: 62px;
+    background: var(--surface);
+  }
+
+  .lab-catalog-close {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    border: 1px solid var(--line);
+    border-radius: 9px;
+    background: var(--surface2);
+    color: var(--ink);
+  }
+
+  .lab-catalog-close svg {
+    width: 19px;
+  }
+
+  .lab-mode-bar {
+    gap: 10px;
+    margin-bottom: 10px;
+    padding: 12px;
+  }
+
+  .lab-mode-bar > div:first-child p {
+    display: none;
+  }
+
+  .lab-mode-bar h2 {
+    margin-bottom: 0;
+    font-size: 15px;
+  }
+
+  .lab-mode-options {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .lab-mode-options button {
+    min-height: 44px;
+  }
+
+  .lab-page .lab-workspace {
+    margin-top: 0;
+  }
+}
+
+@media (max-width: 430px) {
+  .lab-page .lab-trust-note {
+    padding: 10px 12px;
+  }
+
+  .lab-page .lab-trust-note p {
+    font-size: 11px;
+    line-height: 1.45;
+  }
+
+  .lab-catalog.mobile-open .lab-catalog-header {
+    padding-top: 15px;
+  }
+
+  .lab-catalog.mobile-open .lab-selected-overview {
+    padding-bottom: 24px;
+  }
+}
+
 /* Documento que o caso afirma NAO constar do processo.
    Fica na mesma lista das demais pecas de proposito: perceber a falta e parte
    da decisao, e um fato solto no texto nao produz essa percepcao. A tarja usa

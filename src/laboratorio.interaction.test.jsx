@@ -73,6 +73,41 @@ afterEach(async () => {
 });
 
 describe('persistência da tentativa no Laboratório', () => {
+  it('abre o catálogo como diálogo móvel e devolve o foco ao acionador', async () => {
+    globalThis.matchMedia = vi.fn(() => ({
+      matches: true,
+      addEventListener: vi.fn(),
+      removeEventListener: vi.fn(),
+    }));
+    const initialState = { labs: {}, autoaval: {} };
+    await act(async () => renderLaboratorio(initialState, vi.fn()));
+
+    const trigger = host.querySelector('.lab-catalog-open');
+    const catalog = host.querySelector('#lab-case-catalog-drawer');
+    expect(trigger).toBeTruthy();
+    expect(trigger.getAttribute('aria-expanded')).toBe('false');
+    expect(catalog.getAttribute('aria-hidden')).toBe('true');
+    expect(catalog.getAttribute('role')).toBe('dialog');
+
+    await act(async () => {
+      click(trigger);
+      await new Promise((resolve) => requestAnimationFrame(resolve));
+    });
+
+    expect(trigger.getAttribute('aria-expanded')).toBe('true');
+    expect(catalog.getAttribute('aria-hidden')).toBe('false');
+    expect(document.activeElement).toBe(catalog.querySelector('#lab-case-search'));
+
+    const closeButton = catalog.querySelector('.lab-catalog-close');
+    await act(async () => {
+      click(closeButton);
+      await new Promise((resolve) => requestAnimationFrame(resolve));
+    });
+
+    expect(trigger.getAttribute('aria-expanded')).toBe('false');
+    expect(document.activeElement).toBe(trigger);
+  });
+
   it('expõe e fecha uma evidência com estado, foco e retorno ao acionador', async () => {
     const initialState = { labs: {}, autoaval: {} };
     await act(async () => renderLaboratorio(initialState, vi.fn()));

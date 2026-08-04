@@ -1,5 +1,10 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { progressKey, validateProgress } from "./profile.js";
+import {
+  createStorageAdapter,
+  createStorageEnvelope,
+  decodeStorageValue,
+} from "./storageContracts.js";
 
 export const LEGACY_PROGRESS_KEY = "academia-iat-progress-v2";
 
@@ -58,6 +63,35 @@ function unavailableIssue(error, operation) {
   };
 }
 
+function corruptIssue(error, raw) {
+  return {
+    code: "STORAGE_CORRUPT",
+    message:
+      "O progresso salvo está incompatível ou corrompido. O valor original foi preservado e não será sobrescrito sem sua decisão.",
+    detail: errorDetail(error, "Formato inválido."),
+    recoveryAvailable: true,
+    raw,
+  };
+}
+
+function conflictIssue(detail = "Outra aba alterou este mesmo progresso.") {
+  return {
+    code: "STORAGE_CONFLICT",
+    message:
+      "Há duas versões do progresso abertas. Nenhuma delas será sobrescrita automaticamente.",
+    detail,
+    conflictAvailable: true,
+  };
+}
+
+function sameState(left, right) {
+  try {
+    return JSON.stringify(left) === JSON.stringify(right);
+  } catch {
+    return false;
+  }
+}
+
 export function loadStoredState(
   storage,
   key,
@@ -76,42 +110,54 @@ export function loadStoredState(
   }
 
   if (raw === null) {
+    const envelope = createStorageEnvelope(initial, {
+      revision: 0,
+      updatedAt: "1970-01-01T00:00:00.000Z",
+    });
     return {
       state: initial,
       raw: null,
       blocked: false,
       issue: null,
+      envelope,
+      needsMigration: false,
     };
   }
 
   try {
-    const clean = validateProgress(JSON.parse(raw));
-    if (clean === null) {
-      throw new Error("O registro salvo não contém um estado de progresso.");
-    }
+    const decoded = decodeStorageValue(raw, validateProgress);
+    const state = { ...initial, ...decoded.envelope.data };
     return {
-      state: { ...initial, ...clean },
+      state,
       raw: null,
       blocked: false,
       issue: null,
+      envelope: { ...decoded.envelope, data: state },
+      needsMigration:
+        decoded.migrated || !sameState(state, decoded.envelope.data),
     };
   } catch (error) {
     return {
       state: initial,
       raw,
       blocked: true,
-      issue: {
-        code: "STORAGE_CORRUPT",
-        message:
-          "O progresso salvo está incompatível ou corrompido. O valor original foi preservado e não será sobrescrito sem sua decisão.",
-        detail: errorDetail(error, "Formato inválido."),
-        recoveryAvailable: true,
-      },
+      issue: corruptIssue(error, raw),
+      envelope: null,
+      needsMigration: false,
     };
   }
 }
 
-export function persistStoredState(storage, key, state) {
+export function persistStoredState(
+  storage,
+  key,
+  state,
+  {
+    expectedRevision,
+    now = () => new Date().toISOString(),
+    allowCorruptOverwrite = false,
+  } = {},
+) {
   let clean;
   try {
     clean = validateProgress(state);
@@ -130,9 +176,44 @@ export function persistStoredState(storage, key, state) {
     };
   }
 
+  let raw = null;
+  let currentRevision = 0;
   try {
-    storage.setItem(key, JSON.stringify(clean));
-    return { ok: true, state: clean };
+    raw = storage.getItem(key);
+  } catch (error) {
+    return { ok: false, issue: unavailableIssue(error, "read") };
+  }
+  if (raw !== null) {
+    try {
+      currentRevision = decodeStorageValue(raw, validateProgress).envelope.revision;
+    } catch (error) {
+      if (!allowCorruptOverwrite) {
+        return { ok: false, raw, issue: corruptIssue(error, raw) };
+      }
+    }
+  }
+  if (
+    expectedRevision !== undefined &&
+    expectedRevision !== null &&
+    currentRevision !== expectedRevision
+  ) {
+    return {
+      ok: false,
+      raw,
+      issue: conflictIssue(
+        `A versão aberta era a revisão ${expectedRevision}, mas a revisão ${currentRevision} já está salva.`,
+      ),
+    };
+  }
+
+  let envelope;
+  try {
+    envelope = createStorageEnvelope(clean, {
+      revision: currentRevision + 1,
+      updatedAt: now(),
+    });
+    storage.setItem(key, JSON.stringify(envelope));
+    return { ok: true, state: clean, envelope };
   } catch (error) {
     return { ok: false, issue: unavailableIssue(error, "write") };
   }
@@ -163,18 +244,22 @@ export function useStoredState(options = {}) {
     key: explicitKey,
     resolveKey = progressKey,
     storage: injectedStorage,
+    eventTarget: injectedEventTarget,
     writeDelay = 180,
   } = options;
   const storageTarget = useMemo(() => {
     try {
       return {
-        storage: injectedStorage ?? globalThis.localStorage,
+        storage: createStorageAdapter(
+          injectedStorage ?? globalThis.localStorage,
+          injectedEventTarget ?? globalThis.window,
+        ),
         issue: null,
       };
     } catch (error) {
       return { storage: null, issue: unavailableIssue(error, "read") };
     }
-  }, [injectedStorage]);
+  }, [injectedEventTarget, injectedStorage]);
   const keyTarget = useMemo(
     () =>
       explicitKey
@@ -193,6 +278,8 @@ export function useStoredState(options = {}) {
           raw: null,
           blocked: true,
           issue: bootIssue,
+          envelope: null,
+          needsMigration: false,
         }
       : loadStoredState(
           storageTarget.storage,
@@ -203,23 +290,155 @@ export function useStoredState(options = {}) {
 
   const persistenceBlocked = useRef(loadRef.current.blocked);
   const invalidRaw = useRef(loadRef.current.raw);
+  const remoteRaw = useRef(null);
+  const revision = useRef(loadRef.current.envelope?.revision ?? 0);
+  const persistedState = useRef(loadRef.current.state);
+  const migrationPending = useRef(loadRef.current.needsMigration);
   const [state, setState] = useState(loadRef.current.state);
   const [storageStatus, setStorageStatus] = useState(loadRef.current.issue);
+  const stateRef = useRef(state);
+  stateRef.current = state;
 
   useEffect(() => {
     if (persistenceBlocked.current) return undefined;
+    if (!migrationPending.current && sameState(state, persistedState.current)) {
+      return undefined;
+    }
     const timer = setTimeout(() => {
       const result = persistStoredState(
         storageTarget.storage,
         keyTarget.key,
         state,
+        { expectedRevision: revision.current },
       );
-      setStorageStatus(result.ok ? null : result.issue);
+      if (result.ok) {
+        revision.current = result.envelope.revision;
+        persistedState.current = result.state;
+        migrationPending.current = false;
+        setStorageStatus(null);
+        return;
+      }
+      if (result.issue?.code === "STORAGE_CONFLICT") {
+        persistenceBlocked.current = true;
+        remoteRaw.current = result.raw;
+      }
+      setStorageStatus(result.issue);
     }, writeDelay);
     return () => clearTimeout(timer);
   }, [keyTarget.key, state, storageTarget.storage, writeDelay]);
 
+  useEffect(() => {
+    if (!storageTarget.storage || !keyTarget.key) return undefined;
+    return storageTarget.storage.subscribe(keyTarget.key, ({ newValue }) => {
+      if (newValue === null) {
+        persistenceBlocked.current = true;
+        remoteRaw.current = null;
+        setStorageStatus(conflictIssue("O registro foi removido em outra aba."));
+        return;
+      }
+      let incoming;
+      try {
+        incoming = decodeStorageValue(newValue, validateProgress).envelope;
+      } catch (error) {
+        persistenceBlocked.current = true;
+        invalidRaw.current = newValue;
+        remoteRaw.current = newValue;
+        setStorageStatus({
+          ...conflictIssue("A outra aba gravou um registro incompatível."),
+          detail: errorDetail(error, "Formato inválido."),
+        });
+        return;
+      }
+      const incomingState = {
+        ...initialRef.current,
+        ...incoming.data,
+      };
+      if (incoming.revision < revision.current) return;
+      if (
+        incoming.revision === revision.current &&
+        sameState(incomingState, persistedState.current)
+      ) {
+        return;
+      }
+      if (sameState(incomingState, stateRef.current)) {
+        revision.current = incoming.revision;
+        persistedState.current = incomingState;
+        migrationPending.current = false;
+        persistenceBlocked.current = false;
+        remoteRaw.current = null;
+        setStorageStatus(null);
+        return;
+      }
+      const localDirty = !sameState(stateRef.current, persistedState.current);
+      if (localDirty || incoming.revision === revision.current) {
+        persistenceBlocked.current = true;
+        remoteRaw.current = newValue;
+        setStorageStatus(conflictIssue());
+        return;
+      }
+      revision.current = incoming.revision;
+      persistedState.current = incomingState;
+      migrationPending.current = false;
+      setState(incomingState);
+      setStorageStatus(null);
+    });
+  }, [keyTarget.key, storageTarget.storage]);
+
   function resolveCorruptStorage(action) {
+    if (action === "use-remote") {
+      try {
+        const incoming = remoteRaw.current === null
+          ? createStorageEnvelope(createDefaultProgressState(), {
+              revision: 0,
+              updatedAt: "1970-01-01T00:00:00.000Z",
+            })
+          : decodeStorageValue(remoteRaw.current, validateProgress).envelope;
+        const incomingState = {
+          ...initialRef.current,
+          ...incoming.data,
+        };
+        revision.current = incoming.revision;
+        persistedState.current = incomingState;
+        migrationPending.current = false;
+        persistenceBlocked.current = false;
+        invalidRaw.current = null;
+        remoteRaw.current = null;
+        setState(incomingState);
+        setStorageStatus(null);
+      } catch (error) {
+        setStorageStatus(corruptIssue(error, remoteRaw.current));
+      }
+      return;
+    }
+    if (action === "keep-local") {
+      let expectedRevision = 0;
+      try {
+        const latestRaw = storageTarget.storage.getItem(keyTarget.key);
+        expectedRevision = latestRaw === null
+          ? 0
+          : decodeStorageValue(latestRaw, validateProgress).envelope.revision;
+      } catch (error) {
+        setStorageStatus(corruptIssue(error, remoteRaw.current));
+        return;
+      }
+      const result = persistStoredState(
+        storageTarget.storage,
+        keyTarget.key,
+        stateRef.current,
+        { expectedRevision },
+      );
+      if (!result.ok) {
+        setStorageStatus(result.issue);
+        return;
+      }
+      revision.current = result.envelope.revision;
+      persistedState.current = result.state;
+      migrationPending.current = false;
+      persistenceBlocked.current = false;
+      remoteRaw.current = null;
+      setStorageStatus(null);
+      return;
+    }
     if (action === "download") {
       try {
         const blob = new Blob([invalidRaw.current || ""], {
@@ -253,6 +472,7 @@ export function useStoredState(options = {}) {
       storageTarget.storage,
       keyTarget.key,
       fresh,
+      { allowCorruptOverwrite: true },
     );
     if (!result.ok) {
       setStorageStatus({ ...result.issue, recoveryAvailable: true });
@@ -260,6 +480,10 @@ export function useStoredState(options = {}) {
     }
     persistenceBlocked.current = false;
     invalidRaw.current = null;
+    remoteRaw.current = null;
+    revision.current = result.envelope.revision;
+    persistedState.current = result.state;
+    migrationPending.current = false;
     setStorageStatus(null);
     setState(fresh);
   }

@@ -1,0 +1,48 @@
+Distinção entre documentos
+
+Objetivo: Distinguir a função principal e o limite de cada documento antes de avaliar sua suficiência.
+Pré-requisito: Reconhecer a diferença entre documento apresentado e documento suficiente.
+
+[0.0s] Um processo, funções diferentes
+O processo traz Memorial Descritivo, RAS, RDPA, EIA, RIMA, PBA e PACUERA. Todos são importantes. Mas eles não respondem à mesma pergunta. Como evitar que um documento seja usado para provar aquilo que ele não demonstra?
+Fonte: POP, item 18.2
+
+[18.6s] Objetivo da microaula
+Ao final, você deverá conseguir separar caracterização de engenharia, avaliação ambiental, detalhamento de programas, comunicação pública, gestão territorial e comprovação de execução.
+Fonte: POP, item 18.2
+
+[30.3s] Vocabulário da análise
+Antes de comparar os arquivos, fixe três termos. Função é a pergunta principal que o documento responde. Limite é aquilo que ele não demonstra. Suficiência é o julgamento feito depois de confrontar conteúdo, fonte e finalidade.
+Fonte: POP, item 18.2
+
+[45.1s] Memorial caracteriza o projeto
+Comece pelo Memorial Descritivo. Ele caracteriza engenharia, arranjo, estruturas, parâmetros hidráulicos, operação e áreas associadas. Seu limite é claro: não substitui estudo ambiental, diagnóstico de impactos nem programa ambiental.
+Fonte: POP, item 18.2
+
+[60.3s] Avaliar, detalhar e comunicar
+O RAS subsidia uma avaliação ambiental simplificada. O RDPA detalha as medidas e os programas propostos no RAS. Do mesmo modo, o EIA avalia a viabilidade ambiental, enquanto o RIMA comunica suas conclusões ao público com fidelidade e linguagem acessível.
+Fonte: POP, item 18.2
+
+[80.2s] Planejar não é comprovar execução
+O PBA detalha medidas e programas decorrentes do EIA e do RIMA. O PACUERA organiza diagnóstico, zoneamento, diretrizes, participação, monitoramento e revisão do entorno do reservatório. Já o relatório de execução comprova ações realizadas e resultados.
+Fonte: POP, item 18.2
+
+[98.3s] Erro: trocar função por presença
+O erro recorrente é aceitar equivalências falsas: Memorial como estudo ambiental, RDPA como repetição do RAS, RIMA divergente do EIA, ou cronograma futuro como prova de execução. A presença do arquivo não elimina o limite de sua função.
+Fonte: POP, item 18.2
+
+[116.1s] Decida antes de continuar
+Pausa para decidir. Um relatório apresenta apenas atividades futuras e um cronograma. Isso basta para comprovar o cumprimento de um programa ambiental?
+Fonte: POP, item 18.2
+
+[125.3s] Resposta comentada
+Não. Plano de trabalho e cronograma futuro não comprovam execução. Para isso, o relatório precisa demonstrar ações realizadas, resultados, indicadores, evidências, desvios e providências.
+Fonte: POP, item 18.2
+
+[138.4s] Síntese
+Use sempre duas perguntas: qual é a função principal deste documento, e qual erro o seu limite impede? Essa dupla leitura evita substituições indevidas e prepara a análise de suficiência.
+Fonte: POP, item 18.2
+
+[150.4s] Próximo passo
+Na prática seguinte, monte uma matriz com três colunas: documento, função e limite. Depois compare cada arquivo do caso com aquilo que ele deveria demonstrar.
+Fonte: POP, item 18.2

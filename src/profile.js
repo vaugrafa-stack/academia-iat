@@ -9,14 +9,23 @@
 // credencial institucional. O backup exportado e o meio de levar o progresso
 // para outro computador.
 
+import { validateEvidenceRecord } from './contentContracts.js';
+import {
+  createStorageEnvelope,
+  decodeStorageValue,
+  validateStorageEnvelope,
+} from './storageContracts.js';
+
 const LEGACY_PROFILE_KEY = 'academia-iat-profile-v1';
 const LEGACY_PROGRESS_KEY = 'academia-iat-progress-v2';
 const USERS_KEY = 'academia-iat-users-v1';
 const BACKUP_KIND = 'academia-iat-backup';
-const BACKUP_SCHEMA = 1;
+const BACKUP_SCHEMA = 2;
+const OLDEST_BACKUP_SCHEMA = 1;
 const MAX_BACKUP_BYTES = 4 * 1024 * 1024;
 const MAX_PROFILES = 50;
 const BLOCKED_JSON_KEYS = new Set(['__proto__', 'constructor', 'prototype']);
+const REGISTRY_META = '__localStorageMeta';
 export const PROFILE_SCHEMA = 2;
 
 export function defaultProfile() {
@@ -67,7 +76,15 @@ function readRegistry() {
   }
   if (raw === null) return null;
   try {
-    return normalizeStoredRegistry(JSON.parse(raw));
+    const decoded = decodeStorageValue(raw, normalizeStoredRegistry);
+    return {
+      ...decoded.envelope.data,
+      [REGISTRY_META]: {
+        revision: decoded.envelope.revision,
+        updatedAt: decoded.envelope.updatedAt,
+        migrated: decoded.migrated,
+      },
+    };
   } catch (error) {
     throw persistenceException({
       ok: false,
@@ -99,9 +116,61 @@ function readLegacyProfile() {
 }
 
 function writeRegistry(reg) {
+  let clean;
   try {
-    localStorage.setItem(USERS_KEY, JSON.stringify(reg));
-    return { ok: true };
+    clean = normalizeStoredRegistry(reg);
+  } catch {
+    return {
+      ok: false,
+      code: 'REGISTRY_INVALID',
+      error: 'O registro local de perfis não passou pela validação e não foi salvo.',
+      recoverable: true,
+    };
+  }
+  let raw;
+  let currentRevision = 0;
+  try {
+    raw = localStorage.getItem(USERS_KEY);
+    if (raw !== null) {
+      currentRevision = decodeStorageValue(raw, normalizeStoredRegistry).envelope.revision;
+    }
+  } catch (error) {
+    if (error?.name === 'StorageContractError') {
+      return {
+        ok: false,
+        code: 'REGISTRY_INVALID',
+        error: 'O registro local de perfis está incompatível. O valor original foi preservado.',
+        recoverable: true,
+      };
+    }
+    return storageError(error);
+  }
+  const expectedRevision = reg?.[REGISTRY_META]?.revision;
+  if (expectedRevision !== undefined && expectedRevision !== currentRevision) {
+    return {
+      ok: false,
+      code: 'STORAGE_CONFLICT',
+      error: 'Outro acesso atualizou os perfis neste navegador. Recarregue a página antes de tentar novamente.',
+      recoverable: true,
+    };
+  }
+  const envelope = createStorageEnvelope(clean, {
+    revision: currentRevision + 1,
+    updatedAt: new Date().toISOString(),
+  });
+  try {
+    localStorage.setItem(USERS_KEY, JSON.stringify(envelope));
+    return {
+      ok: true,
+      registry: {
+        ...clean,
+        [REGISTRY_META]: {
+          revision: envelope.revision,
+          updatedAt: envelope.updatedAt,
+          migrated: false,
+        },
+      },
+    };
   } catch (error) {
     return storageError(error);
   }
@@ -195,6 +264,11 @@ export function validateProgress(value) {
       acertos > total
     ) {
       throw new Error('O resultado do exercício de enquadramento está em formato inválido.');
+    }
+  }
+  if (value.lessonEvidence) {
+    for (const [lessonId, evidence] of Object.entries(value.lessonEvidence)) {
+      validateEvidenceRecord(evidence, { lessonId });
     }
   }
 
@@ -311,7 +385,7 @@ function ensureRegistry() {
     try { localStorage.removeItem(LEGACY_PROGRESS_KEY + '::' + first.id); } catch { /* o original legado permanece intacto */ }
     throw persistenceException(writeResult);
   }
-  return reg;
+  return writeResult.registry || reg;
 }
 
 export function progressKey() {
@@ -458,16 +532,36 @@ export function hasAccount(profile) {
 
 // Backup completo (perfil + progresso) como arquivo JSON: e o caminho honesto
 // de levar o estudo para outro computador enquanto nao existe servidor.
+export function buildBackupPayload(profile, rawProgress, exportedAt = new Date().toISOString()) {
+  let progress = null;
+  let progressEnvelope = null;
+  if (typeof rawProgress === 'string') {
+    try {
+      const decoded = decodeStorageValue(rawProgress, validateProgress);
+      progress = decoded.envelope.data;
+      progressEnvelope = decoded.envelope;
+    } catch { /* o backup ainda preserva o perfil; a recuperação bruta ocorre pela faixa de erro */ }
+  }
+  return {
+    kind: BACKUP_KIND,
+    schema: BACKUP_SCHEMA,
+    exportedAt,
+    profile,
+    // `progress` permanece plano para leitores de backup anteriores. O novo
+    // envelope acrescenta revisão sem retirar o campo que já era público.
+    progress,
+    progressEnvelope,
+  };
+}
+
 export function exportBackup() {
   const reg = ensureRegistry();
   const u = reg.users.find((x) => x.id === reg.activeId) || reg.users[0];
-  let progress = null;
+  let rawProgress = null;
   try {
-    progress = validateProgress(
-      JSON.parse(localStorage.getItem(LEGACY_PROGRESS_KEY + '::' + u.id) || 'null'),
-    );
-  } catch { /* backup segue sem progresso corrompido */ }
-  const payload = { kind: BACKUP_KIND, schema: BACKUP_SCHEMA, exportedAt: new Date().toISOString(), profile: u, progress };
+    rawProgress = localStorage.getItem(LEGACY_PROGRESS_KEY + '::' + u.id);
+  } catch { /* backup segue apenas com o perfil quando a leitura falha */ }
+  const payload = buildBackupPayload(u, rawProgress);
   const blob = new Blob([JSON.stringify(payload, null, 1)], { type: 'application/json;charset=utf-8' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
@@ -494,15 +588,29 @@ export function importBackup(text) {
   if (!isRecord(data) || data.kind !== BACKUP_KIND || !data.profile) {
     return { ok: false, code: 'INVALID_BACKUP', error: 'O arquivo não é um backup da Academia IAT.' };
   }
-  if (data.schema !== undefined && data.schema !== BACKUP_SCHEMA) {
+  if (
+    data.schema !== undefined &&
+    (!Number.isInteger(data.schema) || data.schema < OLDEST_BACKUP_SCHEMA || data.schema > BACKUP_SCHEMA)
+  ) {
     return { ok: false, code: 'UNSUPPORTED_SCHEMA', error: 'Esta versão do backup não é compatível com a Academia IAT atual.' };
   }
 
   let cleanProfile;
   let cleanProgress;
+  let cleanProgressEnvelope;
   try {
     cleanProfile = validateProfile(data.profile);
     cleanProgress = validateProgress(data.progress);
+    if (data.progressEnvelope !== undefined && data.progressEnvelope !== null) {
+      cleanProgressEnvelope = validateStorageEnvelope(data.progressEnvelope, validateProgress);
+      if (
+        cleanProgress !== null &&
+        JSON.stringify(cleanProgress) !== JSON.stringify(cleanProgressEnvelope.data)
+      ) {
+        throw new Error('O progresso e o envelope do backup não correspondem entre si.');
+      }
+      cleanProgress = cleanProgressEnvelope.data;
+    }
   } catch (error) {
     return { ok: false, code: 'INVALID_DATA', error: error.message || 'O backup contém dados inválidos.' };
   }
@@ -517,28 +625,28 @@ export function importBackup(text) {
   const u = { ...cleanProfile, id: newId(), schemaVersion: PROFILE_SCHEMA };
   const nextRegistry = { ...reg, activeId: u.id, users: [...reg.users, u] };
   const importedProgressKey = LEGACY_PROGRESS_KEY + '::' + u.id;
-  let previousRegistry;
   let previousProgress;
-  let capturedRegistry = false;
   let capturedProgress = false;
 
   try {
-    previousRegistry = localStorage.getItem(USERS_KEY);
-    capturedRegistry = true;
     previousProgress = localStorage.getItem(importedProgressKey);
     capturedProgress = true;
     // O progresso entra primeiro. O perfil só fica visível quando as duas
     // gravações terminam, evitando usuário ativo sem o respectivo histórico.
-    if (cleanProgress) localStorage.setItem(importedProgressKey, JSON.stringify(cleanProgress));
-    localStorage.setItem(USERS_KEY, JSON.stringify(nextRegistry));
+    if (cleanProgress) {
+      const envelope = createStorageEnvelope(cleanProgress, {
+        revision: Math.max(1, cleanProgressEnvelope?.revision || 1),
+        updatedAt: cleanProgressEnvelope?.updatedAt || new Date().toISOString(),
+      });
+      localStorage.setItem(importedProgressKey, JSON.stringify(envelope));
+    }
+    const registryResult = writeRegistry(nextRegistry);
+    if (!registryResult.ok) throw persistenceException(registryResult);
   } catch (error) {
     if (capturedProgress) {
       try { restoreStorageValue(importedProgressKey, previousProgress); } catch { /* melhor rollback possivel */ }
     }
-    if (capturedRegistry) {
-      try { restoreStorageValue(USERS_KEY, previousRegistry); } catch { /* melhor rollback possivel */ }
-    }
-    return storageError(error);
+    return persistenceResult(error);
   }
   return { ok: true, name: u.name || 'Sem nome', code: 'IMPORTED' };
 }

@@ -4,6 +4,8 @@ import "./videoLearningStage.css";
 
 const PUBLIC_BASE = (import.meta.env.BASE_URL || "/").replace(/\/?$/, "/");
 const PROFESSOR_SPRITE =
+  `${PUBLIC_BASE}media/learning-stage/professor-visemes-v2.webp`;
+const PROFESSOR_SPRITE_FALLBACK =
   `${PUBLIC_BASE}media/learning-stage/professor-sprite.webp`;
 const THEMATIC_ATLAS =
   `${PUBLIC_BASE}media/learning-stage/thematic-atlas.webp`;
@@ -69,6 +71,36 @@ export function mouthFrameForLevel(level) {
   return 3;
 }
 
+/** Retorna o quadro de boca vigente no relógio do próprio vídeo. */
+export function visemeAtTime(entries, currentTime) {
+  if (!Array.isArray(entries) || !entries.length || !Number.isFinite(currentTime)) {
+    return 0;
+  }
+  let low = 0;
+  let high = entries.length - 1;
+  while (low <= high) {
+    const middle = Math.floor((low + high) / 2);
+    const entry = entries[middle];
+    if (currentTime < entry.start) high = middle - 1;
+    else if (currentTime >= entry.end) low = middle + 1;
+    else return Number.isInteger(entry.viseme) ? clamp(entry.viseme, 0, 11) : 0;
+  }
+  return 0;
+}
+
+/** Limita a presença visual do professor às janelas editoriais do roteiro. */
+export function presenterActiveAtTime(windows, currentTime) {
+  if (!Array.isArray(windows) || windows.length === 0) return true;
+  if (!Number.isFinite(currentTime)) return false;
+  return windows.some(
+    (window) =>
+      Array.isArray(window) &&
+      window.length === 2 &&
+      currentTime >= window[0] &&
+      currentTime < window[1],
+  );
+}
+
 export function learningStageTheme(track, lesson) {
   const id = typeof track === "string" ? track : track?.id;
   const searchable = `${lesson?.number || ""} ${lesson?.title || ""}`.toLocaleLowerCase(
@@ -120,6 +152,73 @@ function useReducedMotion() {
   }, []);
 
   return reduced;
+}
+
+function useVisemeTimeline(url) {
+  const [entries, setEntries] = useState([]);
+
+  useEffect(() => {
+    setEntries([]);
+    if (!url || typeof fetch !== "function") return undefined;
+    const controller = new AbortController();
+    let active = true;
+    void fetch(url, { signal: controller.signal })
+      .then((response) => {
+        if (!response.ok) throw new Error(`Falha ao carregar visemas: ${response.status}`);
+        return response.json();
+      })
+      .then((timeline) => {
+        if (active && Array.isArray(timeline?.entries)) setEntries(timeline.entries);
+      })
+      .catch((error) => {
+        if (error?.name !== "AbortError" && active) setEntries([]);
+      });
+    return () => {
+      active = false;
+      controller.abort();
+    };
+  }, [url]);
+
+  return entries;
+}
+
+function usePlaybackClock(videoRef, playing, mediaSource) {
+  const [currentTime, setCurrentTime] = useState(0);
+
+  useEffect(() => {
+    setCurrentTime(0);
+  }, [mediaSource]);
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return undefined;
+    let animationFrame = 0;
+    let lastPublishedAt = -1;
+    const publish = () => {
+      const next = Number.isFinite(video.currentTime) ? video.currentTime : 0;
+      if (Math.abs(next - lastPublishedAt) >= 0.025 || next === 0) {
+        lastPublishedAt = next;
+        setCurrentTime(next);
+      }
+    };
+    const animate = () => {
+      publish();
+      animationFrame = requestAnimationFrame(animate);
+    };
+    video.addEventListener("loadedmetadata", publish);
+    video.addEventListener("seeked", publish);
+    video.addEventListener("timeupdate", publish);
+    if (playing && typeof requestAnimationFrame === "function") animate();
+    else publish();
+    return () => {
+      cancelAnimationFrame(animationFrame);
+      video.removeEventListener("loadedmetadata", publish);
+      video.removeEventListener("seeked", publish);
+      video.removeEventListener("timeupdate", publish);
+    };
+  }, [mediaSource, playing, videoRef]);
+
+  return currentTime;
 }
 
 async function audioGraphFor(video) {
@@ -282,12 +381,25 @@ export default function VideoLearningStage({
   const [professorVisible, setProfessorVisible] = useState(readProfessorPreference);
   const [fullscreen, setFullscreen] = useState(false);
   const reducedMotion = useReducedMotion();
+  const visemeEntries = useVisemeTimeline(media?.visemes);
+  const currentTime = usePlaybackClock(videoRef, playing, media?.src);
   const narrationLevel = useNarrationLevel(
     videoRef,
     playing && professorVisible,
     reducedMotion,
   );
   const mouthFrame = mouthFrameForLevel(narrationLevel);
+  const fallbackVisemes = [0, 10, 9, 3];
+  const scheduledViseme = visemeAtTime(visemeEntries, currentTime);
+  const viseme = reducedMotion
+    ? 0
+    : visemeEntries.length
+      ? mouthFrame === 0 ? 0 : scheduledViseme
+      : fallbackVisemes[mouthFrame];
+  const presenterActive = presenterActiveAtTime(
+    media?.presenterWindows,
+    currentTime,
+  );
   const theme = useMemo(
     () => learningStageTheme(track, lesson),
     [lesson, track],
@@ -308,6 +420,7 @@ export default function VideoLearningStage({
 
   const style = {
     "--vls-professor-sprite": `url("${PROFESSOR_SPRITE}")`,
+    "--vls-professor-fallback": `url("${PROFESSOR_SPRITE_FALLBACK}")`,
     "--vls-thematic-atlas": `url("${THEMATIC_ATLAS}")`,
     "--vls-mouth-level": narrationLevel.toFixed(3),
   };
@@ -366,6 +479,7 @@ export default function VideoLearningStage({
         compact ? "vls-compact" : "",
         playing ? "vls-playing" : "",
         professorVisible ? "vls-professor-visible" : "vls-professor-hidden",
+        presenterActive ? "vls-presenter-active" : "vls-presenter-away",
         reducedMotion ? "vls-reduced-motion" : "",
       ]
         .filter(Boolean)
@@ -415,11 +529,12 @@ export default function VideoLearningStage({
 
       <div
         className="vls-professor-rail"
-        aria-hidden={!professorVisible}
+        aria-hidden={!professorVisible || !presenterActive}
       >
         <div
           className="vls-professor"
           data-mouth-frame={mouthFrame}
+          data-viseme={viseme}
           aria-hidden="true"
         />
         <span className="vls-professor-label">Professor</span>
@@ -442,7 +557,11 @@ export default function VideoLearningStage({
         <button
           type="button"
           className="vls-professor-toggle"
-          aria-label="Exibir professor no palco da videoaula"
+          aria-label={
+            professorVisible
+              ? "Ocultar professor do palco da videoaula"
+              : "Mostrar professor no palco da videoaula"
+          }
           aria-pressed={professorVisible}
           onClick={updatePreference}
         >

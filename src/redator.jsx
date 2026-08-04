@@ -90,6 +90,26 @@ export default function RedatorIT({ scenarios, grupos, state, setState, go }) {
         <span className="rd-prog">{prog.feitas} de {prog.total} itens com registro mínimo</span>
       </div>
 
+      <div className="rd-step-mobile">
+        <label htmlFor="rd-step-select">
+          <span>Etapa {passo + 1} de {ESTRUTURA_IT.length}</span>
+          <select
+            id="rd-step-select"
+            value={passo}
+            onChange={(event) => {
+              setPasso(Number(event.target.value));
+              setVerTexto(false);
+            }}
+          >
+            {ESTRUTURA_IT.map((item, index) => (
+              <option value={index} key={item.id}>
+                {item.n}. {item.titulo}
+              </option>
+            ))}
+          </select>
+        </label>
+      </div>
+
       <div className="rd-trilha" role="tablist" aria-label="Elementos da Informação Técnica">
         {ESTRUTURA_IT.map((s, i) => {
           const feita = prog.ids.includes(s.id);

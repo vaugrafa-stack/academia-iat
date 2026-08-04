@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import {
+  buildBackupPayload,
   certificateSvg,
   createUser,
   importBackup,
@@ -77,6 +78,11 @@ function seedRegistry(storage) {
   return raw;
 }
 
+function readRegistryData(storage = localStorage) {
+  const parsed = JSON.parse(storage.getItem(USERS_KEY));
+  return parsed.data || parsed;
+}
+
 function profileRecord(index) {
   return {
     schemaVersion: 2,
@@ -146,13 +152,17 @@ describe('importBackup', () => {
     }));
 
     expect(result).toMatchObject({ ok: true, code: 'IMPORTED', name: 'Ana Águas' });
-    const registry = JSON.parse(localStorage.getItem(USERS_KEY));
+    const registry = readRegistryData();
     expect(registry.users).toHaveLength(2);
     expect(registry.activeId).not.toBe('id-controlado-pelo-arquivo');
     expect(registry.users[1]).toMatchObject({ id: registry.activeId, name: 'Ana Águas', schemaVersion: 2 });
     expect(JSON.parse(localStorage.getItem(PROGRESS_PREFIX + registry.activeId))).toMatchObject({
-      completed: ['pop-section-001'],
-      notes: { 'pop-section-001': 'Nota preservada' },
+      schemaVersion: 1,
+      revision: 1,
+      data: {
+        completed: ['pop-section-001'],
+        notes: { 'pop-section-001': 'Nota preservada' },
+      },
     });
   });
 
@@ -160,6 +170,60 @@ describe('importBackup', () => {
     const payload = JSON.parse(backup());
     delete payload.schema;
     expect(importBackup(JSON.stringify(payload))).toMatchObject({ ok: true, code: 'IMPORTED' });
+  });
+
+  it('restaura backup novo com envelope e conserva sua revisão', () => {
+    const payload = JSON.parse(backup({ schema: 2 }));
+    payload.progressEnvelope = {
+      schemaVersion: 1,
+      revision: 7,
+      updatedAt: '2026-08-04T12:00:00.000Z',
+      data: payload.progress,
+    };
+
+    expect(importBackup(JSON.stringify(payload))).toMatchObject({ ok: true, code: 'IMPORTED' });
+    const registry = readRegistryData();
+    expect(JSON.parse(localStorage.getItem(PROGRESS_PREFIX + registry.activeId))).toMatchObject({
+      schemaVersion: 1,
+      revision: 7,
+      updatedAt: '2026-08-04T12:00:00.000Z',
+      data: { completed: ['pop-section-001'] },
+    });
+  });
+
+  it('recusa backup cujo progresso plano diverge do envelope', () => {
+    const original = localStorage.getItem(USERS_KEY);
+    const payload = JSON.parse(backup({ schema: 2 }));
+    payload.progressEnvelope = {
+      schemaVersion: 1,
+      revision: 2,
+      updatedAt: '2026-08-04T12:00:00.000Z',
+      data: { ...payload.progress, completed: ['outra-aula'] },
+    };
+
+    expect(importBackup(JSON.stringify(payload))).toMatchObject({ ok: false, code: 'INVALID_DATA' });
+    expect(localStorage.getItem(USERS_KEY)).toBe(original);
+  });
+
+  it('exporta o campo legado e o envelope sem perder dados', () => {
+    const profile = profileRecord(1);
+    const payload = buildBackupPayload(
+      profile,
+      JSON.stringify({ completed: ['aula-1'], notes: { 'aula-1': 'preservar' } }),
+      '2026-08-04T12:00:00.000Z',
+    );
+
+    expect(payload).toMatchObject({
+      kind: 'academia-iat-backup',
+      schema: 2,
+      exportedAt: '2026-08-04T12:00:00.000Z',
+      progress: { completed: ['aula-1'] },
+      progressEnvelope: {
+        schemaVersion: 1,
+        revision: 0,
+        data: { notes: { 'aula-1': 'preservar' } },
+      },
+    });
   });
 
   it('rejeita estruturas que poderiam quebrar o estado da aplicação', () => {
@@ -171,6 +235,16 @@ describe('importBackup', () => {
     expect(result).toMatchObject({ ok: false, code: 'INVALID_DATA' });
     expect(localStorage.getItem(USERS_KEY)).toBe(original);
     expect([...localStorage.values.keys()].filter((key) => key.startsWith(PROGRESS_PREFIX))).toHaveLength(0);
+  });
+
+  it('rejeita evidência de aula incompatível', () => {
+    const result = importBackup(backup({
+      progress: {
+        completed: [],
+        lessonEvidence: { 'aula-1': { criteria: [0, -1] } },
+      },
+    }));
+    expect(result).toMatchObject({ ok: false, code: 'INVALID_DATA' });
   });
 
   it('rejeita versões futuras sem alterar dados existentes', () => {
@@ -189,6 +263,33 @@ describe('importBackup', () => {
 
     expect(result).toMatchObject({ ok: false, code: 'STORAGE_QUOTA' });
     expect(localStorage.getItem(USERS_KEY)).toBe(original);
+    expect([...localStorage.values.keys()].filter((key) => key.startsWith(PROGRESS_PREFIX))).toHaveLength(0);
+  });
+
+  it('preserva uma atualização concorrente do registro ao cancelar a importação', () => {
+    const originalGetItem = localStorage.getItem.bind(localStorage);
+    let registryReads = 0;
+    const concurrentRegistry = JSON.stringify({
+      schemaVersion: 1,
+      revision: 1,
+      updatedAt: '2026-08-04T12:00:00.000Z',
+      data: {
+        activeId: 'u-concorrente',
+        users: [profileRecord('concorrente')],
+      },
+    });
+    localStorage.getItem = (key) => {
+      if (String(key) === USERS_KEY && ++registryReads === 2) {
+        localStorage.values.set(USERS_KEY, concurrentRegistry);
+      }
+      return originalGetItem(key);
+    };
+
+    expect(importBackup(backup())).toMatchObject({
+      ok: false,
+      code: 'STORAGE_CONFLICT',
+    });
+    expect(localStorage.getItem(USERS_KEY)).toBe(concurrentRegistry);
     expect([...localStorage.values.keys()].filter((key) => key.startsWith(PROGRESS_PREFIX))).toHaveLength(0);
   });
 
@@ -221,6 +322,37 @@ describe('importBackup', () => {
 });
 
 describe('registro local de perfis', () => {
+  it('lê o registro legado sem reescrever e o migra no próximo salvamento explícito', () => {
+    const legacyRaw = localStorage.getItem(USERS_KEY);
+
+    expect(loadProfile()).toMatchObject({ id: 'u-original', name: 'Perfil original' });
+    expect(localStorage.getItem(USERS_KEY)).toBe(legacyRaw);
+
+    expect(saveProfile({ name: 'Perfil atualizado', certificates: [] })).toMatchObject({ name: 'Perfil atualizado' });
+    const stored = JSON.parse(localStorage.getItem(USERS_KEY));
+    expect(stored).toMatchObject({
+      schemaVersion: 1,
+      revision: 1,
+      data: {
+        activeId: 'u-original',
+        users: [{ id: 'u-original', name: 'Perfil atualizado' }],
+      },
+    });
+  });
+
+  it('recusa envelope futuro de perfis sem apagar o valor original', () => {
+    const future = JSON.stringify({
+      schemaVersion: 99,
+      revision: 1,
+      updatedAt: '2026-08-04T12:00:00.000Z',
+      data: readRegistryData(),
+    });
+    localStorage.setItem(USERS_KEY, future);
+
+    expect(() => loadProfile()).toThrow(expect.objectContaining({ code: 'REGISTRY_INVALID' }));
+    expect(localStorage.getItem(USERS_KEY)).toBe(future);
+  });
+
   it('migra perfil e progresso legados validados sem apagar os originais', () => {
     localStorage.clear();
     const legacyProfile = JSON.stringify({
@@ -240,7 +372,7 @@ describe('registro local de perfis', () => {
     localStorage.setItem(LEGACY_PROGRESS_KEY, legacyProgress);
 
     const profile = loadProfile();
-    const registry = JSON.parse(localStorage.getItem(USERS_KEY));
+    const registry = readRegistryData();
 
     expect(profile).toMatchObject({
       id: registry.activeId,
@@ -302,7 +434,7 @@ describe('registro local de perfis', () => {
     localStorage.setItem(LEGACY_PROGRESS_KEY, legacyProgress);
 
     const result = resetInvalidProfileRegistry();
-    const registry = JSON.parse(localStorage.getItem(USERS_KEY));
+    const registry = readRegistryData();
 
     expect(result).toMatchObject({ ok: true, code: 'REGISTRY_RESET' });
     expect(localStorage.getItem(LEGACY_PROFILE_KEY)).toBeNull();

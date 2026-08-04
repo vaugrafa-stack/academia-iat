@@ -16,6 +16,11 @@ const ROUTES = [
     ready: (page) => page.locator('.lesson-header h1'),
   },
   {
+    hash: '#/aula/pop-section-059',
+    ready: (page) => page.locator('.lesson-header h1'),
+    pilot: true,
+  },
+  {
     hash: '#/laboratorio',
     ready: (page) => page.getByRole('heading', { name: 'Pratique antes de assinar' }),
   },
@@ -44,8 +49,104 @@ test('artefato final mantém build, rotas críticas e console íntegros', async 
       waitUntil: 'domcontentloaded',
     });
     await expect(route.ready(page)).toBeVisible();
+    if (route.pilot) {
+      await expect(route.ready(page)).toContainText('Distinção entre os documentos');
+      const basePath = new URL(baseURL).pathname.replace(/\/?$/, '/');
+      await expect(page.locator('video.vls-video')).toHaveAttribute(
+        'src',
+        `${basePath}media/piloto/pop-section-059.mp4`,
+      );
+      await page.locator('.transcript-panel > summary').click();
+      await expect(
+        page.getByRole('link', { name: 'Baixar TXT com fontes' }),
+      ).toHaveAttribute(
+        'href',
+        `${basePath}media/piloto/pop-section-059.txt`,
+      );
+      await page
+        .getByRole('button', { name: 'Ver roteiro e fontes por cena' })
+        .click();
+      await expect(page.locator('.transcript-source-scenes pre')).toBeVisible();
+      await expect(page.locator('.transcript-source-scenes pre')).toContainText(
+        'Fonte: POP, item 18.2',
+      );
+    }
     await expectHealthyPage(page, runtimeIssues);
   }
 
   await expectBuildIdentity(page);
+});
+
+test('experiência responsiva prioriza aprender e praticar sem overflow', async ({
+  page,
+  baseURL,
+}) => {
+  const runtimeIssues = monitorRuntime(page, baseURL);
+  const viewport = page.viewportSize();
+  const mobile = viewport.width <= 980;
+
+  await page.goto(appUrl(baseURL), { waitUntil: 'domcontentloaded' });
+  await expect(
+    page.getByRole('heading', { name: /Aprenda o procedimento/i }),
+  ).toBeVisible();
+
+  const bottomNav = page.getByRole('navigation', {
+    name: 'Navegação principal no celular',
+  });
+  if (mobile) {
+    await expect(bottomNav).toBeVisible();
+    await expect(bottomNav.getByRole('button')).toHaveCount(4);
+    for (const label of ['Início', 'Aprender', 'Praticar', 'Consultar']) {
+      await expect(bottomNav.getByRole('button', { name: label })).toBeVisible();
+    }
+  } else {
+    await expect(bottomNav).toBeHidden();
+  }
+  await expectHealthyPage(page, runtimeIssues);
+
+  await page.goto(appUrl(baseURL, '#/aula/pop-section-001'), {
+    waitUntil: 'domcontentloaded',
+  });
+  const video = page.locator('.video-lesson').first();
+  await expect(video).toBeVisible();
+  if (mobile) {
+    const videoBox = await video.boundingBox();
+    expect(videoBox?.y ?? Infinity).toBeLessThanOrEqual(viewport.height * 1.5);
+  }
+  await expectHealthyPage(page, runtimeIssues);
+
+  await page.goto(appUrl(baseURL, '#/laboratorio'), {
+    waitUntil: 'domcontentloaded',
+  });
+  const catalogTrigger = page.locator('.lab-catalog-open');
+  const catalog = page.locator('#lab-case-catalog-drawer');
+  if (mobile) {
+    await expect(catalogTrigger).toBeVisible();
+    const workspaceBox = await page.locator('.lab-workspace').boundingBox();
+    expect(workspaceBox?.y ?? Infinity).toBeLessThanOrEqual(viewport.height * 1.5);
+    await catalogTrigger.click();
+    await expect(catalog).toHaveAttribute('role', 'dialog');
+    await expect(catalog).toBeVisible();
+    await expect(catalog.locator('#lab-case-search')).toBeFocused();
+    await catalog.locator('.lab-catalog-close').click();
+    await expect(catalogTrigger).toBeFocused();
+  } else {
+    await expect(catalogTrigger).toBeHidden();
+    await expect(catalog).toBeVisible();
+    await expect(catalog).not.toHaveAttribute('role', 'dialog');
+  }
+  await expectHealthyPage(page, runtimeIssues);
+
+  await page.goto(appUrl(baseURL, '#/redator'), {
+    waitUntil: 'domcontentloaded',
+  });
+  if (mobile) {
+    await expect(page.locator('.rd-step-mobile')).toBeVisible();
+    await expect(page.locator('.rd-step-mobile')).toContainText('Etapa 1 de 12');
+    await expect(page.locator('.rd-trilha')).toBeHidden();
+  } else {
+    await expect(page.locator('.rd-step-mobile')).toBeHidden();
+    await expect(page.locator('.rd-trilha')).toBeVisible();
+  }
+  await expectHealthyPage(page, runtimeIssues);
 });

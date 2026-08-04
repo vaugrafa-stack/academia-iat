@@ -1,11 +1,14 @@
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
+import { tracks } from './courseData.js';
+import { derivarAulas } from './lessons.js';
 import { questionBank } from './questions.js';
 
-const catalog = JSON.parse(
-  readFileSync(resolve(import.meta.dirname, 'data/content-catalog.json'), 'utf8'),
+const pop = JSON.parse(
+  readFileSync(resolve(import.meta.dirname, 'data/pop-content.json'), 'utf8'),
 );
+const learningLessons = derivarAulas(pop, tracks).lessons;
 
 const TARGETED_IDS = [
   'q001',
@@ -67,14 +70,13 @@ function editorialMetrics(questions) {
 
 describe('validade editorial do banco de questões', () => {
   const metrics = editorialMetrics(questionBank);
-  const learningSections = catalog.documents.find((document) => document.id === 'pop').learningSections;
   const coveredSections = Object.keys(metrics.bySection).length;
 
   console.info(
     `[validade editorial] ${questionBank.length} questões; `
     + `${metrics.strictLongest} corretas estritamente mais longas; `
     + `${metrics.extremeLengthSignal} com razão >= 2; `
-    + `${coveredSections}/${learningSections} seções didáticas citadas; `
+    + `${coveredSections}/${learningLessons.length} aulas com fonte exclusiva; `
     + `1–${Math.max(...Object.values(metrics.bySection))} questões por seção citada.`,
   );
 
@@ -93,10 +95,16 @@ describe('validade editorial do banco de questões', () => {
     expect(metrics.extremeLengthSignal).toBe(0);
   });
 
-  it('contabiliza a cobertura das fontes sem alterar a distribuição por seção', () => {
+  it('mantém uma questão exclusiva e alinhada para cada aula', () => {
     expect(Object.values(metrics.bySection).reduce((sum, count) => sum + count, 0))
       .toBe(questionBank.length);
-    expect(coveredSections).toBe(82);
+    expect(
+      learningLessons.filter((lesson) => !questionBank.some(
+        (question) => question.track === lesson.trackId
+          && question.source.sec === lesson.id,
+      )),
+    ).toEqual([]);
+    expect(coveredSections).toBe(learningLessons.length);
     expect(Math.max(...Object.values(metrics.bySection))).toBe(8);
   });
 });

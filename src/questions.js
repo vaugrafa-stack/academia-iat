@@ -9,6 +9,7 @@
 // check-questoes leem daqui. A aplicacao le src/data/question-bank.json, que
 // tools/build-question-data.mjs deriva deste arquivo e confere com --check.
 import { QUESTOES_EXTRA } from './questionsExtra.js';
+import { QUESTOES_COBERTURA } from './questionsCoverage.js';
 
 const QUESTION_ORDINALS = new Map();
 function buildQuestion(q, i) {
@@ -111,4 +112,5 @@ export const questionBank = [
   ["m12","Segundo o POP, a compensação por impactos não mitigáveis segue qual procedimento?",["Negociação direta com o empreendedor","O procedimento do Decreto Estadual nº 7.150/2024","Livre arbítrio do analista"],1,"A compensação ambiental por impactos negativos não mitigáveis segue o procedimento do Decreto Estadual nº 7.150/2024.",{"sec":"pop-section-155","quote":"O art. 2º do Decreto Estadual nº 7.150/2024 alcança pessoas físicas ou jurídicas responsáveis por empreendimentos"}],
   ["m12","Impacto não mitigável identificado em fase posterior ou em ampliação:",["Não gera compensação nem condicionante, por ser fato superveniente ao estudo","Deve ser tratado conforme o regime aplicável, inclusive em fases posteriores","Só é tratado na renovação da licença de operação seguinte"],1,"O POP trata expressamente processos em fases posteriores, ampliações e impactos supervenientes.",{"sec":"pop-section-157","quote":"O art. 13 estabelece regra específica para empreendimentos ou atividades causadores de impactos negativos não mitigáveis que não tiveram a compensação definida na fase de LI ou LAS"}],
   ...QUESTOES_EXTRA,
+  ...QUESTOES_COBERTURA,
 ].map(buildQuestion);

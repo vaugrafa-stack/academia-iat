@@ -107,28 +107,91 @@
   left: 50%;
   bottom: -2%;
   width: 112%;
-  aspect-ratio: 543 / 724;
-  background-image: var(--vls-professor-sprite);
+  aspect-ratio: 1 / 1;
+  background-image: var(--vls-professor-sprite), var(--vls-professor-fallback);
   background-repeat: no-repeat;
-  background-size: 400% 100%;
-  background-position: 0% 0%;
+  background-size: 300% 400%, 400% 100%;
+  background-position: 0% 0%, 0% 0%;
   filter: drop-shadow(0 12px 20px #0008);
   transform: translateX(-50%) translateY(calc(var(--vls-mouth-level) * -1.5px));
   transform-origin: 50% 84%;
-  transition: background-position 45ms steps(1, end);
+  transition: opacity 180ms ease, transform 180ms ease;
   animation: vls-breathe 4.8s ease-in-out infinite;
 }
 
-.vls-professor[data-mouth-frame="1"] {
-  background-position: 33.333% 0%;
+.vls-professor::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: var(--vls-professor-sprite), var(--vls-professor-fallback);
+  background-repeat: no-repeat;
+  background-size: 300% 400%, 400% 100%;
+  background-position: 0% 0%, 0% 0%;
+  -webkit-mask-image: radial-gradient(ellipse 22% 11% at 50% 46%, #000 52%, transparent 100%);
+  mask-image: radial-gradient(ellipse 22% 11% at 50% 46%, #000 52%, transparent 100%);
+  transition: background-position 45ms steps(1, end);
 }
 
-.vls-professor[data-mouth-frame="2"] {
-  background-position: 66.667% 0%;
+.vls-professor[data-viseme="1"]::after {
+  background-position: 50% 0%, 0% 0%;
 }
 
-.vls-professor[data-mouth-frame="3"] {
-  background-position: 100% 0%;
+.vls-professor[data-viseme="2"]::after {
+  background-position: 100% 0%, 33.333% 0%;
+}
+
+.vls-professor[data-viseme="3"]::after {
+  background-position: 0% 33.333%, 100% 0%;
+}
+
+.vls-professor[data-viseme="4"]::after {
+  background-position: 50% 33.333%, 66.667% 0%;
+}
+
+.vls-professor[data-viseme="5"]::after {
+  background-position: 100% 33.333%, 66.667% 0%;
+}
+
+.vls-professor[data-viseme="6"]::after {
+  background-position: 0% 66.667%, 33.333% 0%;
+}
+
+.vls-professor[data-viseme="7"]::after {
+  background-position: 50% 66.667%, 33.333% 0%;
+}
+
+.vls-professor[data-viseme="8"]::after {
+  background-position: 100% 66.667%, 66.667% 0%;
+}
+
+.vls-professor[data-viseme="9"]::after {
+  background-position: 0% 100%, 66.667% 0%;
+}
+
+.vls-professor[data-viseme="10"]::after {
+  background-position: 50% 100%, 33.333% 0%;
+}
+
+.vls-professor[data-viseme="11"]::after {
+  background-position: 100% 100%, 0% 0%;
+}
+
+.vls-presenter-away .vls-professor,
+.vls-presenter-away .vls-professor-label {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.vls-stage.vls-presenter-away {
+  grid-template-columns: minmax(0, 1fr) 0;
+}
+
+.vls-presenter-away .vls-professor-rail {
+  display: none;
+}
+
+.vls-presenter-away .vls-professor {
+  transform: translateX(-50%) translateY(10px);
 }
 
 .vls-professor-label {

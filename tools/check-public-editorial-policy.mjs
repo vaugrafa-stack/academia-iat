@@ -22,6 +22,13 @@ const TEXT_EXTENSIONS = new Set([
   '.webmanifest',
   '.xml',
 ]);
+const PUBLIC_BINARY_MARKERS = [
+  'openai',
+  'gpt-image',
+  'trainedalgorithmicmedia',
+  'artificial intelligence',
+  'inteligência artificial',
+];
 const SOURCE_EXCLUSIONS = new Set([
   'src/data/content-catalog.json',
   'src/data/extraction-validation.json',
@@ -71,7 +78,9 @@ if (unknownArguments.length > 0) {
 }
 
 const sourceCandidates = (await filesBelow(path.join(ROOT, 'src'))).filter(isRuntimeSource);
-const publicCandidates = (await filesBelow(path.join(ROOT, 'public'))).filter(isText);
+const publicFiles = await filesBelow(path.join(ROOT, 'public'));
+const publicCandidates = publicFiles.filter(isText);
+const publicBinaryCandidates = publicFiles.filter((file) => !isText(file));
 const candidates = [
   path.join(ROOT, 'index.html'),
   ...sourceCandidates,
@@ -103,6 +112,13 @@ for (const file of candidates) {
     failures.push(`${relative(file)}:${line} — ${rule.label}`);
   }
 }
+for (const file of publicBinaryCandidates) {
+  const searchable = (await readFile(file)).toString('latin1').toLocaleLowerCase('pt-BR');
+  const marker = PUBLIC_BINARY_MARKERS.find((value) => searchable.includes(value));
+  if (marker) {
+    failures.push(`${relative(file)} — metadado binário público proibido (${marker})`);
+  }
+}
 if (distArgument) {
   const rawDataAsset = candidates.find((file) =>
     /^pop-content-[A-Za-z0-9_-]+\.json$/u.test(path.basename(file)),
@@ -127,4 +143,7 @@ if (failures.length > 0) {
   process.exit(1);
 }
 
-console.log(`OK: política editorial verificada em ${candidates.length} arquivos públicos de texto.`);
+console.log(
+  `OK: política editorial verificada em ${candidates.length} arquivos públicos de texto `
+  + `e ${publicBinaryCandidates.length} ativos binários.`,
+);

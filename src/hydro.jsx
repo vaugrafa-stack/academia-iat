@@ -136,7 +136,11 @@ function CrossSection({ selected, onSelect }) {
   );
   return (
     <div className="cross-wrap">
-      <svg viewBox="0 0 900 470" className="cross-svg" role="img" aria-label="Corte esquemático de uma usina hidrelétrica">
+      {/* A descricao conta o PROCESSO, nao a aparencia: quem usa leitor de tela
+          precisa da ordem e da direcao, que sao justamente o que o desenho
+          ensina. "Corte esquematico de uma usina" nao informava nada. */}
+      <svg viewBox="0 0 900 470" className="cross-svg" role="img"
+           aria-label="Corte esquemático de uma usina hidrelétrica. A água represada no reservatório entra pela tomada d'água, desce pelo conduto forçado até a casa de força, gira a turbina acoplada ao gerador e é restituída ao rio pelo canal de fuga. A diferença entre o nível do reservatório e o nível do canal de fuga é a queda bruta. O vertedouro escoa o excedente sem passar pela turbina.">
         <defs>
           <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
             <stop offset="0" stopColor="#15201c" /><stop offset="1" stopColor="#1a2620" />
@@ -169,8 +173,14 @@ function CrossSection({ selected, onSelect }) {
         <circle cx="585" cy="398" r="17" fill="none" stroke="#3fe0a6" strokeWidth="3" />
         <circle className="cs-turbine" cx="585" cy="398" r="10" fill="#4cc4f5" />
         <path className="cs-turbine" d="M585 388 L585 408 M575 398 L595 398 M578 391 L592 405 M592 391 L578 405" stroke="#fff" strokeWidth="1.6" />
-        {/* canal de fuga */}
+        {/* canal de fuga: a agua turbinada volta ao rio.
+            Sem o traco em movimento o circuito nao fechava: a agua descia pelo
+            conduto, girava a turbina e ficava parada aqui, como se a usina
+            consumisse a agua. Ela nao consome, restitui. O periodo e o mesmo
+            do conduto (.cs-flow), porque e a mesma vazao. */}
         <rect x="640" y="405" width="260" height="30" fill="url(#wtr)" opacity="0.85" />
+        <path className="cs-flow" d="M664 420 L890 420" stroke="#bfe3ff" strokeWidth="4"
+              strokeLinecap="round" fill="none" opacity="0.9" />
         {/* linha de transmissao */}
         <path d="M690 360 L690 300 M672 316 L708 316 M676 300 L704 300" stroke="#3a4750" strokeWidth="2.5" fill="none" />
         <path d="M690 300 C 760 290, 820 300, 880 285" stroke="#3a4750" strokeWidth="1.5" fill="none" />

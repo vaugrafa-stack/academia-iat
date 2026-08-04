@@ -50,7 +50,7 @@ export const QUESTOES_EXTRA = [
     'A conclusão é resultado da compatibilização documental e técnica, nunca o ponto de partida da leitura.',
     { sec: 'pop-section-015', quote: 'O objetivo é impedir que a análise comece pela conclusão.' }],
   ['m02', 'Um ponto isolado em mapa é suficiente para delimitar o empreendimento?',
-    ['Sim, quando indica a barragem', 'Não; ponto isolado não delimita empreendimento hidrelétrico complexo', 'Sim, desde que acompanhado de memorial'], 1,
+    ['Sim, quando o ponto indica com precisão a posição do eixo da barragem', 'Não; ponto isolado não delimita empreendimento hidrelétrico complexo', 'Sim, desde que acompanhado de memorial descritivo do arranjo'], 1,
     'Sem poligonais não há como analisar APP, supressão e interferências: a delimitação espacial é condição da análise, não detalhe cartográfico.',
     { sec: 'pop-section-019', quote: 'Ponto isolado em mapa não delimita empreendimento hidrelétrico complexo.' }],
   ['m02', 'Sobre o que deve incidir a triagem locacional e territorial em bases oficiais?',
@@ -64,7 +64,7 @@ export const QUESTOES_EXTRA = [
     'Abaixo de 1 MW a CGH não tem Consulta Prévia obrigatória, mas o empreendedor pode buscá-la como orientação.',
     { sec: 'pop-section-024', quote: 'É obrigatória para CGH com potência instalada igual ou superior a 1 MW, PCH e UHE.' }],
   ['m03', 'Qual é a entrada mínima esperada na Consulta Prévia?',
-    ['Somente o requerimento assinado', 'Mapa da ADA, arquivo KML ou KMZ do arranjo e Memorial Descritivo', 'Estudo ambiental completo com ART'], 1,
+    ['Requerimento assinado e comprovante de recolhimento da taxa', 'Mapa da ADA, arquivo KML ou KMZ do arranjo e Memorial Descritivo', 'Estudo ambiental completo, com ART e cronograma de execução'], 1,
     'A entrada mínima permite localizar e caracterizar o pedido; complementações continuam possíveis quando necessárias para orientar a análise.',
     { sec: 'pop-section-025', quote: 'mapa da delimitação da ADA, mapa digital do arranjo em formato KML ou KMZ e Memorial Descritivo' }],
   ['m03', 'Qual a relação entre o enquadramento ambiental do IAT e o regime setorial da ANEEL?',
@@ -74,7 +74,7 @@ export const QUESTOES_EXTRA = [
 
   // ---------- M04 DLAM, LAC e LAS ----------
   ['m04', 'A DLAM é cabível quando o empreendimento está em Unidade de Conservação?',
-    ['Sim, desde que a UC seja de Uso Sustentável', 'Não; o art. 56, I, do Decreto Estadual nº 9.541/2025 afasta a DLAM em UC, inclusive APA', 'Sim, quando não houver supressão de vegetação'], 1,
+    ['Sim, desde que a UC seja de Uso Sustentável e o órgão gestor manifeste anuência prévia', 'Não; o art. 56, I, do Decreto Estadual nº 9.541/2025 afasta a DLAM em UC, inclusive APA', 'Sim, quando não houver supressão de vegetação nem intervenção em APP no arranjo'], 1,
     'Afastada a dispensa, define-se o procedimento aplicável ao caso concreto, sem presumir automaticamente uma modalidade substitutiva.',
     { sec: 'pop-section-029', quote: 'a DLAM não é cabível quando o empreendimento estiver localizado em Unidade de Conservação, inclusive APA' }],
   ['m04', 'A exceção federal do art. 22 da Lei nº 15.190/2025 para APA torna a LAC cabível no regime estadual?',
@@ -86,7 +86,7 @@ export const QUESTOES_EXTRA = [
     'Os quatro critérios formam apenas o enquadramento inicial. A modalidade ainda depende dos critérios gerais e da compatibilidade territorial; em UC, inclusive APA, o POP orienta não concluir pela LAC.',
     { sec: 'pop-section-030', quote: 'Para CGH, a IN prevê LAC para potência de até 1 MW, alagamento inferior a 5 ha, IDA menor que 3 e ausência de necessidade de autorização de supressão' }],
   ['m04', 'No rito da LAS, a existência de supressão de vegetação permite dispensar a análise de flora e a autorização florestal?',
-    ['Sim, o rito simplificado absorve essas análises', 'Não; a supressão continua exigindo análise de flora, fauna, APP e autorização florestal', 'Sim, quando a área for inferior a um hectare'], 1,
+    ['Sim, o rito simplificado já absorve a análise de flora e a autorização florestal', 'Não; a supressão continua exigindo análise de flora, fauna, APP e autorização florestal', 'Sim, quando a área suprimida for inferior a um hectare em estágio inicial'], 1,
     'Simplificar o rito não simplifica o dever técnico: a disciplina material da supressão permanece integralmente aplicável.',
     { sec: 'pop-section-031', quote: 'A existência de supressão não autoriza dispensar análise de flora, fauna, APP ou autorização florestal.' }],
 
@@ -234,7 +234,7 @@ export const QUESTOES_EXTRA = [
     'Incompatibilidade locacional é questão de mérito da localização, não obrigação a ser acompanhada por condicionante.',
     { sec: 'pop-section-123', quote: 'restrição material do ato de criação ou do Plano de Manejo que torne a localização, a estrutura ou a operação incompatível não deve ser transformada em condicionante' }],
   ['m14', 'Qual é a função das ocorrências hipervinculadas de siglas no texto do POP?',
-    ['Abrir a norma citada no site oficial', 'Direcionar para a definição da sigla no anexo de siglas e abreviações', 'Marcar termos que ainda serão revisados'], 1,
+    ['Abrir a norma citada no site oficial do órgão que a editou, em nova aba', 'Direcionar para a definição da sigla no anexo de siglas e abreviações', 'Marcar termos que ainda serão revisados na próxima versão'], 1,
     'O anexo consolida as siglas usadas no procedimento e serve de referência única para a leitura.',
     { sec: 'pop-section-124', quote: 'As ocorrências hipervinculadas no texto direcionam para a respectiva definição neste anexo.' }],
 

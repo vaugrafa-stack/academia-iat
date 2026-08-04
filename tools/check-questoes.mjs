@@ -90,7 +90,7 @@ for (const q of questionBank) {
 // media formato do array em vez de percepcao de quem responde. A margem de 10%
 // e o que separa "a maior" de "uma das maiores".
 const MARGEM = 1.10;
-const TETO_CHUTADOR = 76;
+const TETO_CHUTADOR = 66;
 
 function temPistaDeComprimento(q) {
   const tamanhos = q.options.map((o) => String(o).length);

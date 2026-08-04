@@ -32,7 +32,19 @@ export const BUNDLE_BUDGETS = Object.freeze({
   // de folga sobre os 192,7 / 35,6 KiB medidos, e o portao check-css-morto
   // entra na bateria como catraca para a folga nao ser consumida por regra
   // orfa.
-  totalCss: Object.freeze({ raw: 215 * KIB, gzip: 40 * KIB }),
+  //
+  // Revisto de novo em 04/08/2026, com a mesma disciplina e duas medicoes
+  // independentes: check-css-morto devolveu ZERO classe orfa em 691
+  // declaradas, e a busca por declaracao identica entre as CINCO folhas
+  // encontrou 35 repeticoes, 635 bytes em 246 kB brutos. Ou seja, 0,26% de
+  // sobra. Nao ha o que apagar; o CSS cresce porque a plataforma cresceu.
+  //
+  // Sobe para 240 / 46 KiB, cerca de 20% de folga sobre os 202 / 37,8 KiB
+  // medidos. A folga maior desta vez e deliberada: o modo offline deixou de
+  // ser criterio de recusa por peso, entao vem melhoria visual pela frente, e
+  // subir o teto de 2 em 2 KiB a cada rodada e ritual, nao controle. A catraca
+  // que importa continua sendo check-css-morto com tolerancia zero.
+  totalCss: Object.freeze({ raw: 240 * KIB, gzip: 46 * KIB }),
   largestCompressibleAsset: Object.freeze({
     raw: 960 * KIB,
     gzip: 150 * KIB,

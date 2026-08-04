@@ -2,6 +2,10 @@ import { createHash } from 'node:crypto';
 import { readdir, readFile } from 'node:fs/promises';
 import path from 'node:path';
 import process from 'node:process';
+import {
+  PUBLIC_EDITORIAL_RULES,
+  editorialPatternFor,
+} from './public-editorial-rules.mjs';
 
 const ROOT = process.cwd();
 const TEXT_EXTENSIONS = new Set([
@@ -23,20 +27,6 @@ const SOURCE_EXCLUSIONS = new Set([
   'src/data/extraction-validation.json',
   'src/data/pop-content.json',
 ]);
-const FORBIDDEN = [
-  { label: 'sigla removida da apresentação pública', pattern: /\bIA\b/iu },
-  { label: 'expressão removida da apresentação pública', pattern: /intelig[êe]ncia artificial/iu },
-  { label: 'expressão removida da apresentação pública', pattern: /artificial intelligence/iu },
-  { label: 'produto ou sigla do mesmo tema removido', pattern: /\b(?:ChatGPT|GPT(?:-\d+)?|LLM)\b/iu },
-  {
-    label: 'expressão correlata removida da apresentação pública',
-    pattern: /\b(?:modelos? de linguagem|large language models?|machine learning|aprendizado de máquina)\b/iu,
-  },
-  {
-    label: 'formulação editorial substituída',
-    pattern: /\b(?:revisão|validação|autoria|aprovação|conferência|avaliação)(?:\s+técnica)?\s+humana\b/iu,
-  },
-];
 const LOCKED_PUBLIC_MEDIA = new Map([
   [
     'public/media/aula/pop-section-072.mp4',
@@ -103,20 +93,10 @@ for (const file of candidates) {
   ) {
     failures.push(`${name} — referência de runtime ao conteúdo-fonte bruto`);
   }
-  for (const rule of FORBIDDEN) {
+  for (const rule of PUBLIC_EDITORIAL_RULES) {
     const isBuiltArtifact = distArgument
       && path.resolve(file).startsWith(path.resolve(ROOT, distArgument.slice('--dist='.length)));
-    const pattern = isBuiltArtifact
-      && (
-        rule.label === 'sigla removida da apresentação pública'
-        || rule.label === 'produto ou sigla do mesmo tema removido'
-      )
-      ? (
-          rule.label === 'sigla removida da apresentação pública'
-            ? /\bIA\b/u
-            : /\b(?:ChatGPT|GPT(?:-\d+)?|LLM)\b/u
-        )
-      : rule.pattern;
+    const pattern = editorialPatternFor(rule, { builtArtifact: isBuiltArtifact });
     const match = pattern.exec(text);
     if (!match) continue;
     const line = text.slice(0, match.index).split(/\r?\n/u).length;

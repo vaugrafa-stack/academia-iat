@@ -29,6 +29,7 @@ import {
   X,
 } from 'lucide-react';
 import { PageHeader } from './ui.jsx';
+import { lessonEvidenceStatus } from './lessonEvidence.js';
 
 // O gerenciador offline so aparece dentro do perfil, entao segue adiado aqui.
 const OfflineManager = lazy(() => import('./OfflineManager.jsx'));
@@ -179,9 +180,9 @@ export default function Profile({
       <div className="page profile-page">
         <PageHeader
           icon={BadgeCheck}
-          kicker="Meu perfil"
-          title={conta ? "Editar meu perfil" : "Criar meu perfil"}
-          subtitle="Seu progresso e seus registros pessoais de estudo ficam vinculados a este perfil."
+          kicker="Meu progresso neste dispositivo"
+          title={conta ? "Editar perfil local" : "Criar perfil local"}
+          subtitle="Seu progresso e seus registros de estudo ficam guardados somente neste navegador."
         />
         {profileError}
         <form className="profile-form" onSubmit={salvar}>
@@ -267,7 +268,7 @@ export default function Profile({
     <div className="page profile-page">
       <PageHeader
         icon={BadgeCheck}
-        kicker="Meu perfil"
+        kicker="Meu progresso neste dispositivo"
         title={profile.name}
         subtitle={
           [profile.role, profile.unit].filter(Boolean).join(" · ") ||
@@ -339,7 +340,9 @@ export default function Profile({
               <Target size={15} />{" "}
               {
                 Object.values(state.lessonEvidence || {}).filter((record) =>
-                  lessonEvidenceStatus(record).ready,
+                  lessonEvidenceStatus(record, {
+                    hasObjectiveCheck: false,
+                  }).ready,
                 ).length
               }{" "}
               práticas ativas registradas

@@ -487,19 +487,57 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
 .path-node{padding:14px 6px 8px}
 /* abas da biblioteca roláveis com barra discreta */
 .library-tabs{overflow-x:auto;scrollbar-width:thin}
-/* ===== Aba Suporte ===== */
-.suporte-page{max-width:860px}
-.suporte-card{display:flex;gap:20px;align-items:flex-start;border:1px solid var(--line);border-radius:14px;padding:26px;background:var(--surface);box-shadow:var(--shadow-2)}
-.sup-avatar{width:84px;height:84px;border-radius:50%;background:linear-gradient(135deg,var(--green2),var(--green));color:#fff;display:grid;place-items:center;font-size:28px;font-weight:800;flex:none;box-shadow:0 8px 22px #07583b33}
-.sup-info h2{margin:0 0 2px;font-size:22px}
-.sup-cargo{margin:0 0 10px;color:var(--muted);font-weight:700;font-size:14px}
-.sup-mail{display:inline-flex;align-items:center;gap:8px;background:var(--green3);color:var(--green);font-weight:800;border-radius:9px;padding:10px 16px;text-decoration:none;font-size:14px;transition:background .2s var(--ease),transform .2s var(--ease)}
-.sup-mail:hover{background:#cdeadd;transform:translateY(-1px)}
-.sup-note{margin:12px 0 0;font-size:13px;color:var(--ink2);line-height:1.55}
-.suporte-tipos{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:20px}
-.suporte-tipos article{border:1px solid var(--line);border-radius:10px;padding:16px;background:var(--surface);box-shadow:var(--shadow-1)}
-.suporte-tipos strong{display:block;margin-bottom:6px}
-.suporte-tipos p{margin:0;font-size:13px;color:var(--ink2);line-height:1.5}
+/* ===== Central de Suporte ===== */
+.suporte-page{max-width:1080px}
+.suporte-card{display:flex;gap:20px;align-items:center;border:1px solid var(--line);border-radius:16px;padding:24px;background:var(--surface);box-shadow:var(--shadow-2)}
+.sup-avatar{width:72px;height:72px;border-radius:18px;background:linear-gradient(135deg,var(--green2),var(--green));color:var(--sobre-acento,#073c2c);display:grid;place-items:center;flex:none;box-shadow:0 8px 22px #07583b33}
+.sup-info h2{margin:0 0 5px;font-size:22px}
+.sup-cargo{margin:0 0 7px;color:var(--ink2);font-weight:700;font-size:14px;line-height:1.55}
+.sup-note{margin:0;font-size:13px;color:var(--muted);line-height:1.6}
+.support-warning{display:flex;align-items:flex-start;gap:13px;margin-top:16px;border:1px solid color-mix(in srgb,var(--amber) 65%,var(--line));border-radius:12px;background:var(--amber2);padding:16px 18px}
+.support-warning>svg{color:var(--amber);flex:none;margin-top:1px}
+.support-warning h2{font-size:15px;margin:0 0 4px}
+.support-warning p{font-size:13px;line-height:1.6;color:var(--ink2);margin:0}
+.support-faq,.support-diagnostic,.support-contact{margin-top:24px}
+.support-section-heading small{display:block;color:var(--green);font-size:11px;font-weight:900;letter-spacing:.1em;margin-bottom:5px}
+.support-section-heading h2{font-size:21px;letter-spacing:-.3px;margin:0 0 5px}
+.support-section-heading p{max-width:760px;color:var(--muted);font-size:13px;line-height:1.6;margin:0}
+.support-faq-list{display:grid;gap:8px;margin-top:14px}
+.support-faq-item{border:1px solid var(--line);border-radius:11px;background:var(--surface);overflow:hidden}
+.support-faq-item summary{display:grid;grid-template-columns:40px minmax(0,1fr) 22px;align-items:center;gap:12px;padding:14px 16px;cursor:pointer;list-style:none}
+.support-faq-item summary::-webkit-details-marker{display:none}
+.support-faq-item summary::marker{content:""}
+.support-faq-item summary:hover{background:var(--soft)}
+.support-faq-item[open] summary{border-bottom:1px solid var(--line);background:var(--soft)}
+.support-faq-icon{width:38px;height:38px;border-radius:10px;background:var(--green3);color:var(--green);display:grid;place-items:center}
+.support-faq-label{display:flex;flex-direction:column;gap:3px;min-width:0}
+.support-faq-label strong{font-size:14px}
+.support-faq-label small{font-size:12.5px;line-height:1.45;color:var(--muted)}
+.support-faq-chevron{color:var(--muted);transition:transform .2s var(--ease)}
+.support-faq-item[open] .support-faq-chevron{transform:rotate(180deg)}
+.support-faq-answer{padding:15px 18px 17px 66px}
+.support-faq-answer ol{margin:0;padding-left:20px;color:var(--ink2);font-size:13px;line-height:1.65}
+.support-faq-answer li+li{margin-top:6px}
+.support-faq-answer a{display:inline-flex;margin-top:12px;color:var(--blue);font-weight:800;font-size:13px;text-underline-offset:3px}
+.support-diagnostic,.support-contact{border:1px solid var(--line);border-radius:14px;padding:22px;background:var(--surface);box-shadow:var(--shadow-1)}
+.support-diagnostic-text{display:block;width:100%;margin-top:14px;border:1px solid var(--line);border-radius:10px;padding:13px 14px;resize:vertical;background:var(--surface2);color:var(--ink2);font:12.5px/1.65 ui-monospace,SFMono-Regular,Consolas,monospace}
+.support-copy-row{display:flex;align-items:center;gap:12px;min-height:38px;margin-top:10px}
+.support-copy{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--line);border-radius:9px;background:var(--surface2);color:var(--ink);padding:9px 13px;font-size:13px;font-weight:800}
+.support-copy:hover{border-color:var(--green);color:var(--green)}
+.support-copy-row span{font-size:12px;color:var(--muted)}
+.support-form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:17px}
+.support-form-grid label{display:flex;flex-direction:column;gap:6px;min-width:0}
+.support-form-grid label>span{font-size:12px;font-weight:800;color:var(--ink2)}
+.support-form-grid :is(input,select,textarea){width:100%;border:1px solid var(--line);border-radius:9px;background:var(--surface2);color:var(--ink);padding:10px 11px;font-size:13px}
+.support-form-grid select{height:42px}
+.support-form-grid textarea{line-height:1.55;resize:vertical}
+.support-form-grid :is(input,select,textarea):focus-visible{outline:3px solid #58a9ef;outline-offset:2px;border-color:transparent}
+.support-form-wide{grid-column:1/-1}
+.support-contact-actions{display:flex;align-items:center;gap:16px;margin-top:17px}
+.sup-mail{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:43px;background:linear-gradient(135deg,var(--green2),var(--green));color:var(--sobre-acento,#073c2c);font-weight:900;border-radius:9px;padding:10px 16px;text-decoration:none;font-size:14px;transition:box-shadow .2s var(--ease),transform .2s var(--ease)}
+.sup-mail:hover{box-shadow:0 7px 20px #07583b38;transform:translateY(-1px)}
+.support-contact-actions p{margin:0;color:var(--muted);font-size:12px;line-height:1.55;min-width:0}
+.support-contact-actions strong{color:var(--ink2);overflow-wrap:anywhere}
 /* resumo da norma */
 .leis-resumo{border:1px solid var(--line);border-left:4px solid var(--blue);border-radius:8px;padding:12px 16px;background:var(--surface);margin-top:14px}
 .leis-resumo h3{margin:0 0 6px!important;font-size:14px!important}
@@ -542,20 +580,34 @@ button.primary:active{box-shadow:inset 0 2px 6px #04231c40}
 .feature-media:after{pointer-events:none}
 .feature-media video{width:100%;height:100%;min-height:230px;object-fit:cover;display:block}
 .feature-media>span{z-index:3;border-radius:6px}
-/* mobile: percurso rola dentro da secao; suporte quebra; grids empilham */
+/* mobile: percurso rola dentro da secao; grids empilham */
 .river-journey{overflow-x:auto}
-.suporte-card{flex-wrap:wrap;min-width:0}
-.sup-mail{word-break:break-all}
 @media(max-width:640px){.arr-grid,.prc-grid,.hydro-figs,.tg-body,.lic-cols{grid-template-columns:1fr}.page{padding:24px 14px 60px}}
 /* ===== Ajustes finos mobile ===== */
 @media(max-width:560px){
   .coverage-stats{grid-template-columns:1fr}
-  .suporte-card{flex-direction:column;align-items:center;text-align:center}
-  .sup-mail{word-break:break-all}
   .tg-body,.turb-detail,.cross-layout,.hydro-hero,.leis-view,.prc-fotos{grid-template-columns:1fr}
   .page-header{gap:10px}
   .page-header span{width:40px;height:40px}
   .page-header h1{font-size:24px}
+}
+
+@media(max-width:700px){
+  .suporte-card{align-items:flex-start;padding:18px}
+  .sup-avatar{width:48px;height:48px;border-radius:13px}
+  .sup-avatar svg{width:25px}
+  .support-form-grid{grid-template-columns:1fr}
+  .support-form-wide{grid-column:auto}
+  .support-contact-actions{align-items:stretch;flex-direction:column}
+  .sup-mail{width:100%}
+}
+
+@media(max-width:480px){
+  .support-faq-item summary{grid-template-columns:34px minmax(0,1fr) 18px;gap:9px;padding:12px}
+  .support-faq-icon{width:34px;height:34px}
+  .support-faq-answer{padding:14px 14px 16px 49px}
+  .support-diagnostic,.support-contact{padding:17px}
+  .support-copy-row{align-items:flex-start;flex-direction:column}
 }
 
 .lab-canvas{animation:tabIn .32s var(--ease)}
@@ -597,7 +649,7 @@ input::placeholder,textarea::placeholder{color:var(--muted)}
 .top-progress i,.intro-stat i,.track-metrics i,.context-progress i,.decision-readiness i,.quiz-top i,.cert-mod-bar,.leis-list,.cert-bar{background:var(--track)}
 .pring{background:conic-gradient(var(--green) calc(var(--v)*1% - .5%),var(--track) calc(var(--v)*1% + .5%))}
 /* cartoes ganham leve profundidade de vidro */
-.hydro-block,.pot-card,.res-card,.dam-card,.prc-card,.leis-detail,.profile-card,.suporte-card,.suporte-tipos article,.coverage-card,.flow-preview,.today-plan,.turb-picker,.tg-info,.lab-canvas,.lab-inspector,.quiz-question,.quiz-options button,.module-tests button,.case-summary,.debrief,.context-sticky,.data-table,.lesson-checklist,.lesson-children,.notes-panel,.material-figure,.answer-feedback,.cross-detail,.arr-grid figure,.tg-schema,.tg-photo{background:var(--surface);border-color:var(--line)}
+.hydro-block,.pot-card,.res-card,.dam-card,.prc-card,.leis-detail,.profile-card,.suporte-card,.support-faq-item,.support-diagnostic,.support-contact,.coverage-card,.flow-preview,.today-plan,.turb-picker,.tg-info,.lab-canvas,.lab-inspector,.quiz-question,.quiz-options button,.module-tests button,.case-summary,.debrief,.context-sticky,.data-table,.lesson-checklist,.lesson-children,.notes-panel,.material-figure,.answer-feedback,.cross-detail,.arr-grid figure,.tg-schema,.tg-photo{background:var(--surface);border-color:var(--line)}
 /* botoes-pilula e navegacao */
 .sidebar-v2 nav button{color:var(--ink2)}
 .sidebar-v2 nav button:hover{background:rgba(255,255,255,.05);color:var(--ink)}
@@ -880,10 +932,6 @@ a[href^="http"]::after{content:" (" attr(href) ")";font-size:10px;color:#555}
 :root:not([data-theme="light"]) .interactive-flow>button.active span,
 :root:not([data-theme="light"]) .interactive-flow>button.visited span,
 :root:not([data-theme="light"]) .u-ini{color:var(--sobre-acento)}
-
-/* O e-mail do suporte nao tem fundo solido, so um veu de 15% do acento: a
-   regra anterior lhe deu tinta escura sobre fundo escuro (1,61:1). */
-:root:not([data-theme="light"]) .sup-mail{color:var(--green2)}
 
 /* Selo de dias na revisao espacada: 11px sobre o trilho pede tinta mais clara. */
 .tpr-dias{color:var(--ink2)}

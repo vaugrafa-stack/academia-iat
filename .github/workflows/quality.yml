@@ -10,6 +10,7 @@ on:
   workflow_dispatch:
 
 permissions:
+  actions: read
   contents: read
 
 concurrency:
@@ -68,6 +69,9 @@ jobs:
       - name: Auditar o catálogo offline
         run: node tools/check-offline-packages.mjs
 
+      - name: Preparar o artefato imutável do Pages
+        run: touch dist/.nojekyll
+
       - name: Validar o artefato publicável
         run: |
           node --input-type=module <<'NODE'
@@ -79,6 +83,7 @@ jobs:
           const base = `/${repo}/`;
           const required = [
             "index.html",
+            ".nojekyll",
             "manifest.webmanifest",
             "sw.js",
             "icone-192.png",
@@ -142,12 +147,78 @@ jobs:
           );
           NODE
 
+      - name: Instalar Chromium para testar o artefato
+        run: pnpm exec playwright install --with-deps chromium
+
+      - name: Testar o artefato final em desktop e celular
+        env:
+          EXPECTED_BUILD_SHA: ${{ github.sha }}
+        run: pnpm test:e2e:artifact
+
       - name: Armazenar dist validado
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: academia-iat-${{ github.sha }}
           path: dist
           if-no-files-found: error
+          include-hidden-files: true
           retention-days: 14
           compression-level: 0
+
+  publicar:
+    name: Publicar exatamente o artefato aprovado
+    needs: build-and-test
+    if: >-
+      success() &&
+      github.ref == 'refs/heads/master' &&
+      (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      actions: read
+      contents: write
+
+    steps:
+      - name: Baixar o artefato aprovado neste mesmo run
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          name: academia-iat-${{ github.sha }}
+          path: dist
+
+      - name: Confirmar identidade e integridade do artefato
+        env:
+          APPROVED_SHA: ${{ github.sha }}
+        run: |
+          test -s dist/index.html
+          test -s dist/manifest.webmanifest
+          test -s dist/sw.js
+          test -f dist/.nojekyll
+          grep -R --include='*.js' --fixed-strings "$APPROVED_SHA" dist/assets >/dev/null
+
+      - name: Publicar a branch gh-pages sem recompilar
+        env:
+          APPROVED_SHA: ${{ github.sha }}
+          APPROVED_RUN_ID: ${{ github.run_id }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          cd dist
+          git init
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout -b gh-pages
+          git add -- \
+            .nojekyll \
+            index.html \
+            manifest.webmanifest \
+            sw.js \
+            icone-192.png \
+            icone-512.png \
+            assets \
+            fonts \
+            hidro \
+            media \
+            source-assets
+          git commit -m "Deploy ${APPROVED_SHA} aprovado no run ${APPROVED_RUN_ID}"
+          git remote add origin "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+          git push --force origin gh-pages
 

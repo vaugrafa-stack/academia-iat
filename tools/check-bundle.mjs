@@ -54,7 +54,7 @@ export const AREA_MARKERS = Object.freeze([
   ["redator de IT", "Escrever uma Informação Técnica"],
   ["avaliações", "AUTOAVALIAÇÃO COMENTADA"],
   ["biblioteca", "Biblioteca operacional"],
-  ["suporte", "Relatar dúvida ou problema"],
+  ["suporte", "Central de Suporte"],
 ]);
 
 const COMPRESSIBLE_ASSET_EXTENSIONS = new Set([

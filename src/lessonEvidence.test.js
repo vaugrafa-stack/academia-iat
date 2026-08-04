@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   MIN_ACTIVE_RECALL_CHARS,
   lessonEvidenceStatus,
+  lessonQuestionProvesObjective,
   normalizeCriterionIds,
   normalizedResponseLength,
   selectLessonQuestion,
@@ -54,6 +55,80 @@ describe("lessonEvidence", () => {
     expect(
       selectLessonQuestion(bank, { id: "sem-item", trackId: "m01" }, 0),
     ).toEqual({ question: bank[0], scope: "module" });
+  });
+
+  it("usa somente a questão exclusiva da seção para comprovar o objetivo", () => {
+    const response = "x".repeat(MIN_ACTIVE_RECALL_CHARS);
+    const bank = [
+      { id: "m", track: "m01", source: { sec: "outra" } },
+      { id: "s", track: "m01", source: { sec: "aula-1" } },
+    ];
+    const exact = selectLessonQuestion(
+      bank,
+      { id: "aula-1", trackId: "m01" },
+      0,
+    );
+    const fallback = selectLessonQuestion(
+      bank,
+      { id: "sem-item", trackId: "m01" },
+      0,
+    );
+
+    expect(lessonQuestionProvesObjective(exact)).toBe(true);
+    expect(lessonQuestionProvesObjective(fallback)).toBe(false);
+    expect(
+      lessonEvidenceStatus(
+        { response, criteria: [0, 1], objectiveCorrect: false },
+        { hasObjectiveCheck: lessonQuestionProvesObjective(exact) },
+      ).ready,
+    ).toBe(false);
+  });
+
+  it("mantém a revisão do módulo opcional sem compor o objetivo nem bloquear a aula", () => {
+    const bank = [{ id: "m", track: "m01", source: { sec: "outra" } }];
+    const selection = selectLessonQuestion(
+      bank,
+      { id: "sem-item", trackId: "m01" },
+      0,
+    );
+    const savedEvidence = {
+      response: "x".repeat(MIN_ACTIVE_RECALL_CHARS),
+      criteria: [0, 1],
+      objectiveQuestionId: "m",
+      objectiveSelected: 0,
+      objectiveCorrect: true,
+      objectiveAttempts: 1,
+    };
+    const before = structuredClone(savedEvidence);
+    const status = lessonEvidenceStatus(savedEvidence, {
+      hasObjectiveCheck: lessonQuestionProvesObjective(selection),
+    });
+
+    expect(status).toMatchObject({
+      objectiveMet: false,
+      objectiveRequirementMet: true,
+      ready: true,
+    });
+    expect(savedEvidence).toEqual(before);
+  });
+
+  it("conta prática ativa por recuperação e autoauditoria, sem atribuir objetivo", () => {
+    const status = lessonEvidenceStatus(
+      {
+        response: "x".repeat(MIN_ACTIVE_RECALL_CHARS),
+        criteria: [0, 1],
+        objectiveCorrect: true,
+      },
+      { hasObjectiveCheck: false },
+    );
+
+    expect(status).toMatchObject({
+      responseRecorded: true,
+      selfAuditRecorded: true,
+      objectiveMet: false,
+      objectiveRequirementMet: true,
+      ready: true,
+    });
   });
 
   it("distribui casos e perguntas de forma determinística entre aulas", () => {

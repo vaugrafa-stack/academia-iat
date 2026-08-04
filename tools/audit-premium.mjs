@@ -1,5 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
+import { isPermittedPublicEmail } from './audit-premium-email-policy.mjs';
 
 const ROOT = process.cwd();
 const IGNORE_DIRS = new Set([
@@ -16,17 +17,6 @@ const TEXT_EXTENSIONS = new Set([
   '.scss', '.txt', '.yml', '.yaml', '.toml', '.xml', '.svg', '.vtt', '.py', '.ps1',
   '.cmd', '.bat', '.sh', '.example',
 ]);
-const GENERIC_EMAIL_ALIASES = new Set([
-  'atendimento',
-  'comunicacao',
-  'contato',
-  'dle',
-  'licenciamento',
-  'ouvidoria',
-  'protocolo',
-  'suporte',
-]);
-
 const findings = [];
 
 function addFinding(rule, file, lineNo = 0) {
@@ -93,8 +83,7 @@ function inspect(file) {
     }
 
     for (const email of line.match(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/gi) || []) {
-      const localPart = email.slice(0, email.indexOf('@')).toLowerCase();
-      if (!GENERIC_EMAIL_ALIASES.has(localPart)) {
+      if (!isPermittedPublicEmail(email)) {
         addFinding('non-generic-email', file, lineNo);
       }
     }

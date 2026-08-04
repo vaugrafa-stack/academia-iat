@@ -133,6 +133,7 @@ import { practiceRecordStatus } from "./learningRecords.js";
 import {
   MIN_ACTIVE_RECALL_CHARS,
   lessonEvidenceStatus,
+  lessonQuestionProvesObjective,
   selectLessonQuestion,
   selectLessonScenario,
 } from "./lessonEvidence.js";
@@ -160,6 +161,16 @@ try {
 // Sob deploy em subcaminho (GitHub Pages), os caminhos absolutos dos dados precisam do prefixo da base
 const BASE = (import.meta.env.BASE_URL || "/").replace(/\/$/, "");
 const wb = (p) => (typeof p === "string" && p.startsWith("/") ? BASE + p : p);
+const BUILD_STAMP =
+  typeof __BUILD_STAMP__ !== "undefined" ? __BUILD_STAMP__ : "local";
+const BUILD_LABEL = (() => {
+  const value = String(BUILD_STAMP || "local");
+  const local = value.endsWith("-local");
+  const sha = local ? value.slice(0, -6) : value;
+  return /^[a-f0-9]{40}$/i.test(sha)
+    ? `${sha.slice(0, 12)}${local ? "-local" : ""}`
+    : value;
+})();
 const {
   popData,
   flowData,
@@ -250,7 +261,6 @@ const NAV_GRUPOS = [
   ["Aprender", [
     ["hidreletricas", "Hidrelétricas", Zap],
     ["formacao", "Formação", BookOpen],
-    ["fluxos", "Fluxogramas", GitBranch],
   ]],
   ["Praticar", [
     ["laboratorio", "Laboratório", FlaskConical],
@@ -258,11 +268,12 @@ const NAV_GRUPOS = [
     ["avaliacoes", "Avaliações", ClipboardCheck],
   ]],
   ["Consultar", [
+    ["fluxos", "Fluxogramas", GitBranch],
     ["mapa", "Mapa do Paraná", MapIcon],
     ["biblioteca", "Biblioteca", Library],
   ]],
-  ["Sua conta", [
-    ["perfil", "Meu perfil", BadgeCheck],
+  ["Neste dispositivo", [
+    ["perfil", "Meu progresso", BadgeCheck],
     ["suporte", "Suporte", CircleHelp],
   ]],
 ];
@@ -270,6 +281,23 @@ const NAV_GRUPOS = [
 // Lista plana derivada dos grupos, para o titulo da pagina e qualquer consulta
 // por id continuarem funcionando sem saber do agrupamento.
 const NAV = NAV_GRUPOS.flatMap(([, itens]) => itens);
+
+// O painel inicial e a aula precisam resolver a mídia pela mesma regra. Isso
+// impede que "Continue de onde parou" associe o título de uma aula a um vídeo
+// genérico sem relação com ela.
+function mediaForLesson(lesson) {
+  if (!lesson) return null;
+  if (aulaMedia[lesson.id]) {
+    return {
+      src: wb(`/media/aula/${lesson.id}.mp4`),
+      poster: wb(`/media/aula/${lesson.id}.jpg`),
+      captions: wb(`/media/aula/${lesson.id}.vtt`),
+      title: (lesson.number ? lesson.number + " " : "") + lesson.title,
+      propria: true,
+    };
+  }
+  return featuredMedia[lesson.trackId] || null;
+}
 
 // Cada aula vai para a trilha cuja secao declarada for o prefixo MAIS ESPECIFICO
 // do numero. Assim 20.2.1 fica no modulo de unidades de conservacao (20.2) e nao
@@ -929,14 +957,18 @@ function Topbar({
       <button
         className="profile"
         onClick={onProfile}
-        aria-label={_acc ? `Abrir perfil de ${_n}` : "Criar meu perfil"}
-        title={_acc ? "Ver meu perfil" : "Criar meu perfil"}
+        aria-label={
+          _acc
+            ? `Abrir progresso de ${_n} neste dispositivo`
+            : "Criar perfil local neste dispositivo"
+        }
+        title={_acc ? "Ver meu progresso" : "Criar perfil local"}
       >
         <span aria-hidden="true">{_ini}</span>
         <div>
-          <strong>{_acc ? _n.split(/\s+/)[0] : "Meu perfil"}</strong>
+          <strong>{_acc ? _n.split(/\s+/)[0] : "Meu progresso"}</strong>
           <small>
-            {_acc ? profile.role || "Registro pessoal" : "Criar sua conta"}
+            {_acc ? profile.role || "Neste dispositivo" : "Criar perfil local"}
           </small>
         </div>
       </button>
@@ -1118,6 +1150,13 @@ function Sidebar({
             {popData.metadata?.operational?.dateLabel || "data não informada"}
           </b>
           <small>{lessons.length} tópicos didáticos · minuta técnica</small>
+          <small
+            className="platform-build"
+            data-build-sha={BUILD_STAMP}
+            title={`Build completo: ${BUILD_STAMP}`}
+          >
+            Build da plataforma · {BUILD_LABEL}
+          </small>
         </span>
       </div>
     </aside>
@@ -1176,12 +1215,7 @@ function Dashboard({ state, progress, go, openLesson }) {
   const continueLesson =
     lessonMap.get(state.lastLesson) || firstLesson("m00") || lessons[0];
   const continueTrack = tracks.find((t) => t.id === continueLesson.trackId);
-  const feat = {
-    src: wb("/media/tour-usina.mp4"),
-    poster: wb("/media/tour-usina-poster.png"),
-    captions: wb("/media/tour-usina.vtt"),
-    title: "Anatomia de uma usina em operação, tour guiado",
-  };
+  const feat = mediaForLesson(continueLesson);
   return (
     <div className="page dashboard-page">
       <section className="dashboard-intro">
@@ -1277,9 +1311,9 @@ function Dashboard({ state, progress, go, openLesson }) {
             lesson={continueLesson}
             compact
           />
-          <span>Vídeo em destaque{feat?.title ? `: ${feat.title}` : ""}</span>
+          <span>Resumo em vídeo desta aula</span>
           <span className="fm-chip">
-            <Clock /> 1:24 · 10 componentes
+            <Clock /> Conteúdo vinculado ao tópico
           </span>
         </div>
         <div className="feature-copy">
@@ -1615,15 +1649,7 @@ function Lesson({
   // Antes toda subaula de um modulo mostrava o mesmo video. Agora cada secao tem
   // o seu, montado a partir do texto dela; o video do modulo fica de reserva
   // para as poucas secoes sem conteudo proprio.
-  const media = aulaMedia[lesson.id]
-    ? {
-        src: wb(`/media/aula/${lesson.id}.mp4`),
-        poster: wb(`/media/aula/${lesson.id}.jpg`),
-        captions: wb(`/media/aula/${lesson.id}.vtt`),
-        title: (lesson.number ? lesson.number + " " : "") + lesson.title,
-        propria: true,
-      }
-    : featuredMedia[track.id];
+  const media = mediaForLesson(lesson);
   const ls = trackLessons.get(track.id) || [];
   const index = ls.findIndex((l) => l.id === lesson.id);
   const ORDEM = trackGroups.flatMap((g) => g.ids);
@@ -1647,6 +1673,7 @@ function Lesson({
   const evidence = state.lessonEvidence?.[lesson.id] || {};
   const questionSelection = selectLessonQuestion(questionBank, lesson, index);
   const question = questionSelection?.question || null;
+  const hasObjectiveCheck = lessonQuestionProvesObjective(questionSelection);
   const scenarioSelection = selectLessonScenario(
     scenarios,
     track.id,
@@ -1654,14 +1681,14 @@ function Lesson({
     lesson.id,
   );
   const objectiveCorrect =
-    Boolean(question) &&
+    hasObjectiveCheck &&
     evidence.objectiveQuestionId === question.id &&
     evidence.objectiveCorrect === true;
   const evidenceStatus = lessonEvidenceStatus(
     { ...evidence, objectiveCorrect },
     {
       criterionCount: design.mastery.length,
-      hasObjectiveCheck: Boolean(question),
+      hasObjectiveCheck,
     },
   );
   useEffect(() => {
@@ -1975,8 +2002,9 @@ function Lesson({
               id={`conclusao-aviso-${lesson.id}`}
               role="alert"
             >
-              Registre a recuperação ativa, confira ao menos dois critérios e
-              acerte a checagem objetiva antes de concluir este tópico.
+              {hasObjectiveCheck
+                ? "Registre a recuperação ativa, confira ao menos dois critérios e acerte a checagem da própria seção antes de concluir este tópico."
+                : "Registre a recuperação ativa e confira ao menos dois critérios antes de concluir este tópico. A revisão contextual do módulo é opcional e não interfere nesta conclusão."}
             </p>
           )}
           {state.completed.includes(lesson.id) && !evidenceStatus.ready && (
@@ -2347,6 +2375,7 @@ function LessonKnowledgeCheck({ selection, evidence, answer, retry }) {
   const selected = sameQuestion ? evidence.objectiveSelected : null;
   const answered = Number.isInteger(selected);
   const correct = answered && selected === question.answer;
+  const provesObjective = lessonQuestionProvesObjective(selection);
   return (
     <section
       className="lesson-knowledge-check"
@@ -2361,15 +2390,20 @@ function LessonKnowledgeCheck({ selection, evidence, answer, retry }) {
           </small>
           <h3 id={`checagem-${question.id}`}>Checagem de compreensão</h3>
         </div>
-        <span className={correct ? "done" : ""}>
-          {correct ? <CheckCircle2 /> : <Circle />}
-          {correct ? "Compreendida" : "Pendente"}
+        <span className={provesObjective && correct ? "done" : ""}>
+          {provesObjective && correct ? <CheckCircle2 /> : <Circle />}
+          {provesObjective
+            ? correct
+              ? "Objetivo demonstrado"
+              : "Pendente"
+            : "Opcional"}
         </span>
       </header>
       {selection.scope === "module" && (
         <p className="lesson-check-scope">
-          Esta seção ainda não possui item exclusivo; a pergunta recupera um
-          conceito relacionado do mesmo módulo.
+          Revisão opcional: esta seção ainda não possui questão exclusiva. A
+          pergunta retoma um conceito relacionado do mesmo módulo, mas não
+          comprova o objetivo e não interfere na conclusão desta aula.
         </p>
       )}
       <fieldset>
@@ -2829,7 +2863,7 @@ function LessonOverview({
         status={evidenceStatus}
         updateEvidence={updateEvidence}
         toggleCriterion={toggleEvidenceCriterion}
-        hasObjectiveCheck={Boolean(questionSelection?.question)}
+        hasObjectiveCheck={lessonQuestionProvesObjective(questionSelection)}
       />
       {(prosa.length > 0 || steps.length > 0 || nTab > 0) && (
         <button

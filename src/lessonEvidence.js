@@ -27,7 +27,9 @@ export function lessonEvidenceStatus(
   const responseRecorded = responseLength >= MIN_ACTIVE_RECALL_CHARS;
   const selfAuditRecorded =
     criterionCount === 0 || criteria.length >= Math.min(2, criterionCount);
-  const objectiveMet = !hasObjectiveCheck || record?.objectiveCorrect === true;
+  const objectiveMet =
+    hasObjectiveCheck && record?.objectiveCorrect === true;
+  const objectiveRequirementMet = !hasObjectiveCheck || objectiveMet;
 
   return {
     responseLength,
@@ -35,8 +37,14 @@ export function lessonEvidenceStatus(
     responseRecorded,
     selfAuditRecorded,
     objectiveMet,
-    ready: responseRecorded && selfAuditRecorded && objectiveMet,
+    objectiveRequirementMet,
+    ready:
+      responseRecorded && selfAuditRecorded && objectiveRequirementMet,
   };
+}
+
+export function lessonQuestionProvesObjective(selection) {
+  return selection?.scope === "section" && Boolean(selection.question);
 }
 
 export function selectLessonQuestion(questionBank, lesson, lessonIndex = 0) {

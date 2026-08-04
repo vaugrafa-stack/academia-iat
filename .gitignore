@@ -4,6 +4,8 @@ dist/
 dist-pages/
 dist-integration-check/
 .playwright-cli/
+playwright-report/
+test-results/
 .video_tools/
 tools/tts/
 public/media/.aula.staging-*/

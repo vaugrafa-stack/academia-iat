@@ -32,10 +32,27 @@ Para gerar e conferir o pacote de produção:
 ```powershell
 pnpm test
 pnpm build
+pnpm exec playwright install chromium
+pnpm test:e2e:artifact
 pnpm preview
 ```
 
-O preview fica em `http://127.0.0.1:4173`.
+O preview manual fica em `http://127.0.0.1:4173`. O teste E2E abre o artefato
+final em Chromium nas larguras de 1440, 320, 360, 390 e 430 pixels, percorre
+as rotas críticas e reprova diante de erro de console, resposta local com erro,
+overlay de framework, tela vazia ou rolagem horizontal involuntária.
+
+## Qualidade e publicação
+
+O workflow `Qualidade` compila uma única vez, executa todos os portões e o
+Playwright sobre esse mesmo `dist`, e só então armazena o artefato com o nome
+`academia-iat-<SHA>`. O job de publicação depende desse job, baixa o artefato
+do mesmo run e o envia à branch `gh-pages` sem recompilar. Pull requests nunca
+publicam, e falha ou cancelamento de qualquer portão impede o job de publicação.
+
+O SHA completo é incorporado ao build e aparece de forma abreviada na área de
+versão da plataforma; o valor completo fica disponível no atributo técnico e
+nos registros gerados. Builds locais usam o SHA atual com o sufixo `-local`.
 
 ## Estado atual da plataforma
 
@@ -75,9 +92,10 @@ O registro de conclusão gerado pela plataforma é pessoal e não credencial. Um
 pnpm test
 pnpm build
 pnpm audit:premium
+pnpm test:e2e:artifact
 ```
 
-A suíte cobre testes unitários, PWA/offline, proveniência, referências, rubricas, questões, mídia, auditoria das aulas e navegação funcional automatizada. O portão premium procura falhas de governança, privacidade e exposição acidental. Nenhum teste automatizado substitui revisão humana de conteúdo, acessibilidade, usabilidade, aprendizagem ou validação renderizada em navegador real.
+A suíte cobre testes unitários, PWA/offline, proveniência, referências, rubricas, questões, mídia e auditoria das aulas. O Playwright valida o artefato renderizado em navegador real nas cinco larguras previstas. O portão premium procura falhas de governança, privacidade e exposição acidental. Nenhum teste automatizado substitui revisão especializada de conteúdo, acessibilidade, usabilidade ou aprendizagem.
 
 ## Arquivos principais
 

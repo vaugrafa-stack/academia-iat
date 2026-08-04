@@ -26,6 +26,8 @@
     "media:aulas": "node tools/build-public-content.mjs --check && node tools/check-public-editorial-policy.mjs && python tools/build_lesson_videos.py",
     "build:pages": "node tools/build-public-content.mjs --check && node tools/check-public-editorial-policy.mjs && node tools/sanitize-public-data.mjs --check && node tools/build-offline-packages.mjs --check && vite build --outDir dist-pages && node tools/check-public-editorial-policy.mjs --dist=dist-pages && node tools/build-sw.mjs dist-pages $PAGES_REPO && node tools/check-bundle.mjs dist-pages",
     "preview": "vite preview --port 4173 --strictPort",
+    "test:e2e": "playwright test",
+    "test:e2e:artifact": "playwright test --project=artifact-desktop --project=artifact-320 --project=artifact-360 --project=artifact-390 --project=artifact-430",
     "test:unit": "vitest run",
     "test:pwa": "node tools/test-pwa.mjs && vitest run src/offline.test.js",
     "offline:packages": "node tools/build-offline-packages.mjs",
@@ -45,6 +47,7 @@
     "react-dom": "19.2.7"
   },
   "devDependencies": {
+    "@playwright/test": "1.62.0",
     "jsdom": "29.1.1",
     "vite": "8.1.5",
     "vitest": "4.1.10"

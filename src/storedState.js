@@ -26,6 +26,11 @@ export function createDefaultProgressState() {
     its: {},
     itCasoAtual: null,
     diagnostico: {},
+    // Historico por questao da revisao espacada: degrau, acertos, erros e a
+    // data da proxima retomada. Precisa nascer aqui, e nao so quando a
+    // primeira rodada grava, senao o campo fica indefinido e o seletor da
+    // fila nunca encontra nada para reapresentar.
+    revisao: {},
     autoaval: {},
     enquadra: { acertos: 0, total: 0 },
   };

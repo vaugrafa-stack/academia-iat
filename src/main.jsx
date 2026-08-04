@@ -86,6 +86,11 @@ import { ordenaBusca, snippet } from "./busca.js";
 import { elementoDaAula, precisaDeComplemento } from "./aulasAnexoB.js";
 import { comoLerQuadro } from "./comoLerQuadro.js";
 import { colherErros, errosDaAula } from "./errosRecorrentes.js";
+import {
+  questoesParaRevisar,
+  registrarRodada,
+  resumoDaRevisao,
+} from "./revisaoEspacada.js";
 import popDataUrl from "./data/pop-public-content.json?url";
 import flowDataUrl from "./data/flowcharts-content.json?url";
 import aulaMediaUrl from "./data/aula-media.json?url";
@@ -3275,6 +3280,70 @@ function Notes({ value, setValue }) {
 // variação causalmente ao estudo.
 // Quantas questões de cada módulo entram na amostra diagnóstica geral.
 const DIAG_POR_MODULO = 3;
+// O que a pessoa errou volta, e volta cada vez mais tarde.
+//
+// Conteudo estudado uma vez e nunca revisto se perde: sem retomada, a
+// autoavaliacao final mede memoria recente, e quem fez o modulo ontem recebe a
+// mesma leitura de quem fez ha um mes.
+//
+// So aparece quando ha questao VENCIDA. Bloco de revisao vazio em toda visita
+// vira ruido, e ruido treina a pessoa a ignorar o lugar onde a informacao util
+// vai aparecer depois.
+function RevisaoPendente({ state, openLesson }) {
+  const fila = useMemo(
+    () => questoesParaRevisar(state.revisao, questionBank),
+    [state.revisao],
+  );
+  const resumo = useMemo(
+    () => resumoDaRevisao(state.revisao, questionBank),
+    [state.revisao],
+  );
+  if (!fila.length) return null;
+  return (
+    <section className="revisao-pendente">
+      <header>
+        <RefreshCw size={16} aria-hidden="true" />
+        <div>
+          <small>RETOMADA DO QUE ESCAPOU</small>
+          <h2>
+            {fila.length} {fila.length === 1 ? "questão" : "questões"} para
+            revisar
+          </h2>
+          <p>
+            Você acompanha {resumo.acompanhadas}{" "}
+            {resumo.acompanhadas === 1 ? "questão" : "questões"}, e{" "}
+            {resumo.comErro} já {resumo.comErro === 1 ? "escapou" : "escaparam"}{" "}
+            ao menos uma vez. O intervalo cresce a cada acerto e volta ao início
+            a cada erro.
+          </p>
+        </div>
+      </header>
+      <ul>
+        {fila.map(({ questao, registro, atrasoEmDias }) => (
+          <li key={questao.id}>
+            <button
+              type="button"
+              onClick={() => questao.source?.sec && openLesson(questao.source.sec)}
+            >
+              <span>{questao.question}</span>
+              <small>
+                {registro.erros > 0
+                  ? `${registro.erros}× errada`
+                  : "em acompanhamento"}
+                {atrasoEmDias > 0 ? ` · vencida há ${atrasoEmDias} d` : " · vence hoje"}
+              </small>
+            </button>
+          </li>
+        ))}
+      </ul>
+      <small className="revisao-nota">
+        Isto reapresenta o que você errou no momento em que esquecer é provável.
+        Continua sendo autoestudo, e não medida validada de competência.
+      </small>
+    </section>
+  );
+}
+
 function Assessments({ state, setState, openLesson }) {
   const [track, setTrack] = useState("geral"),
     [started, setStarted] = useState(false),
@@ -3318,8 +3387,16 @@ function Assessments({ state, setState, openLesson }) {
     if (index === questions.length - 1) {
       setDone(true);
       setState((s) => {
+        // Resultado por questao de TODA rodada, e nao so do diagnostico geral.
+        // Sem isto nao havia como saber o que reapresentar: o estado guardava
+        // apenas quantas a pessoa acertou, nunca quais escaparam.
+        const resultados = {};
+        questions.forEach((x, i) => {
+          if (answers[i] !== undefined) resultados[x.id] = answers[i] === x.answer;
+        });
         const base = {
           ...s,
+          revisao: registrarRodada(s.revisao, resultados),
           quizScores: {
             ...s.quizScores,
             [track]: {
@@ -3367,6 +3444,7 @@ function Assessments({ state, setState, openLesson }) {
       />
       {!started ? (
         <div className="assessment-select">
+          <RevisaoPendente state={state} openLesson={openLesson} />
           {(() => {
             const d = state.diagnostico || {};
             if (!d.entrada) return null;

@@ -87,7 +87,7 @@ ter impedimento de peso. O impedimento que resta é editorial: são 159 roteiros
 
 ## Fase 3. Didática, onde está o buraco real
 
-### 3.1 Os degraus vazios do Laboratório ⬜
+### 3.1 Os degraus vazios do Laboratório ✅
 
 **Medida.** `check-niveis` mostra 3 dos 5 degraus ocupados. Nenhum caso exige
 **aplicar** (separar o que não serve da decisão) nem **fundamentar** (pergunta
@@ -100,6 +100,27 @@ produto técnico" em pergunta aberta, sem as cinco de sim ou não.
 **Cuidado.** Isso é autoria de conteúdo. Marcar uma evidência como distratora
 é afirmar que ela não serve à decisão, e essa afirmação precisa vir do caso,
 não de conveniência para preencher o degrau.
+
+**Já estava feito quando fui medir, em 04/08/2026.** O item entrou neste plano
+por erro meu: escrevi a análise a partir de uma medição anterior, sem
+reconferir. `check-niveis` mostra os cinco degraus ocupados:
+
+| Degrau | Casos |
+|---|---:|
+| Reconhecer | 10 |
+| Aplicar | 5 |
+| Decidir | 2 |
+| Integrar | 5 |
+| Fundamentar | 4 |
+
+O portão também mudou de critério, e para melhor: em vez de contar casos por
+degrau, ele registra o **piso por caso**. Contar por degrau produzia falso
+positivo, porque promover um caso esvazia o degrau anterior e parece regressão.
+Agora subir pode, voltar a uma tarefa mais simples não.
+
+Fica a lição de método: **reconferir o estado antes de planejar em cima dele.**
+Um plano que descreve o passado como se fosse o presente desperdiça a rodada de
+quem o executa.
 
 ### 3.2 Os nove elementos nas 159 aulas ⬜
 

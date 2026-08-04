@@ -85,6 +85,7 @@ import { PageHeader, Empty, TableRenderer } from "./ui.jsx";
 import { ordenaBusca, snippet } from "./busca.js";
 import { elementoDaAula, precisaDeComplemento } from "./aulasAnexoB.js";
 import { comoLerQuadro } from "./comoLerQuadro.js";
+import { colherErros, errosDaAula } from "./errosRecorrentes.js";
 import popDataUrl from "./data/pop-public-content.json?url";
 import flowDataUrl from "./data/flowcharts-content.json?url";
 import aulaMediaUrl from "./data/aula-media.json?url";
@@ -237,6 +238,11 @@ const {
 // Contrato de dados do Perfil. Os dois helpers sao closures sobre o estado do
 // modulo (trackLessons, questionBank, scenarios), entao viajam como funcao em
 // vez de serem recalculados na tela.
+// Erros recorrentes que o POP escreve nas colunas "Erro recorrente a evitar"
+// (Quadro 8) e "Limite e erro a evitar" (Quadro 22). Colhidos uma vez: sao 35
+// e nao mudam em tempo de execucao.
+const ERROS_DO_POP = colherErros(popData);
+
 const DADOS_PERFIL = Object.freeze({
   lessons,
   trackProgress,
@@ -2536,6 +2542,47 @@ function ComoLerEsteQuadro({ table }) {
 // exige em cada secao e o erro que mais aparece. Aqui as duas coisas se ligam.
 // Nada inventado, e a pessoa sai da leitura para a pratica de escrever aquela
 // secao no caso real.
+// O erro frequente e o elemento que mais falta numa aula e o que mais rende:
+// saber o engano que costuma acontecer vale mais que outro exemplo certo.
+// Estes 35 nao foram escritos aqui, foram escritos pelo POP, e estavam presos
+// dentro de dois quadros que so aparecem para quem abre aquela tabela.
+//
+// O vinculo e por mencao explicita do termo no texto da propria secao. Nao ha
+// inferencia de assunto: se a aula nao cita o termo, nao recebe o erro dele.
+function ErrosRecorrentesDaSecao({ lesson, blocks = [] }) {
+  const achados = useMemo(() => {
+    const texto = [
+      lesson?.title || "",
+      ...blocks.map((b) => b?.paragraph?.text || ""),
+    ].join(" ");
+    return errosDaAula(ERROS_DO_POP, texto);
+  }, [lesson, blocks]);
+  if (!achados.length) return null;
+  return (
+    <section className="erros-secao">
+      <strong>
+        <AlertTriangle size={15} aria-hidden="true" /> Erros recorrentes nesta
+        matéria
+      </strong>
+      <dl>
+        {achados.map((e) => (
+          <React.Fragment key={e.termo + e.quadro}>
+            <dt>
+              {e.termo}
+              <small>{e.quadro}</small>
+            </dt>
+            <dd>{e.erro}</dd>
+          </React.Fragment>
+        ))}
+      </dl>
+      <small className="erros-fonte">
+        Redação do próprio POP, na coluna de erro a evitar. Aparece aqui porque
+        esta seção cita o termo.
+      </small>
+    </section>
+  );
+}
+
 function ComoEscreverEstaSecao({ lesson, blocks = [], go }) {
   const texto = blocks
     .map((b) => b?.paragraph?.text || "")
@@ -3043,6 +3090,7 @@ function LessonOverview({
           )}
         </div>
       )}
+      <ErrosRecorrentesDaSecao lesson={lesson} blocks={blocks} />
       <ComoEscreverEstaSecao lesson={lesson} blocks={blocks} go={go} />
       <ExemploNoProcesso
         caso={caso}

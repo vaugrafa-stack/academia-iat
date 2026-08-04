@@ -191,25 +191,20 @@ class BuildMapaTests(unittest.TestCase):
         self.assertEqual(self.output.read_text(encoding="utf-8"), "unchanged")
 
 
-def _carregar_gerador_de_aulas():
-    """Importa build_lesson_videos sem executar o main nem exigir Piper.
+def _carregar_normalizacao_de_fala():
+    """Importa tools/fala.py sem passar por build_lesson_videos.
 
-    O modulo le argumentos e monta caminhos de ferramenta ao ser carregado, e
-    nenhuma das duas coisas interessa para testar a normalizacao de fala.
+    O modulo de video importa PIL e imageio_ffmpeg para desenhar quadro, e o
+    runner do CI nao tem PIL: o portao de tooling falhava com
+    ModuleNotFoundError sem nada a ver com o que ele testa. A normalizacao de
+    fala virou modulo proprio, que so usa a biblioteca padrao.
     """
     import importlib.util
-    import sys
 
-    caminho = Path(__file__).resolve().parent / "build_lesson_videos.py"
-    spec = importlib.util.spec_from_file_location("_blv_para_teste", caminho)
+    caminho = Path(__file__).resolve().parent / "fala.py"
+    spec = importlib.util.spec_from_file_location("_fala_para_teste", caminho)
     modulo = importlib.util.module_from_spec(spec)
-    argv = sys.argv
-    sys.argv = [str(caminho), "--dry-run"]
-    try:
-        with contextlib.suppress(SystemExit):
-            spec.loader.exec_module(modulo)
-    finally:
-        sys.argv = argv
+    spec.loader.exec_module(modulo)
     return modulo
 
 
@@ -224,7 +219,7 @@ class TextoFaladoTests(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        cls.blv = _carregar_gerador_de_aulas()
+        cls.blv = _carregar_normalizacao_de_fala()
 
     def falado(self, texto):
         return self.blv.texto_falado(texto)

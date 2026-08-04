@@ -1,0 +1,24 @@
+# Onde vivem os ajustes do pnpm a partir da versao 11: o campo "pnpm" do
+# package.json deixou de ser lido.
+#
+# undici: o portao de Qualidade do CI roda `pnpm audit --audit-level=moderate`
+# ANTES dos testes, entao seis vulnerabilidades numa dependencia transitiva
+# deixavam o portao inteiro vermelho e os testes nem chegavam a rodar. O portao
+# parava de guardar qualquer coisa.
+#
+# O undici entra por jsdom, que entra por vitest: e dependencia de
+# DESENVOLVIMENTO e nao vai para o pacote publicado. Ainda assim vale corrigir,
+# porque portao vermelho por motivo alheio e portao desligado. A versao 7.29.0 e
+# a primeira com as correcoes das GHSA-jr45-8vmc-qm54 e GHSA-v3r7-h72x-cjcm.
+# postcss: mesmo caso. Entra por vite, e o aviso e sobre leitura de arquivo
+# .map por sourceMappingURL controlada por terceiro quando `from` nao e
+# definido. Aqui o vite so processa CSS do proprio repositorio, entao o vetor
+# nao se aplica, mas o portao nao sabe disso e nao deve ficar vermelho por
+# ruido. A 8.5.23 e a primeira com a correcao completa.
+overrides:
+  # A faixa e presa na linha 7 de proposito. `>=7.29.0` sozinho resolveu para
+  # 8.9.0, que removeu `lib/handler/wrap-handler.js`, e o jsdom 29 depende dele:
+  # seis arquivos de teste deixaram de subir com MODULE_NOT_FOUND e a bateria
+  # caiu de 195 para 159 sem falhar por conteudo nenhum.
+  undici: '>=7.29.0 <8'
+  postcss: '>=8.5.23'

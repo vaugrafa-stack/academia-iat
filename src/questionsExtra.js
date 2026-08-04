@@ -60,7 +60,7 @@ export const QUESTOES_EXTRA = [
 
   // ---------- M03 Enquadramento e Consulta Previa ----------
   ['m03', 'Para quais empreendimentos a Consulta Prévia é obrigatória?',
-    ['Para toda CGH, qualquer que seja a potência', 'Para CGH com potência instalada igual ou superior a 1 MW, PCH e UHE', 'Somente para UHE'], 1,
+    ['Para toda CGH, qualquer que seja a potência instalada declarada', 'Para CGH com potência instalada igual ou superior a 1 MW, PCH e UHE', 'Somente para UHE, por causa do porte do reservatório'], 1,
     'Abaixo de 1 MW a CGH não tem Consulta Prévia obrigatória, mas o empreendedor pode buscá-la como orientação.',
     { sec: 'pop-section-024', quote: 'É obrigatória para CGH com potência instalada igual ou superior a 1 MW, PCH e UHE.' }],
   ['m03', 'Qual é a entrada mínima esperada na Consulta Prévia?',
@@ -68,7 +68,7 @@ export const QUESTOES_EXTRA = [
     'A entrada mínima permite localizar e caracterizar o pedido; complementações continuam possíveis quando necessárias para orientar a análise.',
     { sec: 'pop-section-025', quote: 'mapa da delimitação da ADA, mapa digital do arranjo em formato KML ou KMZ e Memorial Descritivo' }],
   ['m03', 'Qual a relação entre o enquadramento ambiental do IAT e o regime setorial da ANEEL?',
-    ['O ato da ANEEL define a modalidade ambiental', 'São classificações com finalidades distintas: uma não substitui a outra', 'O enquadramento do IAT dispensa o ato setorial'], 1,
+    ['O ato da ANEEL define a modalidade de licenciamento ambiental', 'São classificações com finalidades distintas: uma não substitui a outra', 'O enquadramento feito pelo IAT dispensa o ato setorial próprio da ANEEL'], 1,
     'A classificação ambiental serve ao licenciamento estadual; o regime setorial serve ao aproveitamento do potencial hidráulico e aos atos do setor elétrico.',
     { sec: 'pop-section-023', quote: 'Uma classificação não substitui a outra.' }],
 
@@ -100,7 +100,7 @@ export const QUESTOES_EXTRA = [
     'A disponibilização prévia é condição da participação: sem prazo de leitura, a audiência perde a função instrutória.',
     { sec: 'pop-section-040', quote: 'devem permanecer disponíveis ao público por, no mínimo, 45 dias antes da audiência' }],
   ['m05', 'O que a Licença de Operação verifica em primeiro lugar?',
-    ['Se a concepção do empreendimento continua viável', 'Se o empreendimento foi implantado conforme a licença e o projeto aprovado', 'Se o cronograma da obra foi cumprido no prazo'], 1,
+    ['Se a concepção do empreendimento licenciado continua viável', 'Se o empreendimento foi implantado conforme a licença e o projeto aprovado', 'Se o cronograma físico da obra foi integralmente cumprido no prazo previsto'], 1,
     'A LO confronta o executado com o licenciado, verifica o atendimento das condicionantes e a compatibilidade da operação projetada.',
     { sec: 'pop-section-038', quote: 'verificar se o empreendimento foi implantado conforme licença e projeto aprovado' }],
 
@@ -124,7 +124,7 @@ export const QUESTOES_EXTRA = [
     'A sigla do empreendimento não decide a incidência: o que importa são as características do barramento e os critérios da lei.',
     { sec: 'pop-section-054', quote: 'A incidência da PNSB não decorre apenas da classificação do empreendimento como PCH ou UHE' }],
   ['m07', 'Para estruturas fiscalizadas pela ANEEL, qual norma o POP manda consultar?',
-    ['Resolução Normativa ANEEL nº 875/2020', 'Resolução Normativa ANEEL nº 1.064, de 2 de maio de 2023', 'Resolução CONAMA nº 428/2010'], 1,
+    ['Resolução Normativa ANEEL nº 875/2020, sobre outorga', 'Resolução Normativa ANEEL nº 1.064, de 2 de maio de 2023', 'Resolução CONAMA nº 428/2010, sobre zona de amortecimento'], 1,
     'A ResNorm 875/2020 trata dos procedimentos setoriais de PCH e UHE; a 1.064/2023 é a referência de segurança de barragens sob fiscalização da ANEEL.',
     { sec: 'pop-section-054', quote: 'Resolução Normativa ANEEL nº 1.064, de 2 de maio de 2023' }],
   ['m07', 'O que a decisão deve registrar ao tratar sistemas associados e áreas de apoio?',
@@ -142,7 +142,7 @@ export const QUESTOES_EXTRA = [
     'Memorial e estudo têm funções distintas: um caracteriza o empreendimento, o outro avalia impactos. Nenhum substitui o outro.',
     { sec: 'pop-section-060', quote: 'Estudo ambiental antigo não corrige memorial desatualizado' }],
   ['m08', 'O que caracteriza um RDPA suficiente?',
-    ['Reproduzir o diagnóstico do RAS com mais detalhe', 'Transformar as propostas básicas em programas executáveis e verificáveis', 'Apresentar cronograma de execução dos programas'], 1,
+    ['Reproduzir o diagnóstico apresentado no RAS com um nível maior de detalhe', 'Transformar as propostas básicas em programas executáveis e verificáveis', 'Apresentar apenas o cronograma de execução dos programas'], 1,
     'O programa precisa permitir acompanhar execução, resultado e efetividade; copiar o RAS não cumpre essa função.',
     { sec: 'pop-section-063', quote: 'Não basta reproduzir o diagnóstico ou copiar o texto do RAS.' }],
   ['m08', 'Como pode ser afastado um item do Termo de Referência considerado não aplicável?',

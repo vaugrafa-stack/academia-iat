@@ -90,7 +90,7 @@ for (const q of questionBank) {
 // media formato do array em vez de percepcao de quem responde. A margem de 10%
 // e o que separa "a maior" de "uma das maiores".
 const MARGEM = 1.10;
-const TETO_CHUTADOR = 61;
+const TETO_CHUTADOR = 53;
 
 // Palavra portuguesa comum escrita sem acento. Entrou porque eu mesmo escrevi
 // dezenove alternativas sem acentuacao ao reescrever distratores em 04/08/2026,

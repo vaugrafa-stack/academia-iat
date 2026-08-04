@@ -5,7 +5,38 @@ e ferramentas. Complementa `PLANO_EVOLUCAO.md`, que cuida de governança, proven
 e alegações institucionais. Este aqui cuida da **experiência e da qualidade do
 material**, e cada item nasce de um número medido, não de impressão.
 
-Medições feitas em 31/07/2026 sobre o commit `cbf8c3f`.
+Medições iniciais em 31/07/2026 sobre o commit `cbf8c3f`.
+**Estado atualizado em 04/08/2026**, ao fim de uma sequência de rodadas de execução.
+
+## Onde o plano está
+
+| Etapa | Estado | Medida |
+|---|---|---|
+| A1 orçamento de JS | ✅ | 99,6% → 89,3% do teto |
+| A2 extrair telas de `main.jsx` | 🟨 | 3.993 → 3.447 linhas; `Profile` e `Biblioteca` fora; falta `Lesson` |
+| B1 legenda legível | ⛔ | revertida: o cartão é desenhado no MP4 e os dois divergiriam. `frame()` já usa a mesma segmentação; falta regerar o acervo |
+| B2 prosódia | 🟨 | normalização feita e testada; vale na próxima regeração. Pausa variável em aberto |
+| C1 tema nos SVG | ✅ | |
+| C2 animar processo | ✅ | canal de fuga escoa; descrição acessível conta o processo |
+| D3 fonte vs interpretação | ✅ | régua e rótulo no texto do POP; convenção de cor registrada |
+| E1 escada de níveis | 🟨 | instrumento criado; 3 degraus de 5 ocupados. `aplicar` e `fundamentar` vazios |
+| E3 questões | ✅ | pista de comprimento 63% → 30,1%, abaixo do acaso de 32,8% |
+| F1 menu agrupado | ✅ | 11 itens → 4 grupos |
+| F2 medida de linha | ✅ | 85 → 72 caracteres |
+| F3 foco no vídeo | ✅ | verificado, sem defeito |
+| G1 regerar peça só | ✅ | `refazer_legendas.py` |
+| CSS destravado | ✅ | 96,9% → 89,8% do teto |
+
+**O que fica em aberto, em ordem de valor:**
+
+1. **Regerar o acervo de vídeo.** É o que faz B1 e B2 chegarem à tela. Exige Piper
+   e horas de recodificação. `frame()` e o `.vtt` já saem da mesma segmentação, então
+   a regeração entrega legenda legível nos dois lugares de uma vez.
+2. **D1**, os nove elementos em cada uma das 159 aulas. O maior em volume.
+3. **E1**, ocupar os degraus `aplicar` e `fundamentar`. Exige autoria de conteúdo:
+   marcar evidência que não serve à decisão, e escrever pergunta aberta com rubrica.
+4. **A2**, extrair `Lesson` de `main.jsx`, que é a maior tela restante.
+5. **E2**, revisão espaçada com retomada de erro.
 
 Legenda de estado: ⬜ não começou · 🟨 em execução · ✅ concluído e verificado.
 

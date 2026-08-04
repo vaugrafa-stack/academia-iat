@@ -90,7 +90,32 @@ for (const q of questionBank) {
 // media formato do array em vez de percepcao de quem responde. A margem de 10%
 // e o que separa "a maior" de "uma das maiores".
 const MARGEM = 1.10;
-const TETO_CHUTADOR = 66;
+const TETO_CHUTADOR = 61;
+
+// Palavra portuguesa comum escrita sem acento. Entrou porque eu mesmo escrevi
+// dezenove alternativas sem acentuacao ao reescrever distratores em 04/08/2026,
+// e nada acusaria: o texto compila, o portao de citacao passa, e o defeito so
+// apareceria na tela para quem estuda. A lista e curta e literal de proposito;
+// nao tenta ser um corretor ortografico, so pega o vocabulario recorrente
+// deste dominio.
+const SEM_ACENTO = [
+  'licenca', 'licencas', 'agua', 'aguas', 'analise', 'analises', 'tecnica',
+  'tecnico', 'tecnicas', 'tecnicos', 'potencia', 'supressao', 'orgao', 'orgaos',
+  'emissao', 'previa', 'previo', 'hidreletrica', 'hidreletrico', 'comprovacao',
+  'audiencia', 'periodo', 'responsavel', 'disponivel', 'vegetacao', 'extraido',
+  'proprio', 'propria', 'inicio', 'operacao', 'condicao', 'condicoes',
+  'exigencia', 'referencia', 'evidencia', 'competencia', 'area', 'areas',
+  'nivel', 'niveis', 'criterio', 'criterios', 'relatorio', 'relatorios',
+  'obrigatorio', 'necessario', 'ja', 'sera', 'apos', 'ate', 'entao',
+];
+const REGEX_SEM_ACENTO = new RegExp(`\\b(${SEM_ACENTO.join('|')})\\b`, 'i');
+
+for (const q of questionBank) {
+  for (const texto of [q.question, ...q.options, q.explanation]) {
+    const achado = REGEX_SEM_ACENTO.exec(String(texto || ''));
+    if (achado) fail(`${q.id}: "${achado[1]}" sem acento -> "${String(texto).slice(0, 60)}"`);
+  }
+}
 
 function temPistaDeComprimento(q) {
   const tamanhos = q.options.map((o) => String(o).length);

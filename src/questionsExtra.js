@@ -82,7 +82,7 @@ export const QUESTOES_EXTRA = [
     'A exceção federal existe, mas não elimina por si só o critério estadual mais restritivo: em UC, inclusive APA, não se conclui pela LAC.',
     { sec: 'pop-section-030', quote: 'o art. 64, I, e, do Decreto Estadual nº 9.541/2025 impede a LAC em Unidade de Conservação, inclusive APA' }],
   ['m04', 'Quais critérios a IN IAT nº 09/2025 prevê para LAC de CGH?',
-    ['Potência até 3 MW e alagamento inferior a 13 ha, ainda que haja supressão', 'Potência de até 1 MW, alagamento inferior a 5 ha, IDA menor que 3 e ausência de necessidade de autorização de supressão', 'Qualquer potência e alagamento, desde que o empreendedor firme compromisso'], 1,
+    ['Potência até 3 MW e alagamento inferior a 13 ha, ainda que haja supressão de vegetação nativa na área do arranjo', 'Potência de até 1 MW, alagamento inferior a 5 ha, IDA menor que 3 e ausência de necessidade de autorização de supressão', 'Qualquer potência e alagamento, desde que o empreendedor firme termo de compromisso de ajustamento de conduta'], 1,
     'Os quatro critérios formam apenas o enquadramento inicial. A modalidade ainda depende dos critérios gerais e da compatibilidade territorial; em UC, inclusive APA, o POP orienta não concluir pela LAC.',
     { sec: 'pop-section-030', quote: 'Para CGH, a IN prevê LAC para potência de até 1 MW, alagamento inferior a 5 ha, IDA menor que 3 e ausência de necessidade de autorização de supressão' }],
   ['m04', 'No rito da LAS, a existência de supressão de vegetação permite dispensar a análise de flora e a autorização florestal?',
@@ -198,13 +198,13 @@ export const QUESTOES_EXTRA = [
 
   // ---------- M12 Suficiencia, pendencias, condicionantes e conclusao ----------
   ['m12', 'Qual destas é uma condicionante que deve ser evitada?',
-    ['A que fixa prazo e forma de comprovação', 'A que transfere ao empreendedor competência decisória do órgão ambiental', 'A que decorre de impacto avaliado no estudo'], 1,
+    ['A que fixa prazo e forma de comprovação para o empreendedor', 'A que transfere ao empreendedor competência decisória do órgão ambiental', 'A que decorre de impacto já avaliado e aceito no estudo ambiental'], 1,
     'A condicionante organiza obrigação do empreendedor; ela não pode deslocar para ele a decisão que cabe ao órgão.',
     { sec: 'pop-section-095', quote: 'Condicionante que transfere ao empreendedor competência decisória do órgão ambiental.' }],
 
   // ---------- M13 Formatacao, qualidade e rastreabilidade ----------
   ['m13', 'Ao editar um documento técnico, o que a regra de precedência determina?',
-    ['Converter o arquivo para um modelo simplificado padronizado', 'Editar o original ou cópia fiel, preservando cabeçalho, rodapé, margens e campos institucionais', 'Recriar o documento a partir do texto extraído'], 1,
+    ['Converter o arquivo para um modelo simplificado e padronizado pelo próprio órgão licenciador', 'Editar o original ou cópia fiel, preservando cabeçalho, rodapé, margens e campos institucionais', 'Recriar o documento a partir do texto extraído automaticamente do arquivo recebido'], 1,
     'A identidade visual do documento de origem faz parte da sua validade formal e da rastreabilidade institucional.',
     { sec: 'pop-section-100', quote: 'Não substituir documento formatado por arquivo simplificado.' }],
   ['m13', 'Como devem ser apresentadas as coordenadas em um documento técnico do IAT?',

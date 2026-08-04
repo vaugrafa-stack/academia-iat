@@ -13,8 +13,12 @@ describe('contratos de acessibilidade das superfícies principais', () => {
     const css = await readFile(cssUrl, 'utf8');
 
     expect(css).not.toContain('font-size:max(12px,1em)');
+    // O selo .source-lock saiu da barra lateral em 04/08/2026: a mesma
+    // proveniencia ja aparecia no painel inicial e em cada aula, e o build
+    // continua no diagnostico do Suporte. O contrato que sobrevive e o do
+    // bloco que REALMENTE mostra a fonte hoje.
     expect(css).toMatch(
-      /:root\[data-theme="light"\]\s+\.source-lock small,[\s\S]*?color:var\(--ink2\)/,
+      /\.source-assurance[\s\S]*?color:var\(--(?:muted|green|ink2)\)/,
     );
     expect(css).toMatch(
       /@media\(max-width:720px\)[\s\S]*?\.storage-error-bar\{[^}]*flex-wrap:wrap/,

@@ -1236,25 +1236,15 @@ function Sidebar({
         </div>
         <ChevronRight />
       </button>
-      <div className="source-lock">
-        <ShieldCheck />
-        <span>
-          Fonte vinculada
-          <br />
-          <b>
-            POP v{popData.metadata?.operational?.version || "—"} ·{" "}
-            {popData.metadata?.operational?.dateLabel || "data não informada"}
-          </b>
-          <small>{lessons.length} tópicos didáticos · minuta técnica</small>
-          <small
-            className="platform-build"
-            data-build-sha={BUILD_STAMP}
-            title={`Build completo: ${BUILD_STAMP}`}
-          >
-            Build da plataforma · {BUILD_LABEL}
-          </small>
-        </span>
-      </div>
+      {/* O selo de proveniencia saiu da barra lateral em 04/08/2026.
+          Ele ocupava o canto inferior esquerdo em TODAS as telas com uma
+          informacao que nao muda nunca, e o mesmo dado ja aparece em dois
+          lugares onde ele e util: o painel inicial mostra versao, extracao,
+          hash e situacao no bloco de fonte, e cada aula traz o mesmo bloco
+          recolhido. O identificador do build, que era exclusivo daqui,
+          continua no diagnostico da Central de Suporte, que e onde alguem
+          procura ao relatar um problema. Nada de rastreabilidade se perdeu:
+          o que se perdeu foi a repeticao permanente. */}
     </aside>
   );
 }

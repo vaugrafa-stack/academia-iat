@@ -9,6 +9,7 @@ const quality = readFileSync(qualityPath, 'utf8');
 const packageJson = JSON.parse(readFileSync(resolve(root, 'package.json'), 'utf8'));
 const viteConfig = readFileSync(resolve(root, 'vite.config.mjs'), 'utf8');
 const mainSource = readFileSync(resolve(root, 'src/main.jsx'), 'utf8');
+const supportSource = readFileSync(resolve(root, 'src/painelAluno.jsx'), 'utf8');
 
 describe('contrato de release imutável', () => {
   it('mantém qualidade e publicação no mesmo workflow', () => {
@@ -61,6 +62,13 @@ describe('contrato de release imutável', () => {
   it('incorpora o SHA do CI e o expõe na área de versão', () => {
     expect(viteConfig).toContain('process.env.GITHUB_SHA');
     expect(viteConfig).not.toContain("new Date().toISOString().slice(0, 10)");
-    expect(mainSource).toContain('data-build-sha={BUILD_STAMP}');
+    // O selo de proveniência saiu da barra lateral em 04/08/2026: repetia em
+    // toda tela um dado que não muda, e a mesma informação já estava no painel
+    // inicial e em cada aula. O contrato NÃO mudou de exigência, mudou de
+    // lugar: o identificador do build continua obrigatório, agora no
+    // diagnóstico da Central de Suporte, que é onde alguém procura ao relatar
+    // um problema.
+    expect(supportSource).toContain('__BUILD_STAMP__');
+    expect(supportSource).toMatch(/build\s*=\s*BUILD_STAMP/);
   });
 });

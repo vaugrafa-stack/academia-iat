@@ -633,7 +633,7 @@
 .flow-guidance dd{margin:4px 0 0;color:var(--ink2);font-size:12px;line-height:1.45}
 .flow-decision-gate{margin:0 22px 18px;padding:16px;border:1px solid var(--line);border-top:4px solid var(--green);border-radius:9px;background:var(--surface)}
 .flow-decision-gate>small{color:var(--green);font-size:11px;font-weight:900;letter-spacing:.07em}
-.flow-decision-gate>h3{margin:5px 0 13px;font-size:16px;line-height:1.45}
+.flow-decision-gate>h2{margin:5px 0 13px;font-size:16px;line-height:1.45}
 .flow-decision-options{display:grid;gap:7px}
 .flow-decision-options button{display:grid;grid-template-columns:28px 1fr;gap:9px;align-items:center;min-height:46px;padding:9px 11px;border:1px solid var(--line);border-radius:7px;background:var(--surface);text-align:left;font-size:12px;line-height:1.45}
 .flow-decision-options button:disabled{opacity:1;cursor:default}

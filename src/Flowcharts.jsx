@@ -47,7 +47,7 @@ function FlowDecisionGate({ flow, record }) {
   return (
     <section className="flow-decision-gate" aria-labelledby={`fd-${flow.id}`}>
       <small>DECISÃO RAMIFICADA · CASO DIDÁTICO</small>
-      <h3 id={`fd-${flow.id}`}>{decision.prompt}</h3>
+      <h2 id={`fd-${flow.id}`}>{decision.prompt}</h2>
       <div className="flow-decision-options">
         {decision.options.map((option, index) => (
           <button
@@ -138,7 +138,7 @@ function FlowBuilder({ flow, record }) {
   return (
     <div className="flow-builder">
       <div className="fb-head">
-        <h3>Monte a sequência correta</h3>
+        <h2>Monte a sequência correta</h2>
         <p>
           Escolha as etapas na ordem do fluxo. Cada posição informa “correta” ou
           “incorreta” também em texto.
@@ -212,6 +212,11 @@ function FlowBuilder({ flow, record }) {
   );
 }
 
+// Hierarquia de titulos: estes blocos sao secoes de primeiro nivel dentro da
+// pagina, entao usam h2. Estavam como h3 e a rota era a unica das onze com
+// SALTO de nivel, h1 direto para h3, o que quebra a navegacao por cabecalho de
+// quem usa leitor de tela. O estilo acompanha pelo seletor de classe, nao pela
+// tag, entao a aparencia nao muda.
 export default function Flowcharts({ state, setState, flowData }) {
   const [selected, setSelected] = useState(flowSpecs[0].id),
     [variant, setVariant] = useState("simplificado"),
@@ -387,7 +392,7 @@ export default function Flowcharts({ state, setState, flowData }) {
                 <Info />
                 <div>
                   <small>ETAPA {active + 1}</small>
-                  <h3>{flow.nodes[active]}</h3>
+                  <h2>{flow.nodes[active]}</h2>
                   {guidance ? (
                     <>
                       <p>

@@ -128,7 +128,7 @@ export const QUESTOES_EXTRA = [
     'A ResNorm 875/2020 trata dos procedimentos setoriais de PCH e UHE; a 1.064/2023 é a referência de segurança de barragens sob fiscalização da ANEEL.',
     { sec: 'pop-section-054', quote: 'Resolução Normativa ANEEL nº 1.064, de 2 de maio de 2023' }],
   ['m07', 'O que a decisão deve registrar ao tratar sistemas associados e áreas de apoio?',
-    ['Apenas a área total ocupada', 'Vínculo funcional, área de intervenção, titularidade, competência e impactos cumulativos', 'Somente a titularidade do empreendedor principal'], 1,
+    ['Apenas a área total ocupada e a distância até o empreendimento', 'Vínculo funcional, área de intervenção, titularidade, competência e impactos cumulativos', 'Somente a titularidade do empreendedor e a fase em curso'], 1,
     'Esse registro é o que permite justificar a análise conjunta ou separada de linhas, subestações, canteiros, jazidas e bota-fora.',
     { sec: 'pop-section-051', quote: 'A decisão deve registrar o vínculo funcional, a área de intervenção, a titularidade, a competência, os impactos cumulativos' }],
   ['m07', 'O que a manifestação do licenciamento não deve declarar sobre a barragem?',
@@ -270,7 +270,7 @@ export const QUESTOES_EXTRA = [
     'A ficha registra empreendimento, processos, número e vigência do ACT, objeto, fases, aditivos e cláusulas que afetem a análise.',
     { sec: 'pop-section-145', quote: 'Se algum desses elementos for necessário à decisão e não puder ser confirmado, registrar Pendente de validação.' }],
   ['m16', 'A existência do formulário eletrônico do RTAA dispensa o relatório textual complementar?',
-    ['Sim, o formulário substituiu integralmente o relatório', 'Não se pode concluir isso por si só; a necessidade se verifica no ACT e nas orientações do exercício', 'Sim, desde 2026'], 1,
+    ['Sim, o formulário eletrônico substituiu integralmente o relatório textual desde a sua adoção', 'Não se pode concluir isso por si só; a necessidade se verifica no ACT e nas orientações do exercício', 'Sim, desde que os documentos técnicos sigam no mesmo peticionamento'], 1,
     'Em 2026 houve caso de formulário, relatório textual, licença e documentos técnicos peticionados conjuntamente no processo SEI/IBAMA.',
     { sec: 'pop-section-150', quote: 'A existência de formulário eletrônico não permite concluir, por si só, que relatório textual complementar deixou de ser utilizado.' }],
 ];

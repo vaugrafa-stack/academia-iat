@@ -507,6 +507,39 @@ async function testarNavegacaoSemEnvenenarShell() {
     runtime.mensagens.some((mensagem) =>
       mensagem.tipo === 'IAT_PWA_ERROR' && mensagem.codigo === 'QUOTA_EXCEEDED'),
   );
+
+  const consultarConexao = async () => {
+    const respostas = [];
+    await runtime.disparar('message', {
+      data: { tipo: 'IAT_GET_STATUS' },
+      ports: [{ postMessage: (mensagem) => respostas.push(mensagem) }],
+    });
+    return respostas.find((mensagem) => mensagem.tipo === 'IAT_RESPONSE')?.resultado;
+  };
+  assert.equal(
+    (await consultarConexao()).conexaoDaUltimaNavegacao,
+    'online',
+    'a ultima navegacao atendida pela rede deve ser observavel',
+  );
+  assert.ok(Number.isFinite((await consultarConexao()).conexaoDaUltimaNavegacaoEm));
+
+  runtime.rede.manipulador = async () => {
+    throw new TypeError('offline');
+  };
+  const offlineResponse = await runtime.disparar('fetch', {
+    request: {
+      method: 'GET',
+      mode: 'navigate',
+      url: `${ORIGIN}/academia-iat/`,
+      headers: new Headers(),
+    },
+  });
+  assert.match(await offlineResponse.text(), /shell novo/);
+  assert.equal(
+    (await consultarConexao()).conexaoDaUltimaNavegacao,
+    'offline',
+    'fallback do shell deve informar o estado offline a pagina recarregada',
+  );
 }
 
 const testes = [

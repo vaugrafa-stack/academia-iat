@@ -45,6 +45,11 @@ describe('Central de Suporte', () => {
     expect(diagnostic).not.toMatch(/Pessoa de teste|conteúdo reservado|texto de processo|Nota:/u);
   });
 
+  it('usa o estado de conexão observado pela aplicação no diagnóstico', () => {
+    const html = renderToStaticMarkup(<Suporte online={false} />);
+    expect(html).toContain('Conectividade: offline');
+  });
+
   it('prepara o e-mail oficial com assunto, descrição e diagnóstico', () => {
     const href = buildSupportMailto({
       area: 'Mapa do Paraná',

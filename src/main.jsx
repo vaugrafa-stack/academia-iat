@@ -71,7 +71,10 @@ import {
 } from "lucide-react";
 import TranscriptPanel from "./TranscriptPanel.jsx";
 import VideoLearningStage from "./VideoLearningStage.jsx";
-import { resolveAudiovisualPilot } from "./audiovisualPilotRuntime.js";
+import {
+  resolveAudiovisualPilot,
+  useAudiovisualPilotMedia,
+} from "./audiovisualPilotRuntime.js";
 import {
   ThemeToggle,
   Suporte,
@@ -81,7 +84,6 @@ import { PageHeader, Empty, TableRenderer } from "./ui.jsx";
 import { ordenaBusca, snippet } from "./busca.js";
 import { elementoDaAula, precisaDeComplemento } from "./aulasAnexoB.js";
 import { comoLerQuadro } from "./comoLerQuadro.js";
-import mapaDados from "./data/mapa-parana.json";
 import popDataUrl from "./data/pop-public-content.json?url";
 import flowDataUrl from "./data/flowcharts-content.json?url";
 import aulaMediaUrl from "./data/aula-media.json?url";
@@ -100,7 +102,11 @@ import questionBankUrl from "./data/question-bank.json?url";
 // caso abre, e por isso nao pesa no orcamento de JS nem no carregamento de
 // quem so quer ler uma aula. Os nomes dos campos sao os mesmos do caso
 // completo, entao esta tela nao precisa saber da separacao.
-import { scenarios, GRUPOS_LAB, useCasosSobDemanda } from "./labData.js";
+import {
+  scenarios,
+  useCasosSobDemanda,
+  useIndiceLaboratorio,
+} from "./labData.js";
 import {
   loadProfile,
   defaultProfile,
@@ -146,7 +152,6 @@ const HydroGuide = lazy(() => import("./hydro.jsx"));
 const MapaParana = lazy(() => import("./mapa.jsx"));
 const RedatorIT = lazy(() => import("./redator.jsx"));
 const LaboratorioPremium = lazy(() => import("./laboratorio.jsx"));
-const OfflineManager = lazy(() => import("./OfflineManager.jsx"));
 const Flowcharts = lazy(() => import("./Flowcharts.jsx"));
 const KnowledgeLibrary = lazy(() => import("./biblioteca.jsx"));
 const Profile = lazy(() => import("./perfil.jsx"));
@@ -285,7 +290,7 @@ const NAV = NAV_GRUPOS.flatMap(([, itens]) => itens);
 // O painel inicial e a aula precisam resolver a mídia pela mesma regra. Isso
 // impede que "Continue de onde parou" associe o título de uma aula a um vídeo
 // genérico sem relação com ela.
-function mediaForLesson(lesson) {
+function mediaForLesson(lesson, pilotCollection) {
   if (!lesson) return null;
   let fallback = null;
   if (aulaMedia[lesson.id]) {
@@ -299,7 +304,12 @@ function mediaForLesson(lesson) {
   } else {
     fallback = featuredMedia[lesson.trackId] || null;
   }
-  return resolveAudiovisualPilot(lesson, fallback, `${BASE || ""}/`);
+  return resolveAudiovisualPilot(
+    lesson,
+    fallback,
+    `${BASE || ""}/`,
+    pilotCollection,
+  );
 }
 
 // Cada aula vai para a trilha cuja secao declarada for o prefixo MAIS ESPECIFICO
@@ -316,13 +326,26 @@ function trackProgress(id, state) {
 }
 // Requisitos automáticos do registro pessoal de autoestudo. O mérito da
 // fundamentação continua separado e depende de conferência técnica.
-function requisitosAutoestudo(trackId, state) {
+function requisitosAutoestudo(trackId, state, catalogState = null) {
   const leitura = trackProgress(trackId, state) === 100;
   const temQuiz = questionBank.some((q) => q.track === trackId);
   const q = state.quizScores && state.quizScores[trackId];
   const avaliacao = !temQuiz || (q && q.total && q.score / q.total >= 0.8);
-  const cen = scenarios.filter((c) => c.track === trackId);
-  const praticaRegistro = practiceRecordStatus(cen, state.labs);
+  const catalogoPronto = catalogState
+    ? !catalogState.carregando && !catalogState.erro && catalogState.casos.length > 0
+    : scenarios.length > 0;
+  const cen = catalogoPronto
+    ? (catalogState?.casos || scenarios).filter((c) => c.track === trackId)
+    : [];
+  const praticaRegistro = catalogoPronto
+    ? practiceRecordStatus(cen, state.labs)
+    : {
+        applies: true,
+        submitted: false,
+        objectiveMet: false,
+        technicalReviewApproved: false,
+        bestObjectivePercent: null,
+      };
   const pratica = praticaRegistro.objectiveMet;
   const feitos = [leitura, !!avaliacao, !!pratica].filter(Boolean).length;
   return {
@@ -335,6 +358,7 @@ function requisitosAutoestudo(trackId, state) {
     praticaPercentual: praticaRegistro.bestObjectivePercent,
     temQuiz,
     temPratica: praticaRegistro.applies,
+    catalogoPronto,
     pronto: leitura && !!avaliacao && !!pratica,
     pct: Math.round((feitos / 3) * 100),
   };
@@ -431,10 +455,8 @@ function App() {
         ? state.lastLesson
         : firstLesson("m00")?.id,
   );
-  const [selectedScenario, setSelectedScenario] = useState(() =>
-    _init.scenario && scenarios.some((x) => x.id === _init.scenario)
-      ? _init.scenario
-      : null,
+  const [selectedScenario, setSelectedScenario] = useState(
+    () => _init.scenario || null,
   );
   const [libraryTarget, setLibraryTarget] = useState(null);
   const [menuOpen, setMenuOpen] = useState(false),
@@ -449,6 +471,17 @@ function App() {
   // no meio disso jogaria fora o que ela digitou.
   const [online, setOnline] = useState(true),
     [aplicarUpdate, setAplicarUpdate] = useState(null);
+  const precisaIndiceLaboratorio = [
+    "dashboard",
+    "lesson",
+    "laboratorio",
+    "redator",
+    "perfil",
+  ].includes(view);
+  const labIndexStatus = useIndiceLaboratorio(precisaIndiceLaboratorio);
+  const pilotMediaStatus = useAudiovisualPilotMedia(
+    view === "dashboard" || view === "lesson",
+  );
   useEffect(() => {
     return registrarOffline({
       onConexao: setOnline,
@@ -552,12 +585,9 @@ function App() {
         }
         setView("lesson");
       } else {
-        if (
-          p.view === "laboratorio" &&
-          p.scenario &&
-          scenarios.some((x) => x.id === p.scenario)
-        )
+        if (p.view === "laboratorio" && p.scenario) {
           setSelectedScenario(p.scenario);
+        }
         setView(p.view);
       }
       setMenuOpen(false);
@@ -584,11 +614,7 @@ function App() {
   function go(next, param) {
     setView(next);
     setMenuOpen(false);
-    if (
-      next === "laboratorio" &&
-      param &&
-      scenarios.some((x) => x.id === param)
-    ) {
+    if (next === "laboratorio" && param) {
       setSelectedScenario(param);
       pushHash("#/laboratorio/" + encodeURIComponent(param));
     } else pushHash(next === "dashboard" ? "#/" : "#/" + next);
@@ -661,10 +687,12 @@ function App() {
         progress={progress}
         go={go}
         openLesson={openLesson}
+        labIndexStatus={labIndexStatus}
+        pilotMediaStatus={pilotMediaStatus}
       />
     ),
     hidreletricas: <HydroGuide go={go} />,
-    mapa: <MapaParana dados={mapaDados} state={state} setState={setState} />,
+    mapa: <MapaParana state={state} setState={setState} />,
     formacao: (
       <Formation
         state={state}
@@ -683,7 +711,7 @@ function App() {
         state={state}
         setState={setState}
         scenarios={casosInteiros}
-        grupos={GRUPOS_LAB}
+        grupos={labIndexStatus.grupos}
         lessonMap={lessonMap}
         initialScenarioId={selectedScenario}
         onSelectScenario={(id) => {
@@ -699,7 +727,7 @@ function App() {
     ) : (
       <RedatorIT
         scenarios={casosInteiros}
-        grupos={GRUPOS_LAB}
+        grupos={labIndexStatus.grupos}
         state={state}
         setState={setState}
         go={go}
@@ -726,13 +754,19 @@ function App() {
         setProfileStatus={setProfileStatus}
         go={go}
         openLesson={openLesson}
-        dados={DADOS_PERFIL}
+        dados={{
+          ...DADOS_PERFIL,
+          requisitosAutoestudo: (trackId, currentState) =>
+            requisitosAutoestudo(trackId, currentState, labIndexStatus),
+        }}
       />
     ),
-    suporte: <Suporte />,
+    suporte: <Suporte online={online} />,
     lesson: (
       <Lesson
         lesson={lessonMap.get(selectedLesson) || lessons[0]}
+        availableScenarios={labIndexStatus.casos}
+        pilotMediaStatus={pilotMediaStatus}
         state={state}
         setState={setState}
         openLesson={openLesson}
@@ -808,12 +842,14 @@ function App() {
           }}
         />
       )}
-      {appDataWarnings.length > 0 && (
+      {(appDataWarnings.length > 0 ||
+        labIndexStatus.erro ||
+        pilotMediaStatus.error) && (
         <div className="data-warning-bar" role="alert">
           <AlertTriangle size={15} />
           <span>
-            Parte da mídia não pôde ser carregada. As aulas e fontes textuais
-            continuam disponíveis; alguns resumos usarão o material geral do módulo.
+            Parte dos dados complementares ou da mídia não pôde ser carregada.
+            O conteúdo textual continua disponível; tente novamente com conexão.
           </span>
         </div>
       )}
@@ -1284,12 +1320,21 @@ function SourceAssurance({ compact = false }) {
   );
 }
 
-function Dashboard({ state, progress, go, openLesson }) {
+function Dashboard({
+  state,
+  progress,
+  go,
+  openLesson,
+  labIndexStatus,
+  pilotMediaStatus,
+}) {
   const continueLesson =
     lessonMap.get(state.lastLesson) || firstLesson("m00") || lessons[0];
   const continueTrack =
     tracks.find((t) => t.id === continueLesson.trackId) || tracks[0];
-  const feat = mediaForLesson(continueLesson);
+  const feat = pilotMediaStatus.loading
+    ? null
+    : mediaForLesson(continueLesson, pilotMediaStatus.collection);
   return (
     <div className="page dashboard-page">
       <section className="dashboard-intro">
@@ -1307,17 +1352,21 @@ function Dashboard({ state, progress, go, openLesson }) {
       </section>
       <section className="dashboard-feature">
         <div className="feature-media">
-          <VideoLearningStage
-            key={feat?.src}
-            media={{
-              ...feat,
-              poster:
-                feat?.poster || wb("/media/analista-licenciamento.png"),
-            }}
-            track={continueTrack}
-            lesson={continueLesson}
-            compact
-          />
+          {pilotMediaStatus.loading ? (
+            <VideoDataLoading />
+          ) : (
+            <VideoLearningStage
+              key={feat?.src}
+              media={{
+                ...feat,
+                poster:
+                  feat?.poster || wb("/media/analista-licenciamento.png"),
+              }}
+              track={continueTrack}
+              lesson={continueLesson}
+              compact
+            />
+          )}
           <span>Resumo em vídeo desta aula</span>
           <span className="fm-chip">
             <Clock /> Conteúdo vinculado ao tópico
@@ -1370,6 +1419,9 @@ function Dashboard({ state, progress, go, openLesson }) {
           state={state}
           currentTrackId={continueTrack.id}
           go={go}
+          scenarios={labIndexStatus.casos}
+          loading={labIndexStatus.carregando}
+          error={labIndexStatus.erro}
         />
         <ReviewErrorsCard state={state} go={go} openLesson={openLesson} />
       </section>
@@ -1404,18 +1456,47 @@ function CurrentObjectiveCard({ lesson }) {
   );
 }
 
-function NextPracticeCard({ state, currentTrackId, go }) {
+function NextPracticeCard({
+  state,
+  currentTrackId,
+  go,
+  scenarios: availableScenarios,
+  loading,
+  error,
+}) {
   const labs = state.labs || {};
-  const inProgress = scenarios.find(
+  const inProgress = availableScenarios.find(
     (scenario) => labs[scenario.id]?.status === "em_andamento",
   );
   const nextPractice =
     inProgress ||
-    scenarios.find(
+    availableScenarios.find(
       (scenario) => scenario.track === currentTrackId && !labs[scenario.id],
     ) ||
-    scenarios.find((scenario) => !labs[scenario.id]) ||
-    scenarios[0];
+    availableScenarios.find((scenario) => !labs[scenario.id]) ||
+    availableScenarios[0];
+
+  if (!nextPractice) {
+    return (
+      <article className="dashboard-action-card practice" aria-busy={loading || undefined}>
+        <header>
+          <FlaskConical aria-hidden="true" />
+          <span>Próxima prática</span>
+        </header>
+        <h2>{error ? "Práticas temporariamente indisponíveis" : "Preparando os casos"}</h2>
+        <p>
+          {error
+            ? "Não foi possível carregar o catálogo de casos. Confira a conexão e abra o Laboratório para tentar novamente."
+            : "O catálogo de casos está sendo carregado para indicar a prática mais adequada."}
+        </p>
+        {error && (
+          <button type="button" onClick={() => go("laboratorio")}>
+            Abrir Laboratório <ArrowRight />
+          </button>
+        )}
+      </article>
+    );
+  }
   const continuing = labs[nextPractice.id]?.status === "em_andamento";
 
   return (
@@ -1736,6 +1817,8 @@ function Formation({ state, openLesson }) {
 
 function Lesson({
   lesson,
+  availableScenarios = [],
+  pilotMediaStatus,
   state,
   setState,
   openLesson,
@@ -1750,7 +1833,9 @@ function Lesson({
   // Antes toda subaula de um modulo mostrava o mesmo video. Agora cada secao tem
   // o seu, montado a partir do texto dela; o video do modulo fica de reserva
   // para as poucas secoes sem conteudo proprio.
-  const media = mediaForLesson(lesson);
+  const media = pilotMediaStatus.loading
+    ? null
+    : mediaForLesson(lesson, pilotMediaStatus.collection);
   const ls = trackLessons.get(track.id) || [];
   const index = ls.findIndex((l) => l.id === lesson.id);
   const ORDEM = trackGroups.flatMap((g) => g.ids);
@@ -1776,7 +1861,7 @@ function Lesson({
   const question = questionSelection?.question || null;
   const hasObjectiveCheck = lessonQuestionProvesObjective(questionSelection);
   const scenarioSelection = selectLessonScenario(
-    scenarios,
+    availableScenarios,
     track.id,
     index,
     lesson.id,
@@ -1977,12 +2062,16 @@ function Lesson({
             )}
           </button>
         </header>
-        <VideoLesson
-          key={media?.src || lesson.id}
-          media={media}
-          track={track}
-          lesson={lesson}
-        />
+        {pilotMediaStatus.loading ? (
+          <VideoDataLoading />
+        ) : (
+          <VideoLesson
+            key={media?.src || lesson.id}
+            media={media}
+            track={track}
+            lesson={lesson}
+          />
+        )}
         <SourceAssurance compact />
         <LearningContract design={design} />
         <div
@@ -2078,7 +2167,7 @@ function Lesson({
                   {track.code}
                 </button>
               )}
-              {scenarios.some((c) => c.track === track.id) && (
+              {availableScenarios.some((c) => c.track === track.id) && (
                 <button
                   className="text-action"
                   onClick={() => go("laboratorio")}
@@ -2277,6 +2366,17 @@ function LearningContract({ design }) {
         </ul>
       </details>
     </section>
+  );
+}
+function VideoDataLoading() {
+  return (
+    <div className="route-loading video-data-loading" role="status" aria-live="polite">
+      <span aria-hidden="true" />
+      <div>
+        <strong>Preparando o resumo em vídeo</strong>
+        <small>Conferindo a mídia vinculada a esta aula…</small>
+      </div>
+    </div>
   );
 }
 function VideoLesson({ media, track, lesson }) {

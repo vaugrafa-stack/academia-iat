@@ -211,16 +211,16 @@ export function buildSupportMailto({
   return `mailto:${SUPPORT_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 }
 
-export function Suporte() {
+export function Suporte({ online: onlineFromApp } = {}) {
   const [area, setArea] = useState('Central de Suporte');
   const [page, setPage] = useState(currentRoute);
   const [expected, setExpected] = useState('');
   const [found, setFound] = useState('');
-  const [online, setOnline] = useState(currentOnlineState);
+  const [browserOnline, setBrowserOnline] = useState(currentOnlineState);
   const [copyStatus, setCopyStatus] = useState('');
 
   useEffect(() => {
-    const updateConnection = () => setOnline(navigator.onLine);
+    const updateConnection = () => setBrowserOnline(navigator.onLine);
     window.addEventListener('online', updateConnection);
     window.addEventListener('offline', updateConnection);
     return () => {
@@ -228,6 +228,10 @@ export function Suporte() {
       window.removeEventListener('offline', updateConnection);
     };
   }, []);
+
+  const online = typeof onlineFromApp === 'boolean'
+    ? onlineFromApp
+    : browserOnline;
 
   const route = currentRoute();
   const userAgent = currentUserAgent();

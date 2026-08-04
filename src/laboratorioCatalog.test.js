@@ -42,15 +42,36 @@ describe('catálogo pesquisável do laboratório', () => {
     expect(combined.every(({ group }) => group.id === 'fases')).toBe(true);
   });
 
-  it('filtrar por "decidir" devolve exatamente os casos com documento ausente', () => {
+  it('filtrar por "decidir" devolve os casos cujo maior desafio e decidir com ausencia', () => {
     const decidir = filtrarCatalogoLaboratorio(catalog, { complexidade: 'decidir' });
-    expect(decidir.length).toBeGreaterThan(0);
+    expect(decidir.map(({ scenario }) => scenario.id)).toEqual(['rlo-vencida', 'barragem']);
     for (const { scenario } of decidir) {
       expect(scenario.ausentes?.length || 0).toBeGreaterThan(0);
     }
-    // E o inverso: nenhum caso com documento ausente pode ficar de fora.
-    const comAusencia = catalog.filter(({ scenario }) => scenario.ausentes?.length);
-    expect(decidir).toHaveLength(comAusencia.length);
+    // `integrador` tambem tem ausencia, mas sua tarefa aberta e um degrau mais
+    // alto e, por isso, nao deve aparecer simultaneamente em "decidir".
+    const integrador = catalog.find(({ scenario }) => scenario.id === 'integrador');
+    expect(integrador.scenario.ausentes.length).toBeGreaterThan(0);
+    expect(integrador.nivel.id).toBe('fundamentar');
+  });
+
+  it('mede os cinco degraus pela tarefa e preserva os casos promovidos', () => {
+    const distribuicao = Object.fromEntries(
+      ['reconhecer', 'aplicar', 'decidir', 'integrar', 'fundamentar']
+        .map((nivel) => [
+          nivel,
+          filtrarCatalogoLaboratorio(catalog, { complexidade: nivel })
+            .map(({ scenario }) => scenario.id),
+        ]),
+    );
+
+    expect(Object.values(distribuicao).map((casos) => casos.length)).toEqual([10, 5, 2, 5, 4]);
+    expect(new Set(distribuicao.aplicar)).toEqual(
+      new Set(['escopo', 'las', 'cp-antiga', 'triagem', 'intervenientes']),
+    );
+    expect(new Set(distribuicao.fundamentar)).toEqual(
+      new Set(['condicionantes', 'revisao', 'integrador', 'delegado']),
+    );
   });
 });
 
@@ -134,7 +155,7 @@ describe('ajuda progressiva e modos de resolução', () => {
     expect(observation.questions).toEqual([]);
     expect(questions.questions).toEqual(scenario.questions.map(([prompt]) => prompt));
     expect(questions.criteria).toEqual([]);
-    expect(criteria.criteria).toEqual(scenario.elementos.map(({ rot }) => rot));
+    expect(criteria.criteria).toEqual(scenario.openTask.criteria.map(({ label }) => label));
     expect(JSON.stringify(criteria)).not.toContain(scenario.modelo);
     expect(JSON.stringify(criteria)).not.toContain(scenario.outcome);
   });
@@ -170,7 +191,7 @@ describe('rascunho versionado do laboratório', () => {
     }, scenario);
 
     expect(draft).toMatchObject({
-      versao: 1,
+      versao: 2,
       respostas: { 0: 'sim' },
       texto: 'Fundamentação em elaboração.',
       evidenciasConsultadas: [scenario.evidence[0]],
@@ -182,6 +203,25 @@ describe('rascunho versionado do laboratório', () => {
     });
     expect(draft.respostas).not.toHaveProperty('99');
     expect(draft.evidenciasAnotadas).not.toHaveProperty('Peça de outro caso');
+  });
+
+  it('restaura apenas classificações previstas pela tarefa do caso', () => {
+    const scenarioWithTask = scenarios.find((candidate) => candidate.id === 'escopo');
+    const validTitle = scenarioWithTask.evidence[0];
+    const draft = normalizarRascunhoLaboratorio({
+      rascunho: {
+        versao: 2,
+        classificacoesEvidencias: {
+          [validTitle]: 'metodologica',
+          [scenarioWithTask.evidence[1]]: 'classificacao-inexistente',
+          'Peça de outro caso': 'direta',
+        },
+      },
+    }, scenarioWithTask);
+
+    expect(draft.classificacoesEvidencias).toEqual({
+      [validTitle]: 'metodologica',
+    });
   });
 
   it('mantém a conclusão durante a nova tentativa e a arquiva no próximo finish', () => {

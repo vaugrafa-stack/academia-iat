@@ -147,6 +147,7 @@ export default function Profile({
   );
   const mods = tracks.map((t) => ({ t, p: trackProgress(t.id, state) }));
   const concluidos = mods.filter((m) => m.p === 100).length;
+  const catalogoPronto = requisitosAutoestudo(tracks[0].id, state).catalogoPronto;
   const hoje = () =>
     new Date().toLocaleDateString("pt-BR", {
       day: "2-digit",
@@ -490,6 +491,12 @@ export default function Profile({
                     pessoal do percurso. Faltam{" "}
                     {lessons.length - state.completed.length}.
                   </>
+                ) : !catalogoPronto ? (
+                  <>
+                    Preparando o catálogo de práticas. O registro permanece
+                    bloqueado até que os casos e seus objetivos sejam conferidos.
+                    Se esta mensagem persistir, recarregue a plataforma com conexão.
+                  </>
                 ) : (
                   <>
                     Leitura completa. Faltam requisitos automáticos de
@@ -499,8 +506,8 @@ export default function Profile({
                         .length
                     }{" "}
                     módulos: ao menos 80% na autoavaliação e, quando houver
-                    laboratório, entrega válida com ao menos 80% nas decisões
-                    objetivas. A fundamentação não recebe aprovação automática.
+                    laboratório, entrega válida e 80% em cada componente objetivo
+                    aplicável do caso. A fundamentação não recebe aprovação automática.
                   </>
                 )}
               </p>
@@ -544,7 +551,7 @@ export default function Profile({
                     [pr.avaliacao, "avaliação", pr.temQuiz],
                     [
                       pr.pratica,
-                      "entrega e decisões objetivas da prática",
+                      "componentes objetivos aplicáveis da prática",
                       pr.temPratica,
                     ],
                   ]
@@ -565,7 +572,7 @@ export default function Profile({
                     [
                       pr.pratica,
                       pr.temPratica
-                        ? "Entrega + 80% nas decisões objetivas"
+                        ? "Componentes objetivos da prática"
                         : "Sem caso próprio",
                       pr.temPratica,
                     ],
@@ -589,13 +596,15 @@ export default function Profile({
                   </button>
                 ) : (
                   <span className="cert-mod-pending">
-                    {!pr.leitura
+                    {!pr.catalogoPronto
+                      ? "carregando práticas"
+                      : !pr.leitura
                       ? "ler tudo"
                       : !pr.avaliacao
                         ? "fazer avaliação"
                         : !pr.praticaEntregue
                           ? "entregar prática"
-                          : "revisar decisões da prática"}
+                          : "revisar componentes da prática"}
                   </span>
                 )}
               </li>
@@ -604,8 +613,9 @@ export default function Profile({
         </ul>
       </section>
       <p className="profile-note">
-        Estes registros comprovam apenas ações e respostas objetivas salvas
-        neste navegador. A fundamentação prática permanece sem aprovação técnica.
+        Estes registros documentam apenas ações e resultados automáticos dos
+        exercícios salvos neste navegador. A fundamentação prática permanece
+        sem aprovação técnica.
         Eles não comprovam identidade, competência profissional, aprovação
         institucional ou capacitação oficial do Instituto Água e Terra.
       </p>

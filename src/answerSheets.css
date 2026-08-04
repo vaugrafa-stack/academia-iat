@@ -468,6 +468,49 @@
   margin-top: 6px;
 }
 
+.answer-sheet-evidence details {
+  margin-top: 5px;
+}
+
+.answer-sheet-evidence summary {
+  color: var(--blue);
+  font-size: 12px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.answer-sheet-evidence details p {
+  margin: 6px 0;
+  color: var(--muted);
+}
+
+.answer-sheet-evidence details ul {
+  margin: 0;
+  padding-left: 18px;
+}
+
+.answer-sheet-task-note,
+.answer-sheet-missing {
+  margin: 0 0 12px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 10px 12px;
+  background: color-mix(in srgb, var(--blue) 6%, var(--surface));
+  color: var(--ink2);
+  font-size: 12.5px;
+  line-height: 1.5;
+}
+
+.answer-sheet-task-note p,
+.answer-sheet-missing ul {
+  margin: 5px 0 0;
+}
+
+.answer-sheet-missing {
+  margin: 12px 0 0;
+  background: color-mix(in srgb, var(--amber, #c98b19) 8%, var(--surface));
+}
+
 .answer-sheet-table-wrap {
   overflow-x: auto;
   margin-top: 12px;
@@ -620,6 +663,16 @@
 .answer-sheet-minimum svg {
   flex: 0 0 auto;
   color: var(--green2);
+}
+
+.answer-sheet-minimum span {
+  display: grid;
+  gap: 4px;
+}
+
+.answer-sheet-minimum small {
+  color: var(--muted);
+  font-size: 10.5px;
 }
 
 .answer-sheet-outcome,

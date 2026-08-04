@@ -106,8 +106,6 @@ export const POP_LAB_QUOTES = Object.freeze({
   'pop-section-158': 'Com a publicação do Decreto Estadual nº 7.150/2024, não deve mais ser utilizada em novas manifestações, licenças ou modelos a redação “quando expedido o regulamento indicado no art. 5º da Lei nº 20.929/2021”, nem orientação genérica no sentido de “aguardar regulamentação para cobrança”.',
 });
 
-// Exceções em seções que tratam de mais de um alerta. Mantê-las explícitas
-// evita que a decisão aponte para a aula correta, mas mostre o trecho errado.
 const QUOTE_OVERRIDES = Object.freeze({
   'lab-cp-q2-pop-section-027': 'Na Consulta Prévia, a análise de unidades de conservação deve ocorrer antes de qualquer conclusão sobre intervenientes ou restrições locacionais.',
   'lab-transicao-q5-pop-section-005': 'Termos de Referência, condicionantes e orientações internas não prevalecem sobre lei ou regulamento, mas detalham a instrução técnica do caso concreto.',
@@ -137,7 +135,30 @@ const QUOTE_OVERRIDES = Object.freeze({
   'lab-condic-triagem-q1-pop-section-095': 'Condicionante sem prazo, sem indicador ou sem forma de comprovação.',
   'lab-condic-triagem-q3-pop-section-095': 'Condicionante que transfere ao empreendedor competência decisória do órgão ambiental.',
   'lab-condic-triagem-q5-pop-section-095': 'Condicionante que utilize a redação transitória “quando expedido o regulamento indicado no art. 5º da Lei nº 20.929/2021” ou determine genericamente “aguardar regulamentação para cobrança”.',
+  'lab-task-cp-antiga-e1-pop-section-006': 'Normas anteriores podem explicar a instrução realizada à época, mas não devem ser tratadas automaticamente como fundamento vigente.',
+  'lab-task-triagem-e2-pop-section-019': 'Estudo antigo pode ser aproveitado apenas se compatível com o projeto atual, a fase, a área de influência, a operação e a realidade ambiental atual.',
+  'lab-task-triagem-e3-pop-section-019': 'Documento de outro empreendimento ou outro corpo hídrico deve ser classificado como inconsistente, com gravidade geralmente crítica.',
+  'lab-task-intervenientes-e1-pop-section-082': 'Para CGH, não se deve exigir automaticamente autorização ou concessão própria de PCH, mas documentação setorial vigente e compatível com titular, potência e fase.',
+  'lab-task-condicionantes-qualidade-pop-section-095': 'Condicionante sem prazo, sem indicador ou sem forma de comprovação.',
+  'lab-task-condicionantes-compensacao-pop-section-153': 'A compensação ambiental tratada neste item somente deve ser analisada quando os estudos ambientais e a análise técnica identificarem impacto ambiental negativo não mitigável.',
+  'lab-task-integrador-territorio-pop-section-095': 'Incompatibilidade material do empreendimento ou de estrutura associada com o ato de criação, a categoria, o zoneamento ou regra vinculante do Plano de Manejo não deve ser convertida artificialmente em condicionante para cumprimento posterior.',
+  'lab-task-integrador-territorio-pop-section-123': 'restrição material do ato de criação ou do Plano de Manejo que torne a localização, a estrutura ou a operação incompatível não deve ser transformada em condicionante.',
+  'lab-task-delegado-competencia-pop-section-151': 'Em pedido de RLO de UHE com capacidade instalada igual ou superior a 300 MW, a análise deve começar pela competência. Verificar a data de início do processo e a regra de transição do art. 4º do Decreto Federal nº 8.437/2015.',
+  'lab-task-delegado-delegacao-pop-section-132': 'A delegação não converte o processo em licenciamento estadual originário e deve ser exercida dentro do objeto, do prazo e das condições estabelecidas no ACT específico.',
+  'lab-task-delegado-limites-pop-section-145': 'A ficha de controle do processo delegado deve registrar, no mínimo: empreendimento; processo IAT; processo SEI/IBAMA; número do ACT; fundamento da competência federal; data de assinatura e publicação; vigência; objeto e fases abrangidas; sistemas associados incluídos; termos aditivos; obrigações de comunicação; regras de fiscalização; tratamento da compensação ambiental; situação de encerramento ou prorrogação; e demais cláusulas que afetem a análise. Se algum desses elementos for necessário à decisão e não puder ser confirmado, registrar Pendente de validação.',
 });
+
+// Exceções em seções que tratam de mais de um alerta. Mantê-las explícitas
+// evita que a tarefa aponte para a aula correta, mas mostre o trecho errado.
+export function getPopLabSource(sectionId, overrideId = null) {
+  const quote = (overrideId && QUOTE_OVERRIDES[overrideId]) || POP_LAB_QUOTES[sectionId];
+  if (!quote) return null;
+  return Object.freeze({
+    id: overrideId || `lab-task-${sectionId}`,
+    sec: sectionId,
+    quote,
+  });
+}
 
 const CASE_EVIDENCE_ORDINALS = Object.freeze({
   cp: [[2, 3], [4], [], [], []],

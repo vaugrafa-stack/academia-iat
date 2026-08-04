@@ -29,7 +29,11 @@ import { AutoAvaliacao } from './painelAluno.jsx';
 import CaseAnswerSheet from './CaseAnswerSheet.jsx';
 import { buildScenarioDocument, minimumEvidenceRequired } from './scenarioDocuments.js';
 import { tracks } from './courseData.js';
-import { getLabSources, LAB_SOURCE_POLICY } from './labSources.js';
+import {
+  getLabSources,
+  getPopLabSource,
+  LAB_SOURCE_POLICY,
+} from './labSources.js';
 import { nivelDoCaso } from './niveisLab.js';
 import { useMediaQuery } from './useMediaQuery.js';
 import './laboratorio.css';
@@ -38,7 +42,7 @@ function normalizar(valor = '') {
   return valor.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
 }
 
-const LAB_DRAFT_VERSION = 1;
+const LAB_DRAFT_VERSION = 2;
 const LAB_COMPLETION_HISTORY_LIMIT = 5;
 
 function ehRegistro(valor) {
@@ -61,7 +65,7 @@ function conclusaoLaboratorioValida(registro) {
  */
 export function normalizarRascunhoLaboratorio(registro, scenario) {
   const raw = registro?.rascunho;
-  if (!ehRegistro(raw) || raw.versao !== LAB_DRAFT_VERSION || !scenario) return null;
+  if (!ehRegistro(raw) || ![1, LAB_DRAFT_VERSION].includes(raw.versao) || !scenario) return null;
 
   const respostas = {};
   if (ehRegistro(raw.respostas)) {
@@ -86,6 +90,20 @@ export function normalizarRascunhoLaboratorio(registro, scenario) {
     }
   }
 
+  const classificacoesEvidencias = {};
+  const classificacoesPermitidas = new Set(
+    (scenario.evidenceTask?.choices || []).map((choice) => choice.id),
+  );
+  if (ehRegistro(raw.classificacoesEvidencias)) {
+    for (const item of scenario.evidenceTask?.items || []) {
+      const titulo = scenario.evidence?.[item.evidenceIndex];
+      const classificacao = raw.classificacoesEvidencias[titulo];
+      if (titulo && classificacoesPermitidas.has(classificacao)) {
+        classificacoesEvidencias[titulo] = classificacao;
+      }
+    }
+  }
+
   const atualizadoEm = typeof raw.atualizadoEm === 'string'
     && Number.isFinite(Date.parse(raw.atualizadoEm))
     ? raw.atualizadoEm
@@ -98,6 +116,7 @@ export function normalizarRascunhoLaboratorio(registro, scenario) {
     texto: typeof raw.texto === 'string' ? raw.texto : '',
     evidenciasConsultadas,
     evidenciasAnotadas,
+    classificacoesEvidencias,
     modo: raw.modo === 'desafio' ? 'desafio' : 'guiado',
     nivelAjuda: Math.max(0, Math.min(3, Number(raw.nivelAjuda) || 0)),
   };
@@ -108,6 +127,7 @@ function criarRascunhoLaboratorio({
   reason,
   seenEvidence,
   evidenceNotes,
+  evidenceClassifications,
   mode,
   helpLevel,
   atualizadoEm,
@@ -122,6 +142,9 @@ function criarRascunhoLaboratorio({
     evidenciasConsultadas: Object.keys(seenEvidence || {}).filter((key) => seenEvidence[key]),
     evidenciasAnotadas: Object.fromEntries(
       Object.entries(evidenceNotes || {}).filter(([, value]) => typeof value === 'string'),
+    ),
+    classificacoesEvidencias: Object.fromEntries(
+      Object.entries(evidenceClassifications || {}).filter(([, value]) => typeof value === 'string'),
     ),
     modo: mode === 'desafio' ? 'desafio' : 'guiado',
     nivelAjuda: Math.max(0, Math.min(3, Number(helpLevel) || 0)),
@@ -179,12 +202,22 @@ function bateTermo(texto, termo) {
   return texto.includes(normalizado);
 }
 
-function conferirElementos(cenario, texto) {
+export function conferirElementos(cenario, texto) {
   const base = normalizar(texto || '');
-  const els = (cenario.elementos || []).map((elemento) => ({
-    rot: elemento.rot,
-    ok: elemento.termos.some((termo) => bateTermo(base, termo)),
-  }));
+  const criteriosAbertos = cenario.openTask?.criteria || [];
+  const els = criteriosAbertos.length
+    ? criteriosAbertos.map((criterio) => ({
+        rot: criterio.label,
+        ok: criterio.requiredConceptGroups.every((grupo) => (
+          grupo.some((termo) => bateTermo(base, termo))
+        )),
+        sourceRefs: criterio.sourceRefs,
+      }))
+    : (cenario.elementos || []).map((elemento) => ({
+        rot: elemento.rot,
+        ok: elemento.termos.some((termo) => bateTermo(base, termo)),
+        sourceRefs: [],
+      }));
   return {
     els,
     tocados: els.filter((elemento) => elemento.ok).length,
@@ -221,6 +254,8 @@ export function criarCatalogoLaboratorio(scenarios = [], grupos = []) {
           ...(scenario.facts || []),
           ...(scenario.evidence || []),
           ...(scenario.ausentes || []),
+          scenario.evidenceTask?.prompt,
+          scenario.openTask?.prompt,
         ].join(' ')),
       }))
   ));
@@ -286,7 +321,8 @@ export function conteudoAjudaLaboratorio(scenario, level = 0) {
       ? (scenario?.questions || []).map((question) => question[0])
       : [],
     criteria: safeLevel >= 3
-      ? (scenario?.elementos || []).map((element) => element.rot)
+      ? (scenario?.openTask?.criteria || scenario?.elementos || [])
+        .map((element) => element.label || element.rot)
       : [],
   };
 }
@@ -337,17 +373,41 @@ export function calcularIndicadoresLaboratorio({
   minimoEvidencias,
   elementosDetectados,
   totalElementos,
+  classificacoesAlinhadas = 0,
+  totalClassificacoes = 0,
+  tarefaAberta = false,
 }) {
   const rubrica = {
     decisions: percentual(decisoesAlinhadas, totalDecisoes),
     evidence: Math.min(100, percentual(evidenciasRegistradas, minimoEvidencias)),
     reasoning: percentual(elementosDetectados, totalElementos),
+    ...(totalClassificacoes > 0
+      ? { classification: percentual(classificacoesAlinhadas, totalClassificacoes) }
+      : {}),
   };
+  const componentesObjetivo = {
+    decisions: rubrica.decisions,
+    ...(totalClassificacoes > 0 ? { classification: rubrica.classification } : {}),
+    ...(tarefaAberta ? { openTask: rubrica.reasoning } : {}),
+  };
+  const valoresObjetivo = Object.values(componentesObjetivo);
+  const indiceCompletude = totalClassificacoes > 0
+    ? Math.round(
+        rubrica.decisions * 0.3
+        + rubrica.evidence * 0.2
+        + rubrica.reasoning * 0.3
+        + rubrica.classification * 0.2
+      )
+    : Math.round(
+        rubrica.decisions * 0.4 + rubrica.evidence * 0.2 + rubrica.reasoning * 0.4
+      );
   return {
     rubrica,
-    indiceCompletude: Math.round(
-      rubrica.decisions * 0.4 + rubrica.evidence * 0.2 + rubrica.reasoning * 0.4,
-    ),
+    componentesObjetivo,
+    objetivoPercentual: valoresObjetivo.length
+      ? Math.round(valoresObjetivo.reduce((total, value) => total + value, 0) / valoresObjetivo.length)
+      : 0,
+    indiceCompletude,
   };
 }
 
@@ -551,6 +611,71 @@ function DecisionReview({ scenario, answers, lessonMap }) {
   );
 }
 
+function conclusaoCompativelComTarefa(registro, scenario) {
+  if (!conclusaoLaboratorioValida(registro)) return false;
+  const revisaoAtual = Number(scenario?.taskRevision) || 0;
+  return revisaoAtual === 0 || Number(registro.taskRevision) === revisaoAtual;
+}
+
+function EvidenceClassificationReview({ scenario, classifications, lessonMap }) {
+  const task = scenario.evidenceTask;
+  if (!task) return null;
+  const choiceLabels = new Map(task.choices.map((choice) => [choice.id, choice.label]));
+  return (
+    <section className="lab-classification-review" aria-label="Revisão da classificação das evidências">
+      <h4>Uso das evidências</h4>
+      <p>{task.prompt}</p>
+      <ol>
+        {task.items.map((item) => {
+          const title = scenario.evidence[item.evidenceIndex];
+          const learner = classifications[title];
+          const aligned = learner === item.expectedUse;
+          const sources = item.sourceRefs
+            .map((sectionId) => getPopLabSource(
+              sectionId,
+              `lab-task-${scenario.id}-e${item.evidenceIndex + 1}-${sectionId}`,
+            ))
+            .filter(Boolean);
+          return (
+            <li key={title}>
+              <div>
+                <strong>{title}</strong>
+                <b className={aligned ? 'correct' : 'incorrect'}>
+                  {aligned ? 'Alinhada' : 'Revisar'}
+                </b>
+              </div>
+              <p>
+                Sua classificação: {choiceLabels.get(learner) || 'não informada'} · esperado: {' '}
+                {choiceLabels.get(item.expectedUse)}.
+              </p>
+              <p>{item.rationale}</p>
+              <details className="lab-source-details">
+                <summary>{sources.length} {sources.length === 1 ? 'fonte' : 'fontes'} no POP</summary>
+                <div className="lab-source-body">
+                  {sources.map((source) => {
+                    const lesson = lessonMap?.get?.(source.sec);
+                    return (
+                      <figure className="lab-source-quote" key={`${scenario.id}-${item.evidenceIndex}-${source.sec}`}>
+                        <blockquote>{source.quote}</blockquote>
+                        <figcaption>
+                          <a href={`#/aula/${encodeURIComponent(source.sec)}`}>
+                            Minuta POP v1.7 · {rotuloAula(lesson, source.sec)}
+                            <ArrowRight aria-hidden="true" />
+                          </a>
+                        </figcaption>
+                      </figure>
+                    );
+                  })}
+                </div>
+              </details>
+            </li>
+          );
+        })}
+      </ol>
+    </section>
+  );
+}
+
 const HELP_LEVELS = [
   {
     action: 'Ver o que observar',
@@ -668,6 +793,7 @@ export default function Laboratorio({
   const [showSummary, setShowSummary] = useState(false);
   const [seenEvidence, setSeenEvidence] = useState({});
   const [evidenceNotes, setEvidenceNotes] = useState({});
+  const [evidenceClassifications, setEvidenceClassifications] = useState({});
   const [activeEvidence, setActiveEvidence] = useState(null);
   const [query, setQuery] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('todas');
@@ -699,8 +825,8 @@ export default function Laboratorio({
       if (normalizarRascunhoLaboratorio(saved, entry.scenario)) {
         summary.inProgress += 1;
       } else if (
-        conclusaoLaboratorioValida(saved)
-        || (saved && saved.status == null)
+        conclusaoCompativelComTarefa(saved, entry.scenario)
+        || (saved && saved.status == null && !entry.scenario.taskRevision)
       ) {
         summary.completed += 1;
       }
@@ -725,12 +851,20 @@ export default function Laboratorio({
     return [...presentes.values()].sort((a, b) => a.ordem - b.ordem);
   }, [catalog]);
   const helpLevel = helpLevels[selected] || 0;
-  const requiresAllEvidence = ['Avançado', 'Especialista'].includes(group?.nivel);
+  const measuredLevel = nivelDoCaso(scenario);
+  const requiresAllEvidence = measuredLevel.ordem >= 4;
   const minimumEvidence = requiresAllEvidence
     ? scenario.evidence.length
     : minimumEvidenceRequired(scenario);
   const answered = Object.keys(answers).length;
   const score = scenario.questions.filter((question, index) => answers[index] === question[1]).length;
+  const classificationItems = scenario.evidenceTask?.items || [];
+  const classifiedCount = classificationItems.filter((item) => (
+    evidenceClassifications[scenario.evidence[item.evidenceIndex]]
+  )).length;
+  const classificationScore = classificationItems.filter((item) => (
+    evidenceClassifications[scenario.evidence[item.evidenceIndex]] === item.expectedUse
+  )).length;
   const reviewedEvidence = scenario.evidence.filter(
     (title) => seenEvidence[title] && (evidenceNotes[title] || '').trim().length >= 40,
   );
@@ -739,8 +873,9 @@ export default function Laboratorio({
     () => conferirElementos(scenario, reason),
     [scenario, reason],
   );
-  const minimumReasonLength = 180;
+  const minimumReasonLength = scenario.openTask?.minCharacters || 180;
   const ready = answered === scenario.questions.length
+    && (!classificationItems.length || classifiedCount === classificationItems.length)
     && reviewedCount >= minimumEvidence
     && reason.trim().length >= minimumReasonLength;
   const nextUnanswered = scenario.questions.findIndex((_, index) => !answers[index]);
@@ -751,6 +886,12 @@ export default function Laboratorio({
       done: answered === scenario.questions.length,
       percent: percentual(answered, scenario.questions.length),
     },
+    ...(classificationItems.length ? [{
+      label: 'Classificar o uso das evidências',
+      detail: `${classifiedCount}/${classificationItems.length}`,
+      done: classifiedCount === classificationItems.length,
+      percent: percentual(classifiedCount, classificationItems.length),
+    }] : []),
     {
       label: 'Analisar as evidências mínimas',
       detail: `${reviewedCount}/${minimumEvidence}`,
@@ -764,14 +905,22 @@ export default function Laboratorio({
       percent: Math.min(100, percentual(reason.trim().length, minimumReasonLength)),
     },
   ];
+  const completedReadiness = readiness.filter((item) => item.done).length;
 
-  const { rubrica: rubric, indiceCompletude: rubricTotal } = calcularIndicadoresLaboratorio({
+  const {
+    rubrica: rubric,
+    indiceCompletude: rubricTotal,
+    objetivoPercentual,
+  } = calcularIndicadoresLaboratorio({
     decisoesAlinhadas: score,
     totalDecisoes: scenario.questions.length,
     evidenciasRegistradas: reviewedCount,
     minimoEvidencias: minimumEvidence,
     elementosDetectados: conference.tocados,
     totalElementos: conference.total,
+    classificacoesAlinhadas: classificationScore,
+    totalClassificacoes: classificationItems.length,
+    tarefaAberta: Boolean(scenario.openTask),
   });
 
   useEffect(() => {
@@ -787,23 +936,24 @@ export default function Laboratorio({
   useLayoutEffect(() => {
     const saved = state.labs?.[selected];
     const draft = normalizarRascunhoLaboratorio(saved, scenario);
-    const source = draft || saved;
+    const currentConclusion = conclusaoCompativelComTarefa(saved, scenario);
+    const source = draft || (currentConclusion ? saved : null);
     const savedAnswers = draft?.respostas
-      || (saved?.versao >= 3 && saved?.respostas
+      || (currentConclusion && saved?.respostas
         ? saved.respostas
         : {});
     setAnswers(savedAnswers);
     setReason(source?.texto || '');
     setShowResult(Boolean(
       !draft
-      && saved?.versao >= 3
-      && saved?.status === 'concluido',
+      && currentConclusion,
     ));
     setShowSummary(false);
     setSeenEvidence(Object.fromEntries(
       (source?.evidenciasConsultadas || []).map((title) => [title, true]),
     ));
     setEvidenceNotes(source?.evidenciasAnotadas || {});
+    setEvidenceClassifications(source?.classificacoesEvidencias || {});
     setActiveEvidence(null);
     evidenceTriggerRef.current = null;
     setMode(source?.modo === 'desafio' ? 'desafio' : 'guiado');
@@ -811,7 +961,7 @@ export default function Laboratorio({
       ...current,
       [selected]: Math.max(0, Math.min(3, source?.nivelAjuda || 0)),
     }));
-  }, [selected]);
+  }, [scenario, selected]);
 
   useEffect(() => {
     if (!activeEvidence) return undefined;
@@ -871,6 +1021,7 @@ export default function Laboratorio({
       reason: patch.reason ?? reason,
       seenEvidence: patch.seenEvidence ?? seenEvidence,
       evidenceNotes: patch.evidenceNotes ?? evidenceNotes,
+      evidenceClassifications: patch.evidenceClassifications ?? evidenceClassifications,
       mode: patch.mode ?? mode,
       helpLevel: patch.helpLevel ?? helpLevel,
       atualizadoEm,
@@ -916,12 +1067,14 @@ export default function Laboratorio({
     const nextAnswers = {};
     const nextSeenEvidence = {};
     const nextEvidenceNotes = {};
+    const nextEvidenceClassifications = {};
     setAnswers(nextAnswers);
     setReason('');
     setShowResult(false);
     setShowSummary(false);
     setSeenEvidence(nextSeenEvidence);
     setEvidenceNotes(nextEvidenceNotes);
+    setEvidenceClassifications(nextEvidenceClassifications);
     setActiveEvidence(null);
     setMode('guiado');
     setHelpLevels((current) => ({ ...current, [selected]: 0 }));
@@ -930,6 +1083,7 @@ export default function Laboratorio({
       reason: '',
       seenEvidence: nextSeenEvidence,
       evidenceNotes: nextEvidenceNotes,
+      evidenceClassifications: nextEvidenceClassifications,
       mode: 'guiado',
       helpLevel: 0,
     });
@@ -972,6 +1126,15 @@ export default function Laboratorio({
     salvarRascunho({ evidenceNotes: nextEvidenceNotes });
   }
 
+  function classificarEvidencia(title, value) {
+    const nextClassifications = {
+      ...evidenceClassifications,
+      [title]: value,
+    };
+    setEvidenceClassifications(nextClassifications);
+    salvarRascunho({ evidenceClassifications: nextClassifications });
+  }
+
   function finish() {
     if (!ready) return;
     const now = new Date().toISOString();
@@ -990,9 +1153,14 @@ export default function Laboratorio({
         evidenciasAnotadas: Object.fromEntries(
           Object.entries(evidenceNotes).filter(([, value]) => value.trim().length >= 40),
         ),
+        classificacoesEvidencias: { ...evidenceClassifications },
+        classificacoesAlinhadas: classificationScore,
+        classificacoesTotal: classificationItems.length,
         rubrica: rubric,
         rubricaTotal: rubricTotal,
         indiceCompletude: rubricTotal,
+        objetivoPercentual,
+        taskRevision: scenario.taskRevision || 0,
         conferenciaTecnicaPendente: true,
         modo: mode,
         apoioUtilizado: helpLevel > 0,
@@ -1158,8 +1326,8 @@ export default function Laboratorio({
             {filteredCatalog.map(({ scenario: candidate, group: candidateGroup, nivel: candidateNivel }, index) => {
               const saved = state.labs?.[candidate.id];
               const draft = normalizarRascunhoLaboratorio(saved, candidate);
-              const practiced = conclusaoLaboratorioValida(saved)
-                || Boolean(saved && saved.status == null);
+              const practiced = conclusaoCompativelComTarefa(saved, candidate)
+                || Boolean(saved && saved.status == null && !candidate.taskRevision);
               const isSelected = selected === candidate.id;
               return (
                 <li key={candidate.id}>
@@ -1363,22 +1531,50 @@ export default function Laboratorio({
               <h3>Evidências disponíveis</h3>
               <p className="evidence-instruction">
                 Abra e confronte ao menos {minimumEvidence} {minimumEvidence === 1 ? 'peça' : 'peças'}
-                {requiresAllEvidence ? ' — nos níveis avançado e especialista, todas são obrigatórias.' : '.'}
+                {requiresAllEvidence ? ` — no nível ${measuredLevel.titulo}, todas são obrigatórias.` : '.'}
               </p>
-              {scenario.evidence.map((title, index) => (
-                <button
-                  type="button"
-                  key={title}
-                  className={seenEvidence[title] ? 'seen' : ''}
-                  aria-expanded={activeEvidence?.title === title}
-                  aria-controls={`evidence-panel-${scenario.id}`}
-                  onClick={(event) => openEvidence(title, index, event.currentTarget)}
-                >
-                  <FileText aria-hidden="true" />
-                  <span>{title}<small>{reviewedEvidence.includes(title) ? 'Análise registrada' : seenEvidence[title] ? 'Aberta · falta registrar a análise' : 'Documento sintético do cenário'}</small></span>
-                  {reviewedEvidence.includes(title) ? <CheckCircle2 aria-hidden="true" /> : <Eye aria-hidden="true" />}
-                </button>
-              ))}
+              {scenario.evidenceTask && (
+                <aside className="lab-evidence-task" role="note">
+                  <strong>Classifique antes de concluir</strong>
+                  <p>{scenario.evidenceTask.prompt}</p>
+                </aside>
+              )}
+              {scenario.evidence.map((title, index) => {
+                const taskItem = scenario.evidenceTask?.items.find(
+                  (item) => item.evidenceIndex === index,
+                );
+                return (
+                  <div className="lab-evidence-item" key={title}>
+                    <button
+                      type="button"
+                      className={seenEvidence[title] ? 'seen' : ''}
+                      aria-expanded={activeEvidence?.title === title}
+                      aria-controls={`evidence-panel-${scenario.id}`}
+                      onClick={(event) => openEvidence(title, index, event.currentTarget)}
+                    >
+                      <FileText aria-hidden="true" />
+                      <span>{title}<small>{reviewedEvidence.includes(title) ? 'Análise registrada' : seenEvidence[title] ? 'Aberta · falta registrar a análise' : 'Documento sintético do cenário'}</small></span>
+                      {reviewedEvidence.includes(title) ? <CheckCircle2 aria-hidden="true" /> : <Eye aria-hidden="true" />}
+                    </button>
+                    {taskItem && (
+                      <label htmlFor={`lab-evidence-use-${scenario.id}-${index}`}>
+                        <span>Como esta peça pode ser usada?</span>
+                        <select
+                          id={`lab-evidence-use-${scenario.id}-${index}`}
+                          value={evidenceClassifications[title] || ''}
+                          disabled={showResult}
+                          onChange={(event) => classificarEvidencia(title, event.target.value)}
+                        >
+                          <option value="">Escolha uma classificação</option>
+                          {scenario.evidenceTask.choices.map((choice) => (
+                            <option value={choice.id} key={choice.id}>{choice.label}</option>
+                          ))}
+                        </select>
+                      </label>
+                    )}
+                  </div>
+                );
+              })}
               <EvidenceDocument
                 document={activeEvidence}
                 note={activeEvidence ? evidenceNotes[activeEvidence.title] || '' : ''}
@@ -1438,7 +1634,15 @@ export default function Laboratorio({
             <h2>Fundamente a decisão</h2>
             <p>Relacione evidência, fundamento, consequência técnica, incerteza e encaminhamento.</p>
           </div>
-          <label className="lab-reason-label" htmlFor="lab-reason">Fundamentação do caso</label>
+          {scenario.openTask && (
+            <div className="lab-open-task" role="note">
+              <strong>Produto escrito deste caso</strong>
+              <p>{scenario.openTask.prompt}</p>
+            </div>
+          )}
+          <label className="lab-reason-label" htmlFor="lab-reason">
+            {scenario.openTask ? 'Resposta à tarefa aberta' : 'Fundamentação do caso'}
+          </label>
           <textarea
             id="lab-reason"
             value={reason}
@@ -1465,8 +1669,8 @@ export default function Laboratorio({
           </div>
 
           <p className="lab-readiness-note" aria-live="polite">
-            <span>{ready ? 'Pronto para debriefing' : 'Complete os três critérios para finalizar'}</span>
-            <span>{ready ? '100%' : `${[answered === scenario.questions.length, reviewedCount >= minimumEvidence, reason.trim().length >= minimumReasonLength].filter(Boolean).length}/3`}</span>
+            <span>{ready ? 'Pronto para debriefing' : 'Complete os critérios para finalizar'}</span>
+            <span>{ready ? '100%' : `${completedReadiness}/${readiness.length}`}</span>
           </p>
 
           <button type="button" className="primary" disabled={!ready || showResult} onClick={finish}>
@@ -1485,9 +1689,21 @@ export default function Laboratorio({
               <h3>{rubricTotal}% dos critérios automatizáveis registrados</h3>
               <p>{scenario.outcome}</p>
               <div className="lab-rubric">
-                <div><span>Decisões alinhadas · peso 40%</span><b>{rubric.decisions}%</b></div>
+                <div>
+                  <span>Decisões alinhadas · peso {classificationItems.length > 0 ? '30%' : '40%'}</span>
+                  <b>{rubric.decisions}%</b>
+                </div>
                 <div><span>Evidências com registro mínimo · peso 20%</span><b>{rubric.evidence}%</b></div>
-                <div><span>Indícios textuais encontrados · peso 40%</span><b>{rubric.reasoning}%</b></div>
+                <div>
+                  <span>Indícios textuais encontrados · peso {classificationItems.length > 0 ? '30%' : '40%'}</span>
+                  <b>{rubric.reasoning}%</b>
+                </div>
+                {classificationItems.length > 0 && (
+                  <div>
+                    <span>Classificações de evidência alinhadas · peso 20%</span>
+                    <b>{rubric.classification}%</b>
+                  </div>
+                )}
               </div>
               <p className="fund-nota">
                 Este índice mede respostas objetivas e presença/completude observável. Não avalia
@@ -1498,14 +1714,33 @@ export default function Laboratorio({
                 answers={answers}
                 lessonMap={lessonMap}
               />
-              {scenario.elementos && (
+              <EvidenceClassificationReview
+                scenario={scenario}
+                classifications={evidenceClassifications}
+                lessonMap={lessonMap}
+              />
+              {conference.total > 0 && (
                 <div className="fund-check">
                   <strong>Sua fundamentação mencionou {conference.tocados} de {conference.total} elementos esperados</strong>
                   <ul>
                     {conference.els.map((element) => (
                       <li key={element.rot} className={element.ok ? 'ok' : ''}>
                         {element.ok ? <Check aria-hidden="true" size={14} /> : <Circle aria-hidden="true" size={14} />}
-                        <span>{element.rot}</span>
+                        <span>
+                          {element.rot}
+                          {element.sourceRefs?.length > 0 && (
+                            <small>
+                              {element.sourceRefs.map((sourceId, index) => (
+                                <React.Fragment key={sourceId}>
+                                  {index > 0 ? ' · ' : ''}
+                                  <a href={`#/aula/${encodeURIComponent(sourceId)}`}>
+                                    {rotuloAula(lessonMap?.get?.(sourceId), sourceId)}
+                                  </a>
+                                </React.Fragment>
+                              ))}
+                            </small>
+                          )}
+                        </span>
                       </li>
                     ))}
                   </ul>

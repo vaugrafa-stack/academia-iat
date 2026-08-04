@@ -117,6 +117,12 @@ const PRECACHE = ${JSON.stringify(precache)};
 const REVISOES_MIDIA = ${JSON.stringify(revisoesMidia)};
 const INDEX_URL = new URL(BASE + 'index.html', self.location.origin).href;
 const META_MIDIA_URL = new URL(BASE + '__pwa/revisoes-midia.json', self.location.origin).href;
+// navigator.onLine pode voltar a true numa pagina que acabou de nascer de
+// um fallback do Service Worker (isso ocorre inclusive no Chromium). O estado
+// observado pela navegacao network-first e mais fiel e pode ser consultado
+// pela interface logo depois do carregamento.
+let ULTIMA_CONEXAO_DA_NAVEGACAO = null;
+let ULTIMA_CONEXAO_DA_NAVEGACAO_EM = null;
 
 function serializarErro(erro, codigoPadrao) {
   const nome = erro && erro.name ? String(erro.name) : '';
@@ -330,6 +336,8 @@ async function estadoDosCaches(urlConsultada, urlsConsultadas) {
   return {
     versao: VERSAO,
     base: BASE,
+    conexaoDaUltimaNavegacao: ULTIMA_CONEXAO_DA_NAVEGACAO,
+    conexaoDaUltimaNavegacaoEm: ULTIMA_CONEXAO_DA_NAVEGACAO_EM,
     nucleoPronto: Boolean(await cacheNucleo.match(INDEX_URL, { ignoreVary: true })),
     cacheDaAplicacao: nomes.filter((nome) => nome.startsWith(CACHE_PREFIX)),
     midia: {
@@ -462,6 +470,8 @@ self.addEventListener('fetch', (evento) => {
     evento.respondWith((async () => {
       try {
         const resposta = await fetch(request);
+        ULTIMA_CONEXAO_DA_NAVEGACAO = 'online';
+        ULTIMA_CONEXAO_DA_NAVEGACAO_EM = Date.now();
         const tipo = resposta.headers.get('content-type') || '';
         if (resposta.ok && ehEntradaDaAplicacao(url) && tipo.includes('text/html')) {
           try {
@@ -479,6 +489,8 @@ self.addEventListener('fetch', (evento) => {
         }
         return resposta;
       } catch {
+        ULTIMA_CONEXAO_DA_NAVEGACAO = 'offline';
+        ULTIMA_CONEXAO_DA_NAVEGACAO_EM = Date.now();
         const cache = await caches.open(CACHE_NUCLEO);
         return (await cache.match(INDEX_URL, { ignoreVary: true })) ||
           new Response('<!doctype html><html lang="pt-BR"><title>Academia IAT indisponível</title><p>O núcleo offline ainda não foi concluído. Reconecte-se e tente novamente.</p>', {

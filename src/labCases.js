@@ -161,7 +161,7 @@ export const NOVOS_CENARIOS = [
     ],
     evidence: [
       'Documentação setorial vigente da ANEEL',
-      'Manifestação do IPHAN e processo no SEI',
+      'Manifestação do IPHAN referente a fase e ADA diferentes das atuais',
       'IN IPHAN nº 06/2025 e fluxo do SAIP',
       'Anuência municipal',
     ],
@@ -514,6 +514,141 @@ export const NOVOS_CENARIOS = [
 // ordenam do primeiro contato ao julgamento que exige experiência.
 //
 // O nível descreve a EXIGÊNCIA do caso, não o tempo de casa de quem resolve.
+// Tarefas que realmente diferenciam a complexidade dos casos. A classificacao
+// fica separada de `evidence`, cujos titulos sao chaves estaveis no rascunho,
+// na busca e na exportacao. `openTask` mantem as decisoes binarias intactas e
+// transforma a fundamentacao em um produto escrito especifico.
+const EVIDENCE_TASK_CHOICES = [
+  { id: 'direta', label: 'Serve diretamente à análise' },
+  { id: 'condicional', label: 'Serve após conferência' },
+  { id: 'historica', label: 'Serve apenas como histórico' },
+  { id: 'metodologica', label: 'Orienta o método, mas não prova o caso' },
+  { id: 'inapta', label: 'Não serve como prova do ponto analisado' },
+];
+
+// Incrementar quando a tarefa, o gabarito ou a rubrica mudar de modo que uma
+// conclusão anterior deixe de demonstrar os objetivos atuais.
+export const LAB_TASK_REVISION = 1;
+
+export const TAREFAS_LAB = {
+  escopo: {
+    evidenceTask: {
+      prompt: 'Classifique cada fonte conforme sua utilidade para fundamentar a exigência documental proposta.',
+      choices: EVIDENCE_TASK_CHOICES,
+      items: [
+        { evidenceIndex: 0, expectedUse: 'metodologica', distrator: true, rationale: 'O POP organiza o método, mas não cria exigência documental autônoma.', sourceRefs: ['pop-section-003'] },
+        { evidenceIndex: 1, expectedUse: 'direta', rationale: 'A norma e o Termo de Referência pertinentes podem fundamentar a exigência, após confirmação de vigência e aplicação ao caso.', sourceRefs: ['pop-section-003'] },
+        { evidenceIndex: 2, expectedUse: 'condicional', rationale: 'O histórico do SGA ajuda a fixar objeto e fatos processuais, mas precisa ser confrontado com os documentos do pedido.', sourceRefs: ['pop-section-003'] },
+        { evidenceIndex: 3, expectedUse: 'condicional', rationale: 'A consulta verifica existência e compatibilidade dos atos setoriais; o licenciamento não substitui a decisão do órgão competente.', sourceRefs: ['pop-section-004'] },
+      ],
+    },
+  },
+  las: {
+    evidenceTask: {
+      prompt: 'Classifique o que identifica o pedido e o que realmente permite analisar enquadramento e localização.',
+      choices: EVIDENCE_TASK_CHOICES,
+      items: [
+        { evidenceIndex: 0, expectedUse: 'condicional', rationale: 'O requerimento identifica a modalidade pretendida, mas não comprova sozinho que os critérios de LAS foram atendidos.', sourceRefs: ['pop-section-022', 'pop-section-032'] },
+        { evidenceIndex: 1, expectedUse: 'inapta', distrator: true, rationale: 'Um ponto isolado não delimita o arranjo nem permite analisar ADA, APP, supressão e interferências.', sourceRefs: ['pop-section-019', 'pop-section-078'] },
+        { evidenceIndex: 2, expectedUse: 'condicional', rationale: 'O Memorial deve ser confrontado com geometrias completas e com os demais critérios de enquadramento.', sourceRefs: ['pop-section-022', 'pop-section-028'] },
+        { evidenceIndex: 3, expectedUse: 'condicional', rationale: 'A anuência municipal é complementar e não sana a insuficiência cartográfica nem comprova a elegibilidade da modalidade.', sourceRefs: ['pop-section-028'] },
+      ],
+    },
+  },
+  'cp-antiga': {
+    evidenceTask: {
+      prompt: 'Separe o que serve apenas ao histórico do que pode fundamentar o enquadramento atual.',
+      choices: EVIDENCE_TASK_CHOICES,
+      items: [
+        { evidenceIndex: 0, expectedUse: 'historica', distrator: true, rationale: 'A Consulta Prévia vencida integra o histórico, mas não vincula o enquadramento atual nem equivale à aprovação de viabilidade.', sourceRefs: ['pop-section-024', 'pop-section-006'] },
+        { evidenceIndex: 1, expectedUse: 'direta', rationale: 'O Memorial atualizado descreve o objeto atual e precisa ser conferido na análise da LP.', sourceRefs: ['pop-section-018'] },
+        { evidenceIndex: 2, expectedUse: 'direta', rationale: 'A matriz vigente orienta o enquadramento atual, considerada a data do protocolo e a regra de transição.', sourceRefs: ['pop-section-005', 'pop-section-006'] },
+        { evidenceIndex: 3, expectedUse: 'historica', rationale: 'O histórico permite registrar atos anteriores e motivar a transição, sem transformar ato vencido em direito atual.', sourceRefs: ['pop-section-006', 'pop-section-018'] },
+      ],
+    },
+  },
+  triagem: {
+    evidenceTask: {
+      prompt: 'Classifique as peças quanto à correspondência com o empreendimento e à utilidade para o mérito atual.',
+      choices: EVIDENCE_TASK_CHOICES,
+      items: [
+        { evidenceIndex: 0, expectedUse: 'direta', rationale: 'Requerimento e capa fixam o objeto e a identidade do protocolo que deve ser analisado.', sourceRefs: ['pop-section-017'] },
+        { evidenceIndex: 1, expectedUse: 'condicional', rationale: 'Estudo antigo só é aproveitável depois de demonstrada compatibilidade com projeto, fase, área de influência e realidade atual.', sourceRefs: ['pop-section-019'] },
+        { evidenceIndex: 2, expectedUse: 'inapta', distrator: true, rationale: 'O anexo de outro empreendimento e corpo hídrico não sustenta o mérito atual; ele demonstra uma inconsistência geralmente crítica.', sourceRefs: ['pop-section-019'] },
+        { evidenceIndex: 3, expectedUse: 'direta', rationale: 'SGA e e-Protocolo permitem conferir histórico, titularidade e correspondência entre os atos do processo.', sourceRefs: ['pop-section-017', 'pop-section-048'] },
+      ],
+    },
+  },
+  intervenientes: {
+    evidenceTask: {
+      prompt: 'Classifique quais peças correspondem ao objeto atual e quais exigem atualização ou complementação.',
+      choices: EVIDENCE_TASK_CHOICES,
+      items: [
+        { evidenceIndex: 0, expectedUse: 'condicional', rationale: 'A documentação setorial é útil quando estiver vigente e compatível com titular, potência e fase da CGH.', sourceRefs: ['pop-section-082'] },
+        { evidenceIndex: 1, expectedUse: 'inapta', distrator: true, rationale: 'Manifestação referente a outra fase e outra ADA não sustenta o caso atual sem verificação de compatibilidade e atualização.', sourceRefs: ['pop-section-082'] },
+        { evidenceIndex: 2, expectedUse: 'metodologica', rationale: 'A norma e o fluxo do SAIP orientam o procedimento, mas não equivalem à FCA nem à manifestação produzida para o caso.', sourceRefs: ['pop-section-083'] },
+        { evidenceIndex: 3, expectedUse: 'condicional', rationale: 'A anuência municipal genérica precisa ser confrontada com o empreendimento, a fase, a ADA e o arranjo atuais.', sourceRefs: ['pop-section-082'] },
+      ],
+    },
+  },
+  condicionantes: {
+    openTask: {
+      prompt: 'Redija o encaminhamento técnico do caso. Explique por que a condicionante genérica deve ser reescrita ou suprimida, por que a pendência crítica deve retornar à diligência, como consolidar as solicitações e em que condição a compensação poderia ser analisada. Não crie prazo, indicador ou dado inexistente no cenário.',
+      minCharacters: 240,
+      requiredEvidenceIndexes: [0, 1, 2, 3],
+      criteria: [
+        { id: 'qualidade', label: 'Qualidade mensurável e verificável da condicionante', requiredConceptGroups: [['condicionante'], ['prazo', 'indicador', 'comprovação', 'comprovacao']], sourceRefs: ['pop-section-094', 'pop-section-095'] },
+        { id: 'critica', label: 'Pendência crítica tratada antes do deferimento', requiredConceptGroups: [['pendência crítica', 'pendencia critica'], ['diligência', 'diligencia', 'antes do deferimento']], sourceRefs: ['pop-section-095'] },
+        { id: 'consolidacao', label: 'Diligência consolidada, em regra de uma única vez', requiredConceptGroups: [['consolidada', 'consolidadas'], ['única vez', 'unica vez', 'art. 48']], sourceRefs: ['pop-section-092'] },
+        { id: 'compensacao', label: 'Compensação condicionada à demonstração do impacto residual', requiredConceptGroups: [['compensação', 'compensacao'], ['impacto residual', 'não mitigável', 'nao mitigavel']], sourceRefs: ['pop-section-153'] },
+        { id: 'encaminhamento', label: 'Consequência técnica e encaminhamento proporcional', requiredConceptGroups: [['lacuna sanável', 'lacuna sanavel', 'diligência', 'diligencia'], ['não é resposta automática', 'nao e resposta automatica', 'manifestação não favorável', 'manifestacao nao favoravel']], sourceRefs: ['pop-section-098'] },
+      ],
+    },
+  },
+  revisao: {
+    openTask: {
+      prompt: 'Redija uma nota de revisão pré-assinatura distinguindo impedimentos à assinatura, correções documentais e controle visual final. Indique o que precisa ser corrigido e por que a peça permanece como minuta.',
+      minCharacters: 240,
+      requiredEvidenceIndexes: [0, 1, 2, 3],
+      criteria: [
+        { id: 'residuo', label: 'Resíduo de outro processo eliminado', requiredConceptGroups: [['outro empreendimento', 'outro processo'], ['eliminar', 'elimina', 'remover']], sourceRefs: ['pop-section-108'] },
+        { id: 'coordenadas', label: 'Coordenadas completas e reproduzíveis', requiredConceptGroups: [['coordenadas', 'coordenada'], ['sistema'], ['zona'], ['datum']], sourceRefs: ['pop-section-103'] },
+        { id: 'arquivo', label: 'Arquivo institucional original preservado', requiredConceptGroups: [['original', 'cópia fiel', 'copia fiel'], ['cabeçalho', 'cabecalho', 'rodapé', 'rodape', 'layout']], sourceRefs: ['pop-section-100'] },
+        { id: 'minuta', label: 'Status de minuta e responsáveis identificados', requiredConceptGroups: [['minuta'], ['elaboração', 'elaboracao'], ['revisão', 'revisao'], ['aprovação', 'aprovacao']], sourceRefs: ['pop-section-099', 'pop-section-106'] },
+        { id: 'visual', label: 'Controle visual de todas as páginas', requiredConceptGroups: [['renderizado', 'renderizar', 'pdf'], ['páginas', 'paginas'], ['inspecionadas', 'inspecionar']], sourceRefs: ['pop-section-107'] },
+      ],
+    },
+  },
+  integrador: {
+    openTask: {
+      prompt: 'Redija a conclusão da Informação Técnica separando situação documental, compatibilidade locacional, condicionantes da LP e encaminhamento. Explique por que “apresentado” não significa “suficiente” e por que a restrição do Plano de Manejo não pode ser adiada como condicionante.',
+      minCharacters: 280,
+      requiredEvidenceIndexes: [0, 1, 2, 3],
+      criteria: [
+        { id: 'suficiencia', label: 'Documento apresentado separado de documento suficiente', requiredConceptGroups: [['apresentado', 'apresentados'], ['suficiente', 'suficiência', 'suficiencia']], sourceRefs: ['pop-section-089', 'pop-section-105'] },
+        { id: 'territorio', label: 'Restrição territorial tratada como compatibilidade locacional', requiredConceptGroups: [['plano de manejo'], ['compatibilidade locacional', 'restrição material', 'restricao material'], ['condicionante']], sourceRefs: ['pop-section-095', 'pop-section-123'] },
+        { id: 'lp', label: 'Condicionantes da LP dependem de evidência', requiredConceptGroups: [['condicionantes da lp', 'condicionante da lp'], ['evidência', 'evidencia'], ['cumpridas', 'atendidas']], sourceRefs: ['pop-section-037'] },
+        { id: 'modelos', label: 'Modelos adaptados ao caso concreto', requiredConceptGroups: [['modelos', 'modelo', 'anexos'], ['adaptados', 'adaptado'], ['caso concreto']], sourceRefs: ['pop-section-110', 'pop-section-111', 'pop-section-123'] },
+        { id: 'produto', label: 'Checklist e Informação Técnica com funções distintas', requiredConceptGroups: [['checklist'], ['informação técnica', 'informacao tecnica'], ['interpreta', 'consequência', 'consequencia']], sourceRefs: ['pop-section-090'] },
+      ],
+    },
+  },
+  delegado: {
+    openTask: {
+      prompt: 'Redija a abertura e a conclusão da análise de competência deste pedido de RLO. Registre o que pode ser afirmado, o que permanece pendente de validação e os efeitos da ausência de confirmação da vigência e do objeto do ACT.',
+      minCharacters: 300,
+      requiredEvidenceIndexes: [0, 1, 2, 3],
+      criteria: [
+        { id: 'competencia', label: 'Competência e transição analisadas antes do mérito', requiredConceptGroups: [['competência', 'competencia'], ['320 mw', '300 mw', '8.437'], ['transição', 'transicao']], sourceRefs: ['pop-section-151'] },
+        { id: 'delegacao', label: 'Delegação não convertida em competência estadual originária', requiredConceptGroups: [['act', 'delegação', 'delegacao'], ['não converte', 'nao converte'], ['estadual originário', 'estadual originario']], sourceRefs: ['pop-section-132'] },
+        { id: 'limites', label: 'Objeto, vigência e fases do ACT confirmados ou ressalvados', requiredConceptGroups: [['objeto'], ['vigência', 'vigencia'], ['fases', 'fase'], ['pendente de validação', 'pendente de validacao']], sourceRefs: ['pop-section-145'] },
+        { id: 'compensacao', label: 'Compensação sem encaminhamento automático', requiredConceptGroups: [['compensação', 'compensacao'], ['não deve ser direcionada automaticamente', 'nao deve ser direcionada automaticamente', 'não automaticamente', 'nao automaticamente']], sourceRefs: ['pop-section-152'] },
+        { id: 'rtaa', label: 'RTAA e prazo tratados dentro do ACT aplicável', requiredConceptGroups: [['rtaa', 'relatório técnico anual', 'relatorio tecnico anual'], ['31 de março', '31 de marco'], ['ibama']], sourceRefs: ['pop-section-147'] },
+      ],
+    },
+  },
+};
+
 export const GRUPOS_LAB = [
   {
     id: 'fundamentos',

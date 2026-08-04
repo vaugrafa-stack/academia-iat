@@ -7,6 +7,7 @@
 const BASE = `${(import.meta.env.BASE_URL || '/').replace(/\/+$/, '')}/`;
 const TEMPO_LIMITE_MENSAGEM = 30_000;
 const TEMPO_LIMITE_PRONTIDAO = 10_000;
+const INTERVALO_VERIFICACAO_ATUALIZACAO = 6 * 60 * 60_000;
 
 export class ErroOffline extends Error {
   constructor(codigo, mensagem, detalhes) {
@@ -15,6 +16,32 @@ export class ErroOffline extends Error {
     this.codigo = codigo;
     this.detalhes = detalhes;
   }
+}
+
+export function criarAgendadorAtualizacao({
+  registro,
+  agora = () => Date.now(),
+  estaOnline = () => typeof navigator !== 'undefined' && navigator.onLine,
+  intervaloMs = INTERVALO_VERIFICACAO_ATUALIZACAO,
+} = {}) {
+  let ultimaVerificacao = estaOnline() ? agora() : null;
+  return {
+    marcarOffline() {
+      ultimaVerificacao = null;
+    },
+    verificarSeDevido() {
+      const instante = agora();
+      if (!estaOnline() || (ultimaVerificacao !== null &&
+          instante - ultimaVerificacao < intervaloMs)) return false;
+      ultimaVerificacao = instante;
+      Promise.resolve()
+        .then(() => registro.update())
+        .catch(() => {
+          // Verificacao oportunista: a versao ativa continua integra se a rede falhar.
+        });
+      return true;
+    },
+  };
 }
 
 function erroNormalizado(erro, codigo = 'PWA_ERROR') {
@@ -270,8 +297,27 @@ export function registrarOffline({
   const iniciar = async () => {
     try {
       const container = navigator.serviceWorker;
-      const registro = await container.register(`${BASE}sw.js`, { scope: BASE });
+      let registro = await container.getRegistration(BASE);
+      const reutilizouRegistro = Boolean(registro);
+      if (!registro) {
+        try {
+          registro = await container.register(`${BASE}sw.js`, { scope: BASE });
+        } catch (erroRegistro) {
+          // Uma instalacao pode ter terminado entre as duas consultas. Sem um
+          // registro existente, preserve a falha original.
+          registro = await container.getRegistration(BASE);
+          if (!registro) throw erroRegistro;
+        }
+      }
       if (cancelado) return;
+      const agendadorAtualizacao = criarAgendadorAtualizacao({ registro });
+      adicionar(window, 'offline', agendadorAtualizacao.marcarOffline);
+      adicionar(window, 'online', agendadorAtualizacao.verificarSeDevido);
+      adicionar(document, 'visibilitychange', () => {
+        if (document.visibilityState === 'visible') {
+          agendadorAtualizacao.verificarSeDevido();
+        }
+      });
       const avisados = new WeakSet();
       const observados = new WeakSet();
 
@@ -323,6 +369,36 @@ export function registrarOffline({
           ));
         }
       });
+
+      // Em uma recarga servida pelo fallback offline, o Chromium pode criar o
+      // novo documento com navigator.onLine=true. Consulte a navegacao
+      // network-first que o proprio Service Worker acabou de observar para a
+      // barra e o diagnostico de Suporte nao anunciarem uma conexao inexistente.
+      if (onConexao) {
+        try {
+          const estado = await obterEstadoOffline({
+            timeoutMs: 5_000,
+            readyTimeoutMs: 5_000,
+          });
+          const observacaoEm = Number(estado?.conexaoDaUltimaNavegacaoEm);
+          const observacaoRecente = Number.isFinite(observacaoEm) &&
+            Math.abs(Date.now() - observacaoEm) <= 60_000;
+          if (!cancelado && observacaoRecente &&
+              estado?.conexaoDaUltimaNavegacao === 'offline') {
+            agendadorAtualizacao.marcarOffline();
+            onConexao(false);
+          } else if (!cancelado && observacaoRecente &&
+              estado?.conexaoDaUltimaNavegacao === 'online') {
+            onConexao(true);
+            if (reutilizouRegistro) {
+              agendadorAtualizacao.marcarOffline();
+              agendadorAtualizacao.verificarSeDevido();
+            }
+          }
+        } catch {
+          // O indicador inicial baseado no navegador continua sendo o fallback.
+        }
+      }
     } catch (erro) {
       if (!cancelado) onErro?.(erroNormalizado(erro, 'PWA_REGISTER_FAILED'));
     }

@@ -162,6 +162,9 @@ jobs:
           EXPECTED_BUILD_SHA: ${{ github.sha }}
         run: pnpm test:e2e:artifact
 
+      - name: Testar instalacao, atualizacao e suporte offline da PWA
+        run: pnpm test:e2e:pwa
+
       - name: Armazenar dist validado
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:

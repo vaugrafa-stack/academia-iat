@@ -421,6 +421,159 @@
   border-radius: 14px;
 }
 
+/* Cada evidência passou a reunir o documento e, nos casos de aplicação, a
+   classificação de uso. Estes seletores locais preservam o cartão original
+   mesmo com o botão um nível abaixo de `.lab-evidence`. */
+.lab-page .lab-evidence-item {
+  margin-bottom: 8px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface);
+}
+
+.lab-page .lab-evidence-item > button {
+  display: grid;
+  grid-template-columns: 25px minmax(0, 1fr) 18px;
+  align-items: center;
+  gap: 7px;
+  width: 100%;
+  margin: 0;
+  padding: 9px;
+  border: 0;
+  background: var(--surface);
+  color: var(--ink);
+  text-align: left;
+}
+
+.lab-page .lab-evidence-item > button.seen {
+  background: var(--green3);
+}
+
+.lab-page .lab-evidence-item > button:focus-visible,
+.lab-page .lab-evidence-item select:focus-visible {
+  position: relative;
+  z-index: 1;
+  outline: 3px solid #58a9ef;
+  outline-offset: -1px;
+}
+
+.lab-page .lab-evidence-item > label {
+  display: grid;
+  gap: 5px;
+  padding: 9px 10px 10px;
+  border-top: 1px solid var(--line);
+  background: var(--surface2);
+  color: var(--ink2);
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.lab-page .lab-evidence-item select {
+  width: 100%;
+  min-height: 38px;
+  padding: 6px 34px 6px 9px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--surface);
+  color: var(--ink);
+  font: inherit;
+  font-weight: 600;
+}
+
+.lab-evidence-task,
+.lab-open-task {
+  margin: 9px 0 12px;
+  padding: 10px 11px;
+  border: 1px solid color-mix(in srgb, var(--blue) 32%, var(--line));
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--blue) 6%, var(--surface));
+  color: var(--ink2);
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.lab-evidence-task strong,
+.lab-open-task strong {
+  color: var(--ink);
+  font-size: 12px;
+}
+
+.lab-evidence-task p,
+.lab-open-task p {
+  margin: 4px 0 0;
+}
+
+.lab-classification-review {
+  margin-top: 14px;
+  padding-top: 13px;
+  border-top: 1px solid var(--line);
+}
+
+.lab-classification-review > h4 {
+  margin: 0 0 4px;
+  font-size: 14px;
+}
+
+.lab-classification-review > p {
+  margin: 0 0 9px;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.lab-classification-review > ol {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.lab-classification-review > ol > li {
+  padding: 10px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface);
+}
+
+.lab-classification-review > ol > li > div {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.lab-classification-review > ol > li p {
+  margin: 5px 0 0;
+  color: var(--ink2);
+  font-size: 11px;
+  line-height: 1.45;
+}
+
+.lab-classification-review b.correct {
+  color: var(--green);
+}
+
+.lab-classification-review b.incorrect {
+  color: var(--red);
+}
+
+.lab-classification-review b {
+  flex: 0 0 auto;
+  font-size: 10px;
+}
+
+.lab-page .fund-check li > span {
+  display: grid;
+  gap: 3px;
+}
+
+.lab-page .fund-check li > span small {
+  color: var(--muted);
+  font-size: 10px;
+  line-height: 1.4;
+}
+
 .case-header {
   gap: 20px;
 }

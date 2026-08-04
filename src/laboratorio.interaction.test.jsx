@@ -27,6 +27,13 @@ function renderLaboratorio(state, setState, key = 'lab') {
 }
 
 function completionFor(scenario) {
+  const classificacoesEvidencias = Object.fromEntries(
+    (scenario.evidenceTask?.items || []).map((item) => [
+      scenario.evidence[item.evidenceIndex],
+      item.expectedUse,
+    ]),
+  );
+  const elementosTotal = scenario.openTask?.criteria?.length || 0;
   return {
     versao: 3,
     status: 'concluido',
@@ -37,6 +44,7 @@ function completionFor(scenario) {
       scenario.questions.map((question, index) => [index, question[1]]),
     ),
     texto: `${scenario.modelo} ${scenario.modelo}`,
+    taskRevision: scenario.taskRevision || 0,
     evidenciasConsultadas: [...scenario.evidence],
     evidenciasAnotadas: Object.fromEntries(
       scenario.evidence.map((title) => [
@@ -44,8 +52,19 @@ function completionFor(scenario) {
         'Registro anterior com mais de quarenta caracteres para conferência.',
       ]),
     ),
-    rubrica: { decisions: 100, evidence: 100, reasoning: 100 },
+    classificacoesEvidencias,
+    classificacoesAlinhadas: Object.keys(classificacoesEvidencias).length,
+    classificacoesTotal: Object.keys(classificacoesEvidencias).length,
+    elementos: elementosTotal,
+    elementosTotal,
+    rubrica: {
+      decisions: 100,
+      evidence: 100,
+      reasoning: 100,
+      ...(scenario.evidenceTask ? { classification: 100 } : {}),
+    },
     rubricaTotal: 100,
+    objetivoPercentual: 100,
     nivelAjuda: 0,
     modo: 'guiado',
   };
@@ -112,7 +131,7 @@ describe('persistência da tentativa no Laboratório', () => {
     const initialState = { labs: {}, autoaval: {} };
     await act(async () => renderLaboratorio(initialState, vi.fn()));
 
-    const evidenceTrigger = host.querySelector('.lab-evidence > div > button');
+    const evidenceTrigger = host.querySelector('.lab-evidence-item > button');
     expect(evidenceTrigger).toBeTruthy();
     expect(evidenceTrigger.getAttribute('aria-expanded')).toBe('false');
 
@@ -152,14 +171,22 @@ describe('persistência da tentativa no Laboratório', () => {
 
     const firstYes = host.querySelector('#lab-question-0 button');
     await act(async () => click(firstYes));
+    const firstClassification = host.querySelector('.lab-evidence-item select');
+    await act(async () => {
+      firstClassification.value = 'metodologica';
+      firstClassification.dispatchEvent(new Event('change', { bubbles: true }));
+    });
 
     const updater = persist.mock.calls.at(-1)[0];
     const stateWithDraft = updater(initialState);
     expect(stateWithDraft.labs.escopo).toMatchObject({
       status: 'em_andamento',
       rascunho: {
-        versao: 1,
+        versao: 2,
         respostas: { 0: 'sim' },
+        classificacoesEvidencias: {
+          [selectedScenario.evidence[0]]: 'metodologica',
+        },
       },
     });
 
@@ -170,6 +197,7 @@ describe('persistência da tentativa no Laboratório', () => {
       .toContain('Em andamento');
     expect(host.querySelector('#lab-question-0 button')?.getAttribute('aria-pressed'))
       .toBe('true');
+    expect(host.querySelector('.lab-evidence-item select')?.value).toBe('metodologica');
   });
 
   it('inicia de fato uma tentativa vazia sem apagar a conclusão anterior', async () => {
@@ -198,11 +226,12 @@ describe('persistência da tentativa no Laboratório', () => {
     const stateDuringRetry = updater(initialState);
     expect(stateDuringRetry.labs.escopo).toMatchObject(previousCompletion);
     expect(stateDuringRetry.labs.escopo.rascunho).toMatchObject({
-      versao: 1,
+      versao: 2,
       respostas: {},
       texto: '',
       evidenciasConsultadas: [],
       evidenciasAnotadas: {},
+      classificacoesEvidencias: {},
       modo: 'guiado',
       nivelAjuda: 0,
     });

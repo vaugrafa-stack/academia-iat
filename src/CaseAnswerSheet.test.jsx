@@ -154,6 +154,40 @@ describe('painel compartilhado de folha-resposta', () => {
     expect(dialog.textContent).toContain('2 pontos que a resposta precisa enfrentar');
     expect(dialog.querySelectorAll('.answer-sheet-decisions > li')).toHaveLength(3);
   });
+
+  it('mantém o foco no diálogo sem considerar links de classificações recolhidas', async () => {
+    await act(async () => {
+      root.render(
+        <CaseAnswerSheet
+          caseData={scenarios.find((scenario) => scenario.id === 'escopo')}
+          groups={GRUPOS_LAB}
+          answerReasons={answerReasons}
+        />,
+      );
+    });
+    const launcher = host.querySelector('.answer-sheet-launcher');
+    await act(async () => click(launcher));
+
+    const dialog = document.querySelector('[role="dialog"]');
+    const closeButton = dialog.querySelector('[data-close-sheet]');
+    const classification = dialog.querySelector('.answer-sheet-evidence details');
+    const hiddenSourceLink = classification.querySelector('a[href]');
+    expect(classification.open).toBe(false);
+
+    closeButton.focus();
+    await act(async () => {
+      document.dispatchEvent(new KeyboardEvent('keydown', {
+        key: 'Tab',
+        shiftKey: true,
+        bubbles: true,
+        cancelable: true,
+      }));
+    });
+
+    expect(dialog.contains(document.activeElement)).toBe(true);
+    expect(document.activeElement).not.toBe(hiddenSourceLink);
+    expect(document.activeElement.matches('summary')).toBe(true);
+  });
 });
 
 describe('seleção pesquisável do caso', () => {

@@ -1,12 +1,58 @@
 // @vitest-environment node
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import {
+  criarAgendadorAtualizacao,
   criarAplicadorAtualizacao,
   ErroOffline,
   obterEstadoOffline,
 } from './offline.js';
 
 class ContainerServiceWorker extends EventTarget {}
+
+describe('agendamento de consulta de atualizacao', () => {
+  it('consulta na reconexao e limita eventos repetidos', async () => {
+    let instante = 1_000;
+    let online = true;
+    const update = vi.fn().mockResolvedValue(undefined);
+    const agendador = criarAgendadorAtualizacao({
+      registro: { update },
+      agora: () => instante,
+      estaOnline: () => online,
+      intervaloMs: 100,
+    });
+
+    expect(agendador.verificarSeDevido()).toBe(false);
+    instante += 99;
+    expect(agendador.verificarSeDevido()).toBe(false);
+    instante += 1;
+    expect(agendador.verificarSeDevido()).toBe(true);
+    expect(agendador.verificarSeDevido()).toBe(false);
+    await Promise.resolve();
+    expect(update).toHaveBeenCalledTimes(1);
+
+    online = false;
+    agendador.marcarOffline();
+    expect(agendador.verificarSeDevido()).toBe(false);
+    online = true;
+    expect(agendador.verificarSeDevido()).toBe(true);
+    await Promise.resolve();
+    expect(update).toHaveBeenCalledTimes(2);
+  });
+
+  it('absorve falha oportunista sem rejeicao nao tratada', async () => {
+    const update = vi.fn().mockRejectedValue(new Error('rede indisponivel'));
+    const agendador = criarAgendadorAtualizacao({
+      registro: { update },
+      agora: () => 10,
+      estaOnline: () => true,
+      intervaloMs: 0,
+    });
+    expect(agendador.verificarSeDevido()).toBe(true);
+    await Promise.resolve();
+    await Promise.resolve();
+    expect(update).toHaveBeenCalledTimes(1);
+  });
+});
 
 afterEach(() => {
   vi.useRealTimers();

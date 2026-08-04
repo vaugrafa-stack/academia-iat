@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import answerReasons from './data/lab-answer-reasons.json';
 import { GRUPOS_LAB, scenarios } from './scenarios.js';
+import { nivelDoCaso } from './niveisLab.js';
 import {
   buildCaseAnswerSheet,
   CASE_ANSWER_SHEET_TITLE,
@@ -16,16 +17,15 @@ describe('folhas-resposta dos casos práticos', () => {
     expect(scenarios).toHaveLength(26);
     expect(new Set(scenarios.map((scenario) => scenario.id)).size).toBe(26);
 
-    const sheets = scenarios.map((scenario) => (
-      buildSheet(scenario)
-    ));
-
-    for (const sheet of sheets) {
+    for (const scenario of scenarios) {
+      const sheet = buildSheet(scenario);
       expect(sheet.title).toBe(CASE_ANSWER_SHEET_TITLE);
       expect(sheet.facts).toHaveLength(4);
       expect(sheet.evidence).toHaveLength(4);
       expect(sheet.decisions).toHaveLength(5);
-      expect(sheet.minimumElements).toHaveLength(4);
+      expect(sheet.minimumElements).toHaveLength(scenario.openTask?.criteria.length || 4);
+      expect(sheet.complexity.id).toBe(nivelDoCaso(scenario).id);
+      expect(sheet.group).not.toHaveProperty('level');
       expect(sheet.expectedOutcome.length).toBeGreaterThan(40);
       expect(sheet.commentedModel.length).toBeGreaterThan(80);
       expect(sheet.glossary.length).toBeGreaterThan(0);
@@ -33,6 +33,42 @@ describe('folhas-resposta dos casos práticos', () => {
       expect(sheet.source.sha256).toMatch(/^[a-f0-9]{64}$/);
       expect(sheet.source.title).toBe('POP de Licenciamento Ambiental de Empreendimentos Hidrelétricos');
       expect(sheet.source.institutionalStatusLabel).toBe('Minuta técnica');
+    }
+  });
+
+  it('expõe classificações, ausências e tarefas abertas sem substituir as decisões binárias', () => {
+    const classificationIds = ['escopo', 'las', 'cp-antiga', 'triagem', 'intervenientes'];
+    const openIds = ['condicionantes', 'revisao', 'integrador', 'delegado'];
+    const missingIds = ['rlo-vencida', 'barragem', 'integrador'];
+
+    for (const id of classificationIds) {
+      const scenario = scenarios.find((candidate) => candidate.id === id);
+      const sheet = buildSheet(scenario);
+      expect(sheet.evidenceTask?.prompt).toBe(scenario.evidenceTask.prompt);
+      expect(sheet.evidence.filter((item) => item.classification)).toHaveLength(4);
+      for (const evidence of sheet.evidence) {
+        expect(evidence.classification.expectedUse).toBeTruthy();
+        expect(evidence.classification.rationale.length).toBeGreaterThan(30);
+        expect(evidence.classification.sources.length).toBeGreaterThan(0);
+      }
+      expect(sheet.decisions).toHaveLength(5);
+    }
+
+    for (const id of openIds) {
+      const scenario = scenarios.find((candidate) => candidate.id === id);
+      const sheet = buildSheet(scenario);
+      expect(sheet.openTask?.prompt).toBe(scenario.openTask.prompt);
+      expect(sheet.openTask.criteria).toHaveLength(5);
+      expect(sheet.minimumElements).toHaveLength(5);
+      expect(sheet.openTask.criteria.every((criterion) => criterion.sources.length > 0)).toBe(true);
+      expect(sheet.decisions).toHaveLength(5);
+    }
+
+    for (const id of missingIds) {
+      const scenario = scenarios.find((candidate) => candidate.id === id);
+      const sheet = buildSheet(scenario);
+      expect(sheet.missingEvidence.map(({ text }) => text)).toEqual(scenario.ausentes);
+      expect(sheet.gaps[0].id).toBe('ausentes');
     }
   });
 
@@ -80,6 +116,8 @@ describe('folhas-resposta dos casos práticos', () => {
 
     expect(text).toContain('FOLHA-RESPOSTA — CONTEÚDO MÍNIMO ESPERADO');
     expect(text).toContain('3. DECISÕES ESPERADAS');
+    expect(text).toContain('3.1 TAREFA ABERTA DE FUNDAMENTAÇÃO');
+    expect(text).toContain('Critérios e fontes:');
     expect(text).toContain('4. CONTEÚDO MÍNIMO DA FUNDAMENTAÇÃO');
     expect(text).toContain('7. LACUNAS E DADOS A CONFIRMAR');
     expect(text).toContain('GLOSSÁRIO DO CASO');
@@ -89,6 +127,19 @@ describe('folhas-resposta dos casos práticos', () => {
     expect(text).toContain('Arquivo de origem:');
     expect(text).toContain('SHA-256:');
     expect(text).not.toMatch(/intelig[eê]ncia artificial|\bIA\b/i);
+  });
+
+  it('inclui no arquivo de consulta as fontes de cada classificação de evidência', () => {
+    const sheet = buildSheet(
+      scenarios.find((scenario) => scenario.id === 'triagem'),
+    );
+    const text = serializeCaseAnswerSheet(sheet);
+
+    expect(text).toContain('Uso esperado:');
+    expect(text).toContain('Fonte:');
+    expect(text).toContain(
+      'Estudo antigo pode ser aproveitado apenas se compatível com o projeto atual',
+    );
   });
 
   it('explica os cálculos e as decisões críticas com os dados do próprio caso', () => {

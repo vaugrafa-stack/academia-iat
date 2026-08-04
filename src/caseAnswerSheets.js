@@ -1,4 +1,9 @@
-import { getLabSources, LAB_SOURCE_POLICY } from './labSources.js';
+import {
+  getLabSources,
+  getPopLabSource,
+  LAB_SOURCE_POLICY,
+} from './labSources.js';
+import { nivelDoCaso } from './niveisLab.js';
 
 export const CASE_ANSWER_SHEET_TITLE = 'Folha-resposta — conteúdo mínimo esperado';
 
@@ -103,6 +108,8 @@ function buildGlossary(caseData) {
     questions: caseData.questions,
     outcome: caseData.outcome,
     model: caseData.modelo,
+    evidenceTask: caseData.evidenceTask,
+    openTask: caseData.openTask,
   });
 
   return Object.entries(ACRONYM_DEFINITIONS)
@@ -136,12 +143,31 @@ function buildDecision(caseData, question, index, sourceData, answerReason, less
   };
 }
 
+function sourcesForRefs(sourceRefs = [], lessonMap, overrideIdFor = null) {
+  return sourceRefs
+    .map((sectionId) => getPopLabSource(sectionId, overrideIdFor?.(sectionId)))
+    .filter(Boolean)
+    .map((source) => ({
+      id: source.id,
+      sectionId: source.sec,
+      label: resolveLessonLabel(source.sec, lessonMap),
+      quote: source.quote,
+    }));
+}
+
 function buildGaps(caseData, decisions) {
   const reviewPoints = [...new Set(decisions
     .map((decision) => decision.supportCaveat)
     .filter(Boolean))];
 
   return [
+    ...((caseData.ausentes || []).length
+      ? [{
+          id: 'ausentes',
+          title: 'Evidências declaradas como não apresentadas',
+          text: `Não constam no cenário: ${(caseData.ausentes || []).join('; ')}. A ausência deve permanecer explícita na análise e receber consequência técnica e encaminhamento proporcionais.`,
+        }]
+      : []),
     {
       id: 'cadastro',
       title: 'Dados cadastrais da peça completa',
@@ -195,6 +221,14 @@ export function buildCaseAnswerSheet(caseData, groups = [], options = {}) {
       options.lessonMap,
     )
   ));
+  const evidenceTaskItems = new Map(
+    (caseData.evidenceTask?.items || []).map((item) => [item.evidenceIndex, item]),
+  );
+  const evidenceTaskChoices = new Map(
+    (caseData.evidenceTask?.choices || []).map((choice) => [choice.id, choice.label]),
+  );
+  const complexity = nivelDoCaso(caseData);
+  const openCriteria = caseData.openTask?.criteria || [];
 
   const sheet = {
     id: `answer-sheet-${caseData.id}`,
@@ -205,8 +239,13 @@ export function buildCaseAnswerSheet(caseData, groups = [], options = {}) {
     type: caseData.type,
     trackId: caseData.track,
     group: group
-      ? { id: group.id, title: group.titulo, level: group.nivel, summary: group.resumo }
+      ? { id: group.id, title: group.titulo, summary: group.resumo }
       : null,
+    complexity: {
+      id: complexity.id,
+      title: complexity.titulo,
+      task: complexity.tarefa,
+    },
     facts: [...(caseData.facts || [])],
     series: caseData.serie
       ? {
@@ -216,16 +255,62 @@ export function buildCaseAnswerSheet(caseData, groups = [], options = {}) {
           note: caseData.serie.nota || null,
         }
       : null,
-    evidence: (caseData.evidence || []).map((text, index) => ({
-      id: `lab-${caseData.id}-e${index + 1}`,
+    evidence: (caseData.evidence || []).map((text, index) => {
+      const taskItem = evidenceTaskItems.get(index);
+      return {
+        id: `lab-${caseData.id}-e${index + 1}`,
+        ordinal: index + 1,
+        text,
+        classification: taskItem
+          ? {
+              expectedUse: taskItem.expectedUse,
+              expectedLabel: evidenceTaskChoices.get(taskItem.expectedUse) || taskItem.expectedUse,
+              rationale: taskItem.rationale,
+              sources: sourcesForRefs(
+                taskItem.sourceRefs,
+                options.lessonMap,
+                (sectionId) => `lab-task-${caseData.id}-e${index + 1}-${sectionId}`,
+              ),
+            }
+          : null,
+      };
+    }),
+    missingEvidence: (caseData.ausentes || []).map((text, index) => ({
+      id: `lab-${caseData.id}-missing-${index + 1}`,
       ordinal: index + 1,
       text,
     })),
+    evidenceTask: caseData.evidenceTask
+      ? {
+          prompt: caseData.evidenceTask.prompt,
+        }
+      : null,
+    openTask: caseData.openTask
+      ? {
+          prompt: caseData.openTask.prompt,
+          minCharacters: caseData.openTask.minCharacters,
+          requiredEvidenceIndexes: [...caseData.openTask.requiredEvidenceIndexes],
+          criteria: openCriteria.map((criterion) => ({
+            id: criterion.id,
+            label: criterion.label,
+            sources: sourcesForRefs(
+              criterion.sourceRefs,
+              options.lessonMap,
+              (sectionId) => `lab-task-${caseData.id}-${criterion.id}-${sectionId}`,
+            ),
+          })),
+        }
+      : null,
     decisions,
-    minimumElements: (caseData.elementos || []).map((element, index) => ({
+    minimumElements: (openCriteria.length ? openCriteria : (caseData.elementos || [])).map((element, index) => ({
       id: `${caseData.id}-minimum-${index + 1}`,
       ordinal: index + 1,
-      label: element.rot,
+      label: element.label || element.rot,
+      sources: sourcesForRefs(
+        element.sourceRefs,
+        options.lessonMap,
+        (sectionId) => `lab-task-${caseData.id}-${element.id}-${sectionId}`,
+      ),
     })),
     expectedOutcome: caseData.outcome || '',
     commentedModel: caseData.modelo || '',
@@ -259,7 +344,8 @@ export function serializeCaseAnswerSheet(sheet) {
     '',
     `Caso: ${sheet.caseLabel} — ${sheet.caseTitle}`,
     `Tipologia do exercício: ${sheet.type}`,
-    ...(sheet.group ? [`Grupo: ${sheet.group.title} · ${sheet.group.level}`] : []),
+    ...(sheet.group ? [`Categoria: ${sheet.group.title}`] : []),
+    `Complexidade da tarefa: ${sheet.complexity.title} — ${sheet.complexity.task}`,
     '',
     '1. FATOS DISPONÍVEIS',
   ];
@@ -273,7 +359,26 @@ export function serializeCaseAnswerSheet(sheet) {
   }
 
   lines.push('', '2. EVIDÊNCIAS A CONFRONTAR');
-  addList(lines, sheet.evidence, (evidence) => evidence.text);
+  addList(lines, sheet.evidence, (evidence) => {
+    if (!evidence.classification) return evidence.text;
+    const sourceLines = evidence.classification.sources
+      .map((source) => `   Fonte: ${source.label}: “${source.quote}”`)
+      .join('\n');
+    return [
+      evidence.text,
+      `   Uso esperado: ${evidence.classification.expectedLabel}. ${evidence.classification.rationale}`,
+      sourceLines,
+    ].filter(Boolean).join('\n');
+  });
+
+  if (sheet.missingEvidence.length) {
+    lines.push('', '2.1 EVIDÊNCIAS NÃO APRESENTADAS');
+    addList(lines, sheet.missingEvidence, (evidence) => evidence.text);
+  }
+
+  if (sheet.evidenceTask) {
+    lines.push('', '2.2 TAREFA DE CLASSIFICAÇÃO', sheet.evidenceTask.prompt);
+  }
 
   lines.push('', '3. DECISÕES ESPERADAS');
   sheet.decisions.forEach((decision) => {
@@ -296,8 +401,23 @@ export function serializeCaseAnswerSheet(sheet) {
     lines.push('');
   });
 
+  if (sheet.openTask) {
+    lines.push('3.1 TAREFA ABERTA DE FUNDAMENTAÇÃO');
+    lines.push(sheet.openTask.prompt);
+    lines.push(`Registro mínimo: ${sheet.openTask.minCharacters} caracteres.`);
+    lines.push('Critérios e fontes:');
+    sheet.openTask.criteria.forEach((criterion, index) => {
+      lines.push(`${index + 1}. ${criterion.label}`);
+      criterion.sources.forEach((source) => lines.push(`- ${source.label}: “${source.quote}”`));
+    });
+    lines.push('');
+  }
+
   lines.push('4. CONTEÚDO MÍNIMO DA FUNDAMENTAÇÃO');
-  addList(lines, sheet.minimumElements, (element) => element.label);
+  addList(lines, sheet.minimumElements, (element) => {
+    const sourceLabels = element.sources?.map((source) => source.label).join('; ');
+    return sourceLabels ? `${element.label} [fontes: ${sourceLabels}]` : element.label;
+  });
   lines.push('', '5. DESFECHO ESPERADO', sheet.expectedOutcome);
   lines.push('', '6. MODELO COMENTADO', sheet.commentedModel);
   lines.push('', '7. LACUNAS E DADOS A CONFIRMAR');

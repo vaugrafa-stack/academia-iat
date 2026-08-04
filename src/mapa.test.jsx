@@ -2,7 +2,11 @@
 import React, { act } from 'react';
 import { createRoot } from 'react-dom/client';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import MapaParana, { faixaDidaticaDe } from './mapa.jsx';
+import MapaParana, {
+  carregarDadosMapa,
+  faixaDidaticaDe,
+  validarDadosMapa,
+} from './mapa.jsx';
 import { tilesParaVista } from './satelliteLayer.js';
 
 const dados = {
@@ -59,6 +63,24 @@ afterEach(() => {
 });
 
 describe('didática e acesso por teclado no mapa', () => {
+  it('valida e compartilha uma única busca da base cartográfica', async () => {
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => dados,
+    });
+    vi.stubGlobal('fetch', fetchMock);
+
+    expect(() => validarDadosMapa({})).toThrow(/dimensoes invalidas/);
+    const [primeiro, segundo] = await Promise.all([
+      carregarDadosMapa(),
+      carregarDadosMapa(),
+    ]);
+
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    expect(primeiro).toBe(dados);
+    expect(segundo).toBe(dados);
+  });
+
   it('distingue a faixa didática do tipo existente no registro', () => {
     expect(faixaDidaticaDe(0.075)?.sigla).toBe('MCH');
     expect(faixaDidaticaDe(0.5)?.sigla).toBe('MGH');

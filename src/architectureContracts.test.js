@@ -55,9 +55,13 @@ describe("contratos incrementais de arquitetura", () => {
   it("associa o painel de continuidade à mídia da própria aula", async () => {
     const main = await readFile(mainUrl, "utf8");
 
-    expect(main).toContain("function mediaForLesson(lesson)");
-    expect(main).toContain("const feat = mediaForLesson(continueLesson)");
-    expect(main).toContain("const media = mediaForLesson(lesson)");
+    expect(main).toContain("function mediaForLesson(lesson, pilotCollection)");
+    expect(main).toContain(
+      "mediaForLesson(continueLesson, pilotMediaStatus.collection)",
+    );
+    expect(main).toContain(
+      "mediaForLesson(lesson, pilotMediaStatus.collection)",
+    );
     expect(main).not.toContain('/media/tour-usina.mp4');
     expect(main).toContain("Resumo em vídeo desta aula");
   });

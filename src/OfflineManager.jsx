@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   AlertTriangle,
   CheckCircle2,
@@ -9,7 +9,7 @@ import {
   ShieldCheck,
   Trash2,
 } from 'lucide-react';
-import offlinePackages from './data/offline-packages.json';
+import offlinePackagesUrl from './data/offline-packages.json?url';
 import {
   baixarMidiaOffline,
   capacidadeOffline,
@@ -17,6 +17,53 @@ import {
   obterEstadoOffline,
   removerMidiaOffline,
 } from './offline.js';
+
+let packagesCache = null;
+let packagesPromise = null;
+
+export function validateOfflinePackages(catalog) {
+  if (!catalog || !Array.isArray(catalog.packages) || !catalog.packages.length) {
+    throw new Error('offline-packages.json: lista de pacotes ausente');
+  }
+  if (!Number.isFinite(catalog.totalBytes)) {
+    throw new Error('offline-packages.json: tamanho total inválido');
+  }
+  for (const item of catalog.packages) {
+    if (!item?.id || !Array.isArray(item.items) || !item.items.length) {
+      throw new Error('offline-packages.json: pacote inválido');
+    }
+    if (item.items.some((media) => typeof media?.path !== 'string' || !media.path)) {
+      throw new Error(`offline-packages.json: mídia inválida em ${item.id}`);
+    }
+  }
+  return catalog;
+}
+
+/** Catálogo de downloads. O componente é adiado e a promessa é compartilhada. */
+export function loadOfflinePackages({ reload = false } = {}) {
+  if (reload) {
+    packagesCache = null;
+    packagesPromise = null;
+  }
+  if (packagesCache) return Promise.resolve(packagesCache);
+  if (!packagesPromise) {
+    packagesPromise = fetch(offlinePackagesUrl)
+      .then((response) => {
+        if (!response.ok) throw new Error(`offline-packages.json: HTTP ${response.status}`);
+        return response.json();
+      })
+      .then(validateOfflinePackages)
+      .then((catalog) => {
+        packagesCache = catalog;
+        return catalog;
+      })
+      .catch((error) => {
+        packagesPromise = null;
+        throw error;
+      });
+  }
+  return packagesPromise;
+}
 
 function formatBytes(value) {
   if (!Number.isFinite(value)) return 'não informado';
@@ -38,6 +85,7 @@ function mediaUrl(path) {
 }
 
 export default function OfflineManager() {
+  const [catalog, setCatalog] = useState(() => packagesCache);
   const [status, setStatus] = useState(null);
   const [capacity, setCapacity] = useState(null);
   const [cached, setCached] = useState(null);
@@ -47,11 +95,12 @@ export default function OfflineManager() {
   const [error, setError] = useState('');
 
   const allUrls = useMemo(
-    () => offlinePackages.packages.flatMap((item) => item.items.map((media) => mediaUrl(media.path))),
-    [],
+    () => (catalog?.packages || []).flatMap((item) => item.items.map((media) => mediaUrl(media.path))),
+    [catalog],
   );
 
-  async function refresh({ signal } = {}) {
+  const refresh = useCallback(async ({ signal } = {}) => {
+    if (!catalog) return;
     setError('');
     setLoading(true);
     try {
@@ -80,18 +129,49 @@ export default function OfflineManager() {
     } finally {
       if (!signal?.aborted) setLoading(false);
     }
-  }
+  }, [allUrls, catalog]);
 
   useEffect(() => {
+    let active = true;
+    setLoading(true);
+    loadOfflinePackages()
+      .then((loadedCatalog) => {
+        if (active) setCatalog(loadedCatalog);
+      })
+      .catch((issue) => {
+        if (!active) return;
+        setCatalog(null);
+        setLoading(false);
+        setError(issue?.message || 'Não foi possível carregar o catálogo de conteúdo offline.');
+      });
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!catalog) return undefined;
     if (import.meta.env.DEV) {
       setLoading(false);
       setError('A gestão offline é validada no build de produção; o Service Worker fica desativado durante o desenvolvimento.');
-      return;
+      return undefined;
     }
     const controller = new AbortController();
     refresh({ signal: controller.signal });
     return () => controller.abort();
-  }, []);
+  }, [catalog, refresh]);
+
+  function retryCatalog() {
+    setLoading(true);
+    setError('');
+    loadOfflinePackages({ reload: true })
+      .then(setCatalog)
+      .catch((issue) => {
+        setCatalog(null);
+        setLoading(false);
+        setError(issue?.message || 'Não foi possível carregar o catálogo de conteúdo offline.');
+      });
+  }
 
   function packageState(item) {
     const urls = item.items.map((media) => mediaUrl(media.path));
@@ -175,8 +255,12 @@ export default function OfflineManager() {
           <h2 id="offline-title">Conteúdo offline sob seu controle</h2>
           <p>O núcleo do POP abre offline. Baixe somente os módulos cujos resumos em vídeo você quer levar sem conexão.</p>
         </div>
-        <button type="button" onClick={() => refresh()} disabled={Boolean(busy) || loading}>
-          <RefreshCw aria-hidden="true" /> {loading ? 'Consultando…' : 'Atualizar estado'}
+        <button
+          type="button"
+          onClick={() => (catalog ? refresh() : retryCatalog())}
+          disabled={Boolean(busy) || loading}
+        >
+          <RefreshCw aria-hidden="true" /> {loading ? 'Consultando…' : catalog ? 'Atualizar estado' : 'Tentar novamente'}
         </button>
       </header>
 
@@ -249,7 +333,7 @@ export default function OfflineManager() {
       )}
 
       <div className="offline-packages">
-        {offlinePackages.packages.map((item) => {
+        {(catalog?.packages || []).map((item) => {
           const current = packageState(item);
           return (
             <article key={item.id} className={current.complete ? 'complete' : ''}>
@@ -281,7 +365,7 @@ export default function OfflineManager() {
       </div>
 
       <footer>
-        <p>Estimativa total dos 17 pacotes: <strong>{formatBytes(offlinePackages.totalBytes)}</strong>. O tamanho efetivamente ocupado pode variar conforme o navegador.</p>
+        <p>Estimativa total dos 17 pacotes: <strong>{catalog ? formatBytes(catalog.totalBytes) : 'a confirmar'}</strong>. O tamanho efetivamente ocupado pode variar conforme o navegador.</p>
         <button type="button" onClick={clearAll} disabled={Boolean(busy) || loading || !status?.midia?.itens}>
           <Trash2 aria-hidden="true" /> Remover todas as mídias offline
         </button>

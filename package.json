@@ -29,6 +29,8 @@
     "preview": "vite preview --port 4173 --strictPort",
     "test:e2e": "playwright test",
     "test:e2e:artifact": "playwright test --project=artifact-desktop --project=artifact-320 --project=artifact-360 --project=artifact-390 --project=artifact-430",
+    "test:e2e:pwa": "playwright test --config=playwright.pwa.config.mjs",
+    "test:e2e:pwa:local": "node tools/run-pwa-e2e-local.mjs",
     "test:unit": "vitest run",
     "test:pwa": "node tools/test-pwa.mjs && vitest run src/offline.test.js",
     "offline:packages": "node tools/build-offline-packages.mjs",

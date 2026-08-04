@@ -31,6 +31,8 @@
 //   node tools/build-lab-data.mjs --check   falha se estiver desatualizado
 import { readFile, writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
+import { buildLabObjectiveContract } from '../src/labObjectiveContract.js';
+import { nivelDoCaso } from '../src/niveisLab.js';
 
 const raiz = resolve(import.meta.dirname, '..');
 const { scenarios, GRUPOS_LAB } = await import('../src/scenarios.js');
@@ -40,16 +42,21 @@ const CORPOS = resolve(raiz, 'src/data/lab-corpos.json');
 
 // Campos do indice. Quem precisar de mais tem que buscar o corpo, de proposito:
 // e o que impede o indice de voltar a engordar sem ninguem perceber.
-const leve = (c) => ({
-  id: c.id,
-  track: c.track,
-  label: c.label,
-  title: c.title,
-  type: c.type,
-  ...(c.nivel ? { nivel: c.nivel } : {}),
-  facts: (c.facts || []).slice(0, 3),
-  questions: (c.questions || []).map((q) => [q[0]]),
-});
+const leve = (c) => {
+  const objectiveContract = buildLabObjectiveContract(c);
+  return {
+    id: c.id,
+    track: c.track,
+    label: c.label,
+    title: c.title,
+    type: c.type,
+    // Complexidade medida pela tarefa, nunca pelo rotulo editorial do grupo.
+    nivel: nivelDoCaso(c).id,
+    facts: (c.facts || []).slice(0, 3),
+    questions: (c.questions || []).map((q) => [q[0]]),
+    ...(objectiveContract ? { objectiveContract } : {}),
+  };
+};
 
 const indice = {
   grupos: GRUPOS_LAB,

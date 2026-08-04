@@ -10,7 +10,13 @@
 // check-rubricas leem daqui. A aplicacao, em runtime, le o indice leve e busca
 // os corpos sob demanda. tools/build-lab-data.mjs deriva os dois deste arquivo
 // e tem modo --check para garantir que nao divergiram.
-import { NOVOS_CENARIOS, RUBRICAS, GRUPOS_LAB } from './labCases.js';
+import {
+  NOVOS_CENARIOS,
+  RUBRICAS,
+  GRUPOS_LAB,
+  LAB_TASK_REVISION,
+  TAREFAS_LAB,
+} from './labCases.js';
 
 const CENARIOS_BASE = [
   {"id":"cp","track":"m03","label":"Consulta Prévia","type":"CGH","title":"CGH com sensibilidade locacional na Consulta Prévia","facts":["Potência de 2,4 MW","Área de alagamento de 18 ha","ADA a cerca de 600 m de unidade de conservação","Requerimento, Memorial preliminar, mapa da ADA e KMZ do arranjo constam da lista de peças, ainda sem conferência de conteúdo"],"evidence":["Requerimento da Consulta Prévia","Memorial preliminar","Mapa da ADA e arranjo em KMZ","Consulta de restrições (UC, cavidades, terras indígenas)"],"steps":["Objeto","Localização","Sensibilidade","Alcance da CP","Encaminhamento"],"questions":[["A simples presença das peças na lista, sem conferir seu conteúdo, basta para considerar objeto e localização suficientemente caracterizados?","nao"],["A proximidade de unidade de conservação deve integrar a manifestação?","sim"],["A manifestação da CP assegura prioridade ou confere domínio ao requerente?","nao"],["A manifestação da CP substitui o licenciamento e o juízo de viabilidade ambiental?","nao"],["A validade de 24 meses da manifestação é prorrogável?","nao"]],"outcome":"Conferir se o Memorial, o mapa da ADA e o arquivo KML ou KMZ caracterizam o arranjo integral e a localização. Se a entrada for suficiente, emitir manifestação orientativa sobre modalidade, estudo provável e restrições de sensibilidade. A manifestação vale 24 meses, não é prorrogável, não assegura prioridade, não confere domínio e não equivale à aprovação de viabilidade ambiental."},
@@ -28,4 +34,10 @@ const CENARIOS_BASE = [
 // Os cenarios novos entram depois dos originais e cada um recebe a rubrica da
 // fundamentacao (elementos esperados e texto modelo) definida em labCases.js.
 export{GRUPOS_LAB};
-export const scenarios = [...CENARIOS_BASE, ...NOVOS_CENARIOS].map(c => ({ ...c, ...(RUBRICAS[c.id] || {}) }));
+export const scenarios = [...CENARIOS_BASE, ...NOVOS_CENARIOS].map(c => ({
+  ...c,
+  ...(RUBRICAS[c.id] || {}),
+  ...(TAREFAS_LAB[c.id]
+    ? { taskRevision: LAB_TASK_REVISION, ...TAREFAS_LAB[c.id] }
+    : {}),
+}));

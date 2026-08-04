@@ -34,13 +34,17 @@ pnpm test
 pnpm build
 pnpm exec playwright install chromium
 pnpm test:e2e:artifact
+pnpm test:e2e:pwa
 pnpm preview
 ```
 
 O preview manual fica em `http://127.0.0.1:4173`. O teste E2E abre o artefato
 final em Chromium nas larguras de 1440, 320, 360, 390 e 430 pixels, percorre
 as rotas críticas e reprova diante de erro de console, resposta local com erro,
-overlay de framework, tela vazia ou rolagem horizontal involuntária.
+overlay de framework, tela vazia ou rolagem horizontal involuntária. O teste
+PWA separado exercita em Chromium o Service Worker real, navegação sem rede,
+registro e controle da página, atualização de uma versão para outra e o suporte
+disponível offline.
 
 ## Qualidade e publicação
 
@@ -61,17 +65,19 @@ nos registros gerados. Builds locais usam o SHA atual com o sufixo `-local`.
 - aulas com orientação, texto-fonte, quadros, tabelas, figuras, anotações e referências;
 - cada aula oferece checagem comentada, recuperação ativa escrita e autoauditoria; para novas conclusões, a checagem deve estar correta, o registro deve ter ao menos 80 caracteres significativos e dois de três critérios devem ser conferidos;
 - 159 resumos audiovisuais por seção, com 10,5 a 102,5 segundos, voz em português, pôster, texto aberto, legenda WebVTT opcional e transcrição;
-- palco audiovisual contextual com professor animado pela própria narração e cenários de barragem, território, campo e análise documental;
+- seis microaulas piloto usam professor fictício, voz, legenda, transcrição e cenários de barragem, território, campo e análise documental; a sincronização labial desses pilotos ainda usa tempos estimados e não possui comprovação formal de precisão de até 100 ms;
 - 17 vídeos de abertura de módulo e três animações SVG complementares;
 - 7 fluxogramas interativos e 21 fluxogramas-fonte para comparação; cada atividade interativa explicita evidência, risco e fonte em seis etapas e termina em uma decisão ramificada comentada;
-- 26 cenários de laboratório com documentos e dados exclusivamente sintéticos, modos Guiado e Desafio, ajuda progressiva, rascunho retomável e cinco séries históricas;
-- 26 folhas-resposta de consulta, cobrindo 130 decisões com justificativa específica, evidência relacionada, apoio literal do POP, conteúdo mínimo, desfecho, glossário e lacunas a confirmar;
-- 136 questões comentadas, avaliações por módulo e diagnóstico em formas A e B;
+- 26 cenários de laboratório com documentos e dados exclusivamente sintéticos, distribuídos em cinco níveis objetivos: 10 para Reconhecer, 5 para Aplicar, 2 para Decidir, 5 para Integrar e 4 para Fundamentar;
+- cinco casos acrescentam classificação de evidências e quatro acrescentam tarefa aberta; contratos versionados de objetivo impedem que conclusões antigas ou incompletas sejam reaproveitadas como domínio do exercício atual;
+- 26 folhas-resposta de consulta, cobrindo 130 decisões com justificativa específica, evidência relacionada, apoio literal do POP, conteúdo mínimo, desfecho, glossário, lacunas a confirmar e proveniência das classificações e tarefas abertas;
+- 213 questões comentadas, com uma questão exclusiva para cada uma das 159 aulas, avaliações por módulo e diagnóstico em formas A e B;
 - Redator de Informação Técnica organizado pelos 12 elementos do item 23.1, seleção pesquisável de caso e a divergência em relação às 10 seções do Anexo B mantida visível;
 - registro das 60 referências do POP: 22 vínculos diretos para fonte oficial, 38 vínculos para índice oficial e nenhuma referência sem portal oficial mapeado; vigência e aplicação continuam pendentes de revisão humana;
 - busca sobre 3.339 nós textuais, 66 quadros/tabelas e 35 imagens extraídas das fontes;
 - favoritos, caderno pessoal, progresso, resultados e retomada no navegador;
 - PWA com 17 pacotes opcionais de mídia para estudo offline, totalizando aproximadamente 194,0 MiB; a reprodução online usa streaming e só persiste mídia após comando explícito;
+- quatro catálogos volumosos — mapa, índice do laboratório, mídia piloto e pacotes offline — são carregados como JSON externos validados, somente quando necessários;
 - layout responsivo, navegação por teclado e suporte a `prefers-reduced-motion`.
 
 Os números demonstram presença e rastreabilidade, não eficácia pedagógica nem competência profissional. Os vídeos são resumos para orientação e revisão; não substituem a leitura, a consulta à fonte, a prática deliberada ou uma demonstração técnica aprofundada. Os pacotes offline atuais cobrem a mídia catalogada de cada módulo e os recursos compartilhados do palco, mas não equivalem a uma cópia integral de todos os recursos da plataforma.
@@ -79,6 +85,13 @@ Os números demonstram presença e rastreabilidade, não eficácia pedagógica n
 As travas de conclusão das aulas comprovam apenas que uma resposta foi registrada, dois critérios foram autodeclarados e uma questão objetiva foi respondida corretamente. Comprimento de texto e autoauditoria não medem qualidade técnica. Quando uma seção ainda não possui item exclusivo, a checagem usa uma questão claramente rotulada do mesmo módulo. O banco cobre diretamente 82 das 161 seções didáticas; 83 das 136 respostas corretas ainda são estritamente mais longas que os distratores, embora nenhuma tenha o dobro do maior distrator. Revisão editorial, psicométrica e humana continua obrigatória.
 
 Os laboratórios usam casos e documentos sintéticos marcados como exemplos didáticos sem validade administrativa. Nenhum processo real ou dado pessoal deve ser inserido na plataforma.
+
+No artefato medido deste ciclo, o JavaScript soma 645,1 KiB de um orçamento de
+850 KiB em tamanho bruto e 215,4 KiB de 270 KiB compactado. A entrada principal
+mede 179,3 KiB de 205 KiB em tamanho bruto e 56,5 KiB de 66 KiB compactado. O
+CSS permanece próximo do limite: 206,6 KiB de 215 KiB em tamanho bruto e 37,6
+KiB de 40 KiB compactado. A próxima redução deve separar e consolidar o CSS por
+rota; esse trabalho ainda não está concluído.
 
 ## Avaliação e registro pessoal
 
@@ -93,9 +106,10 @@ pnpm test
 pnpm build
 pnpm audit:premium
 pnpm test:e2e:artifact
+pnpm test:e2e:pwa
 ```
 
-A suíte cobre testes unitários, PWA/offline, proveniência, referências, rubricas, questões, mídia e auditoria das aulas. O Playwright valida o artefato renderizado em navegador real nas cinco larguras previstas. O portão premium procura falhas de governança, privacidade e exposição acidental. Nenhum teste automatizado substitui revisão especializada de conteúdo, acessibilidade, usabilidade ou aprendizagem.
+A suíte cobre testes unitários, PWA/offline, proveniência, referências, rubricas, questões, mídia e auditoria das aulas. O Playwright valida o artefato renderizado em navegador real nas cinco larguras previstas e, em um portão próprio, comprova respostas offline do Service Worker e a atualização controlada do aplicativo. O workflow exige os dois portões antes de armazenar o artefato publicável. O portão premium procura falhas de governança, privacidade e exposição acidental. Nenhum teste automatizado substitui revisão especializada de conteúdo, acessibilidade, usabilidade ou aprendizagem.
 
 ## Arquivos principais
 

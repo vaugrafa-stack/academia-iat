@@ -11,6 +11,7 @@ import {
   LAB_SOURCES_BY_SCENARIO,
   POP_LAB_QUOTES,
   getLabSources,
+  getPopLabSource,
 } from './labSources.js';
 
 const blockById = new Map(pop.blocks.map((block) => [block.id, block]));
@@ -114,6 +115,93 @@ describe('proveniência estruturada dos cenários do laboratório', () => {
     }
 
     expect(new Set(Object.keys(POP_LAB_QUOTES))).toEqual(usedSections);
+  });
+
+  it('rastreia as tarefas de classificação e fundamentação a trechos literais do POP', () => {
+    const classificationCases = scenarios.filter((scenario) => scenario.evidenceTask);
+    const openCases = scenarios.filter((scenario) => scenario.openTask);
+    expect(classificationCases).toHaveLength(5);
+    expect(openCases).toHaveLength(4);
+
+    for (const scenario of classificationCases) {
+      const choiceIds = new Set(scenario.evidenceTask.choices.map((choice) => choice.id));
+      expect(choiceIds.size).toBe(scenario.evidenceTask.choices.length);
+      expect(scenario.evidenceTask.items.map((item) => item.evidenceIndex)).toEqual([0, 1, 2, 3]);
+      expect(scenario.evidenceTask.items.filter((item) => item.distrator)).toHaveLength(1);
+      for (const item of scenario.evidenceTask.items) {
+        expect(choiceIds.has(item.expectedUse), scenario.id).toBe(true);
+        expect(item.rationale.length, scenario.id).toBeGreaterThan(30);
+        for (const sectionId of item.sourceRefs) {
+          const source = getPopLabSource(
+            sectionId,
+            `lab-task-${scenario.id}-e${item.evidenceIndex + 1}-${sectionId}`,
+          );
+          expect(source, `${scenario.id}: ${sectionId}`).not.toBeNull();
+          expect(validLessonIds.has(source.sec), `${scenario.id}: ${sectionId}`).toBe(true);
+          expect(literalTextsForSection(source.sec).some((text) => text.includes(source.quote))).toBe(true);
+        }
+      }
+    }
+
+    for (const scenario of openCases) {
+      expect(scenario.openTask.requiredEvidenceIndexes).toEqual([0, 1, 2, 3]);
+      expect(scenario.openTask.criteria).toHaveLength(5);
+      expect(new Set(scenario.openTask.criteria.map((criterion) => criterion.id)).size).toBe(5);
+      for (const criterion of scenario.openTask.criteria) {
+        expect(criterion.requiredConceptGroups.length).toBeGreaterThan(0);
+        expect(criterion.requiredConceptGroups.every((group) => group.length > 0)).toBe(true);
+        for (const sectionId of criterion.sourceRefs) {
+          const source = getPopLabSource(
+            sectionId,
+            `lab-task-${scenario.id}-${criterion.id}-${sectionId}`,
+          );
+          expect(source, `${scenario.id}: ${sectionId}`).not.toBeNull();
+          expect(validLessonIds.has(source.sec), `${scenario.id}: ${sectionId}`).toBe(true);
+          expect(literalTextsForSection(source.sec).some((text) => text.includes(source.quote))).toBe(true);
+        }
+      }
+    }
+
+    expect(JSON.stringify([...classificationCases, ...openCases])).not.toMatch(
+      /\bIA\b|intelig[eê]ncia artificial|chatgpt|claude|openai/i,
+    );
+  });
+
+  it('usa trechos específicos da alegação nas fontes das tarefas críticas', () => {
+    const expectations = [
+      [
+        'pop-section-006',
+        'lab-task-cp-antiga-e1-pop-section-006',
+        'fundamento vigente',
+      ],
+      [
+        'pop-section-019',
+        'lab-task-triagem-e2-pop-section-019',
+        'Estudo antigo pode ser aproveitado',
+      ],
+      [
+        'pop-section-019',
+        'lab-task-triagem-e3-pop-section-019',
+        'outro empreendimento',
+      ],
+      [
+        'pop-section-095',
+        'lab-task-integrador-territorio-pop-section-095',
+        'não deve ser convertida',
+      ],
+      [
+        'pop-section-132',
+        'lab-task-delegado-delegacao-pop-section-132',
+        'não converte o processo',
+      ],
+    ];
+
+    for (const [sectionId, sourceId, excerpt] of expectations) {
+      const source = getPopLabSource(sectionId, sourceId);
+      expect(source.id).toBe(sourceId);
+      expect(source.quote).toContain(excerpt);
+      expect(literalTextsForSection(sectionId).some((text) => text.includes(source.quote))).toBe(true);
+    }
   });
 
   it('mapeia evidências por pertinência sem impor regra global à quinta decisão', () => {

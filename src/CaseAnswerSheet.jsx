@@ -33,7 +33,12 @@ function downloadText(sheet) {
 function focusableElements(container) {
   return [...container.querySelectorAll(
     'a[href], button:not([disabled]), details > summary, [tabindex]:not([tabindex="-1"])',
-  )].filter((element) => !element.hidden);
+  )].filter((element) => {
+    if (element.hidden) return false;
+    const closedDetails = element.closest('details:not([open])');
+    if (!closedDetails) return true;
+    return element.matches('summary') && element.parentElement === closedDetails;
+  });
 }
 
 export function AnswerSheetDrawer({ sheet, open, onClose }) {
@@ -177,7 +182,9 @@ export function AnswerSheetDrawer({ sheet, open, onClose }) {
         <div className="answer-sheet-body">
           <article className="answer-sheet-case">
             <div>
-              <small>{sheet.group?.title || 'Caso prático'}</small>
+              <small>
+                {sheet.group?.title || 'Caso prático'} · {sheet.complexity.title}
+              </small>
               <h3>{sheet.caseLabel} — {sheet.caseTitle}</h3>
               <p>{sheet.group?.summary}</p>
             </div>
@@ -223,9 +230,42 @@ export function AnswerSheetDrawer({ sheet, open, onClose }) {
               <span>2</span>
               <div><h3>Evidências a confrontar</h3><p>Presença na lista não significa suficiência.</p></div>
             </header>
+            {sheet.evidenceTask && (
+              <aside className="answer-sheet-task-note">
+                <strong>Tarefa de classificação</strong>
+                <p>{sheet.evidenceTask.prompt}</p>
+              </aside>
+            )}
             <ol className="answer-sheet-evidence">
-              {sheet.evidence.map((evidence) => <li key={evidence.id}>{evidence.text}</li>)}
+              {sheet.evidence.map((evidence) => (
+                <li key={evidence.id}>
+                  <span>{evidence.text}</span>
+                  {evidence.classification && (
+                    <details>
+                      <summary>Uso esperado: {evidence.classification.expectedLabel}</summary>
+                      <p>{evidence.classification.rationale}</p>
+                      <ul>
+                        {evidence.classification.sources.map((source) => (
+                          <li key={source.id}>
+                            <a href={`#/aula/${encodeURIComponent(source.sectionId)}`}>{source.label}</a>
+                          </li>
+                        ))}
+                      </ul>
+                    </details>
+                  )}
+                </li>
+              ))}
             </ol>
+            {sheet.missingEvidence.length > 0 && (
+              <div className="answer-sheet-missing" role="note">
+                <strong>Evidências não apresentadas</strong>
+                <ul>
+                  {sheet.missingEvidence.map((evidence) => (
+                    <li key={evidence.id}>{evidence.text}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
           </section>
 
           <section id="folha-decisoes" className="answer-sheet-section" tabIndex="-1">
@@ -283,11 +323,30 @@ export function AnswerSheetDrawer({ sheet, open, onClose }) {
                 <p>{sheet.minimumElements.length} pontos que a resposta precisa enfrentar.</p>
               </div>
             </header>
+            {sheet.openTask && (
+              <aside className="answer-sheet-task-note">
+                <strong>Tarefa aberta</strong>
+                <p>{sheet.openTask.prompt}</p>
+                <small>Registro mínimo: {sheet.openTask.minCharacters} caracteres.</small>
+              </aside>
+            )}
             <ul className="answer-sheet-minimum">
               {sheet.minimumElements.map((element) => (
                 <li key={element.id}>
                   <CheckCircle2 size={18} aria-hidden="true" />
-                  <span>{element.label}</span>
+                  <span>
+                    {element.label}
+                    {element.sources?.length > 0 && (
+                      <small>
+                        {element.sources.map((source, index) => (
+                          <React.Fragment key={source.id}>
+                            {index > 0 ? ' · ' : ''}
+                            <a href={`#/aula/${encodeURIComponent(source.sectionId)}`}>{source.label}</a>
+                          </React.Fragment>
+                        ))}
+                      </small>
+                    )}
+                  </span>
                 </li>
               ))}
             </ul>

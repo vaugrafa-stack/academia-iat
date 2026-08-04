@@ -55,7 +55,7 @@ export const NIVEIS = [
     titulo: 'Fundamentar',
     tarefa: 'sustentar a decisão por escrito',
     recebe: 'pergunta aberta, avaliada por rubrica e por pessoa competente',
-    marca: 'ao menos uma pergunta cuja resposta não é sim nem não',
+    marca: 'campo `openTask` com enunciado e rubrica, ou pergunta cuja resposta não é sim nem não',
   },
 ];
 
@@ -70,6 +70,9 @@ function marcas(evidencia) {
 }
 
 export function temDistrator(caso) {
+  if ((caso.evidenceTask?.items || []).some((item) => item.distrator === true)) {
+    return true;
+  }
   return (caso.evidence || []).some((e) => marcas(e).distrator === true);
 }
 
@@ -88,6 +91,9 @@ export function temFontesEmConflito(caso) {
 }
 
 export function temPerguntaAberta(caso) {
+  if (typeof caso.openTask?.prompt === 'string' && caso.openTask.prompt.trim()) {
+    return true;
+  }
   return (caso.questions || []).some((q) => {
     const resposta = String(q?.[1] ?? '').trim().toLowerCase();
     return resposta !== '' && !RESPOSTAS_FECHADAS.has(resposta);
@@ -95,7 +101,7 @@ export function temPerguntaAberta(caso) {
 }
 
 /**
- * Nível que o caso EARNA pela própria estrutura, não pelo rótulo do grupo.
+ * Nível que o caso alcança pela própria estrutura, não pelo rótulo do grupo.
  * Devolve sempre um dos NIVEIS, nunca null: o degrau de partida é reconhecer.
  */
 export function nivelDoCaso(caso) {

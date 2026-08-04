@@ -5,8 +5,9 @@
 //
 // As fontes sao publicas: a divisao hidrografica oficial do Parana e o SIGA da
 // ANEEL. Nada aqui vem da base de processos do IAT.
-import React, { useMemo, useRef, useState } from 'react';
-import { Map as MapIcon, Search, X, Layers3, Zap, ZoomIn, ZoomOut, Maximize2, Target, ChevronRight } from 'lucide-react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { AlertTriangle, Map as MapIcon, Search, X, Layers3, Zap, ZoomIn, ZoomOut, Maximize2, Target, ChevronRight } from 'lucide-react';
+import mapaDadosUrl from './data/mapa-parana.json?url';
 import {
   SATELLITE_INFO_URL,
   useSatelliteLayer,
@@ -14,6 +15,54 @@ import {
 
 const COR = { CGH: '#57d8bf', PCH: '#4cc4f5', UHE: '#9fb7ff' };
 const ORDEM = ['CGH', 'PCH', 'UHE'];
+
+let promessaMapa = null;
+let cacheMapa = null;
+
+export function validarDadosMapa(dados) {
+  if (!dados || typeof dados !== 'object') {
+    throw new Error('mapa-parana.json: objeto raiz ausente');
+  }
+  if (!Number.isFinite(dados.largura) || !Number.isFinite(dados.altura)) {
+    throw new Error('mapa-parana.json: dimensoes invalidas');
+  }
+  if (!Array.isArray(dados.bacias) || !dados.bacias.length) {
+    throw new Error('mapa-parana.json: bacias ausentes');
+  }
+  if (!Array.isArray(dados.usinas) || !dados.usinas.length) {
+    throw new Error('mapa-parana.json: usinas ausentes');
+  }
+  if (!Array.isArray(dados.fontes) || !dados.tileProjection) {
+    throw new Error('mapa-parana.json: fontes ou projecao ausentes');
+  }
+  return dados;
+}
+
+/** Dados vetoriais do mapa. A promessa compartilhada evita buscas duplicadas. */
+export function carregarDadosMapa({ recarregar = false } = {}) {
+  if (recarregar) {
+    cacheMapa = null;
+    promessaMapa = null;
+  }
+  if (cacheMapa) return Promise.resolve(cacheMapa);
+  if (!promessaMapa) {
+    promessaMapa = fetch(mapaDadosUrl)
+      .then((resposta) => {
+        if (!resposta.ok) throw new Error(`mapa-parana.json: HTTP ${resposta.status}`);
+        return resposta.json();
+      })
+      .then(validarDadosMapa)
+      .then((dados) => {
+        cacheMapa = dados;
+        return dados;
+      })
+      .catch((erro) => {
+        promessaMapa = null;
+        throw erro;
+      });
+  }
+  return promessaMapa;
+}
 
 const norm = (v) => (v || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
 
@@ -120,7 +169,7 @@ function ExercicioEnquadrar({ usinas, state, setState }) {
   );
 }
 
-export default function MapaParana({ dados, state, setState }) {
+function MapaConteudo({ dados, state, setState }) {
   const [tipos, setTipos] = useState(() => new Set(ORDEM));
   const [busca, setBusca] = useState('');
   const [sel, setSel] = useState(null);          // usina selecionada
@@ -511,6 +560,70 @@ export default function MapaParana({ dados, state, setState }) {
           </p>
         </div>
       </footer>
+    </div>
+  );
+}
+
+export default function MapaParana({ dados: dadosFornecidos, state, setState }) {
+  const [estado, setEstado] = useState(() => ({
+    dados: dadosFornecidos || cacheMapa,
+    erro: null,
+    carregando: !dadosFornecidos && !cacheMapa,
+  }));
+
+  const buscar = (recarregar = false) => {
+    setEstado((atual) => ({ ...atual, erro: null, carregando: true }));
+    return carregarDadosMapa({ recarregar }).then(
+      (dados) => setEstado({ dados, erro: null, carregando: false }),
+      (erro) => setEstado({ dados: null, erro, carregando: false }),
+    );
+  };
+
+  useEffect(() => {
+    if (dadosFornecidos) {
+      setEstado({ dados: dadosFornecidos, erro: null, carregando: false });
+      return undefined;
+    }
+    if (estado.dados) return undefined;
+    let vivo = true;
+    carregarDadosMapa().then(
+      (dados) => vivo && setEstado({ dados, erro: null, carregando: false }),
+      (erro) => vivo && setEstado({ dados: null, erro, carregando: false }),
+    );
+    return () => {
+      vivo = false;
+    };
+  }, [dadosFornecidos, estado.dados]);
+
+  if (estado.dados) {
+    return <MapaConteudo dados={estado.dados} state={state} setState={setState} />;
+  }
+
+  return (
+    <div className="page mapa-page">
+      <header className="page-header">
+        <span><MapIcon /></span>
+        <div>
+          <small className="ph-kicker">TERRITÓRIO</small>
+          <h1>Mapa das hidrelétricas do Paraná</h1>
+          <p>Carregamento independente para abrir o restante da plataforma sem esperar pela base cartográfica.</p>
+        </div>
+      </header>
+      {estado.carregando ? (
+        <div className="route-loading" role="status" aria-live="polite">
+          <span aria-hidden="true" />
+          <div><strong>Carregando mapa</strong><small>Preparando bacias e usinas…</small></div>
+        </div>
+      ) : (
+        <section className="empty-state" role="alert">
+          <AlertTriangle aria-hidden="true" />
+          <h2>Não foi possível abrir a base do mapa</h2>
+          <p>{estado.erro?.message || 'O arquivo do mapa não respondeu.'}</p>
+          <button type="button" className="primary" onClick={() => buscar(true)}>
+            Tentar novamente
+          </button>
+        </section>
+      )}
     </div>
   );
 }

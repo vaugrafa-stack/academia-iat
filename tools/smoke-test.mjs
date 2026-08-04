@@ -28,9 +28,11 @@ globalThis.fetch = async input => {
     throw new Error('A aplicação tentou carregar o conteúdo-fonte bruto.');
   }
   else if (url.includes('flowcharts-content')) file = 'src/data/flowcharts-content.json';
+  else if (url.includes('mapa-parana')) file = 'src/data/mapa-parana.json';
   // O corpo dos casos saiu do pacote e virou arquivo buscado, para nao pesar
   // no orcamento de JS de quem nunca abre o Laboratorio. Sem este ramo, as
   // duas telas que dependem dele ficam presas no estado de carregamento.
+  else if (url.includes('lab-index')) file = 'src/data/lab-index.json';
   else if (url.includes('lab-corpos')) file = 'src/data/lab-corpos.json';
   else if (url.includes('question-bank')) file = 'src/data/question-bank.json';
   if (file) {
@@ -89,6 +91,10 @@ try {
   assert(document.querySelectorAll('.lesson-tabs button').length === 4, 'abas de aula, fonte, materiais e notas');
   assert(Boolean(document.querySelector('.lesson-knowledge-check')), 'aula inclui checagem comentada');
   assert(Boolean(document.querySelector('.lesson-active-practice textarea')), 'aula exige recuperação ativa escrita');
+  await waitFor(
+    () => document.querySelector('.exemplo-processo'),
+    'o exemplo do processo nao apareceu depois do carregamento do indice do laboratorio',
+  );
   assert(Boolean(document.querySelector('.exemplo-processo')), 'aula conecta o critério a um caso do módulo');
 
   await click(navButtons.find(x => x.textContent.includes('Fluxogramas')));

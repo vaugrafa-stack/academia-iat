@@ -47,7 +47,11 @@ export default defineConfig({
     : {
         command: `pnpm exec vite preview --host 127.0.0.1 --port ${port} --strictPort`,
         url: localBaseURL,
-        reuseExistingServer: !process.env.CI,
+        // Um preview antigo pode ter sido gerado com outra base (por exemplo,
+        // `/` em vez de `/academia-iat/`) e responder 200 apenas com o fallback
+        // HTML. Sempre iniciar o servidor do artefato atual evita esse falso
+        // positivo local.
+        reuseExistingServer: false,
         timeout: 60_000,
       },
   projects: [

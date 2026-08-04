@@ -5,6 +5,7 @@ import { tracks } from './courseData.js';
 import { derivarAulas } from './lessons.js';
 import {
   calcularIndicadoresLaboratorio,
+  conferirElementos,
   resolverProvenienciaDecisao,
   resolverRemediacaoModulo,
 } from './laboratorio.jsx';
@@ -40,6 +41,54 @@ describe('indicadores honestos do laboratório', () => {
 
     expect(resultado.rubrica.evidence).toBe(100);
     expect(resultado.indiceCompletude).toBe(100);
+  });
+
+  it('não compensa classificação ou tarefa aberta ausente com decisões binárias corretas', () => {
+    const resultado = calcularIndicadoresLaboratorio({
+      decisoesAlinhadas: 5,
+      totalDecisoes: 5,
+      evidenciasRegistradas: 4,
+      minimoEvidencias: 4,
+      elementosDetectados: 0,
+      totalElementos: 5,
+      classificacoesAlinhadas: 0,
+      totalClassificacoes: 4,
+      tarefaAberta: true,
+    });
+
+    expect(resultado.rubrica.classification).toBe(0);
+    expect(resultado.componentesObjetivo).toEqual({
+      decisions: 100,
+      classification: 0,
+      openTask: 0,
+    });
+    expect(resultado.objetivoPercentual).toBe(33);
+    expect(resultado.indiceCompletude).toBe(50);
+  });
+});
+
+describe('rubricas das tarefas abertas', () => {
+  const openIds = ['condicionantes', 'revisao', 'integrador', 'delegado'];
+
+  it('faz cada redacao-modelo cobrir todos os criterios especificos do proprio caso', () => {
+    for (const id of openIds) {
+      const scenario = scenarios.find((candidate) => candidate.id === id);
+      const conference = conferirElementos(scenario, scenario.modelo);
+      expect(conference.total, id).toBe(5);
+      expect(conference.tocados, id).toBe(conference.total);
+    }
+  });
+
+  it('nao pontua texto generico nem aceita integralmente o modelo de outro caso', () => {
+    const generic = 'Analisei o processo, esta tudo certo e encaminho para as providencias cabiveis.';
+    for (const id of openIds) {
+      const target = scenarios.find((candidate) => candidate.id === id);
+      expect(conferirElementos(target, generic).tocados, id).toBe(0);
+      for (const source of scenarios.filter((candidate) => candidate.id !== id)) {
+        const result = conferirElementos(target, source.modelo);
+        expect(result.tocados, `${source.id} nao pode resolver ${id}`).toBeLessThan(result.total);
+      }
+    }
   });
 });
 

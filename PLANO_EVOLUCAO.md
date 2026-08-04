@@ -1,7 +1,7 @@
 # Plano de evolução — Academia IAT Premium
 
 Documento operacional para continuidade da execução. Os estados refletem o que
-está comprovado em 28/07/2026, não o que foi apenas planejado.
+está comprovado até 04/08/2026, não o que foi apenas planejado.
 
 Legenda: ⬜ pendente · 🟨 em execução ou aguardando prova · ✅ comprovado ·
 ⛔ bloqueado por validação externa.
@@ -183,6 +183,11 @@ adequadas ao papel.
 **Implementado, aguardando validação**
 
 - documentos sintéticos marcados sem validade;
+- 26 casos distribuídos por exigência observável: 10 para Reconhecer, 5 para
+  Aplicar, 2 para Decidir, 5 para Integrar e 4 para Fundamentar;
+- cinco casos exigem classificação de evidências e quatro exigem tarefa aberta;
+- contratos de objetivo e revisão invalidam conclusões antigas quando a tarefa
+  muda ou quando o registro não demonstra o objetivo atual;
 - evidências mínimas, notas analíticas e fundamentação extensa;
 - rubrica separa decisão, evidência e raciocínio;
 - revisão textual da decisão;
@@ -264,14 +269,18 @@ obrigar uma sequência de curso.
 
 **Diagnóstico atual**
 
-- 159 clipes totalizam cerca de 54,7 minutos;
-- média aproximada de 20,7 segundos e todos têm menos de 30 segundos;
-- são resumos, não videoaulas completas;
-- transcrição consultável ainda não está integrada à experiência.
+- os 159 clipes por seção continuam classificados como resumos em vídeo, não
+  como videoaulas completas;
+- seis microaulas formam o piloto audiovisual aprofundado; não existe ainda uma
+  produção equivalente aprovada para os 159 tópicos;
+- professor fictício, narração, legenda, transcrição e cenário contextual estão
+  integrados aos seis pilotos;
+- o movimento da boca usa uma linha do tempo estimada de visemas. Ainda não há
+  alinhamento fonético medido que comprove precisão de até 100 ms.
 
 **Ação**
 
-- renomear clipes como “resumo em vídeo”;
+- manter os clipes corretamente identificados como “resumo em vídeo”;
 - criar inventário com duração, tamanho, origem, licença e objetivo;
 - oferecer legenda revisada e transcrição pesquisável/baixável;
 - produzir demonstrações longas apenas onde vídeo acrescenta valor;
@@ -279,34 +288,43 @@ obrigar uma sequência de curso.
 - fornecer alternativa estática e respeitar movimento reduzido;
 - criar áudio opcional somente com roteiro revisado;
 - registrar proveniência de imagens e licenças.
+- submeter os seis pilotos à aprovação antes de ampliar a produção;
+- adotar alinhamento fonético mensurável se a precisão de até 100 ms continuar
+  como critério de aceite.
 
 **Pronto quando**
 
 - cada mídia tem objetivo, classificação, transcrição, alternativa e origem;
 - nenhuma fala truncada;
 - controles acessíveis;
+- piloto aprovado e sincronização medida pelo critério declarado;
 - pacote offline sobrevive a reinício e atualização;
 - teste de compreensão demonstra valor didático.
 
 ### E9 — PWA e uso offline 🟨
 
-**Implementado, aguardando prova de navegador**
+**Implementado e comprovado em Chromium; provas em dispositivos reais ainda
+pendentes**
 
 - correção contra envenenamento do shell por navegação;
 - status offline para conjuntos de URLs;
 - pacotes determinísticos por módulo;
 - interface com tamanho, progresso, verificação, remoção, quota e persistência;
 - testes automatizados adicionais para navegação e resposta sob falha de cache.
+- portão em Chromium valida manifesto e ícones, escopo e controle do Service
+  Worker, resposta real sem rede, central de suporte offline e atualização da
+  versão V1 para V2;
+- o workflow exige esse portão antes de armazenar o artefato publicável.
 
 **Ainda falta**
 
 - disponibilizar o gerenciador também antes da criação de perfil ou em rota
   própria;
-- testar instalação limpa;
-- testar rede desligada após fechar e reabrir;
 - testar mídia com Range/HTTP 206;
 - testar quota baixa e falha parcial;
-- testar atualização N→N+1 preservando pacotes;
+- testar fechamento e reabertura em dispositivos e navegadores reais;
+- testar atualização preservando pacotes opcionais já baixados;
+- validar instalação e atualização em Safari/iOS e Android;
 - confirmar que caches de outros projetos nunca são removidos.
 
 **Pronto quando**
@@ -346,6 +364,13 @@ obrigar uma sequência de curso.
 - ledger visual e capturas aceitas.
 
 ### E11 — Persistência, erros e CI 🟨
+
+**Comprovado neste ciclo**
+
+- o workflow compila uma vez e testa o mesmo artefato que será armazenado;
+- o novo portão PWA usa Chromium e reproduz registro e controle do Service
+  Worker, operação offline e atualização controlada antes da etapa de publicação;
+- falha em qualquer portão impede o armazenamento do candidato publicável.
 
 **Ação**
 
@@ -742,22 +767,95 @@ ser atualizados se algum teste adicional for incorporado antes da publicação.
 6. somente projetar backend quando identidade, sincronização, turmas, devolutiva,
    relatórios ou auditoria tiverem finalidade, autorização e operação definidas.
 
+## Ciclo 3 — profundidade do Laboratório, carregamento e PWA — 04/08/2026
+
+Este ciclo substitui, quando houver conflito, as medições históricas anteriores.
+Ele registra o artefato candidato testado localmente; a publicação continua
+dependente da execução verde do mesmo conjunto de portões no workflow.
+
+### Laboratório e evidência de aprendizagem
+
+- os 26 casos passaram a usar cinco níveis derivados da tarefa efetivamente
+  solicitada: 10 para Reconhecer, 5 para Aplicar, 2 para Decidir, 5 para
+  Integrar e 4 para Fundamentar;
+- cinco casos exigem classificar o uso das evidências e quatro exigem uma tarefa
+  aberta com critérios mínimos, em vez de depender somente de decisões binárias;
+- ajuda progressiva, rubrica, comparação da tentativa e folha-resposta comentada
+  permanecem disponíveis sem transformar a consulta em conclusão automática;
+- as folhas-resposta passaram a registrar também o uso esperado, a justificativa
+  e as fontes de cada classificação de evidência e tarefa aberta;
+- cada exercício possui contrato versionado de objetivo. Mudança da revisão,
+  ausência da tarefa ou registro incompleto impede o reaproveitamento indevido de
+  uma conclusão anterior;
+- o perfil usa somente o índice e o contrato leve necessários para calcular o
+  progresso; o corpo completo do caso é validado e carregado na área de prática;
+- proveniência estrutural liga as novas tarefas às fontes declaradas, mas não
+  substitui revisão técnica, normativa ou pedagógica por pessoas competentes.
+
+### Carregamento e orçamento do artefato
+
+- mapa do Paraná, índice do Laboratório, manifesto das mídias piloto e pacotes
+  offline deixaram de integrar o JavaScript e passaram a ser quatro JSONs
+  externos, validados e carregados pela rota que os utiliza;
+- o JavaScript total mede 645,1 KiB de 850 KiB em tamanho bruto e 215,4 KiB de
+  270 KiB compactado;
+- a entrada principal mede 179,3 KiB de 205 KiB em tamanho bruto e 56,5 KiB de
+  66 KiB compactado;
+- o CSS ainda mede 206,6 KiB de 215 KiB em tamanho bruto e 37,6 KiB de 40 KiB
+  compactado. A margem é insuficiente para considerar essa frente encerrada;
+- a próxima intervenção de desempenho deve dividir e consolidar o CSS por rota,
+  medir o resultado no mesmo artefato e manter os limites como portão de build.
+
+### PWA, funcionamento offline e atualização
+
+- um portão dedicado abre o artefato final em Chromium com o Service Worker
+  real, sem simulação interna da aplicação;
+- o teste confere manifesto, ícones, escopo, controle da página, resposta
+  efetivamente servida sem rede, navegação offline e a Central de Suporte;
+- o mesmo fluxo troca uma versão V1 por V2, confirma a nova versão controladora
+  e verifica a limpeza dos caches pertencentes a esta aplicação;
+- erros de página, console e respostas locais HTTP 4xx/5xx reprovam o teste;
+- o workflow executa esse portão antes de armazenar o artefato que pode seguir
+  para publicação. Dispositivo físico, quota baixa e Safari/iOS permanecem como
+  provas complementares pendentes.
+
+### Limite audiovisual preservado
+
+- a produção aprofundada continua restrita a seis microaulas piloto;
+- os demais materiais por seção continuam apresentados como resumos em vídeo;
+- o professor fictício dos pilotos usa uma linha do tempo estimada de visemas.
+  Não existe, neste ciclo, medição fonética que demonstre sincronização de boca e
+  voz com precisão de até 100 ms;
+- a expansão para os 159 tópicos depende da avaliação dos seis pilotos, da
+  revisão dos roteiros e, se mantido o limite de 100 ms, de alinhamento fonético
+  mensurável antes da renderização final.
+
+### Próximas provas deste ciclo
+
+1. executar todos os portões no workflow e comprovar que o SHA publicado é o SHA
+   aprovado;
+2. percorrer a produção em desktop e celular depois da publicação;
+3. separar e consolidar o CSS por rota sem regressão visual ou de acessibilidade;
+4. revisar os cinco casos de classificação e os quatro casos abertos com
+   analistas do domínio;
+5. avaliar os seis pilotos antes de iniciar produção audiovisual em escala.
+
 ## Registro resumido
 
 | Etapa | Estado | Próxima prova |
 |---|---|---|
 | E0 Auditoria e baseline | ✅ | Manter achados e evidências atualizados |
 | E1 Proveniência | ✅ | Reexecutar gate no release candidato |
-| E2 Arquitetura | 🟨 | Build/test e remoção de legado |
+| E2 Arquitetura | 🟨 | Separar CSS por rota e continuar a extração de `main.jsx` |
 | E3 Confiança normativa | 🟨 | Matriz de alegações e conferência técnica |
 | E4 Formação | 🟨 | Checklist dos 159 tópicos e piloto |
-| E5 Laboratório | 🟨 | Navegador, rubricas e revisão técnica |
+| E5 Laboratório | 🟨 | Revisão técnica dos cinco casos de classificação e quatro casos abertos |
 | E6 Avaliações | 🟨 | Testes, revisão de banco e piloto |
 | E7 Consulta operacional | 🟨 | Teste cronometrado com usuários e links bidirecionais restantes |
-| E8 Mídia | 🟨 | Demonstrações aprofundadas e validação técnica das transcrições |
-| E9 PWA/offline | 🟨 | Reinício, quota, Range e atualização real |
+| E8 Mídia | 🟨 | Avaliar os seis pilotos e medir o alinhamento fonético antes de ampliar |
+| E9 PWA/offline | 🟨 | Dispositivos reais, quota baixa, Range e Safari/iOS |
 | E10 UX/acessibilidade | 🟨 | Mobile, zoom, leitor e ledger visual |
-| E11 Persistência/CI | 🟨 | Execução do pipeline em clone limpo e orçamento de performance |
+| E11 Persistência/CI | 🟨 | Workflow verde e identidade entre SHA aprovado e publicado |
 | E12 LGPD/acervo | 🟨 | Revalidar o artefato público e formalizar protocolo de retirada |
 | E13 Validação externa | ⛔ | Pessoas e aprovações responsáveis |
 | E14 Release | 🟨 | Publicar o commit candidato e revalidar o GitHub Pages |

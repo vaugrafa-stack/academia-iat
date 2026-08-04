@@ -14,22 +14,27 @@ por causa do tamanho do download.
 
 ## Onde a plataforma está hoje
 
+Atualizado ao fim da sequência de rodadas de 04/08/2026.
+
 | Lente | Medida | Situação |
 |---|---|---|
-| Funcional | 11 rotas renderizam, console limpo, 291 testes em 40 arquivos, 19 portões | sólida |
-| Frontend | JS 80,2% do teto, CSS **94,6%** | CSS volta a apertar |
-| Código | `main.jsx` 3.732 linhas, `laboratorio.jsx` 1.775 | duas telas concentram tudo |
-| Acessibilidade | 0 botão sem nome, 0 imagem sem alt, 0 rolagem lateral, foco 316/316 aprovado | boa, com **1 salto de nível de título** |
+| Funcional | 11 rotas renderizam, console limpo, **301 testes em 41 arquivos**, 19 portões | sólida |
+| Frontend | JS 80,7% do teto, CSS **80,3%** | com folga |
+| Código | `main.jsx` **3.770 linhas**, `laboratorio.jsx` 1.775 | duas telas concentram tudo |
+| Acessibilidade | 0 botão sem nome, 0 imagem sem alt, 0 rolagem lateral, foco 316/316, **0 salto de título** | limpa |
 | Texto | 0 palavra sem acento em 7 arquivos de conteúdo | limpo |
 | Mídia | 173 MB de videoaula, 27 MB de piloto | irrelevante agora |
-| Didática | 159 aulas, 136 questões sem pista de comprimento, 26 casos em 3 de 5 degraus | prática ainda rasa |
-| Vídeo | 159 aulas com sincronia labial derivada de legenda; 6 pilotos com roteiro editorial | dois padrões convivendo |
+| Didática | 159 aulas, 136 questões sem pista de comprimento, **26 casos nos 5 degraus**, revisão espaçada ativa | prática com escada real |
+| Vídeo | 159 aulas com sincronia labial de fonema derivada da legenda; 6 pilotos com roteiro editorial, **agora declarados na tela** | dois padrões, e a diferença está dita |
+
+**Fechados nesta sequência:** 1.1, 1.2, 2.2, 3.1, 3.2 e 3.3.
+**Abertos:** 2.1 (depende de arte), 4.1 e 4.2 (refatoração).
 
 ---
 
 ## Fase 1. Destravar (antes de qualquer coisa nova)
 
-### 1.1 Orçamento de CSS de volta à folga ⬜
+### 1.1 Orçamento de CSS de volta à folga ✅
 
 **Medida.** 37,8 de 40 KiB gzip, 94,6%. O teto subiu para 40 em 01/08 e já está
 quase consumido de novo. A próxima melhoria visual barra no build.
@@ -40,7 +45,7 @@ registrada no arquivo**, como da última vez. Não subir em silêncio.
 
 **Pronto quando.** Abaixo de 85% do teto.
 
-### 1.2 Salto de nível de título em Fluxogramas ⬜
+### 1.2 Salto de nível de título em Fluxogramas ✅
 
 **Medida.** A rota `fluxos` é a única das 11 com salto na hierarquia de
 títulos: um `h2` seguido direto de `h4`, ou equivalente. Quem navega por
@@ -69,7 +74,7 @@ já marca a sílaba tônica.
 **Risco.** Sem os quadros novos, não fazer nada. Animar por deformação de
 imagem produz o mesmo efeito artificial que a senoide produzia na boca.
 
-### 2.2 Unificar os dois padrões de vídeo ⬜
+### 2.2 Unificar os dois padrões de vídeo ✅
 
 **Medida.** Existem seis aulas-piloto com roteiro editorial, atlas temático e
 visemas de fonema, e 159 aulas com quadros gerados por PIL e visemas derivados
@@ -82,6 +87,22 @@ plataformas.
 
 **Com conexão obrigatória**, migrar as 159 para o padrão do piloto deixou de
 ter impedimento de peso. O impedimento que resta é editorial: são 159 roteiros.
+
+**Resolvido por DECLARAÇÃO, em 04/08/2026.** A legenda do vídeo agora distingue
+os três padrões que convivem:
+
+| O que a pessoa vê | Quando |
+|---|---|
+| Microaula piloto, roteiro editorial | as 6 aulas do piloto |
+| Resumo em vídeo desta seção | as 159 com vídeo próprio |
+| Resumo em vídeo do módulo | as poucas sem vídeo próprio |
+
+O runtime já marcava `classification: "microaula-piloto"`; o dado só não chegava
+à tela. Declarar é mais honesto que uniformizar por baixo: apagar a diferença
+para "ficar tudo igual" esconderia o padrão mais alto em vez de persegui-lo.
+
+A migração das 159 continua aberta, e agora é escolha editorial explícita, não
+uma inconsistência silenciosa.
 
 ---
 
@@ -122,7 +143,7 @@ Fica a lição de método: **reconferir o estado antes de planejar em cima dele.
 Um plano que descreve o passado como se fosse o presente desperdiça a rodada de
 quem o executa.
 
-### 3.2 Os nove elementos nas 159 aulas ⬜
+### 3.2 Os nove elementos nas 159 aulas 🟨
 
 **Medida.** É o maior item em volume do plano anterior e continua aberto.
 Pré-requisito, objetivo observável, explicação, fonte, exemplo trabalhado, erro
@@ -133,7 +154,12 @@ mais falta. O POP já traz erros recorrentes dentro dos quadros: o Quadro 8 tem
 uma coluna inteira chamada "Erro recorrente a evitar". Ligar isso à aula é
 reaproveitamento, não autoria.
 
-### 3.3 Revisão espaçada com retomada de erro ⬜
+**O erro frequente foi feito em 04/08/2026.** 35 erros colhidos de dois quadros,
+ligados por menção explícita do termo: **81 das 159 aulas** recebem ao menos um,
+com 177 vínculos. Os outros oito elementos continuam abertos, e o próximo de
+maior retorno é o **objetivo observável**, hoje repetindo poucos modelos.
+
+### 3.3 Revisão espaçada com retomada de erro ✅
 
 **Medida.** O estado guarda `doneAt` e `lastVisit`, mas nada traz de volta o que
 a pessoa errou. Sem isso, a avaliação final mede memória recente.

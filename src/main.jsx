@@ -2450,10 +2450,21 @@ function VideoLesson({ media, track, lesson }) {
           {media.title}
         </span>
         <span className="vl-tools">
+          {/* Tres padroes de producao convivem, e ate 04/08/2026 a diferenca
+              nao estava dita em lugar nenhum: quem abria a aula 18 e depois a
+              57 via duas plataformas sem saber por que. O runtime ja marcava
+              `classification`, so nao chegava a tela.
+
+              Declarar e mais honesto que uniformizar por baixo: as seis
+              microaulas-piloto tem roteiro editorial e atlas tematico, e
+              apagar isso para "ficar tudo igual" seria esconder o padrao mais
+              alto em vez de perseguir ele. */}
           <small>
-            {media.propria
-              ? "Resumo em vídeo desta seção"
-              : "Resumo em vídeo do módulo"}{" "}
+            {media.classification === "microaula-piloto"
+              ? "Microaula piloto, roteiro editorial"
+              : media.propria
+                ? "Resumo em vídeo desta seção"
+                : "Resumo em vídeo do módulo"}{" "}
             ·{" "}
             {track.code}
           </small>

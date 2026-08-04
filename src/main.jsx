@@ -307,6 +307,10 @@ function mediaForLesson(lesson, pilotCollection) {
       src: wb(`/media/aula/${lesson.id}.mp4`),
       poster: wb(`/media/aula/${lesson.id}.jpg`),
       captions: wb(`/media/aula/${lesson.id}.vtt`),
+      // Sincronia labial derivada dos fonemas da propria legenda, gerada por
+      // tools/visemas_das_aulas.py. Sem isto o professor caia no nivel
+      // estimado pela legenda, que acerta o QUANDO mas nao a forma da boca.
+      visemes: wb(`/media/aula/${lesson.id}.visemes.json`),
       title: (lesson.number ? lesson.number + " " : "") + lesson.title,
       propria: true,
     };

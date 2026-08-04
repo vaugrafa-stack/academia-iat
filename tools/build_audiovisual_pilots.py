@@ -31,6 +31,16 @@ from PIL import Image, ImageDraw, ImageEnhance, ImageFont, ImageOps
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "tools"))
 from legendas import dividir_fala, escrever_vtt  # noqa: E402
+# Motor de visemas compartilhado com visemas_das_aulas.py, que aplica o mesmo
+# mapeamento as 159 videoaulas a partir das legendas.
+from visemas import (  # noqa: E402
+    SCENE_GAP,
+    SKIP_PHONEMES,
+    VIS_NAMES,
+    phoneme_weight,
+    viseme_for,
+    viseme_timeline,
+)
 
 SCRIPTS_PATH = ROOT / "src" / "data" / "audiovisual-pilot-scripts.json"
 POP_PATH = ROOT / "src" / "data" / "pop-public-content.json"
@@ -46,7 +56,6 @@ MODEL = TTS / "pt_BR-faber-medium.onnx"
 W, H, FPS = 960, 540, 12
 TARGET_WPM = 140.0
 MIN_WPM, MAX_WPM = 130.0, 150.0
-SCENE_GAP = 0.22
 TRANSITION_SECONDS = 0.24
 GENERATOR_VERSION = 1
 EXPECTED_IDS = {
@@ -351,95 +360,6 @@ def make_captions(timeline: list[dict]) -> str:
             )
         )
     return escrever_vtt(blocks)
-
-
-VIS_NAMES = [
-    "rest", "MBP", "IE", "A", "O", "U", "FV", "L", "CHJ", "E_OPEN", "SCHWA", "rest_alt"
-]
-SKIP_PHONEMES = {"ˈ", "ˌ", "ː", "ˑ", "͡", "͜", "̃", "̩", "̯", "̪", "ʰ"}
-
-
-def viseme_for(phoneme: str) -> int:
-    if not phoneme or phoneme.isspace() or phoneme in ".,;:!?-()":
-        return 0
-    if phoneme in "mbp":
-        return 1
-    if phoneme in "iɪjyɨ":
-        return 2
-    if phoneme in "aɐɑæɒ":
-        return 3
-    if phoneme in "oɔø":
-        return 4
-    if phoneme in "uʊw":
-        return 5
-    if phoneme in "fv":
-        return 6
-    if phoneme in "lɫ":
-        return 7
-    if phoneme in "ʃʒɕçʝx":
-        return 8
-    if phoneme in "eɛɜœ":
-        return 9
-    return 10
-
-
-def phoneme_weight(phoneme: str, viseme: int) -> float:
-    if phoneme.isspace():
-        return 0.8
-    if phoneme in ".,;:!?-":
-        return 1.25
-    if viseme in {2, 3, 4, 5, 9}:
-        return 1.45
-    if viseme in {1, 6, 7, 8}:
-        return 0.85
-    return 0.68
-
-
-def viseme_timeline(timeline: list[dict], duration: float, lesson_id: str) -> dict:
-    entries = []
-    for scene in timeline:
-        phonemes = [char for char in scene.get("phonemes", "") if char not in SKIP_PHONEMES]
-        if not phonemes:
-            phonemes = list(scene["spoken"])
-        parts = [(char, viseme_for(char)) for char in phonemes]
-        weights = [phoneme_weight(char, viseme) for char, viseme in parts]
-        total_weight = sum(weights) or 1
-        cursor = scene["start"]
-        scene_duration = scene["end"] - scene["start"]
-        for (phoneme, viseme), weight in zip(parts, weights):
-            end = cursor + scene_duration * weight / total_weight
-            if entries and entries[-1]["viseme"] == viseme and abs(entries[-1]["end"] - cursor) < 0.002:
-                entries[-1]["end"] = end
-                entries[-1]["phonemes"] += phoneme
-            else:
-                entries.append({
-                    "start": cursor,
-                    "end": end,
-                    "viseme": viseme,
-                    "name": VIS_NAMES[viseme],
-                    "phonemes": phoneme,
-                })
-            cursor = end
-        if scene["end"] < duration:
-            entries.append({
-                "start": scene["end"],
-                "end": min(duration, scene["end"] + SCENE_GAP),
-                "viseme": 11,
-                "name": "rest_alt",
-                "phonemes": "",
-            })
-    for entry in entries:
-        entry["start"] = round(entry["start"], 3)
-        entry["end"] = round(entry["end"], 3)
-    return {
-        "schemaVersion": "1.0.0",
-        "lessonId": lesson_id,
-        "spriteGrid": {"columns": 3, "rows": 4},
-        "visemeOrder": VIS_NAMES,
-        "alignmentMethod": "phoneme-sequence-weighted-to-scene-audio",
-        "alignmentStatus": "estimated-pilot",
-        "entries": entries,
-    }
 
 
 def presenter_windows(timeline: list[dict], duration: float, target: float = 0.35):

@@ -7,3 +7,4 @@ src/data/offline-packages.json text eol=lf
 src/data/lab-index.json text eol=lf
 src/data/lab-corpos.json text eol=lf
 src/data/question-bank.json text eol=lf
+public/media/aula/*.visemes.json text eol=lf

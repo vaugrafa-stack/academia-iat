@@ -554,7 +554,7 @@ grupos.
 entrelinha e escala tipográfica. Texto normativo longo em linha larga demais cansa e a
 pessoa perde a linha ao voltar.
 
-### F3. Foco no reprodutor de vídeo ⬜
+### F3. Foco no reprodutor de vídeo ✅
 
 **Por quê.** `videoLearningStage.css` não tem nenhuma regra de `:focus` ou
 `:focus-visible`, enquanto as outras quatro folhas têm. Pode ser herança de regra
@@ -564,6 +564,25 @@ global, pode ser lacuna.
 Tab. Se o foco não estiver visível, criar a regra com contorno de 2 px e contraste
 mínimo de 3:1. Não inferir por estilo computado: `getComputedStyle` não lê
 `:focus-visible`.
+
+**Verificado em 04/08/2026. Não havia defeito, e nenhuma linha foi alterada.**
+
+A suspeita era razoável, mas a regra global `button:focus-visible` de `styles.css`
+cobre os controles do reprodutor. Medido percorrendo com Tab de verdade:
+
+- contorno renderizado, `solid 2,67 px`, cor `#3fe0a6`;
+- contraste contra o palco do vídeo: **9,46:1**, contra 3:1 exigidos;
+- `outline-offset` de 2 px mais 2,67 px de largura cabem na folga de 7 px entre os
+  botões de velocidade, então o anel de um não toca o vizinho aceso.
+
+Auditoria estendida a toda a aplicação no mesmo movimento: **316 elementos
+interativos, 11 rotas, 2 temas, zero falhas de contraste de foco.**
+
+Duas armadilhas de medição apareceram e estão registradas na skill
+`auditoria-acessibilidade`. A segunda é nova: **o contorno fica fora do elemento**,
+então o fundo que importa é o do pai. Medir contra o fundo do próprio elemento
+produziu 128 falhas inexistentes, todas com o mesmo valor de 1,24. Muitas falhas com
+número idêntico é sinal de medição errada, não de interface errada.
 
 ---
 

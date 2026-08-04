@@ -2,6 +2,9 @@ import { readFile } from 'node:fs/promises';
 import { describe, expect, it } from 'vitest';
 
 const mainUrl = new URL('./main.jsx', import.meta.url);
+// A tela do perfil saiu de main.jsx em 04/08/2026. O contrato de acessibilidade
+// dela continua valendo: mudou o arquivo, nao a exigencia.
+const perfilUrl = new URL('./perfil.jsx', import.meta.url);
 const cssUrl = new URL('./nota10.css', import.meta.url);
 const baseCssUrl = new URL('./styles.css', import.meta.url);
 
@@ -21,11 +24,12 @@ describe('contratos de acessibilidade das superfícies principais', () => {
 
   it('anuncia mensagens e resultados que também são comunicados visualmente', async () => {
     const main = await readFile(mainUrl, 'utf8');
+    const perfil = await readFile(perfilUrl, 'utf8');
 
     expect(main).toContain(
       'className="toast" role="status" aria-live="polite" aria-atomic="true"',
     );
-    expect(main).toContain('aria-label={`Excluir perfil ${u.name}`}');
+    expect(perfil).toContain('aria-label={`Excluir perfil ${u.name}`}');
     expect(main).toContain('"Resposta correta."');
     expect(main).toContain('"Sua resposta, incorreta."');
   });

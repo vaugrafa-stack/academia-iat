@@ -18,7 +18,7 @@ import { resolve } from 'node:path';
 const raiz = resolve(import.meta.dirname, '..');
 // Modulos de UI fora de main.jsx. main.jsx nao entra: la tudo divide o mesmo
 // escopo e o verificador so acusaria ruido.
-const ARQUIVOS = ['src/ui.jsx', 'src/painelAluno.jsx', 'src/redator.jsx', 'src/mapa.jsx', 'src/hydro.jsx', 'src/hydroCases.jsx', 'src/laboratorio.jsx', 'src/OfflineManager.jsx', 'src/Flowcharts.jsx', 'src/biblioteca.jsx'];
+const ARQUIVOS = ['src/ui.jsx', 'src/painelAluno.jsx', 'src/redator.jsx', 'src/mapa.jsx', 'src/hydro.jsx', 'src/hydroCases.jsx', 'src/laboratorio.jsx', 'src/OfflineManager.jsx', 'src/Flowcharts.jsx', 'src/biblioteca.jsx', 'src/perfil.jsx'];
 
 // Globais e nativos que nao precisam de import.
 const AMBIENTE = new Set([

@@ -136,6 +136,28 @@ test('experiência responsiva prioriza aprender e praticar sem overflow', async 
   }
   await expectHealthyPage(page, runtimeIssues);
 
+  await page.goto(appUrl(baseURL, '#/aula/pop-section-059'), {
+    waitUntil: 'domcontentloaded',
+  });
+  const stage = page.locator('.vls-stage');
+  const stageBox = await stage.boundingBox();
+  if ((stageBox?.width ?? Infinity) <= 640) {
+    const [screenBox, railBox, professorBox] = await Promise.all([
+      stage.locator('.vls-screen').boundingBox(),
+      stage.locator('.vls-professor-rail').boundingBox(),
+      stage.locator('.vls-professor').boundingBox(),
+    ]);
+    expect(railBox?.y ?? 0).toBeGreaterThanOrEqual(
+      (screenBox?.y ?? 0) + (screenBox?.height ?? 0) - 1,
+    );
+    expect(professorBox?.y ?? Infinity).toBeLessThanOrEqual(
+      (railBox?.y ?? 0) + 8,
+    );
+    expect((professorBox?.y ?? 0) + (professorBox?.height ?? 0) * 0.55)
+      .toBeLessThanOrEqual((railBox?.y ?? 0) + (railBox?.height ?? 0));
+  }
+  await expectHealthyPage(page, runtimeIssues);
+
   await page.goto(appUrl(baseURL, '#/laboratorio'), {
     waitUntil: 'domcontentloaded',
   });

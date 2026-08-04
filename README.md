@@ -65,7 +65,7 @@ nos registros gerados. Builds locais usam o SHA atual com o sufixo `-local`.
 - aulas com orientação, texto-fonte, quadros, tabelas, figuras, anotações e referências;
 - cada aula oferece checagem comentada, recuperação ativa escrita e autoauditoria; para novas conclusões, a checagem deve estar correta, o registro deve ter ao menos 80 caracteres significativos e dois de três critérios devem ser conferidos;
 - 159 resumos audiovisuais por seção, com 10,5 a 102,5 segundos, voz em português, pôster, texto aberto, legenda WebVTT opcional e transcrição;
-- seis microaulas piloto usam professor fictício, voz, legenda, transcrição e cenários de barragem, território, campo e análise documental; a boca é exibida em cadência visual reduzida, com transições curtas, pausas neutras e cabeça estável, mas os tempos continuam estimados e não possuem comprovação formal de precisão de até 100 ms;
+- seis microaulas piloto usam professor fictício, voz, legenda, transcrição e cenários de barragem, território, campo e análise documental; a boca é exibida em cadência visual reduzida, com transições curtas, pausas neutras, cabeça estável e rosto integralmente enquadrado também em áreas estreitas, mas os tempos continuam estimados e não possuem comprovação formal de precisão de até 100 ms;
 - 17 vídeos de abertura de módulo e três animações SVG complementares;
 - 7 fluxogramas interativos e 21 fluxogramas-fonte para comparação; cada atividade interativa explicita evidência, risco e fonte em seis etapas e termina em uma decisão ramificada comentada;
 - 26 cenários de laboratório com documentos e dados exclusivamente sintéticos, distribuídos em cinco níveis objetivos: 10 para Reconhecer, 5 para Aplicar, 2 para Decidir, 5 para Integrar e 4 para Fundamentar;

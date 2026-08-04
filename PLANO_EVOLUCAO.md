@@ -854,6 +854,8 @@ dependente da execução verde do mesmo conjunto de portões no workflow.
   transições por 65 ms;
 - o volume controla apenas a visibilidade da região dos lábios e não desloca
   mais a cabeça. A preferência por movimento reduzido mantém a boca neutra;
+- em áreas de vídeo com até 640 px, o enquadramento responsivo mantém olhos,
+  nariz e boca dentro da faixa do professor, sem sobrepor o vídeo ou a legenda;
 - os arquivos de áudio, vídeo e voz não foram regenerados. A linha temporal
   continua estimada e não constitui prova de alinhamento fonético de até 100 ms.
 

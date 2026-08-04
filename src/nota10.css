@@ -741,3 +741,26 @@
 .lesson-header p,
 .analysis-alert p,
 .kp-quadro-nota{max-width:58ch}
+
+/* Linguagem visual de PROCEDENCIA: fonte, interpretacao e exemplo.
+   Misturar os tres e o defeito mais grave possivel neste dominio, porque
+   transforma interpretacao em exigencia aos olhos de quem esta aprendendo.
+   A convencao, agora consistente em toda a plataforma:
+
+     azul   = FONTE. Texto do POP ou evidencia dele derivada.
+     verde  = INTERPRETACAO didatica, escrita pela plataforma.
+     ambar  = ERRO recorrente e atencao.
+     roxo   = EXEMPLO, caso construido sem validade processual.
+
+   O bloco do Anexo B usava azul por engano: ele e conteudo autoral, derivado
+   do item 23.1, e nao transcricao. Passou para verde. */
+.lesson-keypoints.kp-fonte{
+  padding-left:13px;
+  border-left:3px solid color-mix(in srgb,var(--blue) 55%,var(--line));
+}
+.lesson-keypoints.kp-fonte .kp-notas-tit{color:var(--blue)}
+.lesson-keypoints.kp-fonte .kp-notas-tit svg{color:var(--blue)}
+.anexo-b-guia{border-left-color:var(--green)}
+.anexo-b-guia>header>svg,
+.anexo-b-guia>header small{color:var(--green)}
+.anexo-b-guia>button{border-color:var(--green);color:var(--green)}

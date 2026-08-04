@@ -50,6 +50,7 @@ import {
   Maximize2,
   Menu,
   MessageSquareText,
+  Quote,
   Milestone,
   PanelLeftClose,
   PanelLeftOpen,
@@ -3207,7 +3208,16 @@ function LessonOverview({
           </div>
         )}
       {prosa.length > 0 && (
-        <div className="lesson-keypoints">
+        <div className="lesson-keypoints kp-fonte">
+          {/* Estes paragrafos sao o texto do POP na redacao original, e nao
+              parafrase da plataforma. Sem o rotulo, quem le nao tinha como
+              distinguir a palavra da norma do comentario didatico, que neste
+              dominio e a confusao mais grave possivel: transforma
+              interpretacao em exigencia aos olhos de quem esta aprendendo. */}
+          <strong className="kp-notas-tit">
+            <Quote size={14} aria-hidden="true" /> Trechos do POP, na redação
+            original
+          </strong>
           {prosa.slice(0, 4).map((b) => (
             <p key={b.id}>{b.paragraph.text}</p>
           ))}

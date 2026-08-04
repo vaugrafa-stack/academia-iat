@@ -81,14 +81,69 @@ export function computeNarrationLevel(samples) {
 }
 
 /**
- * Movimento discreto usado somente quando Web Audio não está disponível.
- * Não acessa microfone nem infere conteúdo: acompanha o relógio do próprio
- * vídeo para que a figura não fique congelada durante a narração.
+ * Nível de fala derivado da LEGENDA, usado quando Web Audio não está disponível.
+ *
+ * Por que existe assim. A versão anterior era uma senoide de 12,7 rad/s:
+ * `Math.sin(currentTime * 12.7)`. A boca abria e fechava a cerca de duas vezes
+ * por segundo, o tempo todo, sem nenhuma relação com o que estava sendo dito.
+ * Como visema real só existe nos seis vídeos-piloto, e as 159 videoaulas têm
+ * zero, essa senoide era o que quase todo mundo via. O efeito é pior que uma
+ * figura parada: a boca contradiz a fala, e o cérebro percebe na hora.
+ *
+ * A legenda resolve isso sem gerar nada novo. Cada bloco do `.vtt` tem o tempo
+ * exato em que aquela fala acontece, medido do WAV na geração. Então:
+ *
+ *   dentro de um bloco  ->  a pessoa está falando
+ *   entre blocos        ->  silêncio, boca fechada
+ *
+ * A intensidade dentro do bloco varia com a densidade de sílabas do texto, e
+ * não com um relógio solto: fala longa em pouco tempo abre mais a boca do que
+ * fala curta em muito tempo. A modulação fina continua sendo estimativa, mas o
+ * QUANDO passa a ser verdade, e é o quando que se percebe.
+ *
+ * `cues` é uma lista de `{ inicio, fim, chars }` extraída da faixa de legenda.
  */
-export function fallbackNarrationLevel(currentTime) {
-  if (!Number.isFinite(currentTime)) return 0;
-  const wave = Math.sin(currentTime * 12.7) * 0.5 + 0.5;
-  return wave > 0.33 ? clamp((wave - 0.24) * 1.25) : 0;
+export function narrationLevelFromCues(cues, currentTime) {
+  if (!Array.isArray(cues) || !cues.length || !Number.isFinite(currentTime)) return 0;
+  let ativo = null;
+  for (const cue of cues) {
+    if (currentTime >= cue.inicio && currentTime < cue.fim) { ativo = cue; break; }
+    if (cue.inicio > currentTime) break;
+  }
+  if (!ativo) return 0;
+
+  const dur = Math.max(ativo.fim - ativo.inicio, 0.001);
+  // Sílabas por segundo do bloco, normalizadas pela faixa usual de locução em
+  // pt-BR (por volta de 5 a 7 por segundo). Serve para diferenciar bloco denso
+  // de bloco pausado, não para medir fonema.
+  const silabasPorSegundo = (ativo.chars / 2.6) / dur;
+  const densidade = clamp((silabasPorSegundo - 2.2) / 4.5, 0.35, 1);
+
+  // Envelope dentro do bloco: sobe rápido no ataque, cai no fim, e oscila em
+  // torno da densidade para a boca não ficar travada numa abertura só.
+  const t = (currentTime - ativo.inicio) / dur;
+  const ataque = clamp(t / 0.06, 0, 1);
+  const queda = clamp((1 - t) / 0.1, 0, 1);
+  const textura = 0.72 + 0.28 * (Math.sin(currentTime * 9.1) * 0.5 + 0.5);
+  return clamp(densidade * ataque * queda * textura);
+}
+
+/** Lê os tempos e o tamanho de cada bloco da faixa de legenda do vídeo. */
+export function cuesFromTextTrack(video) {
+  const faixa = video?.textTracks?.[0];
+  const lista = faixa?.cues;
+  if (!lista || !lista.length) return [];
+  const fora = [];
+  for (let i = 0; i < lista.length; i += 1) {
+    const c = lista[i];
+    if (!Number.isFinite(c?.startTime) || !Number.isFinite(c?.endTime)) continue;
+    fora.push({
+      inicio: c.startTime,
+      fim: c.endTime,
+      chars: String(c.text || "").replace(/\s+/g, " ").trim().length,
+    });
+  }
+  return fora;
 }
 
 export function mouthFrameForLevel(level) {
@@ -396,11 +451,18 @@ function useNarrationLevel(videoRef, active, reducedMotion) {
       setLevel(normalized);
     };
 
+    // A faixa de legenda so fica populada depois que o navegador carrega o
+    // .vtt, entao a leitura e refeita enquanto vier vazia.
+    let cues = cuesFromTextTrack(video);
     const updateFallback = (timestamp = 0) => {
       if (cancelled) return;
       if (timestamp - lastSampleAt >= 66) {
         lastSampleAt = timestamp;
-        smoothed = fallbackNarrationLevel(video.currentTime);
+        if (!cues.length) cues = cuesFromTextTrack(video);
+        // Sem legenda carregada a boca fica FECHADA. Movimento inventado e pior
+        // do que figura parada: contradiz a fala e quem assiste percebe.
+        const alvo = cues.length ? narrationLevelFromCues(cues, video.currentTime) : 0;
+        smoothed = smoothed * 0.45 + alvo * 0.55;
         publishIfChanged(smoothed);
       }
       animationFrame = requestAnimationFrame(updateFallback);

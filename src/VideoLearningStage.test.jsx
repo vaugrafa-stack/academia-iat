@@ -4,7 +4,7 @@ import { createRoot } from "react-dom/client";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import VideoLearningStage, {
   computeNarrationLevel,
-  fallbackNarrationLevel,
+  narrationLevelFromCues,
   learningStageTheme,
   mouthFrameForLevel,
   mouthVisibilityForLevel,
@@ -35,10 +35,39 @@ describe("lógica do palco das videoaulas", () => {
     expect(mouthFrameForLevel(0.9)).toBe(3);
   });
 
-  it("mantém o fallback determinístico e dentro do intervalo permitido", () => {
-    const samples = [0, 0.1, 1.7, 12.4].map(fallbackNarrationLevel);
-    expect(samples.every((value) => value >= 0 && value <= 1)).toBe(true);
-    expect(fallbackNarrationLevel(1.7)).toBe(fallbackNarrationLevel(1.7));
+  it("cala a boca fora dos blocos de fala e a abre dentro deles", () => {
+    // A versao anterior era uma senoide: a boca abria e fechava duas vezes por
+    // segundo o tempo todo, inclusive no silencio entre as falas. Agora o
+    // QUANDO vem da legenda, que carrega o tempo real medido do audio.
+    const cues = [
+      { inicio: 1, fim: 3, chars: 60 },
+      { inicio: 5, fim: 6, chars: 40 },
+    ];
+    expect(narrationLevelFromCues(cues, 0.5)).toBe(0);
+    expect(narrationLevelFromCues(cues, 4)).toBe(0);
+    expect(narrationLevelFromCues(cues, 7)).toBe(0);
+    expect(narrationLevelFromCues(cues, 2)).toBeGreaterThan(0);
+    expect(narrationLevelFromCues(cues, 5.5)).toBeGreaterThan(0);
+  });
+
+  it("permanece deterministico e dentro do intervalo permitido", () => {
+    const cues = [{ inicio: 0, fim: 4, chars: 90 }];
+    const amostras = [0.2, 1.7, 2.9, 3.8].map((t) => narrationLevelFromCues(cues, t));
+    expect(amostras.every((v) => v >= 0 && v <= 1)).toBe(true);
+    expect(narrationLevelFromCues(cues, 1.7)).toBe(narrationLevelFromCues(cues, 1.7));
+  });
+
+  it("sem legenda nenhuma a boca fica fechada, em vez de inventar movimento", () => {
+    expect(narrationLevelFromCues([], 3)).toBe(0);
+    expect(narrationLevelFromCues(null, 3)).toBe(0);
+  });
+
+  it("fala densa abre mais a boca do que fala pausada", () => {
+    const densa = [{ inicio: 0, fim: 2, chars: 120 }];
+    const pausada = [{ inicio: 0, fim: 2, chars: 20 }];
+    expect(narrationLevelFromCues(densa, 1)).toBeGreaterThan(
+      narrationLevelFromCues(pausada, 1),
+    );
   });
 
   it("seleciona visemas e janelas editoriais pelo relógio do vídeo", () => {

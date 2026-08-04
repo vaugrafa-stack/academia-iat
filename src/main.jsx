@@ -2102,8 +2102,23 @@ function Lesson({
             lesson={lesson}
           />
         )}
-        <SourceAssurance compact />
-        <LearningContract design={design} />
+        {/* Proveniencia e percurso de raciocinio ficam RECOLHIDOS na aula.
+            Os dois blocos sao compromissos reais da plataforma: um declara de
+            onde o conteudo vem, o outro declara o que se espera da pessoa. Mas
+            eram identicos nas 159 aulas e ocupavam a tela inteira antes do
+            conteudo, empurrando a aula para baixo da dobra em toda visita.
+            Informacao que nao muda de aula para aula nao precisa ser parede:
+            precisa estar a um clique, e verificavel quando alguem quiser. */}
+        <details className="aula-meta">
+          <summary>
+            <ShieldCheck size={14} aria-hidden="true" />
+            Fonte deste conteúdo e percurso de raciocínio
+          </summary>
+          <div className="aula-meta-corpo">
+            <SourceAssurance compact />
+            <LearningContract design={design} />
+          </div>
+        </details>
         <div
           className="lesson-tabs"
           role="tablist"

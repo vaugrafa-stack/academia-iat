@@ -799,3 +799,21 @@
 .anexo-b-guia>header>svg,
 .anexo-b-guia>header small{color:var(--green)}
 .anexo-b-guia>button{border-color:var(--green);color:var(--green)}
+
+/* Proveniencia e percurso de raciocinio recolhidos na aula.
+   Os dois blocos declaram compromissos reais: de onde vem o conteudo e o que
+   se espera de quem estuda. Mas sao identicos nas 159 aulas, e abertos
+   empurravam o conteudo da aula para baixo da dobra em toda visita.
+   Recolhidos, continuam a um clique e continuam verificaveis. */
+.aula-meta{margin:0 0 16px;border:1px solid var(--line);border-radius:8px;background:var(--surface)}
+.aula-meta>summary{
+  display:flex;align-items:center;gap:8px;padding:10px 13px;cursor:pointer;
+  color:var(--muted);font-size:12px;font-weight:800;list-style:none;
+}
+.aula-meta>summary::-webkit-details-marker{display:none}
+.aula-meta>summary::after{content:"▸";margin-left:auto;font-size:11px}
+.aula-meta[open]>summary::after{content:"▾"}
+.aula-meta>summary svg{flex:none;color:var(--green)}
+.aula-meta>summary:hover{color:var(--ink2)}
+.aula-meta-corpo{padding:0 13px 12px}
+.aula-meta-corpo .source-assurance{margin-top:0}

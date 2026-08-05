@@ -843,6 +843,11 @@ p.objetivo-como-se-ve strong{color:var(--green)}
 .erros-secao dt{display:flex;align-items:baseline;gap:7px;font-size:12px;font-weight:850;color:var(--ink)}
 .erros-secao dt small{color:var(--muted);font-size:10px;font-weight:600}
 .erros-secao dd{margin:2px 0 0;color:var(--ink2);font-size:12px;line-height:1.55;max-width:58ch}
+/* Seis termos aparecem nos dois quadros do POP, um dizendo o erro que quem
+   analisa comete e o outro o limite do proprio documento. Antes, os dois
+   ocupavam duas das tres vagas da aula. Agora dividem o mesmo verbete. */
+.erros-secao .erro-limite{display:block;margin-top:5px;color:var(--muted)}
+.erros-secao .erro-limite b{color:var(--ink2);font-weight:800}
 .erros-secao .erros-fonte{display:block;margin-top:11px;padding-top:9px;border-top:1px solid var(--line);color:var(--muted);font-size:11px;line-height:1.45}
 
 /* Retomada do que escapou, na tela de autoavaliação.

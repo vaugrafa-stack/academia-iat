@@ -849,7 +849,14 @@ function ErrosRecorrentesDaSecao({ lesson, blocks = [], errosDoPop = [] }) {
               {e.termo}
               <small>{e.quadro}</small>
             </dt>
-            <dd>{e.erro}</dd>
+            <dd>
+              {e.erro}
+              {e.limite && (
+                <span className="erro-limite">
+                  <b>Limite do documento.</b> {e.limite}
+                </span>
+              )}
+            </dd>
           </React.Fragment>
         ))}
       </dl>

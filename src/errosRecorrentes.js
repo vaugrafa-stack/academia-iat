@@ -34,7 +34,15 @@ function colunasDeErro(table) {
   if (erro < 0) return null;
   // O termo é a primeira coluna; a definição, quando existe, é a do meio.
   const definicao = nomes.findIndex((n, i) => i !== 0 && i !== erro && /defini|limite|descri/.test(n));
-  return { termo: 0, definicao: definicao >= 0 ? definicao : -1, erro };
+  return {
+    termo: 0,
+    definicao: definicao >= 0 ? definicao : -1,
+    erro,
+    // O rótulo da coluna decide qual texto é o erro e qual é o limite quando o
+    // mesmo termo aparece em dois quadros. Sem ele, a escolha dependeria da
+    // ordem em que as tabelas foram lidas, que não é critério nenhum.
+    colunaDeErro: (cabecalho.cells[erro]?.text || "").trim(),
+  };
 }
 
 /**
@@ -57,6 +65,7 @@ export function colherErros(popData) {
         erro,
         quadro: `${table.labelType} ${table.labelNumber}`,
         tabelaId: table.id,
+        colunaDeErro: col.colunaDeErro,
       });
     }
   }
@@ -75,6 +84,44 @@ function mencionado(textoNorm, termo) {
 }
 
 /**
+ * Junta num vínculo só as entradas do mesmo termo.
+ *
+ * Seis termos aparecem nos dois quadros: Memorial Descritivo, PCA, RAS, RDPA,
+ * PBA e PACUERA. Os textos dizem a mesma coisa por dois ângulos, o erro que
+ * quem analisa comete e o limite do próprio documento:
+ *
+ *   Quadro 8   "Aceitar memorial como estudo ambiental ou substituto de PCA"
+ *   Quadro 22  "Não substitui estudo ambiental, diagnóstico ou programa"
+ *
+ * Antes disto, os dois ocupavam duas das três vagas da aula, em 21 das 82 que
+ * recebem erro. Nenhum dos textos se perde: o segundo passa a `limite`, e a
+ * tela mostra os dois no mesmo verbete.
+ */
+function juntarPorTermo(lista) {
+  const porTermo = new Map();
+  for (const e of lista) {
+    const chave = norm(e.termo);
+    const existente = porTermo.get(chave);
+    if (!existente) {
+      porTermo.set(chave, { ...e });
+      continue;
+    }
+    // A coluna "erro recorrente a evitar" nomeia a ação de quem analisa, e é
+    // ela que serve de erro. A coluna "limite" descreve o documento, e vira
+    // complemento. Sem isso a escolha dependeria da ordem das tabelas.
+    const ehLimite = /limite/i.test(e.colunaDeErro || "");
+    if (ehLimite) existente.limite = existente.limite || e.erro;
+    else {
+      existente.limite = existente.limite || existente.erro;
+      existente.erro = e.erro;
+      existente.quadro = e.quadro;
+      existente.tabelaId = e.tabelaId;
+    }
+  }
+  return [...porTermo.values()];
+}
+
+/**
  * Erros recorrentes pertinentes a uma aula, no máximo `limite`.
  *
  * `textoDaAula` deve incluir título e corpo. A ordem privilegia o termo mais
@@ -84,8 +131,7 @@ function mencionado(textoNorm, termo) {
 export function errosDaAula(erros, textoDaAula, limite = 3) {
   const alvo = norm(textoDaAula || "");
   if (!alvo) return [];
-  return erros
-    .filter((e) => mencionado(alvo, e.termo))
+  return juntarPorTermo(erros.filter((e) => mencionado(alvo, e.termo)))
     .sort((a, b) => b.termo.length - a.termo.length)
     .slice(0, limite);
 }

@@ -231,6 +231,32 @@ Publicado em `24c92c8` e `24a6933`. 332 testes, 20 portões.
 completa custou pouco e achou quatro defeitos, um deles com efeito sobre decisão
 administrativa.
 
+### Bloco 8. Erro recorrente: termo repetido gastava vaga ✅
+
+Auditando o outro conteúdo derivado, com o mesmo método do bloco 7. Seis termos
+aparecem nos dois quadros de erro do POP (Memorial Descritivo, PCA, RAS, RDPA,
+PBA e PACUERA), dizendo a mesma coisa por dois ângulos. Em **21 das 82 aulas**
+os dois entravam como verbetes separados e gastavam duas das três vagas.
+
+Agora dividem o mesmo verbete, o erro no corpo e o limite como complemento.
+Nenhum texto se perde e sobra vaga para outro termo. 180 vínculos viraram 168.
+
+A escolha de qual é o erro e qual é o limite vem do **rótulo da coluna**, não da
+ordem de leitura das tabelas. Um teste inverte a entrada para provar.
+
+O módulo **não tinha teste nenhum** e ligava conteúdo a 82 aulas. São 17 agora,
+com quatro contratos sobre o POP real.
+
+Publicado em `c6204ef`. 349 testes em 43 arquivos, 20 portões.
+
+## Próximo, quando houver capacidade
+
+- **Fase 4.2**, `laboratorio.jsx` com 1.775 linhas. Único item aberto do plano
+  que não depende de arte nem do usuário. Padrão de extração já provado no
+  bloco 4.
+- Auditar do mesmo jeito os outros conteúdos derivados que nunca foram lidos um
+  por um: `comoLerQuadro.js`, `aulasAnexoB.js` e `leiResumos.js`.
+
 ## Aguardando o usuário
 
 Cinco perguntas travam os blocos 2, 3, 6, 11 e 12 da sequência. Estão inteiras

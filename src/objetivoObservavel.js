@@ -71,8 +71,33 @@ const DEVER_MAIS_ACAO = new RegExp(
 /** Item de procedimento que já começa no infinitivo: "Identificar o documento". */
 const COMECA_EM_ACAO = new RegExp(`^((?:${VERBOS})\\b${CORPO})`, "i");
 
-/** Frase que fixa uma exigência, mesmo sem ação atribuível a quem analisa. */
-const EXIGENCIA = /\b(?:dever[áã]o?|devem|deve|é\s+obrigat|não\s+pode|veda|exig)/i;
+/**
+ * Frase que fixa uma exigência, mesmo sem ação atribuível a quem analisa.
+ *
+ * A fronteira exige cuidado com dois enganos, os dois já cometidos aqui:
+ *
+ * 1. **"deveria" não é exigência, é hipótese.** O POP usa o condicional para
+ *    DESCREVER erro: "condicionante que tenta sanar pendência crítica que
+ *    deveria ser resolvida antes do deferimento" é item de lista de armadilhas.
+ *    Casando com `deve` solto, essa frase virava "Aplicar o que o POP fixa
+ *    aqui: condicionante que tenta sanar pendência crítica", ou seja, a
+ *    plataforma mandava fazer exatamente o que o POP manda evitar. Num domínio
+ *    onde a aula orienta decisão administrativa, esse engano não é estético.
+ * 2. **`\b` não serve para separar palavra em português.** Em JavaScript,
+ *    `\w` é `[A-Za-z0-9_]`, então "á" e "ç" contam como NÃO-palavra e `\bdeve\b`
+ *    casa dentro de "deverá". A separação correta é por ausência de letra
+ *    Unicode, com `\p{L}`. O mesmo engano já tinha produzido oito acusações
+ *    falsas num verificador, porque `/\bo\.$/` casa dentro de "transição.".
+ */
+const SEM_LETRA_ANTES = "(?<![\\p{L}\\p{M}])";
+const SEM_LETRA_DEPOIS = "(?![\\p{L}\\p{M}])";
+const EXIGENCIA = new RegExp(
+  SEM_LETRA_ANTES
+  + "(?:deve|devem|deverá|deverão|é\\s+obrigatóri[ao]s?|não\\s+pode|não\\s+podem"
+  + "|é\\s+vedad[ao]s?|veda|vedam|exige|exigem|exigido|exigida)"
+  + SEM_LETRA_DEPOIS,
+  "iu",
+);
 
 const MIN_FRASE = 45;
 const MAX_CABECALHO = 70;
@@ -228,6 +253,30 @@ function referenciaDoQuadro(tabela) {
   return encontrado ? encontrado[1] : legenda || null;
 }
 
+/**
+ * Concordância do rótulo do quadro.
+ *
+ * "Quadro" é masculino e "Tabela" é feminino, e o POP usa os dois. Sem isto
+ * saía "Percorrer as 7 linhas do Tabela 1 sem consultá-lo", em vinte aulas.
+ * Erro de concordância na primeira linha da tela custa mais do que parece: a
+ * pessoa passa a ler o resto com desconfiança.
+ */
+function generoDoRotulo(referencia) {
+  return /^tabela/i.test(String(referencia || ""))
+    ? { de: "da", pronome: "consultá-la" }
+    : { de: "do", pronome: "consultá-lo" };
+}
+
+/**
+ * Acima disto, decorar deixa de ser objetivo honesto.
+ *
+ * O Quadro 46 tem 102 siglas e o Quadro 9 tem 30. Prometer "percorrer as 102
+ * linhas sem consultar" é prometer o que ninguém faz e o que ninguém precisa
+ * fazer: tabela de referência existe para ser consultada. O objetivo real ali é
+ * saber que ela existe, o que responde e onde procurar.
+ */
+const LIMITE_MEMORIZAVEL = 30;
+
 /** Lista em português: "A", "A e B", "A, B e C". */
 function enumerar(itens) {
   if (itens.length === 1) return itens[0];
@@ -262,13 +311,26 @@ export function objetivoObservavel(secao, blocks = [], tabelasPorId = new Map())
     if (colunas) {
       const referencia = referenciaDoQuadro(tabela);
       const linhas = Math.max(0, (tabela.rowCount || 0) - 1);
+      const { de, pronome } = generoDoRotulo(referencia);
       const [primeira, ...demais] = colunas;
+
+      if (linhas > LIMITE_MEMORIZAVEL) {
+        return {
+          origem: "quadro",
+          referencia,
+          objetivo: `Usar ${de.slice(1)} ${referencia}, com ${linhas} linhas, como referência de consulta.`,
+          comoSeVe:
+            `Diante de ${aspas(primeira)}, você sabe que a resposta está ali e ` +
+            `em qual coluna: ${enumerar(demais.map(aspas))}.`,
+        };
+      }
+
       return {
         origem: "quadro",
         referencia,
         objetivo: linhas
-          ? `Percorrer as ${linhas} linhas do ${referencia} sem consultá-lo.`
-          : `Percorrer o ${referencia} sem consultá-lo.`,
+          ? `Percorrer as ${linhas} linhas ${de} ${referencia} sem ${pronome}.`
+          : `Percorrer ${de.slice(1)} ${referencia} sem ${pronome}.`,
         comoSeVe:
           `Dada a coluna ${aspas(primeira)}, você reconstrói ` +
           `${enumerar(demais.map(aspas))}.`,

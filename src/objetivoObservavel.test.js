@@ -96,6 +96,37 @@ describe("origem quadro", () => {
     );
   });
 
+  it("concorda em gênero com Quadro e com Tabela", () => {
+    // "Percorrer as 7 linhas do Tabela 1 sem consultá-lo" apareceu em vinte
+    // aulas. Erro de concordância na primeira linha da tela custa mais do que
+    // parece: a pessoa passa a ler o resto com desconfiança.
+    const t = quadro({ id: "t", numero: 1, colunas: ["Item", "O que verificar"], linhas: 8 });
+    t.labelType = "Tabela";
+    t.caption = "Tabela 1 - teste";
+    const r = objetivoObservavel(SECAO, [{ type: "table", tableId: "t" }], new Map([["t", t]]));
+    expect(r.objetivo).toBe("Percorrer as 7 linhas da Tabela 1 sem consultá-la.");
+
+    const q = comQuadro(quadro({ id: "q", numero: 5, colunas: ["Papel", "Produto"], linhas: 8 }));
+    expect(objetivoObservavel(SECAO, q.blocos, q.mapa).objetivo).toBe(
+      "Percorrer as 7 linhas do Quadro 5 sem consultá-lo.",
+    );
+  });
+
+  it("não promete decorar tabela de referência grande", () => {
+    // O Quadro 46 tem 102 siglas. Prometer percorrê-lo "sem consultar" é
+    // prometer o que ninguém faz e o que ninguém precisa fazer: tabela de
+    // referência existe para ser consultada.
+    const { blocos, mapa } = comQuadro(
+      quadro({ numero: 46, linhas: 103, colunas: ["Sigla", "Por extenso", "Explicação"] }),
+    );
+    const r = objetivoObservavel(SECAO, blocos, mapa);
+    expect(r.objetivo).toBe(
+      "Usar o Quadro 46, com 102 linhas, como referência de consulta.",
+    );
+    expect(r.objetivo).not.toContain("sem consultá");
+    expect(r.comoSeVe).toContain("em qual coluna");
+  });
+
   it("recusa índice navegável disfarçado de quadro", () => {
     // Índice tem "cabeçalho" que é conteúdo: o título inteiro de uma seção.
     // Aceitar isso produziria "Dada a coluna “1 Objetivo, escopo e limites do
@@ -194,6 +225,39 @@ describe("origem exigencia", () => {
     expect(r.objetivo).toBe(
       "Aplicar o que o POP fixa aqui: “Toda manifestação técnica deve ser construída de forma rastreável”.",
     );
+  });
+
+  it('não confunde "deveria" com exigência', () => {
+    // O POP usa o condicional para DESCREVER erro. Esta frase é item de uma
+    // lista de armadilhas: "condicionante que tenta sanar pendência crítica que
+    // deveria ser resolvida antes do deferimento". Tratada como exigência, a
+    // aula passava a mandar fazer o que o POP manda evitar.
+    const armadilha =
+      "Condicionante que tenta sanar pendência crítica que deveria ser "
+      + "resolvida antes do deferimento pela unidade responsável.";
+    const regra =
+      "Primeiro deve ser resolvida a compatibilidade locacional ou de projeto "
+      + "mediante adequação, diligência ou manifestação da unidade competente.";
+
+    expect(objetivoObservavel(SECAO, [paragrafo(armadilha)])).toBeNull();
+
+    const r = objetivoObservavel(SECAO, [paragrafo(armadilha), paragrafo(regra)]);
+    expect(r.origem).toBe("exigencia");
+    expect(r.objetivo).toContain("Primeiro deve ser resolvida");
+    expect(r.objetivo).not.toContain("deveria");
+  });
+
+  it("separa palavra por letra Unicode, e não por \\b", () => {
+    // Em JavaScript `\w` é [A-Za-z0-9_], então "á" conta como não-palavra e
+    // /\bdeve\b/ casa dentro de "deverá". A separação tem de ser por ausência
+    // de letra Unicode. O mesmo engano já produziu oito acusações falsas num
+    // verificador, porque /\bo\.$/ casa dentro de "transição.".
+    const comAcento =
+      "A unidade responsável deverá manter o registro completo de cada etapa "
+      + "do procedimento no sistema oficial.";
+    const r = objetivoObservavel(SECAO, [paragrafo(comAcento)]);
+    expect(r).not.toBeNull();
+    expect(r.origem).toBe("exigencia");
   });
 
   it("devolve null quando nem a exigência mais curta cabe no cabeçalho", () => {

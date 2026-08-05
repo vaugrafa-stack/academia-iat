@@ -156,6 +156,27 @@ describe("contratos incrementais de arquitetura", () => {
     expect([...licao.matchAll(/\{alvo\.objetivo\}/g)].length).toBe(1);
   });
 
+  it("mantém a regra do Laboratório fora do arquivo da tela", async () => {
+    // As regras saíram de laboratorio.jsx em 05/08/2026. O contrato que impede
+    // a volta não é o tamanho: é a AUSÊNCIA de React no módulo de regra. Se
+    // `laboratorioLogica.js` voltar a importar React ou a conter JSX, os trinta
+    // testes que exercitam regra voltam a carregar a tela inteira para isso.
+    const [logica, tela] = await Promise.all([
+      readFile(new URL("./laboratorioLogica.js", import.meta.url), "utf8"),
+      readFile(laboratorioUrl, "utf8"),
+    ]);
+
+    expect(logica).not.toMatch(/from ['"]react['"]/);
+    expect(logica).not.toMatch(/<[A-Z][A-Za-z]*[\s/>]/);
+    expect(logica).not.toMatch(/\buse(?:State|Effect|Memo|Ref|LayoutEffect)\s*\(/);
+    expect(tela).toContain("from './laboratorioLogica.js'");
+    // A tela não redeclara o que importa.
+    for (const nome of ["criarCatalogoLaboratorio", "calcularIndicadoresLaboratorio", "conferirElementos"]) {
+      expect(tela).not.toMatch(new RegExp(`^(?:export )?function ${nome}\\(`, "m"));
+      expect(logica).toMatch(new RegExp(`^export function ${nome}\\(`, "m"));
+    }
+  });
+
   it("mantém catálogo móvel do Laboratório e seletor compacto do Redator", async () => {
     const [laboratorio, redator] = await Promise.all([
       readFile(laboratorioUrl, "utf8"),

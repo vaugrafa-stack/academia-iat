@@ -10,7 +10,7 @@ import {
   registrarConclusaoLaboratorio,
   registrarRascunhoLaboratorio,
   scrollLaboratorio,
-} from './laboratorio.jsx';
+} from './laboratorioLogica.js';
 
 describe('catálogo pesquisável do laboratório', () => {
   const catalog = criarCatalogoLaboratorio(scenarios, GRUPOS_LAB);

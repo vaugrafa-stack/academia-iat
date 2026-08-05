@@ -18,17 +18,17 @@ Atualizado ao fim da sequência de rodadas de 04/08/2026.
 
 | Lente | Medida | Situação |
 |---|---|---|
-| Funcional | 11 rotas renderizam, console limpo, **326 testes em 42 arquivos**, 20 portões | sólida |
+| Funcional | 11 rotas renderizam, console limpo, **382 testes em 46 arquivos**, 21 portões | sólida |
 | Frontend | JS 80,7% do teto, CSS **80,3%** | com folga |
-| Código | `main.jsx` **79 kB, 51% do teto**, `licao.jsx` 1.568, `laboratorio.jsx` 1.775 | a aula saiu do orquestrador |
+| Código | `main.jsx` **79 kB, 51% do teto**, `licao.jsx` 1.568, `laboratorio.jsx` **1.388** | aula e regra do laboratório fora do orquestrador |
 | Acessibilidade | 0 botão sem nome, 0 imagem sem alt, 0 rolagem lateral, foco 316/316, **0 salto de título** | limpa |
 | Texto | 0 palavra sem acento em 7 arquivos de conteúdo | limpo |
 | Mídia | 173 MB de videoaula, 27 MB de piloto | irrelevante agora |
 | Didática | 159 aulas, **149 objetivos observáveis distintos**, 26 casos nos 5 degraus, revisão espaçada ativa | promessa específica por aula |
 | Vídeo | 159 aulas com sincronia labial de fonema derivada da legenda; 6 pilotos com roteiro editorial, **agora declarados na tela** | dois padrões, e a diferença está dita |
 
-**Fechados nesta sequência:** 1.1, 1.2, 2.2, 3.1, 3.2, 3.3 e 4.1.
-**Abertos:** 2.1 (depende de arte) e 4.2 (refatoração).
+**Fechados nesta sequência:** 1.1, 1.2, 2.2, 3.1, 3.2, 3.3, 4.1 e 4.2.
+**Aberto:** só 2.1, que depende de arte nova e não de código.
 
 ---
 
@@ -203,10 +203,22 @@ afrouxados. Dois defeitos que só o smoke test e o navegador pegariam: eu medi o
 que o bloco precisa de fora e esqueci do sentido contrário, e um ícone ficou
 fora dos imports novos.
 
-### 4.2 `laboratorio.jsx` com 1.775 linhas ⬜
+### 4.2 `laboratorio.jsx` com 1.775 linhas ✅
 
 **Medida.** Segunda maior. Cresceu com o catálogo, a folha-resposta e a ajuda
 progressiva.
+
+**Feito em 05/08/2026.** `src/laboratorioLogica.js` com 411 linhas sem uma linha
+de JSX nem um hook. O arquivo da tela caiu para **1.388 linhas**, de 66 kB para
+53 kB.
+
+O critério da divisão não foi tamanho, foi natureza: o que é regra sai, o que é
+tela fica. A medida que mostrou o ganho: **trinta testes já exercitavam essas
+funções** carregando React, ícones e folha de estilo para isso.
+
+O contrato que impede a volta também não é de tamanho. É a ausência de React no
+módulo de regra: se ele voltar a importar React ou a conter JSX, o portão
+reprova.
 
 ---
 

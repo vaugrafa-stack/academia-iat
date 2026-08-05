@@ -354,6 +354,28 @@ e a distribuição no banco real segue equilibrada: 68 / 68 / 72 / 5, sendo a
 
 381 testes em 46 arquivos, 21 portões.
 
+### Bloco 15. Regra do Laboratório sai da tela (Fase 4.2) ✅
+
+`src/laboratorioLogica.js`, 411 linhas sem uma linha de JSX nem um hook:
+catálogo, filtro, rascunho, conferência de elementos, indicadores, ajuda
+progressiva e proveniência da decisão. `laboratorio.jsx` cai de **1.775 para
+1.388 linhas**, de 66 kB para 53 kB.
+
+O ganho não é estético. **Trinta testes já exercitavam essas funções** e, para
+isso, carregavam a tela inteira, com React, ícones e folha de estilo. Agora
+carregam um módulo que só depende de `tracks`, `nivelDoCaso` e `getLabSources`.
+
+O contrato que impede a volta não é o tamanho, é a **ausência de React** no
+módulo de regra.
+
+Um erro de método que se repetiu: montei a lista de símbolos a importar na mão e
+esqueci um. O que resolveu foi derivar a lista do arquivo, e não da memória.
+
+Conferido no navegador: catálogo com os 26 casos, filtros, caso abre, pergunta
+responde, ajuda progressiva presente, console limpo.
+
+382 testes em 46 arquivos, 21 portões.
+
 ## Próximo, quando houver capacidade
 
 - **Fase 4.2**, `laboratorio.jsx` com 1.775 linhas. Único item aberto do plano

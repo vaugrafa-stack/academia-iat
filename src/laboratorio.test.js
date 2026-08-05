@@ -8,7 +8,7 @@ import {
   conferirElementos,
   resolverProvenienciaDecisao,
   resolverRemediacaoModulo,
-} from './laboratorio.jsx';
+} from './laboratorioLogica.js';
 
 describe('indicadores honestos do laboratório', () => {
   it('mede registros observáveis sem premiar tamanho de texto', () => {

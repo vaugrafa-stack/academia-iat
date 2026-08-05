@@ -404,6 +404,34 @@ para repositório privado quando ele existir; até lá o histórico fica no disc
 27 testes em pytest, sobre exemplos sintéticos. Nenhum vem de processo real: são
 frases montadas com a **forma** dos dados, não com os dados.
 
+## Deixado de propósito para você decidir: ações do CI no Node 20
+
+Toda execução do CI avisa que `actions/checkout`, `setup-node`,
+`upload-artifact` e `pnpm/action-setup` alvejam Node 20, obsoleto, e estão sendo
+forçadas a rodar no Node 24. **É aviso, não falha**, e o CI está verde.
+
+Não apliquei porque são saltos de várias versões maiores numa pipeline que
+publica o site, e o modo de falha é o site parar de ser publicado. Mudança para
+fazer com alguém olhando, não às sete da manhã.
+
+O trabalho de levantamento está feito. Os SHAs da próxima major de cada uma, já
+resolvidos, para trocar em `.github/workflows/quality.yml`:
+
+```
+actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
+actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5.0.0
+actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5.0.0
+actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0 # v5.0.0
+pnpm/action-setup@41ff72655975bd51cab0327fa583b6e92b6d3061 # v4.2.0
+```
+
+Existem majors mais novas ainda (checkout v7, upload-artifact v7,
+download-artifact v8). Subir uma de cada vez, conferindo o CI entre elas, é mais
+barato do que descobrir qual das cinco quebrou. O `upload-artifact` é o de maior
+risco: mudou semântica de artefato a partir da v4.
+
+A fixação por SHA, e não por tag, deve ser mantida: tag pode ser movida.
+
 ## Próximo, quando houver capacidade
 
 **O plano `PLANO_SEQUENCIAL.md` está fechado.** Resta só a Fase 2.1, os olhos do

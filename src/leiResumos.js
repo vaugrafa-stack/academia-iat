@@ -40,7 +40,13 @@ const RESUMOS = [
   [/Lei Estadual n[ºo°] 20\.929/, 'Torna obrigatória a compensação ambiental para empreendimentos que geram impacto ambiental negativo não mitigável no Paraná. É a base legal da compensação analisada no módulo de conclusão.'],
   [/Decreto Estadual n[ºo°] 7\.150/, 'Regulamenta a Lei Estadual nº 20.929/2021 e disciplina a compensação ambiental por impactos negativos não mitigáveis: procedimento, cálculo e fluxo administrativo aplicados pelo IAT.'],
   [/Lei Estadual n[ºo°] 11\.054/, 'Lei Florestal do Estado do Paraná, referência estadual para as questões florestais do licenciamento.'],
-  [/Portaria n[ºo°] 069\/2015/, 'Portaria estadual referida no art. 50 da IN IAT nº 09/2025, aplicável conforme sua identificação oficial e vigência.'],
+  // Conferido na fonte primária em 05/08/2026: o art. 50 da IN IAT nº 09/2025
+  // manda a APP do entorno do reservatório seguir o cálculo desta Portaria, com
+  // relatório de cálculo e shapefile para conferência do IAT na LP ou na LAS. A
+  // ressalva de vigência é do próprio POP, que a aplica "apenas quando ainda
+  // vigente e pertinente". O resumo anterior dizia só que ela era "referida no
+  // art. 50", que é verdade e não ajuda ninguém.
+  [/Portaria n[ºo°] 069\/2015/, 'Fixa o cálculo da APP a ser preservada no entorno do reservatório a ser formado. O art. 50 da IN IAT nº 09/2025 remete a ela e exige relatório de cálculo e arquivos shapefile para conferência do IAT na solicitação de LP ou LAS. Aplicar apenas quando ainda vigente e pertinente ao caso.'],
   // --- IAT: instrucoes normativas ---
   [/Instrução Normativa IAT n[ºo°] 09/, 'Norma central do tema: disciplina o licenciamento ambiental de unidades hidrelétricas no Paraná: enquadramento por potência, alagamento, IDA e sensibilidade; modalidades (DLAM, LAC, LAS, trifásico); Consulta Prévia; documentação por fase.'],
   [/Instrução Normativa IAT n[ºo°] 16\/2025/, 'IN do IAT sobre a compensação ambiental decorrente de supressão de vegetação nativa: forma de cálculo e cumprimento.'],

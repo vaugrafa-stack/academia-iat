@@ -404,6 +404,53 @@ para repositório privado quando ele existir; até lá o histórico fica no disc
 27 testes em pytest, sobre exemplos sintéticos. Nenhum vem de processo real: são
 frases montadas com a **forma** dos dados, não com os dados.
 
+### Bloco 17. A máscara da boca cortava o queixo (Fase 2.1, parte dela) ✅
+
+Investigando os olhos parados do professor, achei outro defeito, esse com
+consequência maior e corrigível sem arte nova.
+
+Medindo a diferença entre o quadro de boca aberta e o de repouso, na coluna
+central do rosto, aparecem **dois picos** de movimento:
+
+| Faixa da altura do quadro | O que se mexe | Pico no E_OPEN |
+|---|---|---:|
+| 54% a 62% | lábios | 60,2 |
+| 64% a 72% | **mandíbula descendo** | **69,2** |
+
+A máscara do CSS ia de 46,5% a 63,5%: pegava o primeiro pico e **cortava o
+segundo inteiro**, sendo que o segundo é o mais forte. Na tela, a boca abria
+dentro de um queixo parado, herdado do quadro de repouso. É isso que lê como
+boca colada, e casa com a queixa registrada: "a boca mexendo de maneira mal
+feita".
+
+A elipse passou de `19% 8.5% at 50% 55%` para `19% 13% at 50% 60%`, cobrindo de
+47% a 73%, que é onde o movimento real acaba. Na horizontal 19% já bastava: a
+diferença cai à linha de base antes de 71%, medido.
+
+Uma linha de CSS. Sem ativo novo, sem manifesto, sem risco.
+
+**Duas coisas que eu errei no caminho e valem registro.**
+
+1. Medi que 68% a 85% da diferença entre os doze quadros do sprite acontece
+   fora da boca, concluí que o rosto tremia e gerei um sprite estabilizado, com
+   gerador, manifesto e tudo. **Era redundante:** o componente já compõe apenas
+   a boca sobre uma base fixa, então o tremor nunca chegava à tela. Medi o
+   artefato em vez de medir o que a pessoa vê. Revertido inteiro.
+2. O que sobrou dessa investida foi útil: perguntar se a máscara era grande o
+   bastante levou ao defeito de verdade.
+
+**Observação que não é defeito, mas você deve saber.** O professor renderiza
+entre 88 e 210 pixels, conforme a largura do palco, porque o trilho é limitado a
+188px. Nesse tamanho, a mandíbula percorre de 6 a 15 pixels. O aparato de
+sincronia labial (12 quadros, 88.739 entradas de visema em 159 aulas) governa um
+rosto do tamanho de uma miniatura. Se o professor importa, ele provavelmente
+precisa aparecer maior; se não, o esforço de fidelidade labial está
+desproporcional ao que se vê. É decisão sua, e não mexi nisso.
+
+**Os olhos continuam parados.** Não há quadro de olho fechado, e desenhar
+pálpebra sobre fotografia produz exatamente o artifício que se quer evitar.
+Piscar continua dependendo de arte nova.
+
 ## Estado final da noite, verificado
 
 Conferido no `gh-pages`, direto no artefato publicado e sem cache no meio. O

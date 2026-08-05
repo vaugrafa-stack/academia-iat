@@ -129,8 +129,19 @@
     var(--vls-mouth-sprite-position),
     var(--vls-mouth-fallback-position);
   opacity: var(--vls-mouth-opacity, 0);
-  -webkit-mask-image: radial-gradient(ellipse 19% 8.5% at 50% 55%, #000 48%, #000b 72%, transparent 100%);
-  mask-image: radial-gradient(ellipse 19% 8.5% at 50% 55%, #000 48%, #000b 72%, transparent 100%);
+  /* A elipse precisa alcançar o QUEIXO, e não só os lábios.
+     Medindo a diferença entre o quadro de boca aberta e o de repouso, na
+     coluna central, aparecem DOIS picos de movimento:
+       54% a 62% da altura   lábios
+       64% a 72% da altura   mandíbula descendo
+     No visema E_OPEN o segundo pico chega a 69, mais forte que o primeiro, que
+     fica em 60. A elipse anterior ia de 46,5% a 63,5%: pegava o primeiro e
+     cortava o segundo inteiro. Na tela, a boca abria dentro de um queixo
+     parado, herdado do quadro de repouso, e é isso que lê como boca colada.
+     Agora vai de 47% a 73%, que é onde o movimento real acaba. Na horizontal
+     19% já bastava: a diferença cai à linha de base antes de 71%. */
+  -webkit-mask-image: radial-gradient(ellipse 19% 13% at 50% 60%, #000 48%, #000b 72%, transparent 100%);
+  mask-image: radial-gradient(ellipse 19% 13% at 50% 60%, #000 48%, #000b 72%, transparent 100%);
   transition: opacity 55ms linear;
   will-change: opacity;
 }

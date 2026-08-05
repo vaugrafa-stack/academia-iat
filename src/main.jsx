@@ -821,7 +821,13 @@ function App() {
     ),
   }[view];
   return (
-    <div className="app-shell">
+    // A identidade do build fica na CASCA, e nao numa tela. Ela saiu de
+    // main.jsx para o painel do Suporte em 04/08/2026, e com isso deixou de
+    // existir em todas as rotas que nao passam pelo Suporte: o teste de
+    // artefato procura `[data-build-sha]` em cada pagina e nao achava em
+    // nenhuma. Saber qual build esta no ar e requisito de rastreabilidade, e
+    // requisito que so vale em uma tela nao e requisito.
+    <div className="app-shell" data-build-sha={BUILD_STAMP}>
       <a className="skip-link" href="#conteudo">
         Ir para o conteúdo
       </a>

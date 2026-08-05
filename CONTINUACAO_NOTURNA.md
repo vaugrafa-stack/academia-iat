@@ -332,6 +332,28 @@ tratá-lo como defeito evitou reescrever texto correto.
 
 379 testes em 46 arquivos, 21 portões.
 
+### Bloco 14. Bug latente que apagaria a resposta certa ✅
+
+`assessmentDesign.js` espalha a posição da resposta certa dentro de cada módulo,
+para a pessoa não aprender a marcar por posição. A contagem por posição era um
+`[0, 0, 0, 0]` **fixo**, o que amarrava a correção do exercício a um número
+mágico.
+
+Numa questão com cinco alternativas: `counts[4]` é `undefined`, o mínimo vira
+`NaN`, nenhuma posição empata com ele, e a troca acontece contra `undefined`. O
+efeito não é erro visível. A alternativa **correta é apagada da lista**, vira
+`null`, e `answer` fica `undefined`. A pessoa receberia uma questão sem resposta
+certa possível e erraria fizesse o que fizesse.
+
+Reproduzido antes de corrigir. Hoje nenhuma das 213 questões passa de quatro
+alternativas, então o defeito nasceria calado da primeira que passasse.
+
+A contagem passou a ser esparsa. Conferido de 2 a 8 alternativas, sem corrupção,
+e a distribuição no banco real segue equilibrada: 68 / 68 / 72 / 5, sendo a
+última posição só das 9 questões que têm quatro alternativas.
+
+381 testes em 46 arquivos, 21 portões.
+
 ## Próximo, quando houver capacidade
 
 - **Fase 4.2**, `laboratorio.jsx` com 1.775 linhas. Único item aberto do plano

@@ -43,21 +43,36 @@ export function selectDiagnosticAnchors(questions, tracks, perTrack = 3) {
   ));
 }
 
+// Espalha a posição da resposta certa dentro de cada módulo, para que ela não
+// caia sempre no mesmo lugar e a pessoa não aprenda a marcar por posição.
+//
+// A contagem por posição é ESPARSA de propósito. Ela já foi um `[0, 0, 0, 0]`
+// fixo, e isso ligava a correção do exercício a um número mágico: numa questão
+// com cinco alternativas, `counts[4]` era `undefined`, o mínimo virava `NaN`,
+// nenhuma posição empatava com ele, e a troca acontecia contra `undefined`. O
+// efeito não era um erro visível: a alternativa correta era APAGADA da lista,
+// virava `null`, e `answer` ficava `undefined`. A pessoa recebia uma questão
+// sem resposta certa possível e errava fizesse o que fizesse.
+//
+// Hoje nenhuma questão passa de quatro alternativas. O defeito nasceria da
+// primeira que passasse, calado.
+const contagem = (counts, posicao) => counts[posicao] || 0;
+
 export function prepareAssessment(questions, seed) {
   const random = randomFromSeed(seed);
   const ordered = shuffled(questions, random);
   const positionCounts = new Map();
 
   return ordered.map((question) => {
-    const counts = positionCounts.get(question.track) || [0, 0, 0, 0];
+    const counts = positionCounts.get(question.track) || [];
     const available = question.options.map((_, index) => index);
-    const minimum = Math.min(...available.map((position) => counts[position]));
+    const minimum = Math.min(...available.map((position) => contagem(counts, position)));
     const candidates = shuffled(
-      available.filter((position) => counts[position] === minimum),
+      available.filter((position) => contagem(counts, position) === minimum),
       random,
     );
     const target = candidates[0];
-    counts[target] += 1;
+    counts[target] = contagem(counts, target) + 1;
     positionCounts.set(question.track, counts);
 
     const options = [...question.options];

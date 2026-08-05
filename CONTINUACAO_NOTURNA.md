@@ -311,6 +311,27 @@ objetivos novos, `como se vê` presente, `lead` removido.
 `gh run list`. Passar no `npm test` não é a mesma coisa que passar no CI, e
 publicar sem olhar é publicar no escuro.
 
+### Bloco 13. Explicações das folhas-resposta: conteúdo íntegro, proteção ausente ✅
+
+Auditadas as 130 explicações dos 26 casos do Laboratório. **Nenhum defeito de
+conteúdo**: 130 distintas, nenhuma repetida, nenhuma curta demais, e as 130
+concordam com o gabarito da pergunta correspondente. Foi o primeiro dos módulos
+auditados que já estava certo.
+
+O que faltava era proteção. O validador de runtime só conferia contagem e
+formato; **nada conferia o alinhamento com o gabarito**. Uma explicação que
+começa em "Sim." numa pergunta cujo gabarito é "nao" devolveria à pessoa a
+decisão certa e a justificativa da decisão contrária, no mesmo lugar da tela.
+
+10 testes novos, incluindo essa invariante, provada acusando: invertendo uma
+explicação de propósito, o teste aponta `cp#0`.
+
+Registro de método: meu primeiro heurístico acusou 12 contradições, e as 12
+eram falsas. "Sim, porque não..." é português normal. Ler o achado antes de
+tratá-lo como defeito evitou reescrever texto correto.
+
+379 testes em 46 arquivos, 21 portões.
+
 ## Próximo, quando houver capacidade
 
 - **Fase 4.2**, `laboratorio.jsx` com 1.775 linhas. Único item aberto do plano

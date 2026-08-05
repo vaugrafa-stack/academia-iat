@@ -376,13 +376,42 @@ responde, ajuda progressiva presente, console limpo.
 
 382 testes em 46 arquivos, 21 portões.
 
+### Bloco 16. Extratores colhidos do `iat_doc_analyzer` ✅
+
+Parte do bloco 1 da sequência da Área Técnica que **não depende de você**. O
+`find_candidates` do app Streamlit tem 19 padrões que funcionam e são a lista do
+que um analista procura ao abrir um processo. O app não sobrevive; os padrões
+sim.
+
+Colhidos **com auditoria, não por cópia**. Três defeitos do original corrigidos:
+
+1. Nome de empreendimento engolia a frase: "A CGH Santa Clara fica no rio"
+   virava o nome inteiro, e "A PCH tem 18 ha" virava um empreendimento chamado
+   "tem 18 ha".
+2. "A LO vencida" virava licença de número "vencida", porque a classe do número
+   aceitava letra.
+3. Um `IGNORECASE` único para os 19, sendo que alguns dependem de caixa. Com
+   ele, "art. 50", que é remissão a dispositivo, virava ART de responsável.
+
+Corrigindo o primeiro eu quebrei um quarto caso, e o teste pegou: "Rio das
+Antas" sumia, porque o conectivo abre o nome.
+
+Onde ficou: `apps/iat_area_tecnica/`, **repositório local sem remoto**. Descobri
+no caminho que aquele diretório não estava sob controle de versão nenhum, e o
+`.git` da pasta pai não é repositório válido. O código que toca dado real vai
+para repositório privado quando ele existir; até lá o histórico fica no disco.
+
+27 testes em pytest, sobre exemplos sintéticos. Nenhum vem de processo real: são
+frases montadas com a **forma** dos dados, não com os dados.
+
 ## Próximo, quando houver capacidade
 
-- **Fase 4.2**, `laboratorio.jsx` com 1.775 linhas. Único item aberto do plano
-  que não depende de arte nem do usuário. Padrão de extração já provado no
-  bloco 4.
-- Auditar `assessmentDesign.js`, `caseAnswerSheets.js` e `labAnswerReasons.js`,
-  que são os últimos conteúdos derivados nunca lidos um por um.
+**O plano `PLANO_SEQUENCIAL.md` está fechado.** Resta só a Fase 2.1, os olhos do
+professor, que depende de quatro quadros de arte novos e não de código.
+
+Da Área Técnica, tudo que não depende do usuário já foi feito: demolição,
+portão, chamado de provisionamento e extratores. Os blocos 2 e 3 dependem do
+registro de aplicativo, que leva de 2 a 8 semanas.
 
 **O que a auditoria dos quatro módulos ensinou.** Ler o conteúdo gerado um por
 um achou defeito em todos os quatro, incluindo dois que eu mesmo tinha criado

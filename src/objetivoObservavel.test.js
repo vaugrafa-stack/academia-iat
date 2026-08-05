@@ -289,6 +289,58 @@ describe("contrato sobre o POP real", () => {
     expect(inventadas).toEqual([]);
   });
 
+  it("não corta palavra ao meio no objetivo de ação", () => {
+    // Esta é a invariante forte. O objetivo de ação é sempre um PREFIXO do que
+    // o POP escreveu, então ele tem de existir literalmente lá. Se o corte cair
+    // dentro de uma palavra, o trecho deixa de existir e o teste acusa.
+    //
+    // O contrato anterior olhava só a última palavra contra uma lista de
+    // conectivos, e deixou passar onze objetivos terminando em "condicionantes
+    // anteri", "análise conjunta ou separad" e "bases ge": palavra cortada não
+    // é conectivo. Medida fraca esconde defeito visível.
+    const corpus = pop.blocks
+      .map((b) => b.paragraph?.text || "")
+      .join("\n")
+      .replace(/\s+/g, " ");
+
+    // Não basta `corpus.includes(nucleo)`: "condicionantes anteri" É substring
+    // de "condicionantes anteriores", então a inclusão daria verdadeiro
+    // justamente no caso que se quer pegar. O que prova a palavra inteira é o
+    // que vem DEPOIS no texto-fonte: tem de ser fim de palavra, não letra.
+    const LETRA = /[\p{L}\p{M}]/u;
+    const terminaEmPalavraInteira = (nucleo) => {
+      let de = 0;
+      for (;;) {
+        const onde = corpus.indexOf(nucleo, de);
+        if (onde < 0) return false;
+        const seguinte = corpus[onde + nucleo.length];
+        if (seguinte === undefined || !LETRA.test(seguinte)) return true;
+        de = onde + 1;
+      }
+    };
+
+    const cortados = comObjetivo
+      .filter(({ r }) => r.origem === "acao")
+      // Sem a maiúscula imposta e sem o ponto final acrescentado.
+      .filter(({ r }) => !terminaEmPalavraInteira(r.objetivo.replace(/\.$/, "").slice(1)))
+      .map(({ secao, r }) => `${secao.number || "-"}: ${r.objetivo.slice(-45)}`);
+
+    expect(cortados).toEqual([]);
+    // A medida so vale se ela ACUSA. Prova com o defeito real de 05/08/2026.
+    expect(terminaEmPalavraInteira("ondicionantes anteriores")).toBe(true);
+    expect(terminaEmPalavraInteira("ondicionantes anteri")).toBe(false);
+  });
+
+  it("não promete ação sem dizer sobre o quê", () => {
+    // "Registrar, no mínimo" vira "Registrar" depois do corte de cauda, e uma
+    // promessa sem objeto não orienta ninguém.
+    const vazios = comObjetivo
+      .filter(({ r }) => r.origem === "acao")
+      .filter(({ r }) => r.objetivo.split(/\s+/).length < 4)
+      .map(({ secao, r }) => `${secao.number}: ${r.objetivo}`);
+    expect(vazios).toEqual([]);
+  });
+
   it("não usa travessão", () => {
     const comTravessao = comObjetivo.filter(
       ({ r }) => /[—–]/.test(r.objetivo) || /[—–]/.test(r.comoSeVe),

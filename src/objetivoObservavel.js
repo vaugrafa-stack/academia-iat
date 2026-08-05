@@ -47,14 +47,20 @@ const ACOES_DE_ANALISE = [
 const VERBOS = ACOES_DE_ANALISE.join("|");
 
 /**
- * Corpo da ação: qualquer coisa menos fim de frase.
+ * Corpo da ação: até o fim da frase, sem teto.
  *
  * O ponto é liberado entre dígitos, e só aí. Sem essa exceção, a ação
  * "atender aos critérios do Decreto Estadual nº 9.541/2025" é cortada em
- * "nº 9", e citação truncada faz a norma parecer dizer outra coisa. Foi assim
- * que apareceu na primeira medição.
+ * "nº 9", e citação truncada faz a norma parecer dizer outra coisa.
+ *
+ * O teto saiu daqui de propósito. Quando ele era `{5,150}`, a expressão parava
+ * no caractere 150, onde quer que ele caísse: saíam objetivos terminando em
+ * "condicionantes anteri", "análise conjunta ou separad" e "bases ge". Palavra
+ * cortada ao meio é pior do que frase longa, porque parece defeito de sistema e
+ * derruba a confiança no resto da tela. Encurtar agora é trabalho de `encurtar`,
+ * que corta em vírgula ou em espaço, nunca dentro de palavra.
  */
-const CORPO = "(?:[^.;:]|(?<=\\d)\\.(?=\\d)){5,150}";
+const CORPO = "(?:[^.;:]|(?<=\\d)\\.(?=\\d)){5,}";
 
 /** "o analista deve verificar ..." e variações de pessoa e número. */
 const DEVER_MAIS_ACAO = new RegExp(
@@ -71,6 +77,7 @@ const EXIGENCIA = /\b(?:dever[áã]o?|devem|deve|é\s+obrigat|não\s+pode|veda|e
 const MIN_FRASE = 45;
 const MAX_CABECALHO = 70;
 const MAX_CITACAO = 200;
+const MAX_ACAO = 160;
 
 /**
  * Abreviação que ficou pendurada no fim da captura.
@@ -105,6 +112,22 @@ const PALAVRA_DE_LIGACAO = new Set([
   "sem", "sob", "sobre", "entre", "por", "pelo", "pela", "se", "quando",
   "conforme", "ante", "após", "até", "desde", "perante", "um", "uma",
 ]);
+
+/**
+ * Encurta sem quebrar palavra.
+ *
+ * Corta na última vírgula que sobrou dentro do limite, porque enumeração menor
+ * e inteira vale mais que maior e quebrada. Se a vírgula estiver perto demais
+ * do começo, o corte perderia o sentido, e aí corta no último espaço.
+ */
+function encurtar(texto, maximo) {
+  if (texto.length <= maximo) return texto;
+  const corte = texto.slice(0, maximo);
+  const virgula = corte.lastIndexOf(",");
+  if (virgula > maximo * 0.45) return corte.slice(0, virgula);
+  const espaco = corte.lastIndexOf(" ");
+  return espaco > 0 ? corte.slice(0, espaco) : corte;
+}
 
 /**
  * Corta a cauda incompleta, de preferência na última vírgula.
@@ -261,8 +284,14 @@ export function objetivoObservavel(secao, blocks = [], tabelasPorId = new Map())
     const bruta =
       frase.match(DEVER_MAIS_ACAO)?.[1] || frase.match(COMECA_EM_ACAO)?.[1];
     const acao =
-      bruta && semCaudaIncompleta(semAbreviacaoPendurada(semPontoFinal(bruta)));
-    if (acao && acao.length >= 20) {
+      bruta &&
+      semCaudaIncompleta(
+        semAbreviacaoPendurada(encurtar(semPontoFinal(bruta), MAX_ACAO)),
+      );
+    // Piso de tamanho e de palavras. "Registrar, no mínimo" vira "Registrar",
+    // que não é objetivo de nada: promete uma ação sem dizer sobre o quê. Cair
+    // para a exigência citada é melhor do que exibir uma promessa vazia.
+    if (acao && acao.length >= 30 && acao.split(/\s+/).length >= 4) {
       return {
         origem: "acao",
         referencia: null,

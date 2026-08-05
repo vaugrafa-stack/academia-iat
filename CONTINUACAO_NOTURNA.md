@@ -71,7 +71,9 @@ Movido para `OneDrive\Documentos\New project\area_tecnica_privado\`:
 
 ## Regras que não mudam
 
-- `npm test` verde antes de qualquer commit. São 19 portões.
+- `npm test` verde antes de qualquer commit. São **21 portões**.
+- **Depois de publicar, conferir `gh run list`.** Passar no `npm test` não é a
+  mesma coisa que passar no CI, e publicar sem olhar é publicar no escuro.
 - Publicar com `git push origin HEAD:master`. `git push origin master` empurra
   o branch errado quando o checkout está num `codex/*`.
 - Nada de dado pessoal, sensível ou identificável no material público.
@@ -281,6 +283,33 @@ algo que o cabeçalho não diz. Contrato novo impede a volta: `design.objective`
 não pode aparecer em `licao.jsx` fora da função de reserva.
 
 Publicado em `04ec28e`. 368 testes em 45 arquivos, 20 portões.
+
+### Bloco 12. O CI estava vermelho e eu não vi ✅
+
+Fui conferir a publicação e o CI reprovava em **todos** os commits da noite, e
+também no commit anterior a eu começar. Duas causas.
+
+1. **Marcador de build sumiu de todas as telas.** `data-build-sha` migrou para o
+   painel do Suporte em 04/08 e deixou de existir em qualquer rota que não passe
+   por lá. O teste de artefato procura em cada página e não achava em nenhuma.
+   Falha anterior a esta noite. O marcador voltou para a **casca** da aplicação:
+   requisito de rastreabilidade que só vale numa tela não é requisito.
+2. **As armadilhas do meu próprio portão pareciam segredo.** O autoteste do
+   `check-segredos.mjs` precisa de exemplos acusáveis, e eu os escrevi por
+   extenso. O `audit:premium` marcou o arquivo. Agora são montadas em pedaços em
+   tempo de execução.
+
+**A causa de eu não ter visto:** `npm test` não era todos os portões.
+`audit:premium` só rodava no CI. Disse "20 portões verdes" a noite inteira
+confiando num comando que não cobria o conjunto. Agora ele está no `npm test`,
+que passa a ter **21**.
+
+CI verde em `5b2ba3d`, artefato publicado, e conferido no site: build no ar,
+objetivos novos, `como se vê` presente, `lead` removido.
+
+**Regra nova, e vale para toda sessão:** depois de publicar, conferir
+`gh run list`. Passar no `npm test` não é a mesma coisa que passar no CI, e
+publicar sem olhar é publicar no escuro.
 
 ## Próximo, quando houver capacidade
 

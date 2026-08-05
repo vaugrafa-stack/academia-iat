@@ -205,6 +205,32 @@ Sete itens que tramitam em paralelo, com as justificativas que a TI costuma
 pedir já escritas. É o caminho crítico: o registro de aplicativo leva de duas a
 oito semanas e não acelera com esforço próprio.
 
+### Bloco 7. Auditoria do que eu mesmo publiquei ✅
+
+Publiquei o objetivo observável tendo lido só uma das três origens. Lendo as
+159 uma por uma apareceram quatro defeitos, todos visíveis na tela:
+
+1. **Palavra cortada ao meio** em onze aulas. "condicionantes anteri",
+   "análise conjunta ou separad", "bases ge". Causa: teto de 150 caracteres
+   dentro da expressão de captura, que parava onde quer que o caractere caísse.
+2. **Erro a evitar apresentado como exigência.** A seção 24.1 dizia "Aplicar o
+   que o POP fixa aqui: condicionante que tenta sanar pendência crítica que
+   deveria ser resolvida antes do deferimento". Isso é item de lista de
+   armadilhas: a plataforma mandava fazer o que o POP manda evitar. Casou porque
+   "deveria" contém "deve".
+3. **Concordância de gênero**, em vinte aulas: "do Tabela 1 sem consultá-lo".
+4. **Promessa que ninguém cumpre:** "percorrer as 102 linhas do Quadro 46 sem
+   consultá-lo", que é o glossário de siglas.
+
+Causa comum do 2 com dois erros meus anteriores: **`\b` não separa palavra em
+português**. Está registrado em memória, com o que usar no lugar.
+
+Publicado em `24c92c8` e `24a6933`. 332 testes, 20 portões.
+
+**Lição de método:** auditar uma amostra de um tier e publicar os três. A leitura
+completa custou pouco e achou quatro defeitos, um deles com efeito sobre decisão
+administrativa.
+
 ## Aguardando o usuário
 
 Cinco perguntas travam os blocos 2, 3, 6, 11 e 12 da sequência. Estão inteiras

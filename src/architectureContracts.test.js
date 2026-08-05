@@ -142,6 +142,20 @@ describe("contratos incrementais de arquitetura", () => {
     );
   });
 
+  it("promete uma coisa só por aula", async () => {
+    // A aula chegou a mostrar dois objetivos DIFERENTES ao mesmo tempo: o
+    // derivado do POP no cabeçalho e o do perfil no corpo. `design.objective`
+    // só pode aparecer dentro de `objetivoDaAula`, que é a reserva de quem não
+    // tem objetivo próprio. Em qualquer outro lugar de licao.jsx, ele produz
+    // uma segunda promessa.
+    const licao = await readFile(licaoUrl, "utf8");
+    const usos = [...licao.matchAll(/design\.objective/g)].length;
+    expect(usos).toBe(0);
+    expect(licao).toContain("getLearningDesign(lesson, blocks).objective");
+    // E o cabeçalho continua sendo o único lugar que mostra o objetivo.
+    expect([...licao.matchAll(/\{alvo\.objetivo\}/g)].length).toBe(1);
+  });
+
   it("mantém catálogo móvel do Laboratório e seletor compacto do Redator", async () => {
     const [laboratorio, redator] = await Promise.all([
       readFile(laboratorioUrl, "utf8"),

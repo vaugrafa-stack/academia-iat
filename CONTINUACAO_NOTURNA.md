@@ -249,13 +249,52 @@ com quatro contratos sobre o POP real.
 
 Publicado em `c6204ef`. 349 testes em 43 arquivos, 20 portões.
 
+### Bloco 9. "Como ler este quadro": dez colunas sem explicação ✅
+
+Dos 25 quadros com leitura guiada, dez colunas chegavam à tela só com o nome:
+"Componente", "Bloco", "Grupo" e "Fonte ou evidência". A tela já degradava com
+honestidade, então não era defeito visível, mas era lacuna barata. O módulo
+também não tinha teste: são 12 agora. Publicado em `b597a4d`.
+
+### Bloco 10. Resumos de norma auditados contra a fonte ✅
+
+As 60 referências normativas têm resumo, nenhuma em branco, e as citações de
+artigo que conferi têm lastro no POP. Uma melhora conferida na **fonte
+primária**: o resumo da Portaria nº 069/2015 dizia só que ela era "referida no
+art. 50 da IN IAT nº 09/2025". Abrindo o PDF oficial, o art. 50 manda a APP do
+entorno do reservatório seguir o **cálculo** dessa Portaria, com relatório e
+shapefile na LP ou LAS. O resumo agora diz isso.
+
+Teste novo, o que mais importa neste domínio: **nenhum número de artigo afirmado
+sem lastro no POP**. A primeira versão dele era inútil e eu quase publiquei,
+porque passava só por existir "art. N" em qualquer lugar. Publicado em `0cb910b`.
+
+### Bloco 11. Dois objetivos diferentes na mesma tela ✅
+
+Regressão minha, de ontem. O parágrafo de abertura de `LessonOverview` sempre
+repetiu `design.objective`. Enquanto o cabeçalho mostrava o mesmo texto, era
+duplicação inofensiva; quando o cabeçalho passou a usar o objetivo derivado do
+POP, virou **contradição em 149 aulas**.
+
+O parágrafo não volta a mostrar objetivo. Sobram os dois casos em que ele diz
+algo que o cabeçalho não diz. Contrato novo impede a volta: `design.objective`
+não pode aparecer em `licao.jsx` fora da função de reserva.
+
+Publicado em `04ec28e`. 368 testes em 45 arquivos, 20 portões.
+
 ## Próximo, quando houver capacidade
 
 - **Fase 4.2**, `laboratorio.jsx` com 1.775 linhas. Único item aberto do plano
   que não depende de arte nem do usuário. Padrão de extração já provado no
   bloco 4.
-- Auditar do mesmo jeito os outros conteúdos derivados que nunca foram lidos um
-  por um: `comoLerQuadro.js`, `aulasAnexoB.js` e `leiResumos.js`.
+- Auditar `assessmentDesign.js`, `caseAnswerSheets.js` e `labAnswerReasons.js`,
+  que são os últimos conteúdos derivados nunca lidos um por um.
+
+**O que a auditoria dos quatro módulos ensinou.** Ler o conteúdo gerado um por
+um achou defeito em todos os quatro, incluindo dois que eu mesmo tinha criado
+na véspera e um com efeito sobre decisão administrativa. Nenhum deles apareceria
+em teste de unidade: eram texto plausível, bem formado, e errado. Auditar
+amostra e publicar o conjunto foi o erro de método da noite.
 
 ## Aguardando o usuário
 

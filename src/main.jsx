@@ -136,6 +136,7 @@ import { criarDerivados, norm } from "./derivados.js";
 import { registrarOffline } from "./offline.js";
 import { loadAppData } from "./appData.js";
 import { getLearningDesign } from "./learningDesign.js";
+import { objetivoObservavel } from "./objetivoObservavel.js";
 import { resolveOfficialSource } from "./officialSources.js";
 import {
   newAssessmentSeed,
@@ -1470,11 +1471,28 @@ function Dashboard({
     </div>
   );
 }
+// O objetivo da aula, preferindo o que o POP diz ao que o perfil supoe.
+//
+// `getLearningDesign` escolhe por palavra-chave no titulo: sao 11 perfis para
+// 167 secoes, entao a mesma promessa aparecia em 41 aulas. `objetivoObservavel`
+// deriva do conteudo da propria secao e devolve tambem COMO se verifica. Quando
+// a secao nao tem base propria, o perfil continua valendo.
+function objetivoDaAula(lesson, blocks) {
+  const derivado = objetivoObservavel(lesson, blocks, tableMap);
+  if (derivado) return derivado;
+  return {
+    objetivo: getLearningDesign(lesson, blocks).objective,
+    comoSeVe: "",
+    origem: "perfil",
+    referencia: null,
+  };
+}
+
 function CurrentObjectiveCard({ lesson }) {
   const blocks = (lesson.blockIds || [])
     .map((id) => blockMap.get(id))
     .filter((block) => block && !block.navigationOnly);
-  const design = getLearningDesign(lesson, blocks);
+  const alvo = objetivoDaAula(lesson, blocks);
 
   return (
     <aside className="current-objective-card">
@@ -1482,7 +1500,12 @@ function CurrentObjectiveCard({ lesson }) {
         <Target aria-hidden="true" /> Objetivo atual
       </span>
       <h2>O que você deve conseguir fazer</h2>
-      <p>{design.objective}</p>
+      <p>{alvo.objetivo}</p>
+      {alvo.comoSeVe && (
+        <p className="objetivo-como-se-ve">
+          <strong>Como você sabe que consegue.</strong> {alvo.comoSeVe}
+        </p>
+      )}
       <small>
         Ao concluir, registre a recuperação ativa e confira os critérios da
         própria aula.
@@ -1891,6 +1914,7 @@ function Lesson({
   );
   const note = state.notes[lesson.id] || "";
   const design = getLearningDesign(lesson, blocks);
+  const alvo = objetivoDaAula(lesson, blocks);
   const evidence = state.lessonEvidence?.[lesson.id] || {};
   const questionSelection = selectLessonQuestion(questionBank, lesson, index);
   const question = questionSelection?.question || null;
@@ -2077,8 +2101,13 @@ function Lesson({
               {lesson.number && <span>{lesson.number}</span>} {lesson.title}
             </h1>
             <p>
-              <Target /> {design.objective}
+              <Target /> {alvo.objetivo}
             </p>
+            {alvo.comoSeVe && (
+              <p className="objetivo-como-se-ve">
+                <strong>Como você sabe que consegue.</strong> {alvo.comoSeVe}
+              </p>
+            )}
           </div>
           <button
             className="bookmark-btn"

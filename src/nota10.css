@@ -783,6 +783,25 @@
 
    O bloco do Anexo B usava azul por engano: ele e conteudo autoral, derivado
    do item 23.1, e nao transcricao. Passou para verde. */
+/* Criterio de verificacao do objetivo. Verde porque e INTERPRETACAO didatica:
+   a plataforma diz como se comprova o objetivo. O trecho citado do POP, dentro
+   dele, vem entre aspas e continua sendo fonte. */
+/* Seletor com a tag junto de proposito. `.lesson-header p` e
+   `.current-objective-card p` valem 0-1-1; so a classe valeria 0-1-0 e perdia,
+   deixando o paragrafo em flex com o rotulo virando coluna estreita. Empatando
+   a especificidade, a ordem de importacao decide, e nota10.css vem depois. */
+p.objetivo-como-se-ve{
+  display:block;
+  margin:9px 0 0;
+  padding-left:11px;
+  border-left:3px solid color-mix(in srgb,var(--green) 55%,var(--line));
+  font-size:13px;
+  line-height:1.55;
+  color:var(--muted);
+  max-width:58ch;
+}
+p.objetivo-como-se-ve strong{color:var(--green)}
+
 .lesson-keypoints.kp-fonte{
   padding-left:13px;
   border-left:3px solid color-mix(in srgb,var(--blue) 55%,var(--line));

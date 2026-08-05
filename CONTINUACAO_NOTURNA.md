@@ -404,6 +404,22 @@ para repositório privado quando ele existir; até lá o histórico fica no disc
 27 testes em pytest, sobre exemplos sintéticos. Nenhum vem de processo real: são
 frases montadas com a **forma** dos dados, não com os dados.
 
+## Estado final da noite, verificado
+
+Conferido no `gh-pages`, direto no artefato publicado e sem cache no meio. O
+deploy é `b648dd3`, o último commit, e o pacote contém tudo o que a noite
+produziu: `objetivo-como-se-ve`, `data-build-sha`, os objetivos de quadro, o
+"Limite do documento" do erro recorrente e o objetivo das tabelas grandes.
+
+CI verde nas quatro últimas execuções. Nada novo do Codex no origin.
+
+**O cron horário foi desligado aqui.** Não porque o trabalho acabou por
+cansaço, mas porque acabou o que não depende do usuário: o `PLANO_SEQUENCIAL.md`
+está fechado exceto a 2.1, que precisa de arte, e a Área Técnica está parada em
+cinco perguntas. Continuar disparando de hora em hora empurraria para inventar
+mudança numa plataforma verde e publicada, e isso é pior do que parar. Basta o
+usuário pedir para religar.
+
 ## Deixado de propósito para você decidir: ações do CI no Node 20
 
 Toda execução do CI avisa que `actions/checkout`, `setup-node`,

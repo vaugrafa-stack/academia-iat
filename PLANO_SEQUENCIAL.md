@@ -18,17 +18,17 @@ Atualizado ao fim da sequência de rodadas de 04/08/2026.
 
 | Lente | Medida | Situação |
 |---|---|---|
-| Funcional | 11 rotas renderizam, console limpo, **301 testes em 41 arquivos**, 19 portões | sólida |
+| Funcional | 11 rotas renderizam, console limpo, **326 testes em 42 arquivos**, 20 portões | sólida |
 | Frontend | JS 80,7% do teto, CSS **80,3%** | com folga |
-| Código | `main.jsx` **3.770 linhas**, `laboratorio.jsx` 1.775 | duas telas concentram tudo |
+| Código | `main.jsx` **79 kB, 51% do teto**, `licao.jsx` 1.568, `laboratorio.jsx` 1.775 | a aula saiu do orquestrador |
 | Acessibilidade | 0 botão sem nome, 0 imagem sem alt, 0 rolagem lateral, foco 316/316, **0 salto de título** | limpa |
 | Texto | 0 palavra sem acento em 7 arquivos de conteúdo | limpo |
 | Mídia | 173 MB de videoaula, 27 MB de piloto | irrelevante agora |
-| Didática | 159 aulas, 136 questões sem pista de comprimento, **26 casos nos 5 degraus**, revisão espaçada ativa | prática com escada real |
+| Didática | 159 aulas, **149 objetivos observáveis distintos**, 26 casos nos 5 degraus, revisão espaçada ativa | promessa específica por aula |
 | Vídeo | 159 aulas com sincronia labial de fonema derivada da legenda; 6 pilotos com roteiro editorial, **agora declarados na tela** | dois padrões, e a diferença está dita |
 
-**Fechados nesta sequência:** 1.1, 1.2, 2.2, 3.1, 3.2 e 3.3.
-**Abertos:** 2.1 (depende de arte), 4.1 e 4.2 (refatoração).
+**Fechados nesta sequência:** 1.1, 1.2, 2.2, 3.1, 3.2, 3.3 e 4.1.
+**Abertos:** 2.1 (depende de arte) e 4.2 (refatoração).
 
 ---
 
@@ -156,8 +156,26 @@ reaproveitamento, não autoria.
 
 **O erro frequente foi feito em 04/08/2026.** 35 erros colhidos de dois quadros,
 ligados por menção explícita do termo: **81 das 159 aulas** recebem ao menos um,
-com 177 vínculos. Os outros oito elementos continuam abertos, e o próximo de
-maior retorno é o **objetivo observável**, hoje repetindo poucos modelos.
+com 177 vínculos.
+
+**O objetivo observável foi feito em 05/08/2026.** Eram 11 objetivos distintos
+para 167 seções, e um deles aparecia em 41 aulas. `objetivoObservavel.js` deriva
+do próprio POP em três origens e produz **149 distintos, nenhum repetido**:
+
+| Origem | Seções | O que vira objetivo |
+|---|---:|---|
+| Quadro próprio | 64 | reconstruir as colunas a partir da primeira |
+| Ação de análise nomeada | 59 | a própria ação, em verbo de lista controlada |
+| Exigência citada | 26 | a regra entre aspas, localizada nos autos |
+| Sem base própria | 18 | segue com o perfil antigo |
+
+Cada aula ganhou também o **como se vê**, que é a parte observável e não existia.
+
+Restam sete elementos. Os que sobraram são os que exigem autoria, e não
+reaproveitamento: **exemplo trabalhado** é o de maior retorno didático e o de
+maior risco de invenção, porque são 159 exemplos. **Pré-requisito** foi medido e
+descartado: as remissões do POP apontam para quadros, quase nunca para outras
+seções, e o glossário de siglas por aula já cobre a terminologia.
 
 ### 3.3 Revisão espaçada com retomada de erro ✅
 
@@ -168,10 +186,22 @@ a pessoa errou. Sem isso, a avaliação final mede memória recente.
 
 ## Fase 4. Código
 
-### 4.1 Extrair `Lesson` de `main.jsx` ⬜
+### 4.1 Extrair `Lesson` de `main.jsx` ✅
 
-**Medida.** 3.732 linhas, e `Lesson` com seus subcomponentes é a maior parte.
-É onde toda mudança futura fica cara.
+**Medida.** 130 kB, 84% do teto contratado de 155 kB, e `Lesson` com seus
+subcomponentes era a maior parte.
+
+**Feito em 05/08/2026.** `src/licao.jsx` com 1.441 linhas movidas e
+`src/sourceAssurance.jsx` com 60. `main.jsx` caiu para **79 kB, 51% do teto**.
+
+A fronteira é o contrato `dados`, mesmo idioma de `biblioteca.jsx`. A medida que
+tornou a extração barata: dos quinze componentes, **onze não precisavam de nada
+além das próprias propriedades**. Só quatro recebem dado derivado.
+
+Cinco contratos apontavam para dentro do bloco e foram repontados, não
+afrouxados. Dois defeitos que só o smoke test e o navegador pegariam: eu medi o
+que o bloco precisa de fora e esqueci do sentido contrário, e um ícone ficou
+fora dos imports novos.
 
 ### 4.2 `laboratorio.jsx` com 1.775 linhas ⬜
 

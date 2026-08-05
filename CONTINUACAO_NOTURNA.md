@@ -172,3 +172,55 @@ afrouxados**. Um deles ganhou guarda: `indexOf` que não acha devolve -1, e
 texto errado e o contrato viraria decoração.
 
 Estado: 326 testes em 42 arquivos, 19 portões verdes, zero classe CSS órfã.
+Publicado em `7cc5749`.
+
+### Bloco 5. Portão contra credencial e documento no repo público ✅
+
+`tools/check-segredos.mjs`, vigésimo portão do `npm test`. Este repositório já
+falhou nas duas coisas que ele agora barra: `caebefb` removeu um CSV com
+contatos de 700 empreendimentos e `83bb215` removeu uma senha escrita no código.
+Remover depois não desfaz.
+
+Tem autoteste em toda execução: cinco armadilhas que precisa acusar e quatro
+textos parecidos que não pode acusar, entre eles a frase didática que fala em
+senha e o SHA-256 de proveniência do POP. Portão que nunca reprovou é
+indistinguível de portão quebrado.
+
+Verificado plantando de verdade: com um `.pdf` e um arquivo de senha no índice
+sai com código 1 apontando arquivo e linha; removidos, volta a passar.
+
+Publicado em `2ff9705`.
+
+### Bloco 6. Demolição e chamado de provisionamento ✅
+
+O esqueleto Node de `apps/iat_area_tecnica` saiu do disco, para
+`area_tecnica_privado/descartado/` com um `LEIA.md` explicando por quê: o
+`config.js` implementava o modelo cross-origin com token no navegador que o
+desenho rejeitou, e `PAPEL_EXIGIDO` com padrão vazio significa "basta o token
+ser válido", ou seja, qualquer conta do tenant estadual lendo processo. O perigo
+não era o arquivo parado, era alguém escrever um `servidor.js` em cima dele.
+
+`area_tecnica_privado/CHAMADO_PROVISIONAMENTO.md` está pronto para protocolo.
+Sete itens que tramitam em paralelo, com as justificativas que a TI costuma
+pedir já escritas. É o caminho crítico: o registro de aplicativo leva de duas a
+oito semanas e não acelera com esforço próprio.
+
+## Aguardando o usuário
+
+Cinco perguntas travam os blocos 2, 3, 6, 11 e 12 da sequência. Estão inteiras
+em `SEQUENCIA_AREA_TECNICA.md`, resumidas:
+
+1. Existe tenant Microsoft 365 do IAT ou do Estado, e quem protocola o registro
+   de aplicativo? Nome de **duas** pessoas, porque uma só é ponto único de falha
+   sobre o login inteiro.
+2. Onde o piloto roda, e a infraestrutura aceita declarar por escrito os dois
+   volumes com políticas opostas?
+3. Quem é a segunda pessoa? O desenho precisa de coordenador que concede acesso,
+   de dono do destino da trilha e de destinatário do resumo diário que não seja
+   quem opera a máquina.
+4. A chefia se compromete com 60 a 100 horas de analista para o gabarito cego,
+   mais 40 a 60 de curadoria normativa?
+5. Qual o veículo de pagamento viável para API de modelo de linguagem?
+
+Enquanto não respondem: o desenvolvimento roda contra Keycloak local em
+contêiner e **nenhum documento real entra**.

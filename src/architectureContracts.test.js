@@ -7,6 +7,7 @@ const flowchartsUrl = new URL("./Flowcharts.jsx", import.meta.url);
 const perfilUrl = new URL("./perfil.jsx", import.meta.url);
 const laboratorioUrl = new URL("./laboratorio.jsx", import.meta.url);
 const redatorUrl = new URL("./redator.jsx", import.meta.url);
+const licaoUrl = new URL("./licao.jsx", import.meta.url);
 const stylesUrl = new URL("./styles.css", import.meta.url);
 
 describe("contratos incrementais de arquitetura", () => {
@@ -53,17 +54,45 @@ describe("contratos incrementais de arquitetura", () => {
   });
 
   it("associa o painel de continuidade à mídia da própria aula", async () => {
-    const main = await readFile(mainUrl, "utf8");
+    // `mediaForLesson` fica em main.jsx, que e quem tem a colecao de pilotos
+    // carregada; a aula recebe a funcao pelo contrato `dados`. Por isso a
+    // definicao e o uso do Inicio sao conferidos la, e o uso da aula aqui.
+    const [main, licao] = await Promise.all([
+      readFile(mainUrl, "utf8"),
+      readFile(licaoUrl, "utf8"),
+    ]);
 
     expect(main).toContain("function mediaForLesson(lesson, pilotCollection)");
     expect(main).toContain(
       "mediaForLesson(continueLesson, pilotMediaStatus.collection)",
     );
-    expect(main).toContain(
+    expect(licao).toContain(
       "mediaForLesson(lesson, pilotMediaStatus.collection)",
     );
     expect(main).not.toContain('/media/tour-usina.mp4');
+    expect(licao).not.toContain('/media/tour-usina.mp4');
+    // O rotulo e do cartao de continuidade do Inicio, que ficou em main.jsx.
     expect(main).toContain("Resumo em vídeo desta aula");
+  });
+
+  it("mantém a tela de aula fora do orquestrador, com contrato de dados", async () => {
+    // A aula saiu de main.jsx em 05/08/2026 com 1.441 linhas. O contrato que
+    // impede a volta nao e o tamanho, e a FRONTEIRA: se `licao.jsx` voltar a
+    // ler dado do escopo de main, a extracao terá sido só de texto.
+    const [main, licao] = await Promise.all([
+      readFile(mainUrl, "utf8"),
+      readFile(licaoUrl, "utf8"),
+    ]);
+
+    // Sem fixar a lista de exportações nomeadas: o que o contrato defende é a
+    // fronteira, não quantas peças a atravessam.
+    expect(main).toMatch(/import Lesson, \{[^}]*\} from "\.\/licao\.jsx"/);
+    expect(main).toContain("dados={DADOS_AULA}");
+    expect(main).not.toMatch(/^function (?:Lesson|LessonOverview|LessonKnowledgeCheck|VideoLesson)\b/m);
+    expect(licao).toMatch(/export default function Lesson\(\{[\s\S]*?dados,\n\}\)/);
+    // O mesmo objetivo aparece no Inicio e na aula, vindo da mesma funcao.
+    expect(main).toContain("objetivoDaAula(lesson, blocks, tableMap)");
+    expect(licao).toContain("objetivoDaAula(lesson, blocks, tableMap)");
   });
 
   it("mantém o início enxuto e a sequência única M00–M16", async () => {
@@ -87,14 +116,19 @@ describe("contratos incrementais de arquitetura", () => {
   });
 
   it("expõe a navegação móvel por tarefa e antecipa o vídeo da aula", async () => {
-    const [main, styles] = await Promise.all([
+    const [main, licao, styles] = await Promise.all([
       readFile(mainUrl, "utf8"),
+      readFile(licaoUrl, "utf8"),
       readFile(stylesUrl, "utf8"),
     ]);
-    const lessonSection = main.slice(
-      main.indexOf("function Lesson("),
-      main.indexOf("function LessonKnowledgeCheck"),
-    );
+    const inicio = licao.indexOf("export default function Lesson(");
+    const fim = licao.indexOf("function LessonKnowledgeCheck");
+    // Fatia com as duas pontas conferidas. `indexOf` que nao acha devolve -1, e
+    // `slice(-1, ...)` ainda produz string: a ordem passaria a ser verificada
+    // em texto errado, e o contrato viraria decoracao.
+    expect(inicio).toBeGreaterThan(-1);
+    expect(fim).toBeGreaterThan(inicio);
+    const lessonSection = licao.slice(inicio, fim);
 
     expect(main).toContain("function MobileBottomNav");
     for (const label of ["Início", "Aprender", "Praticar", "Consultar"]) {

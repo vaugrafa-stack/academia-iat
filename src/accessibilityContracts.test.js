@@ -2,9 +2,12 @@ import { readFile } from 'node:fs/promises';
 import { describe, expect, it } from 'vitest';
 
 const mainUrl = new URL('./main.jsx', import.meta.url);
-// A tela do perfil saiu de main.jsx em 04/08/2026. O contrato de acessibilidade
-// dela continua valendo: mudou o arquivo, nao a exigencia.
+// A tela do perfil saiu de main.jsx em 04/08/2026, e a tela de aula em
+// 05/08/2026. Os contratos de acessibilidade delas continuam valendo: mudou o
+// arquivo, nao a exigencia. Repontar e obrigatorio; afrouxar seria transformar
+// uma extracao em perda de garantia.
 const perfilUrl = new URL('./perfil.jsx', import.meta.url);
+const licaoUrl = new URL('./licao.jsx', import.meta.url);
 const cssUrl = new URL('./nota10.css', import.meta.url);
 const baseCssUrl = new URL('./styles.css', import.meta.url);
 
@@ -27,32 +30,35 @@ describe('contratos de acessibilidade das superfícies principais', () => {
   });
 
   it('anuncia mensagens e resultados que também são comunicados visualmente', async () => {
-    const main = await readFile(mainUrl, 'utf8');
-    const perfil = await readFile(perfilUrl, 'utf8');
+    const [main, perfil, licao] = await Promise.all([
+      readFile(mainUrl, 'utf8'),
+      readFile(perfilUrl, 'utf8'),
+      readFile(licaoUrl, 'utf8'),
+    ]);
 
     expect(main).toContain(
       'className="toast" role="status" aria-live="polite" aria-atomic="true"',
     );
     expect(perfil).toContain('aria-label={`Excluir perfil ${u.name}`}');
-    expect(main).toContain('"Resposta correta."');
-    expect(main).toContain('"Sua resposta, incorreta."');
+    expect(licao).toContain('"Resposta correta."');
+    expect(licao).toContain('"Sua resposta, incorreta."');
   });
 
   it('mantém todas as abas vinculadas ao painel realmente renderizado', async () => {
-    const main = await readFile(mainUrl, 'utf8');
+    const licao = await readFile(licaoUrl, 'utf8');
 
-    expect(main).toContain('aria-controls={`painel-aula-${lesson.id}`}');
-    expect(main).toContain('id={`painel-aula-${lesson.id}`}');
-    expect(main).not.toContain('painel-aula-${lesson.id}-${ids[index]}');
+    expect(licao).toContain('aria-controls={`painel-aula-${lesson.id}`}');
+    expect(licao).toContain('id={`painel-aula-${lesson.id}`}');
+    expect(licao).not.toContain('painel-aula-${lesson.id}-${ids[index]}');
   });
 
   it('mantém o campo de anotações vinculado ao seu rótulo visível', async () => {
-    const main = await readFile(mainUrl, 'utf8');
+    const licao = await readFile(licaoUrl, 'utf8');
 
-    expect(main).toMatch(
+    expect(licao).toMatch(
       /<label htmlFor="lesson-notes">[\s\S]*?Seu caderno[\s\S]*?<\/label>/,
     );
-    expect(main).toMatch(/<textarea[\s\S]*?id="lesson-notes"[\s\S]*?value=\{value\}/);
+    expect(licao).toMatch(/<textarea[\s\S]*?id="lesson-notes"[\s\S]*?value=\{value\}/);
   });
 
   it('trata o menu movel como dialogo, isola o fundo e devolve o foco por todas as saidas', async () => {

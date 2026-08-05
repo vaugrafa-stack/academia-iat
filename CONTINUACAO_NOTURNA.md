@@ -123,3 +123,52 @@ comentário no arquivo:
    JavaScript trata "ã" como não-letra e `/\bo\.$/` casa dentro de "transição.".
 
 Estado: 333 testes em 43 arquivos, 19 portões verdes, zero classe CSS órfã.
+Publicado em `148ed50`.
+
+### Bloco 3. Crítica de segurança e sequência executável ✅
+
+`area_tecnica_privado/SEQUENCIA_AREA_TECNICA.md`. O crítico de segurança que
+faltava rodou e derrubou coisa séria:
+
+- **Erro de correção, não de opinião.** `response_mode=form_post` faz o provedor
+  devolver o código por POST entre sites, e cookie `SameSite=Lax` não é enviado
+  em POST entre sites. O cookie de `state` e `nonce` nunca chegaria ao callback:
+  o login falharia em 100% das tentativas, ou alguém "resolveria" afrouxando o
+  `state`. As duas metades da decisão eram incompatíveis como escritas.
+- **Contradição interna.** Uma decisão guardava refresh token cifrado; outra não
+  pedia `offline_access`, sem o qual o provedor não emite refresh token nenhum.
+  A coluna guardaria algo que não existe.
+- **Três bancos diferentes em três dimensões.** Postgres na segurança, SQLite na
+  arquitetura, e um terceiro na trilha.
+- **Segredo de cliente vence em 24 meses** e quem reemite é a TI central. Todo
+  mundo perde o login de uma vez, sem aviso, e a resposta demora semanas.
+
+Resultado: 12 blocos em ordem, 6 executáveis em modo econômico, 8 decisões
+derrubadas com o que fica no lugar, e 5 perguntas que dependem do usuário.
+
+Marcos separados de propósito: o bloco 10 fecha **sistema construído**, com
+corpus ainda sintético; o bloco 11 é o portão de governança que destrava o
+**primeiro documento real**, restrito a processos já concluídos.
+
+### Bloco 4. `Lesson` sai de `main.jsx` (Fase 4.1) ✅
+
+`src/licao.jsx`, 1.568 linhas, e `src/sourceAssurance.jsx`, 60. `main.jsx` cai
+de 130 kB para 79 kB, de 84% para **51%** do teto contratado.
+
+Fronteira pelo contrato `dados`, mesmo idioma de `biblioteca.jsx` e
+`perfil.jsx`. Dos quinze componentes movidos, onze não precisavam de nada além
+das próprias propriedades; só quatro recebem dado derivado, cada um só o que usa.
+
+Dois defeitos que só o smoke test e o navegador pegariam:
+1. Medi o que o bloco precisa de fora, mas não o que fora precisa do bloco:
+   `Dashboard` usava `VideoDataLoading`, que foi junto. Agora é exportado, e não
+   duplicado, porque as duas telas devem esperar com a mesma cara.
+2. `ShieldCheck` ficou fora dos imports novos. Um verificador que compara tags
+   usadas contra símbolos importados achou os dois em uma passada.
+
+Cinco contratos apontavam para dentro do bloco e foram **repontados, não
+afrouxados**. Um deles ganhou guarda: `indexOf` que não acha devolve -1, e
+`slice(-1, ...)` ainda produz string, então a ordem passaria a ser conferida em
+texto errado e o contrato viraria decoração.
+
+Estado: 326 testes em 42 arquivos, 19 portões verdes, zero classe CSS órfã.

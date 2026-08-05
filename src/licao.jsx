@@ -1230,13 +1230,19 @@ function LessonOverview({
         {lesson.number ? lesson.number + " · " : ""}
         {lesson.title}
       </h2>
-      <p className="lead">
-        {vazia
-          ? "Esta seção organiza o percurso; use os tópicos relacionados para demonstrar o objetivo."
-          : kids.length
-            ? "Esta seção reúne os tópicos abaixo. Estude cada um e volte ao desafio de transferência."
-            : design.objective}
-      </p>
+      {/* O objetivo NAO se repete aqui. Ele ja esta no cabecalho da aula, e
+          repetir era duplicacao desde sempre; depois que o cabecalho passou a
+          usar o objetivo derivado do POP, virou CONTRADICAO, com duas promessas
+          diferentes na mesma tela. Sobram os dois casos em que a frase informa
+          algo que o cabecalho nao diz: secao sem conteudo proprio e secao que
+          so reune subtopicos. */}
+      {(vazia || kids.length > 0) && (
+        <p className="lead">
+          {vazia
+            ? "Esta seção organiza o percurso; use os tópicos relacionados para demonstrar o objetivo."
+            : "Esta seção reúne os tópicos abaixo. Estude cada um e volte ao desafio de transferência."}
+        </p>
+      )}
       <blockquote className="learning-source-basis">
         <small>EVIDÊNCIA-BASE DA SEÇÃO</small>
         <p>{design.sourceBasis}</p>

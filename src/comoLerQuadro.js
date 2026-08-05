@@ -43,6 +43,13 @@ const PAPEL = [
   ['item', 'o elemento conferido'],
   ['documento', 'o elemento conferido'],
   ['elemento', 'o elemento conferido'],
+  // Os quatro abaixo apareciam sem papel em dez colunas de nove quadros. Sao
+  // nomes que o POP usa para a mesma funcao estrutural das tres linhas acima,
+  // e descrever a funcao nao acrescenta exigencia nenhuma.
+  ['componente', 'o elemento conferido'],
+  ['bloco', 'a parte do documento em que o item e conferido'],
+  ['grupo', 'o agrupamento dos itens conferidos'],
+  ['fonte ou evidencia', 'onde esta a prova do que foi conferido'],
 ];
 
 // Colunas que caracterizam instrumento de decisao. Um quadro precisa de pelo

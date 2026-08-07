@@ -123,8 +123,35 @@ describe('contratos de acessibilidade das superfícies principais', () => {
     expect(main).toMatch(
       /const onNav = \(\) => \{[\s\S]*?scrollRouteToTop\(\);[\s\S]*?announceRoute\(\);/,
     );
-    expect(baseCss).toMatch(
-      /\.skip-link\{[^}]*background:#07583b;[^}]*color:#fff/,
-    );
+    // O contrato MEDE o contraste, em vez de prender um hex.
+    //
+    // Antes ele exigia `background:#07583b`, o que é proxy: reprova quando a
+    // paleta muda, mesmo que o contraste melhore, e passaria se alguém trocasse
+    // por outro valor escuro ruim. O nome do teste sempre prometeu contraste;
+    // agora ele confere contraste.
+    const regra = baseCss.match(/\.skip-link\{([^}]*)\}/)?.[1] || '';
+    const fundo = regra.match(/background:(#[0-9a-f]{3,8})/i)?.[1];
+    const frente = regra.match(/(?:^|;)color:(#[0-9a-f]{3,8})/i)?.[1];
+    expect(fundo, 'link de salto precisa declarar fundo próprio').toBeTruthy();
+    expect(frente, 'link de salto precisa declarar cor de texto').toBeTruthy();
+    expect(contraste(frente, fundo)).toBeGreaterThanOrEqual(7);
   });
 });
+
+/** Razão de contraste WCAG entre duas cores em hexadecimal. */
+function contraste(a, b) {
+  const canais = (h) => {
+    const s = h.replace('#', '');
+    const cheio = s.length === 3 ? [...s].map((c) => c + c).join('') : s;
+    return [0, 2, 4].map((i) => parseInt(cheio.slice(i, i + 2), 16));
+  };
+  const lum = (cor) => {
+    const [r, g, b] = canais(cor).map((c) => {
+      const v = c / 255;
+      return v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4;
+    });
+    return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+  };
+  const [alto, baixo] = [lum(a), lum(b)].sort((x, y) => y - x);
+  return (alto + 0.05) / (baixo + 0.05);
+}

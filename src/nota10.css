@@ -1,37 +1,116 @@
-/* Camada nota 10: confiança da fonte{
-  display:block;
-  margin-top:3px;
-  color:rgba(255,255,255,.78);
-  font-size:10px;
-  line-height:1.25;
+/* Camada nota 10: confiança da fonte, progressão didática e prática documental.
+ *
+ * As declarações que abriam este arquivo eram de `.source-lock small`, o selo
+ * que saiu da barra lateral em 04/08/2026. Ao remover a classe órfã, o corte
+ * atravessou a fronteira do comentário: levou o seletor e o fechamento junto, e
+ * as declarações ficaram PRESAS DENTRO do comentário, junto com tudo que vinha
+ * depois.
+ *
+ * O detalhe que importa: `check-css-morto` passou a aprovar justamente por
+ * isso. Ele compara classe declarada contra classe usada, e classe comentada
+ * por acidente não é declarada. O portão que existe para achar CSS morto
+ * premiou escondê-lo num comentário. Quem confere agora é
+ * `check-css-comentario`. */
+
+/* Algarismo tabular onde a coluna de números precisa alinhar.
+ *
+ * O POP tem 66 quadros, e quase todos comparam valores linha a linha: potência,
+ * área, prazo, vazão. Com algarismo proporcional, "18" e "111" ocupam larguras
+ * diferentes e a coluna deixa de ser coluna. Manrope tem tabular; é só pedir. */
+.data-table table,
+.top-progress,
+.track-metrics b,
+.lesson-header h1 span{font-variant-numeric:tabular-nums}
+
+/* O número da seção no título da aula é referência, não enfeite: é por ele que
+   a pessoa acha o trecho no POP impresso. Ganha a face técnica. */
+.lesson-header h1 span{
+  font-family:var(--mono);
+  font-size:.72em;font-weight:600;letter-spacing:0;
 }
 
+/* O bloco de procedência é um CARIMBO DE PRANCHA.
+ *
+ * Todo memorial e toda planta deste domínio tem um: o quadro reticulado no
+ * canto do desenho, com obra, autor, ART, data, escala e folha. É a forma que a
+ * área usa para dizer "isto é este documento, feito por esta pessoa, sob esta
+ * responsabilidade". Este bloco diz exatamente isso sobre o conteúdo da
+ * plataforma: qual POP, qual arquivo, extraído quando, com qual hash.
+ *
+ * Era um cartão arredondado com gradiente, indistinguível de qualquer outro
+ * cartão. Como carimbo, ele passa a falar a língua de quem lê.
+ *
+ * Por isso: canto vivo, sem sombra, sem gradiente. A régua entre as células é a
+ * estrutura, e não decoração. Rótulo em caixa alta pequena, valor em face
+ * técnica com algarismo tabular. A barra à esquerda é a margem desenhada da
+ * prancha.
+ */
 .source-assurance{
   display:grid;
-  grid-template-columns:auto minmax(220px,1fr) minmax(420px,1.35fr);
-  gap:14px;
-  align-items:center;
+  grid-template-columns:auto minmax(210px,1fr) minmax(400px,1.3fr);
+  align-items:stretch;
   margin:0 0 24px;
-  padding:14px 16px;
-  border:1px solid color-mix(in srgb,var(--green) 32%,var(--line));
-  border-radius:8px;
-  background:linear-gradient(100deg,color-mix(in srgb,var(--green) 9%,var(--surface)),var(--surface));
+  border:1px solid var(--line);
+  border-left:3px solid var(--green);
+  border-radius:0;
+  background:var(--surface);
 }
-.source-assurance>svg{width:25px;height:25px;color:var(--green)}
-.source-assurance>div{display:flex;min-width:0;flex-direction:column}
-.source-assurance>div small{color:var(--green);font-size:10px;font-weight:900;letter-spacing:.09em}
-.source-assurance>div strong{margin:2px 0;font-size:13px}
-.source-assurance>div span{overflow:hidden;color:var(--muted);font-size:11px;text-overflow:ellipsis;white-space:nowrap}
-.source-assurance dl{display:grid;grid-template-columns:.75fr 1fr 1.8fr;gap:8px;margin:0}
-.source-assurance dl div{padding-left:11px;border-left:1px solid var(--line)}
-.source-assurance dt{color:var(--muted);font-size:10px}
-.source-assurance dd{margin:2px 0 0;font-size:11px;font-weight:750;line-height:1.35}
+.source-assurance>svg{
+  width:17px;height:17px;
+  align-self:center;
+  margin:0 13px;
+  color:var(--green);
+}
+.source-assurance>div{
+  display:flex;min-width:0;flex-direction:column;justify-content:center;
+  padding:11px 15px;
+  border-left:1px solid var(--line);
+}
+.source-assurance>div small{
+  color:var(--muted);
+  font-weight:800;letter-spacing:.09em;text-transform:uppercase;
+}
+.source-assurance>div strong{
+  margin:3px 0 1px;
+  font-family:var(--mono);font-size:13px;font-weight:600;
+  font-variant-numeric:tabular-nums;
+}
+.source-assurance>div span{
+  overflow:hidden;
+  color:var(--muted);
+  text-overflow:ellipsis;white-space:nowrap;
+}
+.source-assurance dl{display:grid;grid-template-columns:.8fr 1fr 1.7fr;margin:0}
+.source-assurance dl div{
+  display:flex;flex-direction:column;justify-content:center;
+  min-width:0;
+  padding:11px 15px;
+  border-left:1px solid var(--line);
+}
+.source-assurance dt{
+  color:var(--muted);
+  font-weight:800;letter-spacing:.09em;text-transform:uppercase;
+}
+.source-assurance dd{
+  overflow:hidden;
+  margin:3px 0 0;
+  color:var(--ink);
+  font-family:var(--mono);font-weight:600;line-height:1.35;
+  font-variant-numeric:tabular-nums;
+  text-overflow:ellipsis;
+}
 .source-assurance.compact{
   grid-template-columns:auto minmax(0,1fr);
   margin:4px 0 14px;
-  padding:9px 11px;
 }
-.source-assurance.compact dl{grid-column:2;grid-template-columns:repeat(3,minmax(0,1fr))}
+.source-assurance.compact>svg{margin:0 11px}
+.source-assurance.compact>div,.source-assurance.compact dl div{padding:8px 13px}
+/* O carimbo compacto vive na coluna da aula, que é estreita. Três campos lado a
+   lado espremem o mais longo em quatro linhas. Como em prancha de verdade, o
+   campo comprido ocupa a linha inteira: dois campos curtos em cima, a situação
+   embaixo. */
+.source-assurance.compact dl{grid-column:2;grid-template-columns:repeat(2,minmax(0,1fr))}
+.source-assurance.compact dl div:nth-child(3){grid-column:1/-1;border-top:1px solid var(--line)}
 .source-assurance.compact>div span{max-width:640px}
 
 .learning-contract{
@@ -395,9 +474,12 @@
   .offline-packages{grid-template-columns:1fr}
 }
 @media(max-width:720px){
+  /* Carimbo estreito empilha os campos, e a régua vira horizontal. Continua
+     carimbo: o que muda é a direção da divisão, não o recuo dos campos. */
   .source-assurance,.source-assurance.compact{grid-template-columns:auto minmax(0,1fr)}
   .source-assurance dl,.source-assurance.compact dl{grid-column:1/-1;grid-template-columns:1fr}
-  .source-assurance dl div{padding:6px 0 0;border-top:1px solid var(--line);border-left:0}
+  .source-assurance dl div,
+  .source-assurance.compact dl div{border-top:1px solid var(--line);border-left:0}
   .learning-levels{grid-template-columns:1fr}
   .learning-levels article{min-height:0;border-right:0;border-bottom:1px solid var(--line)}
   .learning-levels article:last-child{border-bottom:0}
@@ -435,7 +517,22 @@
 }
 
 /* Textos operacionais não devem cair abaixo de 12 px: são metadados,
-   instruções e estados necessários à tarefa,
+   instruções e estados necessários à tarefa, e não legenda decorativa.
+   Quem lê "SHA-256 8ffa77…" ou "Pendente de validação" precisa ler de fato.
+
+   ESTE COMENTÁRIO ESTAVA ABERTO. Faltava o fechamento, e a abertura engolia as
+   72 linhas seguintes até encontrar o fechamento de outro comentário. Ficaram
+   mortas, sem ninguém perceber:
+
+     - o piso de 12 px, para cerca de sessenta seletores. Os textos que ele
+       protege estavam em 10 e 11 px, exatamente o que a regra existe para
+       impedir;
+     - a trava de rolagem do fundo quando a barra lateral móvel abre, o que
+       deixava a página correr atrás do menu no celular;
+     - o alinhamento de `.track-copy small`.
+
+   Nenhum portão pega isto: CSS com comentário aberto é CSS válido. Achado ao
+   medir por que o carimbo renderizava em 16 px. */
 .source-assurance>div small,
 .source-assurance>div span,
 .source-assurance dt,

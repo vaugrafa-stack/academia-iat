@@ -29,6 +29,25 @@
   font-size:.72em;font-weight:600;letter-spacing:0;
 }
 
+/* O objetivo é a linha mais importante da tela, e estava em 13 px cinza, do
+   tamanho de legenda.
+ *
+ * A correção NÃO é deixá-lo em negrito. Medindo os pesos declarados nas duas
+ * folhas: 106 usos de 800, 41 de 700, 23 de 900, contra 2 de 200 e 3 de 500. A
+ * plataforma inteira mora na ponta pesada, então nada se destaca e a hierarquia
+ * sobra toda para o tamanho. Manrope aqui é variável de 200 a 800 e a metade
+ * leve estava sem uso.
+ *
+ * Então o objetivo cresce e AFINA, que é como documento técnico trata a linha
+ * de abertura: maior para ser lido primeiro, leve para não competir com o
+ * título, e em tinta de texto, não de legenda. */
+.lesson-header p{
+  max-width:62ch;
+  color:var(--ink2);
+  font-size:15px;font-weight:350;line-height:1.55;
+}
+.lesson-header p svg{margin-top:3px}
+
 /* O bloco de procedência é um CARIMBO DE PRANCHA.
  *
  * Todo memorial e toda planta deste domínio tem um: o quadro reticulado no

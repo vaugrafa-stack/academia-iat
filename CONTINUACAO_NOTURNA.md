@@ -467,6 +467,48 @@ cinco perguntas. Continuar disparando de hora em hora empurraria para inventar
 mudança numa plataforma verde e publicada, e isso é pior do que parar. Basta o
 usuário pedir para religar.
 
+## Frente de design, 07/08
+
+### Bloco 17. Paleta, valor codificado e carimbo ✅ `f7aeac2`
+
+Estava `#151f1b` com `#2fd39a`: preto-quase com verde-ácido, o segundo
+lugar-comum da geração atual. A direção nova vem dos instrumentos do domínio,
+não de referência de painel.
+
+- **Paleta de carta hidrográfica.** 56 substituições, com as onze relações de
+  contraste medidas nos dois temas antes de aplicar. Zero reprovação.
+- **O número é o argumento.** Algarismo tabular e face técnica para potência,
+  vazão, coordenada, artigo, protocolo e hash. Mono do sistema, zero byte.
+- **O bloco de fonte virou carimbo de prancha.** Canto vivo, régua entre
+  células, campo longo ocupando a linha inteira.
+
+### Bloco 18. Dois comentários de CSS abertos ✅ mesmo commit
+
+Achado ao medir por que o carimbo renderizava em 16px. **72 linhas mortas**: o
+piso de 12px de texto (os textos que ele protege estavam em 10 e 11) e a trava
+de rolagem do menu móvel. Um segundo, na linha 1, com origem em mim: ao remover
+o selo da barra lateral em 04/08, o corte atravessou a fronteira do comentário.
+
+O que mais importa: **`check-css-morto` aprovava por causa disso.** Classe
+comentada por acidente não conta como declarada, então o portão que existe para
+achar CSS morto premiou escondê-lo num comentário.
+
+Virou o portão 22, `check-css-comentario`. A primeira versão dele **não pegou o
+defeito quando plantei de propósito**, porque eu olhava tamanho do comentário,
+que é acaso. O sinal certo é regra dentro de comentário.
+
+### Bloco 19. Objetivo cresce e afina ✅ `fdcca79`
+
+Medido: 106 usos de peso 800 contra 2 de peso 200. A plataforma mora na ponta
+pesada, então nada se destaca. O objetivo passou a 15px peso 350, contraste
+11,25:1, em vez de 13px cinza.
+
+### O que falta no layout
+
+1. A tela inicial, que ainda abre sem tese visual
+2. A hierarquia da barra lateral e do topo
+3. A escala tipográfica completa, que usa pouco da faixa 200 a 500
+
 ## Deixado de propósito para você decidir: ações do CI no Node 20
 
 Toda execução do CI avisa que `actions/checkout`, `setup-node`,

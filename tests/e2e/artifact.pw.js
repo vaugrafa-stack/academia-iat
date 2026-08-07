@@ -9,7 +9,7 @@ import {
 const ROUTES = [
   {
     hash: '',
-    ready: (page) => page.getByRole('heading', { name: /Aprenda o procedimento/i }),
+    ready: (page) => page.getByRole('heading', { name: /Onde você parou/i }),
   },
   {
     hash: '#/aula/pop-section-001',
@@ -87,7 +87,7 @@ test('experiência responsiva prioriza aprender e praticar sem overflow', async 
 
   await page.goto(appUrl(baseURL), { waitUntil: 'domcontentloaded' });
   await expect(
-    page.getByRole('heading', { name: /Aprenda o procedimento/i }),
+    page.getByRole('heading', { name: /Onde você parou/i }),
   ).toBeVisible();
 
   const bottomNav = page.getByRole('navigation', {

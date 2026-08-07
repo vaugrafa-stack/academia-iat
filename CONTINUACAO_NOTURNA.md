@@ -539,7 +539,33 @@ encolheu de 1286px para 1197px.
 2. O carimbo de procedência está recolhido no rodapé do Início, sendo que a
    procedência é a promessa central da plataforma
 
-## Deixado de propósito para você decidir: ações do CI no Node 20
+## Bloqueado por credencial: ações do CI no Node 20
+
+**Tentei aplicar em 07/08 e o push foi recusado:**
+
+    refusing to allow an OAuth App to create or update workflow
+    .github/workflows/quality.yml without `workflow` scope
+
+O token desta sessão não tem escopo `workflow`, então nenhuma alteração em
+`.github/workflows/` sai daqui. Desfiz o commit para não travar o branch.
+
+Para aplicar você mesmo, basta trocar três linhas em
+`.github/workflows/quality.yml`. São só as de PREPARO; `upload-artifact` e
+`download-artifact` ficam onde estão, porque mudaram semântica a partir da v4,
+são o par que o job de publicação usa, e precisam subir juntas.
+
+```
+actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
+pnpm/action-setup@41ff72655975bd51cab0327fa583b6e92b6d3061 # v4.2.0
+actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5.0.0
+```
+
+O risco é menor do que parece: `publicar` tem `needs: build-and-test`, então
+build vermelho significa "não publica versão nova", e não "site quebra". O site
+continua servindo o último artefato aprovado. Mantenha a fixação por SHA, e não
+por tag: tag pode ser movida.
+
+## Levantamento das demais ações
 
 Toda execução do CI avisa que `actions/checkout`, `setup-node`,
 `upload-artifact` e `pnpm/action-setup` alvejam Node 20, obsoleto, e estão sendo

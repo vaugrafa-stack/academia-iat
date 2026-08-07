@@ -12,6 +12,21 @@
  * premiou escondê-lo num comentário. Quem confere agora é
  * `check-css-comentario`. */
 
+/* O título do Início deixa de ser manchete e vira título de página.
+ *
+ * 39px com entreletra de -1,7px é medida de página de venda, não de ferramenta
+ * que a pessoa abre todo dia. Junto com o parágrafo de apresentação, o bloco
+ * media 151px e empurrava o cartão de continuidade para 335px do topo.
+ *
+ * Em 27px o título continua sendo o primeiro a ser lido, sem tomar a dobra de
+ * quem veio ver onde parou. A entreletra afrouxa junto: aperto de -1,7px existe
+ * para tamanho grande, e em 27px ele só fecha o desenho da letra. */
+.dashboard-intro h1{
+  max-width:24ch;
+  font-size:27px;font-weight:650;letter-spacing:-.6px;line-height:1.2;
+  margin-bottom:0;
+}
+
 /* A marca não cabia na própria caixa.
  *
  * "Licenciamento" em 25px peso 800 mede 168px numa coluna de 163px, e palavra

@@ -57,7 +57,7 @@ export const MINIMUM_JS_BYTES = 380 * KIB;
 // Uma marca por area principal. Se a arvore de modulos for cortada, alguma
 // delas desaparece do artefato.
 export const AREA_MARKERS = Object.freeze([
-  ["painel inicial", "Aprenda o procedimento"],
+  ["painel inicial", "Onde você parou"],
   ["hidrelétricas", "Microcentral"],
   ["mapa", "Faixa didática do POP"],
   ["formação", "Formação guiada pelo POP"],

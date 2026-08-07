@@ -1350,18 +1350,19 @@ function Dashboard({
     : mediaForLesson(continueLesson, pilotMediaStatus.collection);
   return (
     <div className="page dashboard-page">
+      {/* O topo desta tela era slogan: "Aprenda o procedimento. Pratique a
+          decisao.", em 39px, mais um paragrafo de apresentacao. Media 151px, e
+          empurrava o cartao de continuidade para 335px do topo. Numa tela de
+          escritorio de 1366x768, com a barra do navegador, a primeira dobra
+          acaba por volta de 600px: a pessoa abria a plataforma e via uma frase
+          e o topo de um cartao.
+
+          Quem usa isto e servidor de carreira que ja sabe por que esta aqui.
+          Manchete de marketing e espaco emprestado de outro tipo de site. O
+          titulo agora diz o que a tela FAZ, e o resto e o estado do trabalho,
+          que e o que a pessoa veio buscar. */}
       <section className="dashboard-intro">
-        <div>
-          <h1>
-            Aprenda o procedimento.
-            <br />
-            Pratique a decisão.
-          </h1>
-          <p>
-            Do primeiro contato ao controle de qualidade: estude a fonte,
-            confronte evidências e treine decisões justificadas.
-          </p>
-        </div>
+        <h1>Onde você parou, e o que decidir a seguir.</h1>
       </section>
       <section className="dashboard-feature">
         <div className="feature-media">

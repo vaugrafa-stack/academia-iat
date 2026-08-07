@@ -69,7 +69,7 @@ try {
   assert(packageJson.scripts.dev.includes('--open'), 'iniciador abre o navegador quando o servidor fica pronto');
 
   assert(document.querySelectorAll('.sidebar-v2 nav button').length === 11, 'onze áreas principais disponíveis (inclui Mapa e Redigir uma IT)');
-  assert(document.querySelector('.dashboard-page h1')?.textContent.includes('Aprenda o procedimento'), 'painel inicial renderizado');
+  assert(document.querySelector('.dashboard-page h1')?.textContent.includes('Onde você parou'), 'painel inicial renderizado');
   assert(document.querySelectorAll('.dashboard-phases > li').length === 4, 'início resume o percurso em quatro fases');
   assert(
     document.querySelector('.dashboard-phases-section')?.textContent.includes('M00 a M16'),

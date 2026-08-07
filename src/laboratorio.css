@@ -234,7 +234,7 @@
 .lab-case-catalog button small {
   overflow: hidden;
   color: var(--muted);
-  font-size: 10px;
+  font-size:11px;
   font-weight: 700;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -255,7 +255,7 @@
   align-items: center;
   gap: 4px;
   color: var(--green);
-  font-size: 9px;
+  font-size:11px;
   font-weight: 800;
   white-space: nowrap;
 }
@@ -336,7 +336,7 @@
   display: flex;
   flex-direction: column;
   color: var(--muted);
-  font-size: 9px;
+  font-size:11px;
   text-align: center;
   text-transform: uppercase;
 }
@@ -405,7 +405,7 @@
 }
 
 .lab-mode-options button small {
-  font-size: 9px;
+  font-size:11px;
   font-weight: 600;
 }
 
@@ -560,7 +560,7 @@
 
 .lab-classification-review b {
   flex: 0 0 auto;
-  font-size: 10px;
+  font-size:11px;
 }
 
 .lab-page .fund-check li > span {
@@ -570,7 +570,7 @@
 
 .lab-page .fund-check li > span small {
   color: var(--muted);
-  font-size: 10px;
+  font-size:11px;
   line-height: 1.4;
 }
 
@@ -723,7 +723,7 @@
 
 .lab-help-ladder > button small {
   color: var(--muted);
-  font-size: 10px;
+  font-size:11px;
 }
 
 .lab-help-ladder > button svg {
@@ -786,7 +786,7 @@
 
 .lab-page .decision-readiness b {
   color: var(--ink);
-  font-size: 10px;
+  font-size:11px;
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
 }
@@ -1156,7 +1156,7 @@
 .lab-help-columns li.lab-ausente{color:var(--muted);text-decoration:line-through;text-decoration-color:var(--red)}
 .lab-help-columns li.lab-ausente span{
   margin-right:6px;padding:1px 6px;border-radius:10px;
-  background:var(--red);color:#fff;font-size:9px;font-weight:900;
+  background:var(--red);color:#fff;font-size:11px;font-weight:900;
   letter-spacing:.06em;text-transform:uppercase;text-decoration:none;
   display:inline-block;vertical-align:middle;
 }

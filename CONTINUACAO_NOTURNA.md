@@ -503,11 +503,41 @@ Medido: 106 usos de peso 800 contra 2 de peso 200. A plataforma mora na ponta
 pesada, então nada se destaca. O objetivo passou a 15px peso 350, contraste
 11,25:1, em vez de 13px cinza.
 
-### O que falta no layout
+#### Bloco 20. Piso de leitura ✅ `aea98b6`
 
-1. A tela inicial, que ainda abre sem tese visual
-2. A hierarquia da barra lateral e do topo
-3. A escala tipográfica completa, que usa pouco da faixa 200 a 500
+Medido: **130 regras em 11px ou menos**, 13 em 9px e 40 em 10px. Não eram só
+rótulos: estavam em 10px a revisão de resposta do laboratório, o texto da
+transcrição, a lista de evidências e a citação da fonte.
+
+A causa foi método, não descuido. A plataforma tinha **uma só ferramenta para
+fazer texto recuar**: encolher e acinzentar. Das 228 declarações de peso, 3
+estavam na faixa leve, então a metade clara de uma variável de 200 a 800 nunca
+entrou, e sobrava diminuir.
+
+57 regras elevadas. Junto saiu um defeito antigo: **a marca não cabia na própria
+caixa**, 168px numa coluna de 163px, achado ao medir transbordo. Agora a caixa
+manda no tamanho, por consulta de container. Errei o fator duas vezes porque
+`cqi` conta a caixa de conteúdo, 163px, e não os 197px externos.
+
+Portão 23, `check-tipografia`. Ele achou o que minha medição não viu: quatro
+regras em 10,5px, que meu regex de inteiros deixou passar.
+
+### Bloco 21. O Início abre com o trabalho, não com slogan ✅ `9058c66`
+
+O topo era "Aprenda o procedimento. Pratique a decisão." em 39px, mais um
+parágrafo de apresentação: 151px que empurravam o cartão de continuidade para
+335px do topo. Numa tela de escritório a primeira dobra acaba por volta de
+600px, então a pessoa via uma frase e o topo de um cartão.
+
+Manchete de marketing é medida emprestada de outro tipo de site. O título agora
+diz o que a tela faz, em 27px. **86px devolvidos à primeira dobra**, e a página
+encolheu de 1286px para 1197px.
+
+## O que falta no layout
+
+1. A hierarquia da barra lateral e do topo
+2. O carimbo de procedência está recolhido no rodapé do Início, sendo que a
+   procedência é a promessa central da plataforma
 
 ## Deixado de propósito para você decidir: ações do CI no Node 20
 

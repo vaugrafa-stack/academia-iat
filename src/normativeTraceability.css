@@ -1,0 +1,154 @@
+.normative-axes {
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 22px;
+  background: var(--surface);
+  box-shadow: var(--shadow-1);
+}
+
+.normative-axes > header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 16px;
+}
+
+.normative-axes .eyebrow {
+  color: var(--green2);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: .09em;
+  text-transform: uppercase;
+}
+
+.normative-axes h2 {
+  margin: 5px 0 6px;
+  font-size: clamp(19px, 2vw, 25px);
+}
+
+.normative-axes header p {
+  max-width: 760px;
+  margin: 0;
+  color: var(--muted);
+}
+
+.normative-review-badge {
+  flex: 0 0 auto;
+  padding: 6px 10px;
+  border: 1px solid var(--amber);
+  border-radius: 999px;
+  background: var(--amber2);
+  color: var(--ink);
+  font-size: 11px;
+  font-weight: 750;
+}
+
+.normative-axis-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.normative-axis {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  padding: 16px;
+  border: 1px solid var(--line);
+  border-top: 4px solid var(--green2);
+  border-radius: 12px;
+  background: var(--soft);
+}
+
+.normative-axis.aneel-setorial { border-top-color: #d89b15; }
+.normative-axis.gestao-hidrica { border-top-color: #168fc8; }
+
+.normative-axis-heading {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.normative-axis-icon {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  background: var(--surface);
+  color: var(--green2);
+}
+
+.normative-axis-icon svg { width: 20px; height: 20px; }
+.normative-axis-heading small { color: var(--muted); font-weight: 800; }
+.normative-axis h3 { margin: 2px 0 0; font-size: 16px; }
+.normative-axis > p { color: var(--muted); font-size: 13px; }
+.normative-axis ul { margin: 4px 0 14px; padding-left: 19px; font-size: 12px; }
+.normative-axis li + li { margin-top: 6px; }
+
+.normative-axis-meta {
+  display: grid;
+  gap: 5px;
+  margin-top: auto;
+  padding-top: 12px;
+  border-top: 1px solid var(--line);
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.normative-axis-limit {
+  padding: 9px;
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--ink) !important;
+}
+
+.normative-axis-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.normative-axis-links a {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  min-height: 34px;
+  padding: 7px 9px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--green2);
+  font-size: 11px;
+  font-weight: 750;
+  text-decoration: none;
+}
+
+.normative-axis-links a:hover { border-color: var(--green2); }
+.normative-axis-links a:focus-visible { outline: 3px solid #58a9ef; outline-offset: 2px; }
+.normative-axis-links svg { width: 14px; height: 14px; }
+
+.normative-axes-warning {
+  margin: 14px 0 0;
+  padding: 10px 12px;
+  border-left: 4px solid var(--amber);
+  border-radius: 8px;
+  background: var(--amber2);
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.normative-axes.compact { margin-bottom: 18px; }
+.normative-axes.compact .normative-axis > p { min-height: 56px; }
+
+@media (max-width: 980px) {
+  .normative-axis-grid { grid-template-columns: 1fr; }
+  .normative-axes.compact .normative-axis > p { min-height: 0; }
+}
+
+@media (max-width: 640px) {
+  .normative-axes { padding: 16px; }
+  .normative-axes > header { display: grid; }
+  .normative-review-badge { justify-self: start; }
+}

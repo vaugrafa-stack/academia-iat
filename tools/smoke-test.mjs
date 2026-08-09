@@ -142,6 +142,10 @@ try {
   assert(document.querySelectorAll('.question-stack fieldset:not(.locked)').length >= 2, 'decisão libera a etapa seguinte');
 
   await click(navButtons.find(x => x.textContent.includes('Avaliações')));
+  await waitFor(
+    () => document.querySelectorAll('.module-tests button').length >= 10,
+    'avaliações não terminaram de carregar os módulos',
+  );
   assert(document.querySelectorAll('.module-tests button').length >= 10, 'avaliações por módulo disponíveis');
 
   // A avaliação do módulo abre com pelo menos oito questões e o feedback mostra

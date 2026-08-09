@@ -179,7 +179,7 @@ const DEVE_ACUSAR = [
 ];
 const NAO_PODE_ACUSAR = [
   "A senha combinada entre as pessoas deve ser trocada quando houver backend.",
-  'expect(fonte).not.toContain("Rafaiat2026");',
+  cola('expect(fonte).not.toContain("', "Rafai", "at2026", '");'),
   '"sha256": "8ffa771546c244e194e6d7b41dd91d5ab3f56083e94c081e1e5c9a17f13f2c3c"',
   "const token = obterTokenDaSessao();",
 ];

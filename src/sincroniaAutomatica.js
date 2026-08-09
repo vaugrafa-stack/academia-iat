@@ -75,6 +75,75 @@ export function decidirEnvio({ marcoAnterior, marcoAtual, temConta }) {
 }
 
 /**
+ * Serializa gravacoes para que cada uma leia a revisao deixada pela anterior.
+ * Dois fechamentos rapidos nao devem disputar a mesma revisao-base.
+ */
+export function criarFilaDeSincronia({
+  ler = lerRevisao,
+  gravar = (revisao, estado, id) => gravarProgresso(revisao, estado, undefined, id),
+  carimbar = gravarRevisao,
+  interpretar = interpretarGravacao,
+  contaAtiva,
+  identificar = quemSou,
+} = {}) {
+  if (typeof contaAtiva !== "function") {
+    throw new TypeError("A fila de sincronia precisa conhecer a conta ativa.");
+  }
+  let cauda = Promise.resolve();
+
+  const idDaConta = (conta) => {
+    const valor = conta && typeof conta === "object" ? conta.id : conta;
+    return valor === null || valor === undefined || valor === "" ? null : String(valor);
+  };
+  const cancelada = () => ({
+    aceita: false,
+    carimbar: null,
+    algoMaisNovo: false,
+    cancelada: true,
+  });
+
+  return function enfileirar(id, estado) {
+    // O identificador pertence a ESTA operacao. O cookie, por outro lado, sera
+    // lido pelo navegador somente quando o fetch realmente comecar. Por isso a
+    // fila precisa conferir os dois imediatamente antes do envio.
+    const idEsperado = idDaConta(id);
+    const executar = async () => {
+      if (!idEsperado || idDaConta(contaAtiva()) !== idEsperado) return cancelada();
+
+      let identidade;
+      try {
+        identidade = await identificar();
+      } catch {
+        // Sem conseguir provar de quem e o cookie, nao se envia documento.
+        return cancelada();
+      }
+      if (
+        idDaConta(contaAtiva()) !== idEsperado ||
+        idDaConta(identidade) !== idEsperado
+      ) {
+        return cancelada();
+      }
+
+      const pedida = ler(id) + 1;
+      const resposta = await gravar(pedida, estado, idEsperado);
+
+      // A requisicao pode ter terminado depois de uma troca de conta. O
+      // servidor ja recebeu o pedido sob a identidade validada, mas o retorno
+      // antigo nao pode carimbar revisao nem acender aviso na sessao nova.
+      if (idDaConta(contaAtiva()) !== idEsperado) return cancelada();
+
+      const veredito = interpretar(pedida, resposta);
+      if (veredito.contaAlterada) return cancelada();
+      if (veredito.carimbar !== null) carimbar(id, veredito.carimbar);
+      return { ...veredito, cancelada: false };
+    };
+    const atual = cauda.then(executar, executar);
+    cauda = atual.catch(() => undefined);
+    return atual;
+  };
+}
+
+/**
  * Envia o progresso quando um bloco de estudo fecha.
  *
  * Devolve `{ conta, algoMaisNovo }`. `algoMaisNovo` fica verdadeiro quando o
@@ -85,20 +154,34 @@ export function useSincroniaAutomatica(state) {
   const [conta, setConta] = useState(null);
   const [algoMaisNovo, setAlgoMaisNovo] = useState(false);
   const marcoAnterior = useRef(null);
+  const montado = useRef(true);
+  const contaAtiva = useRef(null);
+  const fila = useRef(null);
+  if (fila.current === null) {
+    fila.current = criarFilaDeSincronia({ contaAtiva: () => contaAtiva.current });
+  }
 
   // Quem está logado. Pergunta uma vez, e depois só quando o cartão avisar.
   useEffect(() => {
     let vivo = true;
+    montado.current = true;
     (async () => {
       // Sem o sinalizador de build nao ha o que sondar. Ver `contaHabilitada`.
       if (!contaHabilitada()) return;
       if (!(await servicoDisponivel())) return;
       const eu = await quemSou();
-      if (vivo) setConta(eu);
+      if (vivo) {
+        contaAtiva.current = eu?.id || null;
+        setConta(eu);
+      }
     })();
 
     const aoMudar = (evento) => {
-      setConta(evento.detail || null);
+      const proxima = evento.detail || null;
+      // Atualizar o ref antes do render cancela imediatamente tudo o que ainda
+      // estiver esperando na fila da conta anterior.
+      contaAtiva.current = proxima?.id || null;
+      setConta(proxima);
       // O marco volta a zero: logo depois de entrar, o cartão sincroniza, e
       // gravar aqui devolveria ao servidor o que acabou de vir dele.
       marcoAnterior.current = null;
@@ -112,6 +195,8 @@ export function useSincroniaAutomatica(state) {
     globalThis.addEventListener?.(EVENTO_PROGRESSO_APLICADO, aoAplicar);
     return () => {
       vivo = false;
+      montado.current = false;
+      contaAtiva.current = null;
       globalThis.removeEventListener?.(EVENTO_CONTA, aoMudar);
       globalThis.removeEventListener?.(EVENTO_PROGRESSO_APLICADO, aoAplicar);
     };
@@ -127,21 +212,15 @@ export function useSincroniaAutomatica(state) {
     marcoAnterior.current = decisao.marco;
     if (!decisao.enviar) return undefined;
 
-    let vivo = true;
-    (async () => {
-      const pedida = lerRevisao(id) + 1;
-      const r = await gravarProgresso(pedida, state);
-      if (!vivo) return;
-      // Falha de rede não vira aviso: o progresso local está salvo, e o que não
-      // aconteceu foi a sincronização, que não é o que a pessoa estava fazendo.
-      const veredito = interpretarGravacao(pedida, r);
-      // Só carimba quando gravou de verdade. Ver `interpretarGravacao`.
-      if (veredito.carimbar !== null) gravarRevisao(id, veredito.carimbar);
-      if (veredito.algoMaisNovo) setAlgoMaisNovo(true);
-    })();
-    return () => {
-      vivo = false;
-    };
+    fila.current(id, state)
+      .then((veredito) => {
+        if (montado.current && veredito.algoMaisNovo) setAlgoMaisNovo(true);
+      })
+      .catch(() => {
+        // Falha inesperada não derruba a tela. A fila se recupera e o progresso
+        // local continua sendo a fonte que a pessoa está usando.
+      });
+    return undefined;
   }, [conta, state]);
 
   return { conta, algoMaisNovo };

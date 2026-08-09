@@ -1,4 +1,76 @@
 const CHECKED_AT = '2026-07-27';
+const HYDRO_AXES_CHECKED_AT = '2026-08-09';
+
+// Três trilhas públicas diferentes convivem no mesmo empreendimento. Os
+// registros abaixo não tentam fundi-las em uma única "classificação oficial":
+// cada eixo informa a autoridade, a finalidade e a fonte que sustenta o
+// recorte. A data registra a conferência do conteúdo acessível, não uma opinião
+// automática sobre a norma aplicável a qualquer processo concreto.
+export const HYDRO_AUTHORITY_AXES = Object.freeze([
+  {
+    id: 'iat-ambiental',
+    shortLabel: 'IAT',
+    authority: 'Instituto Água e Terra',
+    title: 'Licenciamento ambiental estadual',
+    scope: 'Enquadramento ambiental e procedimentos de licenciamento de empreendimentos hidrelétricos no Paraná.',
+    act: 'Instrução Normativa IAT nº 09/2025, art. 2º',
+    officialUrl: 'https://www.iat.pr.gov.br/sites/agua-terra/arquivos_restritos/files/documento/2025-06/instrucao_normativa_09-2025-empreendimentos_hidreletricos-23743957-0_republicado.pdf',
+    supportingUrl: 'https://www.iat.pr.gov.br/Pagina/Licenciamento-de-atividades-especificas',
+    checkedAt: HYDRO_AXES_CHECKED_AT,
+    temporalStatus: 'fonte-oficial-atual-localizada',
+    epistemicStatus: 'evidência',
+    humanReview: 'pendente',
+    criteria: [
+      'MCH: potência instalada igual ou inferior a 75 kW.',
+      'MGH: potência superior a 75 kW e até 500 kW.',
+      'CGH: potência superior a 500 kW e até 5 MW.',
+      'PCH: potência superior a 5 MW e até 30 MW, com reservatório de até 3 km², ressalvada a exceção descrita na própria IN.',
+      'UHE: potência superior a 30 MW, reservatório maior que 3 km² ou definição da ANEEL.',
+    ],
+    limitation: 'Este eixo serve ao licenciamento ambiental estadual. Não substitui registro ou outorga setorial nem a regularização do uso da água.',
+  },
+  {
+    id: 'aneel-setorial',
+    shortLabel: 'ANEEL',
+    authority: 'Agência Nacional de Energia Elétrica',
+    title: 'Regulação e outorga do setor elétrico',
+    scope: 'Registro, autorização ou instrução de concessão para exploração do potencial hidráulico, conforme o regime setorial.',
+    act: 'Portal oficial Outorgas e Resolução Normativa ANEEL nº 875/2020',
+    officialUrl: 'https://www.gov.br/aneel/pt-br/assuntos/geracao/outorgas',
+    supportingUrl: 'https://www.gov.br/aneel/pt-br/centrais-de-conteudos/manuais-modelos-e-instrucoes/geracao/registro-autorizacao-e-concessao-de-empreendimentos-de-geracao/outorga-de-autorizacao-pch-e-uhe',
+    checkedAt: HYDRO_AXES_CHECKED_AT,
+    temporalStatus: 'fonte-oficial-atual-localizada',
+    epistemicStatus: 'evidência',
+    humanReview: 'pendente',
+    criteria: [
+      'CGH setorial: capacidade instalada igual ou inferior a 5.000 kW.',
+      'PCH setorial: potência superior a 5.000 kW e até 30.000 kW, com reservatório de até 13 km².',
+      'UHE autorizada: de 5.000 kW a 50.000 kW quando não tiver características de PCH.',
+      'UHE concedida: potência instalada superior a 50.000 kW.',
+    ],
+    limitation: 'Este eixo não define modalidade ou suficiência do licenciamento ambiental e não substitui outorga ou DRDH de recursos hídricos.',
+  },
+  {
+    id: 'gestao-hidrica',
+    shortLabel: 'ANA / gestor estadual',
+    authority: 'ANA ou órgão gestor de recursos hídricos competente',
+    title: 'Disponibilidade e direito de uso da água',
+    scope: 'DRDH, outorga preventiva e outorga de direito de uso, conforme o domínio do corpo hídrico e a competência do gestor.',
+    act: 'Resolução ANA nº 286/2026 e regras do órgão gestor estadual competente',
+    officialUrl: 'https://www.gov.br/ana/pt-br/legislacao/resolucoes/resolucoes-regulatorias/2026/286',
+    supportingUrl: 'https://www.iat.pr.gov.br/Pagina/Outorga-eletronica-de-recursos-hidricos',
+    checkedAt: HYDRO_AXES_CHECKED_AT,
+    temporalStatus: 'fonte-oficial-atual-localizada',
+    epistemicStatus: 'evidência',
+    humanReview: 'pendente',
+    criteria: [
+      'Corpo hídrico de domínio da União: aplicar o fluxo da ANA e identificar quem apresenta o pedido em cada hipótese.',
+      'Corpo hídrico de domínio estadual: consultar o órgão gestor estadual e o procedimento vigente.',
+      'DRDH, outorga preventiva e outorga de direito de uso são atos distintos e devem ser compatíveis com o empreendimento.',
+    ],
+    limitation: 'Este eixo não substitui o ato da ANEEL nem a licença ambiental. O domínio do corpo hídrico e a fase do processo precisam ser confirmados.',
+  },
+]);
 
 // Fontes de maior risco operacional conferidas diretamente nos portais
 // oficiais. O registro guarda a data da conferência do link, mas não finge que
@@ -284,4 +356,130 @@ export function sourceRegistryStats(references = []) {
     },
     { direct: 0, index: 0, unmapped: 0 },
   );
+}
+
+const AUTHORITY_PROFILES = [
+  {
+    pattern: /^INSTITUTO ÁGUA E TERRA\b|^PARANÁ(?:\.|\s|$)/i,
+    code: 'iat-pr',
+    authority: 'Instituto Água e Terra / Estado do Paraná',
+    axis: 'ambiental-estadual',
+  },
+  {
+    pattern: /^AGÊNCIA NACIONAL DE ENERGIA ELÉTRICA\b|\bANEEL\b/i,
+    code: 'aneel',
+    authority: 'Agência Nacional de Energia Elétrica',
+    axis: 'setorial-energetico',
+  },
+  {
+    pattern: /^INSTITUTO BRASILEIRO DO MEIO AMBIENTE\b|\bIBAMA\b/i,
+    code: 'ibama',
+    authority: 'Instituto Brasileiro do Meio Ambiente e dos Recursos Naturais Renováveis',
+    axis: 'ambiental-federal',
+  },
+  {
+    pattern: /^INSTITUTO DO PATRIMÔNIO HISTÓRICO\b|\bIPHAN\b/i,
+    code: 'iphan',
+    authority: 'Instituto do Patrimônio Histórico e Artístico Nacional',
+    axis: 'patrimonio-cultural',
+  },
+  {
+    pattern: /^CONAMA\b/i,
+    code: 'conama',
+    authority: 'Conselho Nacional do Meio Ambiente',
+    axis: 'ambiental-federal',
+  },
+  {
+    pattern: /^BRASIL\b/i,
+    code: 'uniao',
+    authority: 'União',
+    axis: 'marco-legal-federal',
+  },
+  {
+    pattern: /^ABNT\b/i,
+    code: 'abnt',
+    authority: 'Associação Brasileira de Normas Técnicas',
+    axis: 'normalizacao-tecnica',
+  },
+];
+
+function authorityProfile(reference) {
+  return AUTHORITY_PROFILES.find(({ pattern }) => pattern.test(reference)) || {
+    code: 'nao-identificada',
+    authority: 'Autoridade não identificada',
+    axis: 'a-confirmar',
+  };
+}
+
+function actFromReference(reference) {
+  const withoutAuthority = String(reference || '').replace(/^[^.]+\.\s*/, '');
+  return withoutAuthority.split(/\.\s+/)[0]?.trim() || 'Ato não identificado';
+}
+
+function scopeFromReference(reference, profile) {
+  if (profile.axis === 'setorial-energetico') {
+    return 'regulação e outorga do setor elétrico';
+  }
+  if (/outorga|recursos hídricos|vazões|corpos? de água|DRDH/i.test(reference)) {
+    return 'gestão de recursos hídricos';
+  }
+  if (/inventário hidrelétrico|\bDRI\b|\bDRS\b/i.test(reference)) {
+    return 'regulação e outorga do setor elétrico';
+  }
+  if (/IPHAN|patrimônio/i.test(reference)) return 'patrimônio cultural';
+  if (/ABNT|amostragem|laboratórios/i.test(reference)) return 'normalização técnica';
+  if (/segurança de barragens/i.test(reference)) return 'segurança de barragens';
+  if (/florest|vegetação|Mata Atlântica|fauna|Unidades? de Conservação|Plano de Manejo/i.test(reference)) {
+    return 'biodiversidade, vegetação e áreas protegidas';
+  }
+  if (/compensação ambiental/i.test(reference)) return 'compensação ambiental';
+  if (/GeoPR|geoespacial|espacialização/i.test(reference)) return 'informação geoespacial de apoio';
+  if (/RTAA|SEI\/IBAMA|Cooperação Técnica|delegação/i.test(reference)) {
+    return 'licenciamento ambiental federal delegado e prestação de informações';
+  }
+  if (profile.axis === 'ambiental-estadual') return 'licenciamento e gestão ambiental estadual';
+  if (profile.axis === 'ambiental-federal' || profile.axis === 'marco-legal-federal') {
+    return 'marco ambiental federal';
+  }
+  return 'escopo técnico a confirmar na fonte';
+}
+
+function temporalStatus(reference, source) {
+  if (/\brevogad[oa]s?\b/i.test(reference)) return 'histórica';
+  if (/regra de transição|transição/i.test(reference)) return 'transição';
+  if (source?.kind === 'direct') return 'vigência-a-confirmar-no-caso';
+  return 'vigência-e-ato-exato-a-confirmar';
+}
+
+/**
+ * Converte uma referência textual do POP em registro auditável. Para links de
+ * índice, `epistemicStatus` permanece como inferência: a autoria foi
+ * identificada, mas o ato exato ainda precisa ser localizado e revisado.
+ */
+export function buildNormativeLedgerEntry(reference = '', index = 0) {
+  const source = resolveOfficialSource(reference);
+  const profile = authorityProfile(reference);
+  return {
+    id: `fonte-${String(index + 1).padStart(3, '0')}`,
+    reference,
+    authorityCode: profile.code,
+    authority: profile.authority,
+    axis: profile.axis,
+    act: actFromReference(reference),
+    scope: scopeFromReference(reference, profile),
+    officialUrl: source?.url || null,
+    directOfficialUrl: source?.kind === 'direct' ? source.url : null,
+    officialIndexUrl: source?.kind === 'index' ? source.url : null,
+    linkKind: source?.kind || 'unmapped',
+    consultedAt: source?.checkedAt || null,
+    temporalStatus: temporalStatus(reference, source),
+    epistemicStatus: source?.kind === 'direct' ? 'evidência' : 'inferência',
+    humanReview: source?.humanReview || 'pendente',
+    transition: source?.transition || null,
+    sourceStatus: source?.status || 'Fonte oficial ainda não mapeada',
+  };
+}
+
+export function buildNormativeLedger(references = []) {
+  return references.map(buildNormativeLedgerEntry);
 }

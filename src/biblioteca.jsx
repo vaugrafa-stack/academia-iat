@@ -29,9 +29,13 @@ import {
 import { PageHeader, Empty, TableRenderer } from "./ui.jsx";
 import { norm } from "./derivados.js";
 import { leiTokens, ordenaBusca, snippet } from "./busca.js";
-import { resolveOfficialSource } from "./officialSources.js";
+import {
+  buildNormativeLedger,
+  resolveOfficialSource,
+} from "./officialSources.js";
 import { resumoDaNorma } from "./leiResumos";
 import { tracks } from "./courseData";
+import NormativeAuthorityAxes from "./NormativeAuthorityAxes.jsx";
 
 export default function KnowledgeLibrary({
   state,
@@ -59,6 +63,7 @@ export default function KnowledgeLibrary({
       .map((id) => blockMap.get(id)?.paragraph?.text || "")
       .filter(Boolean);
   }, [popData, blockMap]);
+  const leiLedger = useMemo(() => buildNormativeLedger(leis), [leis]);
   const [leiSel, setLeiSel] = useState(0);
   const leiCitacoes = useMemo(() => {
     const ref = leis[leiSel] || "";
@@ -318,7 +323,9 @@ export default function KnowledgeLibrary({
         </div>
       )}
       {tab === "legislacoes" && (
-        <div className="leis-view">
+        <>
+          <NormativeAuthorityAxes compact />
+          <div className="leis-view">
           <aside className="leis-list">
             <div className="leis-head">
               <Scale />
@@ -357,6 +364,7 @@ export default function KnowledgeLibrary({
                 <div className="leis-actions">
                   {(() => {
                     const fonte = resolveOfficialSource(leis[leiSel]);
+                    const registro = leiLedger[leiSel];
                     if (!fonte)
                       return (
                         <p className="fonte-nao-mapeada" role="status">
@@ -392,7 +400,11 @@ export default function KnowledgeLibrary({
                               `${fonte.checkedAt}T12:00:00`,
                             ).toLocaleDateString("pt-BR")}
                           </span>
-                          <span>Conferência técnica de vigência: pendente</span>
+                          <span>Autoridade: {registro.authority}</span>
+                          <span>Escopo: {registro.scope}</span>
+                          <span>Situação temporal: {registro.temporalStatus}</span>
+                          <span>Lastro: {registro.epistemicStatus}</span>
+                          <span>Estado de revisão: {registro.humanReview}</span>
                         </div>
                         <small className="fonte-nota">{fonte.note}</small>
                       </>
@@ -433,7 +445,8 @@ export default function KnowledgeLibrary({
               </>
             )}
           </section>
-        </div>
+          </div>
+        </>
       )}
       {tab === "anotacoes" && (
         <div className="notas-view">

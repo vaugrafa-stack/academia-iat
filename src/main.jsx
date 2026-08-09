@@ -3,7 +3,6 @@ import React, {
   Suspense,
   useCallback,
   useEffect,
-  useLayoutEffect,
   useMemo,
   useRef,
   useState,
@@ -11,7 +10,6 @@ import React, {
 import {
   AlertTriangle,
   ArrowRight,
-  Award,
   BadgeCheck,
   BookMarked,
   BookOpen,
@@ -20,7 +18,6 @@ import {
   Building2,
   Check,
   CheckCircle2,
-  ChevronLeft,
   ChevronRight,
   Circle,
   CircleHelp,
@@ -45,18 +42,15 @@ import {
   Layers3,
   ListChecks,
   Library,
-  Lightbulb,
   Map as MapIcon,
   Maximize2,
   Menu,
-  MessageSquareText,
   Quote,
   Milestone,
   PanelLeftClose,
   PanelLeftOpen,
   Play,
   RefreshCw,
-  RotateCcw,
   Scale,
   Search,
   ShieldCheck,
@@ -65,7 +59,6 @@ import {
   Table2,
   Target,
   Trees,
-  Trophy,
   X,
   Zap,
   CloudOff,
@@ -79,18 +72,12 @@ import {
 import {
   ThemeToggle,
   Suporte,
-  ComparaDiagnostico,
 } from "./painelAluno.jsx";
 import { PageHeader, Empty, TableRenderer } from "./ui.jsx";
 import { ordenaBusca, snippet } from "./busca.js";
 import { elementoDaAula, precisaDeComplemento } from "./aulasAnexoB.js";
 import { comoLerQuadro } from "./comoLerQuadro.js";
 import { colherErros, errosDaAula } from "./errosRecorrentes.js";
-import {
-  questoesParaRevisar,
-  registrarRodada,
-  resumoDaRevisao,
-} from "./revisaoEspacada.js";
 import popDataUrl from "./data/pop-public-content.json?url";
 import flowDataUrl from "./data/flowcharts-content.json?url";
 import aulaMediaUrl from "./data/aula-media.json?url";
@@ -139,11 +126,6 @@ import { getLearningDesign } from "./learningDesign.js";
 import Lesson, { VideoDataLoading, objetivoDaAula } from "./licao.jsx";
 import SourceAssurance from "./sourceAssurance.jsx";
 import { resolveOfficialSource } from "./officialSources.js";
-import {
-  newAssessmentSeed,
-  prepareAssessment,
-  selectDiagnosticAnchors,
-} from "./assessmentDesign.js";
 import { practiceRecordStatus } from "./learningRecords.js";
 import {
   MIN_ACTIVE_RECALL_CHARS,
@@ -168,6 +150,7 @@ const LaboratorioPremium = lazy(() => import("./laboratorio.jsx"));
 const Flowcharts = lazy(() => import("./Flowcharts.jsx"));
 const KnowledgeLibrary = lazy(() => import("./biblioteca.jsx"));
 const Profile = lazy(() => import("./perfil.jsx"));
+const Assessments = lazy(() => import("./avaliacoes.jsx"));
 try {
   const _t = localStorage.getItem("academia-iat-theme");
   document.documentElement.dataset.theme =
@@ -285,6 +268,14 @@ const DADOS_BIBLIOTECA = Object.freeze({
   lessons,
   lessonMap,
   INDICE,
+});
+
+const DADOS_AVALIACOES = Object.freeze({
+  firstLesson,
+  lessonMap,
+  lessons,
+  questionBank,
+  tracks,
 });
 // Navegacao agrupada por NATUREZA DA ATIVIDADE, nao por ordem de criacao.
 //
@@ -782,7 +773,12 @@ function App() {
       />
     ),
     avaliacoes: (
-      <Assessments state={state} setState={setState} openLesson={openLesson} />
+      <Assessments
+        state={state}
+        setState={setState}
+        openLesson={openLesson}
+        dados={DADOS_AVALIACOES}
+      />
     ),
     biblioteca: (
       <KnowledgeLibrary
@@ -1844,457 +1840,6 @@ function Formation({ state, openLesson }) {
   );
 }
 
-
-// Duas aplicações dos mesmos itens-âncora. A comparação é descritiva: mesmo
-// com itens iguais, efeito de memória e familiaridade impedem atribuir a
-// variação causalmente ao estudo.
-// Quantas questões de cada módulo entram na amostra diagnóstica geral.
-const DIAG_POR_MODULO = 3;
-// O que a pessoa errou volta, e volta cada vez mais tarde.
-//
-// Conteudo estudado uma vez e nunca revisto se perde: sem retomada, a
-// autoavaliacao final mede memoria recente, e quem fez o modulo ontem recebe a
-// mesma leitura de quem fez ha um mes.
-//
-// So aparece quando ha questao VENCIDA. Bloco de revisao vazio em toda visita
-// vira ruido, e ruido treina a pessoa a ignorar o lugar onde a informacao util
-// vai aparecer depois.
-function RevisaoPendente({ state, openLesson }) {
-  const fila = useMemo(
-    () => questoesParaRevisar(state.revisao, questionBank),
-    [state.revisao],
-  );
-  const resumo = useMemo(
-    () => resumoDaRevisao(state.revisao, questionBank),
-    [state.revisao],
-  );
-  if (!fila.length) return null;
-  return (
-    <section className="revisao-pendente">
-      <header>
-        <RefreshCw size={16} aria-hidden="true" />
-        <div>
-          <small>RETOMADA DO QUE ESCAPOU</small>
-          <h2>
-            {fila.length} {fila.length === 1 ? "questão" : "questões"} para
-            revisar
-          </h2>
-          <p>
-            Você acompanha {resumo.acompanhadas}{" "}
-            {resumo.acompanhadas === 1 ? "questão" : "questões"}, e{" "}
-            {resumo.comErro} já {resumo.comErro === 1 ? "escapou" : "escaparam"}{" "}
-            ao menos uma vez. O intervalo cresce a cada acerto e volta ao início
-            a cada erro.
-          </p>
-        </div>
-      </header>
-      <ul>
-        {fila.map(({ questao, registro, atrasoEmDias }) => (
-          <li key={questao.id}>
-            <button
-              type="button"
-              onClick={() => questao.source?.sec && openLesson(questao.source.sec)}
-            >
-              <span>{questao.question}</span>
-              <small>
-                {registro.erros > 0
-                  ? `${registro.erros}× errada`
-                  : "em acompanhamento"}
-                {atrasoEmDias > 0 ? ` · vencida há ${atrasoEmDias} d` : " · vence hoje"}
-              </small>
-            </button>
-          </li>
-        ))}
-      </ul>
-      <small className="revisao-nota">
-        Isto reapresenta o que você errou no momento em que esquecer é provável.
-        Continua sendo autoestudo, e não medida validada de competência.
-      </small>
-    </section>
-  );
-}
-
-function Assessments({ state, setState, openLesson }) {
-  const [track, setTrack] = useState("geral"),
-    [started, setStarted] = useState(false),
-    [index, setIndex] = useState(0),
-    [answers, setAnswers] = useState({}),
-    [revealed, setRevealed] = useState(false),
-    [done, setDone] = useState(false),
-    [attemptSeed, setAttemptSeed] = useState(() => newAssessmentSeed()),
-    [diagnosticForm, setDiagnosticForm] = useState(() =>
-      state.diagnostico?.entrada ? "B" : "A",
-    ); // Diagnostico geral: TRES questoes ancora por modulo. Entrada e saida
-  // usam os mesmos itens, mas ordem e posicao das alternativas mudam para
-  // reduzir memorizacao mecanica sem perder comparabilidade por item.
-  const questions = useMemo(() => {
-    let base;
-    if (track !== "geral") base = questionBank.filter((q) => q.track === track);
-    else {
-      base = selectDiagnosticAnchors(questionBank, tracks, DIAG_POR_MODULO);
-    }
-    return prepareAssessment(base, attemptSeed);
-  }, [track, attemptSeed, diagnosticForm]);
-  const q = questions[index];
-  const score = questions.filter((x, i) => answers[i] === x.answer).length;
-  useLayoutEffect(() => {
-    if (track === "geral" && revealed) {
-      setRevealed(false);
-      next();
-    }
-  }, [track, revealed]);
-  function reset(id = track) {
-    setTrack(id);
-    setAttemptSeed(newAssessmentSeed());
-    setDiagnosticForm(state.diagnostico?.entrada ? "B" : "A");
-    setStarted(false);
-    setIndex(0);
-    setAnswers({});
-    setRevealed(false);
-    setDone(false);
-  }
-  function next() {
-    if (index === questions.length - 1) {
-      setDone(true);
-      setState((s) => {
-        // Resultado por questao de TODA rodada, e nao so do diagnostico geral.
-        // Sem isto nao havia como saber o que reapresentar: o estado guardava
-        // apenas quantas a pessoa acertou, nunca quais escaparam.
-        const resultados = {};
-        questions.forEach((x, i) => {
-          if (answers[i] !== undefined) resultados[x.id] = answers[i] === x.answer;
-        });
-        const base = {
-          ...s,
-          revisao: registrarRodada(s.revisao, resultados),
-          quizScores: {
-            ...s.quizScores,
-            [track]: {
-              score,
-              total: questions.length,
-              date: new Date().toISOString(),
-            },
-          },
-        };
-        if (track !== "geral") return base;
-        // A primeira aplicação é preservada e as seguintes atualizam a
-        // reaplicação. São duas amostras descritivas dos mesmos itens, não uma
-        // medida validada de ganho ou prova causal de aprendizagem.
-        const porQuestao = {};
-        questions.forEach((x, i) => {
-          porQuestao[x.id] = { track: x.track, ok: answers[i] === x.answer };
-        });
-        const registro = {
-          data: new Date().toISOString(),
-          acertos: score,
-          total: questions.length,
-          forma: diagnosticForm,
-          leitura: Math.round((s.completed.length / lessons.length) * 100),
-          porQuestao,
-        };
-        const d = s.diagnostico || {};
-        return {
-          ...base,
-          diagnostico: d.entrada
-            ? { ...d, saida: registro }
-            : { ...d, entrada: registro },
-        };
-      });
-    } else {
-      setIndex((i) => i + 1);
-      setRevealed(false);
-    }
-  }
-  return (
-    <div className="page">
-      <PageHeader
-        title="Autoavaliações e revisão"
-        subtitle="Questões comentadas transformam erro em revisão direcionada, sem confundir resultado de quiz com competência profissional."
-        icon={ClipboardCheck}
-      />
-      {!started ? (
-        <div className="assessment-select">
-          <RevisaoPendente state={state} openLesson={openLesson} />
-          {(() => {
-            const d = state.diagnostico || {};
-            if (!d.entrada) return null;
-            return <ComparaDiagnostico d={d} />;
-          })()}
-          <section className="diagnostic">
-            <div>
-              <Award />
-              <span>
-                <small>AVALIAÇÃO INTEGRADORA</small>
-                <h2>Amostra diagnóstica do POP</h2>
-                <p>
-                  Três questões por módulo, dos fundamentos à conclusão técnica.
-                  A reaplicação usa os mesmos itens-âncora em outra ordem e
-                  descreve os dois resultados sem atribuir a variação ao curso.
-                </p>
-              </span>
-            </div>
-            <div className="assessment-meta">
-              <span>
-                <Clock /> {tracks.length * DIAG_POR_MODULO} questões · cerca de{" "}
-                {Math.round(tracks.length * DIAG_POR_MODULO * 0.5)} min
-              </span>
-              <span>
-                <MessageSquareText /> Feedback imediato
-              </span>
-              <span>
-                <Trophy /> Autoacompanhamento não validado
-              </span>
-            </div>
-            <button
-              onClick={() => {
-                reset("geral");
-                setStarted(true);
-              }}
-            >
-              {(state.diagnostico || {}).entrada
-                ? "Reaplicar os itens-âncora"
-                : "Fazer a primeira aplicação"}{" "}
-              <ArrowRight />
-            </button>
-            {state.quizScores.geral && (
-              <small>
-                Último resultado: {state.quizScores.geral.score}/
-                {state.quizScores.geral.total}
-              </small>
-            )}
-          </section>
-          <h2>Avaliações por módulo</h2>
-          <div className="module-tests">
-            {tracks
-              .filter((t) => questionBank.some((q) => q.track === t.id))
-              .map((t) => {
-                let qs = questionBank.filter((q) => q.track === t.id),
-                  last = state.quizScores[t.id];
-                return (
-                  <button
-                    key={t.id}
-                    onClick={() => {
-                      reset(t.id);
-                      setStarted(true);
-                    }}
-                  >
-                    <span style={{ background: t.color, "--tc": t.color }}>
-                      {t.code}
-                    </span>
-                    <div>
-                      <strong>{t.title}</strong>
-                      <small>{qs.length} questões · feedback comentado</small>
-                    </div>
-                    {last ? (
-                      <b>
-                        {last.score}/{last.total}
-                      </b>
-                    ) : (
-                      <ChevronRight />
-                    )}
-                  </button>
-                );
-              })}
-          </div>
-        </div>
-      ) : (
-        <section className="quiz-stage">
-          {done ? (
-            <div className="quiz-result">
-              <div
-                className="score-ring"
-                style={{ "--score": `${(score / questions.length) * 100}%` }}
-              >
-                <span>
-                  <strong>{score}</strong>/{questions.length}
-                </span>
-              </div>
-              <h2>
-                {score / questions.length >= 0.8
-                  ? "Bom desempenho nesta tentativa"
-                  : "Há pontos para revisar"}
-              </h2>
-              <p>
-                Você acertou {Math.round((score / questions.length) * 100)}%.
-                Use o feedback abaixo para voltar aos módulos relacionados. Este
-                resultado não comprova domínio nem competência profissional.
-              </p>
-              {(() => {
-                const erradas = questions
-                  .map((q, i) => ({ q, i }))
-                  .filter(({ q, i }) => answers[i] !== q.answer);
-                return erradas.length ? (
-                  <div className="revisao-erros">
-                    <h3>
-                      <AlertTriangle size={16} /> Volte ao conteúdo destas{" "}
-                      {erradas.length === 1
-                        ? "questão"
-                        : erradas.length + " questões"}
-                    </h3>
-                    <ul>
-                      {erradas.map(({ q, i }) => {
-                        const t = tracks.find((x) => x.id === q.track);
-                        const exata =
-                          q.source && q.source.sec
-                            ? lessonMap.get(q.source.sec)
-                            : null;
-                        const aula = exata || firstLesson(q.track);
-                        const rot = exata
-                          ? (
-                              (exata.number ? exata.number + " " : "") +
-                              exata.title
-                            ).slice(0, 42)
-                          : t
-                            ? t.code
-                            : "módulo";
-                        return (
-                          <li key={i}>
-                            <span className="re-mod">{t ? t.code : ""}</span>
-                            <span className="re-q">{q.question}</span>
-                            {aula && (
-                              <button
-                                className="re-ir"
-                                onClick={() =>
-                                  openLesson && openLesson(aula.id)
-                                }
-                              >
-                                Rever {rot} <ArrowRight size={14} />
-                              </button>
-                            )}
-                          </li>
-                        );
-                      })}
-                    </ul>
-                  </div>
-                ) : (
-                  <div className="revisao-ok">
-                    <CheckCircle2 /> Você acertou todas. Pode seguir para o
-                    próximo módulo.
-                  </div>
-                );
-              })()}
-              <div className="result-actions">
-                <button
-                  onClick={() => {
-                    reset();
-                    setStarted(true);
-                  }}
-                >
-                  <RotateCcw /> Refazer
-                </button>
-                <button className="primary" onClick={() => setStarted(false)}>
-                  Escolher outra avaliação
-                </button>
-              </div>
-            </div>
-          ) : (
-            <>
-              <div className="quiz-top">
-                <button onClick={() => setStarted(false)}>
-                  <ChevronLeft /> Sair
-                </button>
-                <span>
-                  Questão {index + 1} de {questions.length}
-                </span>
-                <i>
-                  <em
-                    style={{
-                      width: `${((index + 1) / questions.length) * 100}%`,
-                    }}
-                  />
-                </i>
-              </div>
-              <div className="quiz-question">
-                <small>
-                  {tracks.find((t) => t.id === q.track)?.code} · AUTOAVALIAÇÃO
-                  COMENTADA
-                </small>
-                <h2>{q.question}</h2>
-                <div className="quiz-options">
-                  {q.options.map((o, i) => (
-                    <button
-                      disabled={revealed}
-                      className={
-                        (answers[index] === i ? "selected " : "") +
-                        (revealed && i === q.answer ? "correct " : "") +
-                        (revealed && answers[index] === i && i !== q.answer
-                          ? "wrong"
-                          : "")
-                      }
-                      onClick={() => setAnswers((a) => ({ ...a, [index]: i }))}
-                      key={o}
-                    >
-                      <span>{String.fromCharCode(65 + i)}</span>
-                      {o}
-                      {revealed && i === q.answer && <Check />}
-                    </button>
-                  ))}
-                </div>
-                {revealed && (
-                  <div
-                    className={
-                      answers[index] === q.answer
-                        ? "answer-feedback correct"
-                        : "answer-feedback"
-                    }
-                  >
-                    <Lightbulb />
-                    <div>
-                      <strong>
-                        {answers[index] === q.answer
-                          ? "Resposta correta"
-                          : "Ponto de revisão"}
-                      </strong>
-                      <p>{q.explanation}</p>
-                      {q.source &&
-                        (() => {
-                          const sec = lessonMap.get(q.source.sec);
-                          return (
-                            <figure className="quiz-fonte">
-                              <blockquote>{q.source.quote}</blockquote>
-                              <figcaption>
-                                POP
-                                {sec
-                                  ? `, ${sec.number ? sec.number + " " : ""}${sec.title}`
-                                  : ""}
-                                {sec && openLesson && (
-                                  <button onClick={() => openLesson(sec.id)}>
-                                    abrir a aula <ArrowRight size={13} />
-                                  </button>
-                                )}
-                              </figcaption>
-                            </figure>
-                          );
-                        })()}
-                    </div>
-                  </div>
-                )}
-                <div className="quiz-actions">
-                  {!revealed ? (
-                    <button
-                      className="primary"
-                      disabled={answers[index] === undefined}
-                      onClick={() => setRevealed(true)}
-                    >
-                      Confirmar resposta
-                    </button>
-                  ) : (
-                    <button className="primary" onClick={next}>
-                      {index === questions.length - 1
-                        ? "Ver resultado"
-                        : "Próxima questão"}
-                      <ArrowRight />
-                    </button>
-                  )}
-                </div>
-              </div>
-            </>
-          )}
-        </section>
-      )}
-    </div>
-  );
-}
 
 const LEI_DOMINIOS = [
   ["BRASIL", "planalto.gov.br"],

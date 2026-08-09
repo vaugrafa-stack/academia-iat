@@ -105,7 +105,10 @@ export function combinar(local, remoto, revisaoLocal = 0) {
   // Conta nova, e a pessoa já estudou neste navegador. Este é o caso que o
   // arquivo existe para não estragar.
   if (localTemAlgo && !remotoTemAlgo) {
-    return { acao: SOBE_O_LOCAL, revisao: Math.max(1, revisaoLocal + 1) };
+    // O CAS parte da revisão REMOTA observada, que aqui é zero. Um carimbo
+    // local antigo pode sobreviver a uma restauração do serviço e não pode ser
+    // usado como base de um registro que o servidor acabou de dizer que não tem.
+    return { acao: SOBE_O_LOCAL, revisao: 1 };
   }
 
   // Computador novo, com a conta já usada em outro.
@@ -198,15 +201,49 @@ export async function lerProgresso(buscar) {
   return r.ok ? r.corpo : null;
 }
 
-export async function gravarProgresso(revisao, estado, buscar) {
-  return chamar(
+export async function gravarProgresso(revisao, estado, buscar, contaEsperada) {
+  const documento = JSON.stringify(estado);
+  const identificador = String(contaEsperada || "").trim();
+  if (!identificador) {
+    // Sem vinculo explicito, uma troca de cookie entre a leitura e este PUT
+    // poderia gravar o documento na conta seguinte. Falhar fechado custa uma
+    // sincronizacao; adivinhar a identidade pode expor progresso entre contas.
+    return {
+      ok: false,
+      status: 0,
+      corpo: null,
+      erro: "conta_esperada_ausente",
+    };
+  }
+  const resposta = await chamar(
     "/api/progresso",
     {
       method: "PUT",
-      body: JSON.stringify({ revisao, documento: JSON.stringify(estado) }),
+      body: JSON.stringify({
+        conta_esperada: identificador,
+        revisao_base: revisao - 1,
+        revisao,
+        documento,
+      }),
     },
     buscar,
   );
+  // Compatibilidade de implantação: o serviço anterior não tinha `aceita`,
+  // mas devolvia o documento efetivamente guardado. Igualdade de revisão E de
+  // documento prova o mesmo efeito idempotente; só a revisão seria ambígua e
+  // foi justamente a causa da perda silenciosa corrigida por este contrato.
+  if (
+    resposta.ok &&
+    resposta.corpo?.aceita === undefined &&
+    Number(resposta.corpo?.revisao) === revisao &&
+    resposta.corpo?.documento === documento
+  ) {
+    return {
+      ...resposta,
+      corpo: { ...resposta.corpo, aceita: true, compatibilidade_legada: true },
+    };
+  }
+  return resposta;
 }
 
 /**
@@ -229,8 +266,9 @@ export async function planejarSincronia(local, revisaoLocal, buscar) {
 /**
  * O que fazer com a resposta do serviço a uma gravação.
  *
- * `PUT /api/progresso` com revisão menor ou igual **não grava**, e devolve o que
- * está guardado. Ou seja: a resposta 200 não quer dizer que gravou.
+ * O serviço confirma uma gravação com `aceita: true`. Uma disputa pela mesma
+ * revisão-base devolve `409 conflito_revisao`, com o progresso vencedor. Uma
+ * resposta antiga ou incompleta fica em modo seguro e não é tratada como êxito.
  *
  * ## O defeito que esta função existe para não ter
  *
@@ -245,7 +283,28 @@ export async function planejarSincronia(local, revisaoLocal, buscar) {
  * próxima sincronização cai no ramo que PERGUNTA.
  */
 export function interpretarGravacao(pedida, resposta) {
-  if (!resposta?.ok) return { aceita: false, carimbar: null, algoMaisNovo: false };
+  if (
+    resposta?.status === 409 &&
+    resposta?.corpo?.aceita === false &&
+    resposta?.corpo?.codigo === "conta_alterada"
+  ) {
+    return {
+      aceita: false,
+      carimbar: null,
+      algoMaisNovo: false,
+      contaAlterada: true,
+    };
+  }
+  if (
+    resposta?.status === 409 &&
+    resposta?.corpo?.aceita === false &&
+    resposta?.corpo?.codigo === "conflito_revisao"
+  ) {
+    return { aceita: false, carimbar: null, algoMaisNovo: true };
+  }
+  if (!resposta?.ok || resposta?.corpo?.aceita !== true) {
+    return { aceita: false, carimbar: null, algoMaisNovo: false };
+  }
   const guardada = Number(resposta.corpo?.revisao);
   if (!Number.isInteger(guardada)) {
     // Resposta sem revisão utilizável. Não dá para afirmar que gravou, e
@@ -253,7 +312,7 @@ export function interpretarGravacao(pedida, resposta) {
     return { aceita: false, carimbar: null, algoMaisNovo: false };
   }
   if (guardada === pedida) return { aceita: true, carimbar: guardada, algoMaisNovo: false };
-  return { aceita: false, carimbar: null, algoMaisNovo: true };
+  return { aceita: false, carimbar: null, algoMaisNovo: false };
 }
 
 /**

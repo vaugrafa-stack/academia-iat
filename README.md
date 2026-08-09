@@ -4,6 +4,11 @@ Plataforma de aprendizagem, consulta técnica e prática aplicada baseada na min
 
 > **Status da fonte:** a versão 1.7 vem do texto visível da capa. O valor “1.2” que ainda aparece em propriedades internas do arquivo Word é metadado legado e não identifica a versão operacional. A minuta e os recursos desta plataforma permanecem sujeitos a validação humana, normativa e institucional.
 
+O estado operacional corrente, a distinção entre produção e repositórios apenas
+enviados e os riscos ainda abertos ficam em [`STATUS_ATUAL.md`](STATUS_ATUAL.md).
+Os demais planos preservam snapshots históricos e não devem ser usados como
+painel de situação.
+
 ## Fonte e rastreabilidade
 
 - arquivo-fonte atual: `POP ou Manual Hidreletricas IAT Julho de 2026 (Com APA, UCs, RTTA).docx`;
@@ -87,12 +92,14 @@ As travas de conclusão das aulas comprovam apenas que uma resposta foi registra
 
 Os laboratórios usam casos e documentos sintéticos marcados como exemplos didáticos sem validade administrativa. Nenhum processo real ou dado pessoal deve ser inserido na plataforma.
 
-No artefato medido deste ciclo, o JavaScript soma 647,5 KiB de um orçamento de
-850 KiB em tamanho bruto e 216,3 KiB de 270 KiB compactado. A entrada principal
-mede 179,3 KiB de 205 KiB em tamanho bruto e 56,5 KiB de 66 KiB compactado. O
-CSS permanece próximo do limite: 207,0 KiB de 215 KiB em tamanho bruto e 37,8
-KiB de 40 KiB compactado. A próxima redução deve separar e consolidar o CSS por
-rota; esse trabalho ainda não está concluído.
+No artefato medido em 09/08/2026, o JavaScript soma 683,0 KiB de um orçamento
+de 850 KiB em tamanho bruto e 231,5 KiB de 270 KiB compactado. A entrada mede
+179,6 KiB de 205 KiB em tamanho bruto e 56,7 KiB de 66 KiB compactado; o código
+da rota Avaliações foi separado em um chunk sob demanda de 11,4 KiB, ou 4,4
+KiB compactado. O CSS soma 214,3 KiB de 240 KiB em tamanho bruto e 39,3 KiB de
+46 KiB compactado. A decomposição adicional por rota continua necessária, mas
+deve preservar os contratos de navegação, acessibilidade e funcionamento
+offline já cobertos pelos portões automáticos.
 
 ## Avaliação e registro pessoal
 
@@ -115,7 +122,8 @@ A suíte cobre testes unitários, PWA/offline, proveniência, referências, rubr
 ## Arquivos principais
 
 - `AGENTS.md`: contrato permanente, limites, prioridades e ciclo obrigatório do agente;
-- `PLANO_EVOLUCAO.md`: diagnóstico, etapas, critérios de pronto e registro de execução;
+- `STATUS_ATUAL.md`: única fonte corrente para versão, provas, limites e próximos portões;
+- `PLANO_EVOLUCAO.md`: snapshot histórico do ciclo encerrado em 04/08/2026;
 - `LEARNING_DESIGN.md`: desenho pedagógico integral e critérios de qualidade;
 - `src/main.jsx`: composição principal e telas ainda em processo de extração;
 - `src/derivados.js`: dados derivados do POP com dependências explícitas;
@@ -127,7 +135,8 @@ A suíte cobre testes unitários, PWA/offline, proveniência, referências, rubr
 - `public/source-assets`: imagens extraídas das fontes documentais;
 - `public/media`: resumos audiovisuais, legendas, pôsteres, animações e ilustrações;
 - `tools/smoke-test.mjs`: navegação funcional automatizada;
-- `tools/audit-premium.mjs`: portão de governança, privacidade e exposição acidental.
+- `tools/audit-premium.mjs`: portão de governança, privacidade e exposição acidental;
+- `tools/validate_claude_workflow.py`: trava fail-closed para relatórios agregados de agentes.
 
 ## Privacidade e uso responsável
 

@@ -1,7 +1,12 @@
-# Plano de evolução — Academia IAT Premium
+# Plano histórico de evolução — Academia IAT Premium
 
-Documento operacional para continuidade da execução. Os estados refletem o que
-está comprovado até 04/08/2026, não o que foi apenas planejado.
+> **Snapshot histórico encerrado em 04/08/2026.** Este documento preserva o
+> raciocínio, os critérios e o registro das etapas daquele ciclo. Contagens,
+> estados e prioridades aqui descritos não são a fonte corrente. Consulte
+> [`STATUS_ATUAL.md`](STATUS_ATUAL.md) antes de planejar, auditar ou publicar.
+
+Os estados abaixo refletem somente o que estava comprovado até 04/08/2026, não
+o que foi apenas planejado nem o que existe hoje.
 
 Legenda: ⬜ pendente · 🟨 em execução ou aguardando prova · ✅ comprovado ·
 ⛔ bloqueado por validação externa.

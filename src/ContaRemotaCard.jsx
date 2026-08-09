@@ -109,7 +109,7 @@ export default function ContaRemotaCard({ state, setState, algoMaisNovo = false 
         setConflito(plano);
         setRecado('');
       } else if (plano.acao === SOBE_O_LOCAL) {
-        const r = await gravarProgresso(plano.revisao, state);
+        const r = await gravarProgresso(plano.revisao, state, undefined, id);
         const veredito = interpretarGravacao(plano.revisao, r);
         if (veredito.carimbar !== null) gravarRevisao(id, veredito.carimbar);
         setRecado(
@@ -146,7 +146,7 @@ export default function ContaRemotaCard({ state, setState, algoMaisNovo = false 
       setOcupado(true);
       if (escolha === SOBE_O_LOCAL) {
         const revisao = (conflito.remoto?.revisao ?? 0) + 1;
-        const r = await gravarProgresso(revisao, state);
+        const r = await gravarProgresso(revisao, state, undefined, id);
         const veredito = interpretarGravacao(revisao, r);
         if (veredito.carimbar !== null) gravarRevisao(id, veredito.carimbar);
         setRecado(

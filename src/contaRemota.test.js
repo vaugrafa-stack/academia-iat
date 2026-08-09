@@ -129,7 +129,12 @@ describe("a decisão de sincronia", () => {
     // perderia tudo no momento em que decidiu confiar na conta.
     const decisao = combinar(comEstudo(), SEM_PROGRESSO, 0);
     expect(decisao.acao).toBe(SOBE_O_LOCAL);
-    expect(decisao.revisao).toBeGreaterThanOrEqual(1);
+    expect(decisao.revisao).toBe(1);
+  });
+
+  it("servidor vazio reinicia o CAS remoto mesmo com carimbo local antigo", () => {
+    const decisao = combinar(comEstudo(), SEM_PROGRESSO, 7);
+    expect(decisao).toMatchObject({ acao: SOBE_O_LOCAL, revisao: 1 });
   });
 
   it("computador novo com conta usada em outro DESCE", () => {
@@ -214,11 +219,37 @@ describe("a conversa com o serviço nunca derruba a tela", () => {
   it("grava o progresso como documento opaco, com a revisão ao lado", async () => {
     // O servico nao conhece os campos da Academia de proposito: acrescentar um
     // campo amanha nao pode exigir mudanca no backend.
-    const buscar = respostaFalsa({ revisao: 2 });
-    await gravarProgresso(2, comEstudo(), buscar);
+    const buscar = respostaFalsa({ aceita: true, revisao: 2 });
+    await gravarProgresso(2, comEstudo(), buscar, "conta-1");
     const corpo = JSON.parse(buscar.mock.calls[0][1].body);
+    expect(corpo.conta_esperada).toBe("conta-1");
     expect(corpo.revisao).toBe(2);
+    expect(corpo.revisao_base).toBe(1);
     expect(JSON.parse(corpo.documento).completed).toEqual(["pop-section-018"]);
+  });
+
+  it("sem conta esperada falha fechado antes da rede", async () => {
+    const buscar = respostaFalsa({ aceita: true, revisao: 2 });
+
+    const resposta = await gravarProgresso(2, comEstudo(), buscar);
+
+    expect(resposta).toMatchObject({
+      ok: false,
+      status: 0,
+      erro: "conta_esperada_ausente",
+    });
+    expect(buscar).not.toHaveBeenCalled();
+  });
+
+  it("aceita eco legado apenas quando revisão e documento são exatamente iguais", async () => {
+    const estado = comEstudo();
+    const buscar = respostaFalsa({ revisao: 2, documento: JSON.stringify(estado) });
+    const resposta = await gravarProgresso(2, estado, buscar, "conta-1");
+    expect(interpretarGravacao(2, resposta)).toMatchObject({ aceita: true, carimbar: 2 });
+
+    const outro = respostaFalsa({ revisao: 2, documento: '{"de":"outro"}' });
+    const recusada = await gravarProgresso(2, estado, outro, "conta-1");
+    expect(interpretarGravacao(2, recusada)).toMatchObject({ aceita: false, carimbar: null });
   });
 
   it("criar conta não devolve a senha em lugar nenhum", async () => {
@@ -229,23 +260,53 @@ describe("a conversa com o serviço nunca derruba a tela", () => {
 });
 
 describe("a resposta do serviço a uma gravação", () => {
+  it("trata troca atomica de conta como cancelamento seguro", () => {
+    const v = interpretarGravacao(1, {
+      ok: false,
+      status: 409,
+      corpo: { aceita: false, codigo: "conta_alterada" },
+    });
+    expect(v).toEqual({
+      aceita: false,
+      carimbar: null,
+      algoMaisNovo: false,
+      contaAlterada: true,
+    });
+  });
+
   it("gravou de verdade quando a revisão volta igual à pedida", () => {
-    const v = interpretarGravacao(5, { ok: true, corpo: { revisao: 5 } });
+    const v = interpretarGravacao(5, {
+      ok: true,
+      status: 200,
+      corpo: { aceita: true, revisao: 5 },
+    });
     expect(v).toEqual({ aceita: true, carimbar: 5, algoMaisNovo: false });
   });
 
   it("RECUSADO não carimba, e este é o defeito que a função existe para não ter", () => {
-    // O serviço responde 200 com o que está guardado quando a revisão pedida é
-    // menor ou igual. Carimbar essa revisão faria este navegador se declarar em
-    // dia com algo que ele NUNCA baixou, e a sincronização seguinte veria as
-    // duas revisões iguais, concluiria "estou em dia" e subiria o local por
-    // cima, apagando em silêncio o estudo do outro computador.
+    // O serviço responde 409 com o vencedor quando a revisão-base já mudou.
+    // Carimbar essa revisão faria este navegador se declarar em dia com algo
+    // que ele NUNCA baixou, e uma sincronização futura poderia subir o estado
+    // local por cima, apagando em silêncio o estudo do outro computador.
     //
     // Aconteceu de verdade, em navegador, em 09/08/2026, antes desta função.
-    const v = interpretarGravacao(3, { ok: true, corpo: { revisao: 9 } });
+    const v = interpretarGravacao(3, {
+      ok: false,
+      status: 409,
+      corpo: {
+        aceita: false,
+        codigo: "conflito_revisao",
+        progresso: { revisao: 3, documento: '{"de":"outro"}' },
+      },
+    });
     expect(v.aceita).toBe(false);
     expect(v.carimbar).toBeNull();
     expect(v.algoMaisNovo).toBe(true);
+  });
+
+  it("nao confunde resposta ambigua antiga com confirmacao", () => {
+    const v = interpretarGravacao(5, { ok: true, status: 200, corpo: { revisao: 5 } });
+    expect(v).toEqual({ aceita: false, carimbar: null, algoMaisNovo: false });
   });
 
   it("falha de rede não carimba e não alarma", () => {

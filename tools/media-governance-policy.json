@@ -1,0 +1,124 @@
+{
+  "schemaVersion": 1,
+  "baselinePath": "tools/media-legacy-baseline.json",
+  "changeLedgerPath": "tools/media-approved-changes.json",
+  "scanRoot": "public",
+  "managedExtensions": [
+    ".gif",
+    ".jpg",
+    ".mp4",
+    ".png",
+    ".svg",
+    ".vtt",
+    ".webp",
+    ".woff2"
+  ],
+  "managedSuffixes": [
+    ".visemes.json"
+  ],
+  "managedTextRules": [
+    {
+      "prefix": "public/media/piloto/",
+      "extension": ".txt"
+    }
+  ],
+  "maxBytesByExtension": {
+    ".gif": 500000,
+    ".jpg": 1000000,
+    ".mp4": 6000000,
+    ".png": 4000000,
+    ".svg": 250000,
+    ".txt": 250000,
+    ".visemes.json": 250000,
+    ".vtt": 150000,
+    ".webp": 750000,
+    ".woff2": 250000
+  },
+  "maxApprovedGrowthBytes": 20000000,
+  "maxApprovedGrowthFiles": 80,
+  "collections": [
+    {
+      "id": "source-document-assets",
+      "prefix": "public/source-assets/",
+      "provenanceStatus": "verified-manifest",
+      "sourceType": "source-document-extraction",
+      "sourceLocator": "public/source-assets/asset-manifest.json",
+      "rightsBasis": "ativos extraidos de documentos inventariados pelo projeto",
+      "privacyStatus": "reviewed-for-public-training",
+      "contract": "source-assets-manifest"
+    },
+    {
+      "id": "lesson-summaries",
+      "prefix": "public/media/aula/",
+      "provenanceStatus": "verified-generator",
+      "sourceType": "project-generated",
+      "sourceLocator": "tools/build_lesson_videos.py",
+      "rightsBasis": "resumos gerados pelo projeto a partir da fonte documental rastreada",
+      "privacyStatus": "synthetic-no-personal-data",
+      "contract": "lesson-media-manifest"
+    },
+    {
+      "id": "audiovisual-pilots",
+      "prefix": "public/media/piloto/",
+      "provenanceStatus": "verified-manifest",
+      "sourceType": "project-generated",
+      "sourceLocator": "public/media/piloto/provenance.json",
+      "rightsBasis": "ativos audiovisuais sinteticos produzidos para a plataforma",
+      "privacyStatus": "synthetic-no-personal-data",
+      "contract": "audiovisual-pilot-manifest"
+    },
+    {
+      "id": "learning-stage",
+      "prefix": "public/media/learning-stage/",
+      "provenanceStatus": "mixed-baseline",
+      "sourceType": "project-generated",
+      "sourceLocator": "public/media/piloto/provenance.json",
+      "rightsBasis": "ativos visuais ficticios produzidos para a plataforma; item legado preservado no baseline",
+      "privacyStatus": "synthetic-no-personal-data",
+      "contract": "baseline-only"
+    },
+    {
+      "id": "legacy-course-media",
+      "prefix": "public/media/",
+      "provenanceStatus": "legacy-baseline",
+      "sourceType": "mixed-legacy",
+      "sourceLocator": "public/media/README.md",
+      "rightsBasis": "acervo historico preservado sem ampliacao automatica",
+      "privacyStatus": "review-required-before-replacement",
+      "contract": "baseline-only"
+    },
+    {
+      "id": "hydroelectric-illustrations",
+      "prefix": "public/hidro/",
+      "provenanceStatus": "legacy-baseline",
+      "sourceType": "mixed-legacy",
+      "sourceLocator": "tools/media-legacy-baseline.json",
+      "rightsBasis": "acervo historico; origem individual deve ser resolvida antes de qualquer substituicao ou adicao",
+      "privacyStatus": "review-required-before-replacement",
+      "contract": "baseline-only"
+    },
+    {
+      "id": "local-fonts",
+      "prefix": "public/fonts/",
+      "provenanceStatus": "verified-license",
+      "sourceType": "open-license",
+      "sourceLocator": "public/fonts/README.md",
+      "rightsBasis": "SIL Open Font License 1.1",
+      "privacyStatus": "not-applicable",
+      "contract": "font-license"
+    },
+    {
+      "id": "application-icons",
+      "paths": [
+        "public/icone-192.png",
+        "public/icone-512.png"
+      ],
+      "provenanceStatus": "project-baseline",
+      "sourceType": "project-generated",
+      "sourceLocator": "manifest.webmanifest",
+      "rightsBasis": "identidade visual do projeto",
+      "privacyStatus": "synthetic-no-personal-data",
+      "contract": "baseline-only"
+    }
+  ]
+}

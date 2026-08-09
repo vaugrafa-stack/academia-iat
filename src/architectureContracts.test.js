@@ -8,6 +8,7 @@ const perfilUrl = new URL("./perfil.jsx", import.meta.url);
 const laboratorioUrl = new URL("./laboratorio.jsx", import.meta.url);
 const redatorUrl = new URL("./redator.jsx", import.meta.url);
 const licaoUrl = new URL("./licao.jsx", import.meta.url);
+const avaliacoesUrl = new URL("./avaliacoes.jsx", import.meta.url);
 const stylesUrl = new URL("./styles.css", import.meta.url);
 
 describe("contratos incrementais de arquitetura", () => {
@@ -33,7 +34,25 @@ describe("contratos incrementais de arquitetura", () => {
     const main = (await readFile(mainUrl, "utf8")).replace(/\r\n/g, "\n");
     const bytes = Buffer.byteLength(main, "utf8");
 
-    expect(bytes).toBeLessThanOrEqual(155_000);
+    expect(bytes).toBeLessThanOrEqual(110_000);
+  });
+
+  it("mantém avaliações fora do orquestrador e carrega a rota sob demanda", async () => {
+    const [main, avaliacoes] = await Promise.all([
+      readFile(mainUrl, "utf8"),
+      readFile(avaliacoesUrl, "utf8"),
+    ]);
+
+    expect(main).toContain(
+      'const Assessments = lazy(() => import("./avaliacoes.jsx"));',
+    );
+    expect(main).toContain("dados={DADOS_AVALIACOES}");
+    expect(main).not.toMatch(/^function (?:Assessments|RevisaoPendente)\b/m);
+    expect(avaliacoes).toMatch(
+      /export default function Assessments\(\{ state, setState, openLesson, dados \}\)/,
+    );
+    expect(avaliacoes).toContain('role="progressbar"');
+    expect(avaliacoes).toContain('stageHeadingRef.current?.focus({ preventScroll: true })');
   });
 
   it("mantém a navegação orientada por tarefa e o perfil explicitamente local", async () => {

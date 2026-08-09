@@ -2,6 +2,8 @@ import { describe, expect, it } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import {
+  buildNormativeLedger,
+  HYDRO_AUTHORITY_AXES,
   resolveOfficialSource,
   sourceRegistryStats,
 } from './officialSources.js';
@@ -85,5 +87,85 @@ describe('registro de fontes oficiais', () => {
       expect(source?.url, reference).not.toMatch(/www2\.aneel|\.pdf$/i);
       expect(source?.humanReview, reference).toBe('pendente');
     }
+  });
+
+  it('gera ledger completo e explícito para as 60 referências do POP', () => {
+    const pop = JSON.parse(
+      readFileSync(resolve(import.meta.dirname, 'data/pop-content.json'), 'utf8'),
+    );
+    const section = pop.sections.find(
+      (item) => item.title === 'Referências normativas e técnicas',
+    );
+    const references = section.blockIds
+      .map((id) => pop.blocks.find((block) => block.id === id)?.paragraph?.text)
+      .filter(Boolean);
+    const ledger = buildNormativeLedger(references);
+    const officialHosts = [
+      /(^|\.)gov\.br$/,
+      /(^|\.)pr\.gov\.br$/,
+      /(^|\.)iat\.pr\.gov\.br$/,
+      /(^|\.)legislacao\.pr\.gov\.br$/,
+      /(^|\.)aneel\.gov\.br$/,
+      /(^|\.)mma\.gov\.br$/,
+      /(^|\.)abntcatalogo\.com\.br$/,
+    ];
+
+    expect(ledger).toHaveLength(60);
+    for (const entry of ledger) {
+      expect(entry.authorityCode, entry.reference).not.toBe('nao-identificada');
+      expect(entry.authority, entry.reference).toBeTruthy();
+      expect(entry.act, entry.reference).toBeTruthy();
+      expect(entry.scope, entry.reference).toBeTruthy();
+      expect(entry.consultedAt, entry.reference).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+      expect(entry.officialUrl, entry.reference).toMatch(/^https:\/\//);
+      if (entry.linkKind === 'direct') {
+        expect(entry.directOfficialUrl, entry.reference).toBe(entry.officialUrl);
+        expect(entry.officialIndexUrl, entry.reference).toBeNull();
+      } else {
+        expect(entry.directOfficialUrl, entry.reference).toBeNull();
+        expect(entry.officialIndexUrl, entry.reference).toBe(entry.officialUrl);
+      }
+      expect(
+        officialHosts.some((pattern) => pattern.test(new URL(entry.officialUrl).hostname)),
+        entry.officialUrl,
+      ).toBe(true);
+      expect(['evidência', 'inferência']).toContain(entry.epistemicStatus);
+      expect(entry.humanReview).toBe('pendente');
+      expect(entry.temporalStatus).toBeTruthy();
+    }
+  });
+
+  it('separa as afirmações decisivas por autoridade, escopo e fonte oficial direta', () => {
+    expect(HYDRO_AUTHORITY_AXES.map((axis) => axis.id)).toEqual([
+      'iat-ambiental',
+      'aneel-setorial',
+      'gestao-hidrica',
+    ]);
+
+    for (const axis of HYDRO_AUTHORITY_AXES) {
+      expect(axis.authority, axis.id).toBeTruthy();
+      expect(axis.act, axis.id).toBeTruthy();
+      expect(axis.scope, axis.id).toBeTruthy();
+      expect(axis.checkedAt, axis.id).toBe('2026-08-09');
+      expect(axis.officialUrl, axis.id).toMatch(/^https:\/\//);
+      expect(axis.supportingUrl, axis.id).toMatch(/^https:\/\//);
+      expect(axis.epistemicStatus, axis.id).toBe('evidência');
+      expect(axis.humanReview, axis.id).toBe('pendente');
+      expect(axis.limitation, axis.id).toMatch(/não substitui/i);
+    }
+
+    const iat = HYDRO_AUTHORITY_AXES.find((axis) => axis.id === 'iat-ambiental');
+    const aneel = HYDRO_AUTHORITY_AXES.find((axis) => axis.id === 'aneel-setorial');
+    expect(iat.criteria.join(' ')).toContain('reservatório de até 3 km²');
+    expect(aneel.criteria.join(' ')).toContain('reservatório de até 13 km²');
+
+    const [iatEntry, aneelEntry, waterEntry] = buildNormativeLedger([
+      'INSTITUTO ÁGUA E TERRA. Instrução Normativa IAT nº 09, de 28 de abril de 2025. Licenciamento ambiental de unidades de geração de energia elétrica a partir de potencial hidráulico.',
+      'AGÊNCIA NACIONAL DE ENERGIA ELÉTRICA. Resolução Normativa nº 875, de 10 de março de 2020.',
+      'BRASIL. Lei Federal nº 9.433, de 8 de janeiro de 1997. Política Nacional de Recursos Hídricos.',
+    ]);
+    expect(iatEntry.scope).toBe('licenciamento e gestão ambiental estadual');
+    expect(aneelEntry.scope).toBe('regulação e outorga do setor elétrico');
+    expect(waterEntry.scope).toBe('gestão de recursos hídricos');
   });
 });

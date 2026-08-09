@@ -13,7 +13,7 @@ import zipfile
 from pathlib import Path
 from unittest import mock
 
-from tools import audit_pop_candidate, build_mapa
+from tools import audit_pop_candidate, build_mapa, validate_claude_workflow
 
 
 class AuditPopCandidatePackageTests(unittest.TestCase):
@@ -259,6 +259,134 @@ class TextoFaladoTests(unittest.TestCase):
         # Sem ponto final o sintetizador nao fecha a entonacao e a frase soa
         # cortada na emenda com a cena seguinte.
         self.assertTrue(self.falado("texto sem ponto").endswith("."))
+
+
+WORKFLOW_POLICY = {
+    "defaults": {
+        "minimumAgents": 1,
+        "successfulStates": ["done", "completed", "success"],
+        "requireNonEmptyResult": True,
+        "requireExecutionEvidence": True,
+    },
+    "workflows": {
+        "auditoria-pre-publicacao": {
+            "expectedAgents": 2,
+            "requiredResultPaths": [
+                {"path": "porLente", "minimumItems": 2, "uniqueBy": "lente"}
+            ],
+            "releaseFlagPath": "liberado",
+        }
+    },
+}
+
+
+def workflow_report(*, states=("done", "done"), result=None):
+    rows = [
+        {
+            "type": "workflow_agent",
+            "label": f"lente:{index}",
+            "state": state,
+            "tokens": 100,
+            "toolCalls": 2,
+        }
+        for index, state in enumerate(states, start=1)
+    ]
+    return {
+        "workflowName": "auditoria-pre-publicacao",
+        "runId": "wf_test",
+        "status": "completed",
+        "agentCount": len(rows),
+        "workflowProgress": rows,
+        "totalTokens": 200,
+        "totalToolCalls": 4,
+        "result": result
+        if result is not None
+        else {
+            "porLente": [{"lente": "a"}, {"lente": "b"}],
+            "liberado": True,
+        },
+    }
+
+
+class ClaudeWorkflowFailClosedTests(unittest.TestCase):
+    def codes(self, data, *, require_release_approved=False):
+        return {
+            violation.code
+            for violation in validate_claude_workflow.validate_workflow(
+                data,
+                WORKFLOW_POLICY,
+                require_release_approved=require_release_approved,
+            )
+        }
+
+    def test_accepts_complete_audit_with_coverage_and_evidence(self):
+        self.assertEqual(
+            self.codes(workflow_report(), require_release_approved=True),
+            set(),
+        )
+
+    def test_agent_error_blocks_even_when_aggregator_says_release(self):
+        codes = self.codes(workflow_report(states=("error", "error")))
+        self.assertIn("AGENT_FAILED", codes)
+        self.assertIn("FALSE_GREEN_RELEASE", codes)
+
+    def test_completed_row_with_terminal_error_still_blocks(self):
+        data = workflow_report()
+        data["workflowProgress"][0]["error"] = "limite de gasto mensal"
+        codes = self.codes(data)
+        self.assertIn("AGENT_REPORTED_ERROR", codes)
+        self.assertIn("FALSE_GREEN_RELEASE", codes)
+
+    def test_duplicate_agents_and_lenses_do_not_fake_coverage(self):
+        data = workflow_report()
+        data["workflowProgress"][1]["label"] = data["workflowProgress"][0]["label"]
+        data["result"]["porLente"] = [{"lente": "ux"}, {"lente": "ux"}]
+        codes = self.codes(data)
+        self.assertIn("AGENT_IDENTITY_DUPLICATE", codes)
+        self.assertIn("RESULT_EVIDENCE_NOT_UNIQUE", codes)
+
+    def test_aggregate_totals_must_equal_agent_evidence(self):
+        data = workflow_report()
+        data["totalTokens"] = 1
+        data["totalToolCalls"] = 1
+        codes = self.codes(data)
+        self.assertIn("TOTAL_TOKEN_EVIDENCE_MISMATCH", codes)
+        self.assertIn("TOTAL_TOOL_EVIDENCE_MISMATCH", codes)
+
+    def test_empty_result_blocks(self):
+        codes = self.codes(workflow_report(result={}))
+        self.assertIn("RESULT_EMPTY", codes)
+        self.assertIn("RESULT_EVIDENCE_MISSING", codes)
+
+    def test_missing_lens_evidence_blocks(self):
+        data = workflow_report(
+            result={"porLente": [{"lente": "a"}], "liberado": True}
+        )
+        codes = self.codes(data)
+        self.assertIn("RESULT_EVIDENCE_INCOMPLETE", codes)
+        self.assertIn("FALSE_GREEN_RELEASE", codes)
+
+    def test_zero_agents_blocks(self):
+        codes = self.codes(workflow_report(states=()))
+        self.assertIn("AGENT_COUNT_INVALID", codes)
+        self.assertIn("AGENT_COVERAGE_MISMATCH", codes)
+
+    def test_missing_execution_evidence_blocks(self):
+        data = workflow_report()
+        data["workflowProgress"][0]["toolCalls"] = 0
+        data["totalTokens"] = 0
+        codes = self.codes(data)
+        self.assertIn("AGENT_TOOL_EVIDENCE_MISSING", codes)
+        self.assertIn("TOTAL_TOKEN_EVIDENCE_MISSING", codes)
+
+    def test_release_false_only_blocks_release_gate(self):
+        data = workflow_report()
+        data["result"]["liberado"] = False
+        self.assertEqual(self.codes(data), set())
+        self.assertIn(
+            "RELEASE_NOT_APPROVED",
+            self.codes(data, require_release_approved=True),
+        )
 
 
 if __name__ == "__main__":

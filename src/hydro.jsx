@@ -6,6 +6,7 @@ import {
   Layers3, Activity, CircleHelp, TowerControl, Wind, MapPin,
 } from 'lucide-react';
 import { TurbineGallery, PRCasesSection, ArrangementSchematics, LicensingPath } from './hydroCases';
+import NormativeAuthorityAxes from './NormativeAuthorityAxes.jsx';
 
 const ASSET = (p) => ((import.meta.env.BASE_URL || '/').replace(/\/$/, '')) + p;
 
@@ -418,8 +419,10 @@ export default function HydroGuide({ go }) {
         <PowerCalc />
       </section>
 
+      <NormativeAuthorityAxes />
+
       <section className="hydro-block">
-        <div className="section-title"><div><h2>Faixas didáticas por potência</h2><p>Quadro 8 do POP: ponto de partida para estudo, sem substituir a conferência do registro e do ato setorial da ANEEL.</p></div><Factory /></div>
+        <div className="section-title"><div><h2>Faixas didáticas do eixo ambiental IAT</h2><p>Quadro 8 do POP e IN IAT nº 09/2025: ponto de partida ambiental, sem substituir os eixos ANEEL e de recursos hídricos acima.</p></div><Factory /></div>
         <div className="pot-grid">{TIPOS_POTENCIA.map((t) => (
           <article key={t.sigla} className="pot-card" style={{ '--pc': t.cor }}>
             <div className="pot-sigla">{t.sigla}</div>

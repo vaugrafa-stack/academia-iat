@@ -1,0 +1,22 @@
+{
+  "schemaVersion": "1.0.0",
+  "defaults": {
+    "minimumAgents": 1,
+    "successfulStates": ["done", "completed", "success"],
+    "requireNonEmptyResult": true,
+    "requireExecutionEvidence": true
+  },
+  "workflows": {
+    "auditoria-pre-publicacao": {
+      "expectedAgents": 5,
+      "requiredResultPaths": [
+        {
+          "path": "porLente",
+          "minimumItems": 5,
+          "uniqueBy": "lente"
+        }
+      ],
+      "releaseFlagPath": "liberadoParaEmpurrar"
+    }
+  }
+}

@@ -54,6 +54,9 @@ jobs:
       - name: Auditar vulnerabilidades conhecidas
         run: pnpm audit --audit-level=moderate
 
+      - name: Validar inventário, proveniência e limites de mídia
+        run: pnpm check:media
+
       - name: Executar o portão premium
         run: pnpm audit:premium
 

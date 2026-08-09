@@ -855,6 +855,19 @@
 .sidebar-v2 nav .side-external .external-indicator{
   width:14px;height:14px;flex:none;opacity:.72;
 }
+
+/* O item ativo era o MENOS legivel da lista.
+   Medido no artefato construido, com as transicoes congeladas, contra o fundo
+   ja composto: destino comum 10,12:1 no claro e 11,25:1 no escuro; destino
+   ATIVO 5,44:1 e 5,90:1. Todos passam no AA, e ainda assim a hierarquia estava
+   invertida: o unico item que a pessoa nao precisa procurar era o que mais
+   recuava, porque o verde de destaque e mais claro que a tinta do texto.
+
+   A correcao mantem os tres sinais de estado que ja existiam (fundo tingido,
+   regua de 3px a esquerda e peso 800) e devolve a tinta cheia ao rotulo. O
+   verde vai para o icone, onde ele identifica sem custar legibilidade. */
+.sidebar-v2 nav button.active{color:var(--ink)}
+.sidebar-v2 nav button.active>svg:first-child{color:var(--green2)}
 @media(max-width:980px){
   .sidebar-v2 nav{-webkit-overflow-scrolling:touch}
   .sidebar-v2 nav .side-destination{min-height:46px}

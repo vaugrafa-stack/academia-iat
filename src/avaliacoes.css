@@ -1,0 +1,128 @@
+.diagnostic-depth,
+.answer-confidence {
+  margin: 18px 0;
+  padding: 0;
+  border: 0;
+}
+
+.diagnostic-depth legend,
+.answer-confidence legend {
+  margin-bottom: 9px;
+  color: var(--ink2);
+  font-size: 13px;
+  font-weight: 850;
+}
+
+.diagnostic-depth {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.diagnostic-depth legend,
+.diagnostic-depth > small {
+  grid-column: 1 / -1;
+}
+
+.diagnostic-depth button,
+.answer-confidence button {
+  min-height: 58px;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  color: var(--ink2);
+  background: var(--surface);
+  text-align: left;
+}
+
+.diagnostic-depth button strong,
+.diagnostic-depth button small,
+.answer-confidence button strong,
+.answer-confidence button small {
+  display: block;
+}
+
+.diagnostic-depth button small,
+.answer-confidence button small,
+.diagnostic-depth > small {
+  margin-top: 4px;
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.35;
+}
+
+.diagnostic-depth button.selected,
+.answer-confidence button.selected {
+  border-color: var(--green);
+  color: var(--green2);
+  background: color-mix(in srgb, var(--green3) 32%, var(--surface));
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--green) 12%, transparent);
+}
+
+.diagnostic-depth button:disabled {
+  opacity: .76;
+}
+
+.answer-confidence {
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 11px;
+  background: color-mix(in srgb, var(--soft) 68%, var(--surface));
+}
+
+.answer-confidence > div {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.confidence-recorded {
+  margin: 12px 0 0;
+  color: var(--muted);
+  font-size: 12px;
+  text-transform: capitalize;
+}
+
+.confidence-priority {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin: 8px 0 13px;
+  padding: 10px 12px;
+  border-left: 3px solid var(--amber);
+  color: var(--ink2);
+  background: color-mix(in srgb, var(--amber) 11%, var(--surface));
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.re-q .confidence-tag {
+  display: block;
+  width: max-content;
+  margin-top: 5px;
+  padding: 3px 7px;
+  border-radius: 999px;
+  color: var(--muted);
+  background: var(--soft);
+  font-size: 12px;
+  font-weight: 800;
+  text-transform: capitalize;
+}
+
+.re-q .confidence-tag.alta {
+  color: #7b4100;
+  background: color-mix(in srgb, var(--amber) 18%, var(--surface));
+}
+
+@media (max-width: 720px) {
+  .diagnostic-depth,
+  .answer-confidence > div {
+    grid-template-columns: 1fr;
+  }
+
+  .diagnostic-depth button,
+  .answer-confidence button {
+    min-height: 64px;
+    font-size: 14px;
+  }
+}

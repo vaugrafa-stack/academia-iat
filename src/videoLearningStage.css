@@ -196,7 +196,8 @@
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  min-height: 32px;
+  min-width: 44px;
+  min-height: 44px;
   padding: 5px 9px;
   border: 1px solid #d4eee575;
   border-radius: 6px;
@@ -369,7 +370,8 @@
 
   .vls-professor-toggle,
   .vls-fullscreen-toggle {
-    min-height: 30px;
+    min-width: 44px;
+    min-height: 44px;
     padding-inline: 7px;
     font-size:11px;
   }

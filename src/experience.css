@@ -1,0 +1,355 @@
+/*
+ * Camada de experiência 2026-08.
+ * Mantém a identidade existente e concentra ajustes de navegação,
+ * acessibilidade e percursos de aprendizagem sem aumentar a especificidade
+ * dos arquivos históricos de estilo.
+ */
+:root {
+  --target-min: 44px;
+  --experience-shadow: 0 16px 40px color-mix(in srgb, var(--green) 12%, transparent);
+}
+
+/* A rota já chega montada. Ocultar seu conteúdo durante a animação fazia
+   telas lazy parecerem vazias; o movimento curto fica a cargo de .view-anim. */
+.page {
+  animation: none;
+}
+
+/* WCAG 2.2: controles recorrentes preservam uma área de toque de 44 px. */
+.page button,
+.lesson-layout button,
+.sidebar-v2 nav button,
+.sidebar-help,
+.mobile-bottom-nav button,
+.topbar button,
+.page summary,
+.page select,
+.page input:not([type="hidden"]) {
+  min-block-size: var(--target-min);
+}
+
+/* Ações que são links, mas funcionam como botões, seguem o mesmo contrato.
+   Links corridos dentro de parágrafos continuam compactos para preservar a
+   leitura e não criar espaçamento artificial entre linhas. */
+.sfp-open,
+.sfp-fit,
+.prc-site,
+.sup-mail {
+  min-block-size: var(--target-min);
+}
+
+.prc-site {
+  padding-block: 10px 5px;
+}
+
+.page button:has(> svg:only-child),
+.lesson-layout button:has(> svg:only-child),
+.topbar button:has(> svg:only-child) {
+  min-inline-size: var(--target-min);
+}
+
+/* O ponto continua visualmente compacto, mas a área interativa cresce. */
+.cs-hot {
+  width: var(--target-min);
+  height: var(--target-min);
+  margin: -22px;
+  border-width: 8px;
+  border-color: color-mix(in srgb, var(--surface) 88%, transparent);
+  background-clip: padding-box;
+}
+
+.cs-hot::after {
+  inset: -2px;
+}
+
+.cs-hot:focus-visible {
+  outline-offset: 3px;
+}
+
+/* Percursos orientados por tarefa: uma entrada para o novato sem criar uma
+   segunda grade curricular nem sugerir certificação de competência. */
+.learning-paths {
+  max-width: 1120px;
+  margin: 0 0 28px;
+  padding: 26px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background:
+    radial-gradient(circle at 96% 4%, color-mix(in srgb, var(--blue) 11%, transparent), transparent 34%),
+    linear-gradient(145deg, var(--surface), color-mix(in srgb, var(--green3) 16%, var(--surface)));
+  box-shadow: var(--experience-shadow);
+}
+
+.learning-paths > header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 20px;
+}
+
+.learning-paths > header h2 {
+  margin: 0 0 7px;
+  font-size: clamp(20px, 2vw, 26px);
+  letter-spacing: -.025em;
+}
+
+.learning-paths > header p {
+  max-width: 720px;
+  margin: 0;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.65;
+}
+
+.learning-paths > header > span {
+  flex: none;
+  padding: 7px 10px;
+  border: 1px solid color-mix(in srgb, var(--blue) 32%, var(--line));
+  border-radius: 999px;
+  color: var(--blue);
+  background: color-mix(in srgb, var(--blue) 7%, var(--surface));
+  font-size: 12px;
+  font-weight: 850;
+}
+
+.learning-path-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.learning-path-grid article {
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr);
+  gap: 12px 14px;
+  padding: 18px;
+  border: 1px solid var(--line);
+  border-radius: 13px;
+  background: color-mix(in srgb, var(--surface) 94%, transparent);
+  box-shadow: 0 8px 22px color-mix(in srgb, var(--ink) 6%, transparent);
+  transition: border-color .18s ease, transform .18s ease, box-shadow .18s ease;
+}
+
+.learning-path-grid article:hover {
+  transform: translateY(-2px);
+  border-color: color-mix(in srgb, var(--green) 35%, var(--line));
+  box-shadow: 0 13px 30px color-mix(in srgb, var(--green) 10%, transparent);
+}
+
+.learning-path-icon {
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  border-radius: 12px;
+  color: var(--green);
+  background: color-mix(in srgb, var(--green3) 65%, var(--surface));
+}
+
+.learning-path-icon svg {
+  width: 21px;
+}
+
+.learning-path-copy small {
+  color: var(--blue);
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: .06em;
+}
+
+.learning-path-copy h3 {
+  margin: 4px 0 7px;
+  font-size: 17px;
+}
+
+.learning-path-copy p,
+.learning-path-copy strong {
+  display: block;
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+.learning-path-copy p {
+  color: var(--muted);
+}
+
+.learning-path-copy strong {
+  margin-top: 9px;
+  color: var(--ink2);
+}
+
+.learning-path-progress,
+.learning-path-grid article > button {
+  grid-column: 1 / -1;
+}
+
+.learning-path-progress {
+  display: grid;
+  grid-template-columns: max-content minmax(70px, 1fr);
+  align-items: center;
+  gap: 10px;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.learning-path-progress i {
+  height: 6px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: var(--soft);
+}
+
+.learning-path-progress em {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--green), var(--blue));
+}
+
+.learning-path-grid article > button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 0 13px;
+  border: 1px solid color-mix(in srgb, var(--green) 42%, var(--line));
+  border-radius: 9px;
+  color: var(--green);
+  background: color-mix(in srgb, var(--green3) 24%, var(--surface));
+  font-size: 13px;
+  font-weight: 850;
+}
+
+.learning-path-grid article > button:hover {
+  color: #fff;
+  background: var(--green);
+}
+
+.learning-path-grid article > button svg {
+  width: 16px;
+}
+
+.learning-path-note {
+  margin: 17px 0 0;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.55;
+}
+
+.formation-empty {
+  display: grid;
+  justify-items: center;
+  max-width: 720px;
+  padding: 42px 24px;
+  border: 1px dashed color-mix(in srgb, var(--green) 45%, var(--line));
+  border-radius: 14px;
+  text-align: center;
+  background: color-mix(in srgb, var(--green3) 18%, var(--surface));
+}
+
+.formation-empty > svg {
+  width: 32px;
+  height: 32px;
+  color: var(--green);
+}
+
+.formation-empty h2 {
+  margin: 13px 0 7px;
+  font-size: 20px;
+}
+
+.formation-empty p {
+  max-width: 520px;
+  margin: 0;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.formation-empty button {
+  margin-top: 18px;
+  padding: 0 17px;
+  border: 0;
+  border-radius: 8px;
+  color: #fff;
+  background: var(--green);
+  font-weight: 800;
+}
+
+@media (max-width: 720px) {
+  .learning-paths {
+    margin-inline: -2px;
+    padding: 19px 14px;
+    border-radius: 13px;
+  }
+
+  .learning-paths > header {
+    display: block;
+  }
+
+  .learning-paths > header > span {
+    display: inline-block;
+    margin-top: 12px;
+  }
+
+  .learning-path-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .learning-path-grid article {
+    padding: 16px;
+  }
+
+  /* A continuidade cabe na primeira dobra e revela logo as próximas ações. */
+  .dashboard-feature {
+    min-height: 0;
+  }
+
+  .feature-media {
+    min-height: 168px;
+    max-height: 195px;
+  }
+
+  .feature-copy {
+    padding: 18px 16px;
+  }
+
+  .feature-copy p {
+    display: -webkit-box;
+    overflow: hidden;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+  }
+
+  .current-objective-card {
+    padding: 17px 16px;
+  }
+
+  .dashboard-action-card {
+    min-height: 175px;
+  }
+
+  .page input,
+  .page textarea,
+  .page select {
+    font-size: 16px;
+  }
+
+  .compact-brand strong {
+    font-size: 13px;
+  }
+
+  .compact-brand small {
+    font-size: 12px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .learning-path-grid article,
+  .feature-media img,
+  .feature-media video {
+    transition: none;
+  }
+}

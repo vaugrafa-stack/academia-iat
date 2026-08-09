@@ -68,8 +68,8 @@ try {
 
   assert(packageJson.scripts.dev.includes('--open'), 'iniciador abre o navegador quando o servidor fica pronto');
 
-  assert(document.querySelectorAll('.sidebar-v2 nav button').length === 11, 'onze áreas principais disponíveis (inclui Mapa e Redigir uma IT)');
-  assert(document.querySelector('.dashboard-page h1')?.textContent.includes('Onde você parou'), 'painel inicial renderizado');
+  assert(document.querySelectorAll('.sidebar-v2 nav button').length === 11, 'onze áreas principais disponíveis (inclui Mapa e Informação Técnica)');
+  assert(document.querySelector('.dashboard-page h1')?.textContent.includes('Comece por aqui'), 'primeiro acesso oferece início, e não uma continuidade inexistente');
   assert(document.querySelectorAll('.dashboard-phases > li').length === 4, 'início resume o percurso em quatro fases');
   assert(
     document.querySelector('.dashboard-phases-section')?.textContent.includes('M00 a M16'),
@@ -77,7 +77,7 @@ try {
   );
 
   const navButtons = [...document.querySelectorAll('.sidebar-v2 nav button')];
-  await click(navButtons.find(x => x.textContent.includes('Formação')));
+  await click(navButtons.find(x => x.textContent.includes('Curso guiado pelo POP')));
   assert(document.querySelectorAll('.track-row').length === 17, 'percurso formativo com dezessete módulos');
   assert(!document.querySelector('.learning-path-selector'), 'formação apresenta uma sequência única, sem divisão por trilhas');
   // o M00 ja abre expandido, para o iniciante ver por onde comecar
@@ -87,6 +87,10 @@ try {
   const lessonButton = document.querySelector('.track-row.expanded .lesson-list button');
   assert(Boolean(lessonButton), 'lista de aulas expande por módulo');
   await click(lessonButton);
+  await waitFor(
+    () => Boolean(document.querySelector('.video-lesson video[src$=".mp4"]')),
+    'a rota lazy da aula não terminou de carregar o vídeo',
+  );
   assert(Boolean(document.querySelector('.video-lesson video[src$=".mp4"]')), 'aula usa vídeo MP4 real');
   assert(document.querySelectorAll('.lesson-tabs button').length === 4, 'abas de aula, fonte, materiais e notas');
   assert(Boolean(document.querySelector('.lesson-knowledge-check')), 'aula inclui checagem comentada');
@@ -154,11 +158,12 @@ try {
   const questionTotal = Number(document.body.textContent.match(/Questão 1 de (\d+)/)?.[1] || 0);
   assert(questionTotal >= 8, 'avaliação do módulo abre com ao menos oito questões');
   await click(document.querySelector('.quiz-options button'));
+  await click([...document.querySelectorAll('.answer-confidence button')].find(x => /Alta/.test(x.textContent)));
   await click([...document.querySelectorAll('button')].find(x => /Confirmar/.test(x.textContent)));
   const fonte = document.querySelector('.quiz-fonte blockquote');
   assert(fonte && fonte.textContent.trim().length > 20, 'feedback exibe o trecho do POP que sustenta a questão');
 
-  await click(navButtons.find(x => x.textContent.includes('Redigir uma IT')));
+  await click(navButtons.find(x => x.textContent.includes('Redigir Informação Técnica')));
   await waitFor(
     () => document.querySelectorAll('.rd-trilha button').length === 12,
     'redator não terminou de carregar os doze elementos do item 23.1',

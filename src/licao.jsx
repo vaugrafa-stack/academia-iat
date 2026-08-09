@@ -60,7 +60,8 @@ import { comoLerQuadro } from "./comoLerQuadro.js";
 import { errosDaAula } from "./errosRecorrentes.js";
 import { trackGroups, tracks } from "./courseData";
 import { getLearningDesign } from "./learningDesign.js";
-import { objetivoObservavel } from "./objetivoObservavel.js";
+import VideoDataLoading from "./VideoDataLoading.jsx";
+import { objetivoDaAula } from "./lessonObjective.js";
 import {
   MIN_ACTIVE_RECALL_CHARS,
   lessonEvidenceStatus,
@@ -76,20 +77,9 @@ import {
 // deriva do conteúdo da própria seção e devolve também COMO se verifica. Quando
 // a seção não tem base própria, o perfil continua valendo.
 //
-// Fica exportado porque o cartão de objetivo do Início mostra o mesmo texto, e
-// duas telas que prometem coisas diferentes sobre a mesma aula seria pior do
-// que qualquer duplicação de código.
-export function objetivoDaAula(lesson, blocks, tableMap) {
-  const derivado = objetivoObservavel(lesson, blocks, tableMap);
-  if (derivado) return derivado;
-  return {
-    objetivo: getLearningDesign(lesson, blocks).objective,
-    comoSeVe: "",
-    origem: "perfil",
-    referencia: null,
-  };
-}
-
+// A derivação fica no módulo compartilhado `lessonObjective.js`: o cartão do
+// Início e esta tela precisam prometer o mesmo resultado observável sem
+// duplicar a regra de conteúdo.
 export default function Lesson({
   lesson,
   availableScenarios = [],
@@ -690,17 +680,6 @@ function LearningContract({ design }) {
 // Exportado porque o cartão de continuidade do Início mostra o mesmo estado de
 // espera. Duas telas que esperam a mesma coisa com aparências diferentes fazem
 // a pessoa achar que são coisas diferentes.
-export function VideoDataLoading() {
-  return (
-    <div className="route-loading video-data-loading" role="status" aria-live="polite">
-      <span aria-hidden="true" />
-      <div>
-        <strong>Preparando o resumo em vídeo</strong>
-        <small>Conferindo a mídia vinculada a esta aula…</small>
-      </div>
-    </div>
-  );
-}
 function VideoLesson({ media, track, lesson }) {
   const ref = useRef(null);
   const [rate, setRate] = useState(1);

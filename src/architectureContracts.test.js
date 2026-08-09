@@ -8,10 +8,30 @@ const perfilUrl = new URL("./perfil.jsx", import.meta.url);
 const laboratorioUrl = new URL("./laboratorio.jsx", import.meta.url);
 const redatorUrl = new URL("./redator.jsx", import.meta.url);
 const licaoUrl = new URL("./licao.jsx", import.meta.url);
+const lessonObjectiveUrl = new URL("./lessonObjective.js", import.meta.url);
 const avaliacoesUrl = new URL("./avaliacoes.jsx", import.meta.url);
 const stylesUrl = new URL("./styles.css", import.meta.url);
+const experienceUrl = new URL("./experience.css", import.meta.url);
+const viteConfigUrl = new URL("../vite.config.mjs", import.meta.url);
 
 describe("contratos incrementais de arquitetura", () => {
+  it("mantém os fornecedores grandes em poucos chunks estáveis", async () => {
+    const viteConfig = await readFile(viteConfigUrl, "utf8");
+
+    expect(viteConfig).toContain("manualChunks(id)");
+    expect(viteConfig).toContain("return 'vendor-react'");
+    expect(viteConfig).toContain("return 'vendor-icons'");
+  });
+
+  it("não volta a ocultar a rota nem reduz os principais alvos de toque", async () => {
+    const experience = await readFile(experienceUrl, "utf8");
+
+    expect(experience).toContain("--target-min: 44px");
+    expect(experience).toMatch(/\.page\s*\{\s*animation:\s*none/);
+    expect(experience).toContain(".cs-hot");
+    expect(experience).toContain("width: var(--target-min)");
+  });
+
   it("mantém o domínio de fluxos fora do orquestrador e sob lazy loading", async () => {
     const [main, flowcharts] = await Promise.all([
       readFile(mainUrl, "utf8"),
@@ -70,6 +90,10 @@ describe("contratos incrementais de arquitetura", () => {
     expect(main).toContain('["perfil", "Meu progresso"');
     expect(main).not.toContain('"Criar sua conta"');
     expect(perfil).toContain('kicker="Meu progresso neste dispositivo"');
+    expect(main).toContain('"Como funciona uma hidrelétrica"');
+    expect(main).toContain('"Curso guiado pelo POP"');
+    expect(main).toContain('"Redigir Informação Técnica"');
+    expect(main).toContain('"GeoPR · mapas oficiais"');
   });
 
   it("associa o painel de continuidade à mídia da própria aula", async () => {
@@ -98,20 +122,24 @@ describe("contratos incrementais de arquitetura", () => {
     // A aula saiu de main.jsx em 05/08/2026 com 1.441 linhas. O contrato que
     // impede a volta nao e o tamanho, e a FRONTEIRA: se `licao.jsx` voltar a
     // ler dado do escopo de main, a extracao terá sido só de texto.
-    const [main, licao] = await Promise.all([
+    const [main, licao, objective] = await Promise.all([
       readFile(mainUrl, "utf8"),
       readFile(licaoUrl, "utf8"),
+      readFile(lessonObjectiveUrl, "utf8"),
     ]);
 
     // Sem fixar a lista de exportações nomeadas: o que o contrato defende é a
     // fronteira, não quantas peças a atravessam.
-    expect(main).toMatch(/import Lesson, \{[^}]*\} from "\.\/licao\.jsx"/);
+    expect(main).toContain('const Lesson = lazy(() => import("./licao.jsx"));');
+    expect(main).not.toMatch(/^import Lesson\b/m);
     expect(main).toContain("dados={DADOS_AULA}");
     expect(main).not.toMatch(/^function (?:Lesson|LessonOverview|LessonKnowledgeCheck|VideoLesson)\b/m);
     expect(licao).toMatch(/export default function Lesson\(\{[\s\S]*?dados,\n\}\)/);
     // O mesmo objetivo aparece no Inicio e na aula, vindo da mesma funcao.
     expect(main).toContain("objetivoDaAula(lesson, blocks, tableMap)");
     expect(licao).toContain("objetivoDaAula(lesson, blocks, tableMap)");
+    expect(objective).toContain("export function objetivoDaAula");
+    expect(objective).not.toMatch(/from ['\"]react['\"]/);
   });
 
   it("mantém o início enxuto e a sequência única M00–M16", async () => {
@@ -122,6 +150,10 @@ describe("contratos incrementais de arquitetura", () => {
     expect(main).toContain("Erros para revisar");
     expect(main).toContain("Quatro fases do percurso");
     expect(main).toContain("Sobre a fonte");
+    expect(main).toContain('"Comece por aqui."');
+    expect(main).toContain('"Iniciar orientação"');
+    expect(main).toContain('className="formation-empty"');
+    expect(main).toContain("Limpar filtro");
     expect(main).toContain("A sequência permanece única, de M00 a M16.");
     expect(main).not.toContain("<TodayPlan");
     expect(main).not.toContain('className="river-journey"');
@@ -167,10 +199,13 @@ describe("contratos incrementais de arquitetura", () => {
     // só pode aparecer dentro de `objetivoDaAula`, que é a reserva de quem não
     // tem objetivo próprio. Em qualquer outro lugar de licao.jsx, ele produz
     // uma segunda promessa.
-    const licao = await readFile(licaoUrl, "utf8");
+    const [licao, objective] = await Promise.all([
+      readFile(licaoUrl, "utf8"),
+      readFile(lessonObjectiveUrl, "utf8"),
+    ]);
     const usos = [...licao.matchAll(/design\.objective/g)].length;
     expect(usos).toBe(0);
-    expect(licao).toContain("getLearningDesign(lesson, blocks).objective");
+    expect(objective).toContain("getLearningDesign(lesson, blocks).objective");
     // E o cabeçalho continua sendo o único lugar que mostra o objetivo.
     expect([...licao.matchAll(/\{alvo\.objetivo\}/g)].length).toBe(1);
   });

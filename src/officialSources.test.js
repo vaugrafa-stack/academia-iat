@@ -129,8 +129,12 @@ describe('registro de fontes oficiais', () => {
         officialHosts.some((pattern) => pattern.test(new URL(entry.officialUrl).hostname)),
         entry.officialUrl,
       ).toBe(true);
-      expect(['evidência', 'inferência']).toContain(entry.epistemicStatus);
+      expect([
+        'fonte primária localizada',
+        'índice oficial localizado',
+      ]).toContain(entry.epistemicStatus);
       expect(entry.humanReview).toBe('pendente');
+      expect(entry.epistemicStatus).not.toMatch(/validada|vigente|evidência/i);
       expect(entry.temporalStatus).toBeTruthy();
     }
   });
@@ -149,8 +153,9 @@ describe('registro de fontes oficiais', () => {
       expect(axis.checkedAt, axis.id).toBe('2026-08-09');
       expect(axis.officialUrl, axis.id).toMatch(/^https:\/\//);
       expect(axis.supportingUrl, axis.id).toMatch(/^https:\/\//);
-      expect(axis.epistemicStatus, axis.id).toBe('evidência');
+      expect(axis.epistemicStatus, axis.id).toBe('fonte primária localizada');
       expect(axis.humanReview, axis.id).toBe('pendente');
+      expect(axis.temporalStatus, axis.id).toBe('vigência-e-aplicação-a-confirmar');
       expect(axis.limitation, axis.id).toMatch(/não substitui/i);
     }
 

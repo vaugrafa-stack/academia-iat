@@ -9,7 +9,31 @@ import {
 const ROUTES = [
   {
     hash: '',
-    ready: (page) => page.getByRole('heading', { name: /Onde você parou/i }),
+    ready: (page) => page.getByRole('heading', { name: /Comece por aqui|Onde você parou/i }),
+  },
+  {
+    hash: '#/hidreletricas',
+    ready: (page) => page.getByRole('heading', { name: /Como funciona uma hidrelétrica/i }),
+  },
+  {
+    hash: '#/formacao',
+    ready: (page) => page.getByRole('heading', { name: /Formação guiada pelo POP/i }),
+  },
+  {
+    hash: '#/avaliacoes',
+    ready: (page) => page.getByRole('heading', { name: /Autoavaliações e revisão/i }),
+  },
+  {
+    hash: '#/fluxos',
+    ready: (page) => page.getByRole('heading', { name: /Fluxos: proposta e atividade/i }),
+  },
+  {
+    hash: '#/biblioteca',
+    ready: (page) => page.getByRole('heading', { name: /Biblioteca/i }),
+  },
+  {
+    hash: '#/perfil',
+    ready: (page) => page.locator('.profile-page h1'),
   },
   {
     hash: '#/aula/pop-section-001',
@@ -87,7 +111,7 @@ test('experiência responsiva prioriza aprender e praticar sem overflow', async 
 
   await page.goto(appUrl(baseURL), { waitUntil: 'domcontentloaded' });
   await expect(
-    page.getByRole('heading', { name: /Onde você parou/i }),
+    page.getByRole('heading', { name: /Comece por aqui|Onde você parou/i }),
   ).toBeVisible();
 
   const bottomNav = page.getByRole('navigation', {
@@ -108,7 +132,7 @@ test('experiência responsiva prioriza aprender e praticar sem overflow', async 
   if (mobile) await menuButton.click();
   const sidebar = page.locator('#navegacao-lateral');
   const geopr = sidebar.getByRole('link', {
-    name: 'Abrir GeoPR em nova aba (site externo)',
+    name: 'Abrir GeoPR · mapas oficiais em nova aba (site externo)',
   });
   await expect(geopr).toHaveAttribute(
     'href',

@@ -5,9 +5,21 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import MapaParana, {
   carregarDadosMapa,
   faixaDidaticaDe,
+  indiceCatalogoPorTecla,
   validarDadosMapa,
 } from './mapa.jsx';
 import { tilesParaVista } from './satelliteLayer.js';
+
+globalThis.IS_REACT_ACT_ENVIRONMENT = true;
+
+function preencherCampo(campo, valor) {
+  const definirValor = Object.getOwnPropertyDescriptor(
+    window.HTMLInputElement.prototype,
+    'value',
+  ).set;
+  definirValor.call(campo, valor);
+  campo.dispatchEvent(new Event('input', { bubbles: true }));
+}
 
 const dados = {
   largura: 1000,
@@ -87,6 +99,100 @@ describe('didática e acesso por teclado no mapa', () => {
     expect(faixaDidaticaDe(5)?.sigla).toBe('CGH');
     expect(faixaDidaticaDe(30)?.sigla).toBe('PCH');
     expect(faixaDidaticaDe(31)?.sigla).toBe('UHE');
+  });
+
+  it('calcula a navegação do catálogo sem ultrapassar os limites', () => {
+    expect(indiceCatalogoPorTecla('ArrowDown', 0, 147)).toBe(1);
+    expect(indiceCatalogoPorTecla('ArrowUp', 0, 147)).toBe(0);
+    expect(indiceCatalogoPorTecla('PageDown', 2, 147)).toBe(12);
+    expect(indiceCatalogoPorTecla('PageUp', 5, 147)).toBe(0);
+    expect(indiceCatalogoPorTecla('End', 0, 147)).toBe(146);
+    expect(indiceCatalogoPorTecla('Home', 146, 147)).toBe(0);
+    expect(indiceCatalogoPorTecla('Enter', 2, 147)).toBeNull();
+    expect(indiceCatalogoPorTecla('ArrowDown', 0, 0)).toBeNull();
+  });
+
+  it('mantém somente uma usina no fluxo de Tab e permite navegar pelo teclado', async () => {
+    vi.stubGlobal('requestAnimationFrame', (callback) => {
+      callback();
+      return 1;
+    });
+    const muitasUsinas = Array.from({ length: 147 }, (_, indice) => ({
+      ...dados.usinas[indice % dados.usinas.length],
+      nome: `Usina ${String(indice + 1).padStart(3, '0')}`,
+      x: indice + 1,
+      y: indice + 1,
+    }));
+    const host = document.createElement('div');
+    document.body.append(host);
+    const root = createRoot(host);
+
+    await act(async () => {
+      root.render(<MapaParana dados={{ ...dados, usinas: muitasUsinas }} />);
+    });
+
+    const itens = [...host.querySelectorAll('.mp-item')];
+    expect(itens).toHaveLength(147);
+    expect(itens.filter((item) => item.tabIndex === 0)).toHaveLength(1);
+    expect(itens.filter((item) => item.tabIndex === -1)).toHaveLength(146);
+    expect(host.querySelector('#mp-lista-instrucoes')?.textContent).toContain('setas para cima e para baixo');
+
+    itens[0].focus();
+    await act(async () => {
+      itens[0].dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown', bubbles: true }));
+    });
+
+    expect(document.activeElement).toBe(itens[1]);
+    expect(itens[0].tabIndex).toBe(-1);
+    expect(itens[1].tabIndex).toBe(0);
+    expect(itens[1].getAttribute('aria-current')).toBe('true');
+    expect(host.querySelector('.mp-detalhe')?.textContent).toContain('Usina 002');
+
+    await act(async () => {
+      itens[1].dispatchEvent(new KeyboardEvent('keydown', { key: 'End', bubbles: true }));
+    });
+    expect(document.activeElement).toBe(itens[146]);
+    expect(itens[146].tabIndex).toBe(0);
+
+    await act(async () => root.unmount());
+  });
+
+  it('preserva um único ponto de Tab após busca e seleção por mouse', async () => {
+    vi.stubGlobal('requestAnimationFrame', (callback) => {
+      callback();
+      return 1;
+    });
+    const host = document.createElement('div');
+    document.body.append(host);
+    const root = createRoot(host);
+
+    await act(async () => {
+      root.render(<MapaParana dados={dados} />);
+    });
+
+    const itensIniciais = [...host.querySelectorAll('.mp-item')];
+    await act(async () => itensIniciais[1].click());
+    expect(itensIniciais[1].tabIndex).toBe(0);
+    expect(itensIniciais[1].getAttribute('aria-current')).toBe('true');
+
+    const busca = host.querySelector('input[aria-label="Buscar usina, município ou bacia"]');
+    await act(async () => {
+      preencherCampo(busca, 'pequena');
+    });
+
+    const itensFiltrados = [...host.querySelectorAll('.mp-item')];
+    expect(itensFiltrados).toHaveLength(1);
+    expect(itensFiltrados[0].textContent).toContain('Usina pequena');
+    expect(itensFiltrados[0].tabIndex).toBe(0);
+    expect(host.querySelector('.mp-lista-cab')?.getAttribute('role')).toBe('status');
+
+    await act(async () => {
+      preencherCampo(busca, 'inexistente');
+    });
+    expect(host.querySelectorAll('.mp-item')).toHaveLength(0);
+    expect(host.querySelector('.mp-vazio')?.textContent).toContain('Nenhuma usina');
+
+    await act(async () => root.unmount());
   });
 
   it('oferece uma lista nativa de bacias e filtra a relação ao selecioná-la', async () => {

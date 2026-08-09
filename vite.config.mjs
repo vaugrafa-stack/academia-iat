@@ -32,6 +32,22 @@ const contaRemota = process.env.IAT_CONTA_REMOTA === '1';
 
 export default {
   base: process.env.PAGES_REPO ? `/${process.env.PAGES_REPO}/` : '/',
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          if (!id.includes('node_modules')) return undefined;
+          if (/[\\/]node_modules[\\/](react|react-dom|scheduler)[\\/]/.test(id)) {
+            return 'vendor-react';
+          }
+          if (/[\\/]node_modules[\\/]lucide-react[\\/]/.test(id)) {
+            return 'vendor-icons';
+          }
+          return undefined;
+        },
+      },
+    },
+  },
   plugins: [{
     name: 'academia-iat-csp-dev',
     apply: 'serve',

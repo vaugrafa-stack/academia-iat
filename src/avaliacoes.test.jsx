@@ -102,6 +102,11 @@ describe("interação acessível das autoavaliações", () => {
     await act(async () => firstOption.click());
     expect(firstOption.getAttribute("aria-pressed")).toBe("true");
 
+    const confidence = buttonByText(host, "Alta");
+    expect(buttonByText(host, "Confirmar resposta").disabled).toBe(true);
+    await act(async () => confidence.click());
+    expect(confidence.getAttribute("aria-pressed")).toBe("true");
+
     await act(async () => buttonByText(host, "Confirmar resposta").click());
     const next = buttonByText(host, "Próxima questão");
     next.focus();
@@ -123,6 +128,7 @@ describe("interação acessível das autoavaliações", () => {
     for (let index = 0; index < QUESTIONS.length; index += 1) {
       const option = host.querySelector(".quiz-options button");
       await act(async () => option.click());
+      await act(async () => buttonByText(host, "Alta").click());
       await act(async () => buttonByText(host, "Confirmar resposta").click());
       await act(async () =>
         buttonByText(
@@ -136,5 +142,18 @@ describe("interação acessível das autoavaliações", () => {
     expect(resultHeading).toBeTruthy();
     expect(document.activeElement).toBe(resultHeading);
     expect(host.textContent).toContain("Este resultado não comprova domínio");
+    expect(host.textContent).toContain("Confiança alta");
+  });
+
+  it("oferece diagnóstico rápido e completo antes da primeira aplicação", async () => {
+    const host = mount();
+    const quick = buttonByText(host, "Rápida");
+    const full = buttonByText(host, "Completa");
+
+    expect(quick.getAttribute("aria-pressed")).toBe("true");
+    expect(full.getAttribute("aria-pressed")).toBe("false");
+    await act(async () => full.click());
+    expect(full.getAttribute("aria-pressed")).toBe("true");
+    expect(host.textContent).toContain("2 questões");
   });
 });

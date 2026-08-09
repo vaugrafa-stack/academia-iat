@@ -1,0 +1,88 @@
+import { expect, test } from '@playwright/test';
+import { appUrl, expectHealthyPage, monitorRuntime } from './helpers.js';
+
+test('navegação móvel abre categorias sem escolher uma página pelo usuário', async ({
+  page,
+  baseURL,
+}) => {
+  test.skip((page.viewportSize()?.width || Infinity) > 980, 'comportamento exclusivo do celular');
+  const runtimeIssues = monitorRuntime(page, baseURL);
+
+  await page.goto(appUrl(baseURL), { waitUntil: 'domcontentloaded' });
+  await expect(
+    page.getByRole('heading', { name: /Comece por aqui|Onde você parou/i }),
+  ).toBeVisible();
+
+  const nav = page.getByRole('navigation', {
+    name: 'Navegação principal no celular',
+  });
+  const aprender = nav.getByRole('button', { name: 'Aprender' });
+  const urlInicial = page.url();
+
+  await aprender.click();
+  const painelAprender = page.getByRole('region', { name: 'Aprender' });
+  await expect(painelAprender).toBeVisible();
+  await expect(aprender).toHaveAttribute('aria-expanded', 'true');
+  await expect(page).toHaveURL(urlInicial);
+  await expect(painelAprender.locator('.mobile-nav-panel__item')).toHaveCount(2);
+  await expect(painelAprender.locator('.mobile-nav-panel__item').first()).toBeFocused();
+
+  await page.keyboard.press('Escape');
+  await expect(painelAprender).toHaveCount(0);
+  await expect(aprender).toBeFocused();
+  await expect(aprender).toHaveAttribute('aria-expanded', 'false');
+
+  await page.keyboard.press('Enter');
+  await expect(page.getByRole('region', { name: 'Aprender' })).toBeVisible();
+  await page.keyboard.press('Escape');
+
+  const praticar = nav.getByRole('button', { name: 'Praticar' });
+  await praticar.click();
+  const painelPraticar = page.getByRole('region', { name: 'Praticar' });
+  await expect(painelPraticar.locator('.mobile-nav-panel__item')).toHaveCount(3);
+  await painelPraticar
+    .getByRole('button', { name: /Redigir Informação Técnica/ })
+    .click();
+  await expect(page).toHaveURL(/#\/redator$/);
+  await expect(
+    page.getByRole('heading', { name: /Escrever uma Informação Técnica/i }),
+  ).toBeVisible();
+  await expect(praticar).toHaveClass(/active/);
+  await expect(praticar).not.toHaveAttribute('aria-current');
+  await praticar.click();
+  const redatorAtual = page
+    .getByRole('region', { name: 'Praticar' })
+    .getByRole('button', { name: /Redigir Informação Técnica/ });
+  await expect(redatorAtual).toHaveAttribute('aria-current', 'page');
+  await page.keyboard.press('Escape');
+
+  const consultar = nav.getByRole('button', { name: 'Consultar' });
+  await consultar.click();
+  const painelConsultar = page.getByRole('region', { name: 'Consultar' });
+  await expect(painelConsultar.locator('.mobile-nav-panel__item')).toHaveCount(4);
+  const geopr = painelConsultar.getByRole('link', {
+    name: 'Abrir GeoPR · mapas oficiais em nova aba (site externo)',
+  });
+  await expect(geopr).toHaveAttribute(
+    'href',
+    'https://geopr.iat.pr.gov.br/portal/home/gallery.html?sortField=title&sortOrder=asc',
+  );
+  await expect(geopr).toHaveAttribute('target', '_blank');
+  await expect(geopr).toHaveAttribute('rel', 'noopener noreferrer');
+
+  await painelConsultar.getByRole('button', { name: /Mapa do Paraná/ }).click();
+  await expect(page).toHaveURL(/#\/mapa$/);
+  await expect(
+    page.getByRole('heading', { name: /Mapa das hidrelétricas do Paraná/i }),
+  ).toBeVisible();
+  await expect(consultar).toHaveClass(/active/);
+  await expect(consultar).not.toHaveAttribute('aria-current');
+
+  await nav.getByRole('button', { name: 'Início' }).click();
+  await expect(page).toHaveURL(/\/$/);
+  await expect(
+    page.getByRole('heading', { name: /Comece por aqui|Onde você parou/i }),
+  ).toBeVisible();
+  await expect(page.locator('.mobile-nav-panel')).toHaveCount(0);
+  await expectHealthyPage(page, runtimeIssues);
+});

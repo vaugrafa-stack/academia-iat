@@ -123,7 +123,8 @@ import { criarDerivados, norm } from "./derivados.js";
 import { registrarOffline } from "./offline.js";
 import { loadAppData } from "./appData.js";
 import { getLearningDesign } from "./learningDesign.js";
-import Lesson, { VideoDataLoading, objetivoDaAula } from "./licao.jsx";
+import VideoDataLoading from "./VideoDataLoading.jsx";
+import { objetivoDaAula } from "./lessonObjective.js";
 import SourceAssurance from "./sourceAssurance.jsx";
 import { resolveOfficialSource } from "./officialSources.js";
 import { practiceRecordStatus } from "./learningRecords.js";
@@ -140,10 +141,15 @@ import { useStoredState } from "./storedState.js";
 // cartao da conta, porque estudar acontece nas OUTRAS telas: no perfil ela
 // nunca veria o momento em que a pessoa termina alguma coisa.
 import { useSincroniaAutomatica } from "./sincroniaAutomatica.js";
+import { hasStartedJourney } from "./learningJourney.js";
+import LearningPaths from "./LearningPaths.jsx";
 import "./styles.css";
 import "./nota10.css";
+import "./experience.css";
+import "./mobileNavigation.css";
 
 const HydroGuide = lazy(() => import("./hydro.jsx"));
+const Lesson = lazy(() => import("./licao.jsx"));
 const MapaParana = lazy(() => import("./mapa.jsx"));
 const RedatorIT = lazy(() => import("./redator.jsx"));
 const LaboratorioPremium = lazy(() => import("./laboratorio.jsx"));
@@ -290,12 +296,12 @@ const DADOS_AVALIACOES = Object.freeze({
 const NAV_GRUPOS = [
   [null, [["dashboard", "Visão geral", Home]]],
   ["Aprender", [
-    ["hidreletricas", "Hidrelétricas", Zap],
-    ["formacao", "Formação", BookOpen],
+    ["hidreletricas", "Como funciona uma hidrelétrica", Zap],
+    ["formacao", "Curso guiado pelo POP", BookOpen],
   ]],
   ["Praticar", [
     ["laboratorio", "Laboratório", FlaskConical],
-    ["redator", "Redigir uma IT", FileText],
+    ["redator", "Redigir Informação Técnica", FileText],
     ["avaliacoes", "Avaliações", ClipboardCheck],
   ]],
   ["Consultar", [
@@ -303,7 +309,7 @@ const NAV_GRUPOS = [
     ["mapa", "Mapa do Paraná", MapIcon],
     [
       "geopr",
-      "GeoPR",
+      "GeoPR · mapas oficiais",
       Layers3,
       "https://geopr.iat.pr.gov.br/portal/home/gallery.html?sortField=title&sortOrder=asc",
     ],
@@ -1035,8 +1041,8 @@ function Topbar({
       <div className="compact-brand">
         <span className="brand-wave">IAT</span>
         <div>
-          <strong>Academia de Licenciamento</strong>
-          <small>Hidrelétrico</small>
+          <strong>Academia IAT</strong>
+          <small>Licenciamento hidrelétrico</small>
         </div>
       </div>
       <button
@@ -1284,55 +1290,211 @@ function Sidebar({
 }
 
 function MobileBottomNav({ view, go, inert }) {
-  const destinations = [
+  const [openCategory, setOpenCategory] = useState(null);
+  const panelRef = useRef(null);
+  const navRef = useRef(null);
+  const triggerRefs = useRef({});
+  const home = { id: "dashboard", label: "Início" };
+  const categories = [
     {
-      id: "dashboard",
-      label: "Início",
-      Icon: Home,
-      views: ["dashboard"],
-    },
-    {
-      id: "formacao",
+      id: "aprender",
       label: "Aprender",
       Icon: BookOpen,
-      views: ["hidreletricas", "formacao", "lesson"],
+      items: NAV_GRUPOS.find(([grupo]) => grupo === "Aprender")?.[1] || [],
     },
     {
-      id: "laboratorio",
+      id: "praticar",
       label: "Praticar",
       Icon: FlaskConical,
-      views: ["laboratorio", "redator", "avaliacoes"],
+      items: NAV_GRUPOS.find(([grupo]) => grupo === "Praticar")?.[1] || [],
     },
     {
-      id: "biblioteca",
+      id: "consultar",
       label: "Consultar",
       Icon: Library,
-      views: ["fluxos", "mapa", "biblioteca"],
+      items: NAV_GRUPOS.find(([grupo]) => grupo === "Consultar")?.[1] || [],
     },
   ];
+  const activeDestination = (id) =>
+    view === id || (view === "lesson" && id === "formacao");
+  const activeCategory = categories.find(({ items }) =>
+    items.some(([id]) => activeDestination(id)),
+  )?.id;
+  const openConfig = categories.find(({ id }) => id === openCategory) || null;
+
+  useEffect(() => {
+    if (!openCategory) return undefined;
+    const focusFirstDestination = () => {
+      const current = panelRef.current?.querySelector('[aria-current="page"]');
+      const first = panelRef.current?.querySelector(
+        '.mobile-nav-panel__item:not([disabled])',
+      );
+      (current || first)?.focus({ preventScroll: true });
+    };
+    const frame = typeof requestAnimationFrame === "function"
+      ? requestAnimationFrame(focusFirstDestination)
+      : setTimeout(focusFirstDestination, 0);
+    return () => {
+      if (typeof cancelAnimationFrame === "function") cancelAnimationFrame(frame);
+      else clearTimeout(frame);
+    };
+  }, [openCategory]);
+
+  useEffect(() => {
+    if (!openCategory) return undefined;
+    const closeOutside = (event) => {
+      if (
+        panelRef.current?.contains(event.target) ||
+        navRef.current?.contains(event.target)
+      ) return;
+      setOpenCategory(null);
+    };
+    document.addEventListener("pointerdown", closeOutside);
+    return () => document.removeEventListener("pointerdown", closeOutside);
+  }, [openCategory]);
+
+  useEffect(() => {
+    setOpenCategory(null);
+  }, [view]);
+
+  useEffect(() => {
+    if (inert) setOpenCategory(null);
+  }, [inert]);
+
+  const closeAndRestoreFocus = () => {
+    const trigger = triggerRefs.current[openCategory];
+    setOpenCategory(null);
+    const restore = () => trigger?.focus({ preventScroll: true });
+    if (typeof requestAnimationFrame === "function") requestAnimationFrame(restore);
+    else setTimeout(restore, 0);
+  };
+  const handleEscape = (event) => {
+    if (event.key !== "Escape" || !openCategory) return;
+    event.preventDefault();
+    event.stopPropagation();
+    closeAndRestoreFocus();
+  };
+  const navigate = (id) => {
+    setOpenCategory(null);
+    go(id);
+  };
 
   return (
-    <nav
-      className="mobile-bottom-nav"
-      aria-label="Navegação principal no celular"
-      inert={inert}
-    >
-      {destinations.map(({ id, label, Icon, views }) => {
-        const active = views.includes(view);
-        return (
+    <>
+      {openConfig && (
+        <section
+          className="mobile-nav-panel"
+          id="mobile-nav-subdestinations"
+          ref={panelRef}
+          role="region"
+          aria-labelledby="mobile-nav-panel-title"
+          inert={inert}
+          onKeyDown={handleEscape}
+        >
+          <header className="mobile-nav-panel__header">
+            <div>
+              <small>Escolha uma página</small>
+              <h2 id="mobile-nav-panel-title">{openConfig.label}</h2>
+            </div>
+            <button
+              type="button"
+              className="mobile-nav-panel__close"
+              onClick={closeAndRestoreFocus}
+              aria-label={`Fechar opções de ${openConfig.label}`}
+            >
+              <X aria-hidden="true" />
+            </button>
+          </header>
+          <div className="mobile-nav-panel__items">
+            {openConfig.items.map(([id, label, Icon, externalUrl]) => {
+              const current = activeDestination(id);
+              const contents = (
+                <>
+                  <Icon aria-hidden="true" />
+                  <span>
+                    <strong>{label}</strong>
+                    <small>
+                      {externalUrl
+                        ? "Site oficial em nova aba"
+                        : current
+                          ? "Página atual"
+                          : "Abrir página"}
+                    </small>
+                  </span>
+                  {externalUrl
+                    ? <ExternalLink aria-hidden="true" />
+                    : current
+                      ? <Check aria-hidden="true" />
+                      : <ChevronRight aria-hidden="true" />}
+                </>
+              );
+              if (externalUrl) {
+                return (
+                  <a
+                    key={id}
+                    className="mobile-nav-panel__item external"
+                    href={externalUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={`Abrir ${label} em nova aba (site externo)`}
+                    onClick={() => setOpenCategory(null)}
+                  >
+                    {contents}
+                  </a>
+                );
+              }
+              return (
+                <button
+                  type="button"
+                  key={id}
+                  className={`mobile-nav-panel__item${current ? " current" : ""}`}
+                  aria-current={current ? "page" : undefined}
+                  onClick={() => navigate(id)}
+                >
+                  {contents}
+                </button>
+              );
+            })}
+          </div>
+        </section>
+      )}
+      <nav
+        className="mobile-bottom-nav"
+        aria-label="Navegação principal no celular"
+        inert={inert}
+        ref={navRef}
+        onKeyDown={handleEscape}
+      >
+        <button
+          type="button"
+          className={view === "dashboard" ? "active" : ""}
+          aria-current={view === "dashboard" ? "page" : undefined}
+          onClick={() => navigate(home.id)}
+        >
+          <Home aria-hidden="true" />
+          <span>{home.label}</span>
+        </button>
+        {categories.map(({ id, label, Icon }) => {
+          const active = activeCategory === id;
+          const open = openCategory === id;
+          return (
           <button
             type="button"
             key={id}
-            className={active ? "active" : ""}
-            aria-current={active ? "page" : undefined}
-            onClick={() => go(id)}
+            ref={(node) => { triggerRefs.current[id] = node; }}
+            className={`${active ? "active" : ""}${open ? " open" : ""}`.trim()}
+            data-has-current-page={active ? "true" : undefined}
+            aria-expanded={open}
+            aria-controls={open ? "mobile-nav-subdestinations" : undefined}
+            onClick={() => setOpenCategory((current) => current === id ? null : id)}
           >
             <Icon aria-hidden="true" />
             <span>{label}</span>
           </button>
-        );
-      })}
-    </nav>
+          );
+        })}
+      </nav>
+    </>
   );
 }
 
@@ -1351,6 +1513,7 @@ function Dashboard({
   const feat = pilotMediaStatus.loading
     ? null
     : mediaForLesson(continueLesson, pilotMediaStatus.collection);
+  const startedJourney = hasStartedJourney(state);
   return (
     <div className="page dashboard-page">
       {/* O topo desta tela era slogan: "Aprenda o procedimento. Pratique a
@@ -1365,7 +1528,11 @@ function Dashboard({
           titulo agora diz o que a tela FAZ, e o resto e o estado do trabalho,
           que e o que a pessoa veio buscar. */}
       <section className="dashboard-intro">
-        <h1>Onde você parou, e o que decidir a seguir.</h1>
+        <h1>
+          {startedJourney
+            ? "Onde você parou, e o que decidir a seguir."
+            : "Comece por aqui."}
+        </h1>
       </section>
       <section className="dashboard-feature">
         <div className="feature-media">
@@ -1390,7 +1557,9 @@ function Dashboard({
           </span>
         </div>
         <div className="feature-copy">
-          <small>{continueTrack.code} · CONTINUE DE ONDE PAROU</small>
+          <small>
+            {continueTrack.code} · {startedJourney ? "CONTINUE DE ONDE PAROU" : "PRIMEIRO PASSO"}
+          </small>
           <h2>{continueLesson.fullTitle || continueLesson.title}</h2>
           <p>{continueTrack.summary}</p>
           <div className="feature-meta">
@@ -1423,7 +1592,7 @@ function Dashboard({
             className="primary"
             onClick={() => openLesson(continueLesson.id)}
           >
-            Continuar aula <Play />
+            {startedJourney ? "Continuar aula" : "Iniciar orientação"} <Play />
           </button>
           <button className="text-action" onClick={() => go("formacao")}>
             Ver todas as aulas <ArrowRight />
@@ -1712,12 +1881,50 @@ function DashboardSourceDetails({ go }) {
 function Formation({ state, openLesson }) {
   const [openTrack, setOpenTrack] = useState("m00"),
     [filter, setFilter] = useState("");
+  const filterNormalized = norm(filter);
+  const filteredGroups = trackGroups
+    .map((group) => ({
+      ...group,
+      rows: group.ids.flatMap((id) => {
+        const track = tracks.find((item) => item.id === id);
+        const full = trackLessons.get(id) || [];
+        const matchingLessons = full.filter((lesson) =>
+          norm(`${lesson.title} ${lesson.number || ""}`).includes(filterNormalized),
+        );
+        const trackMatches = norm(`${track.title} ${track.code}`).includes(
+          filterNormalized,
+        );
+        if (filterNormalized && !trackMatches && !matchingLessons.length) return [];
+        return [{
+          id,
+          track,
+          full,
+          lessons: filterNormalized && trackMatches && !matchingLessons.length
+            ? full
+            : matchingLessons,
+        }];
+      }),
+    }))
+    .filter((group) => group.rows.length > 0);
+  const visibleTopics = filteredGroups.reduce(
+    (total, group) => total + group.rows.reduce(
+      (groupTotal, row) => groupTotal + row.lessons.length,
+      0,
+    ),
+    0,
+  );
   return (
     <div className="page">
       <PageHeader
         title="Formação guiada pelo POP"
         subtitle={`${tracks.length} módulos conectam cada seção do POP a objetivos, conteúdo-fonte, prática e avaliação.`}
         icon={GraduationCap}
+      />
+      <LearningPaths
+        tracks={tracks}
+        trackLessons={trackLessons}
+        state={state}
+        openLesson={openLesson}
       />
       <div className="formation-toolbar">
         <div role="search">
@@ -1730,40 +1937,28 @@ function Formation({ state, openLesson }) {
           />
         </div>
         <span>
-          {lessons.length} tópicos ·{" "}
-          {tracks.reduce(
-            (a, t) =>
-              a +
-              (trackLessons.get(t.id)?.reduce((x, l) => x + l.minutes, 0) || 0),
-            0,
-          )}{" "}
-          min estimados
+          {filterNormalized
+            ? `${visibleTopics} ${visibleTopics === 1 ? "tópico encontrado" : "tópicos encontrados"}`
+            : `${lessons.length} tópicos · ${tracks.reduce(
+              (a, t) =>
+                a +
+                (trackLessons.get(t.id)?.reduce((x, l) => x + l.minutes, 0) || 0),
+              0,
+            )} min estimados`}
         </span>
       </div>
       <div className="curriculum">
-        {trackGroups.map((group) => (
+        {filteredGroups.length ? filteredGroups.map((group) => (
           <section key={group.title}>
             <div className="group-title">
               <span>{group.title}</span>
               <i />
             </div>
-            {group.ids.map((id) => {
-              const t = tracks.find((x) => x.id === id),
-                full = trackLessons.get(id) || [],
-                ls = full.filter((l) =>
-                  norm(l.title + " " + (l.number || "")).includes(norm(filter)),
-                ),
-                p = trackProgress(id, state),
+            {group.rows.map(({ id, track: t, full, lessons: show }) => {
+              const p = trackProgress(id, state),
                 Icon = TRACK_ICONS[t.icon] || BookOpen;
-              if (
-                filter &&
-                !norm(t.title + " " + t.code).includes(norm(filter)) &&
-                !ls.length
-              )
-                return null;
-              const show = filter && !ls.length ? full : ls;
               const expanded =
-                openTrack === id || (!!filter && show.length > 0);
+                openTrack === id || (!!filterNormalized && show.length > 0);
               return (
                 <article
                   className={"track-row " + (expanded ? "expanded" : "")}
@@ -1834,7 +2029,19 @@ function Formation({ state, openLesson }) {
               );
             })}
           </section>
-        ))}
+        )) : (
+          <section className="formation-empty" role="status">
+            <Search aria-hidden="true" />
+            <h2>Nenhum tópico encontrado</h2>
+            <p>
+              Não encontramos módulo ou aula para <strong>“{filter.trim()}”</strong>.
+              Tente um termo como licença, barragem, fauna ou outorga.
+            </p>
+            <button type="button" onClick={() => setFilter("")}>
+              Limpar filtro
+            </button>
+          </section>
+        )}
       </div>
     </div>
   );

@@ -80,6 +80,22 @@ export const faixaDidaticaDe = (mw) => {
   return FAIXAS_DIDATICAS.find((f) => mw <= f.ate) || FAIXAS_DIDATICAS[FAIXAS_DIDATICAS.length - 1];
 };
 
+// O catalogo pode conter centenas de usinas. So uma delas entra na sequencia
+// de Tab; as demais continuam acessiveis pelas setas, Home, End, Page Up e
+// Page Down. Isso evita que a pessoa precise pressionar Tab uma centena de
+// vezes para chegar ao proximo controle da pagina.
+export function indiceCatalogoPorTecla(tecla, atual, total) {
+  if (!Number.isInteger(total) || total <= 0) return null;
+  const indice = Number.isInteger(atual) && atual >= 0 ? atual : 0;
+  if (tecla === 'ArrowDown') return Math.min(indice + 1, total - 1);
+  if (tecla === 'ArrowUp') return Math.max(indice - 1, 0);
+  if (tecla === 'PageDown') return Math.min(indice + 10, total - 1);
+  if (tecla === 'PageUp') return Math.max(indice - 10, 0);
+  if (tecla === 'Home') return 0;
+  if (tecla === 'End') return total - 1;
+  return null;
+}
+
 // Exercicio de comparacao entre duas lentes diferentes: o tipo publicado no
 // registro consultado e a faixa de potencia usada didaticamente no Quadro 8.
 //
@@ -173,6 +189,7 @@ function MapaConteudo({ dados, state, setState }) {
   const [tipos, setTipos] = useState(() => new Set(ORDEM));
   const [busca, setBusca] = useState('');
   const [sel, setSel] = useState(null);          // usina selecionada
+  const [itemTabulavel, setItemTabulavel] = useState(null);
   const [bacia, setBacia] = useState(null);      // bacia sob o cursor
   const [baciaSel, setBaciaSel] = useState(null); // bacia escolhida, filtra a lista
   const listaRef = useRef(null);
@@ -198,6 +215,20 @@ function MapaConteudo({ dados, state, setState }) {
     );
   }, [dados.usinas, tipos, busca, baciaSel]);
 
+  // A identidade vem da posicao na base original, nao do filtro corrente. Ela
+  // permanece estavel quando busca, tipo ou bacia mudam e tambem diferencia
+  // registros que eventualmente tenham o mesmo nome.
+  const indicePorUsina = useMemo(
+    () => new Map((dados.usinas || []).map((u, indice) => [u, indice])),
+    [dados.usinas],
+  );
+  const itemTabulavelEfetivo = useMemo(() => {
+    if (!usinas.length) return null;
+    if (usinas.some((u) => indicePorUsina.get(u) === itemTabulavel)) return itemTabulavel;
+    if (sel && usinas.includes(sel)) return indicePorUsina.get(sel);
+    return indicePorUsina.get(usinas[0]);
+  }, [indicePorUsina, itemTabulavel, sel, usinas]);
+
   const infoBacia = (dados.bacias || []).find((b) => b.nome === (bacia || baciaSel));
 
   const porTipo = useMemo(() => {
@@ -212,12 +243,29 @@ function MapaConteudo({ dados, state, setState }) {
     return n.size ? n : new Set(ORDEM);   // nunca some com tudo
   });
 
-  const escolher = (u) => {
+  const escolher = (u, { focar = false } = {}) => {
+    const indice = indicePorUsina.get(u);
+    if (Number.isInteger(indice)) setItemTabulavel(indice);
     setSel(u);
     // Traz o item da lista para a vista quando a escolha veio do mapa.
-    requestAnimationFrame(() => {
-      listaRef.current?.querySelector('.mp-item.ativo')?.scrollIntoView({ block: 'nearest' });
+    const agendar = typeof requestAnimationFrame === 'function'
+      ? requestAnimationFrame
+      : (callback) => setTimeout(callback, 0);
+    agendar(() => {
+      const item = Number.isInteger(indice)
+        ? listaRef.current?.querySelector(`[data-usina-indice="${indice}"]`)
+        : null;
+      item?.scrollIntoView?.({ block: 'nearest' });
+      if (focar) item?.focus({ preventScroll: true });
     });
+  };
+
+  const navegarCatalogo = (evento, indiceVisivel) => {
+    if (evento.altKey || evento.ctrlKey || evento.metaKey) return;
+    const proximo = indiceCatalogoPorTecla(evento.key, indiceVisivel, usinas.length);
+    if (proximo == null) return;
+    evento.preventDefault();
+    escolher(usinas[proximo], { focar: true });
   };
 
   // Rotulos de municipio. Nao existe base municipal embarcada, e trazer uma
@@ -529,12 +577,38 @@ function MapaConteudo({ dados, state, setState }) {
             </article>
           )}
 
-          <div className="mp-lista" ref={listaRef}>
-            <div className="mp-lista-cab">{usinas.length} de {(dados.usinas || []).length} em exibição{baciaSel ? ` · bacia ${baciaSel}` : ''}</div>
+          <div
+            className="mp-lista"
+            ref={listaRef}
+            role="group"
+            aria-labelledby="mp-lista-status"
+            aria-describedby="mp-lista-instrucoes"
+          >
+            <div
+              id="mp-lista-status"
+              className="mp-lista-cab"
+              role="status"
+              aria-live="polite"
+              aria-atomic="true"
+            >
+              {usinas.length} de {(dados.usinas || []).length} em exibição{baciaSel ? ` · bacia ${baciaSel}` : ''}
+            </div>
+            <p id="mp-lista-instrucoes" className="sr-only">
+              Na lista de usinas, use as setas para cima e para baixo para navegar, Home e End para ir ao
+              início ou ao fim, Page Up e Page Down para avançar em blocos. Enter ou Espaço seleciona a usina.
+            </p>
             {usinas.map((u, i) => (
-              <button key={`${u.nome}-${i}`}
-                      className={'mp-item' + (sel && sel.nome === u.nome && sel.x === u.x ? ' ativo' : '')}
-                      onClick={() => setSel(u)}>
+              <button
+                key={indicePorUsina.get(u) ?? `${u.nome}-${i}`}
+                type="button"
+                data-usina-indice={indicePorUsina.get(u)}
+                tabIndex={indicePorUsina.get(u) === itemTabulavelEfetivo ? 0 : -1}
+                className={'mp-item' + (sel === u ? ' ativo' : '')}
+                aria-current={sel === u ? 'true' : undefined}
+                onFocus={() => setItemTabulavel(indicePorUsina.get(u))}
+                onKeyDown={(evento) => navegarCatalogo(evento, i)}
+                onClick={() => escolher(u)}
+              >
                 <i style={{ background: COR[u.tipo] }} aria-hidden="true" />
                 <span>
                   <strong>{u.nome}</strong>

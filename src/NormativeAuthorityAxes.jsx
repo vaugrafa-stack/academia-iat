@@ -50,9 +50,10 @@ export default function NormativeAuthorityAxes({ compact = false }) {
                 </ul>
               )}
               <div className="normative-axis-meta">
-                <span><strong>Base:</strong> {axis.act}</span>
+                <span><strong>Referência localizada:</strong> {axis.act}</span>
                 <span><strong>Consulta:</strong> {formatDate(axis.checkedAt)}</span>
-                <span><strong>Lastro:</strong> {axis.epistemicStatus}</span>
+                <span><strong>Estado:</strong> {axis.epistemicStatus}</span>
+                <span><strong>Revisão:</strong> institucional pendente</span>
               </div>
               <p className="normative-axis-limit">{axis.limitation}</p>
               <div className="normative-axis-links">
@@ -68,8 +69,9 @@ export default function NormativeAuthorityAxes({ compact = false }) {
         })}
       </div>
       <p className="normative-axes-warning">
-        Fonte oficial atual localizada não equivale a aplicação automática.
-        Antes de uma decisão real, confirme vigência, transição, domínio do
+        Fonte primária localizada não equivale a conteúdo validado, vigência
+        confirmada ou aplicação automática. Antes de uma decisão real, confirme
+        vigência, transição, domínio do
         corpo hídrico, fase, tipologia e atos do processo.
       </p>
     </section>

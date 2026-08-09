@@ -64,5 +64,5 @@ export async function expectBuildIdentity(page) {
     return;
   }
 
-  expect(actual).toMatch(/^(?:[a-f0-9]{40}-local|local)$/);
+  expect(actual).toMatch(/^(?:[a-f0-9]{40}(?:-local)?|local)$/);
 }

@@ -140,7 +140,7 @@ test('registra o Service Worker, abre o Suporte offline e atualiza com consentim
   await expect(page.getByRole('link', { name: 'Enviar e-mail para o suporte' }))
     .toHaveAttribute('href', /^mailto:bol\.rafaelaugusto@iat\.pr\.gov\.br\?/);
 
-  await page.getByRole('button', { name: /Forma..o/ }).click();
+  await page.getByRole('button', { name: 'Curso guiado pelo POP' }).click();
   await expect(page.getByRole('heading', { name: /Forma..o guiada pelo POP/i })).toBeVisible();
   await page.getByRole('button', { name: 'Suporte' }).click();
   await expect(page.getByRole('heading', { name: 'Central de Suporte' })).toBeVisible();

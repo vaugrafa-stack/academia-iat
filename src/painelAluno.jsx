@@ -380,6 +380,7 @@ export function Suporte({ online: onlineFromApp } = {}) {
 
 export function ComparaDiagnostico({d}){
  const e=d.entrada,x=d.saida;
+ const amostra=e.amostraPorModulo||3;
  const pct=r=>Math.round(r.acertos/r.total*100);
  // Agrega por modulo apenas para descrever os dois resultados observados. As
  // perguntas sao as mesmas nas duas aplicacoes, mas isto nao transforma a
@@ -410,7 +411,7 @@ export function ComparaDiagnostico({d}){
    {perdas.length>0&&<p><b className="nao">Menos acertos</b> {perdas.map(z=>nome(z.t)+' '+z.de+'\u2192'+z.para+' de '+z.n).join(' \u00b7 ')}</p>}
    {estaveis.length>0&&<p><b>Mesmo resultado</b> {estaveis.map(z=>nome(z.t)+' '+z.de+'\u2192'+z.para+' de '+z.n).join(' \u00b7 ')}</p>}
   </div>}
-  <small className="dc-limite">São três itens-âncora por módulo: as perguntas se repetem, enquanto ordem e alternativas são embaralhadas. A variação é apenas descritiva e pode refletir familiaridade com os itens; não é medida validada, prova de aprendizagem causal nem demonstração de competência.</small>
+  <small className="dc-limite">A amostra usa {amostra} {amostra===1?'item-âncora':'itens-âncora'} por módulo: as perguntas se repetem, enquanto ordem e alternativas são embaralhadas. A variação é apenas descritiva e pode refletir familiaridade com os itens; não é medida validada, prova de aprendizagem causal nem demonstração de competência.</small>
  </section>
 }
 

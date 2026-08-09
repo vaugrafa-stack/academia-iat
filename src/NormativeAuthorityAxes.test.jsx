@@ -12,7 +12,8 @@ describe('painel de competências normativas', () => {
     expect(html).toContain('Regulação e outorga do setor elétrico');
     expect(html).toContain('Disponibilidade e direito de uso da água');
     expect(html).toContain('Revisão institucional pendente');
-    expect(html).toContain('Fonte oficial atual localizada não equivale a aplicação automática');
+    expect(html).toContain('Fonte primária localizada não equivale a conteúdo validado');
+    expect(html).toContain('Revisão:</strong> institucional pendente');
     expect((html.match(/Fonte principal/g) || [])).toHaveLength(3);
   });
 });

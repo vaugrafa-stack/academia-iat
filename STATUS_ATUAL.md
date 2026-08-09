@@ -64,14 +64,18 @@ precisam executar novamente `pnpm test`, `pnpm build`, `pnpm audit:premium`,
 
 A versão corrente preparada em 09/08/2026 foi validada com:
 
-- 53 arquivos de teste e 451 testes aprovados;
+- 56 arquivos de teste e 468 testes aprovados;
 - todos os portões encadeados de `pnpm test`, inclusive smoke, governança de
   mídia e auditoria fail-closed de workflows, aprovados;
-- build aprovado, com 683,0 KiB de JavaScript bruto, 231,5 KiB compactado,
-  214,3 KiB de CSS bruto e 39,3 KiB compactado;
-- 10 cenários Playwright do artefato e um cenário PWA aprovados;
-- inspeção em navegador real da nova rastreabilidade normativa, da rota
-  Avaliações e dos comportamentos de foco e teclado.
+- build aprovado, com 694,2 KiB de JavaScript bruto, 231,3 KiB compactado,
+  227,7 KiB de CSS bruto e 43,1 KiB compactado, em 32 chunks JavaScript;
+- 14 cenários Playwright do artefato aprovados em desktop e nas larguras 320,
+  360, 390 e 430 pixels, além de um cenário PWA aprovado;
+- onze rotas inspecionadas em 1440 e 390 pixels sem overflow horizontal, erro
+  de página ou erro de console;
+- inspeção em navegador real da rastreabilidade normativa, Avaliações,
+  Hidrelétricas, percursos de formação, navegação móvel, foco, teclado,
+  contraste e alvos de toque.
 
 A promoção de qualquer versão continua condicionada à aprovação do workflow
 público, à publicação do mesmo artefato no GitHub Pages e à conferência do SHA
@@ -83,13 +87,18 @@ do commit que o contém.
 
 | Serviço | Repositório | Estado comprovado | Não confundir com |
 |---|---|---|---|
-| Conta opcional de estudo | repositório privado separado | candidato local com 90 testes aprovados; integração e concorrência exercitadas | serviço implantado ou conta obrigatória |
-| Área Técnica restrita | repositório privado separado | candidato local com 128 testes aprovados; OIDC, sessão, autorização e logout exercitados | ambiente institucional ou tratamento autorizado de processo real |
+| Conta opcional de estudo | repositório privado separado | fonte enviada ao remoto privado no SHA `111edd4cca62b7fdf900657beebd86bceaa24e75`; CI remoto aprovado; 90 testes locais e concorrência exercitada | serviço implantado ou conta obrigatória |
+| Área Técnica restrita | repositório privado separado | fonte enviada ao remoto privado no SHA `94b5184cb362626caccb8dc70622b1f3b375d858`; 128 testes locais, OIDC, sessão, autorização e logout exercitados | ambiente institucional ou tratamento autorizado de processo real |
 
 Os dois serviços privados não possuem implantação ou pipeline de produção
 comprovados. A Academia pública continua utilizável sem conta remota. Nenhum
 documento real pode entrar na Área Técnica antes dos portões formais de
 governança, infraestrutura e autorização.
+
+As correções locais dos workflows privados que fixam a versão do `pip` antes
+do `pip-audit` não puderam ser enviadas porque a credencial OAuth disponível
+não possui o escopo `workflow`. Os patches foram preservados localmente; isso
+não altera o estado das fontes já enviadas nem autoriza implantar os serviços.
 
 O workflow externo de auditoria que antecedeu o primeiro push desses serviços
 não é evidência válida: cinco de cinco agentes falharam e o agregador registrou

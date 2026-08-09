@@ -17,8 +17,8 @@ export const HYDRO_AUTHORITY_AXES = Object.freeze([
     officialUrl: 'https://www.iat.pr.gov.br/sites/agua-terra/arquivos_restritos/files/documento/2025-06/instrucao_normativa_09-2025-empreendimentos_hidreletricos-23743957-0_republicado.pdf',
     supportingUrl: 'https://www.iat.pr.gov.br/Pagina/Licenciamento-de-atividades-especificas',
     checkedAt: HYDRO_AXES_CHECKED_AT,
-    temporalStatus: 'fonte-oficial-atual-localizada',
-    epistemicStatus: 'evidência',
+    temporalStatus: 'vigência-e-aplicação-a-confirmar',
+    epistemicStatus: 'fonte primária localizada',
     humanReview: 'pendente',
     criteria: [
       'MCH: potência instalada igual ou inferior a 75 kW.',
@@ -39,8 +39,8 @@ export const HYDRO_AUTHORITY_AXES = Object.freeze([
     officialUrl: 'https://www.gov.br/aneel/pt-br/assuntos/geracao/outorgas',
     supportingUrl: 'https://www.gov.br/aneel/pt-br/centrais-de-conteudos/manuais-modelos-e-instrucoes/geracao/registro-autorizacao-e-concessao-de-empreendimentos-de-geracao/outorga-de-autorizacao-pch-e-uhe',
     checkedAt: HYDRO_AXES_CHECKED_AT,
-    temporalStatus: 'fonte-oficial-atual-localizada',
-    epistemicStatus: 'evidência',
+    temporalStatus: 'vigência-e-aplicação-a-confirmar',
+    epistemicStatus: 'fonte primária localizada',
     humanReview: 'pendente',
     criteria: [
       'CGH setorial: capacidade instalada igual ou inferior a 5.000 kW.',
@@ -60,8 +60,8 @@ export const HYDRO_AUTHORITY_AXES = Object.freeze([
     officialUrl: 'https://www.gov.br/ana/pt-br/legislacao/resolucoes/resolucoes-regulatorias/2026/286',
     supportingUrl: 'https://www.iat.pr.gov.br/Pagina/Outorga-eletronica-de-recursos-hidricos',
     checkedAt: HYDRO_AXES_CHECKED_AT,
-    temporalStatus: 'fonte-oficial-atual-localizada',
-    epistemicStatus: 'evidência',
+    temporalStatus: 'vigência-e-aplicação-a-confirmar',
+    epistemicStatus: 'fonte primária localizada',
     humanReview: 'pendente',
     criteria: [
       'Corpo hídrico de domínio da União: aplicar o fluxo da ANA e identificar quem apresenta o pedido em cada hipótese.',
@@ -473,7 +473,13 @@ export function buildNormativeLedgerEntry(reference = '', index = 0) {
     linkKind: source?.kind || 'unmapped',
     consultedAt: source?.checkedAt || null,
     temporalStatus: temporalStatus(reference, source),
-    epistemicStatus: source?.kind === 'direct' ? 'evidência' : 'inferência',
+    // Um link direto demonstra que a fonte primária foi localizada, não que a
+    // interpretação, a vigência ou a aplicação ao caso foram aprovadas. O
+    // rótulo anterior, "evidência", apagava essa diferença justamente nos
+    // registros que continuam com análise institucional pendente.
+    epistemicStatus: source?.kind === 'direct'
+      ? 'fonte primária localizada'
+      : 'índice oficial localizado',
     humanReview: source?.humanReview || 'pendente',
     transition: source?.transition || null,
     sourceStatus: source?.status || 'Fonte oficial ainda não mapeada',

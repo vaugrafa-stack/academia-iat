@@ -27,11 +27,18 @@ import {
   prepareAssessment,
   selectDiagnosticAnchors,
 } from "./assessmentDesign.js";
+import "./avaliacoes.css";
 
 // Duas aplicações dos mesmos itens-âncora. A comparação é descritiva: mesmo
 // com itens iguais, efeito de memória e familiaridade impedem atribuir a
 // variação causalmente ao estudo.
-const DIAG_POR_MODULO = 3;
+const DIAG_RAPIDO_POR_MODULO = 1;
+const DIAG_COMPLETO_POR_MODULO = 3;
+const CONFIDENCE_LEVELS = Object.freeze([
+  ["baixa", "Baixa", "Ainda estou em dúvida"],
+  ["media", "Média", "Tenho alguma segurança"],
+  ["alta", "Alta", "Estou convicto desta resposta"],
+]);
 
 // O que a pessoa errou volta, e volta cada vez mais tarde. Só aparece quando
 // há questão vencida, para a retomada útil não virar ruído em toda visita.
@@ -96,23 +103,32 @@ export default function Assessments({ state, setState, openLesson, dados }) {
     [started, setStarted] = useState(false),
     [index, setIndex] = useState(0),
     [answers, setAnswers] = useState({}),
+    [confidence, setConfidence] = useState({}),
     [revealed, setRevealed] = useState(false),
     [done, setDone] = useState(false),
     [attemptSeed, setAttemptSeed] = useState(() => newAssessmentSeed()),
     [diagnosticForm, setDiagnosticForm] = useState(() =>
       state.diagnostico?.entrada ? "B" : "A",
+    ),
+    [diagnosticSize, setDiagnosticSize] = useState(() =>
+      state.diagnostico?.entrada?.amostraPorModulo || DIAG_RAPIDO_POR_MODULO,
     );
   const stageHeadingRef = useRef(null);
 
-  // Diagnóstico geral: três questões âncora por módulo. Entrada e saída usam
-  // os mesmos itens, mas ordem e posição das alternativas mudam para reduzir
-  // memorização mecânica sem perder comparabilidade por item.
+  // Diagnóstico geral: a pessoa escolhe uma amostra rápida ou completa na
+  // entrada. A reaplicação reutiliza o mesmo tamanho e os mesmos itens-âncora;
+  // só ordem e posição das alternativas mudam.
   const questions = useMemo(() => {
     let base;
     if (track !== "geral") base = questionBank.filter((q) => q.track === track);
-    else base = selectDiagnosticAnchors(questionBank, tracks, DIAG_POR_MODULO);
+    else base = selectDiagnosticAnchors(questionBank, tracks, diagnosticSize);
     return prepareAssessment(base, attemptSeed);
-  }, [track, attemptSeed, diagnosticForm, questionBank, tracks]);
+  }, [track, attemptSeed, diagnosticForm, diagnosticSize, questionBank, tracks]);
+  const diagnosticQuestionCount = selectDiagnosticAnchors(
+    questionBank,
+    tracks,
+    diagnosticSize,
+  ).length;
   const q = questions[index];
   const score = questions.filter((x, i) => answers[i] === x.answer).length;
 
@@ -134,9 +150,13 @@ export default function Assessments({ state, setState, openLesson, dados }) {
     setTrack(id);
     setAttemptSeed(newAssessmentSeed());
     setDiagnosticForm(state.diagnostico?.entrada ? "B" : "A");
+    setDiagnosticSize(
+      state.diagnostico?.entrada?.amostraPorModulo || diagnosticSize,
+    );
     setStarted(false);
     setIndex(0);
     setAnswers({});
+    setConfidence({});
     setRevealed(false);
     setDone(false);
   }
@@ -158,19 +178,29 @@ export default function Assessments({ state, setState, openLesson, dados }) {
               score,
               total: questions.length,
               date: new Date().toISOString(),
+              errosAltaConfianca: questions.filter(
+                (question, i) =>
+                  answers[i] !== question.answer && confidence[i] === "alta",
+              ).length,
             },
           },
         };
         if (track !== "geral") return base;
         const porQuestao = {};
         questions.forEach((x, i) => {
-          porQuestao[x.id] = { track: x.track, ok: answers[i] === x.answer };
+          porQuestao[x.id] = {
+            track: x.track,
+            ok: answers[i] === x.answer,
+            confianca: confidence[i],
+          };
         });
         const registro = {
           data: new Date().toISOString(),
           acertos: score,
           total: questions.length,
           forma: diagnosticForm,
+          modo: diagnosticSize === DIAG_COMPLETO_POR_MODULO ? "completo" : "rapido",
+          amostraPorModulo: diagnosticSize,
           leitura: Math.round((s.completed.length / lessons.length) * 100),
           porQuestao,
         };
@@ -212,16 +242,42 @@ export default function Assessments({ state, setState, openLesson, dados }) {
                 <small>AVALIAÇÃO INTEGRADORA</small>
                 <h2>Amostra diagnóstica do POP</h2>
                 <p>
-                  Três questões por módulo, dos fundamentos à conclusão técnica.
-                  A reaplicação usa os mesmos itens-âncora em outra ordem e
-                  descreve os dois resultados sem atribuir a variação ao curso.
+                  Escolha uma leitura rápida ou completa, dos fundamentos à
+                  conclusão técnica. A reaplicação conserva a mesma amostra em
+                  outra ordem e descreve os resultados sem atribuir a variação
+                  ao curso.
                 </p>
               </span>
             </div>
+            <fieldset className="diagnostic-depth">
+              <legend>Profundidade desta aplicação</legend>
+              {[
+                [DIAG_RAPIDO_POR_MODULO, "Rápida", "1 item por módulo · orienta por onde começar"],
+                [DIAG_COMPLETO_POR_MODULO, "Completa", "3 itens por módulo · compara mais pontos do POP"],
+              ].map(([value, label, help]) => (
+                <button
+                  key={value}
+                  type="button"
+                  aria-pressed={diagnosticSize === value}
+                  className={diagnosticSize === value ? "selected" : ""}
+                  disabled={Boolean(state.diagnostico?.entrada)}
+                  onClick={() => setDiagnosticSize(value)}
+                >
+                  <strong>{label}</strong>
+                  <small>{help}</small>
+                </button>
+              ))}
+              {state.diagnostico?.entrada ? (
+                <small>
+                  A reaplicação mantém a mesma amostra da primeira tentativa
+                  para permitir comparação item a item.
+                </small>
+              ) : null}
+            </fieldset>
             <div className="assessment-meta">
               <span>
-                <Clock /> {tracks.length * DIAG_POR_MODULO} questões · cerca de{" "}
-                {Math.round(tracks.length * DIAG_POR_MODULO * 0.5)} min
+                <Clock /> {diagnosticQuestionCount} questões · cerca de{" "}
+                {Math.max(5, Math.round(diagnosticQuestionCount * 0.75))} min
               </span>
               <span>
                 <MessageSquareText /> Feedback imediato
@@ -311,8 +367,12 @@ export default function Assessments({ state, setState, openLesson, dados }) {
                   .map((question, questionIndex) => ({
                     q: question,
                     i: questionIndex,
+                    confianca: confidence[questionIndex],
                   }))
                   .filter(({ q: question, i }) => answers[i] !== question.answer);
+                const errosAltaConfianca = erradas.filter(
+                  ({ confianca }) => confianca === "alta",
+                ).length;
                 return erradas.length ? (
                   <div className="revisao-erros">
                     <h3>
@@ -321,8 +381,17 @@ export default function Assessments({ state, setState, openLesson, dados }) {
                         ? "questão"
                         : `${erradas.length} questões`}
                     </h3>
+                    {errosAltaConfianca ? (
+                      <p className="confidence-priority" role="status">
+                        <AlertTriangle size={15} /> {errosAltaConfianca}{" "}
+                        {errosAltaConfianca === 1
+                          ? "erro foi respondido"
+                          : "erros foram respondidos"}{" "}
+                        com alta confiança. Revise esse bloco primeiro.
+                      </p>
+                    ) : null}
                     <ul>
-                      {erradas.map(({ q: question, i }) => {
+                      {erradas.map(({ q: question, i, confianca }) => {
                         const t = tracks.find((item) => item.id === question.track);
                         const exata = question.source?.sec
                           ? lessonMap.get(question.source.sec)
@@ -337,7 +406,12 @@ export default function Assessments({ state, setState, openLesson, dados }) {
                         return (
                           <li key={question.id || i}>
                             <span className="re-mod">{t?.code || ""}</span>
-                            <span className="re-q">{question.question}</span>
+                            <span className="re-q">
+                              {question.question}
+                              <small className={`confidence-tag ${confianca || "sem"}`}>
+                                Confiança {confianca || "não registrada"}
+                              </small>
+                            </span>
                             {aula ? (
                               <button
                                 type="button"
@@ -438,6 +512,34 @@ export default function Assessments({ state, setState, openLesson, dados }) {
                     </button>
                   ))}
                 </div>
+                {!revealed ? (
+                  <fieldset className="answer-confidence">
+                    <legend>Quanto você confia na resposta escolhida?</legend>
+                    <div>
+                      {CONFIDENCE_LEVELS.map(([value, label, help]) => (
+                        <button
+                          type="button"
+                          key={value}
+                          aria-pressed={confidence[index] === value}
+                          className={confidence[index] === value ? "selected" : ""}
+                          onClick={() =>
+                            setConfidence((current) => ({
+                              ...current,
+                              [index]: value,
+                            }))
+                          }
+                        >
+                          <strong>{label}</strong>
+                          <small>{help}</small>
+                        </button>
+                      ))}
+                    </div>
+                  </fieldset>
+                ) : (
+                  <p className="confidence-recorded">
+                    Confiança declarada: <strong>{confidence[index]}</strong>
+                  </p>
+                )}
                 {revealed ? (
                   <div
                     className={
@@ -486,7 +588,9 @@ export default function Assessments({ state, setState, openLesson, dados }) {
                     <button
                       type="button"
                       className="primary"
-                      disabled={answers[index] === undefined}
+                      disabled={
+                        answers[index] === undefined || !confidence[index]
+                      }
                       onClick={() => setRevealed(true)}
                     >
                       Confirmar resposta

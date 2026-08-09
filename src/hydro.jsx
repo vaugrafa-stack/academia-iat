@@ -1,14 +1,180 @@
 // Secao "Como funciona uma hidreletrica", guia tecnico visual e interativo.
 // Modulo isolado (primeiro passo de quebra do main.jsx). Recebe apenas `go`.
-import React, { useState, useMemo } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import {
   Waves, Zap, Droplets, Factory, Mountain, Gauge, ArrowRight, Info,
   Layers3, Activity, CircleHelp, TowerControl, Wind, MapPin,
 } from 'lucide-react';
 import { TurbineGallery, PRCasesSection, ArrangementSchematics, LicensingPath } from './hydroCases';
 import NormativeAuthorityAxes from './NormativeAuthorityAxes.jsx';
+import './hydroNavigation.css';
 
 const ASSET = (p) => ((import.meta.env.BASE_URL || '/').replace(/\/$/, '')) + p;
+
+export const HYDRO_SECTIONS = Object.freeze([
+  { id: 'hydro-principio', label: 'Princípio' },
+  { id: 'hydro-anatomia', label: 'Anatomia' },
+  { id: 'hydro-potencia', label: 'Potência' },
+  { id: 'hydro-competencias', label: 'Competências' },
+  { id: 'hydro-tipologias', label: 'Tipologias' },
+  { id: 'hydro-operacao', label: 'Operação' },
+  { id: 'hydro-barramentos', label: 'Barramentos' },
+  { id: 'hydro-turbinas', label: 'Turbinas' },
+  { id: 'hydro-casos', label: 'Casos do Paraná' },
+  { id: 'hydro-arranjos', label: 'Arranjos' },
+  { id: 'hydro-licenciamento', label: 'Licenciamento' },
+]);
+
+function clampPercent(value) {
+  return Math.min(100, Math.max(0, Math.round(value)));
+}
+
+export function calculateHydroReadingState({
+  sections,
+  scrollY = 0,
+  viewportHeight = 0,
+  activationOffset = 0,
+}) {
+  const available = sections.filter((section) => (
+    Number.isFinite(section.top) && Number.isFinite(section.bottom)
+  ));
+
+  if (!available.length) {
+    return { activeId: HYDRO_SECTIONS[0].id, progress: 0 };
+  }
+
+  const readingLine = scrollY + activationOffset;
+  let activeId = available[0].id;
+  for (const section of available) {
+    if (section.top > readingLine) break;
+    activeId = section.id;
+  }
+
+  const start = available[0].top;
+  const end = Math.max(start + 1, available.at(-1).bottom - viewportHeight);
+  const progress = clampPercent(((readingLine - start) / (end - start)) * 100);
+  return { activeId, progress };
+}
+
+function topbarHeight() {
+  const cssValue = getComputedStyle(document.documentElement)
+    .getPropertyValue('--top')
+    .trim();
+  return Number.parseFloat(cssValue) || 74;
+}
+
+function focusSection(id) {
+  const section = document.getElementById(id);
+  if (!section) return;
+
+  const reducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+  section.scrollIntoView({
+    behavior: reducedMotion ? 'auto' : 'smooth',
+    block: 'start',
+  });
+  section.focus({ preventScroll: true });
+}
+
+export function HydroLocalNav() {
+  const [reading, setReading] = useState({
+    activeId: HYDRO_SECTIONS[0].id,
+    progress: 0,
+  });
+
+  useEffect(() => {
+    let animationFrame = 0;
+
+    const update = () => {
+      animationFrame = 0;
+      const scrollY = window.scrollY || document.documentElement.scrollTop || 0;
+      const positions = HYDRO_SECTIONS.map(({ id }) => {
+        const element = document.getElementById(id);
+        if (!element) return { id, top: Number.NaN, bottom: Number.NaN };
+        const rect = element.getBoundingClientRect();
+        return {
+          id,
+          top: rect.top + scrollY,
+          bottom: rect.bottom + scrollY,
+        };
+      });
+      const next = calculateHydroReadingState({
+        sections: positions,
+        scrollY,
+        viewportHeight: window.innerHeight,
+        activationOffset: topbarHeight() + 96,
+      });
+      setReading((current) => (
+        current.activeId === next.activeId && current.progress === next.progress
+          ? current
+          : next
+      ));
+    };
+
+    const scheduleUpdate = () => {
+      if (animationFrame) return;
+      animationFrame = window.requestAnimationFrame(update);
+    };
+
+    update();
+    window.addEventListener('scroll', scheduleUpdate, { passive: true });
+    window.addEventListener('resize', scheduleUpdate);
+    return () => {
+      window.removeEventListener('scroll', scheduleUpdate);
+      window.removeEventListener('resize', scheduleUpdate);
+      if (animationFrame) window.cancelAnimationFrame(animationFrame);
+    };
+  }, []);
+
+  function handleKeyDown(event) {
+    if (!['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) return;
+    const controls = [...event.currentTarget.querySelectorAll('[data-hydro-nav-target]')];
+    const currentIndex = controls.indexOf(document.activeElement);
+    if (currentIndex < 0) return;
+
+    event.preventDefault();
+    let nextIndex = currentIndex;
+    if (event.key === 'Home') nextIndex = 0;
+    if (event.key === 'End') nextIndex = controls.length - 1;
+    if (event.key === 'ArrowLeft') nextIndex = Math.max(0, currentIndex - 1);
+    if (event.key === 'ArrowRight') nextIndex = Math.min(controls.length - 1, currentIndex + 1);
+    controls[nextIndex]?.focus();
+  }
+
+  return (
+    <nav className="hydro-guide-nav" aria-label="Seções deste guia" onKeyDown={handleKeyDown}>
+      <div className="hydro-guide-nav__summary">
+        <strong>Neste guia</strong>
+        <span>{reading.progress}% lido</span>
+      </div>
+      <div className="hydro-guide-nav__links">
+        {HYDRO_SECTIONS.map((section) => (
+          <button
+            type="button"
+            key={section.id}
+            data-hydro-nav-target={section.id}
+            aria-current={reading.activeId === section.id ? 'location' : undefined}
+            onClick={() => {
+              setReading((current) => ({ ...current, activeId: section.id }));
+              focusSection(section.id);
+            }}
+          >
+            {section.label}
+          </button>
+        ))}
+      </div>
+      <div
+        className="hydro-guide-nav__progress"
+        role="progressbar"
+        aria-label="Progresso de leitura deste guia"
+        aria-valuemin="0"
+        aria-valuemax="100"
+        aria-valuenow={reading.progress}
+      >
+        <span style={{ width: `${reading.progress}%` }} />
+      </div>
+    </nav>
+  );
+}
 
 // --- Componentes do arranjo (hotspots do corte transversal) ---
 const PARTES = [
@@ -382,7 +548,14 @@ export default function HydroGuide({ go }) {
         </div>
       </header>
 
-      <section className="hydro-hero">
+      <HydroLocalNav />
+
+      <section
+        className="hydro-hero hydro-section hydro-section--intro"
+        id="hydro-principio"
+        tabIndex="-1"
+        data-hydro-section
+      >
         <figure className="hydro-gif">
           <CicloGeracao />
           <figcaption>Ciclo de geração: captação, adução, turbinamento e restituição ao rio.</figcaption>
@@ -399,7 +572,7 @@ export default function HydroGuide({ go }) {
         </div>
       </section>
 
-      <section className="hydro-block">
+      <section className="hydro-block hydro-section hydro-long-section" id="hydro-anatomia" tabIndex="-1" data-hydro-section>
         <div className="section-title"><div><h2>Anatomia do arranjo</h2><p>Clique em cada ponto do corte para entender a função.</p></div><Layers3 /></div>
         <div className="cross-layout">
           <CrossSection selected={parte} onSelect={setParte} />
@@ -414,14 +587,16 @@ export default function HydroGuide({ go }) {
         </div>
       </section>
 
-      <section className="hydro-block">
+      <section className="hydro-block hydro-section hydro-long-section" id="hydro-potencia" tabIndex="-1" data-hydro-section>
         <div className="section-title"><div><h2>A conta da potência</h2><p>Ajuste vazão, queda e rendimento e compare a estimativa com as faixas didáticas do POP.</p></div><Gauge /></div>
         <PowerCalc />
       </section>
 
-      <NormativeAuthorityAxes />
+      <div className="hydro-section hydro-long-section" id="hydro-competencias" tabIndex="-1" data-hydro-section>
+        <NormativeAuthorityAxes />
+      </div>
 
-      <section className="hydro-block">
+      <section className="hydro-block hydro-section hydro-long-section" id="hydro-tipologias" tabIndex="-1" data-hydro-section>
         <div className="section-title"><div><h2>Faixas didáticas do eixo ambiental IAT</h2><p>Quadro 8 do POP e IN IAT nº 09/2025: ponto de partida ambiental, sem substituir os eixos ANEEL e de recursos hídricos acima.</p></div><Factory /></div>
         <div className="pot-grid">{TIPOS_POTENCIA.map((t) => (
           <article key={t.sigla} className="pot-card" style={{ '--pc': t.cor }}>
@@ -433,37 +608,37 @@ export default function HydroGuide({ go }) {
         ))}</div>
       </section>
 
-      <section className="hydro-block">
+      <section className="hydro-block hydro-section hydro-long-section" id="hydro-operacao" tabIndex="-1" data-hydro-section>
         <div className="section-title"><div><h2>Tipos por reservatório e operação</h2></div><Droplets /></div>
         <div className="res-grid">{TIPOS_RESERVATORIO.map((t) => (
           <article key={t.nome} className="res-card"><t.icon /><strong>{t.nome}</strong><p>{t.desc}</p></article>
         ))}</div>
       </section>
 
-      <section className="hydro-block">
+      <section className="hydro-block hydro-section hydro-long-section" id="hydro-barramentos" tabIndex="-1" data-hydro-section>
         <div className="section-title"><div><h2>Tipos de barramento</h2><p>A escolha depende do vale, da fundação e do material disponível.</p></div><Mountain /></div>
         <div className="dam-grid">{BARRAGENS.map((b) => (
           <article key={b.nome} className="dam-card"><DamMini kind={b.svg} /><div><strong>{b.nome}</strong><small>{b.resiste}</small><em>{b.onde}</em></div></article>
         ))}</div>
       </section>
 
-      <section className="hydro-block">
+      <section className="hydro-block hydro-section hydro-long-section" id="hydro-turbinas" tabIndex="-1" data-hydro-section>
         <div className="section-title"><div><h2>Turbinas: faixas de aplicação</h2><p>O projeto cruza queda e vazão; o seletor abaixo destaca somente as faixas de queda e explicita essa limitação.</p></div><Wind /></div>
         <TurbinePicker />
         <TurbineGallery />
       </section>
 
-      <section className="hydro-block">
+      <section className="hydro-block hydro-section hydro-long-section" id="hydro-casos" tabIndex="-1" data-hydro-section>
         <div className="section-title"><div><h2>Casos reais no Paraná</h2><p>Um empreendimento verificado por tipo, com critérios e o site oficial de cada um.</p></div><MapPin /></div>
         <PRCasesSection />
       </section>
 
-      <section className="hydro-block">
+      <section className="hydro-block hydro-section hydro-long-section" id="hydro-arranjos" tabIndex="-1" data-hydro-section>
         <div className="section-title"><div><h2>Esquemas de arranjo</h2><p>Três diagramas detalhados: como o arranjo físico muda o circuito, a operação e o impacto.</p></div><Info /></div>
         <ArrangementSchematics />
       </section>
 
-      <section className="hydro-block">
+      <section className="hydro-block hydro-section hydro-long-section" id="hydro-licenciamento" tabIndex="-1" data-hydro-section>
         <div className="section-title"><div><h2>Como solicitar a autorização para construir</h2><p>Da ideia à operação: o caminho na ANEEL e no IAT, e o papel de cada ator.</p></div><Gauge /></div>
         <LicensingPath go={go} />
       </section>

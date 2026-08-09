@@ -1,0 +1,175 @@
+.hydro-guide-nav {
+  position: sticky;
+  top: calc(var(--top) + 8px);
+  z-index: 24;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: 8px 18px;
+  min-width: 0;
+  padding: 9px 12px 0;
+  border: 1px solid color-mix(in srgb, var(--green) 22%, var(--line));
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--surface) 92%, transparent);
+  box-shadow: 0 12px 32px rgba(15, 42, 32, 0.12);
+  backdrop-filter: blur(16px) saturate(1.2);
+}
+
+.hydro-guide-nav__summary {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  white-space: nowrap;
+}
+
+.hydro-guide-nav__summary strong {
+  color: var(--green);
+  font-size: 13px;
+  letter-spacing: 0.02em;
+}
+
+.hydro-guide-nav__summary span {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.hydro-guide-nav__links {
+  display: flex;
+  min-width: 0;
+  gap: 3px;
+  overflow-x: auto;
+  overscroll-behavior-inline: contain;
+  scrollbar-width: thin;
+  scroll-snap-type: inline proximity;
+}
+
+.hydro-guide-nav__links button {
+  position: relative;
+  flex: 0 0 auto;
+  min-height: 44px;
+  padding: 9px 11px;
+  border: 0;
+  border-radius: 7px 7px 0 0;
+  background: transparent;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 750;
+  white-space: nowrap;
+  scroll-snap-align: center;
+}
+
+.hydro-guide-nav__links button::after {
+  content: '';
+  position: absolute;
+  right: 10px;
+  bottom: 2px;
+  left: 10px;
+  height: 3px;
+  border-radius: 3px;
+  background: linear-gradient(90deg, var(--green2), var(--blue));
+  opacity: 0;
+  transform: scaleX(0.4);
+  transition: opacity 160ms ease, transform 180ms ease;
+}
+
+.hydro-guide-nav__links button:hover {
+  background: var(--soft);
+  color: var(--ink);
+}
+
+.hydro-guide-nav__links button[aria-current='location'] {
+  background: color-mix(in srgb, var(--green3) 78%, transparent);
+  color: var(--green);
+}
+
+.hydro-guide-nav__links button[aria-current='location']::after {
+  opacity: 1;
+  transform: scaleX(1);
+}
+
+.hydro-guide-nav__progress {
+  grid-column: 1 / -1;
+  height: 3px;
+  margin-inline: -12px;
+  overflow: hidden;
+  border-radius: 0 0 12px 12px;
+  background: color-mix(in srgb, var(--green) 10%, var(--line));
+}
+
+.hydro-guide-nav__progress span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--green2), var(--blue));
+  transition: width 140ms linear;
+}
+
+.hydro-section {
+  scroll-margin-top: calc(var(--top) + 88px);
+}
+
+.hydro-section:focus {
+  outline: 3px solid color-mix(in srgb, var(--blue) 72%, white);
+  outline-offset: 5px;
+}
+
+.hydro-long-section {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 720px;
+}
+
+@media (max-width: 980px) {
+  .hydro-guide-nav {
+    grid-template-columns: 1fr;
+    gap: 2px;
+    padding-top: 7px;
+  }
+
+  .hydro-guide-nav__summary {
+    padding-inline: 5px;
+  }
+
+  .hydro-guide-nav__links {
+    margin-inline: -5px;
+  }
+}
+
+@media (max-width: 720px) {
+  .hydro-guide-nav {
+    top: calc(var(--top) + 4px);
+    margin-inline: -8px;
+    border-radius: 10px;
+  }
+
+  .hydro-guide-nav__summary span {
+    margin-left: auto;
+  }
+
+  .hydro-guide-nav__links button {
+    min-height: 46px;
+    padding-inline: 10px;
+  }
+
+  .hydro-section {
+    scroll-margin-top: calc(var(--top) + 108px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hydro-guide-nav__links button::after,
+  .hydro-guide-nav__progress span {
+    transition: none;
+  }
+}
+
+@media print {
+  .hydro-guide-nav {
+    display: none;
+  }
+
+  .hydro-long-section {
+    content-visibility: visible;
+    contain-intrinsic-size: none;
+  }
+}

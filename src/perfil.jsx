@@ -33,6 +33,10 @@ import { lessonEvidenceStatus } from './lessonEvidence.js';
 
 // O gerenciador offline so aparece dentro do perfil, entao segue adiado aqui.
 const OfflineManager = lazy(() => import('./OfflineManager.jsx'));
+// A conta remota tambem: ela nao existe na versao publicada em pagina estatica,
+// e o cartao se apaga sozinho quando nao ha servico na mesma origem. Carregar
+// isso adiantado seria pagar por codigo que a maioria dos acessos nunca usa.
+const ContaRemotaCard = lazy(() => import('./ContaRemotaCard.jsx'));
 import { tracks } from './courseData.js';
 import {
   hasAccount,
@@ -51,6 +55,8 @@ import {
 
 export default function Profile({
   state,
+  setState,
+  algoMaisNovo,
   progress,
   profile,
   setProfile,
@@ -320,6 +326,7 @@ export default function Profile({
             Editar dados
           </button>
         </article>
+        <ContaRemotaCard state={state} setState={setState} algoMaisNovo={algoMaisNovo} />
         <article className="profile-card profile-activity">
           <h3>Atividade</h3>
           <ul className="profile-activity-list">

@@ -154,6 +154,10 @@ import {
 } from "./lessonEvidence.js";
 import { useMediaQuery } from "./useMediaQuery.js";
 import { useStoredState } from "./storedState.js";
+// A gravacao automatica do progresso na conta opcional. Fica aqui, e nao no
+// cartao da conta, porque estudar acontece nas OUTRAS telas: no perfil ela
+// nunca veria o momento em que a pessoa termina alguma coisa.
+import { useSincroniaAutomatica } from "./sincroniaAutomatica.js";
 import "./styles.css";
 import "./nota10.css";
 
@@ -489,6 +493,7 @@ function App() {
     return true;
   };
   const [state, setState, storageStatus, resolveCorruptStorage] = useStoredState();
+  const { algoMaisNovo } = useSincroniaAutomatica(state);
   const _init = parseHash();
   const [view, setView] = useState(_init.view);
   const [selectedLesson, setSelectedLesson] = useState(() =>
@@ -790,6 +795,8 @@ function App() {
     perfil: (
       <Profile
         state={state}
+        setState={setState}
+        algoMaisNovo={algoMaisNovo}
         progress={progress}
         profile={profile}
         setProfile={setProfile}

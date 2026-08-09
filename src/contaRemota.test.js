@@ -12,8 +12,10 @@ import {
   entrar,
   gravarProgresso,
   lerProgresso,
+  marcoDeEstudo,
   planejarSincronia,
   quemSou,
+  servicoDisponivel,
   temConteudo,
 } from "./contaRemota.js";
 
@@ -51,10 +53,45 @@ describe("o que conta como progresso", () => {
   });
 
   it("conta também o que não é lista", () => {
-    for (const campo of ["notes", "quizScores", "labs", "revisao", "doneAt"]) {
+    for (const campo of ["notes", "quizScores", "labs", "revisao", "doneAt", "autoaval"]) {
       const estado = { ...createDefaultProgressState(), [campo]: { algo: 1 } };
       expect(temConteudo(estado), campo).toBe(true);
     }
+  });
+
+  it("o enquadramento conta pelo valor, e não por ter chave", () => {
+    // `enquadra` nasce `{acertos: 0, total: 0}`: contar chaves diria que todo
+    // estado novo tem conteudo, e a pergunta de conflito apareceria para quem
+    // nunca estudou.
+    expect(temConteudo({ ...createDefaultProgressState(), enquadra: { acertos: 0, total: 0 } }))
+      .toBe(false);
+    expect(temConteudo({ ...createDefaultProgressState(), enquadra: { acertos: 1, total: 3 } }))
+      .toBe(true);
+  });
+});
+
+describe("existe serviço de conta nesta origem", () => {
+  it("página estática sem backend responde que não", async () => {
+    // Hospedeiro de página estática devolve a propria pagina de erro em HTML.
+    // Sem esta pergunta, a tela ofereceria criar conta onde nao ha onde criar.
+    const paginaDeErro = vi.fn(async () => ({
+      ok: false,
+      status: 404,
+      json: async () => {
+        throw new Error("não é JSON");
+      },
+    }));
+    expect(await servicoDisponivel(paginaDeErro)).toBe(false);
+  });
+
+  it("200 com corpo que não é o do serviço também é não", async () => {
+    // Hospedeiro que devolve a pagina inicial para caminho desconhecido passaria
+    // pelo `ok` e enganaria a checagem.
+    expect(await servicoDisponivel(respostaFalsa({ titulo: "Academia IAT" }))).toBe(false);
+  });
+
+  it("serviço de verdade responde que sim", async () => {
+    expect(await servicoDisponivel(respostaFalsa({ ok: true }))).toBe(true);
   });
 });
 
@@ -76,6 +113,10 @@ describe("a decisão de sincronia", () => {
     });
     expect(decisao.acao).toBe(DESCE_O_REMOTO);
     expect(decisao.revisao).toBe(7);
+    // O documento viaja junto com a decisao. Sem isso, quem executa precisaria
+    // de uma SEGUNDA leitura, e entre uma e outra o servidor pode mudar: a
+    // pessoa decidiria sobre uma coisa e receberia outra.
+    expect(decisao.remoto.documento).toBe('{"completed":["x"]}');
   });
 
   it("os dois vazios não fazem nada", () => {
@@ -157,6 +198,35 @@ describe("a conversa com o serviço nunca derruba a tela", () => {
     const buscar = respostaFalsa({ id: "1", email: "alguem@example.org" });
     const r = await criarConta("alguem@example.org", SENHA, "Nome", buscar);
     expect(JSON.stringify(r.corpo)).not.toContain(SENHA);
+  });
+});
+
+describe("quando vale a pena gravar", () => {
+  it("anotação sendo digitada não é marco", () => {
+    // Gravar a cada letra encheria o log do serviço e gastaria rede da
+    // repartição para nada.
+    const antes = comEstudo({ notes: { a: "um" } });
+    const depois = comEstudo({ notes: { a: "um texto bem mais longo" } });
+    expect(marcoDeEstudo(depois)).toBe(marcoDeEstudo(antes));
+  });
+
+  it("fechar um bloco de estudo é marco", () => {
+    const base = comEstudo();
+    for (const [campo, valor] of [
+      ["completed", ["a", "b"]],
+      ["quizScores", { q1: 8 }],
+      ["labs", { caso1: {} }],
+      ["checks", { c1: true }],
+      ["its", { it1: {} }],
+      ["enquadra", { acertos: 1, total: 1 }],
+    ]) {
+      expect(marcoDeEstudo({ ...base, [campo]: valor }), campo).not.toBe(marcoDeEstudo(base));
+    }
+  });
+
+  it("não estoura com estado ausente", () => {
+    expect(marcoDeEstudo(null)).toBe("");
+    expect(marcoDeEstudo("texto")).toBe("");
   });
 });
 

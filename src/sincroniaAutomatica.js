@@ -1,0 +1,101 @@
+// Gravação automática do progresso, ao fechar um bloco de estudo.
+//
+// ## Por que isto não mora dentro do cartão da conta
+//
+// O cartão só existe na tela "Meu progresso". Estudar acontece nas outras: a
+// aula, o quiz, o laboratório. Se a gravação morasse lá, ela nunca veria o
+// momento em que a pessoa termina alguma coisa, e a conta prometeria continuar
+// noutro computador sem nunca ter enviado nada.
+//
+// Por isso o gancho é chamado no alto da aplicação, onde o estado do progresso
+// vive, e o cartão avisa por evento quando alguém entra ou sai.
+//
+// ## O que ele nunca faz
+//
+// Não decide conflito, não apaga nada e não mostra erro. Se o serviço recusar a
+// gravação porque existe algo mais novo em outro computador, ele apenas anota
+// isso e deixa a escolha para a pessoa, na tela do perfil.
+
+import { useEffect, useRef, useState } from "react";
+import { gravarProgresso, marcoDeEstudo, quemSou, servicoDisponivel } from "./contaRemota.js";
+import { gravarRevisao, lerRevisao } from "./sincroniaLocal.js";
+
+export const EVENTO_CONTA = "iat:conta-mudou";
+
+/** O cartão avisa aqui quando alguém entra ou sai. */
+export function avisarContaMudou(conta) {
+  try {
+    globalThis.dispatchEvent?.(new CustomEvent(EVENTO_CONTA, { detail: conta || null }));
+  } catch {
+    // Ambiente sem janela (teste de nó). Não ter aviso não quebra nada: o
+    // gancho volta a perguntar quem está logado na próxima montagem.
+  }
+}
+
+/**
+ * Envia o progresso quando um bloco de estudo fecha.
+ *
+ * Devolve `{ conta, algoMaisNovo }`. `algoMaisNovo` fica verdadeiro quando o
+ * serviço recusou a gravação por ter revisão maior, que é o sinal de que outro
+ * computador andou.
+ */
+export function useSincroniaAutomatica(state) {
+  const [conta, setConta] = useState(null);
+  const [algoMaisNovo, setAlgoMaisNovo] = useState(false);
+  const marcoAnterior = useRef(null);
+
+  // Quem está logado. Pergunta uma vez, e depois só quando o cartão avisar.
+  useEffect(() => {
+    let vivo = true;
+    (async () => {
+      if (!(await servicoDisponivel())) return;
+      const eu = await quemSou();
+      if (vivo) setConta(eu);
+    })();
+
+    const aoMudar = (evento) => {
+      setConta(evento.detail || null);
+      // O marco volta a zero: logo depois de entrar, o cartão sincroniza, e
+      // gravar aqui devolveria ao servidor o que acabou de vir dele.
+      marcoAnterior.current = null;
+      setAlgoMaisNovo(false);
+    };
+    globalThis.addEventListener?.(EVENTO_CONTA, aoMudar);
+    return () => {
+      vivo = false;
+      globalThis.removeEventListener?.(EVENTO_CONTA, aoMudar);
+    };
+  }, []);
+
+  useEffect(() => {
+    const id = conta?.id;
+    const marco = marcoDeEstudo(state);
+    if (!id) {
+      marcoAnterior.current = marco;
+      return undefined;
+    }
+    // A primeira passada só registra onde estávamos.
+    if (marcoAnterior.current === null || marcoAnterior.current === marco) {
+      marcoAnterior.current = marco;
+      return undefined;
+    }
+    marcoAnterior.current = marco;
+
+    let vivo = true;
+    (async () => {
+      const pedida = lerRevisao(id) + 1;
+      const r = await gravarProgresso(pedida, state);
+      // Falha de rede não vira aviso: o progresso local está salvo, e o que não
+      // aconteceu foi a sincronização, que não é o que a pessoa estava fazendo.
+      if (!vivo || !r.ok) return;
+      const guardada = r.corpo?.revisao ?? pedida;
+      gravarRevisao(id, guardada);
+      if (guardada !== pedida) setAlgoMaisNovo(true);
+    })();
+    return () => {
+      vivo = false;
+    };
+  }, [conta, state]);
+
+  return { conta, algoMaisNovo };
+}

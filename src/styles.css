@@ -45,6 +45,22 @@
 .profile-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1rem;margin:1.25rem 0}
 .profile-card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:1.25rem;box-shadow:0 8px 24px rgba(12,62,48,.05)}
 .profile-card h3{margin:0 0 .8rem;color:var(--ink);font-size:1rem}
+
+/* Conta opcional. O cartao ocupa a linha inteira porque tem formulario dentro,
+   e so aparece quando existe servico na mesma origem. */
+.conta-remota{grid-column:1/-1}
+.conta-remota h3{display:flex;align-items:center;gap:.5rem}
+.conta-remota h3 svg{width:18px;color:var(--green2)}
+.conta-remota .profile-form{max-width:100%;margin-top:.9rem;padding:1.1rem;box-shadow:none}
+.conta-remota .profile-form small{font-weight:400;color:var(--muted);font-size:.8rem;line-height:1.45}
+.conta-conflito{margin-top:.9rem;padding:.9rem 1rem;border-left:3px solid var(--amber);background:var(--amber2);border-radius:0 10px 10px 0}
+.conta-conflito p{margin:0 0 .8rem;font-size:.88rem;line-height:1.5;color:var(--ink)}
+.conta-conflito button{min-height:40px;padding:.5rem .8rem;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--ink);font:inherit;font-weight:650}
+.conta-aviso{display:flex;gap:.5rem;align-items:flex-start;margin:.9rem 0 0;font-size:.85rem;line-height:1.5}
+.conta-aviso svg{width:16px;flex:none;margin-top:.15rem}
+.conta-aviso-ok svg{color:var(--green2)}
+.conta-aviso-erro{color:var(--red)}
+.conta-aviso-erro svg{color:var(--red)}
 .profile-progress{display:flex;flex-direction:column;align-items:center;gap:.4rem;text-align:center}
 .profile-progress small{color:var(--muted)}
 .pring{--v:0;width:130px;height:130px;border-radius:50%;display:grid;place-items:center;background:conic-gradient(#0e7357 calc(var(--v)*1%),#e6efeb 0);margin:.3rem 0}

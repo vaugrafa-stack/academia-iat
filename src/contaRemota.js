@@ -40,11 +40,33 @@ export const NADA_A_FAZER = "nada-a-fazer";
 export function temConteudo(estado) {
   if (!estado || typeof estado !== "object") return false;
   const listas = ["completed", "bookmarks", "videoSeen"];
-  const mapas = ["notes", "quizScores", "labs", "flows", "checks", "doneAt", "its", "revisao"];
+  // `enquadra` fica de fora desta lista: ele nasce `{acertos: 0, total: 0}`, com
+  // chaves, e contar chaves diria que todo estado novo tem conteúdo. Ele é
+  // conferido pelo valor, logo abaixo.
+  const mapas = [
+    "notes", "quizScores", "labs", "flows", "checks", "doneAt", "its",
+    "revisao", "autoaval", "diagnostico", "lessonEvidence",
+  ];
   return (
     listas.some((c) => Array.isArray(estado[c]) && estado[c].length > 0) ||
-    mapas.some((c) => estado[c] && Object.keys(estado[c]).length > 0)
+    mapas.some((c) => estado[c] && Object.keys(estado[c]).length > 0) ||
+    Number(estado.enquadra?.total) > 0
   );
+}
+
+/**
+ * Existe serviço de conta nesta origem?
+ *
+ * A Academia publicada em página estática NÃO tem backend, e `/api/saude` ali
+ * devolve a página de erro do próprio hospedeiro, com 404 e corpo em HTML. Sem
+ * esta pergunta, a tela ofereceria criar conta onde não há onde criar.
+ *
+ * A resposta precisa ser JSON: hospedeiro que devolve 200 com a página inicial
+ * para caminho desconhecido passaria pelo `ok` e enganaria a checagem.
+ */
+export async function servicoDisponivel(buscar) {
+  const r = await chamar("/api/saude", {}, buscar);
+  return r.ok === true && r.corpo?.ok === true;
 }
 
 /**
@@ -68,8 +90,12 @@ export function combinar(local, remoto, revisaoLocal = 0) {
   }
 
   // Computador novo, com a conta já usada em outro.
+  //
+  // O documento vai junto na decisão, e não numa segunda leitura: entre uma
+  // chamada e outra o servidor pode mudar, e quem executa aplicaria algo
+  // diferente do que foi decidido aqui.
   if (!localTemAlgo && remotoTemAlgo) {
-    return { acao: DESCE_O_REMOTO, revisao: guardado.revisao };
+    return { acao: DESCE_O_REMOTO, revisao: guardado.revisao, remoto: guardado };
   }
 
   // Os dois têm conteúdo. Se a revisão local é a mesma que o servidor
@@ -179,6 +205,33 @@ export async function planejarSincronia(local, revisaoLocal, buscar) {
     return { acao: NADA_A_FAZER, offline: true };
   }
   return combinar(local, remoto, revisaoLocal);
+}
+
+/**
+ * Assinatura do que conta como "fechei um bloco de estudo".
+ *
+ * A integração pede para gravar ao fechar um bloco, e não a cada tecla. Marco
+ * é aula concluída, quiz respondido, caso do laboratório encerrado, checklist
+ * fechado e IT redigida. Anotação sendo digitada NÃO entra: gravar a cada
+ * letra encheria o log do serviço e gastaria rede da repartição para nada.
+ *
+ * Devolve texto para poder ser comparado com o anterior por igualdade simples.
+ */
+export function marcoDeEstudo(estado) {
+  if (!estado || typeof estado !== "object") return "";
+  const tamanho = (v) =>
+    Array.isArray(v) ? v.length : v && typeof v === "object" ? Object.keys(v).length : 0;
+  return [
+    tamanho(estado.completed),
+    tamanho(estado.quizScores),
+    tamanho(estado.labs),
+    tamanho(estado.checks),
+    tamanho(estado.flows),
+    tamanho(estado.its),
+    tamanho(estado.doneAt),
+    tamanho(estado.bookmarks),
+    Number(estado.enquadra?.total) || 0,
+  ].join(".");
 }
 
 /** Decodifica o documento guardado, sem estourar com texto estragado. */

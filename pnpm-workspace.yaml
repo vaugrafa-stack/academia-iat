@@ -15,6 +15,14 @@
 # definido. Aqui o vite so processa CSS do proprio repositorio, entao o vetor
 # nao se aplica, mas o portao nao sabe disso e nao deve ficar vermelho por
 # ruido. A 8.5.23 e a primeira com a correcao completa.
+# nanoid: mesma historia, e o motivo de o portao estar vermelho em 09/08/2026.
+# Entra por vite > postcss > nanoid. O aviso (GHSA-2v37-7h3g-55p8) e sobre
+# gerador customizado entrar em laco infinito quando o tamanho pedido e zero.
+# Aqui quem chama e o postcss, com tamanho fixo, entao o vetor nao se aplica,
+# mas portao vermelho por ruido e portao desligado. A 3.3.17 e a corrigida.
+#
+# A faixa e presa na linha 3, mesmo motivo do undici: `>=3.3.17` sozinho
+# resolveu para 6.0.1, que e outra API e so ESM, e o postcss pede `^3.3.x`.
 overrides:
   # A faixa e presa na linha 7 de proposito. `>=7.29.0` sozinho resolveu para
   # 8.9.0, que removeu `lib/handler/wrap-handler.js`, e o jsdom 29 depende dele:
@@ -22,3 +30,4 @@ overrides:
   # caiu de 195 para 159 sem falhar por conteudo nenhum.
   undici: '>=7.29.0 <8'
   postcss: '>=8.5.23'
+  nanoid: '>=3.3.17 <4'

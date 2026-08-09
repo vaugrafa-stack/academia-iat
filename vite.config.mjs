@@ -22,6 +22,14 @@ function resolveBuildStamp() {
 
 const buildStamp = resolveBuildStamp();
 
+// A conta opcional so existe quando o site e servido junto de um servico de
+// conta na mesma origem. No GitHub Pages nao ha backend, e sondar `/api/saude`
+// ali produz um 404 por carga: erro de console em toda visita, num site que
+// tem portao justamente para nao ter erro de console. Por isso a decisao e de
+// BUILD, e nao de execucao: quem sobe o servico constroi com
+// `IAT_CONTA_REMOTA=1`, e a versao estatica nem carrega o codigo.
+const contaRemota = process.env.IAT_CONTA_REMOTA === '1';
+
 export default {
   base: process.env.PAGES_REPO ? `/${process.env.PAGES_REPO}/` : '/',
   plugins: [{
@@ -36,5 +44,6 @@ export default {
   }],
   define: {
     __BUILD_STAMP__: JSON.stringify(buildStamp),
+    __CONTA_REMOTA__: JSON.stringify(contaRemota),
   },
 };

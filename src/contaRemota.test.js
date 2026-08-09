@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { createDefaultProgressState } from "./storedState.js";
 import {
   DESCE_O_REMOTO,
@@ -7,6 +7,7 @@ import {
   SEM_PROGRESSO,
   SOBE_O_LOCAL,
   combinar,
+  contaHabilitada,
   criarConta,
   documentoParaEstado,
   entrar,
@@ -67,6 +68,31 @@ describe("o que conta como progresso", () => {
       .toBe(false);
     expect(temConteudo({ ...createDefaultProgressState(), enquadra: { acertos: 1, total: 3 } }))
       .toBe(true);
+  });
+});
+
+describe("a conta é decisão de build, e não de execução", () => {
+  afterEach(() => {
+    delete globalThis.__CONTA_REMOTA__;
+  });
+
+  it("sem o sinalizador, nem se pergunta ao servidor", () => {
+    // Na versão publicada em página estática, perguntar é um 404 por carga:
+    // erro de console em toda visita, num site que tem portão justamente para
+    // não ter erro de console. Foi o portão de e2e que acusou isto.
+    expect(contaHabilitada()).toBe(false);
+  });
+
+  it("com o sinalizador ligado, a conta existe", () => {
+    globalThis.__CONTA_REMOTA__ = true;
+    expect(contaHabilitada()).toBe(true);
+  });
+
+  it("qualquer valor que não seja verdadeiro mantém desligado", () => {
+    for (const valor of ["1", 1, "true", null, {}]) {
+      globalThis.__CONTA_REMOTA__ = valor;
+      expect(contaHabilitada(), String(valor)).toBe(false);
+    }
   });
 });
 

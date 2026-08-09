@@ -25,6 +25,7 @@ import {
   NADA_A_FAZER,
   PERGUNTAR,
   SOBE_O_LOCAL,
+  contaHabilitada,
   criarConta,
   documentoParaEstado,
   entrar,
@@ -65,6 +66,9 @@ export default function ContaRemotaCard({ state, setState, algoMaisNovo = false 
   useEffect(() => {
     let vivo = true;
     (async () => {
+      // Sem o sinalizador de build, nem a sondagem acontece: na versao estatica
+      // ela seria um 404 por carga, e erro de console em toda visita.
+      if (!contaHabilitada()) return;
       const existe = await servicoDisponivel();
       if (!vivo) return;
       setServico(existe);

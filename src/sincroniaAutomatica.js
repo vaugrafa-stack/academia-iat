@@ -17,7 +17,13 @@
 // isso e deixa a escolha para a pessoa, na tela do perfil.
 
 import { useEffect, useRef, useState } from "react";
-import { gravarProgresso, marcoDeEstudo, quemSou, servicoDisponivel } from "./contaRemota.js";
+import {
+  contaHabilitada,
+  gravarProgresso,
+  marcoDeEstudo,
+  quemSou,
+  servicoDisponivel,
+} from "./contaRemota.js";
 import { gravarRevisao, lerRevisao } from "./sincroniaLocal.js";
 
 export const EVENTO_CONTA = "iat:conta-mudou";
@@ -48,6 +54,8 @@ export function useSincroniaAutomatica(state) {
   useEffect(() => {
     let vivo = true;
     (async () => {
+      // Sem o sinalizador de build nao ha o que sondar. Ver `contaHabilitada`.
+      if (!contaHabilitada()) return;
       if (!(await servicoDisponivel())) return;
       const eu = await quemSou();
       if (vivo) setConta(eu);

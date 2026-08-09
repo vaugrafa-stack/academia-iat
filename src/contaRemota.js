@@ -55,6 +55,25 @@ export function temConteudo(estado) {
 }
 
 /**
+ * Esta versão foi construída para rodar junto de um serviço de conta?
+ *
+ * Decisão de BUILD, e não de execução. Perguntar ao servidor seria mais
+ * elegante, mas na versão publicada em página estática a pergunta é um 404 por
+ * carga, ou seja, erro de console em toda visita, num site que tem portão
+ * justamente para não ter erro de console.
+ *
+ * Quem sobe o serviço constrói com `IAT_CONTA_REMOTA=1`. Sem isso a conta não
+ * aparece, o que é o comportamento certo: sem serviço, não há onde criar conta.
+ */
+export function contaHabilitada() {
+  try {
+    return typeof __CONTA_REMOTA__ !== "undefined" && __CONTA_REMOTA__ === true;
+  } catch {
+    return false;
+  }
+}
+
+/**
  * Existe serviço de conta nesta origem?
  *
  * A Academia publicada em página estática NÃO tem backend, e `/api/saude` ali

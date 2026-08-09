@@ -35,8 +35,8 @@ export const HYDRO_AUTHORITY_AXES = Object.freeze([
     authority: 'Agência Nacional de Energia Elétrica',
     title: 'Regulação e outorga do setor elétrico',
     scope: 'Registro, autorização ou instrução de concessão para exploração do potencial hidráulico, conforme o regime setorial.',
-    act: 'Portal oficial Outorgas e Resolução Normativa ANEEL nº 875/2020',
-    officialUrl: 'https://www.gov.br/aneel/pt-br/assuntos/geracao/outorgas',
+    act: 'Resolução Normativa ANEEL nº 875/2020, art. 5º, com redação da REN ANEEL nº 1.070/2023',
+    officialUrl: 'https://www2.aneel.gov.br/cedoc/ren2020875.pdf',
     supportingUrl: 'https://www.gov.br/aneel/pt-br/centrais-de-conteudos/manuais-modelos-e-instrucoes/geracao/registro-autorizacao-e-concessao-de-empreendimentos-de-geracao/outorga-de-autorizacao-pch-e-uhe',
     checkedAt: HYDRO_AXES_CHECKED_AT,
     temporalStatus: 'vigência-e-aplicação-a-confirmar',
@@ -44,8 +44,9 @@ export const HYDRO_AUTHORITY_AXES = Object.freeze([
     humanReview: 'pendente',
     criteria: [
       'CGH setorial: capacidade instalada igual ou inferior a 5.000 kW.',
-      'PCH setorial: potência superior a 5.000 kW e até 30.000 kW, com reservatório de até 13 km².',
-      'UHE autorizada: de 5.000 kW a 50.000 kW quando não tiver características de PCH.',
+      'PCH setorial: potência superior a 5.000 kW e até 30.000 kW. A redação consolidada do art. 5º não adota limite de área do reservatório.',
+      'Divergência editorial: a página geral “Outorgas”, atualizada em 2025, ainda menciona 13 km²; a REN consolidada e a página operacional de 2026 usam a faixa de potência. Para decisão, prevalece a conferência do ato consolidado e de sua aplicação ao caso.',
+      'UHE autorizada: potência superior a 30.000 kW e até 50.000 kW, conforme o regime setorial aplicável.',
       'UHE concedida: potência instalada superior a 50.000 kW.',
     ],
     limitation: 'Este eixo não define modalidade ou suficiência do licenciamento ambiental e não substitui outorga ou DRDH de recursos hídricos.',
@@ -453,8 +454,8 @@ function temporalStatus(reference, source) {
 
 /**
  * Converte uma referência textual do POP em registro auditável. Para links de
- * índice, `epistemicStatus` permanece como inferência: a autoria foi
- * identificada, mas o ato exato ainda precisa ser localizado e revisado.
+ * índice, `epistemicStatus` registra que o índice oficial foi localizado, mas
+ * o ato exato ainda precisa ser localizado e revisado.
  */
 export function buildNormativeLedgerEntry(reference = '', index = 0) {
   const source = resolveOfficialSource(reference);

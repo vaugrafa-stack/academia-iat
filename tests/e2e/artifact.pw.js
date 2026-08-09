@@ -101,6 +101,51 @@ test('artefato final mantém build, rotas críticas e console íntegros', async 
   await expectBuildIdentity(page);
 });
 
+test('guia de hidrelétricas leva cada atalho ao título visível e focado', async ({
+  page,
+  baseURL,
+}) => {
+  const runtimeIssues = monitorRuntime(page, baseURL);
+  await page.goto(appUrl(baseURL, '#/hidreletricas'), {
+    waitUntil: 'domcontentloaded',
+  });
+
+  const nav = page.getByRole('navigation', { name: 'Seções deste guia' });
+  const links = nav.locator('.hydro-guide-nav__links');
+  const trigger = nav.getByRole('button', { name: 'Licenciamento' });
+  const target = page.locator('#hydro-licenciamento');
+
+  await expect(nav).toBeVisible();
+  await trigger.click();
+  await expect(target).toBeFocused();
+  await expect(trigger).toHaveAttribute('aria-current', 'location');
+
+  await expect.poll(async () => {
+    const [navBox, targetBox] = await Promise.all([
+      nav.boundingBox(),
+      target.boundingBox(),
+    ]);
+    if (!navBox || !targetBox) return false;
+    const distanceFromNav = targetBox.y - (navBox.y + navBox.height);
+    return distanceFromNav >= -3 && distanceFromNav <= 48;
+  }, {
+    message: 'o título de Licenciamento precisa terminar logo abaixo da navegação fixa',
+  }).toBe(true);
+
+  await expect.poll(async () => trigger.evaluate((element) => {
+    const container = element.parentElement;
+    if (!container) return false;
+    const itemBox = element.getBoundingClientRect();
+    const containerBox = container.getBoundingClientRect();
+    return itemBox.left >= containerBox.left - 1 && itemBox.right <= containerBox.right + 1;
+  }), {
+    message: 'o item ativo precisa permanecer visível na faixa horizontal',
+  }).toBe(true);
+
+  await expect(links).toBeVisible();
+  await expectHealthyPage(page, runtimeIssues);
+});
+
 test('experiência responsiva prioriza aprender e praticar sem overflow', async ({
   page,
   baseURL,

@@ -166,11 +166,11 @@ export const PR_CASES = [
     site: 'https://www.copel.com/site/copel-geracao/usinas/usina-governador-bento-munhoz-da-rocha-netto/', siteLabel: 'copel.com (página oficial da usina)' },
   { tipo: 'UHE a fio d\'água', criterio: 'Acima de 30 MW · sem reservatório de regularização · gera conforme a vazão do rio',
     nome: 'UHE Baixo Iguaçu', local: 'Rio Iguaçu, Capanema / Capitão Leônidas Marques-PR', dados: '350 MW · 3 turbinas Kaplan (~117 MW cada) · concluída em 2019 · vizinha do Parque Nacional do Iguaçu',
-    site: 'https://baixoiguacu.com.br/', siteLabel: 'baixoiguacu.com.br (site oficial, com dados técnicos)' },
+    site: 'https://www.aen.pr.gov.br/Noticia/Usina-Hidreletrica-do-Baixo-Iguacu-opera-com-forca-total', siteLabel: 'aen.pr.gov.br (fonte oficial do Estado do Paraná)' },
   { tipo: 'UHE de queda alta (derivação)', criterio: 'Circuito longo de adução por túnel · queda elevada · turbinas Pelton',
     nome: 'UHE Gov. Pedro Viriato Parigot de Souza (Capivari-Cachoeira)', local: 'Antonina-PR (capta no rio Capivari e restitui no Cachoeira)', dados: '260 MW de potência instalada, com quatro geradores de 62,5 MW segundo a Copel · desnível de 754 m, a maior queda do sul do país · mais de 50 anos de operação',
     site: 'https://www.copel.com/site/copel-geracao/usinas/usina-parigot-de-souza/', siteLabel: 'copel.com (página oficial da usina)' },
-  { tipo: 'PCH, Pequena Central Hidrelétrica', criterio: 'Acima de 5 até 30 MW · área de reservatório de até 3 km², excluída a calha do leito regular (POP) · autorização ANEEL',
+  { tipo: 'PCH, Pequena Central Hidrelétrica', criterio: 'Eixo ambiental IAT: acima de 5 até 30 MW e reservatório de até 3 km², ressalvada a exceção da IN · eixo setorial ANEEL: acima de 5 até 30 MW pela redação consolidada da REN 875/2020, dada pela REN 1.070/2023; a menção a 13 km² ainda existente na página geral Outorgas não deve substituir a conferência do ato',
     nome: 'PCH Bela Vista', local: 'Rio Chopim, Verê / São João-PR', dados: '29,81 MW · inaugurada em outubro de 2021 (unidades em jun/jul/ago) · investimento de R$ 224 milhões da Copel',
     site: 'https://pchbelavista.com.br/', siteLabel: 'pchbelavista.com.br (site oficial)' },
   { tipo: 'CGH, Central Geradora Hidrelétrica', criterio: 'Até 5 MW · registro/comunicação à ANEEL · rito proporcional ao porte',
@@ -187,7 +187,7 @@ export const PR_CASES = [
 export function PRCasesSection() {
   return (
     <div className="pr-cases">
-      <p className="prc-note"><Info size={15} /> Casos reais, com dados públicos coletados nas fontes indicadas em cada card, oficiais sempre que disponíveis. Confirme potência e situação operacional na fonte antes de citar em processo. Os critérios de porte seguem a classificação da ANEEL; o rito de licenciamento aplicável é o do POP e da norma vigente.</p>
+      <p className="prc-note"><Info size={15} /> Casos reais, com dados públicos coletados nas fontes indicadas em cada card, oficiais sempre que disponíveis. Confirme potência e situação operacional na fonte antes de citar em processo. O enquadramento ambiental segue o IAT e o POP; o enquadramento setorial segue a ANEEL. Leia cada eixo separadamente e confirme vigência e aplicação antes de decidir.</p>
       <div className="prc-grid">{PR_CASES.map((c) => (
         <article key={c.nome} className={'prc-card' + (c.site ? '' : ' prc-empty') + (c.reversivel ? ' prc-wide' : '')}>
           <span className="prc-tipo">{c.tipo}</span>

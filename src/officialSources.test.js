@@ -162,7 +162,9 @@ describe('registro de fontes oficiais', () => {
     const iat = HYDRO_AUTHORITY_AXES.find((axis) => axis.id === 'iat-ambiental');
     const aneel = HYDRO_AUTHORITY_AXES.find((axis) => axis.id === 'aneel-setorial');
     expect(iat.criteria.join(' ')).toContain('reservatório de até 3 km²');
-    expect(aneel.criteria.join(' ')).toContain('reservatório de até 13 km²');
+    expect(aneel.act).toContain('1.070/2023');
+    expect(aneel.criteria.join(' ')).toContain('não adota limite de área do reservatório');
+    expect(aneel.criteria.join(' ')).toContain('Divergência editorial');
 
     const [iatEntry, aneelEntry, waterEntry] = buildNormativeLedger([
       'INSTITUTO ÁGUA E TERRA. Instrução Normativa IAT nº 09, de 28 de abril de 2025. Licenciamento ambiental de unidades de geração de energia elétrica a partir de potencial hidráulico.',

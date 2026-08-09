@@ -42,6 +42,10 @@ desempenho, PWA e qualidade de publicação.
   nem aplicação ao caso.
 - Os três eixos decisivos devem permanecer separados: licenciamento ambiental
   IAT, regulação setorial ANEEL e recursos hídricos ANA ou gestor estadual.
+- A REN ANEEL 875/2020 consolidada, com redação da REN 1.070/2023, enquadra
+  PCH pela faixa de potência. A página geral Outorgas ainda menciona 13 km²;
+  essa divergência editorial deve permanecer visível e não pode prevalecer
+  sobre a conferência do ato consolidado e de sua aplicação ao caso.
 - Materiais de treinamento e documentos de projeto não substituem atos oficiais,
   documentos do processo nem análise institucional aplicável.
 
@@ -82,15 +86,19 @@ desempenho, PWA e qualidade de publicação.
     Escape, restauração de foco e fechamento por clique externo.
 15. Contraste das escolhas diagnósticas no tema escuro corrigido e ações em
     vídeo, laboratório, fluxogramas, suporte e fontes ajustadas ao alvo de 44 px.
+16. Atalhos de Hidrelétricas recalculados pelo cabeçalho fixo, sem salto de
+    layout, com regressão Playwright em desktop e quatro larguras móveis.
+17. Critério setorial de PCH corrigido pela redação consolidada da ANEEL, com
+    a divergência da página-resumo registrada em vez de ocultada.
 
 ## Evidências finais desta rodada
 
 - 56 arquivos de teste e 468 testes aprovados, além de todos os portões
   editoriais, técnicos, de segurança, mídia, proveniência, referências, PWA,
   tipografia, rubricas e smoke test.
-- Build aprovado em 32 pedaços JavaScript: 694,2 KiB brutos e 231,3 KiB gzip;
-  CSS com 227,7 KiB brutos e 43,1 KiB gzip, ainda dentro do orçamento.
-- 14 cenários Playwright do artefato aprovados em desktop e larguras 320, 360,
+- Build do GitHub Pages aprovado em 32 pedaços JavaScript: 696,0 KiB brutos e
+  232,0 KiB gzip; CSS com 227,7 KiB brutos e 43,1 KiB gzip, ainda dentro do orçamento.
+- 19 cenários Playwright do artefato aprovados em desktop e larguras 320, 360,
   390 e 430 px; um cenário móvel foi corretamente ignorado no desktop.
 - Um cenário PWA aprovado, incluindo instalação do service worker, suporte
   offline e atualização com consentimento.

@@ -60,16 +60,17 @@ validação local registrada em 09/08/2026 obteve:
 
 Esses resultados são a linha de base do SHA informado. Mudanças posteriores
 precisam executar novamente `pnpm test`, `pnpm build`, `pnpm audit:premium`,
-`pnpm test:e2e:artifact` e `pnpm test:e2e:pwa` antes de publicação.
+`pnpm test:e2e:artifact` e `pnpm test:e2e:pwa:local` antes de publicação local;
+o workflow usa a variante de CI com a base do GitHub Pages.
 
 A versão corrente preparada em 09/08/2026 foi validada com:
 
 - 56 arquivos de teste e 468 testes aprovados;
 - todos os portões encadeados de `pnpm test`, inclusive smoke, governança de
   mídia e auditoria fail-closed de workflows, aprovados;
-- build aprovado, com 694,2 KiB de JavaScript bruto, 231,3 KiB compactado,
-  227,7 KiB de CSS bruto e 43,1 KiB compactado, em 32 chunks JavaScript;
-- 14 cenários Playwright do artefato aprovados em desktop e nas larguras 320,
+- build do GitHub Pages aprovado, com 696,0 KiB de JavaScript bruto, 232,0 KiB
+  compactado, 227,7 KiB de CSS bruto e 43,1 KiB compactado, em 32 chunks JavaScript;
+- 19 cenários Playwright do artefato aprovados em desktop e nas larguras 320,
   360, 390 e 430 pixels, além de um cenário PWA aprovado;
 - onze rotas inspecionadas em 1440 e 390 pixels sem overflow horizontal, erro
   de página ou erro de console;

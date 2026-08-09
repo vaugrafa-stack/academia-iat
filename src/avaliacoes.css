@@ -47,7 +47,7 @@
 .diagnostic-depth > small {
   margin-top: 4px;
   color: var(--muted);
-  font-size: 11px;
+  font-size: 13px;
   line-height: 1.35;
 }
 
@@ -110,7 +110,7 @@
 }
 
 .re-q .confidence-tag.alta {
-  color: #7b4100;
+  color: var(--ink);
   background: color-mix(in srgb, var(--amber) 18%, var(--surface));
 }
 

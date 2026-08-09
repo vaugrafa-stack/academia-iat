@@ -1,6 +1,6 @@
 // Secao "Como funciona uma hidreletrica", guia tecnico visual e interativo.
 // Modulo isolado (primeiro passo de quebra do main.jsx). Recebe apenas `go`.
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useState, useMemo, useRef } from 'react';
 import {
   Waves, Zap, Droplets, Factory, Mountain, Gauge, ArrowRight, Info,
   Layers3, Activity, CircleHelp, TowerControl, Wind, MapPin,
@@ -68,14 +68,26 @@ function focusSection(id) {
   if (!section) return;
 
   const reducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
-  section.scrollIntoView({
+  const localNav = document.querySelector('.hydro-guide-nav');
+  // O alvo fica abaixo das duas barras fixas, mas ainda cruza a linha usada
+  // para identificar a seção ativa. Uma folga maior deixava o título visível
+  // e, ao mesmo tempo, mantinha o item anterior marcado no celular.
+  const offset = topbarHeight() + (localNav?.offsetHeight || 0) + 10;
+  const targetTop = Math.max(
+    0,
+    (window.scrollY || document.documentElement.scrollTop || 0)
+      + section.getBoundingClientRect().top
+      - offset,
+  );
+  window.scrollTo({
+    top: targetTop,
     behavior: reducedMotion ? 'auto' : 'smooth',
-    block: 'start',
   });
   section.focus({ preventScroll: true });
 }
 
 export function HydroLocalNav() {
+  const linksRef = useRef(null);
   const [reading, setReading] = useState({
     activeId: HYDRO_SECTIONS[0].id,
     progress: 0,
@@ -125,6 +137,25 @@ export function HydroLocalNav() {
     };
   }, []);
 
+  useEffect(() => {
+    const links = linksRef.current;
+    const active = links?.querySelector(
+      `[data-hydro-nav-target="${reading.activeId}"]`,
+    );
+    if (!links || !active || typeof links.scrollTo !== 'function') return;
+
+    const linksBox = links.getBoundingClientRect();
+    const activeBox = active.getBoundingClientRect();
+    const outside = activeBox.left < linksBox.left || activeBox.right > linksBox.right;
+    if (!outside) return;
+
+    const reducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+    links.scrollTo({
+      left: Math.max(0, active.offsetLeft - (links.clientWidth - active.offsetWidth) / 2),
+      behavior: reducedMotion ? 'auto' : 'smooth',
+    });
+  }, [reading.activeId]);
+
   function handleKeyDown(event) {
     if (!['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) return;
     const controls = [...event.currentTarget.querySelectorAll('[data-hydro-nav-target]')];
@@ -146,7 +177,7 @@ export function HydroLocalNav() {
         <strong>Neste guia</strong>
         <span>{reading.progress}% lido</span>
       </div>
-      <div className="hydro-guide-nav__links">
+      <div className="hydro-guide-nav__links" ref={linksRef}>
         {HYDRO_SECTIONS.map((section) => (
           <button
             type="button"
@@ -195,7 +226,7 @@ const PARTES = [
   { id: 'fuga', nome: 'Tubo de sucção e canal de fuga', icon: Wind, resumo: 'Devolve a água ao rio a jusante.',
     detalhe: 'Após passar pela turbina, a água segue pelo tubo de sucção (que recupera parte da energia) e pelo canal de fuga de volta ao leito do rio, a jusante. A cota do canal de fuga fecha o cálculo da queda bruta; a queda líquida é a bruta menos as perdas de carga na tomada, na adução e no conduto forçado.' },
   { id: 'subestacao', nome: 'Subestação e conexão', icon: TowerControl, resumo: 'Eleva a tensão e conecta ao sistema.',
-    detalhe: 'A energia gerada é elevada de tensão nos transformadores da subestação e injetada no sistema de transmissão (linha de transmissão / LDAT). É a fronteira entre o empreendimento e o Sistema Interligado Nacional.' },
+    detalhe: 'A energia gerada é elevada de tensão nos transformadores da subestação e entregue à rede de distribuição ou transmissão, conforme o ponto de conexão ou acesso definido para o empreendimento. Os requisitos variam conforme a rede e o agente responsável; não presuma uma LDAT ou conexão direta ao Sistema Interligado Nacional sem conferir os atos e projetos do caso.' },
 ];
 
 const TIPOS_POTENCIA = [
@@ -208,9 +239,9 @@ const TIPOS_POTENCIA = [
   { sigla: 'CGH', nome: 'Central Geradora Hidrelétrica', faixa: 'acima de 500 kW até 5 MW', cor: '#2fb8c9',
     nota: 'Potência superior a 500 kW e até 5 MW. Confirmar se está abaixo ou acima de 1 MW, porque a Consulta Prévia é obrigatória a partir de 1 MW. Erro recorrente: exigir autorização ou concessão da ANEEL como se fosse PCH, sem verificar a regra setorial aplicável.' },
   { sigla: 'PCH', nome: 'Pequena Central Hidrelétrica', faixa: 'acima de 5 MW até 30 MW', cor: '#4cc4f5',
-    nota: 'Potência superior a 5 MW e até 30 MW, com área de reservatório de até 3 km², excluída a calha do leito regular. Outorgada por autorização da ANEEL. Erro recorrente: concluir pelo nome do empreendimento, sem confrontar potência, reservatório, ANEEL, outorga e SGA.' },
+    nota: 'No eixo ambiental do IAT: potência superior a 5 MW e até 30 MW, com reservatório de até 3 km², ressalvada a exceção da IN. No eixo setorial, o art. 5º da REN ANEEL 875/2020, com redação da REN 1.070/2023, enquadra PCH pela faixa superior a 5 MW e até 30 MW, sem limite de área. A página geral Outorgas ainda cita 13 km², mas diverge do ato consolidado e da página operacional de 2026. Não misture os eixos e confirme o ato aplicável ao caso.' },
   { sigla: 'UHE', nome: 'Usina Hidrelétrica', faixa: 'acima de 30 MW', cor: '#9fb7ff',
-    nota: 'Capacidade instalada superior a 30 MW, reservatório maior que 3 km² ou assim definida pela ANEEL. A outorga é por autorização até 50 MW e por concessão, mediante leilão, acima disso. Em regra exige EIA e RIMA. Erro recorrente: ignorar competência, delegação, processo federal ou exigência de EIA e RIMA.' },
+    nota: 'No eixo ambiental do IAT: capacidade instalada superior a 30 MW, reservatório maior que 3 km² ou definição da ANEEL. O regime setorial distingue autorização e concessão por critérios próprios. Em regra exige EIA e RIMA. Erro recorrente: ignorar competência, delegação, processo federal ou exigência de EIA e RIMA.' },
 ];
 
 const TIPOS_RESERVATORIO = [

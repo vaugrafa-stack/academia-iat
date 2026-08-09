@@ -89,6 +89,7 @@ describe('navegação local do guia de hidrelétricas', () => {
     document.body.prepend(host);
     const root = createRoot(host);
     mountedRoots.push(root);
+    const scrollTo = vi.spyOn(window, 'scrollTo').mockImplementation(() => {});
 
     await act(async () => root.render(<HydroLocalNav />));
 
@@ -97,7 +98,8 @@ describe('navegação local do guia de hidrelétricas', () => {
     expect(host.querySelector('[role="progressbar"]')?.getAttribute('aria-valuenow')).toBe('1');
 
     await act(async () => buttons[4].click());
-    expect(targets[4].scrollIntoView).toHaveBeenCalledWith({ behavior: 'smooth', block: 'start' });
+    expect(scrollTo).toHaveBeenCalledWith({ behavior: 'smooth', top: 2816 });
+    expect(targets[4].scrollIntoView).not.toHaveBeenCalled();
     expect(document.activeElement).toBe(targets[4]);
     expect(buttons[4].getAttribute('aria-current')).toBe('location');
 

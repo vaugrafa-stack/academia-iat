@@ -39,7 +39,7 @@ pnpm test
 pnpm build
 pnpm exec playwright install chromium
 pnpm test:e2e:artifact
-pnpm test:e2e:pwa
+pnpm test:e2e:pwa:local
 pnpm preview
 ```
 
@@ -92,11 +92,11 @@ As travas de conclusão das aulas comprovam apenas que uma resposta foi registra
 
 Os laboratórios usam casos e documentos sintéticos marcados como exemplos didáticos sem validade administrativa. Nenhum processo real ou dado pessoal deve ser inserido na plataforma.
 
-No artefato medido em 09/08/2026, o JavaScript soma 683,0 KiB de um orçamento
-de 850 KiB em tamanho bruto e 231,5 KiB de 270 KiB compactado. A entrada mede
-179,6 KiB de 205 KiB em tamanho bruto e 56,7 KiB de 66 KiB compactado; o código
-da rota Avaliações foi separado em um chunk sob demanda de 11,4 KiB, ou 4,4
-KiB compactado. O CSS soma 214,3 KiB de 240 KiB em tamanho bruto e 39,3 KiB de
+No artefato do GitHub Pages medido em 09/08/2026, o JavaScript soma 696,0 KiB de um orçamento
+de 850 KiB em tamanho bruto e 232,0 KiB de 270 KiB compactado. A entrada mede
+4,8 KiB de 205 KiB em tamanho bruto e 2,1 KiB de 66 KiB compactado; o código
+da rota Avaliações permanece em um chunk sob demanda de 12,8 KiB, ou 4,8
+KiB compactado. O CSS soma 227,7 KiB de 240 KiB em tamanho bruto e 43,1 KiB de
 46 KiB compactado. A decomposição adicional por rota continua necessária, mas
 deve preservar os contratos de navegação, acessibilidade e funcionamento
 offline já cobertos pelos portões automáticos.
@@ -114,7 +114,7 @@ pnpm test
 pnpm build
 pnpm audit:premium
 pnpm test:e2e:artifact
-pnpm test:e2e:pwa
+pnpm test:e2e:pwa:local
 ```
 
 A suíte cobre testes unitários, PWA/offline, proveniência, referências, rubricas, questões, mídia e auditoria das aulas. O Playwright valida o artefato renderizado em navegador real nas cinco larguras previstas e, em um portão próprio, comprova respostas offline do Service Worker e a atualização controlada do aplicativo. O workflow exige os dois portões antes de armazenar o artefato publicável. O portão premium procura falhas de governança, privacidade e exposição acidental. Nenhum teste automatizado substitui revisão especializada de conteúdo, acessibilidade, usabilidade ou aprendizagem.

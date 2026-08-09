@@ -144,12 +144,12 @@
   .mobile-nav-panel__item.current {
     border-color: color-mix(in srgb, var(--green) 62%, var(--line));
     background: var(--green3);
-    color: var(--green);
+    color: var(--ink);
     box-shadow: inset 3px 0 0 var(--green);
   }
 
   .mobile-nav-panel__item.current > svg:last-child {
-    color: var(--green);
+    color: var(--ink);
   }
 
   .mobile-nav-panel__item.external > svg:last-child {

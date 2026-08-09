@@ -278,6 +278,11 @@
   font-weight: 800;
 }
 
+:root:not([data-theme="light"]) .learning-path-grid article > button:hover,
+:root:not([data-theme="light"]) .formation-empty button {
+  color: var(--sobre-acento);
+}
+
 @media (max-width: 720px) {
   .learning-paths {
     margin-inline: -2px;

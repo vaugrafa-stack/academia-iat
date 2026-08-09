@@ -80,7 +80,7 @@
 
 .hydro-guide-nav__links button[aria-current='location'] {
   background: color-mix(in srgb, var(--green3) 78%, transparent);
-  color: var(--green);
+  color: var(--ink);
 }
 
 .hydro-guide-nav__links button[aria-current='location']::after {
@@ -112,11 +112,6 @@
 .hydro-section:focus {
   outline: 3px solid color-mix(in srgb, var(--blue) 72%, white);
   outline-offset: 5px;
-}
-
-.hydro-long-section {
-  content-visibility: auto;
-  contain-intrinsic-size: auto 720px;
 }
 
 @media (max-width: 980px) {
@@ -168,8 +163,4 @@
     display: none;
   }
 
-  .hydro-long-section {
-    content-visibility: visible;
-    contain-intrinsic-size: none;
-  }
 }

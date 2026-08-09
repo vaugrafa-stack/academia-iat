@@ -27,6 +27,7 @@ import {
 import { gravarRevisao, lerRevisao } from "./sincroniaLocal.js";
 
 export const EVENTO_CONTA = "iat:conta-mudou";
+export const EVENTO_PROGRESSO_APLICADO = "iat:progresso-aplicado";
 
 /** O cartão avisa aqui quando alguém entra ou sai. */
 export function avisarContaMudou(conta) {
@@ -36,6 +37,40 @@ export function avisarContaMudou(conta) {
     // Ambiente sem janela (teste de nó). Não ter aviso não quebra nada: o
     // gancho volta a perguntar quem está logado na próxima montagem.
   }
+}
+
+/**
+ * O cartão avisa aqui quando ACABOU DE APLICAR progresso vindo do servidor.
+ *
+ * Sem este aviso, o gancho vê o estudo "mudar" e devolve ao servidor o que
+ * acabou de vir dele: uma gravação inútil e uma revisão a mais a cada login em
+ * computador novo. Não é perda de dado, e é ruído que confunde a próxima
+ * comparação de revisões.
+ */
+export function avisarProgressoAplicado() {
+  try {
+    globalThis.dispatchEvent?.(new CustomEvent(EVENTO_PROGRESSO_APLICADO));
+  } catch {
+    // Ambiente sem janela. Ver `avisarContaMudou`.
+  }
+}
+
+/**
+ * Enviar agora, ou não?
+ *
+ * Fora do React de propósito. Esta é a parte que precisa de teste, e amarrá-la a
+ * um efeito obrigaria a montar a árvore inteira para exercitar a comparação de
+ * dois textos.
+ *
+ * `marcoAnterior === null` significa "absorva o que vier como base, sem
+ * enviar". É o estado logo depois de entrar e logo depois de baixar do
+ * servidor, e é o que impede o eco.
+ */
+export function decidirEnvio({ marcoAnterior, marcoAtual, temConta }) {
+  if (!temConta) return { enviar: false, marco: marcoAtual };
+  if (marcoAnterior === null) return { enviar: false, marco: marcoAtual };
+  if (marcoAnterior === marcoAtual) return { enviar: false, marco: marcoAtual };
+  return { enviar: true, marco: marcoAtual };
 }
 
 /**
@@ -68,26 +103,28 @@ export function useSincroniaAutomatica(state) {
       marcoAnterior.current = null;
       setAlgoMaisNovo(false);
     };
+    // O que veio do servidor NÃO volta para ele. Ver `avisarProgressoAplicado`.
+    const aoAplicar = () => {
+      marcoAnterior.current = null;
+    };
     globalThis.addEventListener?.(EVENTO_CONTA, aoMudar);
+    globalThis.addEventListener?.(EVENTO_PROGRESSO_APLICADO, aoAplicar);
     return () => {
       vivo = false;
       globalThis.removeEventListener?.(EVENTO_CONTA, aoMudar);
+      globalThis.removeEventListener?.(EVENTO_PROGRESSO_APLICADO, aoAplicar);
     };
   }, []);
 
   useEffect(() => {
     const id = conta?.id;
-    const marco = marcoDeEstudo(state);
-    if (!id) {
-      marcoAnterior.current = marco;
-      return undefined;
-    }
-    // A primeira passada só registra onde estávamos.
-    if (marcoAnterior.current === null || marcoAnterior.current === marco) {
-      marcoAnterior.current = marco;
-      return undefined;
-    }
-    marcoAnterior.current = marco;
+    const decisao = decidirEnvio({
+      marcoAnterior: marcoAnterior.current,
+      marcoAtual: marcoDeEstudo(state),
+      temConta: Boolean(id),
+    });
+    marcoAnterior.current = decisao.marco;
+    if (!decisao.enviar) return undefined;
 
     let vivo = true;
     (async () => {

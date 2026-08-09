@@ -37,7 +37,7 @@ import {
   servicoDisponivel,
 } from './contaRemota.js';
 import { esquecerRevisao, gravarRevisao, lerRevisao } from './sincroniaLocal.js';
-import { avisarContaMudou } from './sincroniaAutomatica.js';
+import { avisarContaMudou, avisarProgressoAplicado } from './sincroniaAutomatica.js';
 
 const ENTRAR = 'entrar';
 const CRIAR = 'criar';
@@ -87,6 +87,9 @@ export default function ContaRemotaCard({ state, setState, algoMaisNovo = false 
       // versão de lá não conhecia continua existindo aqui, em vez de sumir.
       setState((atual) => ({ ...atual, ...vindo }));
       gravarRevisao(id, revisao);
+      // O que veio do servidor não volta para ele. Sem este aviso, a gravação
+      // automática vê o estudo mudar e devolve o que acabou de baixar.
+      avisarProgressoAplicado();
       return true;
     },
     [setState],

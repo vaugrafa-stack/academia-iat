@@ -10,8 +10,10 @@ identificado e este status.
 - Repositório público: `vaugrafa-stack/academia-iat`.
 - Branch de código: `master`.
 - Produção: <https://vaugrafa-stack.github.io/academia-iat/>.
-- Último commit de produção verificado nesta linha de base:
-  `e298901511b984fea315f675cb0ba2c2736fb762`.
+- Commit efetivo de produção: exposto pela aplicação no atributo
+  `data-build-sha` e confirmado pelo workflow de qualidade. Ele não é fixado
+  neste arquivo para evitar que o próprio commit de atualização o torne
+  obsoleto.
 - Publicação: workflow único `.github/workflows/quality.yml`; o job de publicação
   usa exatamente o artefato aprovado pelo job de qualidade, sem recompilar.
 - Natureza: treinamento e apoio à consulta, sem validade administrativa,
@@ -44,9 +46,10 @@ capa, SHA-256
 Essas contagens provam cobertura e integridade estrutural. Não provam vigência
 normativa, validade pedagógica, competência profissional ou aprovação humana.
 
-## Linha de base de produção e candidato atual
+## Linha de base histórica e validação corrente
 
-No commit de produção acima, a validação local registrada em 09/08/2026 obteve:
+Na linha de base histórica `e298901511b984fea315f675cb0ba2c2736fb762`, a
+validação local registrada em 09/08/2026 obteve:
 
 - 50 arquivos de teste e 431 testes unitários aprovados;
 - todos os portões encadeados de `pnpm test` aprovados;
@@ -59,7 +62,7 @@ Esses resultados são a linha de base do SHA informado. Mudanças posteriores
 precisam executar novamente `pnpm test`, `pnpm build`, `pnpm audit:premium`,
 `pnpm test:e2e:artifact` e `pnpm test:e2e:pwa` antes de publicação.
 
-O candidato preparado em 09/08/2026 foi validado localmente com:
+A versão corrente preparada em 09/08/2026 foi validada com:
 
 - 53 arquivos de teste e 451 testes aprovados;
 - todos os portões encadeados de `pnpm test`, inclusive smoke, governança de
@@ -70,11 +73,11 @@ O candidato preparado em 09/08/2026 foi validado localmente com:
 - inspeção em navegador real da nova rastreabilidade normativa, da rota
   Avaliações e dos comportamentos de foco e teclado.
 
-Esse candidato só passa a produção quando o workflow público aprovar o commit,
-o GitHub Pages publicar o mesmo artefato e o SHA exibido pela aplicação online
-for conferido. O SHA corrente da produção deve ser obtido da própria aplicação
-ou do artefato do workflow; este arquivo não tenta antecipar o hash do commit
-que o contém.
+A promoção de qualquer versão continua condicionada à aprovação do workflow
+público, à publicação do mesmo artefato no GitHub Pages e à conferência do SHA
+exibido pela aplicação online. O SHA corrente deve ser obtido da própria
+aplicação ou do artefato do workflow; este arquivo não tenta antecipar o hash
+do commit que o contém.
 
 ## Serviços separados
 

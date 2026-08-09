@@ -20,6 +20,7 @@ import { useEffect, useRef, useState } from "react";
 import {
   contaHabilitada,
   gravarProgresso,
+  interpretarGravacao,
   marcoDeEstudo,
   quemSou,
   servicoDisponivel,
@@ -130,12 +131,13 @@ export function useSincroniaAutomatica(state) {
     (async () => {
       const pedida = lerRevisao(id) + 1;
       const r = await gravarProgresso(pedida, state);
+      if (!vivo) return;
       // Falha de rede não vira aviso: o progresso local está salvo, e o que não
       // aconteceu foi a sincronização, que não é o que a pessoa estava fazendo.
-      if (!vivo || !r.ok) return;
-      const guardada = r.corpo?.revisao ?? pedida;
-      gravarRevisao(id, guardada);
-      if (guardada !== pedida) setAlgoMaisNovo(true);
+      const veredito = interpretarGravacao(pedida, r);
+      // Só carimba quando gravou de verdade. Ver `interpretarGravacao`.
+      if (veredito.carimbar !== null) gravarRevisao(id, veredito.carimbar);
+      if (veredito.algoMaisNovo) setAlgoMaisNovo(true);
     })();
     return () => {
       vivo = false;

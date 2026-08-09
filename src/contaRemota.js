@@ -227,6 +227,36 @@ export async function planejarSincronia(local, revisaoLocal, buscar) {
 }
 
 /**
+ * O que fazer com a resposta do serviço a uma gravação.
+ *
+ * `PUT /api/progresso` com revisão menor ou igual **não grava**, e devolve o que
+ * está guardado. Ou seja: a resposta 200 não quer dizer que gravou.
+ *
+ * ## O defeito que esta função existe para não ter
+ *
+ * Carimbar a revisão do servidor quando ele RECUSOU faz este navegador passar a
+ * se declarar em dia com uma revisão que ele nunca baixou. Na sincronização
+ * seguinte, `combinar` vê as duas revisões iguais, conclui "este navegador está
+ * em dia" e SOBE o local por cima, apagando em silêncio o estudo do outro
+ * computador. É exatamente o que o módulo inteiro existe para impedir, entrando
+ * pela porta dos fundos.
+ *
+ * Recusado, o carimbo fica onde estava. Aí as revisões seguem divergentes, e a
+ * próxima sincronização cai no ramo que PERGUNTA.
+ */
+export function interpretarGravacao(pedida, resposta) {
+  if (!resposta?.ok) return { aceita: false, carimbar: null, algoMaisNovo: false };
+  const guardada = Number(resposta.corpo?.revisao);
+  if (!Number.isInteger(guardada)) {
+    // Resposta sem revisão utilizável. Não dá para afirmar que gravou, e
+    // carimbar um palpite é o defeito descrito acima.
+    return { aceita: false, carimbar: null, algoMaisNovo: false };
+  }
+  if (guardada === pedida) return { aceita: true, carimbar: guardada, algoMaisNovo: false };
+  return { aceita: false, carimbar: null, algoMaisNovo: true };
+}
+
+/**
  * Assinatura do que conta como "fechei um bloco de estudo".
  *
  * A integração pede para gravar ao fechar um bloco, e não a cada tecla. Marco

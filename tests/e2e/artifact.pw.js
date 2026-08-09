@@ -142,19 +142,38 @@ test('experiência responsiva prioriza aprender e praticar sem overflow', async 
   const stage = page.locator('.vls-stage');
   const stageBox = await stage.boundingBox();
   if ((stageBox?.width ?? Infinity) <= 640) {
-    const [screenBox, railBox, professorBox] = await Promise.all([
-      stage.locator('.vls-screen').boundingBox(),
-      stage.locator('.vls-professor-rail').boundingBox(),
-      stage.locator('.vls-professor').boundingBox(),
-    ]);
-    expect(railBox?.y ?? 0).toBeGreaterThanOrEqual(
-      (screenBox?.y ?? 0) + (screenBox?.height ?? 0) - 1,
-    );
-    expect(professorBox?.y ?? Infinity).toBeLessThanOrEqual(
-      (railBox?.y ?? 0) + 8,
-    );
-    expect((professorBox?.y ?? 0) + (professorBox?.height ?? 0) * 0.55)
-      .toBeLessThanOrEqual((railBox?.y ?? 0) + (railBox?.height ?? 0));
+    // As tres relacoes sao medidas DENTRO de um poll, e nao uma vez so.
+    //
+    // `boundingBox()` e um retrato instantaneo: medido logo apos o
+    // `domcontentloaded`, ele pega o layout no meio do assentamento. Em
+    // 09/08/2026 isso reprovou por 1,55px numa tolerancia de 1px, e tres
+    // reexecucoes seguidas passaram. Afrouxar a tolerancia esconderia um
+    // desalinhamento de verdade; remedir ate assentar remove a corrida sem
+    // mexer em limite nenhum.
+    await expect
+      .poll(
+        async () => {
+          const [screenBox, railBox, professorBox] = await Promise.all([
+            stage.locator('.vls-screen').boundingBox(),
+            stage.locator('.vls-professor-rail').boundingBox(),
+            stage.locator('.vls-professor').boundingBox(),
+          ]);
+          return {
+            trilhoAbaixoDaTela:
+              (railBox?.y ?? 0) >= (screenBox?.y ?? 0) + (screenBox?.height ?? 0) - 1,
+            professorNoTopoDoTrilho: (professorBox?.y ?? Infinity) <= (railBox?.y ?? 0) + 8,
+            professorCabeNoTrilho:
+              (professorBox?.y ?? 0) + (professorBox?.height ?? 0) * 0.55 <=
+              (railBox?.y ?? 0) + (railBox?.height ?? 0),
+          };
+        },
+        { message: 'palco da videoaula em coluna: trilho abaixo da tela, professor dentro dele' },
+      )
+      .toEqual({
+        trilhoAbaixoDaTela: true,
+        professorNoTopoDoTrilho: true,
+        professorCabeNoTrilho: true,
+      });
   }
   await expectHealthyPage(page, runtimeIssues);
 

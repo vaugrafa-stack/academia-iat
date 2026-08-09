@@ -30,6 +30,7 @@ import {
   documentoParaEstado,
   entrar,
   gravarProgresso,
+  interpretarGravacao,
   pedirRecuperacao,
   planejarSincronia,
   quemSou,
@@ -109,12 +110,15 @@ export default function ContaRemotaCard({ state, setState, algoMaisNovo = false 
         setRecado('');
       } else if (plano.acao === SOBE_O_LOCAL) {
         const r = await gravarProgresso(plano.revisao, state);
-        if (r.ok) {
-          gravarRevisao(id, r.corpo?.revisao ?? plano.revisao);
-          setRecado('Progresso deste computador enviado.');
-        } else {
-          setRecado('Não deu para sincronizar agora. Seu estudo continua salvo aqui.');
-        }
+        const veredito = interpretarGravacao(plano.revisao, r);
+        if (veredito.carimbar !== null) gravarRevisao(id, veredito.carimbar);
+        setRecado(
+          veredito.aceita
+            ? 'Progresso deste computador enviado.'
+            : veredito.algoMaisNovo
+              ? 'Alguém gravou de outro computador enquanto isto acontecia. Sincronize de novo para escolher o que fica.'
+              : 'Não deu para sincronizar agora. Seu estudo continua salvo aqui.',
+        );
       } else if (plano.acao === DESCE_O_REMOTO) {
         const trouxe = aplicarRemoto(plano.remoto?.documento, plano.revisao, id);
         setRecado(
@@ -143,11 +147,14 @@ export default function ContaRemotaCard({ state, setState, algoMaisNovo = false 
       if (escolha === SOBE_O_LOCAL) {
         const revisao = (conflito.remoto?.revisao ?? 0) + 1;
         const r = await gravarProgresso(revisao, state);
-        if (r.ok) gravarRevisao(id, r.corpo?.revisao ?? revisao);
+        const veredito = interpretarGravacao(revisao, r);
+        if (veredito.carimbar !== null) gravarRevisao(id, veredito.carimbar);
         setRecado(
-          r.ok
+          veredito.aceita
             ? 'Mantido o estudo deste computador, e o guardado foi substituído.'
-            : 'Não deu para enviar agora. Nada foi alterado.',
+            : veredito.algoMaisNovo
+              ? 'Enquanto você decidia, outro computador gravou. Nada foi alterado: sincronize de novo.'
+              : 'Não deu para enviar agora. Nada foi alterado.',
         );
       } else {
         const trouxe = aplicarRemoto(conflito.remoto?.documento, conflito.remoto?.revisao ?? 0, id);

@@ -12,6 +12,7 @@ import {
   documentoParaEstado,
   entrar,
   gravarProgresso,
+  interpretarGravacao,
   lerProgresso,
   marcoDeEstudo,
   planejarSincronia,
@@ -224,6 +225,40 @@ describe("a conversa com o serviço nunca derruba a tela", () => {
     const buscar = respostaFalsa({ id: "1", email: "alguem@example.org" });
     const r = await criarConta("alguem@example.org", SENHA, "Nome", buscar);
     expect(JSON.stringify(r.corpo)).not.toContain(SENHA);
+  });
+});
+
+describe("a resposta do serviço a uma gravação", () => {
+  it("gravou de verdade quando a revisão volta igual à pedida", () => {
+    const v = interpretarGravacao(5, { ok: true, corpo: { revisao: 5 } });
+    expect(v).toEqual({ aceita: true, carimbar: 5, algoMaisNovo: false });
+  });
+
+  it("RECUSADO não carimba, e este é o defeito que a função existe para não ter", () => {
+    // O serviço responde 200 com o que está guardado quando a revisão pedida é
+    // menor ou igual. Carimbar essa revisão faria este navegador se declarar em
+    // dia com algo que ele NUNCA baixou, e a sincronização seguinte veria as
+    // duas revisões iguais, concluiria "estou em dia" e subiria o local por
+    // cima, apagando em silêncio o estudo do outro computador.
+    //
+    // Aconteceu de verdade, em navegador, em 09/08/2026, antes desta função.
+    const v = interpretarGravacao(3, { ok: true, corpo: { revisao: 9 } });
+    expect(v.aceita).toBe(false);
+    expect(v.carimbar).toBeNull();
+    expect(v.algoMaisNovo).toBe(true);
+  });
+
+  it("falha de rede não carimba e não alarma", () => {
+    // O estudo local está salvo. O que não aconteceu foi a sincronização.
+    const v = interpretarGravacao(3, { ok: false, status: 0, erro: "Failed to fetch" });
+    expect(v).toEqual({ aceita: false, carimbar: null, algoMaisNovo: false });
+  });
+
+  it("resposta sem revisão utilizável também não carimba", () => {
+    for (const corpo of [null, {}, { revisao: "cinco" }, { revisao: null }]) {
+      const v = interpretarGravacao(3, { ok: true, corpo });
+      expect(v.carimbar, JSON.stringify(corpo)).toBeNull();
+    }
   });
 });
 

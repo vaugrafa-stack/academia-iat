@@ -533,6 +533,54 @@ Manchete de marketing é medida emprestada de outro tipo de site. O título agor
 diz o que a tela faz, em 27px. **86px devolvidos à primeira dobra**, e a página
 encolheu de 1286px para 1197px.
 
+## Frente de conta, 09/08
+
+### Bloco 22. A conta opcional vira tela que funciona ✅ `dd77539` + `3265f64`
+
+O modulo cliente existia e ninguem usava. Agora a Academia tem, de ponta a
+ponta: entrar, criar conta, recuperar acesso, sincronizar, resolver conflito e
+gravar sozinha ao fechar um bloco de estudo.
+
+Onde mora: `src/contaRemota.js` (conversa e decisao), `src/sincroniaLocal.js`
+(carimbo da revisao, por conta), `src/sincroniaAutomatica.js` (gravacao no alto
+da aplicacao) e `src/ContaRemotaCard.jsx` (a tela, dentro do "Meu progresso").
+
+**A gravacao automatica NAO mora no cartao.** O cartao so existe na tela do
+perfil, e estudar acontece nas outras. Se morasse la, nunca veria o momento em
+que a pessoa termina alguma coisa.
+
+**A conta e decisao de BUILD.** `IAT_CONTA_REMOTA=1` no `vite`. Sem isso nem a
+sondagem acontece. Descoberto pelo portao de e2e, que reprovou com `4 erros de
+runtime`: sondar `/api/saude` na versao estatica e um 404 por carga.
+
+**Provado rodando, sem Docker.** `uvicorn` servindo o `dist` em
+`http://localhost:8080`: conta criada e local subiu; armazenamento limpo e o
+guardado desceu; os dois lados divergentes e a tela perguntou; favorito marcado
+na tela da aula subiu sozinho. O script esta no bloco de notas da sessao.
+
+### Bloco 23. Dois portoes vermelhos publicados sem eu ver ✅ `05df57d`
+
+`audit:premium` acusava e-mail de teste, `check-segredos` acusava a senha
+atribuida a literal. **As duas acusacoes estavam certas.** A politica de e-mail
+passou a aceitar os dominios que a RFC 2606 RESERVA, por igualdade e nao por
+sufixo (`example.com.br` existe de verdade), e ganhou teste proprio, provado por
+mutacao. A senha do teste virou constante montada em tempo de execucao.
+
+**Regra nova, que custou a publicacao errada:** nunca passar `npm test` por um
+`grep`. O `grep` engole o codigo de saida, e eu li "401 testes passaram" num
+comando que tinha saido com 1.
+
+### Bloco 24. CI vermelho por ruido de dependencia ✅ mesmo commit
+
+`pnpm audit` reprovava por nanoid < 3.3.17, via vite > postcss, e os testes nem
+chegavam a rodar. Override em `pnpm-workspace.yaml`, preso na linha 3: pedir so
+`>=3.3.17` resolveu para 6.0.1, que e outra API e so ESM. Mesmo erro que o
+undici ja tinha ensinado, e que estava escrito no arquivo ao lado.
+
+**Regra nova:** rodar o e2e local exige `PAGES_REPO=academia-iat` TAMBEM no
+`vite preview`. Sem isso o preview serve na base `/` e o e2e acusa a aplicacao
+por culpa do harness. Perdi uma rodada nisso.
+
 ## O que falta no layout
 
 1. A hierarquia da barra lateral e do topo

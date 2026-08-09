@@ -581,6 +581,60 @@ undici ja tinha ensinado, e que estava escrito no arquivo ao lado.
 `vite preview`. Sem isso o preview serve na base `/` e o e2e acusa a aplicacao
 por culpa do harness. Perdi uma rodada nisso.
 
+### Bloco 25. A conta ganhou remoto privado, e a varredura que veio antes ✅
+
+`vaugrafa-stack/iat-contas` e `vaugrafa-stack/iat-area-tecnica`, os dois
+PRIVADOS, conferidos com 404 para quem nao esta logado. Antes disso, varredura da
+arvore E do historico completo nos dois: 19 ocorrencias brutas, 18 descartadas na
+leitura do contexto, 1 corrigida (fixture de IP em faixa alocada de verdade, hoje
+na faixa reservada da RFC 5737).
+
+**Um workflow multiagente disparado para isso voltou com `liberadoParaEmpurrar:
+true` e zero achados, e era MENTIRA:** os cinco agentes morreram no limite de uso
+e nenhum abriu um arquivo. Resultado vazio por falha e indistinguivel de
+resultado vazio por limpeza, se voce olhar so o numero. Refiz com script
+deterministico, que para procurar segredo serve melhor de qualquer jeito.
+
+### Bloco 26. Login da Area Tecnica provado em navegador, sem Docker ✅
+
+`desenvolvimento/provedor_local.py`: provedor OIDC falso que CONFERE segredo,
+`redirect_uri` por igualdade exata e PKCE S256. So sobe com variavel explicita,
+escuta so em 127.0.0.1, chave RSA em memoria.
+
+Provado: state, nonce, S256, troca do codigo, `oid`/`tid` virando identidade,
+cookie invisivel para script, entrar NAO habilita ninguem, callback forjado nao
+derruba quem esta dentro, e nenhum token no banco (conferido nos BYTES).
+
+Promocao e revogacao tambem: o papel e lido a cada pedido, e nao carimbado no
+cookie. Promover liberou na mesma sessao; rebaixar bloqueou no pedido seguinte.
+
+**Removidas as colunas `ip_truncado` e `agente`.** Tinham truncamento, teste
+proprio, e nasciam SEMPRE nulas: o `app.py` nunca passava os valores. Ninguem
+lia, nada mostrava, nao havia prazo de descarte. No lugar, dois testes que provam
+a AUSENCIA, para que a volta seja decisao e nao reflexo.
+
+### Bloco 27. O pior defeito da frente de conta, achado rodando ✅ `0435ac2`
+
+Gravacao RECUSADA pelo servico (revisao menor ou igual) fazia o navegador
+carimbar a revisao devolvida e se declarar em dia com algo que nunca baixou. A
+sincronizacao seguinte via as revisoes iguais e SUBIA por cima, apagando o estudo
+do outro computador sem perguntar. O ramo PERGUNTAR deixava de ser alcancavel.
+
+`interpretarGravacao` so carimba quando a revisao volta IGUAL a pedida. Os tres
+lugares que gravavam tinham a mesma armadilha.
+
+Antes disso, no mesmo dia, o defeito irmao: o que vinha do servidor voltava para
+ele, porque ao mover a gravacao automatica para o gancho eu deixei para tras a
+marca de "isto veio de fora".
+
+**Licao de metodo:** os dois defeitos passaram por 400+ testes e so apareceram
+com o servico de pe e um cenario adversarial montado a mao. Teste de unidade
+prova a peca; so a execucao prova a montagem.
+
+**Licao de ferramenta:** nao usar `git checkout` para desfazer uma mutacao em
+arquivo nao commitado. Ele levou junto a correcao que eu ainda nao tinha
+gravado. Copia antes, restaura depois.
+
 ## O que falta no layout
 
 1. A hierarquia da barra lateral e do topo

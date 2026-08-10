@@ -203,7 +203,14 @@ function validateChange(change, actualByPath, baselineByPath, failures) {
       failures.push(`${change.path}: reviewedAt deve usar AAAA-MM-DD`);
     }
   }
-  if (change.reason?.trim().length < 8) failures.push(`${change.path}: justificativa insuficiente`);
+  // `change.reason?.trim().length < 8` parecia exigir justificativa e nao exigia:
+  // sem o campo, a expressao vira `undefined < 8`, que em JavaScript e FALSE. A
+  // regra so pegava quem se deu ao trabalho de escrever uma justificativa curta,
+  // e liberava quem nao escreveu nenhuma.
+  const justificativa = typeof change.reason === 'string' ? change.reason.trim() : '';
+  if (justificativa.length < 8) {
+    failures.push(`${change.path}: justificativa insuficiente`);
+  }
 }
 
 function validateSizes(entries, policy, failures) {

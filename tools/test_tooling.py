@@ -325,6 +325,43 @@ class ClaudeWorkflowFailClosedTests(unittest.TestCase):
             set(),
         )
 
+    def test_nome_fora_da_politica_nao_escapa_das_regras(self):
+        """O relatório não escolhe a régua pela qual será julgado.
+
+        `workflowName` é escrito pelo mesmo agregador que este validador existe
+        para desconfiar. Enquanto nome desconhecido caía nos defaults em
+        silêncio, as duas regras que de fato pegam auditoria fabricada
+        (`requiredResultPaths` e `releaseFlagPath`) desapareciam: um relatório
+        bem formado, com ZERO lentes auditadas e liberação declarada, saía com
+        exit 0 bastando trocar uma maiúscula ou pôr um acento no nome.
+        """
+        fabricado = workflow_report(result={"porLente": [], "liberado": True})
+        registrado = self.codes(fabricado)
+        self.assertIn("RESULT_EVIDENCE_MISSING", registrado)
+        self.assertIn("FALSE_GREEN_RELEASE", registrado)
+
+        for nome in (
+            "auditoria-pre-publicacao-2",
+            "Auditoria-Pre-Publicacao",
+            "auditoria-pré-publicação",
+            "seja-la-o-que-for",
+        ):
+            renomeado = dict(fabricado, workflowName=nome)
+            with self.subTest(nome=nome):
+                self.assertIn("WORKFLOW_UNREGISTERED", self.codes(renomeado))
+
+    def test_politica_pode_permitir_nome_desconhecido_por_escrito(self):
+        # A saída existe, e é explícita. O que não pode existir é a saída
+        # silenciosa, que era o comportamento anterior.
+        permissiva = dict(WORKFLOW_POLICY, allowUnknownWorkflows=True)
+        codigos = {
+            v.code
+            for v in validate_claude_workflow.validate_workflow(
+                dict(workflow_report(), workflowName="outro-qualquer"), permissiva
+            )
+        }
+        self.assertNotIn("WORKFLOW_UNREGISTERED", codigos)
+
     def test_agent_error_blocks_even_when_aggregator_says_release(self):
         codes = self.codes(workflow_report(states=("error", "error")))
         self.assertIn("AGENT_FAILED", codes)

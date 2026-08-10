@@ -52,7 +52,7 @@ com `AGENT_FAILED` e `FALSE_GREEN_RELEASE`.
 ## Testes
 
 ```powershell
-python -m unittest tools/test_validate_claude_workflow.py
+python -m unittest tools.test_tooling
 ```
 
 As políticas são versionadas separadamente do código para permitir cobertura

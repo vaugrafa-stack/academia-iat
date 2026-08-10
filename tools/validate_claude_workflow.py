@@ -62,18 +62,32 @@ def _positive_integer(value: Any) -> bool:
     return isinstance(value, int) and not isinstance(value, bool) and value > 0
 
 
-def _merged_policy(policy_document: Mapping[str, Any], workflow_name: str) -> dict[str, Any]:
+def _merged_policy(
+    policy_document: Mapping[str, Any], workflow_name: str
+) -> tuple[dict[str, Any], bool]:
+    """Devolve a política aplicável E se o workflow estava registrado.
+
+    O segundo valor não é conveniência: sem ele, nome desconhecido caía nos
+    defaults em silêncio, e as regras que de fato pegam auditoria fabricada
+    (`requiredResultPaths` e `releaseFlagPath`) simplesmente deixavam de existir.
+
+    Quem escreve `workflowName` é o mesmo relatório que este validador foi
+    escrito para desconfiar. Deixar esse campo escolher sob qual política ele
+    será julgado inverte a relação de confiança: bastava trocar uma letra
+    maiúscula ou pôr um acento para o portão aprovar.
+    """
     defaults = policy_document.get("defaults")
     workflows = policy_document.get("workflows")
     if not isinstance(defaults, Mapping) or not isinstance(workflows, Mapping):
         raise ValueError("a política precisa conter objetos 'defaults' e 'workflows'")
 
     selected = dict(defaults)
+    registrado = workflow_name in workflows
     override = workflows.get(workflow_name, {})
     if not isinstance(override, Mapping):
         raise ValueError(f"a política do workflow {workflow_name!r} não é um objeto")
     selected.update(override)
-    return selected
+    return selected, registrado
 
 
 def validate_workflow(
@@ -89,7 +103,20 @@ def validate_workflow(
     if not isinstance(workflow_name, str) or not workflow_name.strip():
         return [Violation("WORKFLOW_NAME_MISSING", "workflowName ausente ou vazio")]
 
-    policy = _merged_policy(policy_document, workflow_name)
+    policy, registrado = _merged_policy(policy_document, workflow_name)
+    if not registrado and not policy_document.get("allowUnknownWorkflows", False):
+        # Fail-closed de verdade. Sem isto, o relatório escolhia a própria régua:
+        # bastava um nome fora da lista para escapar de `requiredResultPaths` e
+        # de `releaseFlagPath`, e um relatório com ZERO lentes auditadas e
+        # `liberado: true` saía com exit 0, que a governança define como
+        # autorização para publicar.
+        violations.append(
+            Violation(
+                "WORKFLOW_UNREGISTERED",
+                f"{workflow_name!r} não tem política registrada; "
+                f"registrados: {sorted(policy_document.get('workflows', {}))}",
+            )
+        )
     if report.get("status") != "completed":
         violations.append(
             Violation(

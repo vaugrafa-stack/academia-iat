@@ -154,7 +154,12 @@ describe("contratos incrementais de arquitetura", () => {
     expect(main).not.toMatch(/^import Lesson\b/m);
     expect(main).toContain("dados={DADOS_AULA}");
     expect(main).not.toMatch(/^function (?:Lesson|LessonOverview|LessonKnowledgeCheck|VideoLesson)\b/m);
-    expect(licao).toMatch(/export default function Lesson\(\{[\s\S]*?dados,\n\}\)/);
+    // `\r?\n`, e não `\n`: em máquina Windows com `core.autocrlf=true` o arquivo
+    // em disco tem CRLF, e o `readFile` do Node NÃO traduz fim de linha. Com o
+    // `\n` cru, este contrato passava no CI (Linux, LF) e reprovava na máquina
+    // de quem desenvolve. Portão que só reprova localmente ensina a ignorar
+    // portão, que é o começo de publicar no escuro.
+    expect(licao).toMatch(/export default function Lesson\(\{[\s\S]*?dados,\r?\n\}\)/);
     // O mesmo objetivo aparece no Inicio e na aula, vindo da mesma funcao.
     expect(main).toContain("objetivoDaAula(lesson, blocks, tableMap)");
     expect(licao).toContain("objetivoDaAula(lesson, blocks, tableMap)");

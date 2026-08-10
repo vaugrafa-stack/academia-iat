@@ -125,4 +125,39 @@ describe('governanca mecanica de midia', () => {
     expect(result.ok).toBe(false);
     expect(result.failures).toContain('public/large.png: 17 bytes excedem o limite de 16');
   });
+
+  it('reprova entrada SEM justificativa, e nao so a justificativa curta', async () => {
+    // A regra era `change.reason?.trim().length < 8`. Sem o campo, isso vira
+    // `undefined < 8`, que em JavaScript e FALSE: a exigencia so alcancava quem
+    // escreveu uma justificativa curta, e liberava quem nao escreveu nenhuma.
+    // Ou seja, a unica forma de burlar era nao se dar ao trabalho.
+    const { root, baseline } = await fixture();
+    const payload = 'sem';
+    await writeFile(join(root, 'public', 'sem-motivo.png'), payload);
+    const entries = await buildInventory(root, basePolicy);
+    const semJustificativa = {
+      action: 'add', path: 'public/sem-motivo.png', bytes: Buffer.byteLength(payload),
+      sha256: sha256(payload), sourceType: 'project-generated',
+      sourceLocator: 'tools/generator.mjs', rightsBasis: 'produzido pelo projeto',
+      privacyReview: 'synthetic-no-personal-data', technicalReview: 'approved',
+      reviewedBy: 'revisor fixture', reviewedAt: '2026-08-09',
+    };
+    const semNada = await validateMediaGovernance({
+      root, policy: basePolicy, baseline, entries,
+      ledger: { schemaVersion: 1, changes: [semJustificativa] },
+    });
+    expect(semNada.ok).toBe(false);
+    expect(semNada.failures).toContain('public/sem-motivo.png: justificativa insuficiente');
+
+    // E o campo presente porem vazio, ou so espaco, tambem nao vale.
+    for (const reason of ['', '   ', 'curta']) {
+      const r = await validateMediaGovernance({
+        root, policy: basePolicy, baseline, entries,
+        ledger: { schemaVersion: 1, changes: [{ ...semJustificativa, reason }] },
+      });
+      expect(r.failures, JSON.stringify(reason)).toContain(
+        'public/sem-motivo.png: justificativa insuficiente',
+      );
+    }
+  });
 });

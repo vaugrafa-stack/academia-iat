@@ -94,6 +94,30 @@ describe('contratos de acessibilidade das superfícies principais', () => {
     );
   });
 
+  it('nenhum destino da navegação inferior encolhe abaixo do alvo de toque', async () => {
+    // Em 10/08/2026 esta regra foi de `min-height:54px` para
+    // `min-height:28px;max-height:28px` e atravessou build, suíte e CI sem que
+    // nada acusasse: nenhum portão media o alvo de toque da barra inferior, que
+    // é justamente o controle mais usado no celular.
+    //
+    // A altura é lida do CSS, e não do navegador, porque este é um contrato de
+    // fonte: o e2e mede o retângulo renderizado, e é bom que meça, mas ele só
+    // roda no artefato construído. Aqui o defeito morre antes de virar build.
+    const folhaBase = await readFile(baseCssUrl, 'utf8');
+    const regra = folhaBase.match(/\.mobile-bottom-nav button\{([^}]*)\}/);
+    expect(regra, '.mobile-bottom-nav button precisa existir').toBeTruthy();
+
+    const altura = Number(regra[1].match(/min-height:\s*(\d+)px/)?.[1] ?? 0);
+    expect(altura, `min-height declarado: ${altura}px`).toBeGreaterThanOrEqual(44);
+
+    // `max-height` menor que o mínimo transforma o alvo em faixa fina sem que o
+    // `min-height` pareça errado. Foi assim que o defeito passou despercebido.
+    const teto = regra[1].match(/max-height:\s*(\d+)px/)?.[1];
+    if (teto !== undefined) {
+      expect(Number(teto), `max-height declarado: ${teto}px`).toBeGreaterThanOrEqual(44);
+    }
+  });
+
   it('mantém Suporte alcançável por rolagem e identifica o GeoPR como destino externo', async () => {
     const [main, css] = await Promise.all([
       readFile(mainUrl, 'utf8'),

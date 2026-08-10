@@ -34,6 +34,7 @@
     ".webp": 750000,
     ".woff2": 250000
   },
+  "currentCycle": "2026-08",
   "maxApprovedGrowthBytes": 20000000,
   "maxApprovedGrowthFiles": 80,
   "collections": [

@@ -211,6 +211,12 @@ function validateChange(change, actualByPath, baselineByPath, failures) {
   if (justificativa.length < 8) {
     failures.push(`${change.path}: justificativa insuficiente`);
   }
+  // O ciclo e obrigatorio e explicito. Sem ele, o teto de crescimento nao teria
+  // como distinguir o que entrou agora do que ja estava aprovado ha meses, e
+  // voltaria a ser vitalicio. Exigido como string nao vazia, e nao com `?.`,
+  // pela mesma razao da justificativa logo acima.
+  const ciclo = typeof change.cycle === 'string' ? change.cycle.trim() : '';
+  if (!ciclo) failures.push(`${change.path}: cycle ausente`);
 }
 
 function validateSizes(entries, policy, failures) {
@@ -339,10 +345,36 @@ export async function validateMediaGovernance({ root, policy, baseline, ledger, 
   if (duplicates.length) {
     for (const duplicate of duplicates) failures.push(`conteudo duplicado ${duplicate.sha256}: ${duplicate.paths.join(', ')}`);
   }
+  // O teto e POR CICLO, e agora isso e verdade.
+  //
+  // Antes, a conta somava todas as adicoes ja aprovadas, de sempre. E o ledger
+  // nao pode encolher: o baseline e imutavel, entao tirar uma entrada faria o
+  // arquivo correspondente virar "novo ativo sem registro" na proxima execucao.
+  // O resultado era um teto vitalico disfarcado de teto por ciclo, que travaria
+  // o CI de forma permanente por volta do octogesimo ativo novo, e a unica saida
+  // seria afrouxar a politica para todo mundo.
+  //
+  // As entradas de ciclos anteriores continuam valendo como AUTORIZACAO do
+  // ativo, que e o que impede o "sem registro". Elas apenas nao consomem mais o
+  // orcamento do ciclo em curso. Encerrar um ciclo e uma edicao explicita de
+  // `currentCycle` na politica, visivel no diff, que e onde ela deve ser julgada.
+  const cicloCorrente = typeof policy.currentCycle === 'string' ? policy.currentCycle.trim() : '';
+  if (!cicloCorrente) failures.push('politica sem currentCycle: o teto de crescimento nao tem periodo');
   const approvedAdds = (ledger.changes || []).filter((change) => change.action === 'add');
-  const growthBytes = approvedAdds.reduce((total, change) => total + (change.bytes || 0), 0);
-  if (approvedAdds.length > policy.maxApprovedGrowthFiles) failures.push('ledger excede o limite de novos arquivos por ciclo');
-  if (growthBytes > policy.maxApprovedGrowthBytes) failures.push('ledger excede o limite de crescimento em bytes por ciclo');
+  const doCiclo = approvedAdds.filter((change) => (change.cycle || '').trim() === cicloCorrente);
+  const growthBytes = doCiclo.reduce((total, change) => total + (change.bytes || 0), 0);
+  if (doCiclo.length > policy.maxApprovedGrowthFiles) {
+    failures.push(
+      `ledger excede o limite de novos arquivos no ciclo ${cicloCorrente}: `
+      + `${doCiclo.length} de ${policy.maxApprovedGrowthFiles}`,
+    );
+  }
+  if (growthBytes > policy.maxApprovedGrowthBytes) {
+    failures.push(
+      `ledger excede o limite de crescimento em bytes no ciclo ${cicloCorrente}: `
+      + `${growthBytes} de ${policy.maxApprovedGrowthBytes}`,
+    );
+  }
   await validateContracts(root, entries, failures);
   return {
     ok: failures.length === 0,

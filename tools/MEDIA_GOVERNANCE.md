@@ -16,10 +16,34 @@ resumo registra contagem, bytes, colecoes, extensoes e o hash do inventario.
 
 Qualquer mudanca futura deve entrar em `media-approved-changes.json` com acao,
 caminho, bytes, SHA-256, origem, base de direitos, revisao de privacidade,
-revisao tecnica, responsavel, data e justificativa. O ledger nao substitui a
-revisao humana; ele torna a aprovacao explicita e testavel. Novos ciclos ficam
-limitados a 80 arquivos e 20 MB, alem dos limites por extensao. Para volumes
-maiores, a politica precisa ser revista conscientemente antes da incorporacao.
+revisao tecnica, responsavel, data, justificativa e **ciclo**. O ledger nao
+substitui a revisao humana; ele torna a aprovacao explicita e testavel.
+
+## O ciclo, e por que ele existe
+
+O teto de 80 arquivos e 20 MB vale **por ciclo**, e o ciclo corrente e declarado
+em `currentCycle`, na politica.
+
+Isso nao e detalhe de contabilidade. O baseline e imutavel e o ledger nao pode
+encolher: retirar uma entrada faria o arquivo correspondente virar "novo ativo
+sem registro" na execucao seguinte. Enquanto o teto somava todas as adicoes ja
+aprovadas, ele era vitalicio disfarcado de "por ciclo", e travaria o CI de forma
+permanente por volta do octogesimo ativo novo. A unica saida seria afrouxar o
+limite para todo mundo, que e como um portao morre.
+
+As entradas de ciclos anteriores continuam valendo como autorizacao do ativo.
+Elas apenas nao consomem mais o orcamento do ciclo em curso.
+
+**Encerrar um ciclo** e uma edicao de uma linha:
+
+```json
+"currentCycle": "2026-09"
+```
+
+Ela aparece no diff, que e onde a decisao deve ser julgada: quem abre um ciclo
+novo esta dizendo que o anterior foi revisado e incorporado. Para volumes
+maiores dentro de um mesmo ciclo, a politica precisa ser revista
+conscientemente antes da incorporacao.
 
 O comando `node tools/check-media-governance.mjs --report <arquivo>` pode gerar
 um relatorio completo do estado corrente para auditoria sem alterar o baseline.

@@ -15,6 +15,7 @@
 // aproveita para redesenhar impede saber, quando algo quebra, se foi a mudanca
 // de lugar ou a mudanca de conteudo.
 import React, { lazy, useEffect, useMemo, useRef, useState } from 'react';
+import './routeStyles.css';
 import {
   AlertTriangle,
   ArrowRight,

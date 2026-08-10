@@ -152,6 +152,27 @@
     color: var(--ink);
   }
 
+  /* Estado atual explícito no tema escuro: texto, ícones e contorno não ficam
+     reféns da composição alfa de --green3 sobre o painel translúcido. */
+  :root:not([data-theme="light"]) .mobile-nav-panel__item.current {
+    border-color: #65d19e;
+    color: #f1f5f9;
+    background: #173d34;
+    box-shadow:
+      inset 3px 0 0 #65d19e,
+      inset 0 0 0 1px #65d19e;
+  }
+
+  :root:not([data-theme="light"]) .mobile-nav-panel__item.current strong,
+  :root:not([data-theme="light"]) .mobile-nav-panel__item.current small,
+  :root:not([data-theme="light"]) .mobile-nav-panel__item.current > svg:last-child {
+    color: #d8e7e2;
+  }
+
+  :root:not([data-theme="light"]) .mobile-nav-panel__item.current > svg:first-child {
+    color: #8ce8bd;
+  }
+
   .mobile-nav-panel__item.external > svg:last-child {
     color: var(--blue);
   }

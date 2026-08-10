@@ -10,8 +10,10 @@ const redatorUrl = new URL("./redator.jsx", import.meta.url);
 const licaoUrl = new URL("./licao.jsx", import.meta.url);
 const lessonObjectiveUrl = new URL("./lessonObjective.js", import.meta.url);
 const avaliacoesUrl = new URL("./avaliacoes.jsx", import.meta.url);
+const formacaoUrl = new URL("./formacao.jsx", import.meta.url);
 const stylesUrl = new URL("./styles.css", import.meta.url);
 const experienceUrl = new URL("./experience.css", import.meta.url);
+const mobileNavigationUrl = new URL("./mobileNavigation.css", import.meta.url);
 const viteConfigUrl = new URL("../vite.config.mjs", import.meta.url);
 
 describe("contratos incrementais de arquitetura", () => {
@@ -54,7 +56,25 @@ describe("contratos incrementais de arquitetura", () => {
     const main = (await readFile(mainUrl, "utf8")).replace(/\r\n/g, "\n");
     const bytes = Buffer.byteLength(main, "utf8");
 
-    expect(bytes).toBeLessThanOrEqual(110_000);
+    expect(bytes).toBeLessThanOrEqual(70_000);
+  });
+
+  it("mantém a formação fora do orquestrador e carrega a rota sob demanda", async () => {
+    const [main, formacao] = await Promise.all([
+      readFile(mainUrl, "utf8"),
+      readFile(formacaoUrl, "utf8"),
+    ]);
+
+    expect(main).toContain(
+      'const Formation = lazy(() => import("./formacao.jsx"));',
+    );
+    expect(main).toContain("dados={DADOS_FORMACAO}");
+    expect(main).not.toMatch(/^function Formation\b/m);
+    expect(formacao).toMatch(
+      /export default function Formation\(\{ state, openLesson, dados \}\)/,
+    );
+    expect(formacao).toContain('className="formation-empty"');
+    expect(formacao).toContain("Limpar filtro");
   });
 
   it("mantém avaliações fora do orquestrador e carrega a rota sob demanda", async () => {
@@ -143,7 +163,10 @@ describe("contratos incrementais de arquitetura", () => {
   });
 
   it("mantém o início enxuto e a sequência única M00–M16", async () => {
-    const main = await readFile(mainUrl, "utf8");
+    const [main, formacao] = await Promise.all([
+      readFile(mainUrl, "utf8"),
+      readFile(formacaoUrl, "utf8"),
+    ]);
 
     expect(main).toContain("Objetivo atual");
     expect(main).toContain("Próxima prática");
@@ -152,8 +175,12 @@ describe("contratos incrementais de arquitetura", () => {
     expect(main).toContain("Sobre a fonte");
     expect(main).toContain('"Comece por aqui."');
     expect(main).toContain('"Iniciar orientação"');
-    expect(main).toContain('className="formation-empty"');
-    expect(main).toContain("Limpar filtro");
+    expect(main).toContain('"Novo em hidrelétricas? Veja os fundamentos"');
+    expect(main).toContain(
+      'go(startedJourney ? "formacao" : "hidreletricas")',
+    );
+    expect(formacao).toContain('className="formation-empty"');
+    expect(formacao).toContain("Limpar filtro");
     expect(main).toContain("A sequência permanece única, de M00 a M16.");
     expect(main).not.toContain("<TodayPlan");
     expect(main).not.toContain('className="river-journey"');
@@ -242,5 +269,20 @@ describe("contratos incrementais de arquitetura", () => {
     expect(laboratorio).toContain("role={mobileCatalog ? 'dialog' : undefined}");
     expect(redator).toContain("Etapa {passo + 1} de {ESTRUTURA_IT.length}");
     expect(redator).toContain('id="rd-step-select"');
+  });
+
+  it("mantém o CSS exclusivo da navegação móvel fora da entrada desktop", async () => {
+    const [main, mobileNavigation] = await Promise.all([
+      readFile(mainUrl, "utf8"),
+      readFile(mobileNavigationUrl, "utf8"),
+    ]);
+
+    expect(main).not.toMatch(/^import ["']\.\/mobileNavigation\.css["'];/m);
+    expect(main).toContain(
+      'const MOBILE_NAVIGATION_QUERY = "(max-width: 980px)";',
+    );
+    expect(main).toContain('import("./mobileNavigation.css")');
+    expect(main).toContain("await loadMobileNavigationCss()");
+    expect(mobileNavigation).toContain("@media (max-width: 980px)");
   });
 });

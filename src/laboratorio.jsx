@@ -36,7 +36,7 @@ import {
 } from './labSources.js';
 import { nivelDoCaso } from './niveisLab.js';
 import { useMediaQuery } from './useMediaQuery.js';
-import './laboratorio.css';
+import './routeStyles.css';
 // As regras do Laboratorio sairam daqui em 05/08/2026. Esta tela passou a
 // consumi-las como qualquer outro modulo, e os testes que exercitam regra
 // deixaram de carregar React, icones e folha de estilo para isso.

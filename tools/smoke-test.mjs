@@ -78,6 +78,10 @@ try {
 
   const navButtons = [...document.querySelectorAll('.sidebar-v2 nav button')];
   await click(navButtons.find(x => x.textContent.includes('Curso guiado pelo POP')));
+  await waitFor(
+    () => document.querySelectorAll('.track-row').length === 17,
+    'a rota lazy da formação não terminou de carregar os dezessete módulos',
+  );
   assert(document.querySelectorAll('.track-row').length === 17, 'percurso formativo com dezessete módulos');
   assert(!document.querySelector('.learning-path-selector'), 'formação apresenta uma sequência única, sem divisão por trilhas');
   // o M00 ja abre expandido, para o iniciante ver por onde comecar

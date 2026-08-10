@@ -1,0 +1,13 @@
+/*
+ * Estilos das áreas carregadas sob demanda. As rotas compartilham este único
+ * pacote para que tokens e padrões recorrentes sejam comprimidos em conjunto,
+ * sem levá-los ao primeiro carregamento da página inicial.
+ */
+@import "./avaliacoes.css";
+@import "./answerSheets.css";
+@import "./hydroNavigation.css";
+@import "./laboratorio.css";
+@import "./LearningPaths.css";
+@import "./licao.css";
+@import "./normativeTraceability.css";
+@import "./profileRoute.css";

@@ -4,6 +4,8 @@
 > raciocínio, os critérios e o registro das etapas daquele ciclo. Contagens,
 > estados e prioridades aqui descritos não são a fonte corrente. Consulte
 > [`STATUS_ATUAL.md`](STATUS_ATUAL.md) antes de planejar, auditar ou publicar.
+> Os adendos posteriores registram apenas deltas de execução e também não
+> substituem o status corrente nem a evidência do commit validado.
 
 Os estados abaixo refletem somente o que estava comprovado até 04/08/2026, não
 o que foi apenas planejado nem o que existe hoje.
@@ -907,3 +909,35 @@ O projeto só pode ser chamado de Premium 10/10 quando todas as etapas técnicas
 tiverem prova, as validações humanas obrigatórias estiverem registradas e a
 produção tiver sido revalidada. Até lá, usar a formulação “em evolução para a
 meta Premium 10/10”.
+
+## Adendo de execução — candidato de 10/08/2026
+
+Este adendo não reabre nem reescreve o snapshot histórico. O estado corrente
+permanece em [`STATUS_ATUAL.md`](STATUS_ATUAL.md), e a auditoria detalhada da
+rodada está em
+[`AUDITORIA_NOTA_10_2026-08-10.md`](AUDITORIA_NOTA_10_2026-08-10.md).
+
+### Deltas implementados
+
+| Frente | Avanço | Próxima prova |
+|---|---|---|
+| E2 Arquitetura | Formação extraída para rota lazy; CSS móvel condicional; `main.jsx` em 65.935 bytes e 2.039 linhas | continuar extração por domínio sem romper os contratos |
+| E2 Desempenho | CSS inicial em 181,3/32,5 KiB e total em 236,5/43,0 KiB; sete folhas de rota consolidadas e perfil lazy | preservar margem e medir cada nova superfície |
+| E4 Formação | fundação iniciante, atalho experiente, pesquisa, estado vazio, expansão e abertura de aula cobertos por testes | piloto moderado com iniciantes e especialistas |
+| E6 Avaliações | 213 questões com objetivo, nível cognitivo, dificuldade estrutural, remediação e feedback de distratores | revisão editorial, técnica, psicométrica e rebalanceamento cognitivo |
+| E10 UX e acessibilidade | portão Playwright de 13 rotas aprovado em cinco larguras; contraste, toque, texto móvel, hierarquia, overflow e runtime verificados | leitor de tela real, zoom e dispositivos físicos |
+| E14 Release | 60 arquivos/493 testes, 29 cenários de artefato, PWA, 25 testes Python e auditoria de dependências aprovados | push, workflow verde e SHA online |
+
+### Limites que permanecem
+
+- 168 das 213 questões concentram-se no nível “compreender”; aplicação e análise
+  precisam crescer com qualidade e casos autênticos;
+- a dificuldade das questões é classificação estrutural editorial, não medida
+  psicométrica;
+- vigência, transição, escopo e aplicação normativa permanecem sujeitos a
+  revisão humana registrada;
+- automação de acessibilidade não substitui tecnologia assistiva e teste com
+  pessoas;
+- nenhuma métrica automatizada desta rodada autoriza declarar validade
+  normativa, eficácia pedagógica, aprovação institucional ou nota 10/10
+  absoluta.

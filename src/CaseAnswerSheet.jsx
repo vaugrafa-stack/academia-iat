@@ -14,7 +14,7 @@ import {
   serializeCaseAnswerSheet,
 } from './caseAnswerSheets.js';
 import { loadLabAnswerReasons } from './labAnswerReasons.js';
-import './answerSheets.css';
+import './routeStyles.css';
 
 function downloadText(sheet) {
   const blob = new Blob([serializeCaseAnswerSheet(sheet)], {

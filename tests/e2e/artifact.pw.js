@@ -114,23 +114,35 @@ test('guia de hidrelétricas leva cada atalho ao título visível e focado', asy
   const links = nav.locator('.hydro-guide-nav__links');
   const trigger = nav.getByRole('button', { name: 'Licenciamento' });
   const target = page.locator('#hydro-licenciamento');
+  const targetHeading = target.getByRole('heading', {
+    name: 'Como solicitar a autorização para construir',
+  });
 
   await expect(nav).toBeVisible();
+  await expect(target).toHaveCSS('content-visibility', 'auto');
   await trigger.click();
   await expect(target).toBeFocused();
   await expect(trigger).toHaveAttribute('aria-current', 'location');
 
   await expect.poll(async () => {
-    const [navBox, targetBox] = await Promise.all([
+    const [navBox, headingBox] = await Promise.all([
       nav.boundingBox(),
-      target.boundingBox(),
+      targetHeading.boundingBox(),
     ]);
-    if (!navBox || !targetBox) return false;
-    const distanceFromNav = targetBox.y - (navBox.y + navBox.height);
-    return distanceFromNav >= -3 && distanceFromNav <= 48;
+    if (!navBox || !headingBox) return false;
+    const distanceFromNav = headingBox.y - (navBox.y + navBox.height);
+    const viewportHeight = page.viewportSize()?.height || 0;
+    return distanceFromNav >= 4
+      && distanceFromNav <= 180
+      && headingBox.y >= navBox.y + navBox.height
+      && headingBox.y + headingBox.height <= viewportHeight;
   }, {
-    message: 'o título de Licenciamento precisa terminar logo abaixo da navegação fixa',
+    message: 'o heading final precisa ficar inteiro abaixo da navegação, sem espaçador excessivo',
   }).toBe(true);
+
+  await expect(target).toBeFocused();
+  await expect(trigger).toHaveAttribute('aria-current', 'location');
+  await expect(target).toHaveCSS('content-visibility', 'auto');
 
   await expect.poll(async () => trigger.evaluate((element) => {
     const container = element.parentElement;

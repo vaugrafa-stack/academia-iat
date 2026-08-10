@@ -14,6 +14,11 @@ export const KIB = 1024;
 
 export const BUNDLE_BUDGETS = Object.freeze({
   entry: Object.freeze({ raw: 205 * KIB, gzip: 66 * KIB }),
+  // Folhas declaradas no HTML ou precarregadas pela entrada JavaScript
+  // bloqueiam o primeiro conteudo. O teto total continua protegendo o
+  // artefato inteiro; este teto separado impede que CSS de rota volte
+  // silenciosamente para a entrada comum.
+  initialCss: Object.freeze({ raw: 190 * KIB, gzip: 35 * KIB }),
   largestJs: Object.freeze({ raw: 265 * KIB, gzip: 85 * KIB }),
   totalJs: Object.freeze({ raw: 850 * KIB, gzip: 270 * KIB }),
   // Teto de CSS revisto em 01/08/2026, com a conta na mesa.
@@ -102,10 +107,7 @@ function findModuleScriptSource(html) {
   return null;
 }
 
-export function resolveEntryAsset(html) {
-  const source = findModuleScriptSource(html);
-  if (!source) return null;
-
+function resolveAssetPath(source) {
   let pathname;
   try {
     pathname = new URL(source, "https://bundle.invalid/").pathname;
@@ -123,6 +125,32 @@ export function resolveEntryAsset(html) {
   const markerIndex = pathname.lastIndexOf(marker);
   if (markerIndex < 0) return pathname.replace(/^\/+/, "");
   return pathname.slice(markerIndex + 1);
+}
+
+export function resolveEntryAsset(html) {
+  const source = findModuleScriptSource(html);
+  if (!source) return null;
+  return resolveAssetPath(source);
+}
+
+export function resolveInitialStyleAssets(html, entryJavaScript = "") {
+  const links = html.match(/<link\b[^>]*>/gi) || [];
+  const fromHtml = links.flatMap((link) => {
+    const rel = link.match(/\brel\s*=\s*["']([^"']+)["']/i)?.[1] || "";
+    if (!rel.split(/\s+/).some((value) => value.toLowerCase() === "stylesheet")) {
+      return [];
+    }
+    const href = link.match(/\bhref\s*=\s*["']([^"']+)["']/i)?.[1];
+    const asset = href ? resolveAssetPath(href) : null;
+    return asset ? [asset] : [];
+  });
+  const fromEntry = [...entryJavaScript.matchAll(
+    /["'`]([^"'`]*assets\/[^"'`?]+\.css)(?:\?[^"'`]*)?["'`]/gi,
+  )].flatMap((match) => {
+    const asset = resolveAssetPath(match[1]);
+    return asset ? [asset] : [];
+  });
+  return [...new Set([...fromHtml, ...fromEntry])];
 }
 
 function sum(files, field) {
@@ -175,16 +203,26 @@ export async function collectBundleMetrics(buildDirectory) {
     declaredEntry?.startsWith("assets/") ?
       basename(declaredEntry)
     : null;
+  const entry = entryName ?
+    jsFiles.find((file) => file.name === entryName) || null
+  : null;
+  const declaredInitialStyles = resolveInitialStyleAssets(html, entry?.text || "");
+  const initialStyleNames = new Set(
+    declaredInitialStyles
+      .filter((asset) => asset.startsWith("assets/"))
+      .map((asset) => basename(asset)),
+  );
+  const initialCssFiles = cssFiles.filter((file) => initialStyleNames.has(file.name));
 
   return {
     directory,
     declaredEntry,
-    entry: entryName ?
-      jsFiles.find((file) => file.name === entryName) || null
-    : null,
+    declaredInitialStyles,
+    entry,
     files,
     jsFiles,
     cssFiles,
+    initialCssFiles,
     compressibleAssets,
     flowchartsChunks,
     largestJsRaw: largest(jsFiles, "rawBytes"),
@@ -196,6 +234,10 @@ export async function collectBundleMetrics(buildDirectory) {
     totalCss: {
       rawBytes: sum(cssFiles, "rawBytes"),
       gzipBytes: sum(cssFiles, "gzipBytes"),
+    },
+    initialCss: {
+      rawBytes: sum(initialCssFiles, "rawBytes"),
+      gzipBytes: sum(initialCssFiles, "gzipBytes"),
     },
     largestCompressibleAssetRaw: largest(
       compressibleAssets,
@@ -244,6 +286,16 @@ export function evaluateBudgetMetrics(metrics) {
       metrics.largestJsGzip?.gzipBytes,
       BUNDLE_BUDGETS.largestJs.gzip,
       metrics.largestJsGzip?.name,
+    ],
+    [
+      "CSS inicial bruto",
+      metrics.initialCss?.rawBytes,
+      BUNDLE_BUDGETS.initialCss.raw,
+    ],
+    [
+      "CSS inicial gzip",
+      metrics.initialCss?.gzipBytes,
+      BUNDLE_BUDGETS.initialCss.gzip,
     ],
     [
       "JS total bruto",
@@ -311,6 +363,12 @@ export function evaluateBundleStructure(metrics) {
     violations.push(
       `a entrada declarada no HTML não existe no build: ${metrics.declaredEntry}`,
     );
+  }
+
+  if (!metrics.declaredInitialStyles?.length) {
+    violations.push("entrada sem folha de estilo inicial");
+  } else if (!metrics.initialCssFiles?.length) {
+    violations.push("folhas de estilo iniciais declaradas nao existem no build");
   }
 
   if (metrics.flowchartsChunks.length !== 1) {
@@ -384,6 +442,16 @@ export function printBundleMetrics(metrics) {
     metrics.largestJsGzip?.gzipBytes,
     BUNDLE_BUDGETS.largestJs.gzip,
     metrics.largestJsGzip?.name,
+  );
+  printMetric(
+    "CSS inicial · bruto",
+    metrics.initialCss.rawBytes,
+    BUNDLE_BUDGETS.initialCss.raw,
+  );
+  printMetric(
+    "CSS inicial · gzip",
+    metrics.initialCss.gzipBytes,
+    BUNDLE_BUDGETS.initialCss.gzip,
   );
   printMetric(
     "JS total · bruto",

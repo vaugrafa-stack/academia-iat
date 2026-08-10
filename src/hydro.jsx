@@ -7,7 +7,7 @@ import {
 } from 'lucide-react';
 import { TurbineGallery, PRCasesSection, ArrangementSchematics, LicensingPath } from './hydroCases';
 import NormativeAuthorityAxes from './NormativeAuthorityAxes.jsx';
-import './hydroNavigation.css';
+import './routeStyles.css';
 
 const ASSET = (p) => ((import.meta.env.BASE_URL || '/').replace(/\/$/, '')) + p;
 
@@ -63,27 +63,55 @@ function topbarHeight() {
   return Number.parseFloat(cssValue) || 74;
 }
 
+let pendingSectionFrame = 0;
+let pendingSectionCleanup = null;
+
 function focusSection(id) {
   const section = document.getElementById(id);
   if (!section) return;
 
-  const reducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
-  const localNav = document.querySelector('.hydro-guide-nav');
-  // O alvo fica abaixo das duas barras fixas, mas ainda cruza a linha usada
-  // para identificar a seção ativa. Uma folga maior deixava o título visível
-  // e, ao mesmo tempo, mantinha o item anterior marcado no celular.
-  const offset = topbarHeight() + (localNav?.offsetHeight || 0) + 10;
-  const targetTop = Math.max(
-    0,
-    (window.scrollY || document.documentElement.scrollTop || 0)
-      + section.getBoundingClientRect().top
-      - offset,
-  );
-  window.scrollTo({
-    top: targetTop,
-    behavior: reducedMotion ? 'auto' : 'smooth',
-  });
+  if (pendingSectionFrame) window.cancelAnimationFrame(pendingSectionFrame);
+  pendingSectionCleanup?.();
+
+  // Antes de medir um destino distante, materialize temporariamente as
+  // seções cujo tamanho ainda é apenas intrínseco. Sem isso, o navegador pode
+  // calcular Licenciamento com placeholders e deslocá-lo quando os blocos
+  // intermediários forem revelados durante a rolagem.
+  const longSections = [...document.querySelectorAll('.hydro-long-section')];
+  const previousVisibility = longSections.map((element) => (
+    [element, element.style.getPropertyValue('content-visibility')]
+  ));
+  const restoreVisibility = () => {
+    previousVisibility.forEach(([element, previous]) => {
+      if (previous) element.style.setProperty('content-visibility', previous);
+      else element.style.removeProperty('content-visibility');
+    });
+    if (pendingSectionCleanup === restoreVisibility) pendingSectionCleanup = null;
+  };
+  pendingSectionCleanup = restoreVisibility;
+  longSections.forEach((element) => element.style.setProperty('content-visibility', 'visible'));
+  // A leitura força uma geometria completa antes de scrollIntoView.
+  void document.documentElement.scrollHeight;
+
+  section.scrollIntoView({ block: 'start', inline: 'nearest', behavior: 'auto' });
   section.focus({ preventScroll: true });
+
+  let framesLeft = 16;
+  const settle = () => {
+    pendingSectionFrame = 0;
+    const localNav = document.querySelector('.hydro-guide-nav');
+    const desiredTop = topbarHeight() + (localNav?.offsetHeight || 0) + 10;
+    const delta = section.getBoundingClientRect().top - desiredTop;
+    if (Math.abs(delta) > 1) {
+      const scrollY = window.scrollY || document.documentElement.scrollTop || 0;
+      window.scrollTo({ top: Math.max(0, scrollY + delta), behavior: 'auto' });
+    }
+    framesLeft -= 1;
+    if (framesLeft === 12) restoreVisibility();
+    if (framesLeft > 0) pendingSectionFrame = window.requestAnimationFrame(settle);
+    else restoreVisibility();
+  };
+  pendingSectionFrame = window.requestAnimationFrame(settle);
 }
 
 export function HydroLocalNav() {
@@ -210,7 +238,7 @@ export function HydroLocalNav() {
 // --- Componentes do arranjo (hotspots do corte transversal) ---
 const PARTES = [
   { id: 'reservatorio', nome: 'Reservatório', icon: Droplets, resumo: 'Massa de água represada que estoca energia potencial.',
-    detalhe: 'Volume de água acumulado a montante da barragem. A diferença de nível entre a superfície do reservatório e o nível de água no canal de fuga, a jusante, é a queda bruta (H), que define quanta energia cada metro cúbico de água pode entregar. Reservatórios de acumulação regularizam a vazão ao longo do ano; usinas a fio d\'água têm reservatório reduzido.' },
+    detalhe: 'Volume de água acumulado a montante da barragem. A diferença de nível entre a superfície do reservatório e o nível de água no canal de fuga, a jusante, é a queda bruta. A queda líquida disponível à turbina desconta as perdas hidráulicas. Reservatórios de acumulação podem regularizar vazões; arranjos a fio d\'água têm pouca ou nenhuma regularização sazonal. Área e volume, isoladamente, não definem a operação nem a magnitude dos impactos.' },
   { id: 'barragem', nome: 'Barragem / barramento', icon: Mountain, resumo: 'Estrutura que barra o rio e cria a queda.',
     detalhe: 'Barra o curso d\'água, eleva o nível a montante e sustenta a pressão da água. Pode ser de concreto (gravidade, arco, contrafortes) ou de aterro (terra, enrocamento). É a estrutura de maior responsabilidade estrutural e alvo central da segurança de barragens.' },
   { id: 'vertedouro', nome: 'Vertedouro', icon: Waves, resumo: 'Extravasa com segurança as cheias.',
@@ -226,7 +254,7 @@ const PARTES = [
   { id: 'fuga', nome: 'Tubo de sucção e canal de fuga', icon: Wind, resumo: 'Devolve a água ao rio a jusante.',
     detalhe: 'Após passar pela turbina, a água segue pelo tubo de sucção (que recupera parte da energia) e pelo canal de fuga de volta ao leito do rio, a jusante. A cota do canal de fuga fecha o cálculo da queda bruta; a queda líquida é a bruta menos as perdas de carga na tomada, na adução e no conduto forçado.' },
   { id: 'subestacao', nome: 'Subestação e conexão', icon: TowerControl, resumo: 'Eleva a tensão e conecta ao sistema.',
-    detalhe: 'A energia gerada é elevada de tensão nos transformadores da subestação e entregue à rede de distribuição ou transmissão, conforme o ponto de conexão ou acesso definido para o empreendimento. Os requisitos variam conforme a rede e o agente responsável; não presuma uma LDAT ou conexão direta ao Sistema Interligado Nacional sem conferir os atos e projetos do caso.' },
+    detalhe: 'A energia gerada passa pelos transformadores e equipamentos de manobra e proteção da subestação. A conexão pode integrar rede de distribuição ou de transmissão, conforme tensão e ponto de acesso definidos para o empreendimento. Os requisitos variam conforme a rede e o agente responsável; não presuma uma LDAT ou conexão direta ao Sistema Interligado Nacional sem conferir os atos e projetos do caso.' },
 ];
 
 const TIPOS_POTENCIA = [
@@ -245,8 +273,8 @@ const TIPOS_POTENCIA = [
 ];
 
 const TIPOS_RESERVATORIO = [
-  { nome: 'Fio d\'água', icon: Waves, desc: 'Reservatório pequeno, sem regularização relevante. A usina gera conforme a vazão que chega ao rio. Menor área alagada e menor impacto de barramento, porém geração variável.' },
-  { nome: 'Acumulação / regularização', icon: Droplets, desc: 'Reservatório grande que estoca água e regulariza a vazão entre as estações. Permite firmar energia e atender picos, ao custo de maior área alagada e reassentamento.' },
+  { nome: 'Fio d\'água', icon: Waves, desc: 'Opera com pouca ou nenhuma regularização sazonal e geração mais dependente da vazão afluente. Pode envolver menor alagamento que uma alternativa de acumulação, mas isso não significa impacto automaticamente menor: avalie barramento, trecho de vazão reduzida, conectividade, sedimentos, fauna, usos da água e localização.' },
+  { nome: 'Acumulação / regularização', icon: Droplets, desc: 'Armazena água para regularizar vazões entre períodos e ampliar a flexibilidade de geração. Pode ampliar alagamento, deplecionamento e deslocamentos, mas a natureza e a magnitude dos impactos dependem também da localização, do arranjo, da regra operativa e das medidas de controle.' },
   { nome: 'Reversível (bombeamento)', icon: Activity, desc: 'Bombeia água para um reservatório superior nas horas de baixa demanda e turbina nas horas de pico. Funciona como uma "bateria" hídrica de grande porte para o sistema.' },
 ];
 
@@ -413,7 +441,7 @@ export function PowerCalc() {
   const turbinasPorQueda = turbinasCompativeisPorQueda(h);
   return (
     <div className="power-calc">
-      <div className="pc-formula"><Zap /> <span>P = ρ · g · Q · H · η</span> <small>densidade × gravidade × vazão × queda × rendimento</small></div>
+      <div className="pc-formula"><Zap /> <span>P = ρ · g · Q · H · η</span> <small>densidade × gravidade × vazão turbinada × queda líquida × rendimento global</small></div>
       <div className="pc-controls">
         <label>Vazão turbinada, Q <b>{q} m³/s</b><input type="range" min="1" max="1500" value={q} onChange={(e) => setQ(+e.target.value)} /></label>
         <label>Queda líquida, H <b>{h} m</b><input type="range" min="2" max="800" value={h} onChange={(e) => setH(+e.target.value)} /></label>
@@ -434,8 +462,9 @@ export function PowerCalc() {
       <p className="pc-note">
         Estimativa didática, não enquadramento automático. A faixa MCH, MGH, CGH, PCH ou UHE reproduz
         apenas o recorte de potência do Quadro 8 do POP; não determina nem altera cadastro, registro ou
-        ato setorial da ANEEL, modalidade ambiental ou suficiência documental. A potência real depende
-        do arranjo, das perdas hidráulicas e das curvas de rendimento.
+        ato setorial da ANEEL, modalidade ambiental ou suficiência documental. Nesta expressão, H é a
+        queda líquida, depois das perdas hidráulicas, e η representa o rendimento global do conjunto,
+        inclusive turbina e gerador. A potência real depende do arranjo e das curvas de operação.
       </p>
       <p className="pc-note">
         A lista de turbinas cruza somente a queda H com as faixas ilustradas acima. A vazão Q participa
@@ -500,7 +529,7 @@ function CicloGeracao() {
   return (
     <>
       <svg viewBox="0 0 640 280" className="ciclo-svg" role="img"
-           aria-label="Ciclo de geração de uma usina hidrelétrica: a água do reservatório desce pelo conduto forçado, gira a turbina, o gerador produz eletricidade que segue pela linha de transmissão, e a água turbinada é restituída ao rio.">
+           aria-label="Ciclo de geração de uma usina hidrelétrica: a água do reservatório desce pelo conduto forçado, gira a turbina, o gerador produz eletricidade que segue pelo sistema de conexão, em rede de distribuição ou transmissão conforme o ponto de acesso, e a água turbinada é restituída ao rio.">
         <defs>
           <linearGradient id="cg-ceu" x1="0" y1="0" x2="0" y2="1">
             <stop offset="0" stopColor="#0d2b30" /><stop offset="1" stopColor="#10352f" />
@@ -540,7 +569,7 @@ function CicloGeracao() {
               fill="#0a4a38" stroke="#f3bd4f" strokeWidth="2" />
         {marcador(465, 172, 4)}
 
-        {/* subestacao e linha de transmissao */}
+        {/* subestacao e conexao eletrica */}
         <path d="M566 214 L556 152 M566 214 L576 152 M559 178 L573 178 M557 194 L575 194"
               stroke="#8399a0" strokeWidth="2.5" fill="none" />
         <path className="cg-linha" d="M490 220 Q528 192 556 156"
@@ -599,7 +628,7 @@ export default function HydroGuide({ go }) {
               <React.Fragment key={e}><span>{e}</span>{i < 3 && <ArrowRight />}</React.Fragment>
             ))}
           </div>
-          <p className="hydro-two">Dois números mandam no projeto: a <strong>queda (H)</strong>, diferença de nível entre reservatório e restituição, e a <strong>vazão (Q)</strong>, volume de água por segundo. O produto dos dois define a potência.</p>
+          <p className="hydro-two">A potência hidráulica estimada segue <strong>P = ρ · g · Q · H · η</strong>: vazão turbinada (Q), queda líquida disponível após as perdas (H), densidade da água (ρ), gravidade (g) e rendimento global do conjunto (η). O valor de projeto depende das condições e curvas de operação.</p>
         </div>
       </section>
 

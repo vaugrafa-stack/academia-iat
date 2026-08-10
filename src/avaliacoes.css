@@ -96,6 +96,83 @@
   line-height: 1.5;
 }
 
+.question-pedagogy {
+  display: grid;
+  grid-template-columns: minmax(0, 1.45fr) minmax(310px, .95fr);
+  gap: 12px 18px;
+  margin: 0 0 20px;
+  padding: 14px 16px;
+  border: 1px solid var(--line);
+  border-left: 4px solid var(--blue);
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--soft) 58%, var(--surface));
+}
+
+.question-objective small {
+  color: var(--blue);
+  font-size: 12px;
+  font-weight: 850;
+  letter-spacing: .06em;
+}
+
+.question-objective p {
+  margin: 5px 0 0;
+  color: var(--ink2);
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.48;
+}
+
+.question-pedagogy dl {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 6px;
+  margin: 0;
+}
+
+.question-pedagogy dl > div {
+  min-width: 0;
+  padding: 8px 9px;
+  border: 1px solid color-mix(in srgb, var(--line) 75%, transparent);
+  border-radius: 8px;
+  background: var(--surface);
+}
+
+.question-pedagogy dt {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.25;
+}
+
+.question-pedagogy dd {
+  margin: 3px 0 0;
+  color: var(--ink2);
+  font-size: 13px;
+  font-weight: 850;
+}
+
+.pedagogy-method-note {
+  grid-column: 1 / -1;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.distractor-explanation {
+  margin: 8px 0 10px;
+  padding: 10px 12px;
+  border-left: 3px solid var(--amber);
+  background: color-mix(in srgb, var(--amber) 10%, var(--surface));
+}
+
+.answer-feedback .distractor-explanation strong {
+  font-size: 13px;
+}
+
+.answer-feedback .distractor-explanation p {
+  margin: 4px 0 0;
+}
+
 .re-q .confidence-tag {
   display: block;
   width: max-content;
@@ -114,6 +191,43 @@
   background: color-mix(in srgb, var(--amber) 18%, var(--surface));
 }
 
+/* No tema escuro, a prioridade pedagógica precisa ser percebida sem depender
+   apenas da diferença sutil entre dois fundos escuros. O contorno âmbar dá ao
+   selo uma borda de estado com contraste não textual, e a tinta clara preserva
+   AA mesmo em telas com brilho reduzido. */
+:root:not([data-theme="light"]) .re-q .confidence-tag.alta {
+  border: 1px solid #fbbf24;
+  color: #fff7e6;
+  background: #5a3508;
+}
+
+/* Contraste local AA no tema escuro para os metadados pedagógicos.
+   Valores explícitos evitam que blue/amber/muted percam contraste em misturas. */
+:root:not([data-theme="light"]) .question-pedagogy {
+  border-left-color: #7dd3fc;
+  background: #14252b;
+}
+
+:root:not([data-theme="light"]) .question-objective small {
+  color: #7dd3fc;
+}
+
+:root:not([data-theme="light"]) .question-pedagogy dt,
+:root:not([data-theme="light"]) .pedagogy-method-note {
+  color: #cbd5e1;
+}
+
+:root:not([data-theme="light"]) .question-pedagogy dd,
+:root:not([data-theme="light"]) .question-objective p {
+  color: #f1f5f9;
+}
+
+:root:not([data-theme="light"]) .distractor-explanation {
+  border-left-color: #fbbf24;
+  color: #f1f5f9;
+  background: #2c281d;
+}
+
 @media (max-width: 720px) {
   .diagnostic-depth,
   .answer-confidence > div {
@@ -124,5 +238,25 @@
   .answer-confidence button {
     min-height: 64px;
     font-size: 14px;
+  }
+
+  .question-pedagogy {
+    grid-template-columns: 1fr;
+    padding: 13px;
+  }
+
+  .question-pedagogy dl {
+    grid-template-columns: 1fr;
+  }
+
+  .question-objective small,
+  .question-pedagogy dt,
+  .question-pedagogy dd,
+  .pedagogy-method-note,
+  .answer-feedback .distractor-explanation strong,
+  .confidence-recorded,
+  .confidence-priority,
+  .re-q .confidence-tag {
+    font-size: 13px;
   }
 }

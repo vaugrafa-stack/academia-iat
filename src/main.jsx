@@ -14,7 +14,6 @@ import {
   BookMarked,
   BookOpen,
   Bookmark,
-  BookmarkCheck,
   Building2,
   Check,
   CheckCircle2,
@@ -34,7 +33,6 @@ import {
   Filter,
   FlaskConical,
   GitBranch,
-  GraduationCap,
   Home,
   Image as ImageIcon,
   Inbox,
@@ -142,11 +140,36 @@ import { useStoredState } from "./storedState.js";
 // nunca veria o momento em que a pessoa termina alguma coisa.
 import { useSincroniaAutomatica } from "./sincroniaAutomatica.js";
 import { hasStartedJourney } from "./learningJourney.js";
-import LearningPaths from "./LearningPaths.jsx";
 import "./styles.css";
 import "./nota10.css";
 import "./experience.css";
-import "./mobileNavigation.css";
+
+const MOBILE_NAVIGATION_QUERY = "(max-width: 980px)";
+const mobileNavigationMedia = globalThis.matchMedia?.(MOBILE_NAVIGATION_QUERY);
+let mobileNavigationCssPromise;
+
+function loadMobileNavigationCss() {
+  mobileNavigationCssPromise ??= import("./mobileNavigation.css");
+  return mobileNavigationCssPromise;
+}
+
+if (!mobileNavigationMedia || mobileNavigationMedia.matches) {
+  // Evita FOUC no primeiro paint móvel sem penalizar a entrada desktop.
+  await loadMobileNavigationCss();
+} else {
+  const loadWhenMobile = (event) => {
+    if (!event.matches) return;
+    mobileNavigationMedia.removeEventListener?.("change", loadWhenMobile);
+    mobileNavigationMedia.removeListener?.(loadWhenMobile);
+    void loadMobileNavigationCss();
+  };
+
+  if (typeof mobileNavigationMedia.addEventListener === "function") {
+    mobileNavigationMedia.addEventListener("change", loadWhenMobile);
+  } else {
+    mobileNavigationMedia.addListener?.(loadWhenMobile);
+  }
+}
 
 const HydroGuide = lazy(() => import("./hydro.jsx"));
 const Lesson = lazy(() => import("./licao.jsx"));
@@ -157,6 +180,7 @@ const Flowcharts = lazy(() => import("./Flowcharts.jsx"));
 const KnowledgeLibrary = lazy(() => import("./biblioteca.jsx"));
 const Profile = lazy(() => import("./perfil.jsx"));
 const Assessments = lazy(() => import("./avaliacoes.jsx"));
+const Formation = lazy(() => import("./formacao.jsx"));
 try {
   const _t = localStorage.getItem("academia-iat-theme");
   document.documentElement.dataset.theme =
@@ -281,6 +305,14 @@ const DADOS_AVALIACOES = Object.freeze({
   lessonMap,
   lessons,
   questionBank,
+  tracks,
+});
+const DADOS_FORMACAO = Object.freeze({
+  lessons,
+  trackGroups,
+  trackIcons: TRACK_ICONS,
+  trackLessons,
+  trackProgress,
   tracks,
 });
 // Navegacao agrupada por NATUREZA DA ATIVIDADE, nao por ordem de criacao.
@@ -742,6 +774,7 @@ function App() {
       <Formation
         state={state}
         openLesson={openLesson}
+        dados={DADOS_FORMACAO}
       />
     ),
     fluxos: (
@@ -1594,8 +1627,14 @@ function Dashboard({
           >
             {startedJourney ? "Continuar aula" : "Iniciar orientação"} <Play />
           </button>
-          <button className="text-action" onClick={() => go("formacao")}>
-            Ver todas as aulas <ArrowRight />
+          <button
+            className="text-action"
+            onClick={() => go(startedJourney ? "formacao" : "hidreletricas")}
+          >
+            {startedJourney
+              ? "Ver todas as aulas"
+              : "Novo em hidrelétricas? Veja os fundamentos"}{" "}
+            <ArrowRight />
           </button>
         </div>
         <CurrentObjectiveCard lesson={continueLesson} />
@@ -1877,176 +1916,6 @@ function DashboardSourceDetails({ go }) {
     </details>
   );
 }
-
-function Formation({ state, openLesson }) {
-  const [openTrack, setOpenTrack] = useState("m00"),
-    [filter, setFilter] = useState("");
-  const filterNormalized = norm(filter);
-  const filteredGroups = trackGroups
-    .map((group) => ({
-      ...group,
-      rows: group.ids.flatMap((id) => {
-        const track = tracks.find((item) => item.id === id);
-        const full = trackLessons.get(id) || [];
-        const matchingLessons = full.filter((lesson) =>
-          norm(`${lesson.title} ${lesson.number || ""}`).includes(filterNormalized),
-        );
-        const trackMatches = norm(`${track.title} ${track.code}`).includes(
-          filterNormalized,
-        );
-        if (filterNormalized && !trackMatches && !matchingLessons.length) return [];
-        return [{
-          id,
-          track,
-          full,
-          lessons: filterNormalized && trackMatches && !matchingLessons.length
-            ? full
-            : matchingLessons,
-        }];
-      }),
-    }))
-    .filter((group) => group.rows.length > 0);
-  const visibleTopics = filteredGroups.reduce(
-    (total, group) => total + group.rows.reduce(
-      (groupTotal, row) => groupTotal + row.lessons.length,
-      0,
-    ),
-    0,
-  );
-  return (
-    <div className="page">
-      <PageHeader
-        title="Formação guiada pelo POP"
-        subtitle={`${tracks.length} módulos conectam cada seção do POP a objetivos, conteúdo-fonte, prática e avaliação.`}
-        icon={GraduationCap}
-      />
-      <LearningPaths
-        tracks={tracks}
-        trackLessons={trackLessons}
-        state={state}
-        openLesson={openLesson}
-      />
-      <div className="formation-toolbar">
-        <div role="search">
-          <Search aria-hidden="true" />
-          <input
-            aria-label="Filtrar módulos ou aulas"
-            value={filter}
-            onChange={(e) => setFilter(e.target.value)}
-            placeholder="Filtrar módulos ou aulas"
-          />
-        </div>
-        <span>
-          {filterNormalized
-            ? `${visibleTopics} ${visibleTopics === 1 ? "tópico encontrado" : "tópicos encontrados"}`
-            : `${lessons.length} tópicos · ${tracks.reduce(
-              (a, t) =>
-                a +
-                (trackLessons.get(t.id)?.reduce((x, l) => x + l.minutes, 0) || 0),
-              0,
-            )} min estimados`}
-        </span>
-      </div>
-      <div className="curriculum">
-        {filteredGroups.length ? filteredGroups.map((group) => (
-          <section key={group.title}>
-            <div className="group-title">
-              <span>{group.title}</span>
-              <i />
-            </div>
-            {group.rows.map(({ id, track: t, full, lessons: show }) => {
-              const p = trackProgress(id, state),
-                Icon = TRACK_ICONS[t.icon] || BookOpen;
-              const expanded =
-                openTrack === id || (!!filterNormalized && show.length > 0);
-              return (
-                <article
-                  className={"track-row " + (expanded ? "expanded" : "")}
-                  key={id}
-                >
-                  <button
-                    className="track-summary"
-                    aria-expanded={expanded}
-                    onClick={() => setOpenTrack(openTrack === id ? "" : id)}
-                  >
-                    <span className="track-icon" style={{ "--track": t.color }}>
-                      <Icon />
-                    </span>
-                    <span className="track-copy">
-                      <small>{t.code}</small>
-                      <strong>{t.title}</strong>
-                      <em>{t.summary}</em>
-                    </span>
-                    <span className="track-metrics">
-                      <b>{p}%</b>
-                      <i>
-                        <em style={{ width: `${p}%` }} />
-                      </i>
-                      <small>
-                        {
-                          state.completed.filter((x) =>
-                            full.some((l) => l.id === x),
-                          ).length
-                        }
-                        /{full.length} tópicos
-                      </small>
-                    </span>
-                    <ChevronRight />
-                  </button>
-                  {expanded && (
-                    <div className="lesson-list">
-                      {show.map((l) => (
-                        <button key={l.id} onClick={() => openLesson(l.id)}>
-                          <span
-                            className={
-                              state.completed.includes(l.id) ? "complete" : ""
-                            }
-                          >
-                            {state.completed.includes(l.id) ? (
-                              <Check />
-                            ) : (
-                              full.indexOf(l) + 1
-                            )}
-                          </span>
-                          <span>
-                            <strong>
-                              {l.number ? `${l.number} ` : ""}
-                              {l.title}
-                            </strong>
-                            <small>
-                              {l.minutes} min estimados · Fonte vinculada ao POP
-                            </small>
-                          </span>
-                          {state.bookmarks.includes(l.id) && (
-                            <BookmarkCheck className="saved" />
-                          )}
-                          <ChevronRight />
-                        </button>
-                      ))}
-                    </div>
-                  )}
-                </article>
-              );
-            })}
-          </section>
-        )) : (
-          <section className="formation-empty" role="status">
-            <Search aria-hidden="true" />
-            <h2>Nenhum tópico encontrado</h2>
-            <p>
-              Não encontramos módulo ou aula para <strong>“{filter.trim()}”</strong>.
-              Tente um termo como licença, barragem, fauna ou outorga.
-            </p>
-            <button type="button" onClick={() => setFilter("")}>
-              Limpar filtro
-            </button>
-          </section>
-        )}
-      </div>
-    </div>
-  );
-}
-
 
 const LEI_DOMINIOS = [
   ["BRASIL", "planalto.gov.br"],

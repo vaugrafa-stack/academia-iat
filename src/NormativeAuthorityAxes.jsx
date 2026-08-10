@@ -1,7 +1,7 @@
 import React from 'react';
 import { ExternalLink, Landmark, Scale, Waves } from 'lucide-react';
 import { HYDRO_AUTHORITY_AXES } from './officialSources.js';
-import './normativeTraceability.css';
+import './routeStyles.css';
 
 const ICONS = {
   'iat-ambiental': Landmark,

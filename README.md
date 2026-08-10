@@ -66,7 +66,7 @@ nos registros gerados. Builds locais usam o SHA atual com o sufixo `-local`.
 ## Estado atual da plataforma
 
 - 17 módulos e 159 tópicos didáticos vinculados às seções com conteúdo próprio do POP;
-- Formação em uma sequência única de 17 módulos, com pesquisa, expansão por módulo e acesso livre a qualquer aula;
+- Formação em uma sequência única de 17 módulos, com pesquisa, expansão por módulo, acesso livre a qualquer aula e código carregado sob demanda;
 - aulas com orientação, texto-fonte, quadros, tabelas, figuras, anotações e referências;
 - cada aula oferece checagem comentada, recuperação ativa escrita e autoauditoria; para novas conclusões, a checagem deve estar correta, o registro deve ter ao menos 80 caracteres significativos e dois de três critérios devem ser conferidos;
 - 159 resumos audiovisuais por seção, com 10,5 a 102,5 segundos, voz em português, pôster, texto aberto, legenda WebVTT opcional e transcrição;
@@ -76,7 +76,7 @@ nos registros gerados. Builds locais usam o SHA atual com o sufixo `-local`.
 - 26 cenários de laboratório com documentos e dados exclusivamente sintéticos, distribuídos em cinco níveis objetivos: 10 para Reconhecer, 5 para Aplicar, 2 para Decidir, 5 para Integrar e 4 para Fundamentar;
 - cinco casos acrescentam classificação de evidências e quatro acrescentam tarefa aberta; contratos versionados de objetivo impedem que conclusões antigas ou incompletas sejam reaproveitadas como domínio do exercício atual;
 - 26 folhas-resposta de consulta, cobrindo 130 decisões com justificativa específica, evidência relacionada, apoio literal do POP, conteúdo mínimo, desfecho, glossário, lacunas a confirmar e proveniência das classificações e tarefas abertas;
-- 213 questões comentadas, com uma questão exclusiva para cada uma das 159 aulas, avaliações por módulo e diagnóstico em formas A e B;
+- 213 questões comentadas, com uma questão exclusiva para cada uma das 159 aulas, avaliações por módulo e diagnóstico em formas A e B; o candidato de 10/08/2026 acrescenta objetivo, nível cognitivo, dificuldade estrutural, prioridade de remediação e feedback por distrator, todos marcados para revisão humana;
 - Redator de Informação Técnica organizado pelos 12 elementos do item 23.1, seleção pesquisável de caso e a divergência em relação às 10 seções do Anexo B mantida visível;
 - registro das 60 referências do POP: 22 vínculos diretos para fonte oficial, 38 vínculos para índice oficial e nenhuma referência sem portal oficial mapeado; vigência e aplicação continuam pendentes de revisão humana;
 - busca sobre 3.339 nós textuais, 66 quadros/tabelas e 35 imagens extraídas das fontes;
@@ -92,14 +92,31 @@ As travas de conclusão das aulas comprovam apenas que uma resposta foi registra
 
 Os laboratórios usam casos e documentos sintéticos marcados como exemplos didáticos sem validade administrativa. Nenhum processo real ou dado pessoal deve ser inserido na plataforma.
 
-No artefato do GitHub Pages medido em 09/08/2026, o JavaScript soma 696,0 KiB de um orçamento
-de 850 KiB em tamanho bruto e 232,0 KiB de 270 KiB compactado. A entrada mede
-4,8 KiB de 205 KiB em tamanho bruto e 2,1 KiB de 66 KiB compactado; o código
-da rota Avaliações permanece em um chunk sob demanda de 12,8 KiB, ou 4,8
-KiB compactado. O CSS soma 227,7 KiB de 240 KiB em tamanho bruto e 43,1 KiB de
-46 KiB compactado. A decomposição adicional por rota continua necessária, mas
-deve preservar os contratos de navegação, acessibilidade e funcionamento
-offline já cobertos pelos portões automáticos.
+No candidato integralmente validado em 10/08/2026, o JavaScript soma 710,6 KiB
+de um orçamento de 850 KiB em tamanho bruto e 237,4 KiB de 270 KiB compactado,
+distribuído em 35 chunks. O CSS inicial mede 181,3 KiB bruto e 32,5 KiB
+compactado; o total mede 236,5/43,0 KiB. Folhas exclusivas de rota e perfil
+ficam fora da inicialização, sem elevar os limites existentes.
+
+### Candidato integralmente validado — 10/08/2026
+
+Esta rodada extraiu a Formação de `main.jsx`, reduziu o compositor principal
+para 65.935 bytes e 2.039 linhas, criou chunks sob demanda e acrescentou uma
+fundação didática para quem ainda não conhece hidrelétricas. Também revisou a
+navegação e o conteúdo técnico do guia de hidrelétricas, levou as siglas das
+aulas ao conteúdo móvel, reforçou contraste e transformou o feedback das 213
+questões em dados pedagógicos inspecionáveis.
+
+O portão Playwright percorre 13 rotas e verifica semântica, títulos, nomes
+acessíveis, alvos de toque, tamanho de texto em campos móveis, imagens,
+hierarquia de títulos, overflow e falhas de runtime. A bateria final aprovou 60
+arquivos e 493 testes, 29 cenários Playwright nas cinco larguras previstas, um
+cenário PWA/offline, 25 testes das ferramentas Python e a auditoria de
+dependências sem vulnerabilidades conhecidas. A publicação ainda exige workflow
+público verde e conferência do SHA incorporado ao aplicativo online.
+
+Os detalhes, limites e pendências humanas estão em
+[`AUDITORIA_NOTA_10_2026-08-10.md`](AUDITORIA_NOTA_10_2026-08-10.md).
 
 ## Avaliação e registro pessoal
 
@@ -117,15 +134,17 @@ pnpm test:e2e:artifact
 pnpm test:e2e:pwa:local
 ```
 
-A suíte cobre testes unitários, PWA/offline, proveniência, referências, rubricas, questões, mídia e auditoria das aulas. O Playwright valida o artefato renderizado em navegador real nas cinco larguras previstas e, em um portão próprio, comprova respostas offline do Service Worker e a atualização controlada do aplicativo. O workflow exige os dois portões antes de armazenar o artefato publicável. O portão premium procura falhas de governança, privacidade e exposição acidental. Nenhum teste automatizado substitui revisão especializada de conteúdo, acessibilidade, usabilidade ou aprendizagem.
+A suíte cobre testes unitários, PWA/offline, proveniência, referências, rubricas, questões, mídia e auditoria das aulas. O Playwright valida o artefato renderizado em navegador real nas cinco larguras previstas; o candidato de 10/08/2026 acrescenta uma auditoria permanente de semântica, operação por toque e legibilidade em 13 rotas. Em um portão próprio, o Playwright também comprova respostas offline do Service Worker e a atualização controlada do aplicativo. O workflow exige os dois portões antes de armazenar o artefato publicável. O portão premium procura falhas de governança, privacidade e exposição acidental. Nenhum teste automatizado substitui revisão especializada de conteúdo, acessibilidade, usabilidade ou aprendizagem.
 
 ## Arquivos principais
 
 - `AGENTS.md`: contrato permanente, limites, prioridades e ciclo obrigatório do agente;
 - `STATUS_ATUAL.md`: única fonte corrente para versão, provas, limites e próximos portões;
-- `PLANO_EVOLUCAO.md`: snapshot histórico do ciclo encerrado em 04/08/2026;
+- `PLANO_EVOLUCAO.md`: snapshot histórico do ciclo encerrado em 04/08/2026, com adendos de evolução posteriores;
+- `AUDITORIA_NOTA_10_2026-08-10.md`: evidências, limites e portões do candidato de 10/08/2026;
 - `LEARNING_DESIGN.md`: desenho pedagógico integral e critérios de qualidade;
 - `src/main.jsx`: composição principal e telas ainda em processo de extração;
+- `src/formacao.jsx`: rota de Formação carregada sob demanda;
 - `src/derivados.js`: dados derivados do POP com dependências explícitas;
 - `src/courseData.js`: módulos, questões, cenários e fluxos;
 - `src/data/pop-content.json`: conteúdo integral estruturado e sanitizado do POP;
@@ -136,6 +155,7 @@ A suíte cobre testes unitários, PWA/offline, proveniência, referências, rubr
 - `public/media`: resumos audiovisuais, legendas, pôsteres, animações e ilustrações;
 - `tools/smoke-test.mjs`: navegação funcional automatizada;
 - `tools/audit-premium.mjs`: portão de governança, privacidade e exposição acidental;
+- `tests/e2e/accessibility.artifact.pw.js`: portão de acessibilidade e UX em 13 rotas do artefato;
 - `tools/validate_claude_workflow.py`: trava fail-closed para relatórios agregados de agentes.
 
 ## Privacidade e uso responsável

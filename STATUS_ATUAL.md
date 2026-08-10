@@ -1,6 +1,6 @@
 # Status atual da Academia IAT
 
-Atualizado em 09/08/2026. Este é o único documento de situação corrente. Os
+Atualizado em 10/08/2026. Este é o único documento de situação corrente. Os
 planos detalhados do repositório preservam decisões e snapshots históricos.
 Quando houver divergência, prevalecem os manifestos gerados, os testes do commit
 identificado e este status.
@@ -63,7 +63,7 @@ precisam executar novamente `pnpm test`, `pnpm build`, `pnpm audit:premium`,
 `pnpm test:e2e:artifact` e `pnpm test:e2e:pwa:local` antes de publicação local;
 o workflow usa a variante de CI com a base do GitHub Pages.
 
-A versão corrente preparada em 09/08/2026 foi validada com:
+A última versão integralmente validada localmente em 09/08/2026 obteve:
 
 - 56 arquivos de teste e 468 testes aprovados;
 - todos os portões encadeados de `pnpm test`, inclusive smoke, governança de
@@ -77,6 +77,45 @@ A versão corrente preparada em 09/08/2026 foi validada com:
 - inspeção em navegador real da rastreabilidade normativa, Avaliações,
   Hidrelétricas, percursos de formação, navegação móvel, foco, teclado,
   contraste e alvos de toque.
+
+### Candidato local de 10/08/2026 — validação integral concluída
+
+O candidato desta rodada foi validado localmente, mas só se torna produção após
+push, workflow público verde e conferência do mesmo SHA no GitHub Pages. Ele
+incorpora:
+
+- Formação extraída de `main.jsx` e carregada sob demanda, com fundação para
+  iniciantes, atalho para experientes e testes próprios da rota;
+- compositor principal reduzido para 65.935 bytes e 2.039 linhas;
+- CSS exclusivo de rotas consolidado e carregado sob demanda, CSS de perfil
+  retirado da inicialização e folha móvel solicitada apenas quando necessária;
+- guia de hidrelétricas com navegação local estável, conteúdo técnico revisado e
+  separação explícita entre os eixos ambiental e setorial;
+- glossário contextual das aulas também disponível no conteúdo móvel;
+- metadados pedagógicos nas 213 questões: objetivo, nível cognitivo,
+  dificuldade estrutural, prioridade de remediação e feedback por distrator;
+- contraste reforçado, alvos de toque de 44 × 44 px e auditoria Playwright
+  permanente sobre 13 rotas.
+
+No candidato integrado, a validação final obteve:
+
+- 60 arquivos de teste e 493 testes aprovados, além de todos os portões
+  encadeados de conteúdo, segurança, privacidade, mídia, fontes, CSS e smoke;
+- build aprovado em 35 chunks JavaScript, com 710,6 KiB bruto e 237,4 KiB
+  compactado; CSS inicial em 181,3/32,5 KiB e CSS total em 236,5/43,0 KiB;
+- 29 cenários Playwright aprovados em desktop e nas larguras 320, 360, 390 e
+  430 pixels; um cenário exclusivamente móvel foi corretamente ignorado no
+  projeto desktop; o cenário PWA/offline também foi aprovado;
+- 25 testes das ferramentas Python aprovados e auditoria de dependências de
+  produção sem vulnerabilidades conhecidas;
+- inspeção em navegador real que encontrou e corrigiu a rota incorreta do botão
+  de fundamentos; um teste agora confirma clique, destino e recarga direta.
+
+Esses resultados liberam o candidato para publicação, não para declarar
+validade normativa, eficácia pedagógica ou aprovação institucional.
+
+O relatório desta rodada está em
+[`AUDITORIA_NOTA_10_2026-08-10.md`](AUDITORIA_NOTA_10_2026-08-10.md).
 
 A promoção de qualquer versão continua condicionada à aprovação do workflow
 público, à publicação do mesmo artefato no GitHub Pages e à conferência do SHA
@@ -123,8 +162,9 @@ nem para receber documentos reais.
    editorial, psicométrica, técnica e teste com usuários dos perfis atendidos.
 3. **Acessibilidade.** Automação não substitui leitor de tela, zoom a 200%,
    dispositivos reais, baixa conectividade e validação assistiva humana.
-4. **Arquitetura.** Arquivos centrais e CSS permanecem grandes; a decomposição
-   deve preservar contratos, modo offline e orçamentos.
+4. **Arquitetura.** Formação já foi extraída e o CSS inicial ganhou orçamento
+   próprio, mas o compositor e o CSS compartilhado permanecem grandes. A
+   decomposição deve preservar contratos, modo offline e orçamentos.
 5. **Mídia e repositório.** O acervo é volumoso e requer política de crescimento,
    origem, licença, retenção e distribuição. Não reescrever o histórico para
    migrar mídia sem plano de rollback.

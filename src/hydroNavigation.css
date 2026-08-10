@@ -30,7 +30,7 @@
 
 .hydro-guide-nav__summary span {
   color: var(--muted);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 700;
 }
 
@@ -41,7 +41,21 @@
   overflow-x: auto;
   overscroll-behavior-inline: contain;
   scrollbar-width: thin;
+  scrollbar-color: color-mix(in srgb, var(--green) 48%, var(--line)) transparent;
   scroll-snap-type: inline proximity;
+}
+
+.hydro-guide-nav__links::-webkit-scrollbar {
+  height: 4px;
+}
+
+.hydro-guide-nav__links::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.hydro-guide-nav__links::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--green) 48%, var(--line));
 }
 
 .hydro-guide-nav__links button {
@@ -83,6 +97,14 @@
   color: var(--ink);
 }
 
+/* O item selecionado precisa manter leitura e contorno verificáveis mesmo
+   sobre o vidro escuro e translúcido da navegação local. */
+:root:not([data-theme="light"]) .hydro-guide-nav__links button[aria-current='location'] {
+  color: #f1f5f9;
+  background: #173d34;
+  box-shadow: inset 0 0 0 1px #65d19e;
+}
+
 .hydro-guide-nav__links button[aria-current='location']::after {
   opacity: 1;
   transform: scaleX(1);
@@ -114,6 +136,11 @@
   outline-offset: 5px;
 }
 
+.hydro-long-section {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 720px;
+}
+
 @media (max-width: 980px) {
   .hydro-guide-nav {
     grid-template-columns: 1fr;
@@ -139,6 +166,7 @@
 
   .hydro-guide-nav__summary span {
     margin-left: auto;
+    font-size: 13px;
   }
 
   .hydro-guide-nav__links button {
@@ -161,6 +189,11 @@
 @media print {
   .hydro-guide-nav {
     display: none;
+  }
+
+  .hydro-long-section {
+    content-visibility: visible;
+    contain-intrinsic-size: none;
   }
 
 }

@@ -12,6 +12,7 @@ import {
   gzipSize,
   isFlowchartsChunk,
   resolveEntryAsset,
+  resolveInitialStyleAssets,
 } from "../tools/check-bundle.mjs";
 
 function measured(name, rawBytes, gzipBytes) {
@@ -34,6 +35,11 @@ function budgetMetrics(delta = 0) {
       "main-HASH.js",
       0,
       BUNDLE_BUDGETS.largestJs.gzip + delta,
+    ),
+    initialCss: measured(
+      null,
+      BUNDLE_BUDGETS.initialCss.raw + delta,
+      BUNDLE_BUDGETS.initialCss.gzip + delta,
     ),
     totalJs: measured(
       null,
@@ -68,12 +74,13 @@ describe("orçamento reproduzível do bundle", () => {
     expect(evaluateBudgetMetrics(budgetMetrics())).toEqual([]);
 
     const violations = evaluateBudgetMetrics(budgetMetrics(1));
-    expect(violations).toHaveLength(12);
+    expect(violations).toHaveLength(14);
     expect(violations).toEqual(
       expect.arrayContaining([
         expect.stringContaining("entrada JS bruta"),
         expect.stringContaining("maior chunk JS gzip"),
         expect.stringContaining("JS total bruto"),
+        expect.stringContaining("CSS inicial bruto"),
         expect.stringContaining("CSS total gzip"),
         expect.stringContaining("maior asset compressível bruto"),
         expect.stringContaining("chunk Flowcharts gzip"),
@@ -88,6 +95,13 @@ describe("orçamento reproduzível do bundle", () => {
     ].join("\n");
 
     expect(resolveEntryAsset(html)).toBe("assets/index-A_b-19.js");
+    expect(resolveInitialStyleAssets([
+      '<link rel="preload" href="/assets/ignorado.css">',
+      '<link href="/academia-iat/assets/index-A_b-19.css?v=7" rel="stylesheet">',
+    ].join("\n"))).toEqual(["assets/index-A_b-19.css"]);
+    expect(resolveInitialStyleAssets("", [
+      'm.f=["assets/main-A.css","assets/route-B.js","assets/video-C.css"]',
+    ].join("\n"))).toEqual(["assets/main-A.css", "assets/video-C.css"]);
     expect(isFlowchartsChunk("Flowcharts-X_y-9.js")).toBe(true);
     expect(isFlowchartsChunk("Flowcharts.js")).toBe(false);
     expect(isFlowchartsChunk("main-X_y-9.js")).toBe(false);
@@ -119,7 +133,8 @@ describe("orçamento reproduzível do bundle", () => {
       await Promise.all([
         writeFile(
           join(directory, "index.html"),
-          `<script src="/repo/assets/${entryName}?release=1" type="module"></script>`,
+          `<link rel="stylesheet" href="/repo/assets/main-A.css">\n` +
+            `<script src="/repo/assets/${entryName}?release=1" type="module"></script>`,
         ),
         writeFile(join(assets, entryName), entryContent),
         writeFile(join(assets, mainName), mainContent),
@@ -139,6 +154,8 @@ describe("orçamento reproduzível do bundle", () => {
       expect(metrics.totalCss.rawBytes).toBe(
         Buffer.byteLength(cssA + cssB),
       );
+      expect(metrics.initialCssFiles.map((file) => file.name)).toEqual(["main-A.css"]);
+      expect(metrics.initialCss.rawBytes).toBe(Buffer.byteLength(cssA));
       expect(metrics.largestCompressibleAssetRaw?.name).toBe(
         "pop-content-C.json",
       );
@@ -156,6 +173,8 @@ describe("orçamento reproduzível do bundle", () => {
     const complete = {
       declaredEntry: "assets/index-HASH.js",
       entry: measured("index-HASH.js", 1, 1),
+      declaredInitialStyles: ["assets/index-HASH.css"],
+      initialCssFiles: [measured("index-HASH.css", 1, 1)],
       flowchartsChunks: [measured("Flowcharts-HASH.js", 1, 1)],
       allJavaScript: AREA_MARKERS.map(([, marker]) => marker).join("\n"),
       totalJs: { rawBytes: MINIMUM_JS_BYTES, gzipBytes: 1 },

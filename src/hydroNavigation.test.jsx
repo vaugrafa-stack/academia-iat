@@ -90,6 +90,12 @@ describe('navegação local do guia de hidrelétricas', () => {
     const root = createRoot(host);
     mountedRoots.push(root);
     const scrollTo = vi.spyOn(window, 'scrollTo').mockImplementation(() => {});
+    const pendingFrames = [];
+    vi.spyOn(window, 'requestAnimationFrame').mockImplementation((callback) => {
+      pendingFrames.push(callback);
+      return pendingFrames.length;
+    });
+    vi.spyOn(window, 'cancelAnimationFrame').mockImplementation(() => {});
 
     await act(async () => root.render(<HydroLocalNav />));
 
@@ -98,8 +104,20 @@ describe('navegação local do guia de hidrelétricas', () => {
     expect(host.querySelector('[role="progressbar"]')?.getAttribute('aria-valuenow')).toBe('1');
 
     await act(async () => buttons[4].click());
-    expect(scrollTo).toHaveBeenCalledWith({ behavior: 'smooth', top: 2816 });
-    expect(targets[4].scrollIntoView).not.toHaveBeenCalled();
+    await act(async () => {
+      let guard = 0;
+      while (pendingFrames.length && guard < 24) {
+        pendingFrames.shift()(guard * 16);
+        guard += 1;
+      }
+    });
+    expect(targets[4].scrollIntoView).toHaveBeenCalledWith({
+      behavior: 'auto',
+      block: 'start',
+      inline: 'nearest',
+    });
+    expect(scrollTo).toHaveBeenCalledWith({ behavior: 'auto', top: 2816 });
+    expect(targets.every((target) => target.style.contentVisibility === '')).toBe(true);
     expect(document.activeElement).toBe(targets[4]);
     expect(buttons[4].getAttribute('aria-current')).toBe('location');
 

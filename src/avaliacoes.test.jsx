@@ -3,6 +3,7 @@ import React, { act, useState } from "react";
 import { createRoot } from "react-dom/client";
 import { afterEach, describe, expect, it } from "vitest";
 import Assessments from "./avaliacoes.jsx";
+import generatedQuestionBank from "./data/question-bank.json";
 
 const TRACK = {
   id: "m-teste",
@@ -10,6 +11,25 @@ const TRACK = {
   title: "Módulo teste",
   color: "#13795b",
 };
+
+function pedagogy(objective, distractor) {
+  return {
+    schemaVersion: 1,
+    derivation: "regras-editoriais-automaticas-v1",
+    reviewStatus: "revisao-humana-pendente",
+    objective,
+    cognitiveLevel: "aplicar",
+    difficulty: "intermediaria",
+    difficultySignals: ["ação cognitiva: aplicar"],
+    remediationPriority: "alta",
+    distractors: [
+      {
+        option: distractor,
+        feedback: "Esta alternativa não é sustentada pelo trecho citado.",
+      },
+    ],
+  };
+}
 
 const QUESTIONS = [
   {
@@ -19,6 +39,10 @@ const QUESTIONS = [
     options: ["Documento A", "Documento B"],
     answer: 0,
     explanation: "A conferência começa pelo documento apresentado.",
+    pedagogy: pedagogy(
+      "Aplicar a ordem de conferência e justificar a escolha.",
+      "Documento B",
+    ),
   },
   {
     id: "q-2",
@@ -27,6 +51,10 @@ const QUESTIONS = [
     options: ["Sim", "Não"],
     answer: 1,
     explanation: "O resultado serve apenas ao autoacompanhamento.",
+    pedagogy: pedagogy(
+      "Distinguir autoacompanhamento de validação profissional.",
+      "Sim",
+    ),
   },
 ];
 
@@ -82,6 +110,28 @@ afterEach(async () => {
 });
 
 describe("interação acessível das autoavaliações", () => {
+  it("expõe o objetivo, a estimativa pedagógica e a remediação do distrator", async () => {
+    const host = mount();
+    await act(async () => buttonByText(host, TRACK.title).click());
+
+    expect(host.querySelector(".question-pedagogy")).toBeTruthy();
+    expect(host.textContent).toContain("OBJETIVO OBSERVÁVEL");
+    expect(host.textContent).toContain("Dificuldade estrutural estimada");
+    expect(host.textContent).toContain("dificuldade é estrutural");
+    expect(host.textContent).toContain("não foi calibrada psicometricamente");
+    expect(host.textContent).toContain("revisão especializada responsável");
+    expect(host.textContent).toContain("permanece pendente");
+
+    const question = host.querySelector(".quiz-question h2").textContent;
+    const distractor = question.includes("documento") ? "Documento B" : "Sim";
+    await act(async () => buttonByText(host, distractor).click());
+    await act(async () => buttonByText(host, "Alta").click());
+    await act(async () => buttonByText(host, "Confirmar resposta").click());
+
+    expect(host.querySelector(".distractor-explanation")?.textContent)
+      .toContain("Esta alternativa não é sustentada pelo trecho citado");
+  });
+
   it("leva o foco ao enunciado ao iniciar e ao avançar pelo teclado", async () => {
     const host = mount();
     const start = buttonByText(host, TRACK.title);
@@ -155,5 +205,56 @@ describe("interação acessível das autoavaliações", () => {
     await act(async () => full.click());
     expect(full.getAttribute("aria-pressed")).toBe("true");
     expect(host.textContent).toContain("2 questões");
+  });
+
+  it("mantém o feedback do diagnóstico visível antes de avançar", async () => {
+    const host = mount();
+    await act(async () =>
+      buttonByText(host, "Fazer a primeira aplicação").click(),
+    );
+
+    const headingBefore = host.querySelector(".quiz-question h2").textContent;
+    const wrongOption = [...host.querySelectorAll(".quiz-options button")]
+      .find((button) => !button.textContent.includes("Documento A"));
+    await act(async () => wrongOption.click());
+    await act(async () => buttonByText(host, "Alta").click());
+    await act(async () => buttonByText(host, "Confirmar resposta").click());
+
+    expect(host.querySelector(".quiz-question h2").textContent).toBe(headingBefore);
+    expect(host.querySelector(".answer-feedback")).toBeTruthy();
+    expect(host.textContent).toContain("Ponto de revisão");
+    expect(buttonByText(host, "Próxima questão") || buttonByText(host, "Ver resultado"))
+      .toBeTruthy();
+  });
+});
+
+describe("metadados pedagógicos do banco gerado", () => {
+  it("mantém as 213 questões rastreáveis e com revisão especializada pendente", () => {
+    const cognitiveLevels = new Set();
+    const difficulties = new Set();
+    const priorities = new Set();
+
+    expect(generatedQuestionBank).toHaveLength(213);
+    for (const question of generatedQuestionBank) {
+      const metadata = question.pedagogy;
+      expect(metadata?.schemaVersion).toBe(1);
+      expect(metadata?.derivation).toBe("regras-editoriais-automaticas-v1");
+      expect(metadata?.reviewStatus).toBe("revisao-humana-pendente");
+      expect(metadata?.objective.length).toBeGreaterThan(30);
+      expect(metadata?.difficultySignals.length).toBeGreaterThan(0);
+      expect(metadata?.distractors).toHaveLength(question.options.length - 1);
+      expect(metadata.distractors.every((item) => (
+        question.options.includes(item.option)
+        && item.option !== question.options[question.answer]
+        && item.feedback.length > 40
+      ))).toBe(true);
+      cognitiveLevels.add(metadata.cognitiveLevel);
+      difficulties.add(metadata.difficulty);
+      priorities.add(metadata.remediationPriority);
+    }
+
+    expect(cognitiveLevels.size).toBeGreaterThanOrEqual(3);
+    expect(difficulties.size).toBeGreaterThanOrEqual(2);
+    expect(priorities.size).toBeGreaterThanOrEqual(2);
   });
 });

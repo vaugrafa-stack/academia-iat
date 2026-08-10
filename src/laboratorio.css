@@ -465,7 +465,7 @@
   border-top: 1px solid var(--line);
   background: var(--surface2);
   color: var(--ink2);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 800;
 }
 
@@ -478,6 +478,7 @@
   background: var(--surface);
   color: var(--ink);
   font: inherit;
+  font-size: 14px;
   font-weight: 600;
 }
 
@@ -828,6 +829,10 @@
 }
 
 @media (max-width: 760px) {
+  .lab-page .lab-evidence-item select {
+    font-size: 16px;
+  }
+
   .lab-catalog-header,
   .lab-mode-bar {
     grid-template-columns: 1fr;

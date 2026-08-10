@@ -15,6 +15,7 @@
 // Uma extração que aproveita para redesenhar impede saber, quando algo quebra,
 // se foi a mudança de lugar ou a mudança de conteúdo.
 import React, { useEffect, useMemo, useRef, useState } from "react";
+import "./routeStyles.css";
 import {
   AlertTriangle,
   ArrowRight,
@@ -69,6 +70,118 @@ import {
   selectLessonQuestion,
   selectLessonScenario,
 } from "./lessonEvidence.js";
+
+function textoDeCelulas(rows = []) {
+  return rows.flatMap((row) =>
+    (row?.cells || []).map((cell) => cell?.text || ""),
+  );
+}
+
+function textoDaTabela(table) {
+  if (!table) return [];
+  return [
+    table.title,
+    table.caption,
+    table.labelType,
+    table.labelNumber,
+    ...textoDeCelulas(table.rows),
+  ];
+}
+
+// O glossário precisa representar a aula inteira. Antes ele recebia somente
+// parágrafos e, por isso, não encontrava uma sigla presente apenas no título ou
+// em um quadro. A coleta abaixo permanece estritamente descritiva: apenas reúne
+// texto já publicado na aula, sem inferir significado ou regra normativa.
+export function textoDaAulaParaSiglas(lesson, blocks = [], tableMap = new Map()) {
+  const partes = [lesson?.title];
+  for (const block of blocks) {
+    if (!block) continue;
+    partes.push(
+      block.paragraph?.text,
+      block.text,
+      block.title,
+      block.caption,
+      ...textoDeCelulas(block.rows),
+      ...textoDeCelulas(block.cells ? [{ cells: block.cells }] : []),
+    );
+    if (block.tableId)
+      partes.push(...textoDaTabela(tableMap?.get?.(block.tableId)));
+    if (block.table) partes.push(...textoDaTabela(block.table));
+  }
+  return partes
+    .filter((parte) => typeof parte === "string" && parte.trim())
+    .join(" ");
+}
+
+export function encontrarSiglasDaAula({
+  lesson,
+  blocks = [],
+  tableMap = new Map(),
+  siglasDaAula,
+}) {
+  if (typeof siglasDaAula !== "function") return [];
+  const encontradas = siglasDaAula(
+    textoDaAulaParaSiglas(lesson, blocks, tableMap),
+  );
+  const vistas = new Set();
+  return (Array.isArray(encontradas) ? encontradas : []).filter((item) => {
+    const chave = String(item?.sig || "").trim().toLocaleUpperCase("pt-BR");
+    if (!chave || vistas.has(chave)) return false;
+    vistas.add(chave);
+    return true;
+  });
+}
+
+function ListaDeSiglas({ siglas }) {
+  return (
+    <dl>
+      {siglas.map((item) => (
+        <React.Fragment key={item.sig}>
+          <dt>{item.sig}</dt>
+          <dd>
+            {item.nome}
+            {item.desc ? <em>{item.desc}</em> : null}
+          </dd>
+        </React.Fragment>
+      ))}
+    </dl>
+  );
+}
+
+export function SiglasDaAula({ siglas = [], variante = "principal" }) {
+  const [aberto, setAberto] = useState(false);
+  const painelId = React.useId();
+  if (!siglas.length) return null;
+  if (variante === "lateral") {
+    return (
+      <section className="siglas-aula siglas-aula-lateral">
+        <h4 className="siglas-aula-titulo">
+          <BookMarked size={15} aria-hidden="true" /> Siglas desta aula
+        </h4>
+        <ListaDeSiglas siglas={siglas} />
+      </section>
+    );
+  }
+  return (
+    <section className="siglas-aula siglas-aula-principal">
+      <button
+        className="siglas-aula-toggle"
+        type="button"
+        aria-expanded={aberto}
+        aria-controls={painelId}
+        onClick={() => setAberto((valor) => !valor)}
+      >
+        <BookMarked size={17} aria-hidden="true" />
+        <span>Siglas desta aula</span>
+        <small>{siglas.length}</small>
+        <ChevronRight className={aberto ? "aberto" : ""} aria-hidden="true" />
+      </button>
+      <div id={painelId} hidden={!aberto}>
+        <ListaDeSiglas siglas={siglas} />
+      </div>
+    </section>
+  );
+}
 
 // O objetivo da aula, preferindo o que o POP diz ao que o perfil supõe.
 //
@@ -133,6 +246,12 @@ export default function Lesson({
   const figures = popData.figures.filter(
     (f) => f.blockId && lesson.blockIds?.includes(f.blockId),
   );
+  const siglas = encontrarSiglasDaAula({
+    lesson,
+    blocks,
+    tableMap,
+    siglasDaAula,
+  });
   const note = state.notes[lesson.id] || "";
   const design = getLearningDesign(lesson, blocks);
   const alvo = objetivoDaAula(lesson, blocks, tableMap);
@@ -374,6 +493,7 @@ export default function Lesson({
             <LearningContract design={design} />
           </div>
         </details>
+        <SiglasDaAula siglas={siglas} />
         <div
           className="lesson-tabs"
           role="tablist"
@@ -601,31 +721,7 @@ export default function Lesson({
               </p>
             </div>
           </div>
-          {(() => {
-            const sg = siglasDaAula(
-              blocks
-                .map((b) => (b && b.paragraph && b.paragraph.text) || "")
-                .join(" "),
-            );
-            return sg.length ? (
-              <div className="siglas-aula">
-                <strong>
-                  <BookMarked size={15} /> Siglas desta aula
-                </strong>
-                <dl>
-                  {sg.map((x) => (
-                    <React.Fragment key={x.sig}>
-                      <dt>{x.sig}</dt>
-                      <dd>
-                        {x.nome}
-                        {x.desc ? <em>{x.desc}</em> : null}
-                      </dd>
-                    </React.Fragment>
-                  ))}
-                </dl>
-              </div>
-            ) : null;
-          })()}
+          <SiglasDaAula siglas={siglas} variante="lateral" />
         </div>
       </aside>
     </div>

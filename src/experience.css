@@ -223,7 +223,7 @@
 }
 
 .learning-path-grid article > button:hover {
-  color: #fff;
+  color: var(--sobre-acento);
   background: var(--green);
 }
 
@@ -273,14 +273,14 @@
   padding: 0 17px;
   border: 0;
   border-radius: 8px;
-  color: #fff;
+  color: var(--sobre-acento);
   background: var(--green);
   font-weight: 800;
 }
 
-:root:not([data-theme="light"]) .learning-path-grid article > button:hover,
-:root:not([data-theme="light"]) .formation-empty button {
-  color: var(--sobre-acento);
+:root[data-theme="light"] .learning-path-grid article > button:hover,
+:root[data-theme="light"] .formation-empty button {
+  color: #fff;
 }
 
 @media (max-width: 720px) {

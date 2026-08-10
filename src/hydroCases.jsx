@@ -164,13 +164,16 @@ export const PR_CASES = [
   { tipo: 'UHE de acumulação', criterio: 'Acima de 30 MW · concessão (leilão) · em regra EIA/RIMA · reservatório de regularização',
     nome: 'UHE Gov. Bento Munhoz da Rocha Netto (Foz do Areia)', local: 'Rio Iguaçu, Pinhão-PR', dados: '1.676 MW · 4 turbinas Francis de 419 MW · barragem de 160 m · reservatório de ~165 km² · opera desde 1980 · maior usina da Copel',
     site: 'https://www.copel.com/site/copel-geracao/usinas/usina-governador-bento-munhoz-da-rocha-netto/', siteLabel: 'copel.com (página oficial da usina)' },
-  { tipo: 'UHE a fio d\'água', criterio: 'Acima de 30 MW · sem reservatório de regularização · gera conforme a vazão do rio',
-    nome: 'UHE Baixo Iguaçu', local: 'Rio Iguaçu, Capanema / Capitão Leônidas Marques-PR', dados: '350 MW · 3 turbinas Kaplan (~117 MW cada) · concluída em 2019 · vizinha do Parque Nacional do Iguaçu',
-    site: 'https://www.aen.pr.gov.br/Noticia/Usina-Hidreletrica-do-Baixo-Iguacu-opera-com-forca-total', siteLabel: 'aen.pr.gov.br (fonte oficial do Estado do Paraná)' },
+  { tipo: 'UHE a fio d\'água', criterio: 'Acima de 30 MW · pouca ou nenhuma regularização sazonal · geração mais dependente da vazão afluente',
+    nome: 'UHE Baixo Iguaçu', local: 'Rio Iguaçu, Capanema / Capitão Leônidas Marques-PR', dados: '350,2 MW · 3 unidades Kaplan segundo nota técnica da EPE. A fonte registra dados de projeto; confirme a situação operacional atual na base competente antes de citar em processo.',
+    site: 'https://www.epe.gov.br/sites-pt/publicacoes-dados-abertos/publicacoes/PublicacoesArquivos/publicacao-292/topico-376/EPE-DEE-RE-066-2016-r0.pdf', siteLabel: 'epe.gov.br (nota técnica oficial; dados de projeto)' },
   { tipo: 'UHE de queda alta (derivação)', criterio: 'Circuito longo de adução por túnel · queda elevada · turbinas Pelton',
     nome: 'UHE Gov. Pedro Viriato Parigot de Souza (Capivari-Cachoeira)', local: 'Antonina-PR (capta no rio Capivari e restitui no Cachoeira)', dados: '260 MW de potência instalada, com quatro geradores de 62,5 MW segundo a Copel · desnível de 754 m, a maior queda do sul do país · mais de 50 anos de operação',
     site: 'https://www.copel.com/site/copel-geracao/usinas/usina-parigot-de-souza/', siteLabel: 'copel.com (página oficial da usina)' },
-  { tipo: 'PCH, Pequena Central Hidrelétrica', criterio: 'Eixo ambiental IAT: acima de 5 até 30 MW e reservatório de até 3 km², ressalvada a exceção da IN · eixo setorial ANEEL: acima de 5 até 30 MW pela redação consolidada da REN 875/2020, dada pela REN 1.070/2023; a menção a 13 km² ainda existente na página geral Outorgas não deve substituir a conferência do ato',
+  { tipo: 'PCH, Pequena Central Hidrelétrica',
+    criterioAmbiental: 'IN IAT nº 09/2025, art. 2º: capacidade instalada superior a 5 MW e igual ou inferior a 30 MW, com reservatório de até 3 km², excluída a calha do leito regular. A restrição de área não se aplica aos aproveitamentos comprovadamente dimensionados para objetivos diferentes da geração de energia elétrica.',
+    criterioSetorial: 'ANEEL: a página operacional consultada em 10/08/2026 usa potência superior a 5.000 kW e igual ou inferior a 30.000 kW. Confira o ato setorial aplicável e a situação concreta do empreendimento.',
+    criterioAlerta: 'Não transporte a referência a 13 km² de uma página geral para o critério ambiental do IAT, nem a misture com o enquadramento setorial.',
     nome: 'PCH Bela Vista', local: 'Rio Chopim, Verê / São João-PR', dados: '29,81 MW · inaugurada em outubro de 2021 (unidades em jun/jul/ago) · investimento de R$ 224 milhões da Copel',
     site: 'https://pchbelavista.com.br/', siteLabel: 'pchbelavista.com.br (site oficial)' },
   { tipo: 'CGH, Central Geradora Hidrelétrica', criterio: 'Até 5 MW · registro/comunicação à ANEEL · rito proporcional ao porte',
@@ -180,8 +183,8 @@ export const PR_CASES = [
     nome: 'Itaipu Binacional', local: 'Rio Paraná, Foz do Iguaçu-PR (Brasil/Paraguai)', dados: '14.000 MW · 20 unidades geradoras Francis · líder mundial em produção acumulada de energia',
     site: 'https://www.itaipu.gov.br/', siteLabel: 'itaipu.gov.br (site oficial)' },
   { tipo: 'Reversível (bombeamento)', criterio: 'Bombeia água a reservatório superior fora de ponta e turbina na ponta, a "bateria" hídrica', reversivel: true,
-    nome: 'Bath County Pumped Storage Station: exemplo fora do Paraná', local: 'Bath County, Virgínia, Estados Unidos', dados: 'Não há usina reversível em operação comercial no Paraná; este é o exemplo internacional de referência: 3.003 MW em 6 unidades reversíveis, em operação desde 1985, por muitos anos a maior do mundo (Dominion Energy 60% e Allegheny Power 40%).',
-    site: 'https://www.dominionenergy.com/en/About/Making-Energy/Hydroelectric-Power-Facilities/Bath-County-Pumped-Storage-Station', siteLabel: 'dominionenergy.com (página da operadora)' },
+    nome: 'Bath County Pumped Storage Station: exemplo fora do Paraná', local: 'Bath County, Virgínia, Estados Unidos', dados: 'Exemplo didático internacional de armazenamento por bombeamento. A fonte técnica abaixo explica a tecnologia; não atesta a situação operacional atual deste empreendimento, que deve ser conferida na agência ou operadora competente.',
+    site: 'https://www.energy.gov/cmei/water/history-hydropower', siteLabel: 'energy.gov (fonte técnica oficial dos Estados Unidos)' },
 ];
 
 export function PRCasesSection() {
@@ -192,7 +195,10 @@ export function PRCasesSection() {
         <article key={c.nome} className={'prc-card' + (c.site ? '' : ' prc-empty') + (c.reversivel ? ' prc-wide' : '')}>
           <span className="prc-tipo">{c.tipo}</span>
           <h3>{c.nome}</h3>
-          <p className="prc-crit"><Factory size={13} /> {c.criterio}</p>
+          {c.criterio && <p className="prc-crit"><Factory size={13} /> {c.criterio}</p>}
+          {c.criterioAmbiental && <p className="prc-crit"><Factory size={13} /><span><strong>Eixo ambiental IAT.</strong> {c.criterioAmbiental}</span></p>}
+          {c.criterioSetorial && <p className="prc-crit"><Zap size={13} /><span><strong>Eixo setorial ANEEL.</strong> {c.criterioSetorial}</span></p>}
+          {c.criterioAlerta && <p className="prc-crit"><Info size={13} /><span><strong>Não misture os critérios.</strong> {c.criterioAlerta}</span></p>}
           <p className="prc-local"><MapPin size={13} /> {c.local}</p>
           <p className="prc-dados">{c.dados}</p>
           {c.reversivel && <div className="prc-fotos">
@@ -292,7 +298,7 @@ function ArrFioAgua() {
       <text x="22" y="66" fontSize="12" fontWeight="800" fill="#4cc4f5">FIO D'ÁGUA</text>
       <text x="22" y="82" fontSize="10.5" fill="#bcd0c7">reservatório mínimo</text>
       <text x="22" y="96" fontSize="10.5" fill="#bcd0c7">gera conforme o rio</text>
-      <text x="22" y="212" fontSize="10.5" fill="#93aaa1">menor alagamento · geração variável</text>
+      <text x="22" y="212" fontSize="10.5" fill="#93aaa1">alagamento pode ser menor · geração variável</text>
       <rect x="240" y="46" width="210" height="176" fill="#fff" stroke="#dce5e0" />
       <path d="M250 166 L360 166 L360 108 L250 128 Z" fill="#bfe3ff" />
       <path d="M360 108 L360 200 L392 200 L380 108 Z" fill="#8a9a93" stroke="#8399a0" strokeWidth="1.6" />
@@ -302,7 +308,7 @@ function ArrFioAgua() {
       <text x="252" y="66" fontSize="12" fontWeight="800" fill="#3fe0a6">ACUMULAÇÃO</text>
       <text x="252" y="82" fontSize="10.5" fill="#bcd0c7">estoca água entre estações</text>
       <text x="252" y="96" fontSize="10.5" fill="#bcd0c7">regulariza vazão e firma energia</text>
-      <text x="252" y="212" fontSize="10.5" fill="#93aaa1">maior área alagada · deplecionamento</text>
+      <text x="252" y="212" fontSize="10.5" fill="#93aaa1">regularização · deplecionamento</text>
     </svg>
   );
 }
@@ -311,7 +317,7 @@ export function ArrangementSchematics() {
     <div className="arr-grid">
       <figure><ArrPeBarragem /><figcaption>Pé de barragem: a queda vem só do barramento. Circuito curto, casa de força ao pé e restituição imediata ao rio.</figcaption></figure>
       <figure><ArrDerivacao /><figcaption>Derivação: circuito longo que aproveita a queda do relevo (caso da UHE Parigot de Souza), com açude, adução, chaminé de equilíbrio e trecho de vazão reduzida.</figcaption></figure>
-      <figure><ArrFioAgua /><figcaption>Regularização: fio d'água (caso do Baixo Iguaçu) contra acumulação (caso de Foz do Areia). O tamanho do reservatório define a operação e o impacto.</figcaption></figure>
+      <figure><ArrFioAgua /><figcaption>Regularização: fio d'água (caso do Baixo Iguaçu) e acumulação (caso de Foz do Areia). Área e volume do reservatório influenciam a operação e os impactos, mas não os definem sozinhos; considere também arranjo, regra operativa, localização, conectividade e usos da água.</figcaption></figure>
     </div>
   );
 }

@@ -16,6 +16,7 @@ const basePolicy = {
   managedExtensions: ['.png'],
   managedSuffixes: [],
   managedTextRules: [],
+  ignoredExtensions: ['.json', '.md', '.txt'],
   maxBytesByExtension: { '.png': 16 },
   currentCycle: '2026-08',
   maxApprovedGrowthBytes: 32,
@@ -127,6 +128,42 @@ describe('governanca mecanica de midia', () => {
     const result = await validateMediaGovernance({ root, policy: basePolicy, baseline, ledger, entries });
     expect(result.ok).toBe(false);
     expect(result.failures).toContain('public/large.png: 17 bytes excedem o limite de 16');
+  });
+
+  it('extensao desconhecida reprova em vez de entrar calada', async () => {
+    // O portao vigia por lista fechada. Isso deixava uma TERCEIRA categoria:
+    // nem vigiada, nem declarada como irrelevante. Um `.webm` ao lado dos
+    // `.mp4`, um `.jpeg` ao lado dos `.jpg`, um `.mp3` de narracao entravam sem
+    // proveniencia, sem base de direitos, sem teto de tamanho e sem checagem de
+    // duplicata. E entravam CALADOS.
+    const { root, baseline, entries } = await fixture();
+    await writeFile(join(root, 'public', 'narracao.webm'), 'video moderno');
+    await writeFile(join(root, 'public', 'foto.jpeg'), 'outro nome do jpg');
+
+    const resultado = await validateMediaGovernance({
+      root, policy: basePolicy, baseline, entries,
+      ledger: { schemaVersion: 1, changes: [] },
+    });
+    expect(resultado.ok).toBe(false);
+    expect(resultado.failures).toEqual(expect.arrayContaining([
+      expect.stringContaining('public/foto.jpeg: extensao nao classificada'),
+      expect.stringContaining('public/narracao.webm: extensao nao classificada'),
+    ]));
+    // A mensagem precisa dizer o que fazer, e nao so que ha algo errado.
+    const aviso = resultado.failures.find((f) => f.includes('narracao.webm'));
+    expect(aviso).toContain('managedExtensions');
+    expect(aviso).toContain('ignoredExtensions');
+  });
+
+  it('extensao declarada como nao-midia passa sem virar ativo', async () => {
+    // A saida existe e e explicita. O que nao pode existir e a saida silenciosa.
+    const { root, baseline, entries } = await fixture();
+    await writeFile(join(root, 'public', 'leia.md'), 'documento, e nao midia');
+    const resultado = await validateMediaGovernance({
+      root, policy: basePolicy, baseline, entries,
+      ledger: { schemaVersion: 1, changes: [] },
+    });
+    expect(resultado.ok).toBe(true);
   });
 
   it('o teto de crescimento conta o ciclo corrente, e nao a vida inteira', async () => {

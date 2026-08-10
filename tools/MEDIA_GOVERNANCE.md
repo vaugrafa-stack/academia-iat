@@ -19,6 +19,25 @@ caminho, bytes, SHA-256, origem, base de direitos, revisao de privacidade,
 revisao tecnica, responsavel, data, justificativa e **ciclo**. O ledger nao
 substitui a revisao humana; ele torna a aprovacao explicita e testavel.
 
+## Duas listas, e nada fora delas
+
+O portao vigia por extensao, e isso deixava uma terceira categoria silenciosa:
+nem vigiada, nem declarada como irrelevante. Um `.webm` ao lado dos `.mp4`, um
+`.jpeg` ao lado dos `.jpg`, um `.mp3` de narracao entravam na arvore sem
+proveniencia, sem base de direitos, sem teto de tamanho e sem checagem de
+duplicata. E entravam calados, que e o pior modo.
+
+Agora ha duas listas explicitas, e nada fora delas:
+
+- `managedExtensions`, `managedSuffixes` e `managedTextRules`: vigiado, exige
+  proveniencia e entra no baseline;
+- `ignoredExtensions`: declarado como nao-midia. Hoje sao `.json`, `.md` e
+  `.txt`, que no acervo correspondem a manifestos, README e a licenca das
+  fontes.
+
+Extensao que nao esteja em nenhuma das duas reprova, com a instrucao junto. A
+saida existe e e explicita; o que deixou de existir e a saida silenciosa.
+
 ## O ciclo, e por que ele existe
 
 O teto de 80 arquivos e 20 MB vale **por ciclo**, e o ciclo corrente e declarado

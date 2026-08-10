@@ -59,6 +59,32 @@ async function walk(directory) {
   return files;
 }
 
+/**
+ * Arquivos sob o acervo que o portao nao vigia E que ninguem declarou ignorar.
+ *
+ * O portao vigia por lista fechada de extensao. Isso deixava uma TERCEIRA
+ * categoria silenciosa: nem vigiada, nem declarada como irrelevante. Um `.webm`
+ * ao lado dos `.mp4`, um `.jpeg` ao lado dos `.jpg`, um `.mp3` de narracao,
+ * entravam na arvore sem proveniencia, sem base de direitos, sem teto de
+ * tamanho e sem checagem de duplicata. E entravam CALADOS, que e o pior modo.
+ *
+ * Agora existem duas listas explicitas, e nada fora delas: o que e vigiado, e o
+ * que foi declarado como nao-midia. Extensao desconhecida vira falha com
+ * instrucao, e nao ausencia.
+ */
+export async function unclassifiedAssets(root, policy) {
+  const scanRoot = resolve(root, policy.scanRoot);
+  const ignoradas = new Set(policy.ignoredExtensions || []);
+  const fora = [];
+  for (const absolutePath of await walk(scanRoot)) {
+    const path = normalizePath(relative(root, absolutePath));
+    if (isManagedAsset(path, policy)) continue;
+    if (ignoradas.has(assetExtension(path))) continue;
+    fora.push(path);
+  }
+  return fora.toSorted((left, right) => left.localeCompare(right, 'en'));
+}
+
 export async function buildInventory(root, policy) {
   const scanRoot = resolve(root, policy.scanRoot);
   const files = await walk(scanRoot);
@@ -373,6 +399,12 @@ export async function validateMediaGovernance({ root, policy, baseline, ledger, 
     failures.push(
       `ledger excede o limite de crescimento em bytes no ciclo ${cicloCorrente}: `
       + `${growthBytes} de ${policy.maxApprovedGrowthBytes}`,
+    );
+  }
+  for (const path of await unclassifiedAssets(root, policy)) {
+    failures.push(
+      `${path}: extensao nao classificada; declare em managedExtensions `
+      + '(com proveniencia) ou em ignoredExtensions (declarando que nao e midia)',
     );
   }
   await validateContracts(root, entries, failures);

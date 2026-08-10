@@ -33,6 +33,41 @@ const TARGETED_IDS = [
   'q127',
 ];
 
+const REVISED_DUPLICATE_PAIRS = [
+  ['q035', 'q091'],
+  ['q036', 'q092'],
+  ['q050', 'q107'],
+  ['q066', 'q123'],
+  ['q069', 'q128'],
+];
+
+const SIMILARITY_STOPWORDS = new Set(
+  (
+    'a o as os um uma de da do das dos e em no na nos nas para por que qual quais '
+    + 'como quando se ao aos com sem entre sua seu suas seus esta este essa esse depois sobre'
+  ).split(' '),
+);
+
+function questionTokens(text) {
+  return new Set(
+    text
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .toLowerCase()
+      .replace(/[^a-z0-9 ]/g, ' ')
+      .split(/\s+/)
+      .filter((token) => token.length > 2 && !SIMILARITY_STOPWORDS.has(token)),
+  );
+}
+
+function jaccardSimilarity(left, right) {
+  const leftTokens = questionTokens(left);
+  const rightTokens = questionTokens(right);
+  const intersection = [...leftTokens].filter((token) => rightTokens.has(token)).length;
+  const union = new Set([...leftTokens, ...rightTokens]).size;
+  return union ? intersection / union : 0;
+}
+
 function lengthSignal(question) {
   const correctLength = question.options[question.answer].length;
   const distractorLengths = question.options
@@ -106,5 +141,17 @@ describe('validade editorial do banco de questões', () => {
     ).toEqual([]);
     expect(coveredSections).toBe(learningLessons.length);
     expect(Math.max(...Object.values(metrics.bySection))).toBe(8);
+  });
+
+  it('mantém distintos os cinco pares antes repetidos', () => {
+    const byId = new Map(questionBank.map((question) => [question.id, question]));
+
+    for (const [firstId, secondId] of REVISED_DUPLICATE_PAIRS) {
+      const first = byId.get(firstId);
+      const second = byId.get(secondId);
+      expect(first, firstId).toBeTruthy();
+      expect(second, secondId).toBeTruthy();
+      expect(jaccardSimilarity(first.question, second.question)).toBeLessThanOrEqual(0.3);
+    }
   });
 });

@@ -160,6 +160,17 @@ describe('contratos de acessibilidade das superfícies principais', () => {
     expect(frente, 'link de salto precisa declarar cor de texto').toBeTruthy();
     expect(contraste(frente, fundo)).toBeGreaterThanOrEqual(7);
   });
+
+  it('mantem texto contrastante nos botoes primarios do tema escuro', async () => {
+    const baseCss = await readFile(baseCssUrl, 'utf8');
+
+    // A regra base de `.primary` usa texto branco com `!important`. Sem um
+    // sentinela temático igualmente importante, o gradiente verde claro
+    // renderizado cai a 2,25:1 no primeiro stop.
+    expect(baseCss).toMatch(
+      /:root:not\(\[data-theme="light"\]\) button\.primary\{color:var\(--sobre-acento\)!important\}/,
+    );
+  });
 });
 
 /** Razão de contraste WCAG entre duas cores em hexadecimal. */

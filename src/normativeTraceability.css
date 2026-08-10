@@ -104,6 +104,16 @@
   color: var(--ink) !important;
 }
 
+.normative-axis-source-alert {
+  margin: 4px 0 12px;
+  padding: 10px;
+  border-left: 4px solid var(--amber);
+  border-radius: 8px;
+  background: var(--amber2);
+  color: var(--ink) !important;
+  font-size: 12px !important;
+}
+
 .normative-axis-links {
   display: flex;
   flex-wrap: wrap;

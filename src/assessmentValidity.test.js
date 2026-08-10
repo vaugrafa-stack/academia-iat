@@ -7,6 +7,22 @@ function blindRate(questions, position) {
     / questions.length;
 }
 
+function canonical(text) {
+  return text
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .trim()
+    .toLowerCase();
+}
+
+function beginsWithNo(option) {
+  return /^(nao|nunca)\b/.test(canonical(option));
+}
+
+function beginsWithYes(option) {
+  return /^sim\b/.test(canonical(option));
+}
+
 describe('validade mínima do banco de avaliações', () => {
   it('mantém cada gabarito dentro das alternativas disponíveis', () => {
     for (const question of questionBank) {
@@ -35,6 +51,22 @@ describe('validade mínima do banco de avaliações', () => {
     for (const position of [0, 1, 2]) {
       expect(blindRate(diagnostic, position)).toBeCloseTo(1 / 3, 5);
     }
+  });
+
+  it('limita a pista de polaridade nas questões explícitas de sim ou não', () => {
+    const polarQuestions = questionBank.filter((question) =>
+      question.options.some((option) => beginsWithNo(option) || beginsWithYes(option)),
+    );
+    const correctNo = polarQuestions.filter((question) =>
+      beginsWithNo(question.options[question.answer]),
+    ).length;
+    const correctYes = polarQuestions.filter((question) =>
+      beginsWithYes(question.options[question.answer]),
+    ).length;
+
+    expect(polarQuestions.length).toBeGreaterThan(0);
+    expect(correctNo / polarQuestions.length).toBeLessThanOrEqual(0.75);
+    expect(correctYes).toBeGreaterThanOrEqual(10);
   });
 
   it('preserva as distinções críticas corrigidas na revisão editorial', () => {

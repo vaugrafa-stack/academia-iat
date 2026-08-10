@@ -7,6 +7,7 @@ import { describe, expect, it } from 'vitest';
 import {
   buildInventory,
   createBaseline,
+  createCycleSeal,
   sha256,
   validateMediaGovernance,
 } from './media-governance-lib.mjs';
@@ -16,8 +17,16 @@ const basePolicy = {
   managedExtensions: ['.png'],
   managedSuffixes: [],
   managedTextRules: [],
-  ignoredExtensions: ['.json', '.md', '.txt'],
+  ignoredPaths: [
+    'public/source-assets/asset-manifest.json',
+    'public/media/aula/manifest.json',
+    'public/media/piloto/manifest.json',
+    'public/media/piloto/provenance.json',
+    'public/fonts/README.md',
+    'public/fonts/OFL.txt',
+  ],
   maxBytesByExtension: { '.png': 16 },
+  firstGovernedCycle: '2026-08',
   currentCycle: '2026-08',
   maxApprovedGrowthBytes: 32,
   maxApprovedGrowthFiles: 2,
@@ -152,7 +161,7 @@ describe('governanca mecanica de midia', () => {
     // A mensagem precisa dizer o que fazer, e nao so que ha algo errado.
     const aviso = resultado.failures.find((f) => f.includes('narracao.webm'));
     expect(aviso).toContain('managedExtensions');
-    expect(aviso).toContain('ignoredExtensions');
+    expect(aviso).toContain('ignoredPaths');
   });
 
   it('extensao declarada como nao-midia passa sem virar ativo', async () => {
@@ -160,10 +169,24 @@ describe('governanca mecanica de midia', () => {
     const { root, baseline, entries } = await fixture();
     await writeFile(join(root, 'public', 'leia.md'), 'documento, e nao midia');
     const resultado = await validateMediaGovernance({
-      root, policy: basePolicy, baseline, entries,
+      root, policy: { ...basePolicy, ignoredPaths: [...basePolicy.ignoredPaths, 'public/leia.md'] },
+      baseline, entries,
       ledger: { schemaVersion: 1, changes: [] },
     });
     expect(resultado.ok).toBe(true);
+  });
+
+  it('ignore e por caminho exato e nao libera toda uma extensao', async () => {
+    const { root, baseline, entries } = await fixture();
+    await writeFile(join(root, 'public', 'animacao.json'), '{"layers":[]}');
+    const resultado = await validateMediaGovernance({
+      root, policy: basePolicy, baseline, entries,
+      ledger: { schemaVersion: 1, changes: [] },
+    });
+    expect(resultado.failures).toContain(
+      'public/animacao.json: extensao nao classificada; declare em managedExtensions '
+      + '(com proveniencia) ou em ignoredPaths (declarando que nao e midia)',
+    );
   });
 
   it('o teto de crescimento conta o ciclo corrente, e nao a vida inteira', async () => {
@@ -175,7 +198,8 @@ describe('governanca mecanica de midia', () => {
     // todo mundo, que e como um portao morre.
     const { root, baseline } = await fixture();
     await writeFile(join(root, 'public', 'nova.png'), 'nova');
-    const entries = await buildInventory(root, basePolicy);
+    const policy = { ...basePolicy, firstGovernedCycle: '2026-06' };
+    const entries = await buildInventory(root, policy);
     const comum = {
       action: 'add', sourceType: 'project-generated', sourceLocator: 'tools/generator.mjs',
       rightsBasis: 'produzido pelo projeto', privacyReview: 'synthetic-no-personal-data',
@@ -189,9 +213,14 @@ describe('governanca mecanica de midia', () => {
     ];
     const doCiclo = { ...comum, path: 'public/nova.png', bytes: 4, sha256: sha256('nova'), cycle: '2026-08' };
 
+    const todas = [...historico, doCiclo];
     const resultado = await validateMediaGovernance({
-      root, policy: basePolicy, baseline, entries,
-      ledger: { schemaVersion: 1, changes: [...historico, doCiclo] },
+      root, policy, baseline, entries,
+      ledger: {
+        schemaVersion: 1,
+        cycleSeals: historico.map((change) => createCycleSeal(todas, change.cycle)),
+        changes: todas,
+      },
     });
     // O historico nao consome o orcamento do ciclo em curso.
     expect(resultado.failures).not.toEqual(
@@ -199,19 +228,95 @@ describe('governanca mecanica de midia', () => {
     );
 
     // Mas o teto continua valendo DENTRO do ciclo: tres no mesmo ciclo reprova.
+    const noMesmoCiclo = [...historico.map((c) => ({ ...c, cycle: '2026-08' })), doCiclo];
     const estourado = await validateMediaGovernance({
-      root, policy: basePolicy, baseline, entries,
+      root, policy, baseline, entries,
       ledger: {
         schemaVersion: 1,
-        changes: [
-          ...historico.map((c) => ({ ...c, cycle: '2026-08' })),
-          doCiclo,
-        ],
+        changes: noMesmoCiclo,
       },
     });
     expect(estourado.ok).toBe(false);
     expect(estourado.failures).toEqual(expect.arrayContaining([
       expect.stringContaining('limite de novos arquivos no ciclo 2026-08: 3 de 2'),
+    ]));
+  });
+
+  it('fecha ciclos fora do intervalo e preserva o teto em ciclos selados', async () => {
+    const { root, baseline } = await fixture();
+    const nomes = ['retro-1.png', 'retro-2.png', 'retro-3.png'];
+    for (const nome of nomes) await writeFile(join(root, 'public', nome), nome);
+    const policy = {
+      ...basePolicy,
+      firstGovernedCycle: '2026-08',
+      currentCycle: '2026-09',
+    };
+    const entries = await buildInventory(root, policy);
+    const actualByPath = new Map(entries.map((entry) => [entry.path, entry]));
+    const changes = nomes.map((nome) => {
+      const path = `public/${nome}`;
+      const actual = actualByPath.get(path);
+      return {
+        action: 'add', path, bytes: actual.bytes, sha256: actual.sha256,
+        sourceType: 'project-generated', sourceLocator: 'tools/generator.mjs',
+        rightsBasis: 'produzido pelo projeto', privacyReview: 'synthetic-no-personal-data',
+        technicalReview: 'approved', reviewedBy: 'revisor fixture',
+        reviewedAt: '2026-08-31', reason: 'mudanca historica de teste', cycle: '2026-08',
+      };
+    });
+
+    const resultado = await validateMediaGovernance({
+      root, policy, baseline, entries,
+      ledger: { schemaVersion: 1, changes },
+    });
+
+    expect(resultado.ok).toBe(false);
+    expect(resultado.failures).toEqual(expect.arrayContaining([
+      expect.stringContaining('ciclo historico 2026-08 sem selo'),
+    ]));
+
+    const dentroDoTeto = changes.slice(0, 2);
+    const entriesDentroDoTeto = entries.filter((entry) => entry.path !== 'public/retro-3.png');
+    const seal = createCycleSeal(dentroDoTeto, '2026-08');
+    const encerrado = await validateMediaGovernance({
+      root, policy, baseline, entries: entriesDentroDoTeto,
+      ledger: { schemaVersion: 1, cycleSeals: [seal], changes: dentroDoTeto },
+    });
+    expect(encerrado.ok).toBe(true);
+
+    const sealEstourado = createCycleSeal(changes, '2026-08');
+    const estourado = await validateMediaGovernance({
+      root, policy, baseline, entries,
+      ledger: { schemaVersion: 1, cycleSeals: [sealEstourado], changes },
+    });
+    expect(estourado.failures).toContain(
+      'ledger excede o limite de novos arquivos no ciclo 2026-08: 3 de 2',
+    );
+
+    const adulterado = await validateMediaGovernance({
+      root, policy, baseline, entries: entriesDentroDoTeto,
+      ledger: {
+        schemaVersion: 1,
+        cycleSeals: [{ ...seal, sha256: '0'.repeat(64) }],
+        changes: dentroDoTeto,
+      },
+    });
+    expect(adulterado.failures).toContain(
+      'selo do ciclo historico 2026-08 diverge das mudancas aprovadas',
+    );
+
+    const future = [{ ...changes[0], cycle: '2099-01' }];
+    const futuro = await validateMediaGovernance({
+      root, policy, baseline, entries,
+      ledger: {
+        schemaVersion: 1,
+        cycleSeals: [createCycleSeal(future, '2099-01')],
+        changes: future,
+      },
+    });
+    expect(futuro.failures).toEqual(expect.arrayContaining([
+      expect.stringContaining('selo do ciclo 2099-01 fora do intervalo governado'),
+      expect.stringContaining('ciclo 2099-01 fora do intervalo governado'),
     ]));
   });
 
@@ -242,13 +347,32 @@ describe('governanca mecanica de midia', () => {
       expect(r.failures, JSON.stringify(vazio)).toContain('public/sem-ciclo.png: cycle ausente');
     }
 
+    for (const invalido of ['2026-7', '2026-13', ' 2026-08 ']) {
+      const r = await validateMediaGovernance({
+        root, policy: basePolicy, baseline, entries,
+        ledger: { schemaVersion: 1, changes: [{ ...entrada, cycle: invalido }] },
+      });
+      expect(r.failures, invalido).toContain(
+        'public/sem-ciclo.png: cycle deve usar exatamente AAAA-MM',
+      );
+    }
+
     const { currentCycle, ...semCicloNaPolitica } = basePolicy;
     const politicaMuda = await validateMediaGovernance({
       root, policy: semCicloNaPolitica, baseline, entries,
       ledger: { schemaVersion: 1, changes: [{ ...entrada, cycle: '2026-08' }] },
     });
     expect(politicaMuda.failures).toContain(
-      'politica sem currentCycle: o teto de crescimento nao tem periodo',
+      'politica sem currentCycle valido no formato AAAA-MM',
+    );
+
+    const { firstGovernedCycle, ...semPrimeiroCiclo } = basePolicy;
+    const semInicio = await validateMediaGovernance({
+      root, policy: semPrimeiroCiclo, baseline, entries,
+      ledger: { schemaVersion: 1, changes: [{ ...entrada, cycle: '2026-08' }] },
+    });
+    expect(semInicio.failures).toContain(
+      'politica sem firstGovernedCycle valido e anterior ou igual ao currentCycle',
     );
   });
 

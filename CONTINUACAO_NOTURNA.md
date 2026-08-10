@@ -639,8 +639,9 @@ gravado. Copia antes, restaura depois.
 
 Verificado de fato, e nao pelo relato: o site no ar e exatamente o commit
 publicado (carimbo conferido na propria pagina), nove rotas sem erro de console
-nem 404, CI verde nos seis commits, e as mudancas em `check-segredos` e
-`check-bundle` sao REFORCO. A fila de sincronizacao que o Codex criou por cima do
+nem 404 e o run final do CI esta verde. Um run intermediario foi cancelado por
+supersessao, mas seu conteudo entrou no commit final aprovado. As mudancas em
+`check-segredos` e `check-bundle` sao REFORCO. A fila de sincronizacao que o Codex criou por cima do
 meu trabalho e melhor que a minha: confere a identidade da conta imediatamente
 antes do envio, e o servico confirma pelo cookie.
 
@@ -652,8 +653,7 @@ antes do envio, e o servico confirma pelo cookie.
    decide o rigor e escrito pelo relatorio que o validador deveria desconfiar.
 2. `change.reason?.trim().length < 8`: sem o campo, `undefined < 8` e FALSE. So
    pegava quem escreveu justificativa curta.
-3. Contrato de arquitetura com `
-` cru contra arquivo CRLF: verde no CI, vermelho
+3. Contrato de arquitetura com `\n` cru contra arquivo CRLF: verde no CI, vermelho
    na maquina de quem desenvolve.
 4. Teto de midias "por ciclo" que era vitalicio: o baseline e imutavel e o ledger
    nao pode encolher, entao travaria o CI por volta do octogesimo ativo, e a
@@ -663,11 +663,12 @@ antes do envio, e o servico confirma pelo cookie.
    com DUAS listas explicitas, e nada fora delas.
 
 **E um sexto, que fui eu.** O `git add -A` do meu primeiro commit varreu uma
-alteracao alheia: `.mobile-bottom-nav button` de `min-height:54px` para
-`28px;max-height:28px`. Metade do alvo de toque no controle mais usado do
-celular. Atravessou build, 494 testes, 29 cenarios de Playwright e CI, porque
-nenhum contrato media aquele alvo. Desfeito, e agora ha contrato que mede
-`min-height` E `max-height`, provado por mutacao.
+alteracao alheia: a declaracao de `.mobile-bottom-nav button` foi de
+`min-height:54px` para `28px;max-height:28px`. Outra folha ainda podia impor um
+piso renderizado de 44px, portanto nao ha prova de que o controle efetivo caiu a
+28px; o que houve foi regressao real do contrato de fonte. Atravessou build,
+testes e CI porque nenhum contrato media aquela declaracao. Desfeito, e agora ha
+contrato que mede `min-height` e `max-height`.
 
 **Duas licoes de metodo:**
 
@@ -775,3 +776,41 @@ em `SEQUENCIA_AREA_TECNICA.md`, resumidas:
 
 Enquanto não respondem: o desenvolvimento roda contra Keycloak local em
 contêiner e **nenhum documento real entra**.
+
+## Recuperação da auditoria interrompida em 10/08/2026
+
+O fechamento foi refeito a partir dos arquivos e dos journals, sem considerar
+`status=completed` como prova suficiente. O resíduo temporário
+`src/__tmp_audit_compact.test.jsx` foi removido e todas as pendências que tinham
+ficado abertas ou terminado abruptamente foram concluídas:
+
+1. **Rastreabilidade normativa.** O eixo ANEEL agora liga separadamente a REN
+   nº 875/2020 consolidada, a REN nº 1.070/2023, a página operacional e a
+   página geral divergente. A interface mostra a divergência também no modo
+   compacto e mantém separadas as competências do IAT, da ANEEL e do gestor de
+   recursos hídricos. A aplicação temporal ao caso continua exigindo confirmação
+   responsável.
+2. **Banco de questões.** Os cinco pares repetidos foram transformados em
+   cenários distintos; a pista Sim/Não foi reduzida; classificadores cognitivos,
+   feedbacks e o verificador da pista de comprimento foram corrigidos. O banco
+   permanece com 213 questões únicas, fonte em 213/213 e cobertura exclusiva de
+   159/159 aulas. Metadados automáticos não substituem revisão editorial e
+   psicométrica.
+3. **Acessibilidade.** Foi corrigido o contraste real do botão primário no tema
+   escuro. Os E2E agora medem o estilo renderizado de gradientes, foco, trap e
+   restauração de foco, operação por teclado, menu móvel, identidade e conteúdo
+   mínimo de todas as rotas principais.
+4. **Governança de mídia.** Ignorar uma extensão inteira deixou de ser permitido:
+   somente oito caminhos não audiovisuais conhecidos são ignorados. Ciclos
+   históricos exigem selo determinístico e permanecem sujeitos ao teto do
+   próprio ciclo; ciclos fora do intervalo governado, selo divergente, duplicado
+   ou órfão reprovam. Como o selo não é assinatura externa, alteração
+   retroativa deliberada também exige revisão humana do diff.
+
+Provas locais do conjunto congelado: 60 arquivos e 508 testes Vitest; 27
+regressões autocontidas do tooling; todos os portões editoriais, de segurança,
+segredos, proveniência, referências, mídia, tipografia e smoke; build e orçamento;
+43 E2E aprovados em desktop e quatro larguras de celular, com dois casos móveis
+corretamente omitidos no projeto desktop; e um E2E de instalação, atualização e
+uso offline da PWA. `pnpm audit --audit-level=moderate` não encontrou
+vulnerabilidade conhecida.

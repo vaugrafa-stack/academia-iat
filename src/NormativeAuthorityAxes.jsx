@@ -49,6 +49,11 @@ export default function NormativeAuthorityAxes({ compact = false }) {
                   {axis.criteria.map((criterion) => <li key={criterion}>{criterion}</li>)}
                 </ul>
               )}
+              {axis.sourceAlert && (
+                <p className="normative-axis-source-alert" role="note">
+                  <strong>Atenção às fontes:</strong> {axis.sourceAlert}
+                </p>
+              )}
               <div className="normative-axis-meta">
                 <span><strong>Referência localizada:</strong> {axis.act}</span>
                 <span><strong>Consulta:</strong> {formatDate(axis.checkedAt)}</span>
@@ -60,9 +65,19 @@ export default function NormativeAuthorityAxes({ compact = false }) {
                 <a href={axis.officialUrl} target="_blank" rel="noreferrer">
                   <ExternalLink aria-hidden="true" /> Fonte principal
                 </a>
+                {axis.amendingUrl && (
+                  <a href={axis.amendingUrl} target="_blank" rel="noreferrer">
+                    Ato alterador
+                  </a>
+                )}
                 <a href={axis.supportingUrl} target="_blank" rel="noreferrer">
                   Fonte complementar
                 </a>
+                {axis.divergentUrl && (
+                  <a href={axis.divergentUrl} target="_blank" rel="noreferrer">
+                    Página geral divergente
+                  </a>
+                )}
               </div>
             </article>
           );

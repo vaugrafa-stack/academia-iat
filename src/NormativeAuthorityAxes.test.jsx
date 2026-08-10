@@ -14,6 +14,22 @@ describe('painel de competências normativas', () => {
     expect(html).toContain('Revisão institucional pendente');
     expect(html).toContain('Fonte primária localizada não equivale a conteúdo validado');
     expect(html).toContain('Revisão:</strong> institucional pendente');
+    expect(html).toContain('Atenção às fontes:');
+    expect(html).toContain('Página geral divergente');
+    expect(html).toContain('Ato alterador');
     expect((html.match(/Fonte principal/g) || [])).toHaveLength(3);
+  });
+
+  it('mantém visível no modo compacto a divergência entre a REN consolidada e a página geral', () => {
+    const html = renderToStaticMarkup(<NormativeAuthorityAxes compact />);
+
+    expect(html).toContain('normative-axes compact');
+    expect(html).toContain('15/05/2025');
+    expect(html).toContain('13 km²');
+    expect(html).toContain('20/02/2026');
+    expect(html).toContain('ren2020875.pdf');
+    expect(html).toContain('ren20231070.pdf');
+    expect(html).toContain('/assuntos/geracao/outorgas');
+    expect(html).not.toContain('<li>');
   });
 });

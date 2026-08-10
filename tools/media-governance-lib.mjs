@@ -3,6 +3,7 @@ import { readFile, readdir, stat } from 'node:fs/promises';
 import { extname, join, relative, resolve, sep } from 'node:path';
 
 const SHA256_PATTERN = /^[a-f0-9]{64}$/;
+const CYCLE_PATTERN = /^\d{4}-(0[1-9]|1[0-2])$/;
 const REVIEW_STATES = new Set(['approved', 'not-applicable']);
 const PRIVACY_STATES = new Set([
   'approved-anonymized',
@@ -74,15 +75,48 @@ async function walk(directory) {
  */
 export async function unclassifiedAssets(root, policy) {
   const scanRoot = resolve(root, policy.scanRoot);
-  const ignoradas = new Set(policy.ignoredExtensions || []);
+  const ignorados = new Set(policy.ignoredPaths || []);
   const fora = [];
   for (const absolutePath of await walk(scanRoot)) {
     const path = normalizePath(relative(root, absolutePath));
     if (isManagedAsset(path, policy)) continue;
-    if (ignoradas.has(assetExtension(path))) continue;
+    if (ignorados.has(path)) continue;
     fora.push(path);
   }
   return fora.toSorted((left, right) => left.localeCompare(right, 'en'));
+}
+
+function canonicalChange(change) {
+  const fields = [
+    'action', 'path', 'bytes', 'sha256', 'sourceType', 'sourceLocator',
+    'rightsBasis', 'privacyReview', 'technicalReview', 'reviewedBy',
+    'reviewedAt', 'reason', 'cycle',
+  ];
+  return Object.fromEntries(fields.map((field) => [field, change[field] ?? null]));
+}
+
+/**
+ * Selo deterministico de um ciclo encerrado.
+ *
+ * O selo impede que uma adicao feita hoje seja retrodatada silenciosamente. A
+ * entrada historica continua autorizando o arquivo, mas qualquer alteracao no
+ * conjunto encerrado muda o hash e exige uma decisao explicita no diff.
+ */
+export function createCycleSeal(changes, cycle) {
+  const selected = changes
+    .filter((change) => change.cycle === cycle)
+    .map(canonicalChange)
+    .toSorted((left, right) => (
+      left.path.localeCompare(right.path, 'en') || left.action.localeCompare(right.action, 'en')
+    ));
+  const approvedAdds = selected.filter((change) => change.action === 'add');
+  return {
+    cycle,
+    changes: selected.length,
+    approvedAdds: approvedAdds.length,
+    growthBytes: approvedAdds.reduce((total, change) => total + (change.bytes || 0), 0),
+    sha256: sha256(JSON.stringify(selected)),
+  };
 }
 
 export async function buildInventory(root, policy) {
@@ -243,6 +277,109 @@ function validateChange(change, actualByPath, baselineByPath, failures) {
   // pela mesma razao da justificativa logo acima.
   const ciclo = typeof change.cycle === 'string' ? change.cycle.trim() : '';
   if (!ciclo) failures.push(`${change.path}: cycle ausente`);
+  else if (change.cycle !== ciclo || !CYCLE_PATTERN.test(ciclo)) {
+    failures.push(`${change.path}: cycle deve usar exatamente AAAA-MM`);
+  }
+}
+
+function validateCycles(ledger, policy, failures) {
+  const cicloCorrente = typeof policy.currentCycle === 'string' ? policy.currentCycle.trim() : '';
+  const primeiroCiclo = typeof policy.firstGovernedCycle === 'string'
+    ? policy.firstGovernedCycle.trim()
+    : '';
+  if (!CYCLE_PATTERN.test(cicloCorrente)) {
+    failures.push('politica sem currentCycle valido no formato AAAA-MM');
+    return { cicloCorrente, primeiroCiclo, additionsByCycle: new Map() };
+  }
+  if (!CYCLE_PATTERN.test(primeiroCiclo) || primeiroCiclo > cicloCorrente) {
+    failures.push('politica sem firstGovernedCycle valido e anterior ou igual ao currentCycle');
+    return { cicloCorrente, primeiroCiclo, additionsByCycle: new Map() };
+  }
+
+  const seals = ledger.cycleSeals ?? [];
+  if (!Array.isArray(seals)) {
+    failures.push('cycleSeals do ledger deve ser uma lista');
+    return { cicloCorrente, primeiroCiclo, additionsByCycle: new Map() };
+  }
+  const sealByCycle = new Map();
+  for (const seal of seals) {
+    if (!CYCLE_PATTERN.test(seal?.cycle || '')) {
+      failures.push('selo de ciclo sem cycle valido no formato AAAA-MM');
+      continue;
+    }
+    if (seal.cycle < primeiroCiclo || seal.cycle > cicloCorrente) {
+      failures.push(
+        `selo do ciclo ${seal.cycle} fora do intervalo governado `
+        + `${primeiroCiclo}..${cicloCorrente}`,
+      );
+    }
+    if (seal.cycle === cicloCorrente) {
+      failures.push(`ciclo corrente ${cicloCorrente} nao pode estar selado`);
+    }
+    if (sealByCycle.has(seal.cycle)) failures.push(`selo duplicado para o ciclo ${seal.cycle}`);
+    sealByCycle.set(seal.cycle, seal);
+  }
+
+  const changes = ledger.changes || [];
+  const cycles = new Set(changes.map((change) => change.cycle).filter(Boolean));
+  for (const cycle of cycles) {
+    if (!CYCLE_PATTERN.test(cycle)) continue;
+    if (cycle < primeiroCiclo || cycle > cicloCorrente) {
+      failures.push(
+        `ciclo ${cycle} fora do intervalo governado ${primeiroCiclo}..${cicloCorrente}`,
+      );
+      continue;
+    }
+    if (cycle === cicloCorrente) continue;
+    const seal = sealByCycle.get(cycle);
+    if (!seal) {
+      failures.push(
+        `ciclo historico ${cycle} sem selo; nova mudanca deve usar o ciclo corrente ${cicloCorrente}`,
+      );
+      continue;
+    }
+    const expected = createCycleSeal(changes, cycle);
+    const fields = ['cycle', 'changes', 'approvedAdds', 'growthBytes', 'sha256'];
+    if (fields.some((field) => seal[field] !== expected[field])) {
+      failures.push(`selo do ciclo historico ${cycle} diverge das mudancas aprovadas`);
+    }
+  }
+  for (const cycle of sealByCycle.keys()) {
+    if (!cycles.has(cycle)) failures.push(`selo orfao para o ciclo ${cycle}`);
+  }
+
+  const additionsByCycle = new Map();
+  for (const change of changes) {
+    if (change.action !== 'add' || !CYCLE_PATTERN.test(change.cycle || '')) continue;
+    if (change.cycle < primeiroCiclo || change.cycle > cicloCorrente) continue;
+    const additions = additionsByCycle.get(change.cycle) || [];
+    additions.push(change);
+    additionsByCycle.set(change.cycle, additions);
+  }
+
+  return {
+    cicloCorrente,
+    primeiroCiclo,
+    additionsByCycle,
+  };
+}
+
+function validateCycleBudgets(additionsByCycle, policy, failures) {
+  for (const [cycle, additions] of additionsByCycle) {
+    const growthBytes = additions.reduce((total, change) => total + (change.bytes || 0), 0);
+    if (additions.length > policy.maxApprovedGrowthFiles) {
+      failures.push(
+        `ledger excede o limite de novos arquivos no ciclo ${cycle}: `
+        + `${additions.length} de ${policy.maxApprovedGrowthFiles}`,
+      );
+    }
+    if (growthBytes > policy.maxApprovedGrowthBytes) {
+      failures.push(
+        `ledger excede o limite de crescimento em bytes no ciclo ${cycle}: `
+        + `${growthBytes} de ${policy.maxApprovedGrowthBytes}`,
+      );
+    }
+  }
 }
 
 function validateSizes(entries, policy, failures) {
@@ -381,30 +518,14 @@ export async function validateMediaGovernance({ root, policy, baseline, ledger, 
   // seria afrouxar a politica para todo mundo.
   //
   // As entradas de ciclos anteriores continuam valendo como AUTORIZACAO do
-  // ativo, que e o que impede o "sem registro". Elas apenas nao consomem mais o
-  // orcamento do ciclo em curso. Encerrar um ciclo e uma edicao explicita de
-  // `currentCycle` na politica, visivel no diff, que e onde ela deve ser julgada.
-  const cicloCorrente = typeof policy.currentCycle === 'string' ? policy.currentCycle.trim() : '';
-  if (!cicloCorrente) failures.push('politica sem currentCycle: o teto de crescimento nao tem periodo');
-  const approvedAdds = (ledger.changes || []).filter((change) => change.action === 'add');
-  const doCiclo = approvedAdds.filter((change) => (change.cycle || '').trim() === cicloCorrente);
-  const growthBytes = doCiclo.reduce((total, change) => total + (change.bytes || 0), 0);
-  if (doCiclo.length > policy.maxApprovedGrowthFiles) {
-    failures.push(
-      `ledger excede o limite de novos arquivos no ciclo ${cicloCorrente}: `
-      + `${doCiclo.length} de ${policy.maxApprovedGrowthFiles}`,
-    );
-  }
-  if (growthBytes > policy.maxApprovedGrowthBytes) {
-    failures.push(
-      `ledger excede o limite de crescimento em bytes no ciclo ${cicloCorrente}: `
-      + `${growthBytes} de ${policy.maxApprovedGrowthBytes}`,
-    );
-  }
+  // ativo, mas precisam estar seladas. Sem o selo, bastaria declarar um mes
+  // antigo para uma adicao nova escapar do orcamento corrente.
+  const { additionsByCycle } = validateCycles(ledger, policy, failures);
+  validateCycleBudgets(additionsByCycle, policy, failures);
   for (const path of await unclassifiedAssets(root, policy)) {
     failures.push(
       `${path}: extensao nao classificada; declare em managedExtensions `
-      + '(com proveniencia) ou em ignoredExtensions (declarando que nao e midia)',
+      + '(com proveniencia) ou em ignoredPaths (declarando que nao e midia)',
     );
   }
   await validateContracts(root, entries, failures);

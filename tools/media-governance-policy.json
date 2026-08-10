@@ -22,7 +22,16 @@
       "extension": ".txt"
     }
   ],
-  "ignoredExtensions": [".json", ".md", ".txt"],
+  "ignoredPaths": [
+    "public/fonts/OFL.txt",
+    "public/fonts/README.md",
+    "public/media/README.md",
+    "public/media/aula/manifest.json",
+    "public/media/media-manifest.json",
+    "public/media/piloto/manifest.json",
+    "public/media/piloto/provenance.json",
+    "public/source-assets/asset-manifest.json"
+  ],
   "maxBytesByExtension": {
     ".gif": 500000,
     ".jpg": 1000000,
@@ -35,6 +44,7 @@
     ".webp": 750000,
     ".woff2": 250000
   },
+  "firstGovernedCycle": "2026-08",
   "currentCycle": "2026-08",
   "maxApprovedGrowthBytes": 20000000,
   "maxApprovedGrowthFiles": 80,

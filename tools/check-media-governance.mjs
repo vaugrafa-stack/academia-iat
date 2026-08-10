@@ -5,6 +5,7 @@ import { resolve } from 'node:path';
 import {
   buildInventory,
   createBaseline,
+  createCycleSeal,
   stableJson,
   validateMediaGovernance,
 } from './media-governance-lib.mjs';
@@ -16,6 +17,7 @@ const baselinePath = resolve(root, policy.baselinePath);
 const ledgerPath = resolve(root, policy.changeLedgerPath);
 const initialize = process.argv.includes('--initialize-baseline');
 const reportFlag = process.argv.indexOf('--report');
+const sealFlag = process.argv.indexOf('--propose-cycle-seal');
 const inventory = await buildInventory(root, policy);
 
 if (initialize) {
@@ -36,6 +38,14 @@ const [baseline, ledger] = await Promise.all([
   readFile(baselinePath, 'utf8').then(JSON.parse),
   readFile(ledgerPath, 'utf8').then(JSON.parse),
 ]);
+
+if (sealFlag >= 0) {
+  const cycle = process.argv[sealFlag + 1];
+  if (!cycle) throw new Error('--propose-cycle-seal exige um ciclo AAAA-MM');
+  console.log(stableJson(createCycleSeal(ledger.changes || [], cycle)).trimEnd());
+  process.exit(0);
+}
+
 const result = await validateMediaGovernance({ root, policy, baseline, ledger, entries: inventory });
 
 if (reportFlag >= 0) {

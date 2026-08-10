@@ -150,7 +150,7 @@ describe('registro de fontes oficiais', () => {
       expect(axis.authority, axis.id).toBeTruthy();
       expect(axis.act, axis.id).toBeTruthy();
       expect(axis.scope, axis.id).toBeTruthy();
-      expect(axis.checkedAt, axis.id).toBe('2026-08-09');
+      expect(axis.checkedAt, axis.id).toBe('2026-08-10');
       expect(axis.officialUrl, axis.id).toMatch(/^https:\/\//);
       expect(axis.supportingUrl, axis.id).toMatch(/^https:\/\//);
       expect(axis.epistemicStatus, axis.id).toBe('fonte primária localizada');
@@ -163,8 +163,15 @@ describe('registro de fontes oficiais', () => {
     const aneel = HYDRO_AUTHORITY_AXES.find((axis) => axis.id === 'aneel-setorial');
     expect(iat.criteria.join(' ')).toContain('reservatório de até 3 km²');
     expect(aneel.act).toContain('1.070/2023');
+    expect(aneel.officialUrl).toBe('https://www2.aneel.gov.br/cedoc/ren2020875.pdf');
+    expect(aneel.amendingAct).toContain('1.070/2023');
+    expect(aneel.amendingUrl).toBe('https://www2.aneel.gov.br/cedoc/ren20231070.pdf');
     expect(aneel.criteria.join(' ')).toContain('não adota limite de área do reservatório');
-    expect(aneel.criteria.join(' ')).toContain('Divergência editorial');
+    expect(aneel.criteria.join(' ')).not.toContain('13 km²');
+    expect(aneel.sourceAlert).toContain('15/05/2025');
+    expect(aneel.sourceAlert).toContain('13 km²');
+    expect(aneel.sourceAlert).toContain('20/02/2026');
+    expect(aneel.divergentUrl).toBe('https://www.gov.br/aneel/pt-br/assuntos/geracao/outorgas');
 
     const [iatEntry, aneelEntry, waterEntry] = buildNormativeLedger([
       'INSTITUTO ÁGUA E TERRA. Instrução Normativa IAT nº 09, de 28 de abril de 2025. Licenciamento ambiental de unidades de geração de energia elétrica a partir de potencial hidráulico.',

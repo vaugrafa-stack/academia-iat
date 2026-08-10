@@ -31,12 +31,13 @@ Agora ha duas listas explicitas, e nada fora delas:
 
 - `managedExtensions`, `managedSuffixes` e `managedTextRules`: vigiado, exige
   proveniencia e entra no baseline;
-- `ignoredExtensions`: declarado como nao-midia. Hoje sao `.json`, `.md` e
-  `.txt`, que no acervo correspondem a manifestos, README e a licenca das
-  fontes.
+- `ignoredPaths`: somente os oito manifestos, README e arquivo de licenca
+  identificados pelo caminho completo.
 
-Extensao que nao esteja em nenhuma das duas reprova, com a instrucao junto. A
-saida existe e e explicita; o que deixou de existir e a saida silenciosa.
+Arquivo que nao esteja em nenhuma das duas listas reprova, com a instrucao
+junto. Ignorar por caminho evita que um futuro `.json` audiovisual, `.txt` de
+narracao ou outro arquivo grande escape apenas por compartilhar a extensao de
+um manifesto conhecido.
 
 ## O ciclo, e por que ele existe
 
@@ -50,19 +51,44 @@ aprovadas, ele era vitalicio disfarcado de "por ciclo", e travaria o CI de forma
 permanente por volta do octogesimo ativo novo. A unica saida seria afrouxar o
 limite para todo mundo, que e como um portao morre.
 
-As entradas de ciclos anteriores continuam valendo como autorizacao do ativo.
-Elas apenas nao consomem mais o orcamento do ciclo em curso.
+As entradas de ciclos anteriores continuam valendo como autorizacao do ativo,
+mas o conjunto encerrado precisa de um `cycleSeal`. O selo registra ciclo,
+quantidades, bytes e SHA-256 deterministico de todas as mudancas daquele ciclo.
+Cada ciclo, inclusive os encerrados, continua sujeito aos mesmos tetos de
+arquivos e bytes. Ciclos anteriores a `firstGovernedCycle`, posteriores a
+`currentCycle`, sem selo, com selo divergente, duplicado ou orfao reprovam.
 
-**Encerrar um ciclo** e uma edicao de uma linha:
+O selo torna qualquer ajuste posterior visivel no diff, mas nao e uma assinatura
+externa: quem pode alterar o repositorio tambem pode recalcula-lo. Por isso a
+proteção contra uma insercao historica deliberada depende da revisao do diff;
+o portao mecanico garante o intervalo permitido, os tetos de cada ciclo e a
+integridade interna do conjunto declarado.
+
+**Encerrar um ciclo** exige duas mudancas revisaveis no mesmo diff:
 
 ```json
-"currentCycle": "2026-09"
+{
+  "cycleSeals": [
+    {
+      "cycle": "2026-08",
+      "changes": 12,
+      "approvedAdds": 10,
+      "growthBytes": 123456,
+      "sha256": "..."
+    }
+  ]
+}
 ```
 
-Ela aparece no diff, que e onde a decisao deve ser julgada: quem abre um ciclo
-novo esta dizendo que o anterior foi revisado e incorporado. Para volumes
-maiores dentro de um mesmo ciclo, a politica precisa ser revista
-conscientemente antes da incorporacao.
+Depois do selo, `currentCycle` pode avancar na politica. Selo ausente, duplicado,
+orfao ou divergente reprova. Para volumes maiores dentro de um mesmo ciclo, a
+politica precisa ser revista conscientemente antes da incorporacao.
+
+O valor exato do selo e gerado sem escrever arquivos:
+
+```powershell
+node tools/check-media-governance.mjs --propose-cycle-seal 2026-08
+```
 
 O comando `node tools/check-media-governance.mjs --report <arquivo>` pode gerar
 um relatorio completo do estado corrente para auditoria sem alterar o baseline.

@@ -226,6 +226,34 @@ describe("interação acessível das autoavaliações", () => {
     expect(buttonByText(host, "Próxima questão") || buttonByText(host, "Ver resultado"))
       .toBeTruthy();
   });
+
+  it("mantém a nota baseada apenas nos acertos, independentemente da confiança", async () => {
+    const host = mount();
+    await act(async () => buttonByText(host, TRACK.title).click());
+
+    for (let index = 0; index < QUESTIONS.length; index += 1) {
+      const currentText = host.querySelector(".quiz-question h2").textContent;
+      const currentQuestion = QUESTIONS.find(
+        (question) => question.question === currentText,
+      );
+      const correctOption = currentQuestion.options[currentQuestion.answer];
+
+      await act(async () => buttonByText(host, correctOption).click());
+      await act(async () =>
+        buttonByText(host, index === 0 ? "Baixa" : "Alta").click(),
+      );
+      await act(async () => buttonByText(host, "Confirmar resposta").click());
+      await act(async () =>
+        buttonByText(
+          host,
+          index === QUESTIONS.length - 1 ? "Ver resultado" : "Próxima questão",
+        ).click(),
+      );
+    }
+
+    expect(host.querySelector(".score-ring").textContent.replace(/\s/g, ""))
+      .toContain("2/2");
+  });
 });
 
 describe("metadados pedagógicos do banco gerado", () => {
@@ -256,5 +284,29 @@ describe("metadados pedagógicos do banco gerado", () => {
     expect(cognitiveLevels.size).toBeGreaterThanOrEqual(3);
     expect(difficulties.size).toBeGreaterThanOrEqual(2);
     expect(priorities.size).toBeGreaterThanOrEqual(2);
+  });
+
+  it("classifica corretamente os itens factuais e os que exigem aplicação", () => {
+    const byId = new Map(generatedQuestionBank.map((question) => [question.id, question]));
+
+    expect(byId.get("q012")?.pedagogy.cognitiveLevel).toBe("aplicar");
+    for (const id of ["q040", "q097", "q098", "q101", "q110", "q111", "q118"]) {
+      expect(byId.get(id)?.pedagogy.cognitiveLevel, id).toBe("recordar");
+    }
+    for (const id of ["q026", "q039"]) {
+      expect(byId.get(id)?.pedagogy.cognitiveLevel, id).toBe("compreender");
+    }
+  });
+
+  it("explica especificamente distratores com regras absolutas", () => {
+    const byId = new Map(generatedQuestionBank.map((question) => [question.id, question]));
+
+    for (const id of ["q025", "q030"]) {
+      const distractor = byId.get(id)?.pedagogy.distractors.find(({ option }) =>
+        /exclusivamente|automática/i.test(option),
+      );
+      expect(distractor, id).toBeTruthy();
+      expect(distractor.feedback, id).toMatch(/regra absoluta/i);
+    }
   });
 });

@@ -54,13 +54,19 @@ function canonical(text = '') {
 // acao predominante solicitada pelo enunciado e nao mede aprendizagem.
 function cognitiveLevel(question) {
   const stem = canonical(question.question);
-  if (/\b(distinguir|comparar|coerencia|conflito|compatibil|classificar|fundamenta|relacao entre|divisao de papeis|avaliar)\b/.test(stem)) {
+  // Prazos, escalas, periodicidade e gatilhos numericos pedem recuperacao de
+  // um dado expresso. Antes, sete itens desse tipo caiam no retorno generico
+  // "compreender", enquanto "quanto aos" era classificado como recordar.
+  if (/^(por quanto tempo|com que periodicidade|em quantos dias|quantos |quantas |qual(?: e)?(?: o| a)? (?:prazo|escala|gatilho(?: tipologico)? numerico|gatilho de entorno))/.test(stem)) {
+    return 'recordar';
+  }
+  if (/\b(distinguir|comparar|coerencia|conflito|compatibil\w*|classificar|fundamenta\w*|relacao entre|divisao de papeis|avaliar)\b/.test(stem)) {
     return 'analisar';
   }
-  if (/\b(em um processo|na analise|ao verificar|ao selecionar|na triagem|em pedido|como proceder|encaminhamento|o tecnico deve|quando |se uma |deve ser analisad)\b/.test(stem)) {
+  if (/\b(em um processo|na analise|ao verificar|ao selecionar|na triagem|em pedido|como (?:proceder|analisar|tratar|avaliar|conferir)|qual providencia|qual correcao|encaminhamento|o tecnico deve|quando |se uma |depois de |deve ser analisad\w*)\b/.test(stem)) {
     return 'aplicar';
   }
-  if (/^(o que e|qual documento|para quem|quanto |quem |o que significa|qual e a sigla)/.test(stem)) {
+  if (/^(o que e|qual documento|para quem|quem |o que significa|qual e a sigla)/.test(stem)) {
     return 'recordar';
   }
   return 'compreender';
@@ -132,10 +138,10 @@ function remediationPriority(question, level) {
 
 function distractorFeedback(option) {
   const text = canonical(option);
-  if (/\b(sempre|nunca|automatic|apenas|somente|exclusiv|irrelevante|dispensa|substitui)\b/.test(text)) {
+  if (/\b(sempre|nunca|automatic\w*|apenas|somente|exclusiv\w*|irrelevante|dispens\w*|substitu\w*)\b/.test(text)) {
     return 'A alternativa usa uma regra absoluta ou uma dispensa que o trecho citado não sustenta. Compare os limites da afirmação com a justificativa e a fonte.';
   }
-  if (/\b(competencia|aneel|iat|iphan|ibama|outorga|licenca)\b/.test(text)) {
+  if (/\b(competenc\w*|aneel|iat|iphan|ibama|outorga\w*|licenc\w*)\b/.test(text)) {
     return 'A alternativa atribui um papel ou efeito a um ator ou ato que não corresponde ao fundamento deste item. Refaça a separação de competências e atos com apoio do trecho citado.';
   }
   return 'A alternativa não é sustentada pelo trecho do POP citado para esta questão. Compare-a com a justificativa e localize no texto-fonte o critério que muda a conclusão.';

@@ -33,8 +33,28 @@ test('navegação móvel abre categorias sem escolher uma página pelo usuário'
   await expect(aprender).toHaveAttribute('aria-expanded', 'false');
 
   await page.keyboard.press('Enter');
-  await expect(page.getByRole('region', { name: 'Aprender' })).toBeVisible();
+  const painelReaberto = page.getByRole('region', { name: 'Aprender' });
+  await expect(painelReaberto).toBeVisible();
+  const primeiroDestino = painelReaberto.locator('.mobile-nav-panel__item').first();
+  const fecharPainel = painelReaberto.getByRole('button', {
+    name: /Fechar opções de Aprender/i,
+  });
+  await expect(primeiroDestino).toBeFocused();
+  const indicador = await primeiroDestino.evaluate((element) => {
+    const style = getComputedStyle(element);
+    return {
+      style: style.outlineStyle,
+      width: Number.parseFloat(style.outlineWidth),
+    };
+  });
+  expect(indicador.style).not.toBe('none');
+  expect(indicador.width).toBeGreaterThanOrEqual(2);
+  await page.keyboard.press('Shift+Tab');
+  await expect(fecharPainel).toBeFocused();
+  await page.keyboard.press('Tab');
+  await expect(primeiroDestino).toBeFocused();
   await page.keyboard.press('Escape');
+  await expect(aprender).toBeFocused();
 
   const praticar = nav.getByRole('button', { name: 'Praticar' });
   await praticar.click();
@@ -63,6 +83,7 @@ test('navegação móvel abre categorias sem escolher uma página pelo usuário'
   const geopr = painelConsultar.getByRole('link', {
     name: 'Abrir GeoPR · mapas oficiais em nova aba (site externo)',
   });
+  await expect(geopr).toBeVisible();
   await expect(geopr).toHaveAttribute(
     'href',
     'https://geopr.iat.pr.gov.br/portal/home/gallery.html?sortField=title&sortOrder=asc',
@@ -84,5 +105,46 @@ test('navegação móvel abre categorias sem escolher uma página pelo usuário'
     page.getByRole('heading', { name: /Comece por aqui|Onde você parou/i }),
   ).toBeVisible();
   await expect(page.locator('.mobile-nav-panel')).toHaveCount(0);
+  await expectHealthyPage(page, runtimeIssues);
+});
+
+test('menu lateral móvel é modal, contém o foco e navega por teclado', async ({
+  page,
+  baseURL,
+}) => {
+  test.skip((page.viewportSize()?.width || Infinity) > 980, 'comportamento exclusivo do celular');
+  const runtimeIssues = monitorRuntime(page, baseURL);
+
+  await page.goto(appUrl(baseURL), { waitUntil: 'domcontentloaded' });
+  const trigger = page.getByRole('button', { name: /Abrir menu/i });
+  await trigger.focus();
+  await trigger.press('Enter');
+
+  const dialog = page.locator('#navegacao-lateral[role="dialog"]');
+  const close = dialog.getByRole('button', { name: /Fechar menu/i });
+  const last = dialog.getByRole('button', { name: /Por onde começar/i });
+  await expect(dialog).toBeVisible();
+  await expect(dialog).toHaveAttribute('aria-modal', 'true');
+  await expect(close).toBeFocused();
+  await expect.poll(() => page.locator('#conteudo').evaluate((node) => node.inert)).toBe(true);
+  await expect.poll(() => page.locator('.mobile-bottom-nav').evaluate((node) => node.inert)).toBe(true);
+
+  await close.press('Shift+Tab');
+  await expect(last).toBeFocused();
+  await last.press('Tab');
+  await expect(close).toBeFocused();
+  await close.press('Escape');
+  await expect(dialog).toHaveCount(0);
+  await expect(trigger).toBeFocused();
+
+  await trigger.press('Enter');
+  const reopened = page.locator('#navegacao-lateral[role="dialog"]');
+  const formation = reopened.getByRole('button', { name: /Curso guiado pelo POP/i });
+  await formation.press('Enter');
+  await expect(page).toHaveURL(/#\/formacao$/);
+  await expect(
+    page.getByRole('heading', { level: 1, name: /Formação guiada pelo POP/i }),
+  ).toBeVisible();
+  await expect(page.locator('#conteudo')).toBeFocused();
   await expectHealthyPage(page, runtimeIssues);
 });

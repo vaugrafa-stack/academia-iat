@@ -1,5 +1,5 @@
 const CHECKED_AT = '2026-07-27';
-const HYDRO_AXES_CHECKED_AT = '2026-08-09';
+const HYDRO_AXES_CHECKED_AT = '2026-08-10';
 
 // Três trilhas públicas diferentes convivem no mesmo empreendimento. Os
 // registros abaixo não tentam fundi-las em uma única "classificação oficial":
@@ -37,7 +37,10 @@ export const HYDRO_AUTHORITY_AXES = Object.freeze([
     scope: 'Registro, autorização ou instrução de concessão para exploração do potencial hidráulico, conforme o regime setorial.',
     act: 'Resolução Normativa ANEEL nº 875/2020, art. 5º, com redação da REN ANEEL nº 1.070/2023',
     officialUrl: 'https://www2.aneel.gov.br/cedoc/ren2020875.pdf',
+    amendingAct: 'Resolução Normativa ANEEL nº 1.070/2023',
+    amendingUrl: 'https://www2.aneel.gov.br/cedoc/ren20231070.pdf',
     supportingUrl: 'https://www.gov.br/aneel/pt-br/centrais-de-conteudos/manuais-modelos-e-instrucoes/geracao/registro-autorizacao-e-concessao-de-empreendimentos-de-geracao/outorga-de-autorizacao-pch-e-uhe',
+    divergentUrl: 'https://www.gov.br/aneel/pt-br/assuntos/geracao/outorgas',
     checkedAt: HYDRO_AXES_CHECKED_AT,
     temporalStatus: 'vigência-e-aplicação-a-confirmar',
     epistemicStatus: 'fonte primária localizada',
@@ -45,10 +48,10 @@ export const HYDRO_AUTHORITY_AXES = Object.freeze([
     criteria: [
       'CGH setorial: capacidade instalada igual ou inferior a 5.000 kW.',
       'PCH setorial: potência superior a 5.000 kW e até 30.000 kW. A redação consolidada do art. 5º não adota limite de área do reservatório.',
-      'Divergência editorial: a página geral “Outorgas”, atualizada em 2025, ainda menciona 13 km²; a REN consolidada e a página operacional de 2026 usam a faixa de potência. Para decisão, prevalece a conferência do ato consolidado e de sua aplicação ao caso.',
       'UHE autorizada: potência superior a 30.000 kW e até 50.000 kW, conforme o regime setorial aplicável.',
       'UHE concedida: potência instalada superior a 50.000 kW.',
     ],
+    sourceAlert: 'Divergência entre páginas oficiais: a página geral “Outorgas”, atualizada em 15/05/2025, ainda menciona reservatório de até 13 km²; a REN nº 875/2020 consolidada, alterada pela REN nº 1.070/2023, e a página operacional atualizada em 20/02/2026 enquadram PCH pela faixa superior a 5.000 kW e igual ou inferior a 30.000 kW. Não use a página geral isoladamente como critério decisório; confira o ato consolidado e sua aplicação temporal ao caso.',
     limitation: 'Este eixo não define modalidade ou suficiência do licenciamento ambiental e não substitui outorga ou DRDH de recursos hídricos.',
   },
   {

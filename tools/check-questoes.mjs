@@ -169,7 +169,7 @@ console.log(
   `pista de comprimento: chutador acerta ${acertosDoChutador} (${percentual}%), `
   + `acaso ${acaso}%, teto ${TETO_CHUTADOR}`,
 );
-if (acertosDoChutador > acaso + 8) {
+if (percentual > acaso + 8) {
   console.log(
     'AVISO: a alternativa correta ainda e reconhecivel pelo tamanho. Ao reescrever '
     + 'uma questao, deixe as alternativas com comprimento parecido e baixe o teto.',

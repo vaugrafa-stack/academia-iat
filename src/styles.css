@@ -720,6 +720,9 @@ button:focus-visible,input:focus-visible,textarea:focus-visible,a:focus-visible,
 :root:not([data-theme="light"]) button.primary,
 :root:not([data-theme="light"]) button.primary svg,
 :root:not([data-theme="light"]) .sup-mail{color:var(--sobre-acento)}
+/* A regra base de .primary usa !important; este sentinela tem a mesma
+   importância e maior especificidade para preservar contraste no tema escuro. */
+:root:not([data-theme="light"]) button.primary{color:var(--sobre-acento)!important}
 /* selos de modulo: fundo escuro, cor do modulo no texto e na borda */
 :root:not([data-theme="light"]) .module-tests button>span,
 :root:not([data-theme="light"]) .cert-mod-code,

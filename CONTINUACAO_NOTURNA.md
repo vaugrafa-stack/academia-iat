@@ -635,6 +635,52 @@ prova a peca; so a execucao prova a montagem.
 arquivo nao commitado. Ele levou junto a correcao que eu ainda nao tinha
 gravado. Copia antes, restaura depois.
 
+### Bloco 28. Auditoria do que o Codex entregou, e cinco portoes que diziam sim ✅
+
+Verificado de fato, e nao pelo relato: o site no ar e exatamente o commit
+publicado (carimbo conferido na propria pagina), nove rotas sem erro de console
+nem 404, CI verde nos seis commits, e as mudancas em `check-segredos` e
+`check-bundle` sao REFORCO. A fila de sincronizacao que o Codex criou por cima do
+meu trabalho e melhor que a minha: confere a identidade da conta imediatamente
+antes do envio, e o servico confirma pelo cookie.
+
+**Cinco defeitos, todos da mesma familia: aprovar sem ter olhado.**
+
+1. `validate_claude_workflow.py` era fail-OPEN pelo NOME. Relatorio bem formado
+   declarando liberacao com ZERO lentes auditadas: bloqueado com o nome exato,
+   APROVADO com exit 0 trocando uma maiuscula ou pondo um acento. O campo que
+   decide o rigor e escrito pelo relatorio que o validador deveria desconfiar.
+2. `change.reason?.trim().length < 8`: sem o campo, `undefined < 8` e FALSE. So
+   pegava quem escreveu justificativa curta.
+3. Contrato de arquitetura com `
+` cru contra arquivo CRLF: verde no CI, vermelho
+   na maquina de quem desenvolve.
+4. Teto de midias "por ciclo" que era vitalicio: o baseline e imutavel e o ledger
+   nao pode encolher, entao travaria o CI por volta do octogesimo ativo, e a
+   unica saida seria afrouxar para todo mundo.
+5. Extensao desconhecida entrava calada: `.webm`, `.jpeg`, `.mp3` passariam sem
+   proveniencia, sem direitos, sem teto e sem checagem de duplicata. Corrigido
+   com DUAS listas explicitas, e nada fora delas.
+
+**E um sexto, que fui eu.** O `git add -A` do meu primeiro commit varreu uma
+alteracao alheia: `.mobile-bottom-nav button` de `min-height:54px` para
+`28px;max-height:28px`. Metade do alvo de toque no controle mais usado do
+celular. Atravessou build, 494 testes, 29 cenarios de Playwright e CI, porque
+nenhum contrato media aquele alvo. Desfeito, e agora ha contrato que mede
+`min-height` E `max-height`, provado por mutacao.
+
+**Duas licoes de metodo:**
+
+- `git add -A` em repositorio onde outro agente tambem trabalha e um jeito de
+  assinar mudanca alheia. Usar caminhos explicitos;
+- nao usar `git checkout` para desfazer mutacao em arquivo nao commitado: ele
+  leva junto a correcao que ainda nao foi gravada. Copia antes, restaura depois.
+
+**Tentei medir contraste na mao e falhei duas vezes:** o medidor nao enxerga
+gradiente nem a notacao `color(srgb ...)`, e acusou 18 falhas falsas. Os dois
+casos que fui conferir a mao estavam corretos. Para contraste, usar a skill de
+auditoria e o e2e, e nao script improvisado no console.
+
 ## O que falta no layout
 
 1. A hierarquia da barra lateral e do topo

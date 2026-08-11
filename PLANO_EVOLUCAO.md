@@ -926,8 +926,8 @@ rodada está em
 | E4 Formação | fundação iniciante, atalho experiente, pesquisa, estado vazio, expansão e abertura de aula cobertos por testes | piloto moderado com iniciantes e especialistas |
 | E6 Avaliações | 213 questões com objetivo, nível cognitivo, dificuldade estrutural, remediação e feedback de distratores | revisão editorial, técnica, psicométrica e rebalanceamento cognitivo |
 | E10 UX e acessibilidade | portão Playwright de 13 rotas aprovado em cinco larguras; contraste, toque, texto móvel, hierarquia, overflow e runtime verificados | leitor de tela real, zoom e dispositivos físicos |
-| E11 Persistência/conta | ciclo visual da conta opcional integrado; backend separado no SHA `a89a81c130f4d784578ff02162b22b7511d95599`, com 136 testes aprovados | publicar backend, conferir CI e implantar somente em mesma origem autorizada |
-| E14 Release | 61 arquivos/512 testes, 29 cenários de artefato, PWA, 25 testes Python e auditoria de dependências aprovados; Área Técnica sintética separada no SHA `6a21ed88fe931a638ce5c4a0ea3376268a197864` | push, workflows verdes e SHA da Academia online |
+| E11 Persistência/conta | ciclo visual da conta opcional integrado; backend separado no SHA `a89a81c130f4d784578ff02162b22b7511d95599`, com 136 testes e matriz Windows/Ubuntu mais imagem Docker aprovadas | implantar somente em mesma origem e infraestrutura autorizadas |
+| E14 Release | 61 arquivos/512 testes, 29 cenários de artefato, PWA, 25 testes Python e auditoria de dependências aprovados; Área Técnica sintética separada no SHA `b64591ad3a266024840be2f0f1518cdb52a033ec`, com `337 passed`, `3 skipped` e matriz Windows/Ubuntu mais imagem Docker aprovadas | manter workflows verdes e confirmar o novo SHA da Academia online |
 
 O build de 11/08/2026 preserva os limites com 38 chunks, 721,8/241,1 KiB de
 JavaScript e 181,3/32,5 KiB de CSS inicial. O CSS total chegou a 238,3/43,3

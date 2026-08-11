@@ -126,7 +126,8 @@ sessões e exclusão. A integração permanece desligada no build público comum
 só é ativada com `IAT_CONTA_REMOTA=1`, sempre em mesma origem com o backend de
 contas. O backend correspondente foi validado e versionado no commit
 `a89a81c130f4d784578ff02162b22b7511d95599` do repositório privado
-`iat-contas`, com 136 testes aprovados.
+`iat-contas`, com 136 testes aprovados e a matriz de qualidade mais a imagem
+Docker aprovadas no [workflow 31509742433](https://github.com/vaugrafa-stack/iat-contas/actions/runs/31509742433).
 
 Com essa superfície opcional, o artefato atual possui 38 chunks JavaScript,
 721,8 KiB brutos e 241,1 KiB compactados. O CSS inicial permanece em
@@ -134,11 +135,13 @@ Com essa superfície opcional, o artefato atual possui 38 chunks JavaScript,
 margem de CSS total ficou estreita e deve ser preservada nos próximos ciclos.
 
 A Área Técnica restrita é outro produto e outra fronteira de segurança. O
-commit `6a21ed88fe931a638ce5c4a0ea3376268a197864` do repositório privado
+commit `b64591ad3a266024840be2f0f1518cdb52a033ec` do repositório privado
 `iat-area-tecnica` entrega, para piloto local exclusivamente sintético, OIDC,
 papéis, concessão nominal por processo, upload, conversa, fila, resultados,
-histórico, backup, retenção e trilha. A suíte aprovou 333 testes e ignorou três
-casos que exigem privilégio de symlink no Windows. Isso não constitui
+histórico, backup, retenção e trilha. A execução local registrou `337 passed`
+e `3 skipped`; Windows e Ubuntu em Python 3.12/3.13 e a imagem Docker foram
+aprovados no [workflow 31520073659](https://github.com/vaugrafa-stack/iat-area-tecnica/actions/runs/31520073659).
+Os casos ignorados exigem privilégio de symlink no Windows. Isso não constitui
 implantação institucional, não autoriza documento real e não transforma o
 worker em um serviço autônomo de IA: a análise ainda depende de processador
 externo aprovado ou de revisão humana.

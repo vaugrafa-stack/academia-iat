@@ -479,7 +479,7 @@ export const NOVOS_CENARIOS = [
       'Quadro 40 do POP, padrão de qualidade das condicionantes',
       'Item 24.1, condicionantes que devem ser evitadas',
       'Quadro 41, foco de condicionantes por fase',
-      'Checklist com a classificação de gravidade das pendências',
+      'Checklist com a consequência técnica de cada pendência',
     ],
     serie: {
       titulo: 'Condicionantes propostas, como foram escritas',
@@ -851,7 +851,7 @@ export const RUBRICAS = {
       { rot: 'Titularidade sem ato formal', termos: ['titular', 'transferenc', 'transferênc', 'anuenc', 'anuênc'] },
       { rot: 'Aproveitamento do estudo antigo', termos: ['2016', 'estudo antigo', 'compativ', 'compatív', 'atual'] },
     ],
-    modelo: 'A leitura partiu do objeto do requerimento e do histórico do processo, antes de qualquer juízo de suficiência. O anexo que identifica outro empreendimento e outro corpo hídrico é inconsistência de gravidade crítica, por afetar a própria identificação do objeto analisado. A divergência de titularidade sem ato administrativo formal de transferência, anuência e assunção de condicionantes constitui pendência crítica. O estudo de 2016 só é aproveitável mediante demonstração de compatibilidade com o projeto atual, a fase, a área de influência e a realidade ambiental atuais, razão pela qual proponho diligência antes do mérito.',
+    modelo: 'A leitura partiu do objeto do requerimento e do histórico do processo, antes de qualquer juízo de suficiência. O anexo que identifica outro empreendimento e outro corpo hídrico é inconsistência que impede a decisão, por afetar a própria identificação do objeto analisado. A divergência de titularidade sem ato administrativo formal de transferência, anuência e assunção de condicionantes constitui pendência crítica. O estudo de 2016 só é aproveitável mediante demonstração de compatibilidade com o projeto atual, a fase, a área de influência e a realidade ambiental atuais, razão pela qual proponho diligência antes do mérito.',
   },
   barragem: {
     elementos: [
@@ -902,12 +902,12 @@ export const RUBRICAS = {
     elementos: [
       // "apresentad" sozinho casava com qualquer texto ("apresentado pelo
       // interessado"), entao o sinal aqui e o vocabulario da matriz.
-      { rot: 'Apresentado não é suficiente', termos: ['suficien', 'checklist', 'exigibilidade', 'gravidade'] },
+      { rot: 'Apresentado não é suficiente', termos: ['suficien', 'checklist', 'exigibilidade', 'consequ'] },
       { rot: 'Modelos adaptados ao caso', termos: ['modelo', 'anexo', 'adaptad', 'caso concreto'] },
       { rot: 'Restrição territorial do Plano de Manejo', termos: ['plano de manejo', 'zona', 'locacional', 'compatib', 'restric', 'restriç'] },
       { rot: 'Evidência das condicionantes da LP', termos: ['condicionante', 'lp', 'evidencia', 'evidência', 'comprova'] },
     ],
-    modelo: 'O checklist marca todos os documentos como apresentados, mas apresentar não é sinônimo de suficiente: a matriz deve distinguir exigibilidade, status, gravidade, achado, consequência técnica e encaminhamento. Os modelos dos anexos foram aplicados sem ajuste e precisam ser adaptados ao caso concreto, verificando impacto, fase, competência, prazo e forma de comprovação. A incidência da ADA em zona definida pelo Plano de Manejo é questão de compatibilidade locacional; restrição material que torne a localização incompatível não deve ser convertida em condicionante. As duas condicionantes da LP sem evidência anexada não podem ser dadas por cumpridas nesta fase. A Informação Técnica interpreta o conjunto e explica a consequência das pendências, sem reproduzir integralmente o checklist.',
+    modelo: 'O checklist marca todos os documentos como apresentados, mas apresentar não é sinônimo de suficiente: a matriz deve distinguir exigibilidade, status, achado, consequência técnica e encaminhamento. Os modelos dos anexos foram aplicados sem ajuste e precisam ser adaptados ao caso concreto, verificando impacto, fase, competência, prazo e forma de comprovação. A incidência da ADA em zona definida pelo Plano de Manejo é questão de compatibilidade locacional; restrição material que torne a localização incompatível não deve ser convertida em condicionante. As duas condicionantes da LP sem evidência anexada não podem ser dadas por cumpridas nesta fase. A Informação Técnica interpreta o conjunto e explica a consequência das pendências, sem reproduzir integralmente o checklist.',
   },
   'uc-apa': {
     elementos: [

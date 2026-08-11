@@ -13,11 +13,11 @@ describe("quando há leitura guiada", () => {
   it("exige ao menos duas colunas decisórias", () => {
     // Com uma só, o quadro é lista de referência e explicar seria enfeite.
     expect(comoLerQuadro(quadro(["Item", "Status"]))).toBeNull();
-    expect(comoLerQuadro(quadro(["Item", "Status", "Gravidade"]))).not.toBeNull();
+    expect(comoLerQuadro(quadro(["Item", "Status", "Consequência técnica"]))).not.toBeNull();
   });
 
   it("recusa tabela sem cabeçalho declarado", () => {
-    const sem = quadro(["Item", "Status", "Gravidade"]);
+    const sem = quadro(["Item", "Status", "Consequência técnica"]);
     sem.rows[0].isHeader = false;
     expect(comoLerQuadro(sem)).toBeNull();
     expect(comoLerQuadro(null)).toBeNull();
@@ -25,15 +25,15 @@ describe("quando há leitura guiada", () => {
   });
 
   it("preserva a ordem das colunas, que é o roteiro de uso", () => {
-    const g = comoLerQuadro(quadro(["Item", "O que verificar", "Status", "Gravidade"]));
+    const g = comoLerQuadro(quadro(["Item", "O que verificar", "Status", "Consequência técnica"]));
     expect(g.colunas.map((c) => c.nome)).toEqual([
-      "Item", "O que verificar", "Status", "Gravidade",
+      "Item", "O que verificar", "Status", "Consequência técnica",
     ]);
   });
 
   it("conta linhas sem o cabeçalho", () => {
-    expect(comoLerQuadro(quadro(["Item", "Status", "Gravidade"], 10)).linhas).toBe(9);
-    expect(comoLerQuadro(quadro(["Item", "Status", "Gravidade"], 1)).linhas).toBe(0);
+    expect(comoLerQuadro(quadro(["Item", "Status", "Consequência técnica"], 10)).linhas).toBe(9);
+    expect(comoLerQuadro(quadro(["Item", "Status", "Consequência técnica"], 1)).linhas).toBe(0);
   });
 });
 
@@ -46,27 +46,27 @@ describe("papel de cada coluna", () => {
   });
 
   it("ignora acento e caixa", () => {
-    const g = comoLerQuadro(quadro(["ITEM", "CRITÉRIO DE ANÁLISE", "GRAVIDADE"]));
+    const g = comoLerQuadro(quadro(["ITEM", "CRITÉRIO DE ANÁLISE", "CONSEQUÊNCIA TÉCNICA"]));
     expect(g.colunas.every((c) => c.papel)).toBe(true);
   });
 
   it("não inventa papel para coluna desconhecida", () => {
     // Degradar em silêncio é melhor do que descrever errado: a tela mostra o
     // nome da coluna sem explicação, e não uma explicação chutada.
-    const g = comoLerQuadro(quadro(["Assunto qualquer", "Status", "Gravidade"]));
+    const g = comoLerQuadro(quadro(["Assunto qualquer", "Status", "Consequência técnica"]));
     expect(g.colunas[0].papel).toBeNull();
   });
 });
 
-describe("status e gravidade", () => {
+describe("status e consequência técnica", () => {
   it("avisa quando as duas convivem", () => {
-    // Confundir as duas é o erro que o POP combate em vários pontos.
-    expect(comoLerQuadro(quadro(["Item", "Status", "Gravidade"])).separaStatusDeGravidade).toBe(true);
+    // Apresentado não é suficiente, e o quadro só funciona se as duas forem lidas separadas.
+    expect(comoLerQuadro(quadro(["Item", "Status", "Consequência técnica"])).separaStatusDeConsequencia).toBe(true);
   });
 
   it("não avisa quando só uma existe", () => {
     expect(
-      comoLerQuadro(quadro(["Item", "O que verificar", "Gravidade"])).separaStatusDeGravidade,
+      comoLerQuadro(quadro(["Item", "O que verificar", "Consequência técnica"])).separaStatusDeConsequencia,
     ).toBe(false);
   });
 });

@@ -50,9 +50,9 @@ export const ESTRUTURA_IT = [
   },
   {
     n: 7, id: 'documental', titulo: 'Análise documental',
-    exige: 'Tabela com documento, status, gravidade, achado, consequência e encaminhamento. Apresentar não é sinônimo de suficiente.',
-    armadilha: 'Marcar tudo como apresentado sem avaliar suficiência, e derivar a gravidade da falta formal em vez do efeito sobre a decisão.',
-    dica: (c) => `Liste as ${(c.evidence || []).length} evidências do caso com status e gravidade, uma linha por documento.`,
+    exige: 'Tabela com documento, status, achado, consequência e encaminhamento. Apresentar não é sinônimo de suficiente.',
+    armadilha: 'Marcar tudo como apresentado sem avaliar suficiência, e derivar o impedimento da falta formal em vez do efeito sobre a decisão.',
+    dica: (c) => `Liste as ${(c.evidence || []).length} evidências do caso com status e consequência técnica, uma linha por documento.`,
   },
   {
     n: 8, id: 'tecnica', titulo: 'Análise técnica',
@@ -62,8 +62,8 @@ export const ESTRUTURA_IT = [
   },
   {
     n: 9, id: 'pendencias', titulo: 'Pendências classificadas',
-    exige: 'Pendências classificadas por status e gravidade, sempre vinculadas ao achado, à base normativa, à consequência técnica e à providência necessária.',
-    armadilha: 'Classificar a gravidade pela simples ausência formal do arquivo, sem explicar o efeito da lacuna sobre a decisão.',
+    exige: 'Pendências classificadas por status, sempre vinculadas ao achado, à base normativa, à consequência técnica e à providência necessária.',
+    armadilha: 'Concluir pela simples ausência formal do arquivo, sem explicar o efeito da lacuna sobre a decisão.',
     dica: () => 'Se a pendência impede decisão segura, deixe isso explícito e não a postergue como condicionante.',
   },
   {
@@ -80,7 +80,7 @@ export const ESTRUTURA_IT = [
   },
   {
     n: 12, id: 'controle_qualidade', titulo: 'Controle de qualidade e revisão final',
-    exige: 'Conferir coerência entre objeto, base, achados, gravidade, conclusão, pendências, condicionantes e encaminhamento; revisar forma, rastreabilidade e limites de competência.',
+    exige: 'Conferir coerência entre objeto, base, achados, consequência técnica, conclusão, pendências, condicionantes e encaminhamento; revisar forma, rastreabilidade e limites de competência.',
     armadilha: 'Assinar texto cuja conclusão contradiz os achados ou que declara como validada matéria atribuída a outro órgão.',
     dica: () => 'Faça uma leitura inversa: do encaminhamento para cada evidência que o sustenta, e registre o que ainda exige conferência técnica.',
   },

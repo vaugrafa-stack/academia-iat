@@ -1,4 +1,4 @@
-// Gate de proveniência e integridade da minuta POP v1.7.
+// Gate de proveniência e integridade da minuta POP v1.9.
 //
 // Diferentemente do extrator, este teste não exige que o DOCX exista na
 // máquina de CI. Ele confere o fingerprint publicado, a coerência entre todos
@@ -14,24 +14,24 @@ import { derivarAulas } from '../src/lessons.js';
 
 const root = resolve(import.meta.dirname, '..');
 const EXPECTED = {
-  fileName: 'POP ou Manual Hidreletricas IAT Julho de 2026 (Com APA, UCs, RTTA).docx',
-  bytes: 4_408_377,
-  sha256: '8ffa771546c244e194e6d7b41dd91d5ab3f56083e94c081e1e5c9a17f13f2c3c',
-  version: '1.7',
-  sections: 167,
-  learningSections: 161,
-  teachableLessons: 159,
+  fileName: 'POP_DLE_HID_001_v1.9_Sem_Classificacao_de_Gravidade.docx',
+  bytes: 4_196_608,
+  sha256: 'f7056462b84de383c8e2dbb1e22d3bb732d90fbd876a933e0596642caf5b4871',
+  version: '1.9',
+  sections: 176,
+  learningSections: 170,
+  teachableLessons: 168,
   structuralHeaders: 2,
   navigationSections: 6,
-  tables: 66,
-  quadros: 46,
+  tables: 69,
+  quadros: 49,
   tabelas: 20,
   figures: 14,
   popAssets: 14,
   flowAssets: 21,
   totalAssets: 35,
-  searchableParagraphNodes: 3_339,
-  sourceParagraphNodes: 3_365,
+  searchableParagraphNodes: 3_396,
+  sourceParagraphNodes: 3_424,
 };
 
 let failures = 0;
@@ -78,9 +78,25 @@ check(/minuta técnica.*validação.*institucional/i.test(pop.metadata?.provenan
 same(pop.metadata?.provenance?.pipeline, 'tools/extract_pop.py', 'pipeline canônico');
 same(pop.metadata?.provenance?.operationalVersionAuthority,
   'texto visível da capa do documento', 'autoridade da versão operacional');
-same(pop.metadata?.provenance?.corePropertiesVersion, '1.2', 'versão nas propriedades internas do Word');
-check(/desatualizado.*não usado como versão operacional/i.test(pop.metadata?.provenance?.corePropertiesStatus || ''),
-  'divergência das propriedades internas do Word não está explicitamente governada');
+// A invariante é que a versão operacional sai da capa e o metadado interno do
+// Word nunca a substitui. O valor do metadado é circunstancial: era 1.2 na
+// v1.7, e coincide com a capa na v1.9. Fixar 1.2 aqui fazia o portão testar a
+// coincidência em vez da regra. O caso proibido continua sendo o mudo, um
+// metadado que diverge da capa sem estar registrado por escrito.
+{
+  const interna = pop.metadata?.provenance?.corePropertiesVersion;
+  const status = pop.metadata?.provenance?.corePropertiesStatus || '';
+  const operacional = pop.metadata?.operational?.version;
+  const registrado = !interna
+    ? /ausente/i.test(status)
+    : interna !== operacional
+      ? /desatualizado.*não usado como versão operacional/i.test(status)
+      : /coerente/i.test(status);
+  check(pop.metadata?.provenance?.coverVersionIsOperationalVersion === true,
+    'a versão operacional não está declarada como vinda da capa');
+  check(registrado,
+    `metadado interno do Word (${interna ?? 'ausente'}) não está registrado no status: ${status}`);
+}
 
 const substantive = pop.sections.filter((section) => !section.navigationOnly);
 const navigation = pop.sections.filter((section) => section.navigationOnly);

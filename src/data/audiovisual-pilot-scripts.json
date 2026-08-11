@@ -286,7 +286,7 @@
           "role": "explanation",
           "presenter": false,
           "claimClass": "conteúdo do POP",
-          "speech": "Separe os documentos por grupo e crie a matriz de análise. Para cada achado, registre status, gravidade, consequência técnica e encaminhamento. Se a documentação não permitir conclusão segura, registre a limitação em vez de preencher a lacuna.",
+          "speech": "Separe os documentos por grupo e crie a matriz de análise. Para cada achado, registre status, consequência técnica e encaminhamento. Se a documentação não permitir conclusão segura, registre a limitação em vez de preencher a lacuna.",
           "visualTitle": "Bloco 4 · Matriz e limites",
           "visualBullets": ["Agrupar documentos", "Classificar achados", "Registrar limitações"],
           "citations": ["pop-7.1"]
@@ -792,9 +792,9 @@
           "role": "explanation",
           "presenter": false,
           "claimClass": "conteúdo do POP",
-          "speech": "Depois, confira norma e transição, separe adequação da modalidade e suficiência documental, e compare status e gravidade com a consequência técnica. Remova pendências sem base e reformule condicionantes genéricas.",
+          "speech": "Depois, confira norma e transição, separe adequação da modalidade e suficiência documental, e compare o status com a consequência técnica. Remova pendências sem base e reformule condicionantes genéricas.",
           "visualTitle": "Camada 2 · Norma e decisão",
-          "visualBullets": ["Transição verificada", "Temas separados", "Gravidade justificada"],
+          "visualBullets": ["Transição verificada", "Temas separados", "Consequência justificada"],
           "citations": ["pop-27", "pop-quality-checklist"]
         },
         {

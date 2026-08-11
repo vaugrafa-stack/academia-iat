@@ -170,8 +170,8 @@ export const QUESTOES_EXTRA = [
     'Sem esses elementos não se consegue localizar, delimitar nem quantificar impactos, que é a função da peça cartográfica.',
     { sec: 'pop-section-076', quote: 'título, legenda, escala, orientação, projeção, datum, data, responsável técnico' }],
   ['m10', 'Como tratar a ausência de outorga vigente ou equivalente?',
-    ['Como pendência de baixa gravidade, sanável depois da licença', 'Como possível pendência crítica para instalação, operação e renovação', 'Como assunto alheio ao licenciamento ambiental'], 1,
-    'A gravidade se define pela consequência: sem outorga não há como compatibilizar vazões, TVR, usos múltiplos e operação.',
+    ['Como pendência de forma, sanável depois da licença', 'Como possível pendência crítica para instalação, operação e renovação', 'Como assunto alheio ao licenciamento ambiental'], 1,
+    'A consequência é que sem outorga não há como compatibilizar vazões, TVR, usos múltiplos e operação.',
     { sec: 'pop-section-080', quote: 'Ausência de outorga vigente ou equivalente pode ser pendência crítica' }],
   ['m10', 'Havendo divergência entre a camada geográfica, o ato de criação e o Plano de Manejo, o técnico deve:',
     ['Corrigir a geometria conforme sua leitura do ato legal', 'Classificar como Pendente de validação e consultar a unidade competente', 'Adotar sempre a camada do GeoPR, por ser oficial'], 1,
@@ -217,7 +217,7 @@ export const QUESTOES_EXTRA = [
     { sec: 'pop-section-107', quote: 'o arquivo deve ser renderizado para PDF ou imagens e todas as páginas devem ser inspecionadas' }],
   ['m13', 'Nas tabelas de checklist, o status "Apresenta" equivale a "suficiente"?',
     ['Sim, apresentar o documento encerra a verificação', 'Não; apresentar não significa automaticamente suficiente', 'Sim, quando o documento tiver ART'], 1,
-    'Por isso a tabela mantém colunas distintas para exigibilidade, status, gravidade, achado, consequência técnica e encaminhamento.',
+    'Por isso a tabela mantém colunas distintas para exigibilidade, status, achado, consequência técnica e encaminhamento.',
     { sec: 'pop-section-105', quote: 'não significa automaticamente' }],
 
   // ---------- M14 Anexos, referencias e caso integrador ----------

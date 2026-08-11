@@ -34,10 +34,12 @@ export const QUESTOES_COBERTURA = [
     ['Apresenta, pois a presença formal do arquivo encerra a verificação documental daquela etapa', 'Insuficiente, porque o conteúdo apresentado não sustenta a decisão técnica necessária', 'Inconsistente, ainda que não exista divergência interna ou conflito com outra evidência do processo'], 1,
     'A classificação “Insuficiente” distingue presença formal de suficiência material.',
     { sec: 'pop-section-013', quote: 'Documento existe, mas não contém dados mínimos para decisão técnica.' }],
-  ['m01', 'Quando uma pendência deve receber gravidade crítica?',
+  ['m01', 'Quando uma pendência impede a decisão?',
     ['Quando exige apenas ajuste de forma que não modifica a compreensão nem a segurança da decisão', 'Quando impede decisão segura ou envolve tema essencial de enquadramento, viabilidade ou regularidade', 'Quando qualquer campo secundário está vazio, independentemente da consequência para a análise'], 1,
-    'A gravidade decorre da consequência da lacuna, e não apenas da existência de uma falha.',
-    { sec: 'pop-section-014', quote: 'Impede decisão segura ou envolve enquadramento, viabilidade, titularidade, outorga, ANEEL, APP, supressão, fauna, patrimônio cultural, condicionante essencial, embargos ou pendência jurídica.' }],
+    'O impedimento decorre da consequência da lacuna, e não apenas da existência de uma falha.',
+    // A fonte era a seção 5.3, que definia a escala de gravidade e saiu do POP.
+    // O critério continua existindo, agora na seção 25, dita pela consequência.
+    { sec: 'pop-section-098', quote: 'A conclusão deve decorrer da consequência técnica e da possibilidade de saneamento dos achados.' }],
 
   // M03 — enquadramento e Consulta Prévia
   ['m03', 'Qual é a finalidade prática da Licença Prévia na matriz de enquadramento?',
@@ -291,9 +293,9 @@ export const QUESTOES_COBERTURA = [
     'A metodologia documenta o caminho de análise entre entrada, critério, avaliação e providência.',
     { sec: 'pop-section-116', quote: 'Registrar que a análise considerou documento apresentado, fase, tipologia, data do protocolo, norma aplicável, suficiência ou inconsistência, consequência técnica e encaminhamento.' }],
   ['m14', 'Quais colunas formam a tabela de análise documental do modelo?',
-    ['Documento, status, gravidade, achado, consequência e encaminhamento', 'Documento, tamanho do arquivo, data de criação, autor e quantidade de páginas', 'Documento, custo estimado, prazo de contratação, equipe e situação financeira'], 0,
+    ['Documento, status, achado, consequência e encaminhamento', 'Documento, tamanho do arquivo, data de criação, autor e quantidade de páginas', 'Documento, custo estimado, prazo de contratação, equipe e situação financeira'], 0,
     'As colunas conectam cada documento à avaliação e à providência correspondente.',
-    { sec: 'pop-section-117', quote: 'Inserir tabela com documento, status, gravidade, achado, consequência e encaminhamento.' }],
+    { sec: 'pop-section-117', quote: 'Inserir tabela com documento, status, achado, consequência e encaminhamento.' }],
   ['m14', 'Qual conjunto integra a análise técnica prevista no modelo do Anexo B?',
     ['Memorial, estudos, cartografia, temas ambientais, competência, atos externos e sistemas associados', 'Somente memorial, cadastro, procuração, comprovante de pagamento e certidão municipal atualizada', 'Apenas impactos do meio físico, pois flora, fauna e interfaces administrativas pertencem a documentos separados'], 0,
     'A análise técnica integra componentes ambientais, territoriais, administrativos e setoriais pertinentes ao caso.',

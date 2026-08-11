@@ -8,15 +8,16 @@
 // sim INSTRUMENTO DE DECISAO, com o mesmo esqueleto:
 //
 //   Status                  17 quadros
-//   Gravidade               16
 //   O que verificar         14
 //   Encaminhamento padrao   13
 //   Criterio de analise     10
 //   Conteudo minimo         10
 //
 // Ou seja, o metodo do POP inteiro esta dentro das tabelas: o que conferir, o
-// que o achado vira, quanto pesa e para onde vai. Este modulo torna esse
-// esqueleto visivel.
+// que o achado vira e para onde vai. Este modulo torna esse esqueleto visivel.
+//
+// A coluna Gravidade saiu do POP. O vocabulario dela saiu junto, senao o
+// modulo continuaria prometendo explicar uma coluna que nao existe mais.
 //
 // O que ele NAO faz: acrescentar exigencia. Cada frase descreve o PAPEL da
 // coluna dentro do instrumento, que e fato sobre a estrutura do quadro, e nao
@@ -32,11 +33,12 @@ const PAPEL = [
   ['criterio de analise', 'a regra que separa suficiente de insuficiente'],
   ['criterio', 'a regra que separa suficiente de insuficiente'],
   ['conteudo minimo', 'o que precisa constar para o item ser considerado apresentado'],
-  ['status', 'o resultado da conferência, que não é a mesma coisa que gravidade'],
-  ['situacao', 'o resultado da conferência, que não é a mesma coisa que gravidade'],
-  ['gravidade', 'o peso do achado sobre a decisão, e não sobre a falta formal'],
-  ['encaminhamento padrao', 'a providência que decorre do status e da gravidade'],
-  ['encaminhamento', 'a providência que decorre do status e da gravidade'],
+  ['status', 'o resultado da conferência, que não é a mesma coisa que suficiência'],
+  ['situacao', 'o resultado da conferência, que não é a mesma coisa que suficiência'],
+  ['consequencia tecnica', 'o efeito do achado sobre a decisão, e não sobre a falta formal'],
+  ['consequencia', 'o efeito do achado sobre a decisão, e não sobre a falta formal'],
+  ['encaminhamento padrao', 'a providência que decorre do status e da consequência técnica'],
+  ['encaminhamento', 'a providência que decorre do status e da consequência técnica'],
   ['erro recorrente a evitar', 'o engano que mais aparece neste ponto'],
   ['erro recorrente', 'o engano que mais aparece neste ponto'],
   ['quando usar', 'a situação em que este item se aplica'],
@@ -57,7 +59,7 @@ const PAPEL = [
 // e explicar seria enfeite.
 const DECISORIAS = new Set([
   'o que verificar', 'como analisar', 'criterio de analise', 'criterio',
-  'conteudo minimo', 'status', 'situacao', 'gravidade',
+  'conteudo minimo', 'status', 'situacao', 'consequencia tecnica', 'consequencia',
   'encaminhamento padrao', 'encaminhamento', 'erro recorrente a evitar',
   'erro recorrente',
 ]);
@@ -102,11 +104,11 @@ export function comoLerQuadro(table) {
   return {
     colunas,
     linhas: Math.max(0, (table.rowCount || table.rows.length) - 1),
-    // Quando o quadro tem status E gravidade, vale dizer em voz alta que são
-    // coisas diferentes: confundir as duas é o erro que o POP combate em
-    // vários pontos, e o quadro só funciona se elas forem lidas separadas.
-    separaStatusDeGravidade:
+    // Quando o quadro tem status E consequência, vale dizer em voz alta que são
+    // coisas diferentes: um documento pode estar apresentado e ainda assim ser
+    // insuficiente, e o quadro só funciona se as duas forem lidas separadas.
+    separaStatusDeConsequencia:
       colunas.some((c) => ['status', 'situacao'].includes(chave(c.nome)))
-      && colunas.some((c) => chave(c.nome) === 'gravidade'),
+      && colunas.some((c) => chave(c.nome).startsWith('consequencia')),
   };
 }

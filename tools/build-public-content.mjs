@@ -17,6 +17,10 @@ const FORBIDDEN_PUBLIC_TERMS = [
   /\b(?:revisão|validação|autoria|aprovação|conferência|avaliação)(?:\s+técnica)?\s+humana\b/iu,
 ];
 
+// Linhas de política interna sobre uso de IA. Existiam na minuta v1.7 e não
+// existem mais na v1.9. O filtro continua porque a fonte pode voltar a trazê-las.
+const OMITIR_LINHA_IA = /^(Declaração sobre|Limites de)\s+IA$/iu;
+
 function hasForbiddenTerm(value) {
   return typeof value === 'string'
     && FORBIDDEN_PUBLIC_TERMS.some((pattern) => pattern.test(value));
@@ -80,9 +84,7 @@ function buildPublicContent(source) {
     table.caption = publicText(table.caption);
     table.rows = table.rows
       .filter((row) => {
-        const omit = /^(Declaração sobre|Limites de)\s+IA$/iu.test(
-          row.cells[0]?.text || '',
-        );
+        const omit = OMITIR_LINHA_IA.test(row.cells[0]?.text || '');
         if (omit) omittedSourceRows += 1;
         return !omit;
       })
@@ -91,11 +93,22 @@ function buildPublicContent(source) {
         index: rowIndex + 1,
       }));
   }
-  if (omittedSourceRows !== 2) {
+  // O que este portão protege é que nenhuma linha de política interna sobre IA
+  // chegue ao build público. Ele fixava o número exato, 2, que era quantas a
+  // minuta v1.7 tinha. Isso o fazia reprovar quando a fonte mudasse, o que de
+  // fato aconteceu: a v1.9 removeu as duas linhas do próprio POP. Fixar o
+  // número testava a fonte; testar a saída testa a regra.
+  const vazouParaOPublico = result.tables.some((table) =>
+    table.rows.some((row) => OMITIR_LINHA_IA.test(row.cells[0]?.text || '')),
+  );
+  if (vazouParaOPublico) {
     throw new Error(
-      `A política editorial esperava omitir 2 linhas da fonte, mas encontrou ${omittedSourceRows}.`,
+      'Linha de política interna sobre IA sobreviveu ao build público.',
     );
   }
+  console.log(
+    `Política editorial: ${omittedSourceRows} linha(s) de política interna sobre IA omitida(s) da fonte.`,
+  );
 
   const publicResult = transformStrings(result);
   const tableParagraphCount = publicResult.tables.reduce(

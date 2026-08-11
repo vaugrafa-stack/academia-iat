@@ -846,8 +846,8 @@ function VideoLesson({ media, track, lesson }) {
 // De proposito NAO mostra o desfecho: se mostrasse, o laboratorio viraria
 // leitura. A aula enquadra o problema; a pratica resolve.
 // A maioria dos quadros do POP nao e lista de referencia: e instrumento de
-// decisao. A medicao dos 64 achou o mesmo esqueleto repetido, 17 com Status,
-// 16 com Gravidade, 14 com "O que verificar" e 13 com "Encaminhamento padrao".
+// decisao. A medicao achou o mesmo esqueleto repetido: Status, "O que
+// verificar", "Encaminhamento padrao" e a consequencia tecnica do achado.
 // O metodo do POP inteiro esta dentro das tabelas, e a tabela era renderizada
 // crua: uma grade de celulas sem dizer para que serve.
 //
@@ -874,12 +874,12 @@ function ComoLerEsteQuadro({ table }) {
           </li>
         ))}
       </ol>
-      {guia.separaStatusDeGravidade && (
+      {guia.separaStatusDeConsequencia && (
         <small>
-          Status e gravidade são colunas diferentes de propósito. Um documento
-          pode estar apresentado e ainda assim ser insuficiente, e a gravidade
-          mede o efeito da lacuna sobre a decisão, não a falta formal do
-          arquivo.
+          Status e consequência técnica são colunas diferentes de propósito. Um
+          documento pode estar apresentado e ainda assim ser insuficiente, e a
+          consequência descreve o efeito da lacuna sobre a decisão, não a falta
+          formal do arquivo.
         </small>
       )}
     </aside>

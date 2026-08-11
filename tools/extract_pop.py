@@ -2,7 +2,7 @@
 """Cadeia canônica e auditável de extração do POP da Academia IAT.
 
 O script:
-1. valida a identidade da minuta-fonte v1.7 por nome, tamanho e SHA-256;
+1. valida a identidade da minuta-fonte v1.9 por nome, tamanho e SHA-256;
 2. preserva os IDs de seção existentes;
 3. extrai texto, tabelas, figuras e somente metadados públicos necessários;
 4. atualiza o catálogo, o manifesto de ativos e a validação de fidelidade;
@@ -52,20 +52,20 @@ DEFAULT_POP_SOURCE = (
 
 PIPELINE_VERSION = "2.0.0"
 EXPECTED = {
-    "fileName": "POP ou Manual Hidreletricas IAT Julho de 2026 (Com APA, UCs, RTTA).docx",
-    "bytes": 4_408_377,
-    "sha256": "8ffa771546c244e194e6d7b41dd91d5ab3f56083e94c081e1e5c9a17f13f2c3c",
-    "version": "1.7",
-    "sections": 167,
-    "learningSections": 161,
+    "fileName": "POP_DLE_HID_001_v1.9_Sem_Classificacao_de_Gravidade.docx",
+    "bytes": 4_196_608,
+    "sha256": "f7056462b84de383c8e2dbb1e22d3bb732d90fbd876a933e0596642caf5b4871",
+    "version": "1.9",
+    "sections": 176,
+    "learningSections": 170,
     "navigationSections": 6,
-    "tables": 66,
-    "quadros": 46,
+    "tables": 69,
+    "quadros": 49,
     "tabelas": 20,
     "figures": 14,
     "assets": 14,
-    "paragraphNodes": 3_339,
-    "bodyBlocks": 765,
+    "paragraphNodes": 3_396,
+    "bodyBlocks": 851,
 }
 
 W_NS = "http://schemas.openxmlformats.org/wordprocessingml/2006/main"
@@ -621,10 +621,20 @@ def extract_pop(source: Path, source_bytes: bytes, previous: dict) -> tuple[dict
                 "operationalVersionAuthority": "texto visível da capa do documento",
                 "corePropertiesVersion": core_properties_version,
                 "corePropertiesStatus": (
-                    "metadado interno do Word desatualizado; preservado para auditoria e "
-                    "não usado como versão operacional"
-                    if core_properties_version and core_properties_version != operational["version"]
-                    else "coerente com a versão operacional"
+                    # Três casos, e não dois. A minuta v1.7 trazia 1.2 no
+                    # metadado interno do Word, desatualizado em relação à capa.
+                    # A v1.9 não traz o campo. Ausente não é o mesmo que
+                    # coerente, e chamar de coerente o que simplesmente não
+                    # existe apaga a diferença justamente no registro que serve
+                    # para auditoria.
+                    "metadado interno do Word ausente neste documento"
+                    if not core_properties_version
+                    else (
+                        "metadado interno do Word desatualizado; preservado para auditoria e "
+                        "não usado como versão operacional"
+                        if core_properties_version != operational["version"]
+                        else "coerente com a versão operacional"
+                    )
                 ),
             },
             "supplementalParts": supplemental,
@@ -780,6 +790,22 @@ def build_asset_manifest(pop: dict, flows: dict) -> dict:
     }
 
 
+def _versao_interna_registrada(interna, status: str, operacional: str) -> bool:
+    """Diz se o metadado interno do Word está registrado com honestidade.
+
+    Ausente, divergente e coerente são três estados distintos, e cada um tem
+    que aparecer por escrito no status. O que não pode acontecer é um metadado
+    divergente passar em silêncio, porque é assim que a versão errada acaba
+    citada como se fosse a operacional.
+    """
+
+    if not interna:
+        return "ausente" in status
+    if interna != operacional:
+        return "desatualizado" in status
+    return "coerente" in status
+
+
 def make_check(check_id: str, expected, actual, details=None) -> dict:
     check = {"id": check_id, "expected": expected, "actual": actual, "pass": expected == actual}
     if details is not None:
@@ -830,11 +856,20 @@ def build_validation(
             pop["metadata"]["provenance"]["operationalVersionAuthority"],
         ),
         make_check(
+            # O que este portão protege é uma invariante, não o valor 1.2: a
+            # versão operacional sai da capa, e o metadado interno do Word nunca
+            # a substitui. O caso proibido é o mudo, um metadado divergente sem
+            # registro. Fixar 1.2 fazia o portão passar por coincidência com a
+            # v1.7 e reprovar a v1.9, que sequer traz o campo.
             "pop-stale-core-version-explicitly-governed",
             True,
             (
-                pop["metadata"]["provenance"]["corePropertiesVersion"] == "1.2"
-                and "desatualizado" in pop["metadata"]["provenance"]["corePropertiesStatus"]
+                pop["metadata"]["provenance"]["coverVersionIsOperationalVersion"] is True
+                and _versao_interna_registrada(
+                    pop["metadata"]["provenance"]["corePropertiesVersion"],
+                    pop["metadata"]["provenance"]["corePropertiesStatus"],
+                    pop["metadata"]["operational"]["version"],
+                )
             ),
         ),
         make_check(

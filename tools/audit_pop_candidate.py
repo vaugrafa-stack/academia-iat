@@ -217,6 +217,15 @@ def section_diff(old: dict, new: dict) -> list[str]:
 
 
 def main() -> int:
+    # O relatorio carrega o texto do POP, que tem subscrito, grau e simbolo de
+    # unidade. No Windows a saida padrao nasce em cp1252 e o json.dumps final
+    # morre com UnicodeEncodeError depois de todo o trabalho ja feito. Esta
+    # ferramenta existe justamente para ser rodada nessa maquina.
+    for fluxo in (sys.stdout, sys.stderr):
+        reconfigurar = getattr(fluxo, "reconfigure", None)
+        if reconfigurar is not None:
+            reconfigurar(encoding="utf-8")
+
     if len(sys.argv) != 2:
         print("Uso: audit_pop_candidate.py <arquivo.docx>", file=sys.stderr)
         return 2

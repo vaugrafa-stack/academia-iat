@@ -19,8 +19,19 @@
 // duas consequências escritas. Escolher por conta própria custaria a tarde de
 // estudo de um dos lados.
 import React, { useCallback, useEffect, useState } from 'react';
-import { AlertTriangle, Check, Cloud, CloudOff, LogOut, RefreshCw } from 'lucide-react';
 import {
+  AlertTriangle,
+  Check,
+  Cloud,
+  CloudOff,
+  KeyRound,
+  LogOut,
+  RefreshCw,
+  ShieldX,
+  Trash2,
+} from 'lucide-react';
+import {
+  alterarSenha,
   DESCE_O_REMOTO,
   NADA_A_FAZER,
   PERGUNTAR,
@@ -29,12 +40,15 @@ import {
   criarConta,
   documentoParaEstado,
   entrar,
+  excluirConta,
   gravarProgresso,
   interpretarGravacao,
   pedirRecuperacao,
   planejarSincronia,
   quemSou,
+  reenviarVerificacao,
   sair,
+  sairDeTodas,
   servicoDisponivel,
 } from './contaRemota.js';
 import { esquecerRevisao, gravarRevisao, lerRevisao } from './sincroniaLocal.js';
@@ -63,6 +77,14 @@ export default function ContaRemotaCard({ state, setState, algoMaisNovo = false 
   const [erro, setErro] = useState('');
   const [recado, setRecado] = useState('');
   const [conflito, setConflito] = useState(null);
+  const [emailPendente, setEmailPendente] = useState('');
+  const [painelConta, setPainelConta] = useState('');
+  const [seguranca, setSeguranca] = useState({
+    atual: '',
+    nova: '',
+    repetir: '',
+    confirmacao: '',
+  });
 
   useEffect(() => {
     let vivo = true;
@@ -192,6 +214,17 @@ export default function ContaRemotaCard({ state, setState, algoMaisNovo = false 
           : await entrar(campos.email, campos.senha);
 
       if (!r.ok) {
+        if (modo === CRIAR && r.corpo?.codigo === 'conta_criada_correspondencia_pendente') {
+          setEmailPendente(campos.email.trim());
+          setRecado(r.corpo.mensagem);
+          setModo(ENTRAR);
+          setCampos((atual) => ({ ...atual, senha: '', nome: '' }));
+          setOcupado(false);
+          return;
+        }
+        if (r.corpo?.codigo === 'email_nao_verificado') {
+          setEmailPendente(campos.email.trim());
+        }
         setErro(
           r.corpo?.mensagem ||
             (r.erro
@@ -203,15 +236,13 @@ export default function ContaRemotaCard({ state, setState, algoMaisNovo = false 
       }
 
       if (modo === CRIAR) {
-        // Criar não abre sessão: entrar em seguida é uma chamada a mais e evita
-        // dois caminhos diferentes para o mesmo estado de "logado".
-        const login = await entrar(campos.email, campos.senha);
-        if (!login.ok) {
-          setRecado('Conta criada. Entre com ela para sincronizar.');
-          setModo(ENTRAR);
-          setOcupado(false);
-          return;
-        }
+        // A conta não abre sessão antes de provar que o endereço responde.
+        setEmailPendente(campos.email.trim());
+        setRecado('Conta criada. Abra o link enviado ao seu e-mail antes de entrar.');
+        setModo(ENTRAR);
+        setCampos((atual) => ({ ...atual, senha: '', nome: '' }));
+        setOcupado(false);
+        return;
       }
 
       const eu = await quemSou();
@@ -233,6 +264,89 @@ export default function ContaRemotaCard({ state, setState, algoMaisNovo = false 
     setConflito(null);
     setRecado('Você saiu da conta. O estudo deste computador continua aqui.');
   }, [conta]);
+
+  const reenviarConfirmacao = useCallback(async () => {
+    const email = emailPendente || campos.email.trim();
+    if (!email) return;
+    setOcupado(true);
+    setErro('');
+    setRecado('');
+    const resposta = await reenviarVerificacao(email);
+    if (resposta.erro || !resposta.ok) {
+      setErro(
+        resposta.corpo?.mensagem ||
+          'Não foi possível alcançar o serviço de conta. Tente novamente em instantes.',
+      );
+    } else {
+      setRecado(
+        resposta.corpo?.mensagem ||
+          'Se existir conta ainda não verificada, um novo link foi enviado.',
+      );
+    }
+    setOcupado(false);
+  }, [campos.email, emailPendente]);
+
+  const limparSeguranca = useCallback(() => {
+    setSeguranca({ atual: '', nova: '', repetir: '', confirmacao: '' });
+    setPainelConta('');
+  }, []);
+
+  const trocarSenhaDaConta = useCallback(async (evento) => {
+    evento.preventDefault();
+    setErro('');
+    if (seguranca.nova !== seguranca.repetir) {
+      setErro('As duas senhas novas não são iguais.');
+      return;
+    }
+    setOcupado(true);
+    const resposta = await alterarSenha(seguranca.atual, seguranca.nova);
+    if (resposta.ok) {
+      limparSeguranca();
+      setRecado('Senha alterada. As outras sessões foram encerradas.');
+    } else {
+      setErro(resposta.corpo?.mensagem || 'Não foi possível alterar a senha.');
+    }
+    setOcupado(false);
+  }, [limparSeguranca, seguranca]);
+
+  const encerrarTodas = useCallback(async () => {
+    const id = conta?.id;
+    setOcupado(true);
+    setErro('');
+    const resposta = await sairDeTodas();
+    if (resposta.ok) {
+      esquecerRevisao(id);
+      setConta(null);
+      avisarContaMudou(null);
+      limparSeguranca();
+      setRecado('Todas as sessões foram encerradas. O estudo deste computador continua aqui.');
+    } else {
+      setErro(resposta.corpo?.mensagem || 'Não foi possível encerrar todas as sessões.');
+    }
+    setOcupado(false);
+  }, [conta, limparSeguranca]);
+
+  const apagarConta = useCallback(async (evento) => {
+    evento.preventDefault();
+    const id = conta?.id;
+    setErro('');
+    if (seguranca.confirmacao !== 'EXCLUIR') {
+      setErro('Digite exatamente EXCLUIR para confirmar.');
+      return;
+    }
+    setOcupado(true);
+    const resposta = await excluirConta(seguranca.atual, seguranca.confirmacao);
+    if (resposta.ok) {
+      esquecerRevisao(id);
+      setConta(null);
+      avisarContaMudou(null);
+      limparSeguranca();
+      setRecado('Conta excluída. O estudo salvo somente neste computador foi preservado.');
+    } else {
+      setErro(resposta.corpo?.mensagem || 'Não foi possível excluir a conta.');
+    }
+    setOcupado(false);
+  }, [conta, limparSeguranca, seguranca]);
 
   // Serviço ausente (o caso da página publicada) ou ainda sendo perguntado: o
   // cartão não existe. Nada de "carregando" para algo que talvez nem apareça.
@@ -284,6 +398,92 @@ export default function ContaRemotaCard({ state, setState, algoMaisNovo = false 
             Há estudo mais novo em outro computador. Sincronize para escolher o que fica.
           </Aviso>
         )}
+        <details className="conta-seguranca">
+          <summary>Segurança e privacidade da conta</summary>
+          <div className="conta-seguranca-actions">
+            <button type="button" className="text-action" onClick={() => setPainelConta('senha')}>
+              <KeyRound aria-hidden="true" /> Alterar senha
+            </button>
+            <button type="button" className="text-action" disabled={ocupado} onClick={encerrarTodas}>
+              <ShieldX aria-hidden="true" /> Sair de todos os dispositivos
+            </button>
+            <button type="button" className="text-action danger" onClick={() => setPainelConta('excluir')}>
+              <Trash2 aria-hidden="true" /> Excluir conta
+            </button>
+          </div>
+          {painelConta === 'senha' && (
+            <form className="profile-form conta-security-form" onSubmit={trocarSenhaDaConta}>
+              <label>
+                Senha atual
+                <input
+                  type="password"
+                  required
+                  autoComplete="current-password"
+                  value={seguranca.atual}
+                  onChange={(e) => setSeguranca((s) => ({ ...s, atual: e.target.value }))}
+                />
+              </label>
+              <label>
+                Nova senha
+                <input
+                  type="password"
+                  required
+                  minLength={12}
+                  autoComplete="new-password"
+                  value={seguranca.nova}
+                  onChange={(e) => setSeguranca((s) => ({ ...s, nova: e.target.value }))}
+                />
+              </label>
+              <label>
+                Repetir nova senha
+                <input
+                  type="password"
+                  required
+                  minLength={12}
+                  autoComplete="new-password"
+                  value={seguranca.repetir}
+                  onChange={(e) => setSeguranca((s) => ({ ...s, repetir: e.target.value }))}
+                />
+              </label>
+              <div className="profile-actions-row">
+                <button type="submit" className="primary" disabled={ocupado}>Salvar nova senha</button>
+                <button type="button" className="text-action" onClick={limparSeguranca}>Cancelar</button>
+              </div>
+            </form>
+          )}
+          {painelConta === 'excluir' && (
+            <form className="profile-form conta-security-form conta-danger-zone" onSubmit={apagarConta}>
+              <p>
+                <strong>Esta ação apaga a conta e o progresso sincronizado.</strong>{' '}
+                O perfil local deste navegador permanece.
+              </p>
+              <label>
+                Senha atual
+                <input
+                  type="password"
+                  required
+                  autoComplete="current-password"
+                  value={seguranca.atual}
+                  onChange={(e) => setSeguranca((s) => ({ ...s, atual: e.target.value }))}
+                />
+              </label>
+              <label>
+                Digite EXCLUIR
+                <input
+                  type="text"
+                  required
+                  autoComplete="off"
+                  value={seguranca.confirmacao}
+                  onChange={(e) => setSeguranca((s) => ({ ...s, confirmacao: e.target.value }))}
+                />
+              </label>
+              <div className="profile-actions-row">
+                <button type="submit" className="danger" disabled={ocupado}>Excluir minha conta</button>
+                <button type="button" className="text-action" onClick={limparSeguranca}>Cancelar</button>
+              </div>
+            </form>
+          )}
+        </details>
         <Aviso tom="ok">{recado}</Aviso>
         <Aviso tom="erro">{erro}</Aviso>
       </article>
@@ -377,6 +577,16 @@ export default function ContaRemotaCard({ state, setState, algoMaisNovo = false 
 
       <Aviso tom="ok">{recado}</Aviso>
       <Aviso tom="erro">{erro}</Aviso>
+      {emailPendente && (
+        <button
+          type="button"
+          className="text-action conta-reenviar"
+          disabled={ocupado}
+          onClick={reenviarConfirmacao}
+        >
+          Reenviar link de confirmação
+        </button>
+      )}
     </article>
   );
 }

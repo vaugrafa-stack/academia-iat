@@ -70,4 +70,23 @@
 .profile-storage-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
 .profile-storage-actions button{min-height:40px;border:1px solid var(--line);border-radius:5px;background:var(--surface);color:var(--ink);padding:7px 10px;display:inline-flex;align-items:center;gap:6px;font:inherit;font-weight:700}
 .profile-storage-actions svg{width:16px}
+.conta-seguranca{margin-top:1rem;border-top:1px solid var(--line);padding-top:.9rem}
+.conta-seguranca summary{width:fit-content;color:var(--ink);font-weight:750;cursor:pointer}
+.conta-seguranca-actions{display:flex;flex-wrap:wrap;gap:.65rem;margin-top:.85rem}
+.conta-seguranca-actions .text-action{display:inline-flex;align-items:center;gap:.35rem}
+.conta-seguranca-actions svg{width:16px}
+.text-action.danger{color:var(--red)}
+.conta-security-form{grid-template-columns:repeat(3,minmax(0,1fr));margin-top:1rem}
+.conta-security-form .profile-actions-row,.conta-danger-zone>p{grid-column:1/-1}
+.conta-danger-zone{border-color:color-mix(in srgb,var(--red) 45%,var(--line));background:color-mix(in srgb,var(--red2) 45%,var(--surface))}
+.conta-danger-zone button.danger{min-height:40px;border:1px solid var(--red);border-radius:8px;background:var(--red);color:#fff;padding:.55rem .85rem;font:inherit;font-weight:750;cursor:pointer}
+.conta-reenviar{margin-top:.65rem}
+.conta-link-page{padding-top:1rem}
+.conta-link-card{display:grid;grid-template-columns:auto minmax(0,1fr);gap:1rem;max-width:760px;margin:1.25rem auto}
+.conta-link-card h2{margin:.1rem 0 .5rem;font-size:1.25rem}
+.conta-link-card p{color:var(--muted);line-height:1.55}
+.conta-link-icon{width:32px;height:32px;color:var(--green2)}
+.conta-link-action,.conta-link-success{display:grid;justify-items:start;gap:.65rem}
+.conta-link-form{padding:0;border:0;box-shadow:none;margin-top:1rem}
 @media(max-width:820px){.profile-grid{grid-template-columns:1fr}.cert-modules li{grid-template-columns:2.4rem minmax(0,1fr) 46px auto}.cert-mod-bar{display:none}}
+@media(max-width:720px){.conta-security-form{grid-template-columns:1fr}.conta-link-card{grid-template-columns:1fr}.conta-link-icon{width:28px;height:28px}}

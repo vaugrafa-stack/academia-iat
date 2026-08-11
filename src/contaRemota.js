@@ -196,6 +196,56 @@ export async function pedirRecuperacao(email, buscar) {
   );
 }
 
+export async function concluirRecuperacao(token, senha, buscar) {
+  return chamar(
+    "/api/recuperacao/concluir",
+    { method: "POST", body: JSON.stringify({ token, senha }) },
+    buscar,
+  );
+}
+
+export async function concluirVerificacao(token, buscar) {
+  return chamar(
+    "/api/verificacao/concluir",
+    { method: "POST", body: JSON.stringify({ token }) },
+    buscar,
+  );
+}
+
+export async function reenviarVerificacao(email, buscar) {
+  return chamar(
+    "/api/verificacao/reenviar",
+    { method: "POST", body: JSON.stringify({ email }) },
+    buscar,
+  );
+}
+
+export async function alterarSenha(senhaAtual, novaSenha, buscar) {
+  return chamar(
+    "/api/senha",
+    {
+      method: "POST",
+      body: JSON.stringify({ senha_atual: senhaAtual, nova_senha: novaSenha }),
+    },
+    buscar,
+  );
+}
+
+export async function sairDeTodas(buscar) {
+  return chamar("/api/sair/todas", { method: "POST" }, buscar);
+}
+
+export async function excluirConta(senhaAtual, confirmacao, buscar) {
+  return chamar(
+    "/api/conta",
+    {
+      method: "DELETE",
+      body: JSON.stringify({ senha_atual: senhaAtual, confirmacao }),
+    },
+    buscar,
+  );
+}
+
 export async function lerProgresso(buscar) {
   const r = await chamar("/api/progresso", {}, buscar);
   return r.ok ? r.corpo : null;

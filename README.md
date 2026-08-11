@@ -109,14 +109,39 @@ questões em dados pedagógicos inspecionáveis.
 
 O portão Playwright percorre 13 rotas e verifica semântica, títulos, nomes
 acessíveis, alvos de toque, tamanho de texto em campos móveis, imagens,
-hierarquia de títulos, overflow e falhas de runtime. A bateria final aprovou 60
-arquivos e 493 testes, 29 cenários Playwright nas cinco larguras previstas, um
+hierarquia de títulos, overflow e falhas de runtime. A bateria final aprovou 61
+arquivos e 512 testes, 29 cenários Playwright nas cinco larguras previstas, um
 cenário PWA/offline, 25 testes das ferramentas Python e a auditoria de
 dependências sem vulnerabilidades conhecidas. A publicação ainda exige workflow
 público verde e conferência do SHA incorporado ao aplicativo online.
 
 Os detalhes, limites e pendências humanas estão em
 [`AUDITORIA_NOTA_10_2026-08-10.md`](AUDITORIA_NOTA_10_2026-08-10.md).
+
+### Conta opcional e Área Técnica separada — 11/08/2026
+
+A Academia ganhou o ciclo visual completo da conta opcional: criação,
+verificação de e-mail, entrada, recuperação, troca de senha, encerramento de
+sessões e exclusão. A integração permanece desligada no build público comum e
+só é ativada com `IAT_CONTA_REMOTA=1`, sempre em mesma origem com o backend de
+contas. O backend correspondente foi validado e versionado no commit
+`a89a81c130f4d784578ff02162b22b7511d95599` do repositório privado
+`iat-contas`, com 136 testes aprovados.
+
+Com essa superfície opcional, o artefato atual possui 38 chunks JavaScript,
+721,8 KiB brutos e 241,1 KiB compactados. O CSS inicial permanece em
+181,3/32,5 KiB e o total em 238,3/43,3 KiB, ainda dentro dos orçamentos; a
+margem de CSS total ficou estreita e deve ser preservada nos próximos ciclos.
+
+A Área Técnica restrita é outro produto e outra fronteira de segurança. O
+commit `6a21ed88fe931a638ce5c4a0ea3376268a197864` do repositório privado
+`iat-area-tecnica` entrega, para piloto local exclusivamente sintético, OIDC,
+papéis, concessão nominal por processo, upload, conversa, fila, resultados,
+histórico, backup, retenção e trilha. A suíte aprovou 333 testes e ignorou três
+casos que exigem privilégio de symlink no Windows. Isso não constitui
+implantação institucional, não autoriza documento real e não transforma o
+worker em um serviço autônomo de IA: a análise ainda depende de processador
+externo aprovado ou de revisão humana.
 
 ## Avaliação e registro pessoal
 

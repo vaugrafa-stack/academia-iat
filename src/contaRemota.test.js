@@ -6,17 +6,23 @@ import {
   PERGUNTAR,
   SEM_PROGRESSO,
   SOBE_O_LOCAL,
+  alterarSenha,
   combinar,
   contaHabilitada,
   criarConta,
+  concluirRecuperacao,
+  concluirVerificacao,
   documentoParaEstado,
   entrar,
+  excluirConta,
   gravarProgresso,
   interpretarGravacao,
   lerProgresso,
   marcoDeEstudo,
   planejarSincronia,
   quemSou,
+  reenviarVerificacao,
+  sairDeTodas,
   servicoDisponivel,
   temConteudo,
 } from "./contaRemota.js";
@@ -256,6 +262,32 @@ describe("a conversa com o serviço nunca derruba a tela", () => {
     const buscar = respostaFalsa({ id: "1", email: "alguem@example.org" });
     const r = await criarConta("alguem@example.org", SENHA, "Nome", buscar);
     expect(JSON.stringify(r.corpo)).not.toContain(SENHA);
+  });
+
+  it("usa os contratos de verificação, recuperação e segurança da conta", async () => {
+    const buscar = respostaFalsa({ ok: true });
+    await concluirVerificacao("token-v", buscar);
+    await concluirRecuperacao("token-r", SENHA, buscar);
+    await reenviarVerificacao("alguem@example.org", buscar);
+    await alterarSenha(SENHA, `${SENHA}-nova`, buscar);
+    await sairDeTodas(buscar);
+    await excluirConta(SENHA, "EXCLUIR", buscar);
+
+    expect(buscar.mock.calls.map(([caminho]) => caminho)).toEqual([
+      "/api/verificacao/concluir",
+      "/api/recuperacao/concluir",
+      "/api/verificacao/reenviar",
+      "/api/senha",
+      "/api/sair/todas",
+      "/api/conta",
+    ]);
+    expect(buscar.mock.calls.map(([, opcoes]) => opcoes.method)).toEqual([
+      "POST", "POST", "POST", "POST", "POST", "DELETE",
+    ]);
+    expect(JSON.parse(buscar.mock.calls[5][1].body)).toEqual({
+      senha_atual: SENHA,
+      confirmacao: "EXCLUIR",
+    });
   });
 });
 

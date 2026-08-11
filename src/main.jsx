@@ -140,6 +140,7 @@ import { useStoredState } from "./storedState.js";
 // nunca veria o momento em que a pessoa termina alguma coisa.
 import { useSincroniaAutomatica } from "./sincroniaAutomatica.js";
 import { hasStartedJourney } from "./learningJourney.js";
+import { interpretarLinkConta } from "./contaLinks.js";
 import "./styles.css";
 import "./nota10.css";
 import "./experience.css";
@@ -181,6 +182,7 @@ const KnowledgeLibrary = lazy(() => import("./biblioteca.jsx"));
 const Profile = lazy(() => import("./perfil.jsx"));
 const Assessments = lazy(() => import("./avaliacoes.jsx"));
 const Formation = lazy(() => import("./formacao.jsx"));
+const ContaLinkPage = lazy(() => import("./ContaLinkPage.jsx"));
 try {
   const _t = localStorage.getItem("academia-iat-theme");
   document.documentElement.dataset.theme =
@@ -456,25 +458,37 @@ const VIEW_IDS = [
   "suporte",
 ];
 function parseHash() {
+  const linkConta = interpretarLinkConta(
+    (typeof location !== "undefined" && location.hash) || "",
+  );
+  if (linkConta) {
+    return {
+      view: "conta",
+      lesson: null,
+      scenario: null,
+      accountLink: linkConta,
+    };
+  }
   const h = ((typeof location !== "undefined" && location.hash) || "").replace(
     /^#\/?/,
     "",
   );
-  if (!h) return { view: "dashboard", lesson: null, scenario: null };
+  if (!h) return { view: "dashboard", lesson: null, scenario: null, accountLink: null };
   const i = h.indexOf("/");
   const seg = i < 0 ? h : h.slice(0, i);
   const rest = i < 0 ? "" : h.slice(i + 1);
   if (seg === "aula" && rest)
-    return { view: "lesson", lesson: decodeURIComponent(rest), scenario: null };
+    return { view: "lesson", lesson: decodeURIComponent(rest), scenario: null, accountLink: null };
   if (seg === "laboratorio")
     return {
       view: "laboratorio",
       lesson: null,
       scenario: rest ? decodeURIComponent(rest) : null,
+      accountLink: null,
     };
   if (VIEW_IDS.includes(seg))
-    return { view: seg, lesson: null, scenario: null };
-  return { view: "dashboard", lesson: null, scenario: null };
+    return { view: seg, lesson: null, scenario: null, accountLink: null };
+  return { view: "dashboard", lesson: null, scenario: null, accountLink: null };
 }
 function reloadFade() {
   document.body.classList.add("page-leave");
@@ -535,6 +549,7 @@ function App() {
   const [selectedScenario, setSelectedScenario] = useState(
     () => _init.scenario || null,
   );
+  const [accountLink, setAccountLink] = useState(() => _init.accountLink || null);
   const [libraryTarget, setLibraryTarget] = useState(null);
   const [menuOpen, setMenuOpen] = useState(false),
     [searchOpen, setSearchOpen] = useState(false),
@@ -653,6 +668,7 @@ function App() {
   useEffect(() => {
     const onNav = () => {
       const p = parseHash();
+      setAccountLink(p.accountLink || null);
       if (p.view === "lesson") {
         if (p.lesson && lessonMap.has(p.lesson)) {
           setSelectedLesson(p.lesson);
@@ -690,6 +706,7 @@ function App() {
   }
   function go(next, param) {
     setView(next);
+    setAccountLink(null);
     setMenuOpen(false);
     if (next === "laboratorio" && param) {
       setSelectedScenario(param);
@@ -746,9 +763,13 @@ function App() {
     const label =
       view === "lesson" && lesson
         ? `${lesson.number ? lesson.number + " " : ""}${lesson.title}`
+        : view === "conta"
+          ? accountLink?.acao === "verificar"
+            ? "Confirmar e-mail"
+            : "Recuperar senha"
         : NAV.find(([id]) => id === view)?.[1] || "Visão geral";
     document.title = `${label} · Academia IAT`;
-  }, [view, selectedLesson]);
+  }, [view, selectedLesson, accountLink?.acao]);
   // O Laboratorio e o Redator sao as unicas telas que usam o caso inteiro
   // (evidencias, documentos, serie, rubrica, desfecho e alternativas). O corpo
   // e buscado so quando uma das duas abre, e ate chegar elas mostram
@@ -846,6 +867,7 @@ function App() {
         }}
       />
     ),
+    conta: <ContaLinkPage acao={accountLink?.acao} token={accountLink?.token} go={go} />,
     suporte: <Suporte online={online} />,
     lesson: (
       <Lesson
@@ -909,7 +931,13 @@ function App() {
       >
         <div
           className="view-anim"
-          key={view === "lesson" ? "l:" + selectedLesson : view}
+            key={
+              view === "lesson"
+                ? "l:" + selectedLesson
+                : view === "conta"
+                  ? `conta:${accountLink?.acao || ""}`
+                  : view
+            }
         >
           <Suspense fallback={<RouteLoading />}>{content}</Suspense>
         </div>

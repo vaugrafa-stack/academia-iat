@@ -86,7 +86,8 @@ incorpora:
 
 - Formação extraída de `main.jsx` e carregada sob demanda, com fundação para
   iniciantes, atalho para experientes e testes próprios da rota;
-- compositor principal reduzido para 65.935 bytes e 2.039 linhas;
+- compositor principal em 68.969 bytes e 2.067 linhas após integrar as rotas
+  lazy da conta opcional;
 - CSS exclusivo de rotas consolidado e carregado sob demanda, CSS de perfil
   retirado da inicialização e folha móvel solicitada apenas quando necessária;
 - guia de hidrelétricas com navegação local estável, conteúdo técnico revisado e
@@ -99,10 +100,10 @@ incorpora:
 
 No candidato integrado, a validação final obteve:
 
-- 60 arquivos de teste e 493 testes aprovados, além de todos os portões
+- 61 arquivos de teste e 512 testes aprovados, além de todos os portões
   encadeados de conteúdo, segurança, privacidade, mídia, fontes, CSS e smoke;
-- build aprovado em 35 chunks JavaScript, com 710,6 KiB bruto e 237,4 KiB
-  compactado; CSS inicial em 181,3/32,5 KiB e CSS total em 236,5/43,0 KiB;
+- build aprovado em 38 chunks JavaScript, com 721,8 KiB bruto e 241,1 KiB
+  compactado; CSS inicial em 181,3/32,5 KiB e CSS total em 238,3/43,3 KiB;
 - 29 cenários Playwright aprovados em desktop e nas larguras 320, 360, 390 e
   430 pixels; um cenário exclusivamente móvel foi corretamente ignorado no
   projeto desktop; o cenário PWA/offline também foi aprovado;
@@ -127,18 +128,19 @@ do commit que o contém.
 
 | Serviço | Repositório | Estado comprovado | Não confundir com |
 |---|---|---|---|
-| Conta opcional de estudo | repositório privado separado | fonte enviada ao remoto privado no SHA `111edd4cca62b7fdf900657beebd86bceaa24e75`; CI remoto aprovado; 90 testes locais e concorrência exercitada | serviço implantado ou conta obrigatória |
-| Área Técnica restrita | repositório privado separado | fonte enviada ao remoto privado no SHA `94b5184cb362626caccb8dc70622b1f3b375d858`; 128 testes locais, OIDC, sessão, autorização e logout exercitados | ambiente institucional ou tratamento autorizado de processo real |
+| Conta opcional de estudo | repositório privado separado | fonte validada e versionada no SHA `a89a81c130f4d784578ff02162b22b7511d95599`; 136 testes locais, wheel reproduzível, ciclo de e-mail/senha e sincronização exercitados | serviço implantado, conta obrigatória ou armazenamento de processos |
+| Área Técnica restrita | repositório privado separado | fonte validada e versionada no SHA `6a21ed88fe931a638ce5c4a0ea3376268a197864`; 333 testes locais e 3 skips de privilégio do Windows; OIDC, autorização, upload, conversa, fila, resultados, backup e retenção exercitados com dados sintéticos | ambiente institucional, IA autônoma ou tratamento autorizado de processo real |
 
 Os dois serviços privados não possuem implantação ou pipeline de produção
 comprovados. A Academia pública continua utilizável sem conta remota. Nenhum
 documento real pode entrar na Área Técnica antes dos portões formais de
 governança, infraestrutura e autorização.
 
-As correções locais dos workflows privados que fixam a versão do `pip` antes
-do `pip-audit` não puderam ser enviadas porque a credencial OAuth disponível
-não possui o escopo `workflow`. Os patches foram preservados localmente; isso
-não altera o estado das fontes já enviadas nem autoriza implantar os serviços.
+Os dois candidatos privados incluem dependências travadas por hash, auditoria
+de vulnerabilidades, construção determinística de wheel e workflow de
+qualidade. A execução remota desses workflows deve ser conferida depois do
+envio; nenhuma dessas provas locais, isoladamente, autoriza implantar os
+serviços.
 
 O workflow externo de auditoria que antecedeu o primeiro push desses serviços
 não é evidência válida: cinco de cinco agentes falharam e o agregador registrou

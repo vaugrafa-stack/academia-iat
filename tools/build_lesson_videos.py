@@ -96,7 +96,17 @@ _SIGLAS = ["art", "arts", "inc", "incs", "fig", "figs", "par", "pars", "cap",
 _ABREV = "".join(r"(?<!" + re.escape(s) + r"\.)" for s in
                  sorted({v for s in _SIGLAS for v in (s, s.capitalize(), s.upper())}))
 
-_FIM = re.compile(_ABREV + r"(?<=[.;])\s+(?=[A-ZÀ-ÚÁÉÍÓÚÂÊÔÃÕ0-9])")
+# O marcador de lista tambem encerra frase. Sem esta alternativa, uma secao
+# feita so de bullets virava uma unica string: cada item termina em ponto, mas o
+# proximo comeca em "•", que nao e maiuscula nem digito, entao a quebra nunca
+# acontecia e o resultado estourava o teto de 900 caracteres e era descartado
+# inteiro. A 18.12.9 do POP v1.9, dez itens de erro recorrente, foi a primeira
+# secao assim, e ficou sem videoaula nenhuma.
+_MARCADOR = r"[••‣◦⁃∙]"
+_FIM = re.compile(
+    _ABREV + r"(?<=[.;])\s+(?=[A-ZÀ-ÚÁÉÍÓÚÂÊÔÃÕ0-9])"
+    + r"|\s*(?=" + _MARCADOR + r"\s)"
+)
 
 
 def frases(texto: str):
@@ -104,6 +114,8 @@ def frases(texto: str):
     out = []
     for f in _FIM.split(texto or ""):
         f = re.sub(r"\s+", " ", f).strip()
+        # O marcador nao se fala. Ele delimitou a frase e sai antes da narracao.
+        f = re.sub(r"^" + _MARCADOR + r"\s*", "", f).strip()
         # O teto existe para descartar lixo de extracao, nao prosa longa: a
         # secao 11.2 e uma unica frase de 471 caracteres e ficava sem roteiro
         # nenhum, caindo no video do modulo sem ninguem perceber. Quem apara o

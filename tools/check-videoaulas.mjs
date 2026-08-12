@@ -4,10 +4,15 @@
 //   1. o manifesto so lista secoes que existem;
 //   2. toda secao listada tem de fato os tres arquivos (mp4, vtt e poster);
 //   3. nenhuma legenda comeca no meio de uma frase;
-//   4. as secoes SEM video proprio sao poucas e conhecidas: as organizacionais,
-//      que nao tem conteudo para roteiro e caem no video do modulo. Se esse
-//      numero crescer, alguma coisa quebrou na geracao e o aluno volta a ver o
-//      mesmo video em varias subaulas, que era exatamente o defeito corrigido.
+//   4. so ficam sem video proprio as secoes SEM bloco de conteudo, isto e, os
+//      cabecalhos estruturais, que nao tem texto para roteiro e caem no video
+//      do modulo. Aula com conteudo e sem video e defeito de geracao, e o aluno
+//      volta a ver o mesmo video em varias subaulas sem ninguem perceber.
+//
+//      Este item ja foi um teto numerico de 4, e o teto escondeu exatamente o
+//      defeito que deveria pegar: a 18.12.9 do POP v1.9 ficou sem roteiro e,
+//      somada aos dois cabecalhos estruturais, deu 3. Contar tolera; o criterio
+//      nao.
 //
 // Uso:  node tools/check-videoaulas.mjs
 import { readFile, stat } from 'node:fs/promises';
@@ -19,7 +24,6 @@ const { tracks } = await import('../src/courseData.js');
 const { derivarAulas } = await import('../src/lessons.js');
 const { lessons } = derivarAulas(pop, tracks);
 
-const TOLERANCIA_SEM_VIDEO = 4;
 const MAX_CPS = 17;
 const MAX_CUE_CHARS = 220;
 
@@ -224,10 +228,30 @@ if (linhasLongas.length > TOLERANCIA_LINHA_LONGA) {
 }
 
 const sem = lessons.filter((l) => !manifesto[l.id]);
-if (sem.length > TOLERANCIA_SEM_VIDEO) {
-  fail(`${sem.length} aulas sem video proprio (tolerancia ${TOLERANCIA_SEM_VIDEO}): ${sem.slice(0, 8).map((l) => (l.number || '-') + ' ' + l.title.slice(0, 30)).join(' | ')}`);
-} else if (sem.length) {
-  console.log(`aulas sem video proprio (caem no video do modulo): ${sem.map((l) => (l.number || '-') + ' ' + l.title.slice(0, 34)).join(' | ')}`);
+// Aula sem bloco proprio e cabecalho estrutural: nao ha texto para roteiro e
+// cair no video do modulo e o comportamento correto. Aula COM conteudo e sem
+// video e defeito de geracao, qualquer que seja a quantidade.
+//
+// Antes daqui havia apenas um teto de 4. A 18.12.9 do POP v1.9, que e feita so
+// de marcadores de lista, ficou sem roteiro por um defeito do divisor de frases
+// e, somada aos dois cabecalhos estruturais, dava 3: passava por baixo do teto
+// e o aluno via o video do modulo no lugar da aula, em silencio. O teto tinha
+// exatamente o tamanho do defeito que ele deveria pegar.
+const semConteudoProprio = sem.filter((l) => !(l.blockIds || []).length);
+const semVideoComConteudo = sem.filter((l) => (l.blockIds || []).length);
+if (semVideoComConteudo.length) {
+  fail(
+    `${semVideoComConteudo.length} aula(s) COM conteudo proprio e sem video: `
+    + semVideoComConteudo
+      .map((l) => `${l.number || '-'} ${l.title.slice(0, 40)} (${l.id})`)
+      .join(' | '),
+  );
+}
+if (semConteudoProprio.length) {
+  console.log(
+    `${semConteudoProprio.length} cabecalho(s) estrutural(is) sem video proprio, como esperado: `
+    + semConteudoProprio.map((l) => `${l.number || '-'} ${l.title.slice(0, 34)}`).join(' | '),
+  );
 }
 
 console.log(`\n${Object.keys(manifesto).length} videoaulas de secao para ${lessons.length} aulas.`);

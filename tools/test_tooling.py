@@ -13,7 +13,12 @@ import zipfile
 from pathlib import Path
 from unittest import mock
 
-from tools import audit_pop_candidate, build_mapa, validate_claude_workflow
+from tools import (
+    audit_pop_candidate,
+    build_lesson_videos,
+    build_mapa,
+    validate_claude_workflow,
+)
 
 
 class AuditPopCandidatePackageTests(unittest.TestCase):
@@ -424,6 +429,62 @@ class ClaudeWorkflowFailClosedTests(unittest.TestCase):
             "RELEASE_NOT_APPROVED",
             self.codes(data, require_release_approved=True),
         )
+
+
+class RoteiroDeVideoaulaTests(unittest.TestCase):
+    """A secao feita so de marcadores tem que render roteiro.
+
+    O divisor de frases quebrava apenas antes de maiuscula ou digito. Numa
+    secao de lista, cada item termina em ponto e o seguinte comeca em "•", que
+    nao e nem um nem outro: os itens viravam uma string unica, estouravam o teto
+    de 900 caracteres e eram descartados inteiros. A secao ficava sem roteiro e
+    o aluno via o video do modulo no lugar da aula.
+    """
+
+    BULLETS = (
+        "• Reproduzir o texto do empreendedor sem confrontar evidencias, "
+        "indicadores ou o programa aprovado. "
+        "• Analisar cada relatorio isoladamente e perder a continuidade das "
+        "pendencias ou da serie historica. "
+        "• Aceitar valores acumulados incompativeis com os periodos anteriores "
+        "ou tabelas com numeros distintos do texto."
+    )
+
+    def test_separa_cada_marcador_em_uma_frase(self):
+        frases = build_lesson_videos.frases(self.BULLETS)
+        self.assertEqual(len(frases), 3)
+
+    def test_nao_deixa_o_marcador_na_fala(self):
+        for frase in build_lesson_videos.frases(self.BULLETS):
+            self.assertFalse(
+                frase.lstrip().startswith(("•", "‣", "◦", "⁃", "∙")),
+                f"marcador sobrou na fala: {frase!r}",
+            )
+
+    def test_lista_longa_nao_e_descartada_pelo_teto(self):
+        # Vinte itens passam de 900 caracteres somados. Sem a quebra por
+        # marcador, o resultado seria uma frase so, acima do teto, e a funcao
+        # devolveria lista vazia.
+        lista = " ".join(
+            f"• Item numero {i} com texto suficiente para passar do minimo de "
+            f"trinta e cinco caracteres exigido pelo filtro." for i in range(20)
+        )
+        self.assertGreater(len(lista), 900)
+        self.assertEqual(len(build_lesson_videos.frases(lista)), 20)
+
+    def test_prosa_comum_continua_sendo_quebrada_como_antes(self):
+        prosa = (
+            "A analise deve ser proporcional ao programa e ao periodo apurado. "
+            "Nao e necessario formular solicitacao em todos os itens da matriz."
+        )
+        self.assertEqual(len(build_lesson_videos.frases(prosa)), 2)
+
+    def test_abreviacao_de_artigo_nao_quebra_a_frase(self):
+        texto = (
+            "O art. 15 da Instrucao Normativa trata da documentacao exigida na "
+            "fase de licenca previa do empreendimento."
+        )
+        self.assertEqual(len(build_lesson_videos.frases(texto)), 1)
 
 
 if __name__ == "__main__":

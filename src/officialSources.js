@@ -302,6 +302,14 @@ const OFFICIAL_INDEXES = [
     url: 'https://www.abntcatalogo.com.br/',
     portal: 'ABNT Catálogo',
   }],
+  // Entrou com a v1.9, junto do Diagnóstico Climático. Não é norma brasileira e
+  // não cria exigência por si: é a metodologia de inventário de gases de efeito
+  // estufa que o estudo pode adotar. O destino é o portal da própria iniciativa
+  // porque não existe publicação oficial brasileira desse padrão para apontar.
+  [/\bGREENHOUSE GAS PROTOCOL\b/i, {
+    url: 'https://ghgprotocol.org/standards',
+    portal: 'Greenhouse Gas Protocol',
+  }],
 ];
 
 function governanceNote(source) {
@@ -404,6 +412,12 @@ const AUTHORITY_PROFILES = [
     code: 'abnt',
     authority: 'Associação Brasileira de Normas Técnicas',
     axis: 'normalizacao-tecnica',
+  },
+  {
+    pattern: /^GREENHOUSE GAS PROTOCOL\b/i,
+    code: 'ghg-protocol',
+    authority: 'Greenhouse Gas Protocol',
+    axis: 'metodologia-internacional',
   },
 ];
 

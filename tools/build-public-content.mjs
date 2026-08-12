@@ -67,7 +67,12 @@ function buildPublicContent(source) {
   const section = result.sections.find((item) => item.id === 'pop-section-072');
   if (!section) throw new Error('Seção de apresentação pública não localizada.');
 
+  const tituloOriginal = section.title;
   section.title = publicText(section.title);
+  // Na v1.7 o título da seção citava uso de IA e a política o reescrevia. A
+  // v1.9 já não cita, então não há renomeação. Declarar renomeação que não
+  // aconteceu transforma o registro de proveniência em ficção.
+  const renamedSectionIds = section.title === tituloOriginal ? [] : [section.id];
   section.fullTitle = [section.number, section.title].filter(Boolean).join(' ');
 
   const heading = result.blocks.find((block) => block.id === section.headingBlockId);
@@ -138,7 +143,7 @@ function buildPublicContent(source) {
     sourceContentPreservedSeparately: true,
     omittedSourceRows,
     omittedSourceParagraphNodes,
-    renamedSectionIds: ['pop-section-072'],
+    renamedSectionIds,
   };
 
   const serialized = JSON.stringify(publicResult);

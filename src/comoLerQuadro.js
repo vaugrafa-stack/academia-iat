@@ -42,6 +42,10 @@ const PAPEL = [
   ['erro recorrente a evitar', 'o engano que mais aparece neste ponto'],
   ['erro recorrente', 'o engano que mais aparece neste ponto'],
   ['quando usar', 'a situação em que este item se aplica'],
+  // Quadro 17, chegou com a v1.9: a coluna traz a pergunta que o analista faz
+  // ao processo, e nao um item a conferir.
+  ['pergunta de regularizacao', 'a pergunta que o analista faz ao processo neste ponto'],
+  ['pergunta', 'a pergunta que o analista faz ao processo neste ponto'],
   ['item', 'o elemento conferido'],
   ['documento', 'o elemento conferido'],
   ['elemento', 'o elemento conferido'],

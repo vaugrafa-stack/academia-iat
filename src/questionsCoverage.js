@@ -348,4 +348,65 @@ export const QUESTOES_COBERTURA = [
     ['O ACT específico, sua publicação e os aditivos aplicáveis ao empreendimento e à fase', 'Qualquer ACT anterior entre os mesmos órgãos, ainda que trate de outro empreendimento ou objeto', 'Somente a instrução normativa geral, sem conferir vigência, publicação ou alcance do acordo concreto'], 0,
     'A referência ao acordo precisa corresponder ao instrumento que efetivamente fundamenta a execução delegada.',
     { sec: 'pop-section-125', quote: 'Consultar o ACT específico, sua publicação e eventuais termos aditivos aplicáveis ao empreendimento e à fase analisada.' }],
+  // M08 - Diagnostico Climatico e analise de programas ambientais, secoes que
+  // entraram com o POP v1.9. Cada questao cita o trecho da propria secao.
+  //
+  // Os distratores sao deliberadamente do mesmo tamanho da resposta correta. A
+  // primeira versao destas onze questoes tinha a correta como a alternativa
+  // mais longa em todas elas, e o portao de validade editorial reprovou: quem
+  // nao estudou acerta pelo comprimento, e a questao deixa de medir o objetivo.
+  ['m08', 'A quais processos se aplica o Diagnóstico Climático da Portaria IAT nº 42/2022?',
+    ['Aos empreendimentos submetidos a EIA/RIMA, sem extensão automática aos estudos simplificados', 'A todo processo de licenciamento de hidrelétrica, qualquer que seja a modalidade adotada pelo IAT', 'Somente aos empreendimentos com reservatório acima de cem hectares ou potência superior a 10 MW'], 0,
+    'A incidência acompanha a exigibilidade do EIA. Estender a DLAM, LAC, LAS, RAS, RDPA ou PCA exige fundamento próprio.',
+    { sec: 'pop-section-174', quote: 'A incidência decorre da exigibilidade do EIA e não deve ser estendida automaticamente a DLAM, LAC, LAS, RAS, RDPA, PCA ou outros estudos simplificados sem fundamento específico em norma, TR, condicionante válida ou decisão técnica motivada.' }],
+
+  ['m08', 'Ao analisar o Diagnóstico Climático de uma hidrelétrica, o que o técnico não deve presumir?',
+    ['Nem emissão nula nem emissão elevada, avaliando fontes, remoções e vulnerabilidades do caso concreto', 'Que a emissão é nula, porque a geração hidrelétrica é fonte renovável e substitui térmicas fósseis', 'Que a emissão é elevada, porque todo reservatório alaga biomassa e passa a emitir metano na operação'], 0,
+    'O POP recusa as duas presunções e manda avaliar o caso concreto.',
+    { sec: 'pop-section-174', quote: 'Para hidrelétricas, não se deve presumir emissão nula nem elevada.' }],
+
+  ['m08', 'Antes de avaliar o mérito de um programa ambiental, que distinção o técnico precisa fazer?',
+    ['Entre o status declarado pelo empreendedor e o status validado pelo IAT ou pela área competente', 'Entre programas previstos no PBA e programas previstos no PCA, descartando os que não constem do PBA', 'Entre relatórios assinados por consultoria contratada e relatórios assinados pelo próprio empreendedor'], 0,
+    'Declarar execução não é o mesmo que ter execução validada, e a análise precisa separar as duas coisas antes de concluir.',
+    { sec: 'pop-section-175', quote: 'O status declarado pelo empreendedor deve ser distinguido do status validado pelo IAT ou pela área competente.' }],
+
+  ['m08', 'A base jurídica de um programa ambiental é encontrada onde?',
+    ['Na combinação entre o regime geral, a licença e suas condicionantes, o plano aprovado e a legislação do tema', 'Exclusivamente na instrução normativa que disciplina o licenciamento ambiental da tipologia do empreendimento', 'No termo de referência do estudo ambiental, que funciona como fonte única e suficiente da obrigação'], 0,
+    'A obrigação não nasce de uma norma só: ela combina regime, licença, plano aprovado e legislação do tema monitorado.',
+    { sec: 'pop-section-176', quote: 'A base jurídica de um programa ambiental decorre da combinação entre o regime geral do licenciamento, a licença e suas condicionantes, o estudo ou plano aprovado e a legislação material do tema monitorado.' }],
+
+  ['m08', 'Como identificar de que trata um programa quando a denominação varia entre PCA, RDPA e PBA?',
+    ['Pela função ambiental que ele exerce, e não apenas pelo título que recebeu', 'Pelo nome adotado na licença ambiental, que prevalece sobre o conteúdo do programa', 'Pela ordem em que o programa aparece listado no plano aprovado para o empreendimento'], 0,
+    'O título muda de empreendedor para empreendedor. A função ambiental é o que permite comparar.',
+    { sec: 'pop-section-177', quote: 'O técnico deve analisar a função ambiental exercida e não apenas o título.' }],
+
+  ['m08', 'Ao comparar relatórios sucessivos, o que fazer com grandezas de naturezas diferentes?',
+    ['Não somar massa, volume e unidades em um total único sem metodologia demonstrada', 'Converter tudo para quilogramas, adotando os fatores médios de referência do setor elétrico', 'Somar os valores e registrar o resultado como total consolidado do período de referência'], 0,
+    'Somar o que não é somável produz um número que parece resultado e não é.',
+    { sec: 'pop-section-178', quote: 'Não somar massa, volume e unidades em um único total sem metodologia tecnicamente demonstrada.' }],
+
+  ['m08', 'Um indicador apresentado sem meta e sem referência temporal demonstra efetividade?',
+    ['Não, porque valor isolado sem referência temporal ou meta não demonstra efetividade', 'Sim, desde que o valor esteja assinado por responsável técnico com ART recolhida no período', 'Sim, desde que o mesmo valor apareça em dois relatórios seguidos do mesmo programa ambiental'], 0,
+    'Indicador precisa de unidade, meta ou referência, periodicidade e interpretação para dizer alguma coisa.',
+    { sec: 'pop-section-179', quote: 'Valor isolado sem referência temporal ou meta não demonstra, por si só, efetividade.' }],
+
+  ['m08', 'Quando o mérito depende de unidade especializada, o que cabe à Informação Técnica de Apoio?',
+    ['Registrar o que foi verificado e delimitar o ponto que permanece pendente de validação', 'Concluir sobre o mérito assim mesmo, já que a análise documental alcança todos os temas do programa', 'Suspender a análise inteira do relatório até que a unidade especializada se manifeste nos autos'], 0,
+    'A informação de apoio avalia coerência, execução documental e continuidade, e diz até onde foi.',
+    { sec: 'pop-section-180', quote: 'A Informação Técnica de Apoio pode avaliar a coerência, a execução documental e a continuidade dos programas, mas não deve substituir manifestação de unidade especializada quando o mérito depender de atribuição específica.' }],
+
+  ['m08', 'O que a Informação Técnica de Apoio sobre programas precisa permitir identificar?',
+    ['O apresentado, o ocorrido no período, o que mudou desde o relatório anterior e a providência que falta', 'A lista completa dos documentos protocolados no período, com número de páginas e data de cada peça', 'A pontuação atribuída a cada programa em escala comparativa entre os empreendimentos da mesma bacia'], 0,
+    'A estrutura existe para responder essas quatro perguntas, e é por isso que a comparação entre períodos é obrigatória.',
+    { sec: 'pop-section-181', quote: 'a Informação Técnica de Apoio deve permitir ao leitor identificar o que foi apresentado, o que ocorreu no período, o que mudou em relação ao relatório anterior e qual providência ainda é necessária' }],
+
+  ['m08', 'Programa executado, mas com inconsistência de redação no relatório. Qual o encaminhamento?',
+    ['Solicitar retificação ou esclarecimento, sem equiparar a inconsistência à falta de execução', 'Concluir pela não execução do programa no período até que o relatório seja integralmente refeito', 'Aceitar o relatório como está, já que a execução material do programa foi demonstrada por evidência'], 0,
+    'Há execução material. O problema está na série, na redação ou nas unidades, e é isso que se corrige.',
+    { sec: 'pop-section-182', quote: 'Solicitar retificação ou esclarecimento sem equiparar a inconsistência' }],
+
+  ['m08', 'Cercamento, retirada de exótica e preparação de área equivalem a restauração implantada?',
+    ['Não, e confundir as duas coisas está entre os erros recorrentes que o POP evita', 'Sim, porque são etapas expressamente previstas no cronograma do programa de restauração aprovado', 'Sim, desde que estejam registradas em fotografia datada e georreferenciada no relatório do período'], 0,
+    'Preparação não é execução. A restauração implantada exige resultado monitorado.',
+    { sec: 'pop-section-183', quote: 'Confundir preparação de área, cercamento ou retirada de exótica com restauração efetivamente implantada e monitorada.' }],
 ];

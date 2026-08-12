@@ -138,8 +138,10 @@ describe("contrato sobre o POP real", () => {
   });
   const comErro = daAula.filter((x) => x.achados.length);
 
-  it("colhe os 35 erros que o POP escreveu", () => {
-    expect(erros.length).toBe(35);
+  it("colhe os 36 erros que o POP escreveu", () => {
+    // Eram 35 na minuta v1.7. O 36o entrou com a v1.9: "Diagnostico Climatico",
+    // que o POP passou a listar entre os termos de erro recorrente.
+    expect(erros.length).toBe(36);
   });
 
   it("cobre boa parte das seções", () => {

@@ -244,9 +244,17 @@ function colunasDoQuadro(tabela) {
   return colunas;
 }
 
+// O POP reparte um quadro em partes com letra: "Quadro 33: A", "Quadro 33: B".
+// A extração guarda só o número, então quatro seções diferentes recebiam a
+// mesma referência, e duas delas, com o mesmo número de linhas, produziam o
+// mesmo objetivo palavra por palavra. A letra é o que as distingue.
+const SUBLETRA = /^\s*(?:Quadro|Tabela)\s+\d+\s*[:.\-–]\s*([A-Z])\b/i;
+
 function referenciaDoQuadro(tabela) {
   if (tabela?.labelType && tabela?.labelNumber != null) {
-    return `${tabela.labelType} ${tabela.labelNumber}`;
+    const letra = String(tabela?.caption || "").match(SUBLETRA);
+    const sufixo = letra ? ` ${letra[1].toUpperCase()}` : "";
+    return `${tabela.labelType} ${tabela.labelNumber}${sufixo}`;
   }
   const legenda = String(tabela?.caption || "").trim();
   const encontrado = legenda.match(/^((?:Quadro|Tabela|Anexo)\s+[\dA-Z]+)/i);

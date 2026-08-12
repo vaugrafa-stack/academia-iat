@@ -51,7 +51,7 @@ describe('registro de fontes oficiais', () => {
     });
   });
 
-  it('mapeia as 60 referências do POP sem desviar para buscador genérico', () => {
+  it('mapeia as 66 referências do POP sem desviar para buscador genérico', () => {
     const pop = JSON.parse(
       readFileSync(resolve(import.meta.dirname, 'data/pop-content.json'), 'utf8'),
     );
@@ -63,10 +63,13 @@ describe('registro de fontes oficiais', () => {
       .filter(Boolean);
     const stats = sourceRegistryStats(references);
 
-    expect(references).toHaveLength(60);
+    expect(references).toHaveLength(66);
+    // Eram 60 na minuta v1.7. A v1.9 acrescentou seis referencias, todas do
+    // Diagnostico Climatico: PNMC federal, politica estadual do clima e seu
+    // decreto, a Portaria IAT no 42/2022 e o Greenhouse Gas Protocol.
     expect(stats).toEqual({
       direct: 22,
-      index: 38,
+      index: 44,
       unmapped: 0,
     });
     for (const reference of references) {
@@ -89,7 +92,7 @@ describe('registro de fontes oficiais', () => {
     }
   });
 
-  it('gera ledger completo e explícito para as 60 referências do POP', () => {
+  it('gera ledger completo e explícito para as 66 referências do POP', () => {
     const pop = JSON.parse(
       readFileSync(resolve(import.meta.dirname, 'data/pop-content.json'), 'utf8'),
     );
@@ -108,9 +111,14 @@ describe('registro de fontes oficiais', () => {
       /(^|\.)aneel\.gov\.br$/,
       /(^|\.)mma\.gov\.br$/,
       /(^|\.)abntcatalogo\.com\.br$/,
+      // A lista já admitia entidade normalizadora privada com a ABNT. O mesmo
+      // critério vale para o Greenhouse Gas Protocol, que a v1.9 passou a citar
+      // no Diagnóstico Climático: o host é o do próprio publicador do padrão,
+      // porque não existe publicação oficial brasileira dele para apontar.
+      /(^|\.)ghgprotocol\.org$/,
     ];
 
-    expect(ledger).toHaveLength(60);
+    expect(ledger).toHaveLength(66);
     for (const entry of ledger) {
       expect(entry.authorityCode, entry.reference).not.toBe('nao-identificada');
       expect(entry.authority, entry.reference).toBeTruthy();

@@ -93,7 +93,7 @@
       "prerequisite": "Reconhecer a diferença entre documento apresentado e documento suficiente.",
       "theme": "office",
       "sourceRefs": [
-        { "id": "pop-18.2", "kind": "pop", "locator": "POP, item 18.2", "sectionId": "pop-section-059", "tableIds": ["pop-table-032"] }
+        { "id": "pop-18.2", "kind": "pop", "locator": "POP, item 18.2", "sectionId": "pop-section-059", "tableIds": ["pop-table-031"] }
       ],
       "scenes": [
         {
@@ -353,7 +353,7 @@
       "prerequisite": "Compreender o PACUERA como instrumento de gestão territorial do entorno do reservatório.",
       "theme": "map",
       "sourceRefs": [
-        { "id": "pop-18.10.2", "kind": "pop", "locator": "POP, item 18.10.2", "sectionId": "pop-section-069", "tableIds": ["pop-table-040"] },
+        { "id": "pop-18.10.2", "kind": "pop", "locator": "POP, item 18.10.2", "sectionId": "pop-section-069", "tableIds": ["pop-table-039"] },
         { "id": "tr-pacuera-2026", "kind": "official", "locator": "IAT, TR PACUERA 2026", "officialSourceId": "official-pacuera-tr-2026" }
       ],
       "scenes": [
@@ -489,8 +489,8 @@
       "prerequisite": "Distinguir pendência sanável antes da decisão e obrigação de controle posterior.",
       "theme": "office",
       "sourceRefs": [
-        { "id": "pop-24", "kind": "pop", "locator": "POP, item 24", "sectionId": "pop-section-094", "paragraphIds": ["pop-paragraph-0546"], "tableIds": ["pop-table-053"] },
-        { "id": "pop-24.1", "kind": "pop", "locator": "POP, item 24.1", "sectionId": "pop-section-095", "paragraphIds": ["pop-paragraph-0552", "pop-paragraph-0553", "pop-paragraph-0554", "pop-paragraph-0555", "pop-paragraph-0556", "pop-paragraph-0557", "pop-paragraph-0559"] }
+        { "id": "pop-24", "kind": "pop", "locator": "POP, item 24", "sectionId": "pop-section-094", "paragraphIds": ["pop-paragraph-0625"], "tableIds": ["pop-table-056"] },
+        { "id": "pop-24.1", "kind": "pop", "locator": "POP, item 24.1", "sectionId": "pop-section-095", "paragraphIds": ["pop-paragraph-0631", "pop-paragraph-0632", "pop-paragraph-0633", "pop-paragraph-0634", "pop-paragraph-0635", "pop-paragraph-0636", "pop-paragraph-0638"] }
       ],
       "scenes": [
         {
@@ -615,7 +615,7 @@
       "prerequisite": "Reconhecer ponto, linha e polígono como geometrias diferentes.",
       "theme": "map",
       "sourceRefs": [
-        { "id": "pop-19.1.1", "kind": "pop", "locator": "POP, item 19.1.1", "sectionId": "pop-section-134", "paragraphIds": ["pop-paragraph-0398", "pop-paragraph-0399", "pop-paragraph-0400", "pop-paragraph-0401"] },
+        { "id": "pop-19.1.1", "kind": "pop", "locator": "POP, item 19.1.1", "sectionId": "pop-section-134", "paragraphIds": ["pop-paragraph-0477", "pop-paragraph-0478", "pop-paragraph-0479", "pop-paragraph-0480"] },
         { "id": "iat-geodados", "kind": "official", "locator": "IAT, Geodados", "officialSourceId": "official-geodados-aplicacoes" },
         { "id": "iat-uc-data", "kind": "official", "locator": "IAT, Dados de UCs", "officialSourceId": "official-uc-data" },
         { "id": "iat-management-plans", "kind": "official", "locator": "IAT, Planos de Manejo", "officialSourceId": "official-management-plans" }
@@ -743,8 +743,8 @@
       "prerequisite": "Ter concluído a minuta e a matriz de achados.",
       "theme": "office",
       "sourceRefs": [
-        { "id": "pop-27", "kind": "pop", "locator": "POP, item 27", "sectionId": "pop-section-108", "paragraphIds": ["pop-paragraph-0640"] },
-        { "id": "pop-quality-checklist", "kind": "pop", "locator": "POP, Tabela 14", "sectionId": "pop-section-109", "tableIds": ["pop-table-057"] }
+        { "id": "pop-27", "kind": "pop", "locator": "POP, item 27", "sectionId": "pop-section-108", "paragraphIds": ["pop-paragraph-0720"] },
+        { "id": "pop-quality-checklist", "kind": "pop", "locator": "POP, Tabela 14", "sectionId": "pop-section-109", "tableIds": ["pop-table-060"] }
       ],
       "scenes": [
         {

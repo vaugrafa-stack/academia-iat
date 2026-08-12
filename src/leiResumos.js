@@ -20,6 +20,7 @@ const RESUMOS = [
   [/Lei Federal n[ºo°] 12\.334/, 'Institui a Política Nacional de Segurança de Barragens: classificação por risco e dano potencial associado, Plano de Segurança da Barragem, inspeções e o SNISB.'],
   [/Lei Federal n[ºo°] 14\.066/, 'Atualiza a PNSB após Brumadinho: reforça o PAE, veda alteamento a montante em rejeitos, endurece fiscalização e responsabilização.'],
   [/Lei Federal n[ºo°] 15\.190/, 'Lei federal de normas gerais do licenciamento ambiental (alterada pelas Leis nº 15.269/2025 e seguintes), a compatibilizar com a matriz estadual conforme registrado no POP.'],
+  [/Lei Federal n[ºo°] 12\.187/, 'Institui a Política Nacional sobre Mudança do Clima: princípios, objetivos, diretrizes e instrumentos da ação climática federal. Entrou no POP na v1.9 como base do Diagnóstico Climático exigido nos processos sujeitos a EIA/RIMA.'],
   // --- Federais: decretos (antes dos padroes genericos) ---
   [/Decreto Federal n[ºo°] 8\.437/, 'Regulamenta a Lei Complementar nº 140/2011 e fixa as tipologias de empreendimentos e atividades cujo licenciamento ambiental é de competência da União. É a base para identificar quando o processo é federal, ponto de partida do licenciamento delegado ao IAT.'],
   [/Decreto Federal n[ºo°] 4\.340/, 'Regulamenta a Lei do SNUC, com as alterações do Decreto nº 6.848/2009: disciplina a criação e a gestão das unidades de conservação e fixa a metodologia do grau de impacto que define o valor da compensação ambiental do art. 36.'],
@@ -40,6 +41,8 @@ const RESUMOS = [
   [/Lei Estadual n[ºo°] 20\.929/, 'Torna obrigatória a compensação ambiental para empreendimentos que geram impacto ambiental negativo não mitigável no Paraná. É a base legal da compensação analisada no módulo de conclusão.'],
   [/Decreto Estadual n[ºo°] 7\.150/, 'Regulamenta a Lei Estadual nº 20.929/2021 e disciplina a compensação ambiental por impactos negativos não mitigáveis: procedimento, cálculo e fluxo administrativo aplicados pelo IAT.'],
   [/Lei Estadual n[ºo°] 11\.054/, 'Lei Florestal do Estado do Paraná, referência estadual para as questões florestais do licenciamento.'],
+  [/Lei Estadual n[ºo°] 17\.133/, 'Institui a Política Estadual sobre Mudança do Clima no Paraná, contraparte estadual da Lei Federal nº 12.187/2009. Compõe a base do Diagnóstico Climático introduzido no POP na v1.9.'],
+  [/Decreto Estadual n[ºo°] 9\.085/, 'Regulamenta a Lei Estadual nº 17.133/2012, que institui a Política Estadual sobre Mudança do Clima.'],
   // Conferido na fonte primária em 05/08/2026: o art. 50 da IN IAT nº 09/2025
   // manda a APP do entorno do reservatório seguir o cálculo desta Portaria, com
   // relatório de cálculo e shapefile para conferência do IAT na LP ou na LAS. A
@@ -63,6 +66,10 @@ const RESUMOS = [
   [/Portaria IAT n[ºo°] 012/, 'Portaria do IAT com os Anexos I a VIII sobre estudos de fauna no licenciamento: grupos amostrados, esforço, sazonalidade e apresentação de resultados.'],
   [/Portaria IAT n[ºo°] 416/, 'Aprova o Plano de Manejo da Área de Proteção Ambiental Estadual da Escarpa Devoniana, o caso aplicado estudado no módulo de unidades de conservação.'],
   [/Plano de Manejo da Área de Proteção Ambiental Estadual da Escarpa Devoniana/, 'Plano de Manejo da APA Estadual da Escarpa Devoniana, revisão 2026: zoneamento e regras de uso que condicionam a análise de empreendimentos dentro da APA.'],
+  // Fiel à ementa registrada no POP, inclusive a ressalva de compatibilização.
+  // O POP é explícito quanto ao alcance: a exigência decorre da exigibilidade
+  // do EIA e não se estende automaticamente a DLAM, LAC, LAS, RAS, RDPA ou PCA.
+  [/Portaria IAT n[ºo°] 42/, 'Estabelece a inclusão do Diagnóstico Climático nos Estudos de Impacto Ambiental, com inventário de gases de efeito estufa e avaliação de impactos sobre serviços ecossistêmicos associados ao clima. Incide onde o EIA é exigível, sem alcançar automaticamente os estudos simplificados. A remissão interna à Resolução CEMA nº 107/2020 deve ser compatibilizada com o marco estadual vigente.'],
   [/Portaria IAT n[ºo°] 347/, 'Estabelece a metodologia da matriz de valoração dos impactos negativos e não mitigáveis, aplicada no cálculo da compensação ambiental.'],
   [/Portaria IAT n[ºo°] 16, de 6 de janeiro de 2026/, 'Designa a Câmara Técnica de Compensação Ambiental na DILIO, responsável pelo cálculo e pela aplicação dos valores da compensação.'],
   [/Portaria IAT n[ºo°] 400/, 'Inclui servidores na composição da Câmara Técnica de Compensação Ambiental designada pela Portaria IAT nº 16/2026.'],
@@ -83,6 +90,7 @@ const RESUMOS = [
   [/Termos de Referência para RAS\/RDPA/, 'Termos de Referência do IAT que fixam o conteúdo mínimo dos estudos ambientais de hidrelétricas (RAS/RDPA, PCA, EIA/PBA), orientando elaboração e análise de suficiência.'],
   [/Plano Ambiental de Conservação e Uso/, 'Termo de Referência do PACUERA: diagnóstico do entorno do reservatório, zoneamento por UTHs, participação social e regras de implementação e revisão.'],
   [/IPHAN n[ºo°] 06\/2025/, 'IN do IPHAN sobre a participação do órgão no licenciamento ambiental: avaliação do patrimônio arqueológico e cultural nas áreas de influência.'],
+  [/GREENHOUSE GAS PROTOCOL/, 'Padrão internacional de referência para inventário de gases de efeito estufa, usado na quantificação por escopos. Não é norma brasileira e não cria exigência por si: entra como metodologia quando o Diagnóstico Climático a adota. Consultar a versão vigente na data de elaboração do estudo.'],
   [/ABNT/, 'Normas técnicas brasileiras de documentação aplicáveis aos relatórios: referências, citações, numeração progressiva, sumário e apresentação.'],
 ];
 

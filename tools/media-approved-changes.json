@@ -1105,6 +1105,21 @@
       "rightsBasis": "conteudo derivado da minuta institucional do proprio IAT; narracao em voz sintetica Piper offline, sem locutor humano e sem material de terceiros",
       "reviewedBy": "portoes tecnicos automatizados desta rodada (check-videoaulas, check-media-governance, check-public-editorial-policy); aprovacao humana institucional pendente",
       "reviewedAt": "2026-08-11"
+    },
+    {
+      "cycle": "2026-08",
+      "action": "add",
+      "path": "public/hidro/usina-corte-realista.webp",
+      "reason": "corte tecnico original para a animacao interativa do ciclo de geracao hidreletrica",
+      "bytes": 272380,
+      "sha256": "d724808859a196f74f424eb18bc4ca69e8a50787a8ab08dc43406e211d5e342d",
+      "sourceType": "project-generated",
+      "privacyReview": "synthetic-no-personal-data",
+      "technicalReview": "approved",
+      "sourceLocator": "composicao visual original desta rodada, verificada no componente HydroelectricCutaway",
+      "rightsBasis": "ativo visual original produzido para a Academia IAT, sem copia de interface, marca ou material de terceiros",
+      "reviewedBy": "revisao visual, tecnica, responsiva e de acessibilidade desta rodada; aprovacao humana institucional pendente",
+      "reviewedAt": "2026-08-14"
     }
   ]
 }

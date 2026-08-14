@@ -1,0 +1,653 @@
+.hec-shell {
+  --hec-cyan: #74dcff;
+  --hec-water: #48bde6;
+  --hec-green: #59e2ad;
+  --hec-amber: #ffc768;
+  margin: 0;
+  overflow: hidden;
+  border: 1px solid rgba(170, 221, 211, 0.3);
+  border-radius: 16px;
+  background: #071b21;
+  color: #f4fbfa;
+  box-shadow: 0 22px 60px rgba(1, 14, 17, 0.3);
+}
+
+.hec-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  min-height: 76px;
+  padding: 14px 18px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.11);
+  background: linear-gradient(100deg, #0a252b 0%, #0d302f 100%);
+}
+
+.hec-heading,
+.hec-controls,
+.hec-flow-control > span,
+.hec-play,
+.hec-conversion,
+.hec-conversion span,
+.hec-stage-panel {
+  display: flex;
+  align-items: center;
+}
+
+.hec-heading {
+  min-width: 0;
+  gap: 11px;
+}
+
+.hec-heading > span {
+  display: grid;
+  flex: 0 0 38px;
+  width: 38px;
+  height: 38px;
+  place-items: center;
+  border: 1px solid rgba(116, 220, 255, 0.34);
+  border-radius: 10px;
+  background: rgba(72, 189, 230, 0.12);
+  color: var(--hec-cyan);
+}
+
+.hec-heading svg {
+  width: 21px;
+}
+
+.hec-heading h2 {
+  margin: 0 0 2px;
+  color: #fff;
+  font-size: clamp(15px, 1.5vw, 19px);
+  line-height: 1.2;
+  letter-spacing: -0.015em;
+}
+
+.hec-heading p {
+  margin: 0;
+  color: #a9c5c4;
+  font-size: 12px;
+}
+
+.hec-controls {
+  flex: 0 0 auto;
+  gap: 13px;
+}
+
+.hec-flow-control {
+  display: grid;
+  width: 154px;
+  gap: 5px;
+  color: #bfcecf;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.hec-flow-control > span {
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.hec-flow-control strong {
+  color: var(--hec-cyan);
+}
+
+.hec-flow-control input {
+  width: 100%;
+  margin: 0;
+  accent-color: var(--hec-cyan);
+}
+
+.hec-play {
+  justify-content: center;
+  gap: 7px;
+  min-width: 104px;
+  min-height: 44px;
+  padding: 8px 12px;
+  border: 1px solid rgba(89, 226, 173, 0.48);
+  border-radius: 8px;
+  background: rgba(27, 99, 81, 0.42);
+  color: #ebfff8;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.hec-play:hover:not(:disabled) {
+  background: rgba(41, 133, 105, 0.58);
+}
+
+.hec-play:disabled {
+  cursor: not-allowed;
+  opacity: 0.58;
+}
+
+.hec-play svg {
+  width: 16px;
+}
+
+.hec-scene {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  aspect-ratio: 16 / 9;
+  background: radial-gradient(circle at 55% 54%, #254047, #071b21 72%);
+}
+
+.hec-scene::after {
+  position: absolute;
+  z-index: 3;
+  inset: 0;
+  background:
+    linear-gradient(180deg, rgba(2, 13, 16, 0.03) 56%, rgba(2, 13, 16, 0.3) 100%),
+    linear-gradient(90deg, rgba(3, 17, 20, 0.11), transparent 13%, transparent 88%, rgba(3, 17, 20, 0.1));
+  content: '';
+  pointer-events: none;
+}
+
+.hec-scene > img,
+.hec-overlay,
+.hec-hotspots {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.hec-scene > img {
+  z-index: 0;
+  display: block;
+  object-fit: cover;
+}
+
+.hec-overlay {
+  z-index: 1;
+  pointer-events: none;
+}
+
+.hec-water-system,
+.hec-machine-system,
+.hec-electric-system {
+  opacity: 0.54;
+  transition: opacity 240ms ease, filter 240ms ease;
+}
+
+.hec-water-system.is-active,
+.hec-machine-system.is-active,
+.hec-electric-system.is-active {
+  opacity: 1;
+  filter: saturate(1.16);
+}
+
+.hec-water-aura,
+.hec-tailrace-aura,
+.hec-energy-aura,
+.hec-shaft-light {
+  fill: none;
+  stroke-linecap: round;
+}
+
+.hec-water-aura,
+.hec-tailrace-aura {
+  stroke: rgba(55, 183, 226, var(--hec-flow-strength));
+  stroke-width: 23;
+  filter: url(#hec-water-glow);
+}
+
+.hec-water-flow,
+.hec-tailrace-flow {
+  fill: none;
+  stroke: #c5f5ff;
+  stroke-width: 5;
+  stroke-linecap: round;
+  stroke-dasharray: 18 32;
+  filter: url(#hec-water-glow);
+  animation: hec-flow var(--hec-flow-duration) linear infinite;
+}
+
+.hec-tailrace-aura {
+  stroke-width: 18;
+}
+
+.hec-tailrace-flow {
+  stroke-width: 4;
+  animation-direction: reverse;
+}
+
+.hec-shaft-light {
+  stroke: rgba(89, 226, 173, 0.78);
+  stroke-width: 8;
+  stroke-dasharray: 8 18;
+  filter: url(#hec-water-glow);
+  animation: hec-shaft 1.35s linear infinite;
+}
+
+.hec-runner {
+  animation: hec-spin 1.75s linear infinite;
+}
+
+.hec-runner-ring {
+  fill: rgba(5, 30, 34, 0.45);
+  stroke: #c6fff0;
+  stroke-width: 4;
+}
+
+.hec-runner-blade {
+  fill: rgba(198, 255, 240, 0.92);
+}
+
+.hec-generator-field {
+  fill: none;
+  stroke: var(--hec-green);
+  stroke-width: 3;
+  opacity: 0.25;
+  filter: url(#hec-water-glow);
+  animation: hec-field 1.8s ease-in-out infinite;
+}
+
+.hec-energy-aura {
+  stroke: rgba(255, 199, 104, 0.38);
+  stroke-width: 15;
+  filter: url(#hec-energy-glow);
+}
+
+.hec-energy-flow {
+  fill: none;
+  stroke: #fff2ba;
+  stroke-width: 4;
+  stroke-linecap: round;
+  stroke-dasharray: 10 24;
+  filter: url(#hec-energy-glow);
+  animation: hec-energy 1.15s linear infinite;
+}
+
+.hec-transformer-pulse {
+  fill: none;
+  stroke: #ffe8a1;
+  stroke-width: 3;
+  stroke-linecap: round;
+  opacity: 0.58;
+  filter: url(#hec-energy-glow);
+  animation: hec-field 1.4s ease-in-out infinite;
+}
+
+.hec-hotspots {
+  z-index: 5;
+  pointer-events: none;
+}
+
+.hec-hotspot {
+  position: absolute;
+  top: var(--hec-y);
+  left: var(--hec-x);
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  min-width: 44px;
+  min-height: 44px;
+  justify-content: center;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #fff;
+  transform: translate(-50%, -50%);
+  pointer-events: auto;
+}
+
+.hec-hotspot__marker {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  flex: 0 0 30px;
+  width: 30px;
+  height: 30px;
+  place-items: center;
+  border: 2px solid rgba(255, 255, 255, 0.92);
+  border-radius: 50%;
+  background: rgba(4, 25, 29, 0.86);
+  box-shadow: 0 3px 13px rgba(1, 12, 15, 0.48);
+  font-size: 11px;
+  font-weight: 900;
+  transition: transform 180ms ease, background 180ms ease, box-shadow 180ms ease;
+}
+
+.hec-hotspot__marker::after {
+  position: absolute;
+  inset: -7px;
+  border: 1px solid rgba(116, 220, 255, 0.68);
+  border-radius: inherit;
+  content: '';
+  opacity: 0;
+  animation: hec-pulse 2.2s ease-out infinite;
+}
+
+.hec-hotspot__label {
+  max-width: 150px;
+  padding: 5px 8px;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 5px;
+  background: rgba(4, 23, 27, 0.76);
+  box-shadow: 0 5px 18px rgba(0, 0, 0, 0.24);
+  font-size: clamp(9px, 0.72vw, 11px);
+  font-weight: 750;
+  line-height: 1.18;
+  text-align: left;
+  text-shadow: 0 1px 3px #000;
+  backdrop-filter: blur(5px);
+}
+
+.hec-hotspot--left,
+.hec-hotspot--left-up,
+.hec-hotspot--left-down {
+  flex-direction: row-reverse;
+}
+
+.hec-hotspot--left-up .hec-hotspot__label,
+.hec-hotspot--right-up .hec-hotspot__label {
+  transform: translateY(-25px);
+}
+
+.hec-hotspot--left-down .hec-hotspot__label,
+.hec-hotspot--right-down .hec-hotspot__label {
+  transform: translateY(25px);
+}
+
+.hec-hotspot:hover .hec-hotspot__marker,
+.hec-hotspot[aria-pressed='true'] .hec-hotspot__marker {
+  border-color: #fff;
+  background: #137358;
+  box-shadow: 0 0 0 5px rgba(89, 226, 173, 0.2), 0 4px 18px rgba(0, 0, 0, 0.5);
+  transform: scale(1.12);
+}
+
+.hec-hotspot[aria-pressed='true'] .hec-hotspot__label {
+  border-color: rgba(117, 246, 198, 0.74);
+  background: rgba(8, 67, 54, 0.92);
+}
+
+.hec-conversion {
+  position: absolute;
+  z-index: 6;
+  right: 13px;
+  bottom: 12px;
+  gap: 7px;
+  padding: 7px 9px;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 7px;
+  background: rgba(4, 22, 26, 0.78);
+  color: #e9f6f4;
+  box-shadow: 0 5px 18px rgba(0, 0, 0, 0.24);
+  font-size: 11px;
+  font-weight: 800;
+  backdrop-filter: blur(6px);
+}
+
+.hec-conversion span {
+  gap: 4px;
+}
+
+.hec-conversion svg {
+  width: 13px;
+  height: 13px;
+  color: var(--hec-cyan);
+}
+
+.hec-conversion span:last-child svg {
+  color: var(--hec-amber);
+}
+
+.hec-conversion i {
+  width: 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.46);
+}
+
+.hec-tour {
+  padding: 10px 13px 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  background: #081f25;
+}
+
+.hec-tabs {
+  display: flex;
+  gap: 4px;
+  overflow-x: auto;
+  padding-bottom: 7px;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(116, 220, 255, 0.36) transparent;
+}
+
+.hec-tabs button {
+  display: flex;
+  flex: 1 0 auto;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 44px;
+  padding: 6px 9px;
+  border: 1px solid rgba(255, 255, 255, 0.13);
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.035);
+  color: #a9c0c0;
+  font-size: 11px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.hec-tabs button:hover {
+  border-color: rgba(116, 220, 255, 0.44);
+  color: #fff;
+}
+
+.hec-tabs button[aria-selected='true'] {
+  border-color: rgba(89, 226, 173, 0.66);
+  background: rgba(28, 117, 91, 0.38);
+  color: #fff;
+}
+
+.hec-tabs button span {
+  display: grid;
+  width: 18px;
+  height: 18px;
+  place-items: center;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.09);
+  color: var(--hec-cyan);
+  font-size: 11px;
+}
+
+.hec-stage-panel {
+  min-height: 64px;
+  gap: 12px;
+  padding: 10px 11px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 7px;
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.hec-stage-panel > span {
+  color: rgba(116, 220, 255, 0.5);
+  font-size: 24px;
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: -0.06em;
+}
+
+.hec-stage-panel strong {
+  display: block;
+  color: #f5fffc;
+  font-size: 12px;
+}
+
+.hec-stage-panel p {
+  margin: 3px 0 0;
+  color: #afc4c4;
+  font-size: 11px;
+  line-height: 1.45;
+}
+
+.hec-note {
+  display: block;
+  margin-top: 7px;
+  color: #829d9f;
+  font-size: 11px;
+  line-height: 1.4;
+}
+
+.hec-visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.hec-shell[data-playing='false'] :is(
+  .hec-water-flow,
+  .hec-tailrace-flow,
+  .hec-shaft-light,
+  .hec-runner,
+  .hec-generator-field,
+  .hec-energy-flow,
+  .hec-transformer-pulse,
+  .hec-hotspot__marker::after
+) {
+  animation-play-state: paused;
+}
+
+@keyframes hec-flow {
+  to { stroke-dashoffset: -50; }
+}
+
+@keyframes hec-shaft {
+  to { stroke-dashoffset: 52; }
+}
+
+@keyframes hec-energy {
+  to { stroke-dashoffset: -68; }
+}
+
+@keyframes hec-spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes hec-field {
+  0%, 100% { opacity: 0.18; transform: scale(0.92); }
+  50% { opacity: 0.78; transform: scale(1.04); }
+}
+
+@keyframes hec-pulse {
+  0% { opacity: 0.72; transform: scale(0.7); }
+  75%, 100% { opacity: 0; transform: scale(1.35); }
+}
+
+@media (min-width: 1180px) {
+  .hydro-hero--cutaway {
+    grid-template-columns: minmax(0, 1.55fr) minmax(280px, 0.72fr);
+    align-items: start;
+  }
+}
+
+@media (max-width: 760px) {
+  .hec-toolbar {
+    align-items: flex-start;
+    padding: 12px;
+  }
+
+  .hec-heading p,
+  .hec-flow-control,
+  .hec-play span {
+    display: none;
+  }
+
+  .hec-controls {
+    gap: 7px;
+  }
+
+  .hec-play {
+    min-width: 44px;
+    min-height: 44px;
+    padding: 8px;
+  }
+
+  .hec-hotspot__label,
+  .hec-conversion {
+    display: none;
+  }
+
+  .hec-hotspot__marker {
+    width: 27px;
+    height: 27px;
+    flex-basis: 27px;
+    border-width: 1.5px;
+    font-size: 11px;
+  }
+
+  .hec-stage-panel {
+    align-items: flex-start;
+  }
+}
+
+@media (max-width: 430px) {
+  .hec-shell {
+    border-radius: 11px;
+  }
+
+  .hec-heading > span {
+    width: 34px;
+    height: 34px;
+    flex-basis: 34px;
+  }
+
+  .hec-heading h2 {
+    font-size: 14px;
+  }
+
+  .hec-hotspot__marker {
+    width: 24px;
+    height: 24px;
+    flex-basis: 24px;
+  }
+
+  .hec-tabs button {
+    min-height: 44px;
+  }
+
+  .hec-stage-panel > span {
+    font-size: 20px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hec-water-system,
+  .hec-machine-system,
+  .hec-electric-system,
+  .hec-hotspot__marker {
+    transition: none;
+  }
+
+  .hec-water-flow,
+  .hec-tailrace-flow,
+  .hec-shaft-light,
+  .hec-runner,
+  .hec-generator-field,
+  .hec-energy-flow,
+  .hec-transformer-pulse,
+  .hec-hotspot__marker::after {
+    animation: none;
+  }
+}
+
+@media print {
+  .hec-shell {
+    break-inside: avoid;
+    box-shadow: none;
+  }
+
+  .hec-controls,
+  .hec-hotspots,
+  .hec-tabs,
+  .hec-note {
+    display: none;
+  }
+}

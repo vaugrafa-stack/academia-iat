@@ -158,6 +158,47 @@ test('guia de hidrelétricas leva cada atalho ao título visível e focado', asy
   await expectHealthyPage(page, runtimeIssues);
 });
 
+test('corte hidrelétrico interativo carrega o ativo original e responde em qualquer tela', async ({
+  page,
+  baseURL,
+}) => {
+  const runtimeIssues = monitorRuntime(page, baseURL);
+  await page.goto(appUrl(baseURL, '#/hidreletricas'), {
+    waitUntil: 'domcontentloaded',
+  });
+
+  const cutaway = page.locator('.hec-shell');
+  await expect(cutaway).toBeVisible();
+  await expect(cutaway.getByRole('heading', {
+    name: 'Usina hidrelétrica em operação',
+  })).toBeVisible();
+
+  const image = cutaway.locator('.hec-scene img');
+  await expect(image).toHaveJSProperty('complete', true);
+  await expect.poll(() => image.evaluate((node) => node.naturalWidth)).toBe(1600);
+  await expect(cutaway.getByRole('tab')).toHaveCount(8);
+  await expect(cutaway.locator('.hec-hotspot')).toHaveCount(8);
+
+  await cutaway.getByRole('tab', { name: /Transformação/ }).click();
+  await expect(cutaway.locator('.hec-stage-panel strong')).toHaveText('Transformador');
+  await expect(cutaway).toHaveAttribute('data-playing', 'false');
+  await expect(cutaway.getByRole('button', { name: /Reproduzir/ })).toBeVisible();
+
+  const viewport = page.viewportSize();
+  if (viewport.width <= 430) {
+    await expect.poll(() => cutaway.evaluate((node) => (
+      node.scrollWidth <= node.clientWidth + 1
+    ))).toBe(true);
+    const controls = cutaway.locator('button');
+    for (let index = 0; index < await controls.count(); index += 1) {
+      const box = await controls.nth(index).boundingBox();
+      expect(Math.min(box?.width ?? 0, box?.height ?? 0)).toBeGreaterThanOrEqual(44);
+    }
+  }
+
+  await expectHealthyPage(page, runtimeIssues);
+});
+
 test('experiência responsiva prioriza aprender e praticar sem overflow', async ({
   page,
   baseURL,

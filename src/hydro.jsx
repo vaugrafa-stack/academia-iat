@@ -7,6 +7,7 @@ import {
 } from 'lucide-react';
 import { TurbineGallery, PRCasesSection, ArrangementSchematics, LicensingPath } from './hydroCases';
 import NormativeAuthorityAxes from './NormativeAuthorityAxes.jsx';
+import HydroelectricCutaway from './HydroelectricCutaway.jsx';
 import './routeStyles.css';
 
 const ASSET = (p) => ((import.meta.env.BASE_URL || '/').replace(/\/$/, '')) + p;
@@ -611,15 +612,12 @@ export default function HydroGuide({ go }) {
       <HydroLocalNav />
 
       <section
-        className="hydro-hero hydro-section hydro-section--intro"
+        className="hydro-hero hydro-hero--cutaway hydro-section hydro-section--intro"
         id="hydro-principio"
         tabIndex="-1"
         data-hydro-section
       >
-        <figure className="hydro-gif">
-          <CicloGeracao />
-          <figcaption>Ciclo de geração: captação, adução, turbinamento e restituição ao rio.</figcaption>
-        </figure>
+        <HydroelectricCutaway />
         <div className="hydro-hero-copy">
           <h2>O princípio: converter altura em energia</h2>
           <p>Uma hidrelétrica transforma a <strong>energia potencial</strong> da água represada em <strong>energia cinética</strong> ao descer pelo conduto, depois em <strong>energia mecânica</strong> ao girar a turbina e, por fim, em <strong>energia elétrica</strong> no gerador.</p>

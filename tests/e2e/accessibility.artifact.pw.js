@@ -117,6 +117,11 @@ test('rotas principais preservam semantica, leitura e operacao por toque', async
     await expect(page.locator('#conteudo')).toBeVisible();
     await expect(page.locator('#conteudo h1')).toHaveCount(1);
     await expect(page.locator('#conteudo h1')).toHaveText(heading);
+    await expect.poll(() => page.locator('#conteudo').evaluate((main) => (
+      (main.innerText || '').replace(/\s+/g, ' ').trim().length
+    )), {
+      message: `${hash || '#/'}: conteudo lazy nao concluiu a montagem`,
+    }).toBeGreaterThan(250);
 
     const audit = await page.evaluate(({ isMobile }) => {
       const visible = (element) => {

@@ -696,7 +696,15 @@ function App() {
     };
   }, []);
   function announceRoute() {
-    setTimeout(() => document.getElementById("conteudo")?.focus(), 0);
+    const focusMain = () =>
+      document.getElementById("conteudo")?.focus({ preventScroll: true });
+    if (typeof requestAnimationFrame === "function") {
+      // Aguarda o fechamento do modal/drawer e a montagem da rota lazy. Focar
+      // enquanto o main ainda esta inert faz o navegador descartar o pedido.
+      requestAnimationFrame(() => requestAnimationFrame(focusMain));
+    } else {
+      setTimeout(focusMain, 0);
+    }
   }
   function scrollRouteToTop() {
     const reduced =

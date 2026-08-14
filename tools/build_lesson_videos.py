@@ -930,6 +930,23 @@ def main():
         OUT = destino_final
         if destino_final == DEFAULT_OUT.resolve():
             gravar_json_atomico(ROOT / "src" / "data" / "aula-media.json", manifesto)
+    else:
+        # Build parcial grava os MP4, as legendas e as capas direto no destino,
+        # mas antes não tocava no manifesto. O objetivo era não publicar um
+        # manifesto que descrevesse só o subconjunto; o efeito era pior: a mídia
+        # nova ficava no disco descrita pelos metadados da antiga, em silêncio,
+        # e os portões conferiam contra uma ficha desatualizada.
+        #
+        # Mesclar preserva a garantia original, porque nenhuma aula sai do
+        # manifesto, e mantém a ficha verdadeira para as que acabaram de ser
+        # regeradas.
+        publico = OUT / "manifest.json"
+        atual = json.loads(publico.read_text(encoding="utf-8")) if publico.exists() else {}
+        atual.update(manifesto)
+        gravar_json_atomico(publico, atual)
+        if OUT == DEFAULT_OUT.resolve():
+            gravar_json_atomico(ROOT / "src" / "data" / "aula-media.json", atual)
+        print(f"manifesto mesclado: {len(manifesto)} aula(s) atualizada(s) de {len(atual)}")
     print(f"OK {len(manifesto)} videoaulas, {total/1e6:.1f} MB")
     return 0
 

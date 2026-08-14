@@ -34,14 +34,24 @@ const SOURCE_EXCLUSIONS = new Set([
   'src/data/extraction-validation.json',
   'src/data/pop-content.json',
 ]);
+// A 18.10.5 é a única seção cuja apresentação pública passa por reescrita
+// editorial, e por isso a mídia dela fica presa por hash: regerar o vídeo não
+// pode reintroduzir o termo removido sem que alguém olhe.
+//
+// Repinado em 11/08/2026, na migração para o POP v1.9. O que foi conferido
+// antes de trocar o hash: a legenda regerada não contém nenhum dos termos
+// proibidos, e a cue de título narra "18.10.5 Participação social e
+// complementações". A diferença é do próprio POP, que deixou de citar uso de IA
+// no título da seção, de modo que a reescrita editorial virou operação nula
+// nesta versão. A trava continua porque a fonte pode voltar a citar.
 const LOCKED_PUBLIC_MEDIA = new Map([
   [
     'public/media/aula/pop-section-072.mp4',
-    '1e1c7710cb272b4763af713e67a55316a23b84316497f5cae3597abe6bd21592',
+    'd8a50d21325c1bc285557c81f89ab1d96d4f647d5c32598f0605e0df3cf6b794',
   ],
   [
     'public/media/aula/pop-section-072.jpg',
-    'e1b8e8902b992bb123461751bba3fb3647f0c39ded7652baefc4e97b72c0cad3',
+    '20b778bedf588c2263a5efeba3c75178ab99976aa38a08c54c1e22965a0d4d97',
   ],
 ]);
 

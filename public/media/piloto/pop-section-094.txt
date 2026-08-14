@@ -7,42 +7,42 @@ Pré-requisito: Distinguir pendência sanável antes da decisão e obrigação d
 Cumprir a legislação ambiental. Manter o monitoramento. Apresentar documentos quando solicitado. Essas frases parecem rigorosas, mas não dizem exatamente quem faz o quê, quando, como ou com qual evidência.
 Fonte: POP, item 24; POP, item 24.1
 
-[13.7s] Seis elementos verificáveis
+[13.3s] Seis elementos verificáveis
 Ao final, você deverá construir uma condicionante com seis elementos: verbo de ação, objeto definido, prazo, indicador, responsabilidade e forma de comprovação.
 Fonte: POP, item 24
 
-[24.8s] Vocabulário da redação
+[24.4s] Vocabulário da redação
 Condicionante é uma obrigação vinculada ao impacto e à fase. Indicador é a medida usada para acompanhar seu cumprimento. Comprovação é a evidência verificável que permite conferir o resultado.
 Fonte: POP, item 24; POP, item 24.1
 
-[36.4s] Primeiro: vínculo e finalidade
+[36.1s] Primeiro: vínculo e finalidade
 Antes de redigir, confirme o vínculo. A condicionante precisa ter relação direta com o empreendimento, o impacto avaliado, a pendência sanável e a fase do licenciamento. A prioridade é prevenir, depois mitigar e, quando necessário, compensar.
 Fonte: POP, item 24
 
-[51.7s] Depois: estrutura completa
+[51.9s] Depois: estrutura completa
 Escolha um verbo observável, como executar, apresentar, manter ou comprovar. Defina o objeto. Depois acrescente prazo ou gatilho, indicador, responsável e uma forma de comprovação compatível, como relatório com ART ou arquivo geoespacial.
 Fonte: POP, item 24
 
-[68.4s] Do genérico ao verificável
+[68.8s] Do genérico ao verificável
 Compare. Manter o monitoramento de água é genérico. Uma redação verificável identifica o titular, o programa, a periodicidade, os parâmetros previstos e o relatório técnico com ART que comprovará a execução.
 Fonte: POP, item 24
 
-[82.4s] Erro: usar condicionante como atalho
+[82.7s] Erro: usar condicionante como atalho
 Nem toda lacuna pode virar condicionante. Não transfira ao empreendedor uma decisão do órgão. Não use obrigação impossível. E não empurre para depois uma pendência crítica que precisa ser resolvida antes do deferimento.
 Fonte: POP, item 24.1
 
-[95.4s] Decida antes de continuar
+[95.7s] Decida antes de continuar
 Pausa para decidir. A poligonal da área diretamente afetada está ausente e essa falta impede analisar APP e supressão. Você transforma a entrega futura em condicionante da licença?
 Fonte: POP, item 24.1
 
-[107.4s] Resposta comentada
+[107.7s] Resposta comentada
 Não. Se a pendência crítica impede decisão segura, ela deve ser tratada antes do deferimento. A condicionante controla obrigação posterior quando a atividade já é compatível; ela não corrige artificialmente uma incompatibilidade material.
 Fonte: POP, item 24.1
 
-[122.2s] Síntese
+[123.0s] Síntese
 A boa condicionante liga impacto, fase e medida; descreve seis elementos verificáveis; e respeita o limite entre obrigação posterior e pendência impeditiva. Se não puder ser conferida, ainda não está bem redigida.
 Fonte: POP, item 24; POP, item 24.1
 
-[136.2s] Próximo passo
+[137.1s] Próximo passo
 Na oficina, escolha uma condicionante genérica e reescreva cada elemento separadamente. Depois leia em voz alta e pergunte: uma terceira pessoa conseguiria verificar o cumprimento sem adivinhar o critério?
 Fonte: POP, item 24

@@ -7,35 +7,35 @@ Pré-requisito: Reconhecer ponto, linha e polígono como geometrias diferentes.
 Um ponto no mapa aparece fora de uma unidade de conservação. Isso prova que reservatório, barramento, TVR, acessos e linha de conexão também estão fora? Não. A geometria consultada define o alcance da conclusão.
 Fonte: POP, item 19.1.1
 
-[14.9s] Objetivo da microaula
+[14.8s] Objetivo da microaula
 Ao final, você deverá usar as bases oficiais como apoio, registrar a consulta e reconhecer quando é necessário confrontar camada, ato legal, Plano de Manejo e arquivo geoespacial do processo.
 Fonte: POP, item 19.1.1; IAT, Geodados
 
-[27.5s] Vocabulário geoespacial
+[27.4s] Vocabulário geoespacial
 Camada é a representação temática consultada. Geometria é a forma espacial efetivamente analisada, como ponto, linha ou polígono. Rastreabilidade é o registro da base, data, recorte e limitação da consulta.
 Fonte: POP, item 19.1.1; IAT, Geodados
 
-[41.7s] Bases oficiais de apoio
+[41.6s] Bases oficiais de apoio
 GeoPR e o visualizador do IAT apoiam a triagem locacional e a conferência espacial. Para unidades de conservação, consulte também a página de dados das unidades e o repositório de Planos de Manejo.
 Fonte: POP, item 19.1.1; IAT, Geodados; IAT, Dados de UCs; IAT, Planos de Manejo
 
-[56.2s] Apoio não é substituição
+[56.1s] Apoio não é substituição
 A ferramenta não substitui a leitura do ato legal nem a delimitação geoespacial do empreendimento apresentada no processo. A camada orienta perguntas; a conclusão depende do confronto com a fonte e com a geometria adequada.
 Fonte: POP, item 19.1.1
 
-[69.7s] Registre para reproduzir
+[69.6s] Registre para reproduzir
 Torne a consulta reproduzível. Quando relevante, registre data, nome da camada, fonte, metadados, sistema de referência e atualização. Uma captura de tela isolada não deve ser a única memória da análise espacial.
 Fonte: POP, item 19.1.1
 
-[83.7s] Erro: corrigir o limite por conta própria
+[83.5s] Erro: corrigir o limite por conta própria
 Se a camada divergir do ato de criação ou do Plano de Manejo, não redesenhe o limite por interpretação própria. Registre a divergência como pendente de validação e consulte a unidade competente.
 Fonte: POP, item 19.1.1
 
-[95.5s] Decida antes de continuar
+[95.3s] Decida antes de continuar
 Pausa para decidir. A camada de usinas mostra apenas um ponto, e ele está fora da área protegida. Você conclui ausência de interferência para todo o arranjo?
 Fonte: POP, item 19.1.1
 
-[105.6s] Resposta comentada
+[105.2s] Resposta comentada
 Não. A camada pontual ajuda a localizar o empreendimento, mas não demonstra a posição de barramento, reservatório, TVR, acessos ou sistemas associados. Solicite ou confronte a geometria completa antes de concluir.
 Fonte: POP, item 19.1.1
 
@@ -43,6 +43,6 @@ Fonte: POP, item 19.1.1
 Use a sequência: fonte oficial, camada identificada, data registrada, geometria compatível, confronto com os atos e tratamento explícito das divergências. O mapa apoia a decisão; não decide sozinho.
 Fonte: POP, item 19.1.1; IAT, Geodados
 
-[135.0s] Próximo passo
+[135.1s] Próximo passo
 Na prática, compare um ponto cadastral com um arranjo completo. Liste quais conclusões cada geometria permite e quais permanecem pendentes.
 Fonte: POP, item 19.1.1

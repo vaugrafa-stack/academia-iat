@@ -8,10 +8,13 @@ export const QUESTOES_COBERTURA = [
     ['Dispensa nova conferência normativa quando a minuta já passou por revisão editorial', 'Não substitui nova conferência antes da aprovação nem a validação da norma no caso concreto', 'Fixa definitivamente as normas aplicáveis a todos os processos iniciados antes daquela data'], 1,
     'A data-base informa quando a verificação foi feita, mas não encerra a conferência normativa do processo concreto.',
     { sec: 'pop-section-001', quote: 'A data-base não substitui nova conferência antes da aprovação institucional nem a validação da norma aplicável ao processo concreto.' }],
-  ['m00', 'O que a versão 1.6 registrou no histórico de evolução do POP?',
-    ['A substituição integral do licenciamento trifásico por um procedimento ambiental simplificado', 'A incorporação do procedimento de licenciamento ambiental federal delegado ao IAT', 'A retirada dos controles anuais aplicáveis aos acordos de cooperação técnica vigentes'], 1,
+  // A pergunta era sobre a versão 1.6, e o histórico do POP v1.9 não traz mais
+  // essa linha: a tabela passou a listar 1.0, 1.8 e 1.9. Reescrita sobre a
+  // entrada que existe hoje, em vez de citar um trecho que sumiu da fonte.
+  ['m00', 'O que a versão 1.9 registrou no histórico de evolução do POP?',
+    ['A substituição integral do licenciamento trifásico por um procedimento ambiental simplificado', 'A inclusão da Portaria IAT nº 42/2022 e do Diagnóstico Climático nos pontos aplicáveis ao EIA/RIMA', 'A retirada dos controles anuais aplicáveis aos acordos de cooperação técnica atualmente vigentes'], 1,
     'O histórico permite identificar qual conteúdo entrou em cada revisão do documento.',
-    { sec: 'pop-section-002', quote: 'Incorporação do procedimento de licenciamento ambiental federal delegado ao IAT' }],
+    { sec: 'pop-section-002', quote: 'Inclusão da Portaria IAT nº 42/2022 e do Diagnóstico Climático nos pontos aplicáveis ao EIA/RIMA' }],
 
   // M01 — definições e método obrigatório
   ['m01', 'No vocabulário do POP, qual é a função do Memorial?',

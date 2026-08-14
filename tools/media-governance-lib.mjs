@@ -413,11 +413,27 @@ async function validateSourceAssetsContract(root, entries, failures) {
   if (expected.size !== actual.length) failures.push('source-assets: manifesto e inventario tem contagens diferentes');
 }
 
+// Contrato minimo do gerador de videoaula. Era igualdade exata em 2, o que
+// transformava toda subida de versao do builder em reprovacao de governanca.
+// O builder foi para 3 em 071f976 e o acervo commitado ficou em 2 desde entao,
+// porque ninguem rodou o build completo entre uma coisa e outra: o portao nao
+// estava protegendo nada, estava esperando para reprovar quem rodasse.
+//
+// O piso e o que interessa aqui, e e o mesmo que check-videoaulas.mjs ja usa:
+// midia de gerador anterior ao contrato atual reprova, midia de gerador mais
+// novo passa. Os dois portoes agora dizem a mesma coisa.
+const GERADOR_MINIMO = 2;
+
 async function validateLessonContract(root, entries, failures) {
   const manifest = await loadJson(resolve(root, 'public/media/aula/manifest.json'));
   const expected = new Set();
   for (const [lessonId, metadata] of Object.entries(manifest)) {
-    if (!/^pop-section-\d{3}$/.test(lessonId) || metadata.generatorVersion !== 2 || metadata.dur <= 0) {
+    if (
+      !/^pop-section-\d{3}$/.test(lessonId)
+      || !Number.isInteger(metadata.generatorVersion)
+      || metadata.generatorVersion < GERADOR_MINIMO
+      || metadata.dur <= 0
+    ) {
       failures.push(`aula ${lessonId}: metadados de geracao invalidos`);
     }
     for (const suffix of ['.jpg', '.mp4', '.visemes.json', '.vtt']) {

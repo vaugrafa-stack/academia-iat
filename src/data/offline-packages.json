@@ -1,13 +1,13 @@
 {
   "schemaVersion": "1.1.0",
   "source": {
-    "popVersion": "1.7",
-    "popSha256": "8ffa771546c244e194e6d7b41dd91d5ab3f56083e94c081e1e5c9a17f13f2c3c"
+    "popVersion": "1.9",
+    "popSha256": "f7056462b84de383c8e2dbb1e22d3bb732d90fbd876a933e0596642caf5b4871"
   },
   "packageCount": 17,
-  "lessonCount": 159,
-  "itemCount": 528,
-  "totalBytes": 203426936,
+  "lessonCount": 168,
+  "itemCount": 555,
+  "totalBytes": 214837538,
   "packages": [
     {
       "id": "m00",
@@ -71,9 +71,9 @@
       "id": "m01",
       "code": "M01",
       "title": "Papéis, normas, definições e método obrigatório",
-      "lessonCount": 12,
-      "itemCount": 39,
-      "bytes": 15576649,
+      "lessonCount": 11,
+      "itemCount": 36,
+      "bytes": 14610333,
       "items": [
         {
           "path": "media/m01.mp4",
@@ -218,18 +218,6 @@
         {
           "path": "media/aula/pop-section-013.vtt",
           "bytes": 633
-        },
-        {
-          "path": "media/aula/pop-section-014.mp4",
-          "bytes": 933114
-        },
-        {
-          "path": "media/aula/pop-section-014.jpg",
-          "bytes": 32475
-        },
-        {
-          "path": "media/aula/pop-section-014.vtt",
-          "bytes": 727
         }
       ]
     },
@@ -861,9 +849,9 @@
       "id": "m08",
       "code": "M08",
       "title": "Memorial e estudos ambientais",
-      "lessonCount": 13,
-      "itemCount": 42,
-      "bytes": 15678462,
+      "lessonCount": 23,
+      "itemCount": 72,
+      "bytes": 28296644,
       "items": [
         {
           "path": "media/m08.mp4",
@@ -974,6 +962,18 @@
           "bytes": 1147
         },
         {
+          "path": "media/aula/pop-section-174.mp4",
+          "bytes": 1700280
+        },
+        {
+          "path": "media/aula/pop-section-174.jpg",
+          "bytes": 32088
+        },
+        {
+          "path": "media/aula/pop-section-174.vtt",
+          "bytes": 1657
+        },
+        {
           "path": "media/aula/pop-section-065.mp4",
           "bytes": 878130
         },
@@ -1022,6 +1022,114 @@
           "bytes": 852
         },
         {
+          "path": "media/aula/pop-section-175.mp4",
+          "bytes": 1363842
+        },
+        {
+          "path": "media/aula/pop-section-175.jpg",
+          "bytes": 34673
+        },
+        {
+          "path": "media/aula/pop-section-175.vtt",
+          "bytes": 1396
+        },
+        {
+          "path": "media/aula/pop-section-176.mp4",
+          "bytes": 1894291
+        },
+        {
+          "path": "media/aula/pop-section-176.jpg",
+          "bytes": 30443
+        },
+        {
+          "path": "media/aula/pop-section-176.vtt",
+          "bytes": 1654
+        },
+        {
+          "path": "media/aula/pop-section-177.mp4",
+          "bytes": 1204488
+        },
+        {
+          "path": "media/aula/pop-section-177.jpg",
+          "bytes": 30523
+        },
+        {
+          "path": "media/aula/pop-section-177.vtt",
+          "bytes": 1214
+        },
+        {
+          "path": "media/aula/pop-section-178.mp4",
+          "bytes": 1002618
+        },
+        {
+          "path": "media/aula/pop-section-178.jpg",
+          "bytes": 33515
+        },
+        {
+          "path": "media/aula/pop-section-178.vtt",
+          "bytes": 1022
+        },
+        {
+          "path": "media/aula/pop-section-179.mp4",
+          "bytes": 997726
+        },
+        {
+          "path": "media/aula/pop-section-179.jpg",
+          "bytes": 31110
+        },
+        {
+          "path": "media/aula/pop-section-179.vtt",
+          "bytes": 963
+        },
+        {
+          "path": "media/aula/pop-section-180.mp4",
+          "bytes": 1259071
+        },
+        {
+          "path": "media/aula/pop-section-180.jpg",
+          "bytes": 32102
+        },
+        {
+          "path": "media/aula/pop-section-180.vtt",
+          "bytes": 1391
+        },
+        {
+          "path": "media/aula/pop-section-181.mp4",
+          "bytes": 1071830
+        },
+        {
+          "path": "media/aula/pop-section-181.jpg",
+          "bytes": 32492
+        },
+        {
+          "path": "media/aula/pop-section-181.vtt",
+          "bytes": 1141
+        },
+        {
+          "path": "media/aula/pop-section-182.mp4",
+          "bytes": 947288
+        },
+        {
+          "path": "media/aula/pop-section-182.jpg",
+          "bytes": 31403
+        },
+        {
+          "path": "media/aula/pop-section-182.vtt",
+          "bytes": 950
+        },
+        {
+          "path": "media/aula/pop-section-183.mp4",
+          "bytes": 846410
+        },
+        {
+          "path": "media/aula/pop-section-183.jpg",
+          "bytes": 29738
+        },
+        {
+          "path": "media/aula/pop-section-183.vtt",
+          "bytes": 863
+        },
+        {
           "path": "media/aula/pop-section-075.mp4",
           "bytes": 986819
         },
@@ -1041,7 +1149,7 @@
       "title": "PACUERA integral",
       "lessonCount": 6,
       "itemCount": 21,
-      "bytes": 9683583,
+      "bytes": 9585672,
       "items": [
         {
           "path": "media/m09.mp4",
@@ -1117,15 +1225,15 @@
         },
         {
           "path": "media/aula/pop-section-072.mp4",
-          "bytes": 1167359
+          "bytes": 1078021
         },
         {
           "path": "media/aula/pop-section-072.jpg",
-          "bytes": 38838
+          "bytes": 30087
         },
         {
           "path": "media/aula/pop-section-072.vtt",
-          "bytes": 935
+          "bytes": 1113
         }
       ]
     },
@@ -1929,7 +2037,7 @@
       "title": "Formatação, qualidade e rastreabilidade",
       "lessonCount": 11,
       "itemCount": 36,
-      "bytes": 12124778,
+      "bytes": 11981425,
       "items": [
         {
           "path": "media/m13.mp4",
@@ -2017,15 +2125,15 @@
         },
         {
           "path": "media/aula/pop-section-105.mp4",
-          "bytes": 872785
+          "bytes": 740983
         },
         {
           "path": "media/aula/pop-section-105.jpg",
-          "bytes": 40328
+          "bytes": 28667
         },
         {
           "path": "media/aula/pop-section-105.vtt",
-          "bytes": 633
+          "bytes": 743
         },
         {
           "path": "media/aula/pop-section-106.mp4",

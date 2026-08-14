@@ -3,8 +3,8 @@
   "kind": "LessonScriptCollection",
   "sourceDocument": {
     "code": "POP-DLE-HID-001",
-    "version": "1.7",
-    "sha256": "8ffa771546c244e194e6d7b41dd91d5ab3f56083e94c081e1e5c9a17f13f2c3c",
+    "version": "1.9",
+    "sha256": "f7056462b84de383c8e2dbb1e22d3bb732d90fbd876a933e0596642caf5b4871",
     "status": "minuta técnica pendente de validação técnica e institucional"
   },
   "voice": {
@@ -14,7 +14,10 @@
     "quality": "medium",
     "sampleRate": 22050,
     "targetWordsPerMinute": 140,
-    "allowedWordsPerMinute": [130, 150],
+    "allowedWordsPerMinute": [
+      130,
+      150
+    ],
     "modelSource": "https://huggingface.co/rhasspy/piper-voices/tree/main/pt/pt_BR/faber/medium",
     "modelCard": "https://huggingface.co/rhasspy/piper-voices/blob/main/pt/pt_BR/faber/medium/MODEL_CARD",
     "datasetLicense": "CC0",
@@ -46,8 +49,24 @@
   "visemeContract": {
     "version": "1.0.0",
     "sprite": "/media/learning-stage/professor-visemes-v2.webp",
-    "grid": { "columns": 3, "rows": 4 },
-    "order": ["rest", "MBP", "IE", "A", "O", "U", "FV", "L", "CHJ", "E_OPEN", "SCHWA", "rest_alt"],
+    "grid": {
+      "columns": 3,
+      "rows": 4
+    },
+    "order": [
+      "rest",
+      "MBP",
+      "IE",
+      "A",
+      "O",
+      "U",
+      "FV",
+      "L",
+      "CHJ",
+      "E_OPEN",
+      "SCHWA",
+      "rest_alt"
+    ],
     "alignmentMethod": "fonemas do eSpeak retornados pelo Piper, distribuídos na duração real de cada cena",
     "alignmentStatus": "estimativa temporal para piloto; requer conferência perceptiva antes de expansão"
   },
@@ -93,7 +112,15 @@
       "prerequisite": "Reconhecer a diferença entre documento apresentado e documento suficiente.",
       "theme": "office",
       "sourceRefs": [
-        { "id": "pop-18.2", "kind": "pop", "locator": "POP, item 18.2", "sectionId": "pop-section-059", "tableIds": ["pop-table-031"] }
+        {
+          "id": "pop-18.2",
+          "kind": "pop",
+          "locator": "POP, item 18.2",
+          "sectionId": "pop-section-059",
+          "tableIds": [
+            "pop-table-031"
+          ]
+        }
       ],
       "scenes": [
         {
@@ -103,8 +130,14 @@
           "claimClass": "explicação didática sem regra nova",
           "speech": "O processo traz Memorial Descritivo, RAS, RDPA, EIA, RIMA, PBA e PACUERA. Todos são importantes. Mas eles não respondem à mesma pergunta. Como evitar que um documento seja usado para provar aquilo que ele não demonstra?",
           "visualTitle": "Um processo, funções diferentes",
-          "visualBullets": ["Qual é a função?", "Qual é o limite?", "O que o documento realmente demonstra?"],
-          "citations": ["pop-18.2"]
+          "visualBullets": [
+            "Qual é a função?",
+            "Qual é o limite?",
+            "O que o documento realmente demonstra?"
+          ],
+          "citations": [
+            "pop-18.2"
+          ]
         },
         {
           "id": "objetivo",
@@ -113,8 +146,14 @@
           "claimClass": "explicação didática sem regra nova",
           "speech": "Ao final, você deverá conseguir separar caracterização de engenharia, avaliação ambiental, detalhamento de programas, comunicação pública, gestão territorial e comprovação de execução.",
           "visualTitle": "Objetivo da microaula",
-          "visualBullets": ["Separar funções", "Reconhecer limites", "Evitar substituições indevidas"],
-          "citations": ["pop-18.2"]
+          "visualBullets": [
+            "Separar funções",
+            "Reconhecer limites",
+            "Evitar substituições indevidas"
+          ],
+          "citations": [
+            "pop-18.2"
+          ]
         },
         {
           "id": "vocabulario",
@@ -123,8 +162,14 @@
           "claimClass": "explicação didática sem regra nova",
           "speech": "Antes de comparar os arquivos, fixe três termos. Função é a pergunta principal que o documento responde. Limite é aquilo que ele não demonstra. Suficiência é o julgamento feito depois de confrontar conteúdo, fonte e finalidade.",
           "visualTitle": "Vocabulário da análise",
-          "visualBullets": ["Função", "Limite", "Suficiência"],
-          "citations": ["pop-18.2"]
+          "visualBullets": [
+            "Função",
+            "Limite",
+            "Suficiência"
+          ],
+          "citations": [
+            "pop-18.2"
+          ]
         },
         {
           "id": "engenharia-ambiente",
@@ -133,8 +178,14 @@
           "claimClass": "conteúdo do POP",
           "speech": "Comece pelo Memorial Descritivo. Ele caracteriza engenharia, arranjo, estruturas, parâmetros hidráulicos, operação e áreas associadas. Seu limite é claro: não substitui estudo ambiental, diagnóstico de impactos nem programa ambiental.",
           "visualTitle": "Memorial caracteriza o projeto",
-          "visualBullets": ["Arranjo e estruturas", "Parâmetros e operação", "Não substitui estudo ambiental"],
-          "citations": ["pop-18.2"]
+          "visualBullets": [
+            "Arranjo e estruturas",
+            "Parâmetros e operação",
+            "Não substitui estudo ambiental"
+          ],
+          "citations": [
+            "pop-18.2"
+          ]
         },
         {
           "id": "estudo-detalhamento",
@@ -143,8 +194,14 @@
           "claimClass": "conteúdo do POP",
           "speech": "O RAS subsidia uma avaliação ambiental simplificada. O RDPA detalha as medidas e os programas propostos no RAS. Do mesmo modo, o EIA avalia a viabilidade ambiental, enquanto o RIMA comunica suas conclusões ao público com fidelidade e linguagem acessível.",
           "visualTitle": "Avaliar, detalhar e comunicar",
-          "visualBullets": ["RAS: avaliação simplificada", "RDPA: programas executáveis", "EIA e RIMA: análise e comunicação"],
-          "citations": ["pop-18.2"]
+          "visualBullets": [
+            "RAS: avaliação simplificada",
+            "RDPA: programas executáveis",
+            "EIA e RIMA: análise e comunicação"
+          ],
+          "citations": [
+            "pop-18.2"
+          ]
         },
         {
           "id": "gestao-execucao",
@@ -153,8 +210,14 @@
           "claimClass": "conteúdo do POP",
           "speech": "O PBA detalha medidas e programas decorrentes do EIA e do RIMA. O PACUERA organiza diagnóstico, zoneamento, diretrizes, participação, monitoramento e revisão do entorno do reservatório. Já o relatório de execução comprova ações realizadas e resultados.",
           "visualTitle": "Planejar não é comprovar execução",
-          "visualBullets": ["PBA: detalhamento", "PACUERA: gestão territorial", "Relatório: evidência do realizado"],
-          "citations": ["pop-18.2"]
+          "visualBullets": [
+            "PBA: detalhamento",
+            "PACUERA: gestão territorial",
+            "Relatório: evidência do realizado"
+          ],
+          "citations": [
+            "pop-18.2"
+          ]
         },
         {
           "id": "erro",
@@ -163,8 +226,14 @@
           "claimClass": "conteúdo do POP",
           "speech": "O erro recorrente é aceitar equivalências falsas: Memorial como estudo ambiental, RDPA como repetição do RAS, RIMA divergente do EIA, ou cronograma futuro como prova de execução. A presença do arquivo não elimina o limite de sua função.",
           "visualTitle": "Erro: trocar função por presença",
-          "visualBullets": ["Documento presente", "Função inadequada", "Conclusão sem suporte"],
-          "citations": ["pop-18.2"]
+          "visualBullets": [
+            "Documento presente",
+            "Função inadequada",
+            "Conclusão sem suporte"
+          ],
+          "citations": [
+            "pop-18.2"
+          ]
         },
         {
           "id": "decisao",
@@ -173,8 +242,14 @@
           "claimClass": "exercício didático derivado da fonte",
           "speech": "Pausa para decidir. Um relatório apresenta apenas atividades futuras e um cronograma. Isso basta para comprovar o cumprimento de um programa ambiental?",
           "visualTitle": "Decida antes de continuar",
-          "visualBullets": ["Há ação realizada?", "Há resultado?", "Há evidência?"],
-          "citations": ["pop-18.2"]
+          "visualBullets": [
+            "Há ação realizada?",
+            "Há resultado?",
+            "Há evidência?"
+          ],
+          "citations": [
+            "pop-18.2"
+          ]
         },
         {
           "id": "resposta",
@@ -183,8 +258,14 @@
           "claimClass": "conteúdo do POP",
           "speech": "Não. Plano de trabalho e cronograma futuro não comprovam execução. Para isso, o relatório precisa demonstrar ações realizadas, resultados, indicadores, evidências, desvios e providências.",
           "visualTitle": "Resposta comentada",
-          "visualBullets": ["Ação realizada", "Resultado e indicador", "Evidência e providência"],
-          "citations": ["pop-18.2"]
+          "visualBullets": [
+            "Ação realizada",
+            "Resultado e indicador",
+            "Evidência e providência"
+          ],
+          "citations": [
+            "pop-18.2"
+          ]
         },
         {
           "id": "sintese",
@@ -193,8 +274,14 @@
           "claimClass": "explicação didática sem regra nova",
           "speech": "Use sempre duas perguntas: qual é a função principal deste documento, e qual erro o seu limite impede? Essa dupla leitura evita substituições indevidas e prepara a análise de suficiência.",
           "visualTitle": "Síntese",
-          "visualBullets": ["Função principal", "Limite do documento", "Suficiência vem depois"],
-          "citations": ["pop-18.2"]
+          "visualBullets": [
+            "Função principal",
+            "Limite do documento",
+            "Suficiência vem depois"
+          ],
+          "citations": [
+            "pop-18.2"
+          ]
         },
         {
           "id": "proximo",
@@ -203,8 +290,14 @@
           "claimClass": "explicação didática sem regra nova",
           "speech": "Na prática seguinte, monte uma matriz com três colunas: documento, função e limite. Depois compare cada arquivo do caso com aquilo que ele deveria demonstrar.",
           "visualTitle": "Próximo passo",
-          "visualBullets": ["Documento", "Função", "Limite"],
-          "citations": ["pop-18.2"]
+          "visualBullets": [
+            "Documento",
+            "Função",
+            "Limite"
+          ],
+          "citations": [
+            "pop-18.2"
+          ]
         }
       ]
     },
@@ -218,7 +311,25 @@
       "prerequisite": "Conhecer os campos básicos de identificação de um processo.",
       "theme": "office",
       "sourceRefs": [
-        { "id": "pop-7.1", "kind": "pop", "locator": "POP, item 7.1", "sectionId": "pop-section-018", "paragraphIds": ["pop-paragraph-0163", "pop-paragraph-0164", "pop-paragraph-0165", "pop-paragraph-0166", "pop-paragraph-0167", "pop-paragraph-0168", "pop-paragraph-0169", "pop-paragraph-0170", "pop-paragraph-0171", "pop-paragraph-0172", "pop-paragraph-0173"] }
+        {
+          "id": "pop-7.1",
+          "kind": "pop",
+          "locator": "POP, item 7.1",
+          "sectionId": "pop-section-018",
+          "paragraphIds": [
+            "pop-paragraph-0163",
+            "pop-paragraph-0164",
+            "pop-paragraph-0165",
+            "pop-paragraph-0166",
+            "pop-paragraph-0167",
+            "pop-paragraph-0168",
+            "pop-paragraph-0169",
+            "pop-paragraph-0170",
+            "pop-paragraph-0171",
+            "pop-paragraph-0172",
+            "pop-paragraph-0173"
+          ]
+        }
       ],
       "scenes": [
         {
@@ -228,8 +339,14 @@
           "claimClass": "explicação didática sem regra nova",
           "speech": "Uma análise pode começar errada antes mesmo da leitura do estudo: basta confundir o objeto, ignorar a data do protocolo ou deixar de localizar uma licença anterior. O procedimento passo a passo existe para impedir esse desvio.",
           "visualTitle": "A triagem protege a análise",
-          "visualBullets": ["Identidade", "Tempo", "Histórico"],
-          "citations": ["pop-7.1"]
+          "visualBullets": [
+            "Identidade",
+            "Tempo",
+            "Histórico"
+          ],
+          "citations": [
+            "pop-7.1"
+          ]
         },
         {
           "id": "objetivo",
@@ -238,8 +355,15 @@
           "claimClass": "explicação didática sem regra nova",
           "speech": "Ao final, você deverá organizar a triagem em quatro blocos: identificação e regime temporal; natureza do pedido e histórico; território e integridade documental; matriz, limitações e competência.",
           "visualTitle": "Quatro blocos de triagem",
-          "visualBullets": ["Identificar", "Contextualizar", "Conferir", "Registrar"],
-          "citations": ["pop-7.1"]
+          "visualBullets": [
+            "Identificar",
+            "Contextualizar",
+            "Conferir",
+            "Registrar"
+          ],
+          "citations": [
+            "pop-7.1"
+          ]
         },
         {
           "id": "vocabulario",
@@ -248,8 +372,14 @@
           "claimClass": "explicação didática sem regra nova",
           "speech": "Nesta triagem, objeto é o empreendimento e o pedido realmente analisados. Histórico é a sequência de atos e processos vinculados. Matriz é o registro que conecta documento, suficiência, consequência e encaminhamento.",
           "visualTitle": "Vocabulário da triagem",
-          "visualBullets": ["Objeto", "Histórico", "Matriz"],
-          "citations": ["pop-7.1"]
+          "visualBullets": [
+            "Objeto",
+            "Histórico",
+            "Matriz"
+          ],
+          "citations": [
+            "pop-7.1"
+          ]
         },
         {
           "id": "identificacao",
@@ -258,8 +388,14 @@
           "claimClass": "conteúdo do POP",
           "speech": "Primeiro, abra o protocolo e registre número, interessado, CNPJ, empreendimento, município, modalidade requerida e data. Em seguida, fixe a data de entrada em vigor considerada, o estágio processual, o regime aplicado e a justificativa da transição.",
           "visualTitle": "Bloco 1 · Identidade e tempo",
-          "visualBullets": ["Dados do protocolo", "Data e estágio", "Regime e transição"],
-          "citations": ["pop-7.1"]
+          "visualBullets": [
+            "Dados do protocolo",
+            "Data e estágio",
+            "Regime e transição"
+          ],
+          "citations": [
+            "pop-7.1"
+          ]
         },
         {
           "id": "natureza-historico",
@@ -268,8 +404,14 @@
           "claimClass": "conteúdo do POP",
           "speech": "Depois, identifique a natureza do pedido: processo novo, renovação, regularização, alteração, transferência, autorização, complementação ou condicionante. Levante licenças, Consulta Prévia, prazos, outorga, ato da ANEEL e processos vinculados.",
           "visualTitle": "Bloco 2 · Pedido e histórico",
-          "visualBullets": ["Natureza do pedido", "Atos anteriores", "Processos vinculados"],
-          "citations": ["pop-7.1"]
+          "visualBullets": [
+            "Natureza do pedido",
+            "Atos anteriores",
+            "Processos vinculados"
+          ],
+          "citations": [
+            "pop-7.1"
+          ]
         },
         {
           "id": "territorio-integridade",
@@ -278,8 +420,14 @@
           "claimClass": "conteúdo do POP",
           "speech": "A triagem territorial deve observar o arranjo integral em bases oficiais e registrar fonte, camada e data quando isso influenciar a análise. Também confira duplicidades, estudos antigos, titular anterior, assinatura e ART.",
           "visualTitle": "Bloco 3 · Território e integridade",
-          "visualBullets": ["Arranjo integral", "Fonte e data", "Assinatura e responsabilidade"],
-          "citations": ["pop-7.1"]
+          "visualBullets": [
+            "Arranjo integral",
+            "Fonte e data",
+            "Assinatura e responsabilidade"
+          ],
+          "citations": [
+            "pop-7.1"
+          ]
         },
         {
           "id": "matriz",
@@ -288,8 +436,14 @@
           "claimClass": "conteúdo do POP",
           "speech": "Separe os documentos por grupo e crie a matriz de análise. Para cada achado, registre status, consequência técnica e encaminhamento. Se a documentação não permitir conclusão segura, registre a limitação em vez de preencher a lacuna.",
           "visualTitle": "Bloco 4 · Matriz e limites",
-          "visualBullets": ["Agrupar documentos", "Classificar achados", "Registrar limitações"],
-          "citations": ["pop-7.1"]
+          "visualBullets": [
+            "Agrupar documentos",
+            "Classificar achados",
+            "Registrar limitações"
+          ],
+          "citations": [
+            "pop-7.1"
+          ]
         },
         {
           "id": "erro",
@@ -298,8 +452,14 @@
           "claimClass": "conteúdo do POP",
           "speech": "Um erro crítico é aplicar o fluxo estadual ordinário sem verificar indício de competência federal, processo no SEI do IBAMA, acordo de cooperação, termo aditivo, delegação cautelar ou decisão judicial relacionada.",
           "visualTitle": "Erro: ignorar a competência",
-          "visualBullets": ["Indício federal", "Escopo da delegação", "Processos relacionados"],
-          "citations": ["pop-7.1"]
+          "visualBullets": [
+            "Indício federal",
+            "Escopo da delegação",
+            "Processos relacionados"
+          ],
+          "citations": [
+            "pop-7.1"
+          ]
         },
         {
           "id": "decisao",
@@ -308,8 +468,14 @@
           "claimClass": "fato de caso sintético",
           "speech": "Pausa para decidir. O processo apresenta outorga em nome do titular anterior e não traz transferência formal. Você segue para a conclusão, ou registra a incompatibilidade na matriz e define o encaminhamento?",
           "visualTitle": "Decida antes de continuar",
-          "visualBullets": ["Titular do pedido", "Titular da outorga", "Transferência formal"],
-          "citations": ["pop-7.1"]
+          "visualBullets": [
+            "Titular do pedido",
+            "Titular da outorga",
+            "Transferência formal"
+          ],
+          "citations": [
+            "pop-7.1"
+          ]
         },
         {
           "id": "resposta",
@@ -318,8 +484,14 @@
           "claimClass": "explicação didática derivada do POP",
           "speech": "Registre a incompatibilidade e o encaminhamento. O procedimento manda conferir titular anterior sem transferência formal e registrar limitações quando os documentos não sustentam conclusão segura.",
           "visualTitle": "Resposta comentada",
-          "visualBullets": ["Incompatibilidade registrada", "Consequência explícita", "Encaminhamento definido"],
-          "citations": ["pop-7.1"]
+          "visualBullets": [
+            "Incompatibilidade registrada",
+            "Consequência explícita",
+            "Encaminhamento definido"
+          ],
+          "citations": [
+            "pop-7.1"
+          ]
         },
         {
           "id": "sintese",
@@ -328,8 +500,15 @@
           "claimClass": "explicação didática sem regra nova",
           "speech": "A sequência é simples de lembrar: identificar, situar no tempo, entender o pedido, reconstruir o histórico, conferir território e integridade, organizar a matriz e declarar os limites. Só então começa a conclusão.",
           "visualTitle": "Síntese do procedimento",
-          "visualBullets": ["Identidade", "Contexto", "Conferência", "Matriz"],
-          "citations": ["pop-7.1"]
+          "visualBullets": [
+            "Identidade",
+            "Contexto",
+            "Conferência",
+            "Matriz"
+          ],
+          "citations": [
+            "pop-7.1"
+          ]
         },
         {
           "id": "proximo",
@@ -338,8 +517,14 @@
           "claimClass": "prática de transferência",
           "speech": "No próximo passo, aplique os quatro blocos a um processo sintético. Preencha a matriz sem concluir o mérito e destaque uma incompatibilidade que exige encaminhamento.",
           "visualTitle": "Próximo passo",
-          "visualBullets": ["Aplicar os quatro blocos", "Preencher a matriz", "Registrar a incompatibilidade"],
-          "citations": ["pop-7.1"]
+          "visualBullets": [
+            "Aplicar os quatro blocos",
+            "Preencher a matriz",
+            "Registrar a incompatibilidade"
+          ],
+          "citations": [
+            "pop-7.1"
+          ]
         }
       ]
     },
@@ -353,8 +538,21 @@
       "prerequisite": "Compreender o PACUERA como instrumento de gestão territorial do entorno do reservatório.",
       "theme": "map",
       "sourceRefs": [
-        { "id": "pop-18.10.2", "kind": "pop", "locator": "POP, item 18.10.2", "sectionId": "pop-section-069", "tableIds": ["pop-table-039"] },
-        { "id": "tr-pacuera-2026", "kind": "official", "locator": "IAT, TR PACUERA 2026", "officialSourceId": "official-pacuera-tr-2026" }
+        {
+          "id": "pop-18.10.2",
+          "kind": "pop",
+          "locator": "POP, item 18.10.2",
+          "sectionId": "pop-section-069",
+          "tableIds": [
+            "pop-table-039"
+          ]
+        },
+        {
+          "id": "tr-pacuera-2026",
+          "kind": "official",
+          "locator": "IAT, TR PACUERA 2026",
+          "officialSourceId": "official-pacuera-tr-2026"
+        }
       ],
       "scenes": [
         {
@@ -364,8 +562,14 @@
           "claimClass": "explicação didática sem regra nova",
           "speech": "Um PACUERA pode ter muitas páginas e ainda assim não sustentar o zoneamento. O ponto não é contar capítulos. É verificar se diagnóstico, cartografia, fragilidades, potencialidades e regras de uso formam uma cadeia coerente.",
           "visualTitle": "Volume não garante suficiência",
-          "visualBullets": ["Diagnóstico", "Base espacial", "Zoneamento coerente"],
-          "citations": ["pop-18.10.2"]
+          "visualBullets": [
+            "Diagnóstico",
+            "Base espacial",
+            "Zoneamento coerente"
+          ],
+          "citations": [
+            "pop-18.10.2"
+          ]
         },
         {
           "id": "objetivo",
@@ -374,8 +578,15 @@
           "claimClass": "explicação didática sem regra nova",
           "speech": "Ao final, você deverá usar quatro blocos para orientar a primeira leitura: controle e área de estudo; reservatório e base cartográfica; diagnósticos integrados; zoneamento, implementação e revisão. Eles não substituem o checklist integral do item 18.10.2 nem o termo vigente.",
           "visualTitle": "Quatro blocos para orientar a leitura",
-          "visualBullets": ["Controle", "Território", "Diagnóstico", "Gestão"],
-          "citations": ["pop-18.10.2"]
+          "visualBullets": [
+            "Controle",
+            "Território",
+            "Diagnóstico",
+            "Gestão"
+          ],
+          "citations": [
+            "pop-18.10.2"
+          ]
         },
         {
           "id": "vocabulario",
@@ -384,8 +595,15 @@
           "claimClass": "conteúdo do POP e fonte oficial verificada",
           "speech": "Três termos orientam a leitura. TVR é o trecho de vazão reduzida. UTH é a unidade territorial homogênea usada para organizar a análise espacial. Zoneamento é a tradução fundamentada do diagnóstico em zonas e regras de uso.",
           "visualTitle": "Vocabulário territorial",
-          "visualBullets": ["TVR", "UTH", "Zoneamento"],
-          "citations": ["pop-18.10.2", "tr-pacuera-2026"]
+          "visualBullets": [
+            "TVR",
+            "UTH",
+            "Zoneamento"
+          ],
+          "citations": [
+            "pop-18.10.2",
+            "tr-pacuera-2026"
+          ]
         },
         {
           "id": "controle-area",
@@ -394,8 +612,15 @@
           "claimClass": "conteúdo do POP e fonte oficial verificada",
           "speech": "O primeiro bloco reúne autoria, equipe, assinaturas, ARTs, versão, protocolo e revisão. A área de estudo inclui a faixa mínima indicada no termo vigente, a totalidade do TVR e as extensões previstas a jusante e em sistemas de cascata.",
           "visualTitle": "Bloco 1 · Controle e área",
-          "visualBullets": ["Responsabilidade técnica", "Versão aplicável", "Delimitação completa"],
-          "citations": ["pop-18.10.2", "tr-pacuera-2026"]
+          "visualBullets": [
+            "Responsabilidade técnica",
+            "Versão aplicável",
+            "Delimitação completa"
+          ],
+          "citations": [
+            "pop-18.10.2",
+            "tr-pacuera-2026"
+          ]
         },
         {
           "id": "reservatorio-cartografia",
@@ -404,8 +629,14 @@
           "claimClass": "conteúdo do POP",
           "speech": "O segundo bloco confronta cotas, níveis, área, APP, volume, barramento, potência e extensão do TVR com Memorial, outorga, operação e segurança. A cartografia precisa ter origem, precisão, projeção, topologia, atributos e dados reproduzíveis.",
           "visualTitle": "Bloco 2 · Reservatório e mapas",
-          "visualBullets": ["Níveis e estruturas", "Compatibilidade documental", "Dados reproduzíveis"],
-          "citations": ["pop-18.10.2"]
+          "visualBullets": [
+            "Níveis e estruturas",
+            "Compatibilidade documental",
+            "Dados reproduzíveis"
+          ],
+          "citations": [
+            "pop-18.10.2"
+          ]
         },
         {
           "id": "diagnosticos",
@@ -414,8 +645,14 @@
           "claimClass": "conteúdo do POP",
           "speech": "O terceiro bloco integra meio físico, biológico, socioeconômico, histórico-cultural, jurídico e institucional. Fragilidades e potencialidades precisam nascer desses dados e de sua representação espacial. Uma síntese sem base espacial é insuficiente.",
           "visualTitle": "Bloco 3 · Diagnóstico integrado",
-          "visualBullets": ["Meios natural e social", "Regras e competências", "Fragilidades e potencialidades"],
-          "citations": ["pop-18.10.2"]
+          "visualBullets": [
+            "Meios natural e social",
+            "Regras e competências",
+            "Fragilidades e potencialidades"
+          ],
+          "citations": [
+            "pop-18.10.2"
+          ]
         },
         {
           "id": "zoneamento",
@@ -424,8 +661,15 @@
           "claimClass": "conteúdo do POP e fonte oficial verificada",
           "speech": "No quarto bloco, as UTHs e as zonas devem decorrer das fragilidades, potencialidades e capacidade de suporte. Cada regra de uso precisa de fundamento. Implementação, indicadores, cronograma, participação, monitoramento e revisão completam o ciclo de gestão.",
           "visualTitle": "Bloco 4 · Zoneamento e gestão",
-          "visualBullets": ["UTHs fundamentadas", "Regras por zona", "Implementação e revisão"],
-          "citations": ["pop-18.10.2", "tr-pacuera-2026"]
+          "visualBullets": [
+            "UTHs fundamentadas",
+            "Regras por zona",
+            "Implementação e revisão"
+          ],
+          "citations": [
+            "pop-18.10.2",
+            "tr-pacuera-2026"
+          ]
         },
         {
           "id": "erro",
@@ -434,8 +678,14 @@
           "claimClass": "conteúdo do POP",
           "speech": "O erro é aprovar um mapa bonito sem nexo entre diagnóstico e zoneamento. Também é erro tratar o PACUERA como substituto de licença, outorga, aprovação municipal, ato da ANEEL, manifestação patrimonial ou instrumento de segurança.",
           "visualTitle": "Erro: mapa sem cadeia de evidência",
-          "visualBullets": ["Diagnóstico desconectado", "Zona sem fundamento", "Competências confundidas"],
-          "citations": ["pop-18.10.2"]
+          "visualBullets": [
+            "Diagnóstico desconectado",
+            "Zona sem fundamento",
+            "Competências confundidas"
+          ],
+          "citations": [
+            "pop-18.10.2"
+          ]
         },
         {
           "id": "decisao",
@@ -444,8 +694,14 @@
           "claimClass": "fato de caso sintético",
           "speech": "Pausa para decidir. O estudo apresenta zonas, mas não mostra fragilidades, potencialidades nem UTHs que expliquem seus limites. Ele está pronto para a etapa seguinte?",
           "visualTitle": "Decida antes de continuar",
-          "visualBullets": ["Há base espacial?", "Há nexo técnico?", "A zona é reproduzível?"],
-          "citations": ["pop-18.10.2"]
+          "visualBullets": [
+            "Há base espacial?",
+            "Há nexo técnico?",
+            "A zona é reproduzível?"
+          ],
+          "citations": [
+            "pop-18.10.2"
+          ]
         },
         {
           "id": "resposta",
@@ -454,8 +710,14 @@
           "claimClass": "conteúdo do POP",
           "speech": "Não. Sem vínculo entre dados, sínteses, UTHs e regras de cada zona, não é possível validar o zoneamento. A lacuna precisa ser registrada e encaminhada antes de tratar o plano como suficiente.",
           "visualTitle": "Resposta comentada",
-          "visualBullets": ["Lacuna identificada", "Consequência registrada", "Complementação focada"],
-          "citations": ["pop-18.10.2"]
+          "visualBullets": [
+            "Lacuna identificada",
+            "Consequência registrada",
+            "Complementação focada"
+          ],
+          "citations": [
+            "pop-18.10.2"
+          ]
         },
         {
           "id": "sintese",
@@ -464,8 +726,16 @@
           "claimClass": "explicação didática sem regra nova",
           "speech": "Leia o PACUERA como uma cadeia: controle e versão; área e cartografia; diagnósticos e sínteses; UTHs e zoneamento; participação, implementação, monitoramento e revisão. Este mapa de leitura não substitui a lista integral de requisitos. Se um elo faltar, registre a consequência.",
           "visualTitle": "Síntese",
-          "visualBullets": ["Fonte", "Evidência", "Zona", "Gestão"],
-          "citations": ["pop-18.10.2", "tr-pacuera-2026"]
+          "visualBullets": [
+            "Fonte",
+            "Evidência",
+            "Zona",
+            "Gestão"
+          ],
+          "citations": [
+            "pop-18.10.2",
+            "tr-pacuera-2026"
+          ]
         },
         {
           "id": "proximo",
@@ -474,8 +744,15 @@
           "claimClass": "prática de transferência",
           "speech": "Agora abra o item 18.10.2 e o termo vigente. Para cada requisito integral, registre a fonte, a evidência apresentada, o nexo com o zoneamento e a consequência de eventual lacuna.",
           "visualTitle": "Próximo passo",
-          "visualBullets": ["Consultar a lista integral", "Ligar fonte e evidência", "Registrar a consequência"],
-          "citations": ["pop-18.10.2", "tr-pacuera-2026"]
+          "visualBullets": [
+            "Consultar a lista integral",
+            "Ligar fonte e evidência",
+            "Registrar a consequência"
+          ],
+          "citations": [
+            "pop-18.10.2",
+            "tr-pacuera-2026"
+          ]
         }
       ]
     },
@@ -489,8 +766,33 @@
       "prerequisite": "Distinguir pendência sanável antes da decisão e obrigação de controle posterior.",
       "theme": "office",
       "sourceRefs": [
-        { "id": "pop-24", "kind": "pop", "locator": "POP, item 24", "sectionId": "pop-section-094", "paragraphIds": ["pop-paragraph-0625"], "tableIds": ["pop-table-056"] },
-        { "id": "pop-24.1", "kind": "pop", "locator": "POP, item 24.1", "sectionId": "pop-section-095", "paragraphIds": ["pop-paragraph-0631", "pop-paragraph-0632", "pop-paragraph-0633", "pop-paragraph-0634", "pop-paragraph-0635", "pop-paragraph-0636", "pop-paragraph-0638"] }
+        {
+          "id": "pop-24",
+          "kind": "pop",
+          "locator": "POP, item 24",
+          "sectionId": "pop-section-094",
+          "paragraphIds": [
+            "pop-paragraph-0625"
+          ],
+          "tableIds": [
+            "pop-table-056"
+          ]
+        },
+        {
+          "id": "pop-24.1",
+          "kind": "pop",
+          "locator": "POP, item 24.1",
+          "sectionId": "pop-section-095",
+          "paragraphIds": [
+            "pop-paragraph-0631",
+            "pop-paragraph-0632",
+            "pop-paragraph-0633",
+            "pop-paragraph-0634",
+            "pop-paragraph-0635",
+            "pop-paragraph-0636",
+            "pop-paragraph-0638"
+          ]
+        }
       ],
       "scenes": [
         {
@@ -500,8 +802,16 @@
           "claimClass": "explicação didática sem regra nova",
           "speech": "Cumprir a legislação ambiental. Manter o monitoramento. Apresentar documentos quando solicitado. Essas frases parecem rigorosas, mas não dizem exatamente quem faz o quê, quando, como ou com qual evidência.",
           "visualTitle": "Frase genérica não orienta controle",
-          "visualBullets": ["Quem?", "O quê?", "Quando?", "Como comprovar?"],
-          "citations": ["pop-24", "pop-24.1"]
+          "visualBullets": [
+            "Quem?",
+            "O quê?",
+            "Quando?",
+            "Como comprovar?"
+          ],
+          "citations": [
+            "pop-24",
+            "pop-24.1"
+          ]
         },
         {
           "id": "objetivo",
@@ -510,8 +820,14 @@
           "claimClass": "explicação didática sem regra nova",
           "speech": "Ao final, você deverá construir uma condicionante com seis elementos: verbo de ação, objeto definido, prazo, indicador, responsabilidade e forma de comprovação.",
           "visualTitle": "Seis elementos verificáveis",
-          "visualBullets": ["Ação e objeto", "Prazo e indicador", "Responsável e comprovação"],
-          "citations": ["pop-24"]
+          "visualBullets": [
+            "Ação e objeto",
+            "Prazo e indicador",
+            "Responsável e comprovação"
+          ],
+          "citations": [
+            "pop-24"
+          ]
         },
         {
           "id": "vocabulario",
@@ -520,8 +836,15 @@
           "claimClass": "explicação didática derivada do POP",
           "speech": "Condicionante é uma obrigação vinculada ao impacto e à fase. Indicador é a medida usada para acompanhar seu cumprimento. Comprovação é a evidência verificável que permite conferir o resultado.",
           "visualTitle": "Vocabulário da redação",
-          "visualBullets": ["Condicionante", "Indicador", "Comprovação"],
-          "citations": ["pop-24", "pop-24.1"]
+          "visualBullets": [
+            "Condicionante",
+            "Indicador",
+            "Comprovação"
+          ],
+          "citations": [
+            "pop-24",
+            "pop-24.1"
+          ]
         },
         {
           "id": "vinculo",
@@ -530,8 +853,14 @@
           "claimClass": "conteúdo do POP",
           "speech": "Antes de redigir, confirme o vínculo. A condicionante precisa ter relação direta com o empreendimento, o impacto avaliado, a pendência sanável e a fase do licenciamento. A prioridade é prevenir, depois mitigar e, quando necessário, compensar.",
           "visualTitle": "Primeiro: vínculo e finalidade",
-          "visualBullets": ["Impacto relacionado", "Fase correta", "Medida proporcional"],
-          "citations": ["pop-24"]
+          "visualBullets": [
+            "Impacto relacionado",
+            "Fase correta",
+            "Medida proporcional"
+          ],
+          "citations": [
+            "pop-24"
+          ]
         },
         {
           "id": "estrutura",
@@ -540,8 +869,14 @@
           "claimClass": "conteúdo do POP",
           "speech": "Escolha um verbo observável, como executar, apresentar, manter ou comprovar. Defina o objeto. Depois acrescente prazo ou gatilho, indicador, responsável e uma forma de comprovação compatível, como relatório com ART ou arquivo geoespacial.",
           "visualTitle": "Depois: estrutura completa",
-          "visualBullets": ["Verbo + objeto", "Prazo + indicador", "Responsável + prova"],
-          "citations": ["pop-24"]
+          "visualBullets": [
+            "Verbo + objeto",
+            "Prazo + indicador",
+            "Responsável + prova"
+          ],
+          "citations": [
+            "pop-24"
+          ]
         },
         {
           "id": "exemplo",
@@ -550,8 +885,14 @@
           "claimClass": "exemplo didático sem regra nova",
           "speech": "Compare. Manter o monitoramento de água é genérico. Uma redação verificável identifica o titular, o programa, a periodicidade, os parâmetros previstos e o relatório técnico com ART que comprovará a execução.",
           "visualTitle": "Do genérico ao verificável",
-          "visualBullets": ["Responsável identificado", "Periodicidade definida", "Relatório e ART"],
-          "citations": ["pop-24"]
+          "visualBullets": [
+            "Responsável identificado",
+            "Periodicidade definida",
+            "Relatório e ART"
+          ],
+          "citations": [
+            "pop-24"
+          ]
         },
         {
           "id": "erro",
@@ -560,8 +901,14 @@
           "claimClass": "conteúdo do POP",
           "speech": "Nem toda lacuna pode virar condicionante. Não transfira ao empreendedor uma decisão do órgão. Não use obrigação impossível. E não empurre para depois uma pendência crítica que precisa ser resolvida antes do deferimento.",
           "visualTitle": "Erro: usar condicionante como atalho",
-          "visualBullets": ["Competência indevida", "Obrigação impossível", "Pendência impeditiva"],
-          "citations": ["pop-24.1"]
+          "visualBullets": [
+            "Competência indevida",
+            "Obrigação impossível",
+            "Pendência impeditiva"
+          ],
+          "citations": [
+            "pop-24.1"
+          ]
         },
         {
           "id": "decisao",
@@ -570,8 +917,14 @@
           "claimClass": "fato de caso sintético",
           "speech": "Pausa para decidir. A poligonal da área diretamente afetada está ausente e essa falta impede analisar APP e supressão. Você transforma a entrega futura em condicionante da licença?",
           "visualTitle": "Decida antes de continuar",
-          "visualBullets": ["A lacuna impede decidir?", "É sanável antes?", "Qual é a consequência?"],
-          "citations": ["pop-24.1"]
+          "visualBullets": [
+            "A lacuna impede decidir?",
+            "É sanável antes?",
+            "Qual é a consequência?"
+          ],
+          "citations": [
+            "pop-24.1"
+          ]
         },
         {
           "id": "resposta",
@@ -580,8 +933,14 @@
           "claimClass": "conteúdo do POP",
           "speech": "Não. Se a pendência crítica impede decisão segura, ela deve ser tratada antes do deferimento. A condicionante controla obrigação posterior quando a atividade já é compatível; ela não corrige artificialmente uma incompatibilidade material.",
           "visualTitle": "Resposta comentada",
-          "visualBullets": ["Volta para diligência", "Resolve antes da decisão", "Condiciona apenas o que é cabível"],
-          "citations": ["pop-24.1"]
+          "visualBullets": [
+            "Volta para diligência",
+            "Resolve antes da decisão",
+            "Condiciona apenas o que é cabível"
+          ],
+          "citations": [
+            "pop-24.1"
+          ]
         },
         {
           "id": "sintese",
@@ -590,8 +949,15 @@
           "claimClass": "explicação didática sem regra nova",
           "speech": "A boa condicionante liga impacto, fase e medida; descreve seis elementos verificáveis; e respeita o limite entre obrigação posterior e pendência impeditiva. Se não puder ser conferida, ainda não está bem redigida.",
           "visualTitle": "Síntese",
-          "visualBullets": ["Relação direta", "Seis elementos", "Limite decisório"],
-          "citations": ["pop-24", "pop-24.1"]
+          "visualBullets": [
+            "Relação direta",
+            "Seis elementos",
+            "Limite decisório"
+          ],
+          "citations": [
+            "pop-24",
+            "pop-24.1"
+          ]
         },
         {
           "id": "proximo",
@@ -600,8 +966,14 @@
           "claimClass": "explicação didática sem regra nova",
           "speech": "Na oficina, escolha uma condicionante genérica e reescreva cada elemento separadamente. Depois leia em voz alta e pergunte: uma terceira pessoa conseguiria verificar o cumprimento sem adivinhar o critério?",
           "visualTitle": "Próximo passo",
-          "visualBullets": ["Reescrever", "Testar verificabilidade", "Revisar proporcionalidade"],
-          "citations": ["pop-24"]
+          "visualBullets": [
+            "Reescrever",
+            "Testar verificabilidade",
+            "Revisar proporcionalidade"
+          ],
+          "citations": [
+            "pop-24"
+          ]
         }
       ]
     },
@@ -615,10 +987,36 @@
       "prerequisite": "Reconhecer ponto, linha e polígono como geometrias diferentes.",
       "theme": "map",
       "sourceRefs": [
-        { "id": "pop-19.1.1", "kind": "pop", "locator": "POP, item 19.1.1", "sectionId": "pop-section-134", "paragraphIds": ["pop-paragraph-0477", "pop-paragraph-0478", "pop-paragraph-0479", "pop-paragraph-0480"] },
-        { "id": "iat-geodados", "kind": "official", "locator": "IAT, Geodados", "officialSourceId": "official-geodados-aplicacoes" },
-        { "id": "iat-uc-data", "kind": "official", "locator": "IAT, Dados de UCs", "officialSourceId": "official-uc-data" },
-        { "id": "iat-management-plans", "kind": "official", "locator": "IAT, Planos de Manejo", "officialSourceId": "official-management-plans" }
+        {
+          "id": "pop-19.1.1",
+          "kind": "pop",
+          "locator": "POP, item 19.1.1",
+          "sectionId": "pop-section-134",
+          "paragraphIds": [
+            "pop-paragraph-0477",
+            "pop-paragraph-0478",
+            "pop-paragraph-0479",
+            "pop-paragraph-0480"
+          ]
+        },
+        {
+          "id": "iat-geodados",
+          "kind": "official",
+          "locator": "IAT, Geodados",
+          "officialSourceId": "official-geodados-aplicacoes"
+        },
+        {
+          "id": "iat-uc-data",
+          "kind": "official",
+          "locator": "IAT, Dados de UCs",
+          "officialSourceId": "official-uc-data"
+        },
+        {
+          "id": "iat-management-plans",
+          "kind": "official",
+          "locator": "IAT, Planos de Manejo",
+          "officialSourceId": "official-management-plans"
+        }
       ],
       "scenes": [
         {
@@ -628,8 +1026,14 @@
           "claimClass": "explicação didática sem regra nova",
           "speech": "Um ponto no mapa aparece fora de uma unidade de conservação. Isso prova que reservatório, barramento, TVR, acessos e linha de conexão também estão fora? Não. A geometria consultada define o alcance da conclusão.",
           "visualTitle": "Um ponto não representa o arranjo",
-          "visualBullets": ["Ponto cadastral", "Estruturas distribuídas", "Conclusão limitada"],
-          "citations": ["pop-19.1.1"]
+          "visualBullets": [
+            "Ponto cadastral",
+            "Estruturas distribuídas",
+            "Conclusão limitada"
+          ],
+          "citations": [
+            "pop-19.1.1"
+          ]
         },
         {
           "id": "objetivo",
@@ -638,8 +1042,15 @@
           "claimClass": "explicação didática sem regra nova",
           "speech": "Ao final, você deverá usar as bases oficiais como apoio, registrar a consulta e reconhecer quando é necessário confrontar camada, ato legal, Plano de Manejo e arquivo geoespacial do processo.",
           "visualTitle": "Objetivo da microaula",
-          "visualBullets": ["Consultar", "Registrar", "Confrontar"],
-          "citations": ["pop-19.1.1", "iat-geodados"]
+          "visualBullets": [
+            "Consultar",
+            "Registrar",
+            "Confrontar"
+          ],
+          "citations": [
+            "pop-19.1.1",
+            "iat-geodados"
+          ]
         },
         {
           "id": "vocabulario",
@@ -648,8 +1059,15 @@
           "claimClass": "explicação didática sem regra nova",
           "speech": "Camada é a representação temática consultada. Geometria é a forma espacial efetivamente analisada, como ponto, linha ou polígono. Rastreabilidade é o registro da base, data, recorte e limitação da consulta.",
           "visualTitle": "Vocabulário geoespacial",
-          "visualBullets": ["Camada", "Geometria", "Rastreabilidade"],
-          "citations": ["pop-19.1.1", "iat-geodados"]
+          "visualBullets": [
+            "Camada",
+            "Geometria",
+            "Rastreabilidade"
+          ],
+          "citations": [
+            "pop-19.1.1",
+            "iat-geodados"
+          ]
         },
         {
           "id": "apoio",
@@ -658,8 +1076,17 @@
           "claimClass": "conteúdo do POP e fonte oficial verificada",
           "speech": "GeoPR e o visualizador do IAT apoiam a triagem locacional e a conferência espacial. Para unidades de conservação, consulte também a página de dados das unidades e o repositório de Planos de Manejo.",
           "visualTitle": "Bases oficiais de apoio",
-          "visualBullets": ["GeoPR e GeoParaná", "Dados das unidades", "Planos e zoneamentos"],
-          "citations": ["pop-19.1.1", "iat-geodados", "iat-uc-data", "iat-management-plans"]
+          "visualBullets": [
+            "GeoPR e GeoParaná",
+            "Dados das unidades",
+            "Planos e zoneamentos"
+          ],
+          "citations": [
+            "pop-19.1.1",
+            "iat-geodados",
+            "iat-uc-data",
+            "iat-management-plans"
+          ]
         },
         {
           "id": "limite",
@@ -668,8 +1095,14 @@
           "claimClass": "conteúdo do POP",
           "speech": "A ferramenta não substitui a leitura do ato legal nem a delimitação geoespacial do empreendimento apresentada no processo. A camada orienta perguntas; a conclusão depende do confronto com a fonte e com a geometria adequada.",
           "visualTitle": "Apoio não é substituição",
-          "visualBullets": ["Camada consultada", "Ato legal", "Geometria do processo"],
-          "citations": ["pop-19.1.1"]
+          "visualBullets": [
+            "Camada consultada",
+            "Ato legal",
+            "Geometria do processo"
+          ],
+          "citations": [
+            "pop-19.1.1"
+          ]
         },
         {
           "id": "rastreabilidade",
@@ -678,8 +1111,14 @@
           "claimClass": "conteúdo do POP",
           "speech": "Torne a consulta reproduzível. Quando relevante, registre data, nome da camada, fonte, metadados, sistema de referência e atualização. Uma captura de tela isolada não deve ser a única memória da análise espacial.",
           "visualTitle": "Registre para reproduzir",
-          "visualBullets": ["Camada e fonte", "Data e metadados", "Sistema de referência"],
-          "citations": ["pop-19.1.1"]
+          "visualBullets": [
+            "Camada e fonte",
+            "Data e metadados",
+            "Sistema de referência"
+          ],
+          "citations": [
+            "pop-19.1.1"
+          ]
         },
         {
           "id": "divergencia",
@@ -688,8 +1127,14 @@
           "claimClass": "conteúdo do POP",
           "speech": "Se a camada divergir do ato de criação ou do Plano de Manejo, não redesenhe o limite por interpretação própria. Registre a divergência como pendente de validação e consulte a unidade competente.",
           "visualTitle": "Erro: corrigir o limite por conta própria",
-          "visualBullets": ["Divergência registrada", "Status explícito", "Consulta competente"],
-          "citations": ["pop-19.1.1"]
+          "visualBullets": [
+            "Divergência registrada",
+            "Status explícito",
+            "Consulta competente"
+          ],
+          "citations": [
+            "pop-19.1.1"
+          ]
         },
         {
           "id": "decisao",
@@ -698,8 +1143,14 @@
           "claimClass": "fato de caso sintético",
           "speech": "Pausa para decidir. A camada de usinas mostra apenas um ponto, e ele está fora da área protegida. Você conclui ausência de interferência para todo o arranjo?",
           "visualTitle": "Decida antes de continuar",
-          "visualBullets": ["Qual geometria foi consultada?", "Quais estruturas faltam?", "O limite é oficial?"],
-          "citations": ["pop-19.1.1"]
+          "visualBullets": [
+            "Qual geometria foi consultada?",
+            "Quais estruturas faltam?",
+            "O limite é oficial?"
+          ],
+          "citations": [
+            "pop-19.1.1"
+          ]
         },
         {
           "id": "resposta",
@@ -708,8 +1159,14 @@
           "claimClass": "conteúdo do POP",
           "speech": "Não. A camada pontual ajuda a localizar o empreendimento, mas não demonstra a posição de barramento, reservatório, TVR, acessos ou sistemas associados. Solicite ou confronte a geometria completa antes de concluir.",
           "visualTitle": "Resposta comentada",
-          "visualBullets": ["Ponto localiza", "Polígonos e linhas delimitam", "Arranjo completo sustenta análise"],
-          "citations": ["pop-19.1.1"]
+          "visualBullets": [
+            "Ponto localiza",
+            "Polígonos e linhas delimitam",
+            "Arranjo completo sustenta análise"
+          ],
+          "citations": [
+            "pop-19.1.1"
+          ]
         },
         {
           "id": "sintese",
@@ -718,8 +1175,16 @@
           "claimClass": "explicação didática sem regra nova",
           "speech": "Use a sequência: fonte oficial, camada identificada, data registrada, geometria compatível, confronto com os atos e tratamento explícito das divergências. O mapa apoia a decisão; não decide sozinho.",
           "visualTitle": "Síntese",
-          "visualBullets": ["Fonte", "Geometria", "Confronto", "Rastreabilidade"],
-          "citations": ["pop-19.1.1", "iat-geodados"]
+          "visualBullets": [
+            "Fonte",
+            "Geometria",
+            "Confronto",
+            "Rastreabilidade"
+          ],
+          "citations": [
+            "pop-19.1.1",
+            "iat-geodados"
+          ]
         },
         {
           "id": "proximo",
@@ -728,8 +1193,15 @@
           "claimClass": "explicação didática sem regra nova",
           "speech": "Na prática, compare um ponto cadastral com um arranjo completo. Liste quais conclusões cada geometria permite e quais permanecem pendentes.",
           "visualTitle": "Próximo passo",
-          "visualBullets": ["Ponto", "Linha", "Polígono", "Limite da conclusão"],
-          "citations": ["pop-19.1.1"]
+          "visualBullets": [
+            "Ponto",
+            "Linha",
+            "Polígono",
+            "Limite da conclusão"
+          ],
+          "citations": [
+            "pop-19.1.1"
+          ]
         }
       ]
     },
@@ -743,8 +1215,24 @@
       "prerequisite": "Ter concluído a minuta e a matriz de achados.",
       "theme": "office",
       "sourceRefs": [
-        { "id": "pop-27", "kind": "pop", "locator": "POP, item 27", "sectionId": "pop-section-108", "paragraphIds": ["pop-paragraph-0720"] },
-        { "id": "pop-quality-checklist", "kind": "pop", "locator": "POP, Tabela 14", "sectionId": "pop-section-109", "tableIds": ["pop-table-060"] }
+        {
+          "id": "pop-27",
+          "kind": "pop",
+          "locator": "POP, item 27",
+          "sectionId": "pop-section-108",
+          "paragraphIds": [
+            "pop-paragraph-0720"
+          ]
+        },
+        {
+          "id": "pop-quality-checklist",
+          "kind": "pop",
+          "locator": "POP, Tabela 14",
+          "sectionId": "pop-section-109",
+          "tableIds": [
+            "pop-table-060"
+          ]
+        }
       ],
       "scenes": [
         {
@@ -754,8 +1242,14 @@
           "claimClass": "explicação didática sem regra nova",
           "speech": "A análise pode estar tecnicamente bem encaminhada e ainda assim falhar na última página: nome de outro empreendimento, norma sem ressalva, data incompatível, condicionante genérica ou conclusão sem suporte. A etapa de controle final não é um detalhe.",
           "visualTitle": "Antes da assinatura, pare",
-          "visualBullets": ["Coerência", "Rastreabilidade", "Documento renderizado"],
-          "citations": ["pop-27"]
+          "visualBullets": [
+            "Coerência",
+            "Rastreabilidade",
+            "Documento renderizado"
+          ],
+          "citations": [
+            "pop-27"
+          ]
         },
         {
           "id": "objetivo",
@@ -764,8 +1258,15 @@
           "claimClass": "explicação didática sem regra nova",
           "speech": "Ao final, você deverá revisar cinco camadas: técnica, normativa, documental, linguística e visual; e bloquear a assinatura quando uma falha crítica permanecer.",
           "visualTitle": "Cinco camadas de controle",
-          "visualBullets": ["Técnica e normativa", "Documental e linguística", "Visual"],
-          "citations": ["pop-27", "pop-quality-checklist"]
+          "visualBullets": [
+            "Técnica e normativa",
+            "Documental e linguística",
+            "Visual"
+          ],
+          "citations": [
+            "pop-27",
+            "pop-quality-checklist"
+          ]
         },
         {
           "id": "vocabulario",
@@ -774,8 +1275,15 @@
           "claimClass": "explicação didática sem regra nova",
           "speech": "Coerência é a compatibilidade entre fatos, análise e conclusão. Rastreabilidade permite localizar a fonte de cada afirmação. Renderização é a conferência do arquivo final exatamente como será lido e assinado.",
           "visualTitle": "Vocabulário do controle final",
-          "visualBullets": ["Coerência", "Rastreabilidade", "Renderização"],
-          "citations": ["pop-27", "pop-quality-checklist"]
+          "visualBullets": [
+            "Coerência",
+            "Rastreabilidade",
+            "Renderização"
+          ],
+          "citations": [
+            "pop-27",
+            "pop-quality-checklist"
+          ]
         },
         {
           "id": "identidade-metodo",
@@ -784,8 +1292,14 @@
           "claimClass": "conteúdo do POP",
           "speech": "Comece pela identidade e pelo método. Confirme empreendimento, CNPJ, município, corpo hídrico, protocolo e modalidade. Verifique se documento, fase, tipologia, data, norma, suficiência, consequência e encaminhamento aparecem de forma coerente.",
           "visualTitle": "Camada 1 · Identidade e método",
-          "visualBullets": ["Caso correto", "Sequência completa", "Conclusão suportada"],
-          "citations": ["pop-quality-checklist"]
+          "visualBullets": [
+            "Caso correto",
+            "Sequência completa",
+            "Conclusão suportada"
+          ],
+          "citations": [
+            "pop-quality-checklist"
+          ]
         },
         {
           "id": "norma-pendencias",
@@ -794,8 +1308,15 @@
           "claimClass": "conteúdo do POP",
           "speech": "Depois, confira norma e transição, separe adequação da modalidade e suficiência documental, e compare o status com a consequência técnica. Remova pendências sem base e reformule condicionantes genéricas.",
           "visualTitle": "Camada 2 · Norma e decisão",
-          "visualBullets": ["Transição verificada", "Temas separados", "Consequência justificada"],
-          "citations": ["pop-27", "pop-quality-checklist"]
+          "visualBullets": [
+            "Transição verificada",
+            "Temas separados",
+            "Consequência justificada"
+          ],
+          "citations": [
+            "pop-27",
+            "pop-quality-checklist"
+          ]
         },
         {
           "id": "linguagem-dados",
@@ -804,8 +1325,14 @@
           "claimClass": "conteúdo do POP",
           "speech": "Revise português brasileiro, concordância, pontuação e tom institucional. Confira dados pessoais e sensíveis pela necessidade de uso. Valide referências, numeração, sumário, quadros, tabelas e anexos.",
           "visualTitle": "Camada 3 · Linguagem e dados",
-          "visualBullets": ["Texto claro", "Dados necessários", "Referências consistentes"],
-          "citations": ["pop-quality-checklist"]
+          "visualBullets": [
+            "Texto claro",
+            "Dados necessários",
+            "Referências consistentes"
+          ],
+          "citations": [
+            "pop-quality-checklist"
+          ]
         },
         {
           "id": "visual",
@@ -814,8 +1341,14 @@
           "claimClass": "conteúdo do POP",
           "speech": "Por fim, renderize o arquivo e inspecione todas as páginas. A revisão do texto extraído não revela tabela quebrada, cabeçalho ausente, página em branco, imagem ilegível ou numeração que mudou na paginação final.",
           "visualTitle": "Camada 4 · Inspeção renderizada",
-          "visualBullets": ["Todas as páginas", "Tabelas e imagens", "Cabeçalho e paginação"],
-          "citations": ["pop-27"]
+          "visualBullets": [
+            "Todas as páginas",
+            "Tabelas e imagens",
+            "Cabeçalho e paginação"
+          ],
+          "citations": [
+            "pop-27"
+          ]
         },
         {
           "id": "interfaces",
@@ -824,8 +1357,14 @@
           "claimClass": "conteúdo do POP",
           "speech": "Aplique também os blocos específicos quando pertinentes: PACUERA, unidades de conservação, APAs, Planos de Manejo, GeoPR, competência federal, acordo de cooperação e obrigações anuais.",
           "visualTitle": "Camada 5 · Interfaces aplicáveis",
-          "visualBullets": ["Território", "PACUERA", "Competência e delegação"],
-          "citations": ["pop-quality-checklist"]
+          "visualBullets": [
+            "Território",
+            "PACUERA",
+            "Competência e delegação"
+          ],
+          "citations": [
+            "pop-quality-checklist"
+          ]
         },
         {
           "id": "erro",
@@ -834,8 +1373,14 @@
           "claimClass": "conteúdo do POP",
           "speech": "O erro é tratar a revisão como leitura rápida do final. O POP exige eliminar resíduos de outro empreendimento, datas incompatíveis, dados sem fonte e conclusões não suportadas, além de conferir o arquivo renderizado.",
           "visualTitle": "Erro: revisar só a conclusão",
-          "visualBullets": ["Resíduos", "Incompatibilidades", "Falhas visuais"],
-          "citations": ["pop-27"]
+          "visualBullets": [
+            "Resíduos",
+            "Incompatibilidades",
+            "Falhas visuais"
+          ],
+          "citations": [
+            "pop-27"
+          ]
         },
         {
           "id": "decisao",
@@ -844,8 +1389,14 @@
           "claimClass": "fato de caso sintético",
           "speech": "Pausa para decidir. A minuta está correta no editor, mas o PDF mostra uma tabela cortada e uma página sem cabeçalho. O documento pode seguir para assinatura?",
           "visualTitle": "Decida antes de continuar",
-          "visualBullets": ["Conteúdo correto", "Renderização falhou", "Assinar ou corrigir?"],
-          "citations": ["pop-27"]
+          "visualBullets": [
+            "Conteúdo correto",
+            "Renderização falhou",
+            "Assinar ou corrigir?"
+          ],
+          "citations": [
+            "pop-27"
+          ]
         },
         {
           "id": "resposta",
@@ -854,8 +1405,15 @@
           "claimClass": "conteúdo do POP",
           "speech": "Não. O arquivo renderizado faz parte da checagem. Corrija a tabela e o cabeçalho, renderize novamente e repita o controle final antes da assinatura.",
           "visualTitle": "Resposta comentada",
-          "visualBullets": ["Corrigir", "Renderizar de novo", "Reexecutar o checklist"],
-          "citations": ["pop-27", "pop-quality-checklist"]
+          "visualBullets": [
+            "Corrigir",
+            "Renderizar de novo",
+            "Reexecutar o checklist"
+          ],
+          "citations": [
+            "pop-27",
+            "pop-quality-checklist"
+          ]
         },
         {
           "id": "sintese",
@@ -864,8 +1422,16 @@
           "claimClass": "explicação didática sem regra nova",
           "speech": "A revisão final pergunta: este é o caso correto, a fonte correta, o raciocínio completo, a linguagem adequada e o documento visualmente íntegro? Qualquer resposta negativa volta para correção.",
           "visualTitle": "Síntese do controle final",
-          "visualBullets": ["Caso", "Fonte", "Raciocínio", "Forma"],
-          "citations": ["pop-27", "pop-quality-checklist"]
+          "visualBullets": [
+            "Caso",
+            "Fonte",
+            "Raciocínio",
+            "Forma"
+          ],
+          "citations": [
+            "pop-27",
+            "pop-quality-checklist"
+          ]
         },
         {
           "id": "proximo",
@@ -874,8 +1440,15 @@
           "claimClass": "prática de transferência",
           "speech": "Na próxima prática, revise uma minuta sintética em duas passagens: primeiro o conteúdo editável; depois o arquivo renderizado. Registre cada falha crítica antes de autorizar a assinatura.",
           "visualTitle": "Próximo passo",
-          "visualBullets": ["Revisar o editável", "Conferir o renderizado", "Bloquear falhas críticas"],
-          "citations": ["pop-27", "pop-quality-checklist"]
+          "visualBullets": [
+            "Revisar o editável",
+            "Conferir o renderizado",
+            "Bloquear falhas críticas"
+          ],
+          "citations": [
+            "pop-27",
+            "pop-quality-checklist"
+          ]
         }
       ]
     }

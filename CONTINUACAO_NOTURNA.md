@@ -772,7 +772,7 @@ em `SEQUENCIA_AREA_TECNICA.md`, resumidas:
    quem opera a máquina.
 4. A chefia se compromete com 60 a 100 horas de analista para o gabarito cego,
    mais 40 a 60 de curadoria normativa?
-5. Qual o veículo de pagamento viável para API de modelo de linguagem?
+5. Qual o veículo de pagamento viável para a API do processador externo?
 
 Enquanto não respondem: o desenvolvimento roda contra Keycloak local em
 contêiner e **nenhum documento real entra**.

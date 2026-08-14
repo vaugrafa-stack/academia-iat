@@ -129,7 +129,7 @@ do commit que o contém.
 | Serviço | Repositório | Estado comprovado | Não confundir com |
 |---|---|---|---|
 | Conta opcional de estudo | repositório privado separado | fonte validada e versionada no SHA `a89a81c130f4d784578ff02162b22b7511d95599`; 136 testes locais, wheel reproduzível, ciclo de e-mail/senha e sincronização exercitados; matriz Windows/Ubuntu e imagem Docker aprovadas no workflow `31509742433` | serviço implantado, conta obrigatória ou armazenamento de processos |
-| Área Técnica restrita | repositório privado separado | fonte validada e versionada no SHA `b64591ad3a266024840be2f0f1518cdb52a033ec`; execução local com `337 passed` e `3 skipped` de privilégio do Windows; matriz Windows/Ubuntu em Python 3.12/3.13 e imagem Docker aprovadas no workflow `31520073659`; OIDC, autorização, upload, conversa, fila, resultados, backup e retenção exercitados com dados sintéticos | ambiente institucional, IA autônoma ou tratamento autorizado de processo real |
+| Área Técnica restrita | repositório privado separado | fonte validada e versionada no SHA `b64591ad3a266024840be2f0f1518cdb52a033ec`; execução local com `337 passed` e `3 skipped` de privilégio do Windows; matriz Windows/Ubuntu em Python 3.12/3.13 e imagem Docker aprovadas no workflow `31520073659`; OIDC, autorização, upload, conversa, fila, resultados, backup e retenção exercitados com dados sintéticos | ambiente institucional, processamento autônomo ou tratamento autorizado de processo real |
 
 Os dois serviços privados não possuem implantação ou pipeline de produção
 comprovados. A Academia pública continua utilizável sem conta remota. Nenhum

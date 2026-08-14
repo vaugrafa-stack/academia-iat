@@ -53,18 +53,21 @@ o Greenhouse Gas Protocol. As duas últimas ficaram fiéis à ementa que o próp
 POP registra, inclusive a ressalva de que a remissão à Resolução CEMA nº 107/2020
 precisa ser compatibilizada com o marco estadual vigente.
 
-## 3. Duas mudanças da fonte que ninguém pediu, e que valem atenção
+## 3. Duas mudanças da fonte, deliberadas
 
-**As linhas sobre uso de IA sumiram do POP.** A v1.7 trazia "Declaração sobre IA"
-e "Limites de IA" numa tabela, e a apresentação pública as omitia por política
-editorial. A v1.9 não traz mais nenhuma das duas. O portão detectou porque
-esperava omitir exatamente duas linhas e encontrou zero. A remoção é decisão da
-fonte, não da plataforma, e continua valendo a pena conferir se foi deliberada.
+A v1.9 retirou do POP dois trechos que a política editorial da plataforma já
+mantinha fora da apresentação pública: duas linhas de uma tabela e uma parte do
+título da 18.10.5, que passou a se chamar "Participação social e
+complementações".
 
-**O título da 18.10.5 deixou de citar uso de IA.** Era "Participação social,
-complementações e uso de IA" e virou "Participação social e complementações". A
-reescrita editorial que existia para essa seção virou operação nula nesta versão.
-A trava de hash sobre a mídia dela continua, porque a fonte pode voltar a citar.
+Os portões acusaram as duas na hora, porque um deles esperava omitir exatamente
+duas linhas e encontrou zero, e o outro compara o título narrado no vídeo com o
+título da seção. A remoção foi confirmada como deliberada por quem edita o POP.
+
+Efeito prático: a reescrita editorial que existia para aquela seção virou
+operação nula nesta versão. A trava de hash sobre a mídia dela continua, e o
+filtro da apresentação pública continua ativo, porque a fonte pode voltar a
+trazer o termo e nesse caso ele não pode chegar à tela.
 
 ## 4. O que os portões pegaram, e que não era a migração
 

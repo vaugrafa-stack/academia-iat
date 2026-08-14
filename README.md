@@ -143,8 +143,8 @@ e `3 skipped`; Windows e Ubuntu em Python 3.12/3.13 e a imagem Docker foram
 aprovados no [workflow 31520073659](https://github.com/vaugrafa-stack/iat-area-tecnica/actions/runs/31520073659).
 Os casos ignorados exigem privilégio de symlink no Windows. Isso não constitui
 implantação institucional, não autoriza documento real e não transforma o
-worker em um serviço autônomo de IA: a análise ainda depende de processador
-externo aprovado ou de revisão humana.
+worker em um serviço autônomo: a análise ainda depende de processador externo
+aprovado ou de conferência técnica.
 
 ## Avaliação e registro pessoal
 

@@ -15,7 +15,7 @@ from unittest import mock
 
 from tools import (
     audit_pop_candidate,
-    build_lesson_videos,
+    segmentacao,
     build_mapa,
     validate_claude_workflow,
 )
@@ -451,11 +451,11 @@ class RoteiroDeVideoaulaTests(unittest.TestCase):
     )
 
     def test_separa_cada_marcador_em_uma_frase(self):
-        frases = build_lesson_videos.frases(self.BULLETS)
+        frases = segmentacao.frases(self.BULLETS)
         self.assertEqual(len(frases), 3)
 
     def test_nao_deixa_o_marcador_na_fala(self):
-        for frase in build_lesson_videos.frases(self.BULLETS):
+        for frase in segmentacao.frases(self.BULLETS):
             self.assertFalse(
                 frase.lstrip().startswith(("•", "‣", "◦", "⁃", "∙")),
                 f"marcador sobrou na fala: {frase!r}",
@@ -470,21 +470,21 @@ class RoteiroDeVideoaulaTests(unittest.TestCase):
             f"trinta e cinco caracteres exigido pelo filtro." for i in range(20)
         )
         self.assertGreater(len(lista), 900)
-        self.assertEqual(len(build_lesson_videos.frases(lista)), 20)
+        self.assertEqual(len(segmentacao.frases(lista)), 20)
 
     def test_prosa_comum_continua_sendo_quebrada_como_antes(self):
         prosa = (
             "A analise deve ser proporcional ao programa e ao periodo apurado. "
             "Nao e necessario formular solicitacao em todos os itens da matriz."
         )
-        self.assertEqual(len(build_lesson_videos.frases(prosa)), 2)
+        self.assertEqual(len(segmentacao.frases(prosa)), 2)
 
     def test_abreviacao_de_artigo_nao_quebra_a_frase(self):
         texto = (
             "O art. 15 da Instrucao Normativa trata da documentacao exigida na "
             "fase de licenca previa do empreendimento."
         )
-        self.assertEqual(len(build_lesson_videos.frases(texto)), 1)
+        self.assertEqual(len(segmentacao.frases(texto)), 1)
 
 
 if __name__ == "__main__":

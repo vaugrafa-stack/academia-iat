@@ -17,13 +17,13 @@ Legenda: ⬜ pendente · 🟨 em execução ou aguardando prova · ✅ comprovad
 
 ### Fonte congelada
 
-- POP: `POP ou Manual Hidreletricas IAT Julho de 2026 (Com APA, UCs, RTTA).docx`
+- POP: `POP_DLE_HID_001_v1.9_Sem_Classificacao_de_Gravidade.docx`
 - Origem local: fornecida fora do repositório e identificada exclusivamente pelo
   nome, tamanho e SHA-256 abaixo; nenhum caminho pessoal é versionado.
 - SHA-256:
-  `8ffa771546c244e194e6d7b41dd91d5ab3f56083e94c081e1e5c9a17f13f2c3c`
-- Tamanho: `4.408.377 bytes`
-- Versão operacional visível na capa: `1.7`
+  `f7056462b84de383c8e2dbb1e22d3bb732d90fbd876a933e0596642caf5b4871`
+- Tamanho: `4.196.608 bytes`
+- Versão operacional visível na capa: `1.9`
 - Situação: minuta técnica pendente de validação técnica e institucional.
 
 O arquivo anterior, com outro tamanho e hash, não é fonte desta execução. A
@@ -99,7 +99,7 @@ adequadas ao papel.
 - 159 tópicos com conteúdo próprio no percurso; os títulos 13.1 e 19.1 são cabeçalhos estruturais representados pelas subseções;
 - seção 26.3 tratada como conteúdo substantivo;
 - fidelidade textual normalizada sem divergência;
-- 66 tabelas, 14 figuras e 21 fluxogramas controlados por manifesto.
+- 69 tabelas, 14 figuras e 21 fluxogramas controlados por manifesto.
 
 **Critério de aceite contínuo**
 
@@ -640,7 +640,7 @@ não foi convertido em alegação de competência ou aprovação institucional.
 **Rastreabilidade e segurança didática do laboratório revalidadas em 28/07/2026**
 
 - as 130 decisões dos 26 cenários possuem vínculo estruturado com 180 trechos
-  literais da minuta POP v1.7 e com as aulas correspondentes;
+  literais da minuta POP v1.9 e com as aulas correspondentes;
 - cada debriefing separa fundamento da fonte, fatos sintéticos e interpretação
   didática, exibindo o trecho citado e o destino exato para revisão;
 - dez conclusões frágeis foram corrigidas para não presumir enquadramento,

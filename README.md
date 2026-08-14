@@ -1,8 +1,8 @@
 # Academia IAT — Licenciamento Hidrelétrico
 
-Plataforma de aprendizagem, consulta técnica e prática aplicada baseada na minuta `POP-DLE-HID-001`, versão operacional 1.7, julho de 2026, e na proposta de fluxogramas vinculada ao projeto.
+Plataforma de aprendizagem, consulta técnica e prática aplicada baseada na minuta `POP-DLE-HID-001`, versão operacional 1.9, agosto de 2026, e na proposta de fluxogramas vinculada ao projeto.
 
-> **Status da fonte:** a versão 1.7 vem do texto visível da capa. O valor “1.2” que ainda aparece em propriedades internas do arquivo Word é metadado legado e não identifica a versão operacional. A minuta e os recursos desta plataforma permanecem sujeitos a validação humana, normativa e institucional.
+> **Status da fonte:** a versão 1.9 vem do texto visível da capa, que continua sendo a única autoridade sobre a versão operacional. Na minuta v1.7 o metadado interno do arquivo Word trazia “1.2” e divergia da capa; na v1.9 ele coincide. O extrator registra por escrito qual dos três casos ocorreu, ausente, divergente ou coerente, e um metadado que divirja sem registro reprova. A minuta e os recursos desta plataforma permanecem sujeitos a validação humana, normativa e institucional.
 
 O estado operacional corrente, a distinção entre produção e repositórios apenas
 enviados e os riscos ainda abertos ficam em [`STATUS_ATUAL.md`](STATUS_ATUAL.md).
@@ -11,9 +11,9 @@ painel de situação.
 
 ## Fonte e rastreabilidade
 
-- arquivo-fonte atual: `POP ou Manual Hidreletricas IAT Julho de 2026 (Com APA, UCs, RTTA).docx`;
-- SHA-256: `8ffa771546c244e194e6d7b41dd91d5ab3f56083e94c081e1e5c9a17f13f2c3c`;
-- versão operacional: 1.7, conforme a capa;
+- arquivo-fonte atual: `POP_DLE_HID_001_v1.9_Sem_Classificacao_de_Gravidade.docx`;
+- SHA-256: `f7056462b84de383c8e2dbb1e22d3bb732d90fbd876a933e0596642caf5b4871`;
+- versão operacional: 1.9, conforme a capa;
 - extração: 167 seções, das quais 161 não navegacionais e 6 apenas navegacionais;
 - percurso: 159 tópicos com conteúdo próprio; 2 dos 161 títulos não navegacionais são apenas cabeçalhos estruturais e permanecem representados pela hierarquia e pelas subseções;
 - conteúdo pesquisável: 3.339 nós de parágrafo;

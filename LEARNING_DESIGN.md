@@ -4,16 +4,16 @@
 
 Este documento especifica a arquitetura pedagógica pretendida para transformar o conteúdo das duas fontes fornecidas em uma plataforma de aprendizagem operacional, interativa e avaliável:
 
-- `POP ou Manual Hidreletricas IAT Julho de 2026 (Com APA, UCs, RTTA).docx`;
+- `POP_DLE_HID_001_v1.9_Sem_Classificacao_de_Gravidade.docx`;
 - `Proposta de Fluxogramas (Original, Simplificado e Detalhado).docx`.
 
 O desenho cobre os 27 capítulos do POP, os 6 anexos, as referências normativas, os 46 quadros, as 20 tabelas, as 14 figuras do POP e os 7 fluxogramas apresentados em três níveis (original, simplificado e completo). O conteúdo não deve ser reduzido a cartões resumidos: cada tema precisa aparecer como explicação, demonstração visual, decisão simulada, prática com feedback e evidência de aprendizagem.
 
 ### Controle da fonte e status deste documento
 
-- versão operacional: **1.7**, conforme o texto visível da capa;
+- versão operacional: **1.9**, conforme o texto visível da capa;
 - data: julho de 2026;
-- SHA-256 da fonte: `8ffa771546c244e194e6d7b41dd91d5ab3f56083e94c081e1e5c9a17f13f2c3c`;
+- SHA-256 da fonte: `f7056462b84de383c8e2dbb1e22d3bb732d90fbd876a933e0596642caf5b4871`;
 - natureza: minuta técnica pendente de validação humana, jurídica e institucional;
 - o valor “1.2” preservado nas propriedades internas do Word é metadado legado e não deve ser exibido como versão operacional;
 - os fluxogramas são uma proposta de treinamento e comparação, não um fluxo institucional automaticamente aprovado.
@@ -32,7 +32,7 @@ Este arquivo combina requisitos-alvo e decisões de desenho. Ele não deve ser l
 
 ### Regra editorial da plataforma
 
-Todo conteúdo normativo deve exibir a faixa: **“Base de treinamento: minuta POP v1.7, julho de 2026, pendente de validação institucional. Antes de decidir em processo real, confirme a fonte oficial, a norma, o Termo de Referência e o fluxo institucional vigentes.”** A plataforma ensina o método descrito na minuta; não cria exigência autônoma, não substitui o SGA, a manifestação jurídica, a outorga, o ato da ANEEL, a manifestação do IPHAN, o planejamento municipal, a decisão de unidade especializada ou a autoridade competente.
+Todo conteúdo normativo deve exibir a faixa: **“Base de treinamento: minuta POP v1.9, agosto de 2026, pendente de validação institucional. Antes de decidir em processo real, confirme a fonte oficial, a norma, o Termo de Referência e o fluxo institucional vigentes.”** A plataforma ensina o método descrito na minuta; não cria exigência autônoma, não substitui o SGA, a manifestação jurídica, a outorga, o ato da ANEEL, a manifestação do IPHAN, o planejamento municipal, a decisão de unidade especializada ou a autoridade competente.
 
 ### Resultado de aprendizagem final
 
@@ -674,7 +674,7 @@ Todos os vídeos aprofundados precisam de legenda, transcrição, descrição vi
 
 - As 14 figuras do POP devem ser exibidas em alta resolução, com zoom, texto alternativo e versão interativa reconstruída por nós quando isso agregar compreensão.
 - Os 7 fluxos do segundo DOCX devem oferecer abas `Visão resumida`, `Fluxo completo` e `Original de referência`.
-- O fluxo completo, conferido com a minuta POP v1.7, é a base da prática. A versão original serve à comparação de evolução e não deve ser apresentada como decisão automática nem como fluxo institucional validado.
+- O fluxo completo, conferido com a minuta POP v1.9, é a base da prática. A versão original serve à comparação de evolução e não deve ser apresentada como decisão automática nem como fluxo institucional validado.
 - Cada nó deve abrir: pergunta, dado necessário, fonte, risco do erro e próximo passo.
 - Em modo prova, nomes dos nós podem ser ocultados e o usuário deve ordenar ou selecionar a rota.
 
@@ -907,7 +907,7 @@ O painel do aluno deve mostrar desempenho por eixo e não apenas porcentagem ger
 | 2 Responsabilidades institucionais | M01.1 | atores, produtos, competências e limites | jogo “Quem decide?” |
 | 3 Base normativa e ordem de consulta | M01.2-M01.4 | hierarquia, dupla transição, compatibilização e validação | ficha normativa de caso antigo |
 | 4 Definições e siglas | M01.5 + glossário global | tipologias, atos, documentos e erros recorrentes | pares conceito/erro e busca contextual |
-| 5 Princípios e método obrigatório | M01.6-M01.7 | sequência de oito passos, status e gravidade | classificador de achados |
+| 5 Princípios e método obrigatório | M01.6-M01.7 | sequência de oito passos e classificação documental | classificador de achados |
 | 6 Fluxo geral | M02.1/M02.5 | oito movimentos e saídas da triagem | fluxo clicável e seleção de saída |
 | 7 Recebimento e triagem | M02.2-M02.5 | leitura cronológica/temática, agrupamento e alertas | processo virtual de 28 itens |
 | 8 Enquadramento | M03.1-M03.5 | tipologia, critérios, matriz estadual, situações especiais e ANEEL | simulador de enquadramento motivado |

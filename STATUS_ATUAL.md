@@ -25,9 +25,9 @@ publicado é verificado pelo SHA incorporado ao aplicativo.
 
 ## Fonte e medidas reproduzíveis
 
-Fonte congelada: minuta `POP-DLE-HID-001`, versão operacional 1.7 indicada na
+Fonte congelada: minuta `POP-DLE-HID-001`, versão operacional 1.9 indicada na
 capa, SHA-256
-`8ffa771546c244e194e6d7b41dd91d5ab3f56083e94c081e1e5c9a17f13f2c3c`.
+`f7056462b84de383c8e2dbb1e22d3bb732d90fbd876a933e0596642caf5b4871`.
 
 | Medida | Valor | Fonte reproduzível |
 |---|---:|---|

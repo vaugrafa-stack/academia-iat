@@ -8,3 +8,11 @@ src/data/lab-index.json text eol=lf
 src/data/lab-corpos.json text eol=lf
 src/data/question-bank.json text eol=lf
 public/media/aula/*.visemes.json text eol=lf
+
+# A pasta do piloto tem os mesmos artefatos de texto das aulas, e ficava fora
+# da normalizacao: cada rodada de geracao alternava o fim de linha e sujava o
+# diff sem mudar conteudo.
+public/media/piloto/*.visemes.json text eol=lf
+public/media/piloto/*.txt text eol=lf
+public/media/piloto/manifest.json text eol=lf
+public/media/piloto/provenance.json text eol=lf

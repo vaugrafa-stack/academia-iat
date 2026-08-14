@@ -92,7 +92,7 @@ quadro preto intermediário.
 As fontes foram verificadas em 4 de agosto de 2026 e estão identificadas no
 arquivo de roteiros. O termo PACUERA registra validade até 1º de fevereiro de
 2027, e o gate exige nova conferência depois dessa data. O POP público usado pelo gate tem SHA-256
-`8ffa771546c244e194e6d7b41dd91d5ab3f56083e94c081e1e5c9a17f13f2c3c`.
+`f7056462b84de383c8e2dbb1e22d3bb732d90fbd876a933e0596642caf5b4871`.
 
 ## Reprodução e controle
 

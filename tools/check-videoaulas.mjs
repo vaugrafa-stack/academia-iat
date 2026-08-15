@@ -15,6 +15,7 @@
 //      nao.
 //
 // Uso:  node tools/check-videoaulas.mjs
+import { createHash } from 'node:crypto';
 import { readFile, stat } from 'node:fs/promises';
 import { resolve } from 'node:path';
 
@@ -26,6 +27,48 @@ const { lessons } = derivarAulas(pop, tracks);
 
 const MAX_CPS = 17;
 const MAX_CUE_CHARS = 220;
+
+const stableValue = (value) => {
+  if (Array.isArray(value)) return value.map(stableValue);
+  if (value && typeof value === 'object') {
+    return Object.fromEntries(
+      Object.keys(value).sort().map((key) => [key, stableValue(value[key])]),
+    );
+  }
+  return value;
+};
+const sha256Text = (value) => createHash('sha256').update(value, 'utf8').digest('hex');
+const blocksById = new Map(pop.blocks.map((block) => [block.id, block]));
+const tablesById = new Map(pop.tables.map((table) => [table.id, table]));
+const sectionSourceSha256 = (section) => {
+  const sourceBlocks = (section.blockIds || []).flatMap((blockId) => {
+    const block = blocksById.get(blockId) || {};
+    if (block.type === 'paragraph') {
+      return [{ type: 'paragraph', text: block.paragraph?.text || '' }];
+    }
+    if (block.type === 'table') {
+      const table = tablesById.get(block.tableId) || {};
+      return [{
+        type: 'table',
+        title: table.title || table.caption || '',
+        rows: (table.rows || []).map((row) =>
+          (row.cells || []).map((cell) => cell.text || ''),
+        ),
+      }];
+    }
+    return [];
+  });
+  return sha256Text(JSON.stringify(stableValue({
+    id: section.id || '',
+    number: section.number || '',
+    title: section.title || '',
+    blocks: sourceBlocks,
+  })));
+};
+const sectionHashes = new Map(pop.sections.map((section) => [
+  section.id,
+  sectionSourceSha256(section),
+]));
 
 // Legibilidade da legenda, travada em 31/07/2026. A medicao anterior a essa
 // data encontrou 88% dos blocos com uma linha acima de 42 caracteres (a maior
@@ -74,6 +117,11 @@ for (const [id, meta] of Object.entries(manifesto)) {
   }
   if (!Number.isFinite(meta.dur) || meta.dur <= 0) fail(`${id}: duracao invalida no manifesto`);
   if (!Number.isInteger(meta.cenas) || meta.cenas < 1) fail(`${id}: quantidade de cenas invalida`);
+  if (!/^[a-f0-9]{64}$/u.test(meta.sourceSha256 || '')) {
+    fail(`${id}: hash do roteiro-fonte ausente ou invalido`);
+  } else if (meta.sourceSha256 !== sectionHashes.get(id)) {
+    fail(`${id}: midia desatualizada em relacao ao conteudo atual da secao`);
+  }
   // Uma cue de titulo alem das cenas, e agora POSSIVELMENTE mais de uma cue
   // por cena. A regra era igualdade estrita (cues === cenas + 1), o que
   // impedia legenda legivel: uma fala de 11 segundos com 170 caracteres nao

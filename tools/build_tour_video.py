@@ -67,7 +67,7 @@ def draw_plant(d, t, foco=None):
     for row in range(4):
         pts = [(x, 316 + row * 34 + math.sin(x / 60 + t * 1.4 + row) * 4) for x in range(0, 456, 12)]
         d.line(pts, fill="#7fc4f4", width=3)
-    # barragem (gravidade)
+    # barragem estabilizada pelo peso proprio
     d.polygon([(455, 300), (455, 610), (545, 610), (505, 300)], fill=CONC, outline="#5b6672")
     for yy in range(330, 600, 42):
         d.line((458, yy, 520 + (yy - 330) // 8, yy), fill="#9aa8a0", width=2)

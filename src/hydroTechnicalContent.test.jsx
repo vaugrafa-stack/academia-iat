@@ -37,11 +37,14 @@ describe('contratos técnicos do guia de hidrelétricas', () => {
     const html = renderToStaticMarkup(<HydroGuide go={() => {}} />);
 
     expect(html).toContain('P = ρ · g · Q · H · η');
+    expect(html).toContain('constante física g');
+    expect(html).toContain('Concreto estabilizado pelo peso próprio');
     expect(html).toContain('queda líquida disponível após as perdas');
     expect(html).toContain('rede de distribuição ou transmissão');
     expect(html).toContain('não significa impacto automaticamente menor');
     expect(html).toContain('não os definem sozinhos');
     expect(html).not.toContain('segue pela linha de transmissão');
     expect(html).not.toContain('O tamanho do reservatório define a operação e o impacto');
+    expect(html).not.toMatch(/gravidad/i);
   });
 });

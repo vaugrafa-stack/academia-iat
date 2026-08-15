@@ -1,3 +1,4 @@
+import { execFileSync } from 'node:child_process';
 import { readFile, readdir } from 'node:fs/promises';
 import { extname, join, relative, resolve } from 'node:path';
 
@@ -7,6 +8,19 @@ const failures = [];
 
 function fail(message) {
   failures.push(message);
+}
+
+try {
+  const trackedDocuments = execFileSync(
+    'git',
+    ['ls-files', '--', '*.docx'],
+    { cwd: root, encoding: 'utf8', windowsHide: true },
+  ).trim();
+  if (trackedDocuments) {
+    fail(`documento institucional DOCX versionado: ${trackedDocuments.split(/\r?\n/u).join(', ')}`);
+  }
+} catch {
+  fail('não foi possível confirmar a ausência de DOCX institucional no Git.');
 }
 
 async function sourceFiles(directory) {

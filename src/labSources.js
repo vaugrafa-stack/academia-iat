@@ -9,9 +9,9 @@ import { LAB_SOURCE_INDEX } from './labSourceIndex.js';
 export const LAB_SOURCE_POLICY = Object.freeze({
   schemaVersion: 1,
   sourceTitle: 'POP de Licenciamento Ambiental de Empreendimentos Hidrelétricos',
-  sourceDocument: 'POP ou Manual Hidreletricas IAT Julho de 2026 (Com APA, UCs, RTTA).docx',
-  sourceVersion: '1.7 — julho de 2026',
-  sourceSha256: '8ffa771546c244e194e6d7b41dd91d5ab3f56083e94c081e1e5c9a17f13f2c3c',
+  sourceDocument: 'POP_DLE_HID_001_v1.9_Linguagem_Operacional_Revisada.docx',
+  sourceVersion: '1.9 — agosto de 2026',
+  sourceSha256: 'd66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4',
   institutionalStatus: 'technical-draft',
   institutionalStatusLabel: 'Minuta técnica',
   supportModes: Object.freeze({
@@ -24,12 +24,12 @@ export const LAB_SOURCE_POLICY = Object.freeze({
   }),
 });
 
-// Cada valor é um trecho literal de uma aula derivada do POP v1.7. O teste de
+// Cada valor é um trecho literal de uma aula derivada do POP v1.9. O teste de
 // contrato confere a literalidade também em células de quadros e tabelas.
 export const POP_LAB_QUOTES = Object.freeze({
   'pop-section-003': 'Este procedimento não cria exigência documental autônoma. A exigência deve decorrer da norma aplicável, do Termo de Referência pertinente, do SGA, de condicionante anterior, de fato novo, de inconsistência técnica ou de ausência que impeça a decisão segura. Quando não houver elemento suficiente para concluir, o técnico deve registrar a limitação de forma explícita e proporcional.',
   'pop-section-004': 'A unidade de licenciamento deve verificar a existência e a compatibilidade de outorgas, atos setoriais e manifestações externas, mas não pode substituir a decisão técnica ou administrativa do órgão competente.',
-  'pop-section-005': 'A análise deve partir da norma vigente aplicável ao caso concreto e da data do protocolo. Para processos antigos, deve ser verificada a regra de transição, sem aplicação retroativa automática de exigências novas, salvo quando houver previsão normativa, fato novo, alteração do empreendimento, inconsistência crítica ou ausência que impeça a decisão segura.',
+  'pop-section-005': 'A análise deve partir da norma vigente aplicável ao caso concreto e da data do protocolo. Para processos antigos, deve ser verificada a regra de transição, sem aplicação retroativa automática de exigências novas, salvo quando houver previsão normativa, fato novo, alteração do empreendimento, inconsistência ou ausência que impeça a decisão segura.',
   'pop-section-006': 'Para essa análise, devem ser registrados a data do protocolo, a data de entrada em vigor considerada conforme o art. 67, o estágio processual existente nessa data, o regime jurídico aplicado e a justificativa.',
   'pop-section-007': 'Os arts. 6º e 7º fixam faixas de validade e preveem prorrogação automática quando a renovação for requerida com antecedência mínima de 120 dias.',
   'pop-section-008': 'Até a definição institucional, o técnico deve registrar a pendência como Pendente de validação, sem criar solução normativa própria.',
@@ -46,12 +46,12 @@ export const POP_LAB_QUOTES = Object.freeze({
   'pop-section-033': 'A LP avalia localização e concepção, a LI autoriza instalação conforme projetos e programas, e a LO autoriza operação após verificação da implantação, do atendimento das condicionantes e da regularidade atual.',
   'pop-section-034': 'A LP deve analisar viabilidade ambiental, alternativas locacionais e tecnológicas, áreas de influência, impactos, medidas mitigadoras e compatibilidade com ordenamento territorial, recursos hídricos, intervenientes e restrições ambientais.',
   'pop-section-036': 'Quando houver UC ou APA, confirmar que o projeto executivo, as áreas de apoio e os sistemas associados permanecem nas zonas avaliadas e respeitam as condições do Plano de Manejo aplicável.',
-  'pop-section-037': 'Não emitir LI com condicionante crítica da LP sem atendimento ou justificativa.',
+  'pop-section-037': 'Não emitir LI se condicionante da LP indispensável à decisão estiver sem atendimento ou justificativa.',
   'pop-section-038': 'A LO deve verificar se o empreendimento foi implantado conforme licença e projeto aprovado, se as condicionantes foram atendidas, se os programas foram executados e se a operação projetada é compatível com outorga, ANEEL, segurança ambiental, vazão remanescente e obrigações de monitoramento.',
   'pop-section-039': 'Status declarado e evidências de atendimento.',
   'pop-section-040': 'Nos processos sujeitos a EIA, deve ser realizada pelo menos uma audiência pública antes da decisão final sobre a LP.',
   'pop-section-041': 'Na IN IAT nº 09/2025, possui aplicação expressa para enchimento de reservatório e testes de comissionamento de CGH submetida a RAS, PCH e UHE',
-  'pop-section-043': 'Em RLO, RLAS, LASR, LOR, LIR, LOC ou licença corretiva amparada pelo regime aplicável, a análise deve focar a regularidade atual, a situação fática e a continuidade da operação, sem rediscutir integralmente a viabilidade locacional já apreciada, salvo fato novo, alteração, irregularidade, dano, inconsistência crítica, vencimento, mudança de titularidade ou ausência que impeça a decisão.',
+  'pop-section-043': 'Em RLO, RLAS, LASR, LOR, LIR, LOC ou licença corretiva amparada pelo regime aplicável, a análise deve focar a regularidade atual, a situação fática e a continuidade da operação, sem rediscutir integralmente a viabilidade locacional já apreciada, salvo fato novo, alteração, irregularidade, dano, inconsistência ou ausência que impeça a decisão, vencimento ou mudança de titularidade.',
   'pop-section-045': 'Número, validade, objeto, condicionantes, tempestividade e CRL ou prorrogação quando aplicável.',
   'pop-section-048': 'Transferência de titularidade não se confunde com comunicação societária. Deve haver ato administrativo do órgão ambiental, comprovação de poderes de representação, anuência ou documentação equivalente do titular anterior quando aplicável, assunção de condicionantes e passivos, atualização cadastral, compatibilidade com outorga e documentação setorial da ANEEL.',
   'pop-section-050': 'Alterações em empreendimentos hidrelétricos devem ser avaliadas conforme natureza, escala, fase, impactos adicionais e relação com a licença vigente.',
@@ -79,7 +79,7 @@ export const POP_LAB_QUOTES = Object.freeze({
   'pop-section-090': 'O checklist controla a instrução; a Informação Técnica interpreta o conjunto; o Parecer Técnico Conclusivo deve observar a competência institucional e apresentar conclusão motivada.',
   'pop-section-092': 'A diligência deve ser consolidada após análise integrada do processo e comunicada, em regra, de uma única vez, ressalvadas exigências decorrentes de fatos novos ou de fundamento superveniente devidamente registrado, conforme art. 48 da Lei Federal nº 15.190/2025.',
   'pop-section-094': 'Devem ser claras, mensuráveis, verificáveis, proporcionais e acompanhadas de prazo e forma de comprovação.',
-  'pop-section-095': 'Condicionante que tenta sanar pendência crítica que deveria ser resolvida antes do deferimento.',
+  'pop-section-095': 'Condicionante que tenta sanar pendência que deve ser resolvida antes do deferimento.',
   'pop-section-096': 'Complementação de projetos, detalhamento de programas, obtenção de manifestações, estudos de campo, alternativas e medidas para próxima fase.',
   'pop-section-098': 'Inadequação de modalidade deve levar prioritariamente à reclassificação ou adequação do pedido quando juridicamente possível; manifestação não favorável exige motivação técnica suficiente e não deve ser utilizada como resposta automática a lacuna sanável.',
   'pop-section-099': 'Enquanto não houver elaboração, revisão e aprovação formalmente identificadas, o arquivo deve ser denominado minuta técnica e não pode declarar validação institucional concluída.',
@@ -113,7 +113,7 @@ const QUOTE_OVERRIDES = Object.freeze({
   'lab-transicao-q4-pop-section-006': 'A etapa em curso preserva as obrigações e os cronogramas já estabelecidos até sua conclusão, enquanto as etapas subsequentes devem observar a legislação federal vigente.',
   'lab-triagem-q2-pop-section-019': 'Documento de outro empreendimento ou outro corpo hídrico deve ser classificado como inconsistente, e a inconsistência impede a decisão até ser sanada.',
   'lab-triagem-q3-pop-section-019': 'Estudo antigo pode ser aproveitado apenas se compatível com o projeto atual, a fase, a área de influência, a operação e a realidade ambiental atual.',
-  'lab-triagem-q4-pop-section-019': 'Mudança de titularidade sem ato administrativo formal, anuência, assunção de condicionantes e compatibilidade com outorga e ANEEL deve ser tratada como pendência crítica.',
+  'lab-triagem-q4-pop-section-019': 'Mudança de titularidade sem ato administrativo formal, anuência, assunção de condicionantes e compatibilidade com outorga e ANEEL deve ser registrada como impeditiva à decisão, com indicação do saneamento necessário.',
   'lab-triagem-q5-pop-section-017': 'O analista deve evitar concluir por deferimento ou indeferimento antes de confrontar SGA, e-Protocolo, memorial, estudo, outorga, ANEEL, cartografia e condicionantes anteriores.',
   'lab-barragem-q4-pop-section-051': 'Acessos, canteiros, bota-fora, jazidas, áreas de empréstimo, pátios, alojamentos e depósitos podem integrar o escopo da licença hidrelétrica ou exigir processo próprio.',
   'lab-intervenientes-q1-pop-section-082': 'Para CGH, não se deve exigir automaticamente autorização ou concessão própria de PCH, mas documentação setorial vigente e compatível com titular, potência e fase.',

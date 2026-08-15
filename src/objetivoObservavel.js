@@ -77,10 +77,10 @@ const COMECA_EM_ACAO = new RegExp(`^((?:${VERBOS})\\b${CORPO})`, "i");
  * A fronteira exige cuidado com dois enganos, os dois já cometidos aqui:
  *
  * 1. **"deveria" não é exigência, é hipótese.** O POP usa o condicional para
- *    DESCREVER erro: "condicionante que tenta sanar pendência crítica que
+ *    DESCREVER erro: "condicionante que tenta sanar pendência impeditiva que
  *    deveria ser resolvida antes do deferimento" é item de lista de armadilhas.
  *    Casando com `deve` solto, essa frase virava "Aplicar o que o POP fixa
- *    aqui: condicionante que tenta sanar pendência crítica", ou seja, a
+ *    aqui: condicionante que tenta sanar pendência impeditiva", ou seja, a
  *    plataforma mandava fazer exatamente o que o POP manda evitar. Num domínio
  *    onde a aula orienta decisão administrativa, esse engano não é estético.
  * 2. **`\b` não serve para separar palavra em português.** Em JavaScript,

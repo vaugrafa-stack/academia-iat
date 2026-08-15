@@ -95,6 +95,33 @@ describe('política editorial da superfície pública', () => {
   ])('não cria falso positivo para “%s”', (text) => {
     expect(firstEditorialViolation(text)).toBeNull();
   });
+
+  it.each([
+    'Gravidade do achado',
+    'Severidade alta',
+    'Criticidade documental',
+    'Pendência crítica',
+    'Análise crítica dos resultados',
+    'Atividade de baixo risco',
+    'Intervenção de baixo impacto',
+    'Empreendimento de baixo potencial',
+    'Atividade com risco baixo',
+    'Intervenções com impactos baixos',
+    'Critical analysis of the results',
+    'High severity finding',
+    'Physical gravity',
+    'Low-impact activity',
+  ])('bloqueia a linguagem operacional retirada em “%s”', (text) => {
+    expect(firstEditorialViolation(text)).not.toBeNull();
+  });
+
+  it.each([
+    'Usina Hidrelétrica Baixo Iguaçu',
+    'A constante física g entra no cálculo.',
+    'Pendência que impede a decisão segura.',
+  ])('preserva formulações permitidas em “%s”', (text) => {
+    expect(firstEditorialViolation(text)).toBeNull();
+  });
 });
 
 describe('exceção institucional do auditor de privacidade', () => {

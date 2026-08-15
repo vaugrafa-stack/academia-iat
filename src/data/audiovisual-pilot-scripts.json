@@ -4,7 +4,7 @@
   "sourceDocument": {
     "code": "POP-DLE-HID-001",
     "version": "1.9",
-    "sha256": "f7056462b84de383c8e2dbb1e22d3bb732d90fbd876a933e0596642caf5b4871",
+    "sha256": "d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4",
     "status": "minuta técnica pendente de validação técnica e institucional"
   },
   "voice": {
@@ -450,7 +450,7 @@
           "role": "common-error",
           "presenter": true,
           "claimClass": "conteúdo do POP",
-          "speech": "Um erro crítico é aplicar o fluxo estadual ordinário sem verificar indício de competência federal, processo no SEI do IBAMA, acordo de cooperação, termo aditivo, delegação cautelar ou decisão judicial relacionada.",
+          "speech": "Um erro que invalida o enquadramento é aplicar o fluxo estadual ordinário sem verificar indício de competência federal, processo no SEI do IBAMA, acordo de cooperação, termo aditivo, delegação cautelar ou decisão judicial relacionada.",
           "visualTitle": "Erro: ignorar a competência",
           "visualBullets": [
             "Indício federal",
@@ -899,7 +899,7 @@
           "role": "common-error",
           "presenter": true,
           "claimClass": "conteúdo do POP",
-          "speech": "Nem toda lacuna pode virar condicionante. Não transfira ao empreendedor uma decisão do órgão. Não use obrigação impossível. E não empurre para depois uma pendência crítica que precisa ser resolvida antes do deferimento.",
+          "speech": "Nem toda lacuna pode virar condicionante. Não transfira ao empreendedor uma decisão do órgão. Não use obrigação impossível. E não empurre para depois uma pendência que precisa ser resolvida antes do deferimento.",
           "visualTitle": "Erro: usar condicionante como atalho",
           "visualBullets": [
             "Competência indevida",
@@ -931,7 +931,7 @@
           "role": "feedback",
           "presenter": true,
           "claimClass": "conteúdo do POP",
-          "speech": "Não. Se a pendência crítica impede decisão segura, ela deve ser tratada antes do deferimento. A condicionante controla obrigação posterior quando a atividade já é compatível; ela não corrige artificialmente uma incompatibilidade material.",
+          "speech": "Não. Se a pendência impede decisão segura, ela deve ser tratada antes do deferimento. A condicionante controla obrigação posterior quando a atividade já é compatível; ela não corrige artificialmente uma incompatibilidade material.",
           "visualTitle": "Resposta comentada",
           "visualBullets": [
             "Volta para diligência",
@@ -1256,7 +1256,7 @@
           "role": "objective",
           "presenter": true,
           "claimClass": "explicação didática sem regra nova",
-          "speech": "Ao final, você deverá revisar cinco camadas: técnica, normativa, documental, linguística e visual; e bloquear a assinatura quando uma falha crítica permanecer.",
+          "speech": "Ao final, você deverá revisar cinco camadas: técnica, normativa, documental, linguística e visual; e bloquear a assinatura quando permanecer uma falha que impeça a validação do documento.",
           "visualTitle": "Cinco camadas de controle",
           "visualBullets": [
             "Técnica e normativa",
@@ -1438,12 +1438,12 @@
           "role": "next-step",
           "presenter": false,
           "claimClass": "prática de transferência",
-          "speech": "Na próxima prática, revise uma minuta sintética em duas passagens: primeiro o conteúdo editável; depois o arquivo renderizado. Registre cada falha crítica antes de autorizar a assinatura.",
+          "speech": "Na próxima prática, revise uma minuta sintética em duas passagens: primeiro o conteúdo editável; depois o arquivo renderizado. Registre cada falha que impeça a assinatura antes de autorizá-la.",
           "visualTitle": "Próximo passo",
           "visualBullets": [
             "Revisar o editável",
             "Conferir o renderizado",
-            "Bloquear falhas críticas"
+            "Bloquear falhas que impeçam a assinatura"
           ],
           "citations": [
             "pop-27",

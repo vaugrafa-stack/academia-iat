@@ -14,3 +14,4 @@ public/media/.aula.backup-*/
 __pycache__/
 *.py[cod]
 PLANO_AREA_TECNICA.md
+POP_DLE_HID_*.docx

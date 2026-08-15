@@ -167,7 +167,7 @@ describe('proveniência estruturada dos cenários do laboratório', () => {
     );
   });
 
-  it('usa trechos específicos da alegação nas fontes das tarefas críticas', () => {
+  it('usa trechos específicos da alegação nas fontes das tarefas determinantes', () => {
     const expectations = [
       [
         'pop-section-006',
@@ -321,8 +321,8 @@ describe('proveniência estruturada dos cenários do laboratório', () => {
   it('identifica inequivocamente a minuta técnica usada como fonte', () => {
     expect(LAB_SOURCE_POLICY).toMatchObject({
       schemaVersion: 1,
-      sourceVersion: '1.7 — julho de 2026',
-      sourceSha256: '8ffa771546c244e194e6d7b41dd91d5ab3f56083e94c081e1e5c9a17f13f2c3c',
+      sourceVersion: '1.9 — agosto de 2026',
+      sourceSha256: 'd66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4',
       institutionalStatus: 'technical-draft',
     });
   });

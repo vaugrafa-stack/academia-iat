@@ -1,6 +1,6 @@
 # Status atual da Academia IAT
 
-Atualizado em 10/08/2026. Este é o único documento de situação corrente. Os
+Atualizado em 14/08/2026. Este é o único documento de situação corrente. Os
 planos detalhados do repositório preservam decisões e snapshots históricos.
 Quando houver divergência, prevalecem os manifestos gerados, os testes do commit
 identificado e este status.
@@ -27,20 +27,20 @@ publicado é verificado pelo SHA incorporado ao aplicativo.
 
 Fonte congelada: minuta `POP-DLE-HID-001`, versão operacional 1.9 indicada na
 capa, SHA-256
-`f7056462b84de383c8e2dbb1e22d3bb732d90fbd876a933e0596642caf5b4871`.
+`d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4`.
 
 | Medida | Valor | Fonte reproduzível |
 |---|---:|---|
-| Seções extraídas | 167 | `src/data/extraction-validation.json` |
-| Títulos não navegacionais | 161 | `src/data/extraction-validation.json` |
-| Tópicos didáticos com conteúdo | 159 | `src/data/extraction-validation.json` |
+| Seções extraídas | 176 | `src/data/extraction-validation.json` |
+| Títulos não navegacionais | 170 | `src/data/extraction-validation.json` |
+| Tópicos didáticos com conteúdo | 168 | `src/data/extraction-validation.json` |
 | Módulos | 17 | `src/courseData.js` e testes de contrato |
-| Quadros e tabelas | 66 | `src/data/extraction-validation.json` |
+| Quadros e tabelas | 69 | `src/data/extraction-validation.json` |
 | Figuras do POP | 14 | `src/data/extraction-validation.json` |
 | Fluxogramas-fonte | 21 | `src/data/extraction-validation.json` |
 | Ativos extraídos | 35 | `public/source-assets/asset-manifest.json` |
 | Casos sintéticos | 26 | `src/data/lab-index.json` |
-| Questões comentadas | 213 | `src/data/question-bank.json` |
+| Questões comentadas | 224 | `src/data/question-bank.json` |
 | Referências registradas | 60 | dados de referência e `check-questoes` |
 
 Essas contagens provam cobertura e integridade estrutural. Não provam vigência
@@ -151,7 +151,7 @@ transforma o relatório histórico em evidência válida.
 
 O candidato atual recebeu uma nova revisão independente do diff. Foram
 reexecutados 12 cenários adversariais nas contas e 11 na Área Técnica, além das
-suítes completas, sem bloqueador de segurança alto ou médio para commit e push.
+suítes completas, sem bloqueador de segurança conhecido para commit e push.
 Essa liberação não equivale a autorização para implantar os serviços privados
 nem para receber documentos reais.
 

@@ -69,7 +69,7 @@ describe('validade mínima do banco de avaliações', () => {
     expect(correctYes).toBeGreaterThanOrEqual(10);
   });
 
-  it('preserva as distinções críticas corrigidas na revisão editorial', () => {
+  it('preserva as distinções determinantes corrigidas na revisão editorial', () => {
     const lac = questionBank.find((item) => (
       item.question.includes('critérios')
       && item.question.includes('LAC de CGH')
@@ -83,12 +83,13 @@ describe('validade mínima do banco de avaliações', () => {
     expect(memorial.question).not.toContain('estudo ambiental atualizado');
 
     const eiaPch = questionBank.filter((item) => (
-      item.question.includes('gatilho')
+      item.question.includes('situações passíveis de EIA e RIMA')
       && item.question.includes('PCH')
     ));
     expect(eiaPch.length).toBeGreaterThanOrEqual(2);
     expect(eiaPch.every((item) => (
       item.explanation.includes('inicialmente simplificado')
+      && /confirmad/iu.test(item.explanation)
     ))).toBe(true);
 
     const lacuna = questionBank.find((item) => (

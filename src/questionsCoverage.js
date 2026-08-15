@@ -40,8 +40,8 @@ export const QUESTOES_COBERTURA = [
   ['m01', 'Quando uma pendência impede a decisão?',
     ['Quando exige apenas ajuste de forma que não modifica a compreensão nem a segurança da decisão', 'Quando impede decisão segura ou envolve tema essencial de enquadramento, viabilidade ou regularidade', 'Quando qualquer campo secundário está vazio, independentemente da consequência para a análise'], 1,
     'O impedimento decorre da consequência da lacuna, e não apenas da existência de uma falha.',
-    // A fonte era a seção 5.3, que definia a escala de gravidade e saiu do POP.
-    // O critério continua existindo, agora na seção 25, dita pela consequência.
+    // A fonte anterior definia uma escala ordinal que saiu do POP. O critério
+    // atual está na seção 25 e decorre diretamente da consequência.
     { sec: 'pop-section-098', quote: 'A conclusão deve decorrer da consequência técnica e da possibilidade de saneamento dos achados.' }],
 
   // M03 — enquadramento e Consulta Prévia
@@ -120,7 +120,7 @@ export const QUESTOES_COBERTURA = [
     'A escolha do TR é vinculada ao processo e à fonte oficial, sem montagem automática de requisitos.',
     { sec: 'pop-section-061', quote: 'A escolha do TR deve ser confirmada no processo e na fonte oficial, sem combinação automática de requisitos.' }],
   ['m08', 'O caráter simplificado do RAS permite omitir dados essenciais à decisão?',
-    ['Sim, desde que os dados sejam prometidos para a fase posterior por meio de condicionante genérica', 'Não; a simplificação não autoriza a ausência dos dados essenciais para avaliar o empreendimento', 'Sim, quando o diagnóstico regional indicar que os impactos locais provavelmente serão de baixa magnitude'], 1,
+    ['Sim, desde que os dados sejam prometidos para a fase posterior por meio de condicionante genérica', 'Não; a simplificação não autoriza a ausência dos dados essenciais para avaliar o empreendimento', 'Sim, quando houver diagnóstico regional, independentemente dos dados específicos do local'], 1,
     'Simplificação reduz complexidade procedimental, não o mínimo necessário para uma decisão fundamentada.',
     { sec: 'pop-section-062', quote: 'Simplificação não autoriza ausência de dados essenciais' }],
   ['m08', 'Qual decisão o EIA deve permitir que a análise ambiental fundamente?',

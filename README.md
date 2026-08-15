@@ -11,14 +11,14 @@ painel de situação.
 
 ## Fonte e rastreabilidade
 
-- arquivo-fonte atual: `POP_DLE_HID_001_v1.9_Sem_Classificacao_de_Gravidade.docx`;
-- SHA-256: `f7056462b84de383c8e2dbb1e22d3bb732d90fbd876a933e0596642caf5b4871`;
+- arquivo-fonte atual: `POP_DLE_HID_001_v1.9_Linguagem_Operacional_Revisada.docx`;
+- SHA-256: `d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4`;
 - versão operacional: 1.9, conforme a capa;
-- extração: 167 seções, das quais 161 não navegacionais e 6 apenas navegacionais;
-- percurso: 159 tópicos com conteúdo próprio; 2 dos 161 títulos não navegacionais são apenas cabeçalhos estruturais e permanecem representados pela hierarquia e pelas subseções;
-- conteúdo pesquisável: 3.339 nós de parágrafo;
-- elementos estruturados: 66 quadros/tabelas, 14 figuras do POP e 21 fluxogramas da proposta;
-- fidelidade textual normalizada: nenhuma divergência detectada entre os 3.365 nós de parágrafo da fonte e da extração.
+- extração: 176 seções, das quais 170 não navegacionais e 6 apenas navegacionais;
+- percurso: 168 tópicos com conteúdo próprio; 2 dos 170 títulos não navegacionais são apenas cabeçalhos estruturais e permanecem representados pela hierarquia e pelas subseções;
+- conteúdo pesquisável: 3.396 nós de parágrafo;
+- elementos estruturados: 69 quadros/tabelas, 14 figuras do POP e 21 fluxogramas da proposta;
+- fidelidade textual normalizada: nenhuma divergência detectada entre os 3.424 nós de parágrafo da fonte e da extração.
 
 As evidências verificáveis ficam em `src/data/extraction-validation.json`, `src/data/content-catalog.json` e `public/source-assets/asset-manifest.json`. Os arquivos DOCX originais não integram o repositório público.
 
@@ -45,7 +45,7 @@ pnpm preview
 
 O preview manual fica em `http://127.0.0.1:4173`. O teste E2E abre o artefato
 final em Chromium nas larguras de 1440, 320, 360, 390 e 430 pixels, percorre
-as rotas críticas e reprova diante de erro de console, resposta local com erro,
+as rotas principais e reprova diante de erro de console, resposta local com erro,
 overlay de framework, tela vazia ou rolagem horizontal involuntária. O teste
 PWA separado exercita em Chromium o Service Worker real, navegação sem rede,
 registro e controle da página, atualização de uma versão para outra e o suporte
@@ -65,30 +65,30 @@ nos registros gerados. Builds locais usam o SHA atual com o sufixo `-local`.
 
 ## Estado atual da plataforma
 
-- 17 módulos e 159 tópicos didáticos vinculados às seções com conteúdo próprio do POP;
+- 17 módulos e 168 tópicos didáticos vinculados às seções com conteúdo próprio do POP;
 - Formação em uma sequência única de 17 módulos, com pesquisa, expansão por módulo, acesso livre a qualquer aula e código carregado sob demanda;
 - aulas com orientação, texto-fonte, quadros, tabelas, figuras, anotações e referências;
 - cada aula oferece checagem comentada, recuperação ativa escrita e autoauditoria; para novas conclusões, a checagem deve estar correta, o registro deve ter ao menos 80 caracteres significativos e dois de três critérios devem ser conferidos;
-- 159 resumos audiovisuais por seção, com 10,5 a 102,5 segundos, voz em português, pôster, texto aberto, legenda WebVTT opcional e transcrição;
+- 168 resumos audiovisuais por seção, com 10,5 a 102,5 segundos, voz em português, pôster, texto aberto, legenda WebVTT opcional e transcrição;
 - seis microaulas piloto usam professor fictício, voz, legenda, transcrição e cenários de barragem, território, campo e análise documental; a boca é exibida em cadência visual reduzida, com transições curtas, pausas neutras, cabeça estável e rosto integralmente enquadrado também em áreas estreitas, mas os tempos continuam estimados e não possuem comprovação formal de precisão de até 100 ms;
 - 17 vídeos de abertura de módulo e três animações SVG complementares;
 - 7 fluxogramas interativos e 21 fluxogramas-fonte para comparação; cada atividade interativa explicita evidência, risco e fonte em seis etapas e termina em uma decisão ramificada comentada;
 - 26 cenários de laboratório com documentos e dados exclusivamente sintéticos, distribuídos em cinco níveis objetivos: 10 para Reconhecer, 5 para Aplicar, 2 para Decidir, 5 para Integrar e 4 para Fundamentar;
 - cinco casos acrescentam classificação de evidências e quatro acrescentam tarefa aberta; contratos versionados de objetivo impedem que conclusões antigas ou incompletas sejam reaproveitadas como domínio do exercício atual;
 - 26 folhas-resposta de consulta, cobrindo 130 decisões com justificativa específica, evidência relacionada, apoio literal do POP, conteúdo mínimo, desfecho, glossário, lacunas a confirmar e proveniência das classificações e tarefas abertas;
-- 213 questões comentadas, com uma questão exclusiva para cada uma das 159 aulas, avaliações por módulo e diagnóstico em formas A e B; o candidato de 10/08/2026 acrescenta objetivo, nível cognitivo, dificuldade estrutural, prioridade de remediação e feedback por distrator, todos marcados para revisão humana;
+- 224 questões comentadas, com uma questão exclusiva para cada uma das 168 aulas, avaliações por módulo e diagnóstico em formas A e B; o candidato de 10/08/2026 acrescenta objetivo, nível cognitivo, dificuldade estrutural, prioridade de remediação e feedback por distrator, todos marcados para revisão humana;
 - Redator de Informação Técnica organizado pelos 12 elementos do item 23.1, seleção pesquisável de caso e a divergência em relação às 10 seções do Anexo B mantida visível;
 - registro das 60 referências do POP: 22 vínculos diretos para fonte oficial, 38 vínculos para índice oficial e nenhuma referência sem portal oficial mapeado; vigência e aplicação continuam pendentes de revisão humana;
-- busca sobre 3.339 nós textuais, 66 quadros/tabelas e 35 imagens extraídas das fontes;
+- busca sobre 3.396 nós textuais, 69 quadros/tabelas e 35 imagens extraídas das fontes;
 - favoritos, caderno pessoal, progresso, resultados e retomada no navegador;
-- PWA com 17 pacotes opcionais de mídia para estudo offline, totalizando aproximadamente 194,0 MiB; a reprodução online usa streaming e só persiste mídia após comando explícito;
+- PWA com 17 pacotes opcionais de mídia para estudo offline, totalizando aproximadamente 203,1 MiB; a reprodução online usa streaming e só persiste mídia após comando explícito;
 - quatro catálogos volumosos — mapa, índice do laboratório, mídia piloto e pacotes offline — são carregados como JSON externos validados, somente quando necessários;
 - o menu lateral possui rolagem própria para manter o Suporte alcançável em telas baixas e oferece acesso externo ao portal GeoPR logo após o Mapa do Paraná;
 - layout responsivo, navegação por teclado e suporte a `prefers-reduced-motion`.
 
 Os números demonstram presença e rastreabilidade, não eficácia pedagógica nem competência profissional. Os vídeos são resumos para orientação e revisão; não substituem a leitura, a consulta à fonte, a prática deliberada ou uma demonstração técnica aprofundada. Os pacotes offline atuais cobrem a mídia catalogada de cada módulo e os recursos compartilhados do palco, mas não equivalem a uma cópia integral de todos os recursos da plataforma.
 
-As travas de conclusão das aulas comprovam apenas que uma resposta foi registrada, dois critérios foram autodeclarados e uma questão objetiva foi respondida corretamente. Comprimento de texto e autoauditoria não medem qualidade técnica. As 159 aulas possuem questão exclusiva, dentro de um banco de 213 questões com fonte verificada. Em 41 delas, a alternativa correta ainda é a mais longa; o portão de qualidade mede essa pista para impedir regressão. Revisão editorial, psicométrica e especializada continua necessária.
+As travas de conclusão das aulas comprovam apenas que uma resposta foi registrada, dois critérios foram autodeclarados e uma questão objetiva foi respondida corretamente. Comprimento de texto e autoauditoria não medem qualidade técnica. As 168 aulas possuem questão exclusiva, dentro de um banco de 224 questões com fonte verificada. Em 42 questões, a alternativa correta ainda supera em pelo menos 10% o maior distrator; o portão de qualidade mede essa pista para impedir regressão. Revisão editorial, psicométrica e especializada continua necessária.
 
 Os laboratórios usam casos e documentos sintéticos marcados como exemplos didáticos sem validade administrativa. Nenhum processo real ou dado pessoal deve ser inserido na plataforma.
 

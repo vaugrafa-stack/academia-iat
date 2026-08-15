@@ -17,7 +17,7 @@ Legenda: ⬜ pendente · 🟨 em execução ou aguardando prova · ✅ comprovad
 
 ### Fonte congelada
 
-- POP: `POP_DLE_HID_001_v1.9_Sem_Classificacao_de_Gravidade.docx`
+- POP: versão intermediária 1.9, preservada fora do repositório para auditoria
 - Origem local: fornecida fora do repositório e identificada exclusivamente pelo
   nome, tamanho e SHA-256 abaixo; nenhum caminho pessoal é versionado.
 - SHA-256:
@@ -85,7 +85,7 @@ adequadas ao papel.
 **Evidência exigida para manter ✅**
 
 - relatórios versionados;
-- lista de achados com severidade, estado e prova;
+- lista de achados com consequência, estado, momento de saneamento e prova;
 - nenhuma conclusão apresentada como validação institucional.
 
 ### E1 — Proveniência e integridade da fonte ✅
@@ -173,7 +173,7 @@ adequadas ao papel.
 - manter os 17 módulos em uma sequência única e explicitar pré-requisitos
   somente quando forem necessários ao conteúdo;
 - adicionar revisão espaçada e retomada de erros;
-- aumentar variações de caso nos módulos críticos;
+- aumentar variações de caso nos módulos determinantes;
 - mapear objetivo → atividade → avaliação;
 - testar compreensão com iniciantes e especialistas.
 
@@ -267,7 +267,7 @@ obrigar uma sequência de curso.
 
 **Pronto quando**
 
-- maioria das tarefas críticas é resolvida em até três interações nos testes;
+- maioria das tarefas principais é resolvida em até três interações nos testes;
 - busca tolera sinônimos e termos leigos;
 - nenhuma resposta aparece sem fonte ou marcador de validação;
 - consulta funciona em desktop, celular e offline dentro do escopo declarado.
@@ -397,7 +397,7 @@ pendentes**
 - perfil/progresso antigo migra sem perda silenciosa;
 - falhas relevantes têm teste;
 - pipeline limpa reproduz o release;
-- nenhuma dependência crítica/alta conhecida.
+- nenhuma dependência conhecida capaz de bloquear a publicação.
 
 ### E12 — Casos reais, LGPD e governança de acervo 🟨
 

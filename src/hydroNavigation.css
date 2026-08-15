@@ -38,6 +38,9 @@
   display: flex;
   min-width: 0;
   gap: 3px;
+  /* Reserva um respiro rolável para o último atalho. Sem ele, o limite
+     fracionário do scroll podia deixar Licenciamento cerca de 1 px cortado. */
+  padding-inline-end: 4px;
   overflow-x: auto;
   overscroll-behavior-inline: contain;
   scrollbar-width: thin;

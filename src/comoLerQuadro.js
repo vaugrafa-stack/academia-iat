@@ -16,8 +16,8 @@
 // Ou seja, o metodo do POP inteiro esta dentro das tabelas: o que conferir, o
 // que o achado vira e para onde vai. Este modulo torna esse esqueleto visivel.
 //
-// A coluna Gravidade saiu do POP. O vocabulario dela saiu junto, senao o
-// modulo continuaria prometendo explicar uma coluna que nao existe mais.
+// A antiga escala ordinal saiu do POP. O modulo descreve apenas consequencia,
+// momento de saneamento e encaminhamento presentes no quadro atual.
 //
 // O que ele NAO faz: acrescentar exigencia. Cada frase descreve o PAPEL da
 // coluna dentro do instrumento, que e fato sobre a estrutura do quadro, e nao

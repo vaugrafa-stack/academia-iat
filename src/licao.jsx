@@ -1367,7 +1367,7 @@ function LessonOverview({
           {/* Estes paragrafos sao o texto do POP na redacao original, e nao
               parafrase da plataforma. Sem o rotulo, quem le nao tinha como
               distinguir a palavra da norma do comentario didatico, que neste
-              dominio e a confusao mais grave possivel: transforma
+              dominio e a confusao de maior consequência possível: transforma
               interpretacao em exigencia aos olhos de quem esta aprendendo. */}
           <strong className="kp-notas-tit">
             <Quote size={14} aria-hidden="true" /> Trechos do POP, na redação

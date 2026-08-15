@@ -82,7 +82,7 @@ describe("rotas de entrada da formação", () => {
     );
     expect(html).toContain("Primeira semana");
     expect(html).toContain("Analisar um processo");
-    expect(html).toContain("não dispensam os módulos críticos");
+    expect(html).toContain("não dispensam os módulos indispensáveis");
     expect(html).toContain("não é certificação de competência profissional");
     expect(html).toContain("Nunca estudou uma hidrelétrica?");
     expect(html).toContain("Já domino estes fundamentos");

@@ -133,7 +133,7 @@ O aviso do orçamento desapareceu: as duas medidas voltaram para a faixa OK.
 
 A causa exata: `courseData.js` importava `labCases.js` na primeira linha, e como
 `main.jsx` importa `tracks`, `questionBank` e `trackGroups` de `courseData`, os 70 kB
-de casos entravam no caminho crítico de quem só queria abrir uma aula.
+de casos entravam no caminho principal de quem só queria abrir uma aula.
 
 O que foi feito:
 
@@ -448,7 +448,7 @@ tela de aluno. Ela é ferramenta de autor.
 
 ### D3. Fonte, interpretação e exemplo visualmente distintos ⬜
 
-**Por quê.** É o defeito mais grave possível neste domínio: misturar os três transforma
+**Por quê.** É o defeito de maior consequência possível neste domínio: misturar os três transforma
 opinião em norma aos olhos de quem está aprendendo.
 
 **O que fazer.** Auditar cada tela e garantir três tratamentos visuais inconfundíveis,

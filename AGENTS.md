@@ -55,7 +55,7 @@ Usar as classificações documentais do projeto:
 - Pendente de validação;
 - Não se aplica.
 
-Usar gravidade Crítico, Médio ou Baixo, sempre vinculada à consequência decisória.
+Não atribuir escala ou rótulo ordinal a achados e pendências. Registrar diretamente a consequência decisória, o momento de saneamento, a evidência faltante e o encaminhamento aplicável.
 
 Não criar mecanismo que aparente decidir juridicamente ou tecnicamente aquilo que depende de análise humana, do caso concreto, do IAT, da área especializada, da autoridade competente ou de órgão interveniente.
 

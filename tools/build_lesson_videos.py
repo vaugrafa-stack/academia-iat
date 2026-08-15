@@ -25,6 +25,7 @@ from __future__ import annotations
 
 import argparse
 from concurrent.futures import ProcessPoolExecutor, as_completed
+import hashlib
 import json
 import math
 import os
@@ -617,6 +618,7 @@ def specs():
         titulo = ((sec.get("number", "") + " ") if sec.get("number") else "") + sec["title"]
         yield {
             "id": sec["id"],
+            "sourceSha256": section_source_sha256(sec, blocos, tabelas),
             "titulo": titulo.strip(),
             "kicker": f"{tr['code']} · SEÇÃO DO POP",
             "accent": ACCENTS[int(tr["code"][1:]) % len(ACCENTS)],
@@ -631,6 +633,45 @@ def specs():
 
 def _node():
     return "node"
+
+
+def section_source_sha256(sec, blocos, tabelas):
+    """Fingerprint canônico do conteúdo que pode originar a videoaula.
+
+    O hash é por seção, não pelo DOCX inteiro: uma correção localizada
+    invalida somente as mídias cujo roteiro realmente pode ter mudado.
+    """
+    source_blocks = []
+    for block_id in sec.get("blockIds", []):
+        block = blocos.get(block_id) or {}
+        if block.get("type") == "paragraph":
+            source_blocks.append({
+                "type": "paragraph",
+                "text": block.get("paragraph", {}).get("text", ""),
+            })
+        elif block.get("type") == "table":
+            table = tabelas.get(block.get("tableId")) or {}
+            source_blocks.append({
+                "type": "table",
+                "title": table.get("title") or table.get("caption") or "",
+                "rows": [
+                    [cell.get("text", "") for cell in row.get("cells", [])]
+                    for row in table.get("rows", [])
+                ],
+            })
+    payload = {
+        "id": sec.get("id", ""),
+        "number": sec.get("number", ""),
+        "title": sec.get("title", ""),
+        "blocks": source_blocks,
+    }
+    canonical = json.dumps(
+        payload,
+        ensure_ascii=False,
+        sort_keys=True,
+        separators=(",", ":"),
+    ).encode("utf-8")
+    return hashlib.sha256(canonical).hexdigest()
 
 
 _JS = """
@@ -729,6 +770,7 @@ def metadados_da_narracao(preparado):
         "cues": len(blocos),
         "generatorVersion": GENERATOR_VERSION,
         "maxCps": round(max(taxas_cps), 3) if taxas_cps else 0.0,
+        "sourceSha256": preparado["sourceSha256"],
     }
 
 

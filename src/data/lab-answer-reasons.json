@@ -85,9 +85,9 @@
   ],
   "triagem": [
     "Sim. A leitura começa pelo objeto do requerimento e pelo histórico porque somente depois é possível avaliar a suficiência dos documentos para aquele processo.",
-    "Sim. Documento de outro empreendimento ou corpo hídrico rompe a correspondência com o objeto e deve ser tratado como inconsistência geralmente crítica.",
+    "Sim. Documento de outro empreendimento ou corpo hídrico rompe a correspondência com o objeto e impede seu uso seguro até o saneamento.",
     "Sim. Estudo antigo só pode ser aproveitado depois de demonstrada sua compatibilidade com projeto, fase, área de influência e realidade ambiental atuais.",
-    "Não. Mudança de titularidade sem ato formal e sem assunção das obrigações é pendência crítica, não simples observação.",
+    "Não. Mudança de titularidade sem ato formal e sem assunção das obrigações precisa ser sanada antes do mérito; não é simples observação.",
     "Não. O deferimento só pode ser considerado depois da conferência dos sistemas e documentos e da resolução das inconsistências cadastrais e documentais identificadas."
   ],
   "barragem": [
@@ -113,7 +113,7 @@
   ],
   "condicionantes": [
     "Não. Condicionante genérica, sem prazo, indicador ou comprovação, não é mensurável nem verificável e precisa ser reescrita ou suprimida.",
-    "Não. Pendência crítica que impede decisão segura deve ser resolvida antes do deferimento e não pode ser transferida para condicionante.",
+    "Não. Pendência que impede decisão segura deve ser resolvida antes do deferimento e não pode ser transferida para condicionante.",
     "Sim. A diligência deve reunir as exigências após análise integrada e ser comunicada, em regra, de uma única vez, ressalvado fundamento superveniente registrado.",
     "Não. Compensação por impacto não mitigável depende da demonstração do impacto residual e não decorre automaticamente da potência ou tipologia.",
     "Não. Lacuna sanável deve receber diligência proporcional; manifestação não favorável não é resposta automática quando a complementação é possível."
@@ -178,7 +178,7 @@
     "Não. A condicionante 1 repete obrigação genérica e a 5 apenas manda manter o monitoramento; ambas carecem de elementos que as tornem mensuráveis e verificáveis.",
     "Sim. A condicionante 2 identifica o titular responsável, o verbo de ação, o programa, a periodicidade, os indicadores e a comprovação por relatório com ART.",
     "Não. A condicionante 3 transfere ao empreendedor uma decisão sobre autorização que pertence ao órgão ambiental.",
-    "Não. A condicionante 4 tenta adiar para depois do deferimento uma pendência crítica que precisa ser resolvida por diligência.",
+    "Não. A condicionante 4 tenta adiar para depois do deferimento uma pendência que precisa ser resolvida por diligência.",
     "Não. A condicionante 6 conserva redação transitória superada pelo Decreto Estadual nº 7.150/2024 e deve ser retirada ou atualizada."
   ]
 }

@@ -1,5 +1,15 @@
 export const PUBLIC_EDITORIAL_RULES = Object.freeze([
   {
+    label: 'classificacao de achado removida da apresentacao publica',
+    pattern: /\b(?:gravidades?|graves?|severidades?|sever[oa]s?|severamente|criticidades?|cr[ií]tic(?:o|a|os|as)|gravity|gravities|severity|severities|severe|severely|criticality|criticalities|critical)\b/iu,
+    sourceMaterial: true,
+  },
+  {
+    label: 'enquadramento substituido por efeito e encaminhamento',
+    pattern: /\b(?:(?:baix[oa]s?|low)[\s-]+(?:riscos?|impactos?|potencia(?:l|is)|risks?|impacts?|potentials?)|(?:riscos?|impactos?|potencia(?:l|is)|risks?|impacts?|potentials?)[\s-]+(?:baix[oa]s?|low))\b/iu,
+    sourceMaterial: true,
+  },
+  {
     label: 'sigla removida da apresentação pública',
     pattern: /\b(?:IA|AI)\b/u,
   },

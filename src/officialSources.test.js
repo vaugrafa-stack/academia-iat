@@ -8,7 +8,7 @@ import {
   sourceRegistryStats,
 } from './officialSources.js';
 
-const criticalReferences = [
+const requiredReferences = [
   'INSTITUTO ÁGUA E TERRA. Instrução Normativa IAT nº 09, de 28 de abril de 2025.',
   'INSTITUTO ÁGUA E TERRA. Termo de Referência para elaboração do PACUERA, ano 2026.',
   'PARANÁ. Lei Estadual nº 22.252, de 12 de dezembro de 2024.',
@@ -18,7 +18,7 @@ const criticalReferences = [
 
 describe('registro de fontes oficiais', () => {
   it('abre fonte oficial direta para as referências de maior risco', () => {
-    for (const reference of criticalReferences) {
+    for (const reference of requiredReferences) {
       const source = resolveOfficialSource(reference);
       expect(source?.kind, reference).toBe('direct');
       expect(source?.url, reference).toMatch(/^https:\/\//);
@@ -29,7 +29,7 @@ describe('registro de fontes oficiais', () => {
 
   it('nunca usa pesquisa Google como substituto de fonte oficial', () => {
     const references = [
-      ...criticalReferences,
+      ...requiredReferences,
       'CONAMA. Resolução nº 279, de 27 de junho de 2001.',
       'INSTITUTO ÁGUA E TERRA. Instrução Normativa IAT nº 05/2026.',
       'AGÊNCIA NACIONAL DE ENERGIA ELÉTRICA. Ato setorial a confirmar.',
@@ -41,7 +41,7 @@ describe('registro de fontes oficiais', () => {
 
   it('distingue íntegra vinculada de índice oficial', () => {
     const references = [
-      ...criticalReferences,
+      ...requiredReferences,
       'CONAMA. Resolução nº 279, de 27 de junho de 2001.',
     ];
     expect(sourceRegistryStats(references)).toEqual({

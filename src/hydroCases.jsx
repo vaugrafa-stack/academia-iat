@@ -161,7 +161,7 @@ function SvgReversivel() {
 
 /* ============ CASOS REAIS NO PARANÁ (verificados) ============ */
 export const PR_CASES = [
-  { tipo: 'UHE de acumulação', criterio: 'Acima de 30 MW · concessão (leilão) · em regra EIA/RIMA · reservatório de regularização',
+  { tipo: 'UHE de acumulação', criterio: 'Acima de 30 MW · concessão (leilão) · situação passível de EIA/RIMA; confirmar estudo e rito no caso concreto · reservatório de regularização',
     nome: 'UHE Gov. Bento Munhoz da Rocha Netto (Foz do Areia)', local: 'Rio Iguaçu, Pinhão-PR', dados: '1.676 MW · 4 turbinas Francis de 419 MW · barragem de 160 m · reservatório de ~165 km² · opera desde 1980 · maior usina da Copel',
     site: 'https://www.copel.com/site/copel-geracao/usinas/usina-governador-bento-munhoz-da-rocha-netto/', siteLabel: 'copel.com (página oficial da usina)' },
   { tipo: 'UHE a fio d\'água', criterio: 'Acima de 30 MW · pouca ou nenhuma regularização sazonal · geração mais dependente da vazão afluente',
@@ -221,7 +221,7 @@ const TRILHA_ANEEL = [
 ];
 const TRILHA_IAT = [
   ['Consulta Prévia (obrigatória para CGH a partir de 1 MW, PCH e UHE)', 'Antes de formalizar: mapa da ADA, arranjo em KML/KMZ e memorial descritivo (art. 36 da IN IAT nº 09/2025). A manifestação orienta modalidade e estudo, vale 24 meses e não aprova viabilidade.'],
-  ['Enquadramento', 'Potência, área de alagamento, IDA, supressão e sensibilidade definem a modalidade (DLAM, LAC, LAS ou rito trifásico) e o estudo exigido (RAS/RDPA, PCA ou EIA/RIMA), sempre pelo critério mais restritivo.'],
+  ['Enquadramento', 'Potência, área de alagamento, IDA, supressão e sensibilidade orientam a modalidade (DLAM, LAC, LAS ou rito trifásico). O estudo aplicável (RAS/RDPA, PCA ou EIA/RIMA) deve ser confirmado pelo enquadramento, pelo Termo de Referência vigente e pelos atos do processo, sem inferência automática a partir de um dado isolado.'],
   ['Protocolo e análise', 'Formalização pelo SGA/eProtocolo com a documentação da fase; o IAT confere suficiência antes do mérito e diligencia lacunas.'],
   ['LP → LI → LO', 'LP atesta viabilidade e concepção; LI autoriza instalar conforme projeto (com autorizações florestais, de fauna e outorga/DRDH); LO verifica o instalado e fixa condicionantes de operação, e o PACUERA quando exigível.'],
   ['Intervenientes', 'IPHAN (patrimônio), gestor de UC afetada e demais órgãos manifestam-se no processo; o IAT verifica compatibilidade sem substituir a decisão de cada um.'],

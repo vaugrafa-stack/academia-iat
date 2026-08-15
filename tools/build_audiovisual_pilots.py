@@ -87,6 +87,17 @@ def sha256(path: Path) -> str:
     return digest.hexdigest()
 
 
+def pilot_script_sha256(pilot: dict) -> str:
+    """Vincula cada conjunto audiovisual ao roteiro editorial exato."""
+    canonical = json.dumps(
+        pilot,
+        ensure_ascii=False,
+        sort_keys=True,
+        separators=(",", ":"),
+    ).encode("utf-8")
+    return hashlib.sha256(canonical).hexdigest()
+
+
 def asset(path: Path, public_root: Path) -> dict:
     return {
         "path": "/" + path.relative_to(public_root).as_posix(),
@@ -572,7 +583,7 @@ def provenance_from_manifest(manifest: dict) -> dict:
     }
 
 
-def refresh_existing_metadata(output: Path) -> None:
+def refresh_existing_metadata(output: Path, collection: dict) -> None:
     """Normaliza textos e recalcula metadados sem sintetizar os vídeos."""
     manifest_path = output / "manifest.json"
     manifest = load_json(manifest_path)
@@ -580,13 +591,22 @@ def refresh_existing_metadata(output: Path) -> None:
     if {item.get("lessonId") for item in items} != EXPECTED_IDS:
         raise ValueError("o manifesto existente não contém os seis pilotos aprovados")
 
+    pilots_by_lesson = {pilot["lessonId"]: pilot for pilot in collection["pilots"]}
+
     for item in items:
+        expected_script_sha = pilot_script_sha256(pilots_by_lesson[item["lessonId"]])
+        if item.get("scriptSha256") != expected_script_sha:
+            raise ValueError(
+                f"{item['lessonId']}: roteiro mudou; regenere a mídia em vez de "
+                "atualizar apenas os metadados"
+            )
         for name, metadata in item["assets"].items():
             path = ROOT / "public" / metadata["path"].lstrip("/")
             if name in {"captions", "transcript", "visemes"}:
                 write_text_lf(path, path.read_text(encoding="utf-8"))
             item["assets"][name] = asset(path, ROOT / "public")
 
+    manifest["sourceDocument"] = collection["sourceDocument"]
     manifest["background"].update(asset(ATLAS, ROOT / "public"))
     manifest["presenterSprite"]["source"].update(asset(SPRITE_PNG, ROOT / "public"))
     manifest["presenterSprite"]["optimized"].update(asset(SPRITE_WEBP, ROOT / "public"))
@@ -653,6 +673,7 @@ def build_one(
         "presenterWindows": windows,
         "presenterCoverage": coverage,
         "sourceRefs": pilot["sourceRefs"],
+        "scriptSha256": pilot_script_sha256(pilot),
         "assets": {
             "video": asset(video, ROOT / "public"),
             "poster": asset(poster, ROOT / "public"),
@@ -720,7 +741,7 @@ def main() -> int:
     if args.refresh_metadata:
         if args.ids:
             raise SystemExit("--refresh-metadata não aceita uma seleção parcial")
-        refresh_existing_metadata(args.output.resolve())
+        refresh_existing_metadata(args.output.resolve(), collection)
         return 0
 
     if not args.piper.is_file() or not args.voice_model.is_file():

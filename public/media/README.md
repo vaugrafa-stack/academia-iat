@@ -4,14 +4,14 @@ Este diretório reúne recursos audiovisuais de orientação e revisão. Pela du
 
 ## Recursos por seção
 
-`media/aula` contém 159 resumos associados a seções substantivas do POP:
+`media/aula` contém 168 resumos associados às seções do POP que viram aulas:
 
 - duração entre 10,5 e 102,5 segundos;
-- duração média de 48,3 segundos;
+- duração média de 49,3 segundos;
 - vídeo MP4, pôster e legenda WebVTT;
-- 746 cenas de conteúdo e 905 entradas de legenda, incluindo o título;
-- limite editorial de 17 caracteres por segundo nas legendas; máximo observado de 16,73;
-- 128,0 minutos de mídia no total.
+- 806 cenas de conteúdo e 1.288 entradas de legenda, incluindo o título;
+- limite editorial de 17 caracteres por segundo nas legendas; máximo observado de 16,97;
+- 138,1 minutos de mídia no total.
 
 Esses recursos ajudam a antecipar ou revisar um tópico. Não substituem a aula textual, a leitura da fonte, exemplos trabalhados, prática com feedback nem avaliação de transferência.
 
@@ -30,7 +30,7 @@ Cada conjunto inclui:
 - pôster PNG;
 - animação SVG de 20 segundos como recurso complementar.
 
-Os MP4s foram validados com 300 quadros e duração de 20 segundos. `media-manifest.json` preserva o manifesto histórico desses três conjuntos, inclusive referências antigas a “v1.2”; a fonte operacional atual é a minuta v1.7 identificada na capa, com SHA-256 `8ffa771546c244e194e6d7b41dd91d5ab3f56083e94c081e1e5c9a17f13f2c3c`.
+Os MP4s foram validados com 300 quadros e duração de 20 segundos. `media-manifest.json` preserva o manifesto histórico desses três conjuntos, inclusive referências antigas a “v1.2”; a fonte operacional atual é a minuta v1.9 identificada na capa, com SHA-256 `d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4`.
 
 `analista-licenciamento.png` é uma ilustração editorial gerada para a aula em destaque, sem logomarca ou texto incorporado.
 
@@ -51,15 +51,14 @@ da aplicação, enquanto as mídias de cada módulo continuam opcionais.
 
 ## Geração e validação
 
-`tools/build_lesson_videos.py` produz os 159 conjuntos a partir da apresentação
+`tools/build_lesson_videos.py` produz os 168 conjuntos a partir da apresentação
 pública do POP. A geração usa frases completas, normalização de siglas e
 unidades para a pronúncia em português, tempo derivado do áudio, segmentação
 visual limitada e promoção atômica por diretório: uma falha não publica um
 manifesto parcial.
 
-Em 29/07/2026, os 159 MP4 foram decodificados integralmente, os 159 pôsteres
-foram conferidos em 960 × 540 px e os manifestos, tempos, cenas e legendas
-passaram pelos verificadores automatizados.
+Na geração corrente, os 168 MP4, os 168 pôsteres em 960 × 540 px e os
+manifestos, tempos, cenas e legendas passam pelos verificadores automatizados.
 
 ## Limites e acessibilidade
 

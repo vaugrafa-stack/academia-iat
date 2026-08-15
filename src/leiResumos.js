@@ -55,7 +55,7 @@ const RESUMOS = [
   [/Instrução Normativa IAT n[ºo°] 16\/2025/, 'IN do IAT sobre a compensação ambiental decorrente de supressão de vegetação nativa: forma de cálculo e cumprimento.'],
   [/Instrução Normativa IAT n[ºo°] 08\/2025/, 'IN do IAT sobre reposição florestal e consumo de matéria-prima florestal.'],
   [/Instrução Normativa IAT n[ºo°] 15\/2025/, 'IN do IAT sobre o Plano de Resgate da Flora vinculado às autorizações de supressão.'],
-  [/Instrução Normativa IAT n[ºo°] 64\/2025/, 'IN do IAT sobre intervenções de baixo impacto em APP de reservatórios artificiais.'],
+  [/Instrução Normativa IAT n[ºo°] 64\/2025/, 'IN do IAT sobre intervenções em APP de reservatórios artificiais e elaboração de PACUERA.'],
   [/Instrução Normativa IAT n[ºo°] 63\/2025/, 'IN do IAT sobre medição de vazões e volumes vinculados a outorgas de recursos hídricos.'],
   [/Instrução Normativa IAT n[ºo°] 04\/2026/, 'IN do IAT sobre o corte de árvore isolada.'],
   [/Instrução Normativa IAT n[ºo°] 05\/2026/, 'IN do IAT sobre a autorização de supressão de vegetação nativa.'],

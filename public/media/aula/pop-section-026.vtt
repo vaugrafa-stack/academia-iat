@@ -1,19 +1,46 @@
 WEBVTT
 
-00:00.550 --> 00:02.587
+00:00.550 --> 00:02.541
 Checklist de Consulta Prévia
 
-00:03.067 --> 00:11.067
-Checklist de Consulta Prévia: o quadro do POP relaciona Item, O que verificar, Status, Gravidade e Encaminhamento padrão
+00:03.000 --> 00:07.024
+Checklist de Consulta Prévia:
+o quadro do POP relaciona Item,
 
-00:11.067 --> 00:21.733
-Requerimento ou cadastro no SGA: Interessado, CNPJ, empreendimento, município, corpo hídrico, potência, modalidade pretendida e responsável
+00:07.104 --> 00:10.267
+O que verificar,
+Status e Encaminhamento padrão
 
-00:21.733 --> 00:33.733
-Memorial descritivo: Arranjo, potência, vazões, barramento, casa de força, restituição, reservatório, TVR, acessos, áreas de apoio e sistemas associados
+00:10.267 --> 00:15.301
+Requerimento ou cadastro no SGA:
+Interessado, CNPJ, empreendimento,
 
-00:33.733 --> 00:41.733
-Mapa da ADA: Delimitação da área diretamente afetada, estruturas, acessos, margem, corpo hídrico e interferências
+00:15.381 --> 00:20.800
+município, corpo hídrico, potência,
+modalidade pretendida e responsável
 
-00:41.733 --> 00:51.667
-KML, KMZ ou shapefile: Poligonais e linhas do arranjo, canal, TVR, reservatório, restituição, acessos e estruturas
+00:20.800 --> 00:26.607
+Memorial descritivo: Arranjo, potência,
+vazões, barramento, casa de força,
+
+00:26.687 --> 00:29.789
+restituição, reservatório, TVR, acessos,
+
+00:29.869 --> 00:32.733
+áreas de apoio e sistemas associados
+
+00:32.733 --> 00:36.502
+Mapa da ADA: Delimitação
+da área diretamente afetada,
+
+00:36.582 --> 00:40.867
+estruturas, acessos, margem,
+corpo hídrico e interferências
+
+00:40.867 --> 00:45.438
+KML, KMZ ou shapefile:
+Poligonais e linhas do arranjo,
+
+00:45.518 --> 00:50.600
+canal, TVR, reservatório,
+restituição, acessos e estruturas

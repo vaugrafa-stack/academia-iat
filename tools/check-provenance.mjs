@@ -14,9 +14,9 @@ import { derivarAulas } from '../src/lessons.js';
 
 const root = resolve(import.meta.dirname, '..');
 const EXPECTED = {
-  fileName: 'POP_DLE_HID_001_v1.9_Sem_Classificacao_de_Gravidade.docx',
-  bytes: 4_196_608,
-  sha256: 'f7056462b84de383c8e2dbb1e22d3bb732d90fbd876a933e0596642caf5b4871',
+  fileName: 'POP_DLE_HID_001_v1.9_Linguagem_Operacional_Revisada.docx',
+  bytes: 7_294_663,
+  sha256: 'd66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4',
   version: '1.9',
   sections: 176,
   learningSections: 170,

@@ -106,7 +106,7 @@ export const LEARNING_PATHS = Object.freeze([
     id: "estudos-consultoria",
     title: "Elaborar e revisar estudos",
     summary: "Aprofunde memorial, estudos, PACUERA, qualidade documental e integração final.",
-    outcome: "Produto: estudo rastreável e pronto para revisão crítica.",
+    outcome: "Produto: estudo rastreável e pronto para revisão técnica fundamentada.",
     trackIds: ["m01", "m08", "m09", "m10", "m11", "m13", "m14"],
     icon: Binoculars,
   },
@@ -259,7 +259,7 @@ export default function LearningPaths({ tracks, trackLessons, state, openLesson 
           <h2 id="learning-paths-title">Escolha uma rota de entrada</h2>
           <p>
             Quem nunca trabalhou com hidrelétricas começa pelos fundamentos. As
-            rotas seguintes orientam tarefas, mas não dispensam os módulos críticos
+            rotas seguintes orientam tarefas, mas não dispensam os módulos indispensáveis
             nem substituem a sequência completa de M00 a M16.
           </p>
         </div>

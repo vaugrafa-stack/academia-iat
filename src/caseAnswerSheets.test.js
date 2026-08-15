@@ -142,7 +142,7 @@ describe('folhas-resposta dos casos práticos', () => {
     );
   });
 
-  it('explica os cálculos e as decisões críticas com os dados do próprio caso', () => {
+  it('explica os cálculos e as decisões determinantes com os dados do próprio caso', () => {
     const expectedReasons = {
       'lab-prog-semestral-q1': ['71 + 68 + 76 = 215', '47 registros'],
       'lab-prog-residuos-q3': ['16 + 19 = 35', 'não 46'],

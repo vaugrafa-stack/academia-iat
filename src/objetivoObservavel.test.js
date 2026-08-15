@@ -229,11 +229,11 @@ describe("origem exigencia", () => {
 
   it('não confunde "deveria" com exigência', () => {
     // O POP usa o condicional para DESCREVER erro. Esta frase é item de uma
-    // lista de armadilhas: "condicionante que tenta sanar pendência crítica que
+    // lista de armadilhas: "condicionante que tenta sanar pendência impeditiva que
     // deveria ser resolvida antes do deferimento". Tratada como exigência, a
     // aula passava a mandar fazer o que o POP manda evitar.
     const armadilha =
-      "Condicionante que tenta sanar pendência crítica que deveria ser "
+      "Condicionante que tenta sanar pendência impeditiva que deveria ser "
       + "resolvida antes do deferimento pela unidade responsável.";
     const regra =
       "Primeiro deve ser resolvida a compatibilidade locacional ou de projeto "

@@ -2,7 +2,7 @@
 //
 // Saiu de courseData.js em 01/08/2026. La, a linha 1 importava labCases.js, e
 // como main.jsx importa tracks, questionBank e trackGroups de courseData, os
-// 70 kB de casos entravam no caminho critico de quem so queria abrir uma aula.
+// 70 kB de casos entravam no caminho principal de quem so queria abrir uma aula.
 // O orcamento de JS estava em 99,6% do teto por causa disso, entre outras
 // coisas.
 //

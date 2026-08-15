@@ -25,6 +25,18 @@ const visemeOrder = [
 
 const loadJson = async (path) => JSON.parse(await readFile(path, 'utf8'));
 const sameJson = (left, right) => JSON.stringify(left) === JSON.stringify(right);
+const stableValue = (value) => {
+  if (Array.isArray(value)) return value.map(stableValue);
+  if (value && typeof value === 'object') {
+    return Object.fromEntries(
+      Object.keys(value).sort().map((key) => [key, stableValue(value[key])]),
+    );
+  }
+  return value;
+};
+const pilotScriptSha256 = (pilot) => createHash('sha256')
+  .update(JSON.stringify(stableValue(pilot)), 'utf8')
+  .digest('hex');
 const errors = [];
 const fail = (message) => errors.push(message);
 
@@ -40,6 +52,12 @@ const actualScripts = scripts.pilots.map((pilot) => pilot.lessonId).sort();
 if (!sameJson(actualScripts, expected)) fail('a seleção de roteiros não corresponde aos seis IDs aprovados');
 if (scripts.sourceDocument?.sha256 !== pop.source?.sha256) {
   fail('o hash do POP nos roteiros diverge da extração pública');
+}
+if (!sameJson(
+  stableValue(publicManifest.sourceDocument),
+  stableValue(scripts.sourceDocument),
+)) {
+  fail('a identidade do POP no manifesto audiovisual diverge dos roteiros');
 }
 
 const sections = new Set(pop.sections.map((section) => section.id));
@@ -97,6 +115,7 @@ if (
   fail('a proveniência pública diverge do manifesto audiovisual');
 }
 const items = publicManifest.items || [];
+const scriptsByLesson = new Map(scripts.pilots.map((pilot) => [pilot.lessonId, pilot]));
 const actualMedia = items.map((item) => item.lessonId).sort();
 if (!sameJson(actualMedia, expected)) fail('o manifesto não contém exatamente os seis pilotos');
 if (new Set(actualMedia).size !== actualMedia.length) fail('o manifesto contém aula duplicada');
@@ -135,6 +154,12 @@ const mp4Duration = (buffer) => {
 };
 
 for (const item of items) {
+  const currentScript = scriptsByLesson.get(item.lessonId);
+  if (!/^[a-f0-9]{64}$/iu.test(item.scriptSha256 || '')) {
+    fail(`${item.lessonId}: hash do roteiro audiovisual ausente ou inválido`);
+  } else if (!currentScript || item.scriptSha256 !== pilotScriptSha256(currentScript)) {
+    fail(`${item.lessonId}: mídia diverge do roteiro audiovisual atual`);
+  }
   if (item.durationSeconds < 90 || item.durationSeconds > 240) {
     fail(`${item.lessonId}: duração fora de 90–240 segundos`);
   }

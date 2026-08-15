@@ -14,12 +14,12 @@ competente.
 
 | Campo | Valor |
 |---|---|
-| Arquivo | `POP ou Manual Hidreletricas IAT Julho de 2026 (Com APA, UCs, RTTA).docx` |
+| Arquivo | `POP_DLE_HID_001_v1.9_Linguagem_Operacional_Revisada.docx` |
 | Origem local | Fora do repositório; informada por argumento ou pela variável `IAT_POP_SOURCE` |
-| Tamanho | `4.408.377 bytes` |
-| Última modificação registrada | `2026-07-27T14:54:46.126Z` |
-| SHA-256 | `8ffa771546c244e194e6d7b41dd91d5ab3f56083e94c081e1e5c9a17f13f2c3c` |
-| Versão operacional | `1.7`, conforme texto visível da capa |
+| Tamanho | `7.294.663 bytes` |
+| Última modificação registrada | `2026-08-14T23:23:36Z` |
+| SHA-256 | `d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4` |
+| Versão operacional | `1.9`, conforme texto visível da capa |
 | Situação | Minuta técnica pendente de validação humana e institucional |
 
 Nenhum arquivo com nome semelhante ou hash diferente pode substituir essa fonte
@@ -97,9 +97,9 @@ responsabilidade para cada papel.
 ### Conteúdo e rastreabilidade
 
 - [ ] Fonte coincide em nome, tamanho e SHA-256.
-- [ ] 167 seções preservadas.
-- [ ] 161 seções substantivas acessíveis na aprendizagem.
-- [ ] 66 tabelas, 14 figuras e 21 fluxogramas íntegros.
+- [ ] 176 seções preservadas.
+- [ ] 170 seções substantivas acessíveis na aprendizagem.
+- [ ] 69 tabelas, 14 figuras e 21 fluxogramas íntegros.
 - [ ] Extração é idempotente.
 - [ ] Toda afirmação sensível aponta para fonte e situação.
 - [ ] Cada aula, questão, caso e mídia tem origem e versão.
@@ -107,7 +107,7 @@ responsabilidade para cada papel.
 
 ### Aprendizagem
 
-- [ ] As 161 aulas passam pelo padrão didático completo.
+- [ ] As 168 aulas passam pelo padrão didático completo.
 - [ ] Trilhas e pré-requisitos cobrem iniciante a especialista.
 - [ ] Objetivos, atividades e avaliações estão alinhados.
 - [ ] Há prática de recuperação e revisão espaçada.
@@ -119,7 +119,7 @@ responsabilidade para cada papel.
 
 ### Consulta operacional
 
-- [ ] Tarefas críticas são localizadas rapidamente em testes com usuários.
+- [ ] Tarefas determinantes são localizadas rapidamente em testes com usuários.
 - [ ] Busca entende siglas, sinônimos e termos leigos.
 - [ ] Cada resposta mostra fonte, versão e status.
 - [ ] Fonte, fluxo, checklist, aula e caso têm links bidirecionais.
@@ -169,7 +169,7 @@ responsabilidade para cada papel.
 - [ ] Dependências estão fixadas e auditadas.
 - [ ] CI limpa executa integridade, testes, build, acessibilidade e E2E.
 - [ ] Há orçamento de performance e identificação do commit.
-- [ ] Não há segredos, dados pessoais ou vulnerabilidade crítica/alta conhecida.
+- [ ] Não há segredos, dados pessoais ou vulnerabilidade conhecida capaz de bloquear a publicação.
 - [ ] Clone limpo reproduz o artefato.
 
 ### LGPD e acervo

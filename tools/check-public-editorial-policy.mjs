@@ -34,6 +34,14 @@ const SOURCE_EXCLUSIONS = new Set([
   'src/data/extraction-validation.json',
   'src/data/pop-content.json',
 ]);
+const ACTIVE_OPERATIONAL_DOCUMENTS = [
+  'AGENTS.md',
+  'GOAL_PREMIUM_10.md',
+  'LEARNING_DESIGN.md',
+  'README.md',
+  'STATUS_ATUAL.md',
+  'design/nota-10/DESIGN_SYSTEM.md',
+];
 // A 18.10.5 é a única seção cuja apresentação pública passa por reescrita
 // editorial, e por isso a mídia dela fica presa por hash: regerar o vídeo não
 // pode reintroduzir o termo removido sem que alguém olhe.
@@ -47,11 +55,11 @@ const SOURCE_EXCLUSIONS = new Set([
 const LOCKED_PUBLIC_MEDIA = new Map([
   [
     'public/media/aula/pop-section-072.mp4',
-    'd8a50d21325c1bc285557c81f89ab1d96d4f647d5c32598f0605e0df3cf6b794',
+    'd049ffd6a3eb23279e411596c99993b5c5c64e93a31f1ddb2ceae262cb454919',
   ],
   [
     'public/media/aula/pop-section-072.jpg',
-    '20b778bedf588c2263a5efeba3c75178ab99976aa38a08c54c1e22965a0d4d97',
+    '3b6c8d9ac32871053a549403d43a016ad21a9867b5e45e2f767be87afdee7503',
   ],
 ]);
 
@@ -96,13 +104,17 @@ const candidates = [
   ...sourceCandidates,
   ...publicCandidates,
 ];
+const operationalCandidates = [
+  ...[...SOURCE_EXCLUSIONS].map((name) => path.join(ROOT, name)),
+  ...ACTIVE_OPERATIONAL_DOCUMENTS.map((name) => path.join(ROOT, name)),
+];
 if (distArgument) {
   const distDirectory = path.resolve(ROOT, distArgument.slice('--dist='.length));
   candidates.push(...(await filesBelow(distDirectory)).filter(isText));
 }
 
 const failures = [];
-for (const file of candidates) {
+for (const file of [...candidates, ...operationalCandidates]) {
   const text = await readFile(file, 'utf8');
   const name = relative(file);
   if (
@@ -112,7 +124,10 @@ for (const file of candidates) {
   ) {
     failures.push(`${name} — referência de runtime ao conteúdo-fonte bruto`);
   }
-  for (const rule of PUBLIC_EDITORIAL_RULES) {
+  const rules = operationalCandidates.includes(file)
+    ? PUBLIC_EDITORIAL_RULES.filter((rule) => rule.sourceMaterial)
+    : PUBLIC_EDITORIAL_RULES;
+  for (const rule of rules) {
     const isBuiltArtifact = distArgument
       && path.resolve(file).startsWith(path.resolve(ROOT, distArgument.slice('--dist='.length)));
     const pattern = editorialPatternFor(rule, { builtArtifact: isBuiltArtifact });

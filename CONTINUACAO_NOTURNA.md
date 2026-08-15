@@ -24,11 +24,11 @@ conexão. Peso de download deixou de ser critério de recusa.
 - `apps/iat_area_tecnica/` iniciado: `package.json` e `src/config.js` escritos,
   `src/config.js` ainda sem teste.
 - Workflow de desenho `wf_8bff1c83-3c9` rodando: cinco perspectivas
-  independentes com crítico adversarial por perspectiva.
+  independentes com revisão adversarial por perspectiva.
 
 ## Próximo passo
 
-1. Rodar o crítico de segurança que faltou e a síntese da sequência executável.
+1. Rodar a revisão de segurança que faltou e a síntese da sequência executável.
 2. Executar a sequência, bloco a bloco, atualizando este arquivo a cada bloco.
 
 ## Frente paralela: objetivo observável (Fase 3.2)
@@ -83,10 +83,10 @@ Movido para `OneDrive\Documentos\New project\area_tecnica_privado\`:
 
 ## Registro dos blocos fechados
 
-### Bloco 1. Desenho da Área Técnica, com crítica adversarial
+### Bloco 1. Desenho da Área Técnica, com revisão adversarial
 
 `PLANO_AREA_TECNICA.md`, 205 kB. Cinco dimensões, 40 decisões, cada uma julgada
-por um crítico instruído a derrubá-la.
+por um revisor instruído a derrubá-la.
 
 | Veredicto | Decisões |
 |---|---:|
@@ -95,7 +95,7 @@ por um crítico instruído a derrubá-la.
 | complexidade desnecessária | 5 |
 | sólida | 4 |
 
-O crítico de segurança morreu no limite de sessão e ficou faltando; foi
+O revisor de segurança parou no limite de sessão e ficou faltando; foi
 relançado junto com a síntese executável.
 
 A decisão estruturante que saiu do desenho: a área restrita **não** pode morar
@@ -127,9 +127,9 @@ comentário no arquivo:
 Estado: 333 testes em 43 arquivos, 19 portões verdes, zero classe CSS órfã.
 Publicado em `148ed50`.
 
-### Bloco 3. Crítica de segurança e sequência executável ✅
+### Bloco 3. Revisão de segurança e sequência executável ✅
 
-`area_tecnica_privado/SEQUENCIA_AREA_TECNICA.md`. O crítico de segurança que
+`area_tecnica_privado/SEQUENCIA_AREA_TECNICA.md`. O revisor de segurança que
 faltava rodou e derrubou coisa séria:
 
 - **Erro de correção, não de opinião.** `response_mode=form_post` faz o provedor
@@ -204,7 +204,7 @@ não era o arquivo parado, era alguém escrever um `servidor.js` em cima dele.
 
 `area_tecnica_privado/CHAMADO_PROVISIONAMENTO.md` está pronto para protocolo.
 Sete itens que tramitam em paralelo, com as justificativas que a TI costuma
-pedir já escritas. É o caminho crítico: o registro de aplicativo leva de duas a
+pedir já escritas. É o percurso determinante: o registro de aplicativo leva de duas a
 oito semanas e não acelera com esforço próprio.
 
 ### Bloco 7. Auditoria do que eu mesmo publiquei ✅
@@ -216,7 +216,7 @@ Publiquei o objetivo observável tendo lido só uma das três origens. Lendo as
    "análise conjunta ou separad", "bases ge". Causa: teto de 150 caracteres
    dentro da expressão de captura, que parava onde quer que o caractere caísse.
 2. **Erro a evitar apresentado como exigência.** A seção 24.1 dizia "Aplicar o
-   que o POP fixa aqui: condicionante que tenta sanar pendência crítica que
+   que o POP fixa aqui: condicionante que tenta sanar pendência impeditiva que
    deveria ser resolvida antes do deferimento". Isso é item de lista de
    armadilhas: a plataforma mandava fazer o que o POP manda evitar. Casou porque
    "deveria" contém "deve".

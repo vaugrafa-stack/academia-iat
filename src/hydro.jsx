@@ -241,7 +241,7 @@ const PARTES = [
   { id: 'reservatorio', nome: 'Reservatório', icon: Droplets, resumo: 'Massa de água represada que estoca energia potencial.',
     detalhe: 'Volume de água acumulado a montante da barragem. A diferença de nível entre a superfície do reservatório e o nível de água no canal de fuga, a jusante, é a queda bruta. A queda líquida disponível à turbina desconta as perdas hidráulicas. Reservatórios de acumulação podem regularizar vazões; arranjos a fio d\'água têm pouca ou nenhuma regularização sazonal. Área e volume, isoladamente, não definem a operação nem a magnitude dos impactos.' },
   { id: 'barragem', nome: 'Barragem / barramento', icon: Mountain, resumo: 'Estrutura que barra o rio e cria a queda.',
-    detalhe: 'Barra o curso d\'água, eleva o nível a montante e sustenta a pressão da água. Pode ser de concreto (gravidade, arco, contrafortes) ou de aterro (terra, enrocamento). É a estrutura de maior responsabilidade estrutural e alvo central da segurança de barragens.' },
+    detalhe: 'Barra o curso d\'água, eleva o nível a montante e sustenta a pressão da água. Pode ser de concreto estabilizado pelo peso próprio, em arco ou com contrafortes, ou de aterro em terra ou enrocamento. É a estrutura de maior responsabilidade estrutural e alvo central da segurança de barragens.' },
   { id: 'vertedouro', nome: 'Vertedouro', icon: Waves, resumo: 'Extravasa com segurança as cheias.',
     detalhe: 'Órgão de descarga que verte o excedente de água nas cheias, protegendo a barragem do galgamento. Pode ter comportas ou ser de soleira livre. O dimensionamento parte da cheia de projeto; a energia da água vertida é dissipada em bacia de dissipação ou salto de esqui.' },
   { id: 'tomada', nome: 'Tomada d\'água', icon: Layers3, resumo: 'Capta a água e protege com grades.',
@@ -270,7 +270,7 @@ const TIPOS_POTENCIA = [
   { sigla: 'PCH', nome: 'Pequena Central Hidrelétrica', faixa: 'acima de 5 MW até 30 MW', cor: '#4cc4f5',
     nota: 'No eixo ambiental do IAT: potência superior a 5 MW e até 30 MW, com reservatório de até 3 km², ressalvada a exceção da IN. No eixo setorial, o art. 5º da REN ANEEL 875/2020, com redação da REN 1.070/2023, enquadra PCH pela faixa superior a 5 MW e até 30 MW, sem limite de área. A página geral Outorgas ainda cita 13 km², mas diverge do ato consolidado e da página operacional de 2026. Não misture os eixos e confirme o ato aplicável ao caso.' },
   { sigla: 'UHE', nome: 'Usina Hidrelétrica', faixa: 'acima de 30 MW', cor: '#9fb7ff',
-    nota: 'No eixo ambiental do IAT: capacidade instalada superior a 30 MW, reservatório maior que 3 km² ou definição da ANEEL. O regime setorial distingue autorização e concessão por critérios próprios. Em regra exige EIA e RIMA. Erro recorrente: ignorar competência, delegação, processo federal ou exigência de EIA e RIMA.' },
+    nota: 'No eixo ambiental do IAT: capacidade instalada superior a 30 MW, reservatório maior que 3 km² ou definição da ANEEL. O regime setorial distingue autorização e concessão por critérios próprios. O art. 10 da IN IAT nº 09/2025 enquadra a UHE entre as situações passíveis de EIA e RIMA e de audiência pública; o estudo e o rito aplicáveis devem ser confirmados no caso concreto. Erro recorrente: ignorar competência, delegação, processo federal ou o enquadramento ambiental vigente.' },
 ];
 
 const TIPOS_RESERVATORIO = [
@@ -280,7 +280,7 @@ const TIPOS_RESERVATORIO = [
 ];
 
 const BARRAGENS = [
-  { nome: 'Concreto a gravidade', resiste: 'Resiste pelo peso próprio', onde: 'Vales abertos, fundação rochosa', svg: 'gravidade' },
+  { nome: 'Concreto estabilizado pelo peso próprio', resiste: 'Resiste pelo peso próprio', onde: 'Vales abertos, fundação rochosa', svg: 'peso-proprio' },
   { nome: 'Concreto em arco', resiste: 'Transfere a carga às ombreiras', onde: 'Vales estreitos e rochosos', svg: 'arco' },
   { nome: 'Contrafortes', resiste: 'Laje apoiada em contrafortes', onde: 'Economia de concreto em vãos', svg: 'contraforte' },
   { nome: 'Terra (aterro)', resiste: 'Maciço de solo compactado com núcleo impermeável', onde: 'Vales largos, farto material local', svg: 'terra' },
@@ -318,7 +318,7 @@ function DamMini({ kind }) {
   return (
     <svg viewBox="0 0 120 70" className="dam-mini" aria-hidden="true">
       <rect x="0" y="52" width="120" height="18" fill="#1e2c27" />
-      {kind === 'gravidade' && <>
+      {kind === 'peso-proprio' && <>
         <rect x="2" y="30" width="52" height="22" {...water} />
         <path d="M56 52 L56 20 L76 52 Z" fill="#7f918a" stroke="#3fe0a6" strokeWidth="1.5" />
       </>}
@@ -442,7 +442,7 @@ export function PowerCalc() {
   const turbinasPorQueda = turbinasCompativeisPorQueda(h);
   return (
     <div className="power-calc">
-      <div className="pc-formula"><Zap /> <span>P = ρ · g · Q · H · η</span> <small>densidade × gravidade × vazão turbinada × queda líquida × rendimento global</small></div>
+      <div className="pc-formula"><Zap /> <span>P = ρ · g · Q · H · η</span> <small>densidade × constante física g × vazão turbinada × queda líquida × rendimento global</small></div>
       <div className="pc-controls">
         <label>Vazão turbinada, Q <b>{q} m³/s</b><input type="range" min="1" max="1500" value={q} onChange={(e) => setQ(+e.target.value)} /></label>
         <label>Queda líquida, H <b>{h} m</b><input type="range" min="2" max="800" value={h} onChange={(e) => setH(+e.target.value)} /></label>
@@ -626,7 +626,7 @@ export default function HydroGuide({ go }) {
               <React.Fragment key={e}><span>{e}</span>{i < 3 && <ArrowRight />}</React.Fragment>
             ))}
           </div>
-          <p className="hydro-two">A potência hidráulica estimada segue <strong>P = ρ · g · Q · H · η</strong>: vazão turbinada (Q), queda líquida disponível após as perdas (H), densidade da água (ρ), gravidade (g) e rendimento global do conjunto (η). O valor de projeto depende das condições e curvas de operação.</p>
+          <p className="hydro-two">A potência hidráulica estimada segue <strong>P = ρ · g · Q · H · η</strong>: vazão turbinada (Q), queda líquida disponível após as perdas (H), densidade da água (ρ), constante física g, correspondente à aceleração local, e rendimento global do conjunto (η). O valor de projeto depende das condições e curvas de operação.</p>
         </div>
       </section>
 

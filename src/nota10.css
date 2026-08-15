@@ -864,7 +864,7 @@
 
 /* Leitura guiada de quadro do POP.
    A maioria dos quadros e instrumento de decisao, nao lista de referencia: o
-   esqueleto "o que verificar, status, gravidade, encaminhamento" se repete em
+   esqueleto "o que verificar, status, consequencia, encaminhamento" se repete em
    dezenas deles. Este bloco torna o esqueleto visivel antes da tabela. */
 .ler-quadro{margin:14px 0 8px;padding:12px 14px;border:1px solid var(--line);border-left:3px solid var(--green);border-radius:7px;background:var(--surface)}
 .ler-quadro>strong{display:flex;align-items:center;gap:7px;font-size:12px}
@@ -905,7 +905,7 @@
 .kp-quadro-nota{max-width:58ch}
 
 /* Linguagem visual de PROCEDENCIA: fonte, interpretacao e exemplo.
-   Misturar os tres e o defeito mais grave possivel neste dominio, porque
+   Misturar os tres e o defeito de maior consequência possível neste dominio, porque
    transforma interpretacao em exigencia aos olhos de quem esta aprendendo.
    A convencao, agora consistente em toda a plataforma:
 

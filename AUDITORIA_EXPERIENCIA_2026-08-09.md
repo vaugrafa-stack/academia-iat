@@ -33,7 +33,7 @@ desempenho, PWA e qualidade de publicação.
 - A autoavaliação registrava acerto e erro, mas não distinguia dúvida de
   convicção equivocada.
 - O banco de questões ainda precisa de evolução editorial posterior com
-  dificuldade, nível cognitivo, objetivo, erro crítico, motivo dos distratores,
+  dificuldade, nível cognitivo, objetivo, erro que invalida a resposta, motivo dos distratores,
   versão e responsável pela análise.
 
 ### Conteúdo técnico e normativo

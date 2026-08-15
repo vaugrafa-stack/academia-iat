@@ -4,16 +4,16 @@
 
 Este documento especifica a arquitetura pedagógica pretendida para transformar o conteúdo das duas fontes fornecidas em uma plataforma de aprendizagem operacional, interativa e avaliável:
 
-- `POP_DLE_HID_001_v1.9_Sem_Classificacao_de_Gravidade.docx`;
+- `POP_DLE_HID_001_v1.9_Linguagem_Operacional_Revisada.docx`;
 - `Proposta de Fluxogramas (Original, Simplificado e Detalhado).docx`.
 
-O desenho cobre os 27 capítulos do POP, os 6 anexos, as referências normativas, os 46 quadros, as 20 tabelas, as 14 figuras do POP e os 7 fluxogramas apresentados em três níveis (original, simplificado e completo). O conteúdo não deve ser reduzido a cartões resumidos: cada tema precisa aparecer como explicação, demonstração visual, decisão simulada, prática com feedback e evidência de aprendizagem.
+O desenho cobre os 27 capítulos do POP, os 6 anexos, as referências normativas, os 49 quadros, as 20 tabelas, as 14 figuras do POP e os 7 fluxogramas apresentados em três níveis (original, simplificado e completo). O conteúdo não deve ser reduzido a cartões resumidos: cada tema precisa aparecer como explicação, demonstração visual, decisão simulada, prática com feedback e evidência de aprendizagem.
 
 ### Controle da fonte e status deste documento
 
 - versão operacional: **1.9**, conforme o texto visível da capa;
 - data: julho de 2026;
-- SHA-256 da fonte: `f7056462b84de383c8e2dbb1e22d3bb732d90fbd876a933e0596642caf5b4871`;
+- SHA-256 da fonte: `d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4`;
 - natureza: minuta técnica pendente de validação humana, jurídica e institucional;
 - o valor “1.2” preservado nas propriedades internas do Word é metadado legado e não deve ser exibido como versão operacional;
 - os fluxogramas são uma proposta de treinamento e comparação, não um fluxo institucional automaticamente aprovado.
@@ -79,8 +79,8 @@ Cada aula deve conter, nesta ordem:
 - Diagnóstico inicial não bloqueia o acesso; serve para personalizar a trilha.
 - Cada módulo exige pelo menos 80% no quiz e conclusão da atividade prática.
 - Questões podem ser refeitas, mas a segunda tentativa muda os dados do caso.
-- Erros críticos acionam revisão obrigatória: modalidade incorreta, aplicação retroativa automática, deferimento com pendência impeditiva, confusão entre licença e outorga, substituição de competência externa, PACUERA tratado como licença ou declaração de estabilidade estrutural pelo licenciamento.
-- A conclusão da trilha completa exige nota mínima 75/100 no caso integrador e ausência de erro crítico não corrigido.
+- Decisões que comprometem o resultado acionam revisão obrigatória: modalidade incorreta, aplicação retroativa automática, deferimento com pendência impeditiva, confusão entre licença e outorga, substituição de competência externa, PACUERA tratado como licença ou declaração de estabilidade estrutural pelo licenciamento.
+- A conclusão da trilha completa exige nota mínima 75/100 no caso integrador e correção de toda decisão que comprometa o resultado.
 - Notas, gates e rubricas são critérios internos de aprendizagem. Não geram certificação do IAT, habilitação profissional ou decisão administrativa.
 
 ### 2.4 Estado implementado em 29/07/2026
@@ -113,7 +113,7 @@ Cada aula deve conter, nesta ordem:
 | Código | Módulo | Cobertura principal do POP | Produto de aprendizagem | Experiência central |
 |---|---|---|---|---|
 | M00 | Orientação, escopo e controle documental | abertura; controle documental; histórico; sumários e índices; cap. 1 | mapa pessoal da trilha e diagnóstico | tour animado do processo e busca guiada no POP |
-| M01 | Papéis, normas, definições e método obrigatório | caps. 2 a 5 | ficha de regime aplicável e matriz status/gravidade | simulador da dupla transição + jogo de competência |
+| M01 | Papéis, normas, definições e método obrigatório | caps. 2 a 5 | ficha de regime aplicável e matriz de status, consequência e encaminhamento | simulador da dupla transição + jogo de competência |
 | M02 | Fluxo geral, recebimento e triagem | caps. 6 e 7 | matriz inicial de triagem | processo virtual com documentos misturados |
 | M03 | Enquadramento e Consulta Prévia | caps. 8 e 9 | nota de enquadramento e conclusão de CP | calculadora orientada de tipologia/modalidade + mapa de restrições |
 | M04 | DLAM, LAC e LAS | cap. 10 | checklist e parecer preliminar de LAS | fluxo LAS com decisões e retorno de diligência |
@@ -166,7 +166,7 @@ Cada aula deve conter, nesta ordem:
 4. Compatibilização federal-estadual: LAE, LAU, LOC, alteração, participação, autoridades, prazos e CAR.
 5. Tipologias, documentos e atos: MCH, MGH, CGH, PCH, UHE; Memorial, PCA, RAS, RDPA, EIA/RIMA, PBA, RCA/RCE, PACUERA; DILA, DLAM, licenças e AA.
 6. Método obrigatório em oito passos.
-7. Status documental e gravidade.
+7. Status documental, consequência e encaminhamento.
 
 **Objetivos observáveis**
 
@@ -174,7 +174,7 @@ Cada aula deve conter, nesta ordem:
 - Registrar separadamente transição estadual e federal.
 - Usar `Pendente de validação` quando a solução depende de orientação jurídica ou institucional.
 - Distinguir presença, suficiência, inconsistência, vencimento e não aplicação.
-- Classificar gravidade pela consequência decisória, não pela mera ausência formal.
+- Registrar a consequência decisória e o momento de saneamento, sem converter a mera ausência formal em impedimento.
 
 **Interações**
 
@@ -203,9 +203,9 @@ Cada aula deve conter, nesta ordem:
 
 **Experiência central**
 
-Um processo virtual contém 28 itens, incluindo duplicatas, versões antigas e documentos de outro corpo hídrico. O usuário deve montar a ordem cronológica, separar por grupo, selecionar a versão vigente e registrar status, gravidade, consequência e rota.
+Um processo virtual contém 28 itens, incluindo duplicatas, versões antigas e documentos de outro corpo hídrico. O usuário deve montar a ordem cronológica, separar por grupo, selecionar a versão vigente e registrar status, consequência, momento de saneamento e rota.
 
-**Gate prático:** matriz de triagem com pelo menos dez linhas e justificativa de três achados críticos.
+**Gate prático:** matriz de triagem com pelo menos dez linhas e justificativa de três achados com consequências decisórias distintas.
 
 ### M03 - Enquadramento e Consulta Prévia
 
@@ -225,7 +225,7 @@ Um processo virtual contém 28 itens, incluindo duplicatas, versões antigas e d
 - MGH acima de 75 kW até 500 kW: IDA menor que 3 sem supressão pode levar a DLAM; IDA maior ou igual a 3 sem supressão, a LAC; com supressão, a LAS.
 - CGH até 1 MW, alagamento inferior a 5 ha, IDA menor que 3 e sem supressão: LAC; com IDA maior ou igual a 3 e alagamento até 5 ha: LAS.
 - CGH acima de 1 MW até 5 MW, alagamento até 50 ha e IDA menor que 4: LAS; demais CGHs: LP, LI e LO.
-- PCH e UHE: licenciamento trifásico; UHE exige EIA/RIMA; PCH exige EIA/RIMA quando acima de 10 MW, alagamento superior a 100 ha ou significativo impacto reconhecido.
+- PCH e UHE: licenciamento trifásico; o art. 10 da IN IAT nº 09/2025 enquadra UHEs, PCHs acima de 10 MW ou com alagamento superior a 100 ha e empreendimentos inicialmente simplificados considerados potencialmente impactantes entre as situações passíveis de EIA/RIMA e audiência pública. O estudo e o rito aplicáveis devem ser confirmados no enquadramento do caso, no Termo de Referência vigente e nos atos do processo.
 - Consulta Prévia é obrigatória para CGH igual ou superior a 1 MW, PCH e UHE; validade de 24 meses, sem prorrogação, prioridade, domínio ou viabilidade definitiva.
 - A plataforma não deve calcular o IDA com fórmula inventada: deve receber o valor calculado conforme a fonte oficial e ensinar como ele participa da decisão.
 
@@ -254,7 +254,7 @@ Um processo virtual contém 28 itens, incluindo duplicatas, versões antigas e d
 
 **Experiência central**
 
-O Fluxograma 3 completo vira uma simulação ramificada. Cada diamante exige escolha; cada retângulo abre os documentos que fundamentam a etapa. Erro crítico ocorre se o usuário emitir LAS com modalidade inadequada ou usar condicionante para postergar pendência impeditiva.
+O Fluxograma 3 completo vira uma simulação ramificada. Cada diamante exige escolha; cada retângulo abre os documentos que fundamentam a etapa. A simulação bloqueia o avanço se o usuário emitir LAS com modalidade inadequada ou usar condicionante para postergar pendência impeditiva.
 
 **Gate prático:** concluir um caso de LAS com checklist preenchido e uma diligência concentrada quando a documentação estiver incompleta.
 
@@ -400,7 +400,7 @@ Uma mesa virtual apresenta excertos e anexos fictícios. O aluno deve localizar 
 
 **Aulas**
 
-1. Elementos mínimos do mapa e gravidade pela consequência.
+1. Elementos mínimos do mapa e consequência da ausência ou inconsistência.
 2. ADA, AID, AII e recortes por meio/impacto.
 3. APP, reservatório, TVR e restituição.
 4. Arquivos vetoriais, projeção, datum, topologia e atributos.
@@ -410,7 +410,7 @@ Uma mesa virtual apresenta excertos e anexos fictícios. O aluno deve localizar 
 
 **Experiência central**
 
-“Mapa com 18 erros”: ausência de datum, linha sem topologia, ADA omitindo acesso, ponto isolado no lugar do arranjo, APP incompatível, TVR divergente da outorga, supressão sem poligonal e PACUERA sem atributos. O aluno marca o erro, explica sua consequência e escolhe gravidade.
+“Mapa com 18 erros”: ausência de datum, linha sem topologia, ADA omitindo acesso, ponto isolado no lugar do arranjo, APP incompatível, TVR divergente da outorga, supressão sem poligonal e PACUERA sem atributos. O aluno marca o erro, explica sua consequência e indica se o saneamento deve ocorrer antes da decisão ou pode integrar controle posterior.
 
 **Gate prático:** checklist cartográfico e nota de compatibilização entre mapa, Memorial, estudo, outorga e operação.
 
@@ -483,7 +483,7 @@ O aluno recebe textos ruins e os reescreve. O avaliador automático deve usar re
 - descreve a lacuna sem adjetivação;
 - explica a consequência técnica;
 - pede providência específica;
-- não usa condicionante para pendência crítica prévia;
+- não usa condicionante para pendência que precisa ser sanada antes da decisão;
 - separa adequação da modalidade de suficiência para deferimento.
 
 **Gate prático:** Informação Técnica curta com histórico, método, tabela de análise, duas pendências, conclusão e encaminhamento.
@@ -525,7 +525,7 @@ O aluno recebe um dossiê completo e precisa gerar: ficha temporal/normativa, en
 
 Os casos devem usar nomes, CNPJs, coordenadas e municípios fictícios e conter marca visível de **exemplo didático sem validade administrativa**. Não se devem copiar dados pessoais, documentos, mapas ou identificadores de processos reais. A solução exibida após a entrega deve seguir sempre o encadeamento `dado -> regra/fonte -> classificação -> consequência -> encaminhamento`, evitando respostas binárias sem motivação.
 
-### C01 - MGH de baixo IDA
+### C01 - MGH com IDA compatível com o cenário descrito
 
 **Dados:** MGH de 320 kW, IDA 2,6, sem supressão declarada, arranjo geoespacial completo, processo novo.
 
@@ -561,7 +561,7 @@ Os casos devem usar nomes, CNPJs, coordenadas e municípios fictícios e conter 
 
 **Dados:** PCH de 12 MW, alagamento de 80 ha, processo novo.
 
-**Decisão esperada:** Consulta Prévia e licenciamento trifásico. EIA/RIMA é exigível pelo critério de potência acima de 10 MW, ainda que o alagamento seja inferior a 100 ha. Planejar participação pública aplicável.
+**Decisão esperada:** Consulta Prévia e licenciamento trifásico. A potência acima de 10 MW inclui a PCH entre as situações passíveis de EIA/RIMA; a definição do estudo e do rito deve ser confirmada no enquadramento, no Termo de Referência vigente e nos atos do processo. Planejar a participação pública quando aplicável.
 
 **Armadilha:** avaliar apenas a área alagada.
 
@@ -569,7 +569,7 @@ Os casos devem usar nomes, CNPJs, coordenadas e municípios fictícios e conter 
 
 **Dados:** EIA de UHE sem alternativa de não implantação, com capítulos físico/biótico/socioeconômico isolados e conclusão que não explicita incertezas.
 
-**Decisão esperada:** classificar como insuficiente, gravidade crítica para viabilidade, solicitar complementação concentrada sobre alternativas, análise integrada e conclusão. Não encaminhar à audiência apenas para cumprir rito.
+**Decisão esperada:** registrar a documentação como insuficiente para concluir a viabilidade, solicitar complementação concentrada sobre alternativas, avaliação integrada e conclusão. Não encaminhar à audiência apenas para cumprir rito.
 
 ### C07 - Pedido de LI com projeto alterado
 
@@ -581,7 +581,7 @@ Os casos devem usar nomes, CNPJs, coordenadas e municípios fictícios e conter 
 
 **Dados:** obra concluída com potência e arranjo diferentes do projeto licenciado; relatórios de programas existem, mas a outorga mantém vazões antigas.
 
-**Decisão esperada:** inconsistências críticas. Avaliar retificação, alteração, ampliação, regularização ou medida fiscalizatória; exigir compatibilização antes de manifestação sobre operação segura e regular.
+**Decisão esperada:** as inconsistências impedem manifestação segura sobre a operação. Avaliar retificação, alteração, ampliação, regularização ou medida fiscalizatória e exigir compatibilização prévia.
 
 ### C09 - RLO tempestiva, sem fato novo
 
@@ -599,7 +599,7 @@ Os casos devem usar nomes, CNPJs, coordenadas e municípios fictícios e conter 
 
 **Dados:** novo CNPJ, contrato social e termo de assunção apresentados; outorga e ato setorial ainda permanecem em nome do titular anterior.
 
-**Decisão esperada:** pendência crítica de compatibilização antes de transferência segura. Verificar procedimento nos órgãos competentes; não presumir que o ato ambiental transfere automaticamente outorga ou ato ANEEL.
+**Decisão esperada:** a compatibilização deve ocorrer antes de qualquer transferência. Verificar procedimento nos órgãos competentes; não presumir que o ato ambiental transfere automaticamente outorga ou ato ANEEL.
 
 ### C12 - Repotenciação: temporária ou permanente
 
@@ -623,7 +623,7 @@ Os casos devem usar nomes, CNPJs, coordenadas e municípios fictícios e conter 
 
 **Dados:** limites de ZAS no PACUERA não coincidem com o mapa de inundação do PAE; comunidade aparece em uma fonte e não na outra.
 
-**Decisão esperada:** inconsistência crítica para gestão territorial e segurança ambiental; solicitar compatibilização e encaminhar ao órgão fiscalizador/unidade competente. O analista não declara qual mapa estrutural é correto nem estabilidade da barragem.
+**Decisão esperada:** a inconsistência impede a gestão territorial e uma conclusão segura; solicitar compatibilização e encaminhar ao órgão fiscalizador/unidade competente. O analista não declara qual mapa estrutural é correto nem estabilidade da barragem.
 
 ### C16 - Vistoria encontra bota-fora não cartografado
 
@@ -635,19 +635,19 @@ Os casos devem usar nomes, CNPJs, coordenadas e municípios fictícios e conter 
 
 **Texto ruim:** “Atender toda a legislação ambiental e apresentar relatórios quando solicitado.”
 
-**Reescrita esperada:** selecionar impacto/fase concretos e especificar ação, objeto, prazo, indicador, responsável e forma de comprovação. Se houver pendência crítica prévia, não convertê-la em condicionante.
+**Reescrita esperada:** selecionar impacto/fase concretos e especificar ação, objeto, prazo, indicador, responsável e forma de comprovação. Se houver pendência que impeça a decisão, saneá-la previamente em vez de convertê-la em condicionante.
 
 ### C18 - Controle final
 
 **Dados:** Informação Técnica com nome de outro empreendimento em um parágrafo, norma anterior citada como vigente, tabela quebrada, foto sem legenda, conclusão favorável apesar de outorga incompatível e campo de aprovação preenchido sem evidência.
 
-**Decisão esperada:** reprovar no controle final; corrigir identidade, base/transição, layout e rastreabilidade e reavaliar a conclusão. Outorga incompatível é erro crítico, não defeito editorial.
+**Decisão esperada:** reprovar no controle final; corrigir identidade, base/transição, layout e rastreabilidade e reavaliar a conclusão. Outorga incompatível impede a assinatura; não é defeito editorial.
 
 ## 6. Estratégia de vídeos, imagens e animações
 
 ### 6.1 Série aprofundada pretendida
 
-Os episódios abaixo são requisitos-alvo para explicações de 3 a 8 minutos. Eles não devem ser confundidos com os 159 resumos audiovisuais atualmente disponíveis, que duram entre 9,4 e 23,8 segundos e servem apenas à orientação e à revisão rápida.
+Os episódios abaixo são requisitos-alvo para explicações de 3 a 8 minutos. Eles não devem ser confundidos com os 168 resumos audiovisuais atualmente disponíveis, que duram entre 10,5 e 102,5 segundos e servem apenas à orientação e à revisão rápida.
 
 | Episódio | Duração | Conteúdo e storyboard | Módulo |
 |---|---:|---|---|
@@ -713,13 +713,13 @@ As alternativas erradas devem ser plausíveis e derivadas de erros descritos no 
 | Q005 | Quem conclui disponibilidade hídrica e outorga? | A unidade/órgão competente de recursos hídricos. | O licenciamento confere compatibilidade, sem substituir o mérito hídrico. |
 | Q006 | Em processo antigo, basta registrar apenas a transição estadual? | Não. | O POP exige motivação separada da transição estadual e da federal. |
 | Q007 | Documento existe, mas não contém dados mínimos para decidir. Qual status? | Insuficiente. | `Apresenta` descreve presença compatível; não é sinônimo de suficiência. |
-| Q008 | Ausência que impede decisão segura costuma ter qual gravidade? | Crítica. | Gravidade decorre do efeito sobre a decisão, não da aparência formal do arquivo. |
+| Q008 | Como registrar uma ausência que impede decisão segura? | Como impedimento que exige saneamento antes da decisão. | O registro decorre do efeito sobre a decisão, não da aparência formal do arquivo. |
 
 ### M02
 
 | ID | Questão | Resposta esperada | Feedback essencial |
 |---|---|---|---|
-| Q009 | Estudo de outro corpo hídrico foi anexado. Como classificar? | Inconsistente, geralmente crítico. | O documento conflita com o objeto e pode inviabilizar a análise. |
+| Q009 | Estudo de outro corpo hídrico foi anexado. Como registrar? | Inconsistente; a incompatibilidade impede o uso seguro até o saneamento. | O documento conflita com o objeto e pode inviabilizar a análise. |
 | Q010 | Um estudo antigo pode ser aproveitado automaticamente? | Não. | Precisa ser compatível com projeto, fase, área de influência, operação e realidade atual. |
 | Q011 | Faltam documentos exigíveis, mas a lacuna é sanável. Saída típica? | Diligência documental. | A minuta deve trazer base, consequência e providência específica. |
 | Q012 | Qual vem primeiro: concluir favoravelmente ou compatibilizar documentos e mérito? | Compatibilizar primeiro. | A conclusão é resultado do método, não ponto de partida. |
@@ -730,7 +730,7 @@ As alternativas erradas devem ser plausíveis e derivadas de erros descritos no 
 |---|---|---|---|
 | Q013 | CGH com exatamente 1 MW exige Consulta Prévia? | Sim. | A obrigação começa em potência igual ou superior a 1 MW. |
 | Q014 | MCH até 75 kW, sem supressão demonstrada, aponta inicialmente para qual ato? | DLAM, a verificar. | A dispensa não elimina outorga, APP, atos setoriais ou outras obrigações. |
-| Q015 | PCH de 9 MW e alagamento de 120 ha exige EIA/RIMA no roteiro do POP? | Sim. | O alagamento superior a 100 ha já aciona o critério, embora a potência seja inferior a 10 MW. |
+| Q015 | PCH de 9 MW e alagamento de 120 ha integra as situações passíveis de EIA/RIMA no art. 10 da IN IAT nº 09/2025? | Sim. | O alagamento superior a 100 ha inclui o caso nesse enquadramento, embora a potência seja inferior a 10 MW; o estudo e o rito ainda devem ser confirmados no caso concreto. |
 | Q016 | Um registro da ANEEL define sozinho a modalidade ambiental do IAT? | Não. | Regime setorial e enquadramento ambiental têm finalidades distintas e precisam ser compatibilizados. |
 | Q017 | A Consulta Prévia válida declara viabilidade ambiental definitiva? | Não. | Ela orienta; não garante prioridade, domínio ou viabilidade. |
 
@@ -741,14 +741,14 @@ As alternativas erradas devem ser plausíveis e derivadas de erros descritos no 
 | Q018 | DLAM é uma licença ambiental monofásica? | Não. | É ato de dispensa estadual, com limites próprios. |
 | Q019 | MGH com IDA 3,2 e sem supressão aponta inicialmente para quê? | LAC, se todos os requisitos forem atendidos. | O enquadramento precisa ser separado da suficiência para deferimento. |
 | Q020 | A LAS afasta autorização florestal e análise de fauna? | Não. | A modalidade simplificada não incorpora atos específicos sem previsão expressa. |
-| Q021 | Pode-se emitir LAS e deixar a correção da modalidade como condicionante? | Não, se a inadequação for impeditiva. | Pendência crítica prévia não deve virar condicionante. |
+| Q021 | Pode-se emitir LAS e deixar a correção da modalidade como condicionante? | Não, se a inadequação for impeditiva. | O que precisa ser resolvido antes da decisão não deve virar condicionante. |
 
 ### M05
 
 | ID | Questão | Resposta esperada | Feedback essencial |
 |---|---|---|---|
 | Q022 | Qual licença avalia localização, concepção e viabilidade? | LP. | LI autoriza instalação e LO, operação. |
-| Q023 | Condicionante crítica da LP não atendida pode ser simplesmente repetida na LI? | Em regra, não. | Precisa ser atendida ou receber justificativa/encaminhamento compatível antes da LI. |
+| Q023 | Condicionante da LP indispensável à LI, ainda não atendida, pode ser simplesmente repetida? | Em regra, não. | Precisa ser atendida ou receber justificativa/encaminhamento compatível antes da LI. |
 | Q024 | O status declarado pelo empreendedor no relatório equivale ao status validado pelo IAT? | Não. | A validação depende de evidências e análise. |
 | Q025 | Em EIA, o material deve ficar disponível por quanto tempo antes da audiência, segundo o POP? | No mínimo 45 dias. | A audiência ocorre antes da decisão final sobre a LP. |
 
@@ -798,7 +798,7 @@ As alternativas erradas devem ser plausíveis e derivadas de erros descritos no 
 | ID | Questão | Resposta esperada | Feedback essencial |
 |---|---|---|---|
 | Q047 | Um ponto KML isolado basta para arranjo complexo? | Não. | São necessárias geometrias completas para estruturas, TVR, reservatório, acessos e impactos. |
-| Q048 | TVR deve ser confrontado com qual ato e dado operacional? | Outorga/vazão remanescente, além de Memorial e operação. | Divergência pode ser crítica. |
+| Q048 | TVR deve ser confrontado com qual ato e dado operacional? | Outorga/vazão remanescente, além de Memorial e operação. | A divergência pode impedir uma decisão segura até a compatibilização. |
 | Q049 | Estudo de fauna anterior à Portaria IAT nº 012/2024 usa automaticamente a regra nova? | Não. | O POP manda observar a transição e, em monitoramentos em curso, o desenho aprovado salvo alteração formal. |
 
 ### M11
@@ -815,7 +815,7 @@ As alternativas erradas devem ser plausíveis e derivadas de erros descritos no 
 |---|---|---|---|
 | Q053 | “Apresentar documento X” é uma pendência completa? | Não. | Falta base, descrição da lacuna, consequência, providência e prazo/forma aplicável. |
 | Q054 | Qual sequência orienta condicionantes: compensar, mitigar, prevenir? | Prevenir, mitigar e, quando anteriores não forem possíveis, compensar. | A ordem precisa aparecer na decisão. |
-| Q055 | Pendência crítica que impede decisão pode virar condicionante após a licença? | Não. | Deve ser resolvida antes do deferimento. |
+| Q055 | Pendência que impede a decisão pode virar condicionante após a licença? | Não. | Deve ser resolvida antes do deferimento. |
 | Q056 | Inadequação de modalidade exige sempre manifestação não favorável? | Não. | Prioriza-se reclassificação/adequação quando juridicamente possível; a conclusão deve ser motivada. |
 | Q057 | Informação Técnica deve copiar integralmente o checklist? | Não. | Deve interpretar o conjunto, explicar relevância, consequências e encaminhamento. |
 
@@ -842,9 +842,9 @@ As avaliações deste desenho servem à aprendizagem e ao autoacompanhamento. En
 
 ### 8.1 Diagnóstico inicial
 
-- 20 questões adaptativas cobrindo escopo, tipologia, fases, status, gravidade, documentos, PACUERA e competência.
+- 20 questões adaptativas cobrindo escopo, tipologia, fases, status, consequência, documentos, PACUERA e competência.
 - Resultado por eixo de conteúdo, não apenas nota: `inicial`, `em desenvolvimento`, `proficiente`. Esses rótulos descrevem o desempenho observado no instrumento, não uma competência profissional validada.
-- A plataforma recomenda aulas específicas; não dispensa automaticamente conteúdo de alto risco.
+- A plataforma recomenda aulas específicas; não dispensa automaticamente conteúdo indispensável à decisão.
 
 ### 8.2 Avaliação formativa por módulo
 
@@ -867,16 +867,16 @@ As avaliações deste desenho servem à aprendizagem e ao autoacompanhamento. En
 | Identificação, histórico e situação fática | 6 | objeto, titular, fase, protocolos e atos anteriores coerentes |
 | Regime normativo e transição | 10 | datas, etapa, transição estadual/federal e validações registradas |
 | Tipologia, modalidade e Consulta Prévia | 12 | critérios aplicados e separação de enquadramento/suficiência |
-| Matriz documental | 12 | exigibilidade, status, gravidade, achado, consequência e encaminhamento |
+| Matriz documental | 12 | exigibilidade, status, achado, consequência, momento de saneamento e encaminhamento |
 | Análise de Memorial/estudo | 12 | fase/TR/versão, método, compatibilidade e rastreabilidade |
 | PACUERA, quando aplicável | 14 | TR, área, diagnóstico, UTH/zonas, cartografia, participação, competências e revisão |
 | Temas ambientais e interfaces | 10 | APP, flora, fauna, água, sistemas, barragens e intervenientes tratados nos limites corretos |
 | Vistoria/evidências | 6 | fatos, fotos/coordenação, confronto e limitações claras |
-| Pendências ou condicionantes | 8 | específicas, proporcionais e verificáveis; crítico não é postergado |
+| Pendências ou condicionantes | 8 | específicas, proporcionais e verificáveis; impedimento prévio não é postergado |
 | Conclusão e encaminhamento | 6 | decorrem dos achados e distinguem modalidade de suficiência |
 | Linguagem, formatação e QA | 4 | padrão institucional, rastreabilidade e inspeção final |
 
-**Erros críticos com correção obrigatória:** modalidade manifestamente incompatível; deferimento apesar de outorga/ANEEL/titularidade incompatível impeditiva; substituição de competência jurídica, hídrica, municipal, IPHAN ou de segurança; EIA/PACUERA materialmente incompleto enviado à participação como se apto; condicionante usada para sanar impedimento prévio; conclusão sem vínculo com os achados. Um erro crítico não corrigido limita a nota final a 59.
+**Decisões equivocadas com correção obrigatória:** modalidade manifestamente incompatível; deferimento apesar de outorga/ANEEL/titularidade incompatível impeditiva; substituição de competência jurídica, hídrica, municipal, IPHAN ou de segurança; EIA/PACUERA materialmente incompleto enviado à participação como se apto; condicionante usada para sanar impedimento prévio; conclusão sem vínculo com os achados. Qualquer uma dessas decisões, se não corrigida, limita a nota final a 59.
 
 ### 8.5 Avaliação específica de PACUERA (100 pontos)
 
@@ -946,7 +946,7 @@ O painel do aluno deve mostrar desempenho por eixo e não apenas porcentagem ger
 | 27 Controle de qualidade | M15.7 | checklist técnico, normativo, linguístico, visual e PACUERA | gate final antes da assinatura |
 | Anexo A | M16.1 + ferramenta de checklist | modelo adaptável e campos em branco | checklist de capstone |
 | Anexo B | M16.2 + editor guiado | esqueleto de Informação Técnica | produto final do capstone |
-| Anexo C | M16.3 + M08 | perguntas críticas por documento | matriz de estudo |
+| Anexo C | M16.3 + M08 | perguntas determinantes por documento | matriz de estudo |
 | Anexo D | M16.4 + M14 | exemplos adaptáveis de condicionantes | oficina de reescrita |
 | Anexo E | M16.5 + glossário | siglas e abreviações contextuais | busca e flashcards |
 | Anexo F | M13 | roteiro de controle de processos delegados e RTAA | matriz anual sintética com evidências |
@@ -968,7 +968,7 @@ O painel do aluno deve mostrar desempenho por eixo e não apenas porcentagem ger
 | 8 | Definições e erros recorrentes | M01 | glossário com “erro a evitar” |
 | 9 | Siglas operacionais complementares | M01/M16 | busca contextual e flashcards |
 | 10 | Classificação documental | M01/M14 | seletor de status com exemplos |
-| 11 | Classificação de gravidade | M01/M14 | classificador pela consequência |
+| 11 | Registro de consequência | M01/M14 | decisão, momento de saneamento e encaminhamento |
 | 12 | Saídas da triagem | M02 | escolha de rota e produto |
 | 13 | Tipologias e verificações | M03 | cartões MCH/MGH/CGH/PCH/UHE |
 | 14 | Critérios práticos de modalidade | M03/M06 | árvore de decisão por finalidade |
@@ -1001,7 +1001,7 @@ O painel do aluno deve mostrar desempenho por eixo e não apenas porcentagem ger
 | 41 | Condicionantes por fase | M14 | filtro LP/LI/AA/LO/RLO |
 | 42 | Critérios para conclusão | M14 | comparador das cinco saídas |
 | 43 | Estrutura por produto técnico | M15 | modelos guiados por produto |
-| 44 | Matriz por documento | M16/M08 | checklist de criticidade |
+| 44 | Matriz por documento | M16/M08 | checklist de consequência e encaminhamento |
 | 45 | Modelos de condicionantes | M16/M14 | exemplos com adaptação obrigatória |
 | 46 | Siglas e abreviações | M16 | glossário global pesquisável |
 
@@ -1109,7 +1109,7 @@ A biblioteca deve permitir filtro por `tema`, `ente`, `tipo de ato`, `fase`, `ci
 | Unidades de conservação e infrações | Lei nº 9.985/2000; Lei nº 9.605/1998; Decreto nº 6.514/2008 | UC, compensação, passivos e interface com fiscalização |
 | Fauna | Portaria IAT nº 012/2024, Anexos I a VIII | autorização, métodos, Anexo II e transição do art. 52 |
 | PACUERA | Portaria nº 069/2015 quando vigente/pertinente; IN IAT nº 64/2025; TR PACUERA 2026 | APP de reservatório, plano, participação, implementação e revisão |
-| Sistemas elétricos e baixo risco | IN IAT nº 10/2026; IN IAT nº 11/2026 | linhas, distribuição, subestações e baixo risco |
+| Sistemas elétricos e procedimentos específicos | IN IAT nº 10/2026; IN IAT nº 11/2026 | linhas, distribuição, subestações e respectivos requisitos |
 | Patrimônio cultural | IN IPHAN nº 06/2025 | FCA, SAIP, SEI e Protocolo Digital |
 | Regime setorial | RN ANEEL nº 875/2020 e alterações | inventário, DRI, DRS, comunicação, autorização e concessão |
 | Segurança de barragens | Lei nº 12.334/2010; Lei nº 14.066/2020; RN ANEEL nº 1.064/2023 e alterações | PNSB, PSB, PAE, fiscalização e interface ambiental |
@@ -1134,7 +1134,7 @@ A busca deve aceitar perguntas e termos como `CGH 1 MW`, `LOC`, `TVR`, `uma comp
 
 ### 13.2 Glossário contextual
 
-As siglas do Anexo E devem aparecer como tooltip acessível e página própria. Termos com risco de confusão precisam exibir o contraste: `DILA x DLAM`, `DLAM x licença`, `IAT x ANEEL`, `Memorial x estudo`, `RAS x RDPA`, `EIA x RIMA`, `PBA x PACUERA`, `LO x RLO`, `LOC x LOR/LASR`, `status x gravidade`, `plano x relatório de execução`.
+As siglas do Anexo E devem aparecer como tooltip acessível e página própria. Termos com risco de confusão precisam exibir o contraste: `DILA x DLAM`, `DLAM x licença`, `IAT x ANEEL`, `Memorial x estudo`, `RAS x RDPA`, `EIA x RIMA`, `PBA x PACUERA`, `LO x RLO`, `LOC x LOR/LASR`, `status x consequência`, `plano x relatório de execução`.
 
 ### 13.3 Modelos de trabalho
 
@@ -1157,7 +1157,7 @@ Esta priorização descreve objetivos pedagógicos e não substitui o inventári
 
 ### Onda 1 — Cobertura e rastreabilidade
 
-- manter M00 a M16 vinculados aos 159 tópicos com conteúdo próprio, sem perder a rastreabilidade dos 161 títulos não navegacionais; os 2 cabeçalhos estruturais são representados pela hierarquia e pelas subseções;
+- manter M00 a M16 vinculados aos 168 tópicos com conteúdo próprio, sem perder a rastreabilidade dos 170 títulos não navegacionais; os 2 cabeçalhos estruturais são representados pela hierarquia e pelas subseções;
 - preservar fonte exata, versão, data e identidade por hash;
 - manter figuras, quadros, tabelas e fluxogramas localizáveis;
 - garantir que todo recurso tenha estado explícito, alternativa textual e navegação funcional;
@@ -1185,13 +1185,13 @@ Esta priorização descreve objetivos pedagógicos e não substitui o inventári
 A plataforma só pode ser considerada completa quanto à **cobertura documental declarada** quando todos os itens abaixo forem demonstráveis. Mesmo assim, essa classificação não comprova eficácia pedagógica nem competência profissional:
 
 1. Todos os 27 capítulos, 6 anexos e referências têm página/atividade e fonte vinculada.
-2. Os 46 quadros, 20 tabelas e 14 figuras podem ser localizados por número e tema.
+2. Os 49 quadros, 20 tabelas e 14 figuras podem ser localizados por número e tema.
 3. Os 7 fluxogramas têm visão simplificada e completa funcional; a versão original está disponível como referência comparativa.
 4. Nenhum botão de vídeo ou áudio é inerte. Resumos de poucos segundos são rotulados como resumos; mídia aprofundada ainda não produzida é identificada honestamente como storyboard ou lacuna.
 5. Fluxos não são apenas imagens: decisões são clicáveis, produzem feedback e registram tentativa.
 6. O enquadrador explica a regra usada e não inventa fórmula de IDA nem emite ato automático.
 7. O módulo PACUERA cobre todos os 27 requisitos da matriz específica da seção 11 deste documento.
-8. Toda questão apresenta resposta e justificativa; todo erro crítico leva a remediação dirigida.
+8. Toda questão apresenta resposta e justificativa; toda decisão que comprometa o resultado leva a remediação dirigida.
 9. Cada módulo possui objetivo observável, conteúdo, exemplo, atividade e avaliação.
 10. O progresso persiste e pode ser retomado; a conclusão depende de evidências mínimas de desempenho, não apenas de abrir páginas.
 11. Vídeos têm legenda, transcrição, descrição e controle; imagens têm texto alternativo e zoom.
@@ -1208,17 +1208,17 @@ A plataforma só pode ser considerada completa quanto à **cobertura documental 
 
 - 17 módulos (M00 a M16).
 - 4 percursos recomendados (Essencial, Analista, PACUERA e Revisor), usados como priorização e não como bloqueio de acesso.
-- 159 tópicos ligados às seções com conteúdo próprio; 2 cabeçalhos estruturais sem bloco próprio não viram telas vazias, e 6 seções exclusivamente navegacionais não viram aula.
-- 159 práticas de recuperação ativa, cada uma com checagem comentada, resposta escrita e autoauditoria. A pergunta é exclusiva da seção quando existe; nos demais casos, a interface identifica explicitamente a recuperação de um conceito do mesmo módulo.
-- 159 resumos audiovisuais de 9,4 a 23,8 segundos e 17 vídeos de abertura de módulo.
+- 168 tópicos ligados às seções com conteúdo próprio; 2 cabeçalhos estruturais sem bloco próprio não viram telas vazias, e 6 seções exclusivamente navegacionais não viram aula.
+- 168 práticas de recuperação ativa, cada uma com checagem comentada, resposta escrita e autoauditoria. Cada aula possui uma pergunta exclusiva vinculada à sua seção.
+- 168 resumos audiovisuais de 10,5 a 102,5 segundos e 17 vídeos de abertura de módulo.
 - 26 cenários de laboratório com dados e documentos sintéticos.
-- 136 questões no banco executável, todas com citação literal verificada; 82 das 161 seções didáticas têm cobertura direta. Após a revisão editorial prioritária, 83 respostas corretas ainda são estritamente mais longas, mas nenhuma tem comprimento igual ou superior ao dobro do maior distrator.
+- 224 questões no banco executável, todas com citação literal verificada; as 168 aulas têm cobertura direta. Em 42 questões, a resposta correta ainda supera em pelo menos 10% o maior distrator; o portão automatizado mede essa pista para impedir regressão.
 - 27 capítulos, 6 anexos e referências mapeados.
-- 46 quadros, 20 tabelas e 14 figuras do POP mapeados.
+- 49 quadros, 20 tabelas e 14 figuras do POP mapeados.
 - 7 fluxogramas, com 21 variantes de origem em três níveis de leitura. Cada atividade montável possui seis orientações específicas de evidência, risco e fonte, além de uma decisão final com três opções e feedback.
 - Redator didático com os 12 elementos do item 23.1; a consolidação alternativa em 10 seções do Anexo B é exibida como divergência interna da própria minuta e não é ocultada.
 - 60 referências normativas/técnicas vinculadas a portal oficial: 22 diretamente à íntegra ou página específica e 38 ao índice oficial; vigência, transição e aplicabilidade permanecem pendentes de revisão responsável.
-- 3.339 nós textuais pesquisáveis.
-- 17 pacotes opcionais para estudo offline, com 528 arquivos de mídia e aproximadamente 117,4 MiB no total.
+- 3.396 nós textuais pesquisáveis.
+- 17 pacotes opcionais para estudo offline, com 555 arquivos de mídia e aproximadamente 203,1 MiB no total.
 
 Esse inventário mede presença e rastreabilidade de recursos. O mínimo de 80 caracteres, a checagem objetiva e a autoauditoria são evidências de atividade, não de qualidade técnica. Qualquer redução deve ser registrada como lacuna de cobertura; qualquer alegação de aprendizagem, profundidade ou competência precisa de evidência própria e separada, com revisão humana para desempenho avançado.

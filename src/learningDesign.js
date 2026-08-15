@@ -150,7 +150,7 @@ const LEARNING_PROFILES = [
     apply:
       "Pergunte se a informação é necessária antes da conclusão, se pode ser sanada e se existe base suficiente para uma obrigação futura verificável.",
     audit:
-      "Teste nexo, clareza, proporcionalidade, prazo, forma de comprovação e se uma lacuna crítica foi indevidamente empurrada para condicionante.",
+      "Teste nexo, clareza, proporcionalidade, prazo, forma de comprovação e se uma lacuna que impede a decisão foi indevidamente empurrada para condicionante.",
     mastery: [
       "distingue diligência prévia, impedimento, condicionante e recomendação",
       "redige lacuna, fundamento, consequência e providência de forma única",

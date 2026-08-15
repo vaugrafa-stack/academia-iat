@@ -4,10 +4,10 @@ Registro da migração concluída em 11/08/2026. Este documento nasceu como plan
 e virou relato: o que está aqui aconteceu e está verificado pelos portões do
 repositório.
 
-Fonte publicada: `POP_DLE_HID_001_v1.9_Sem_Classificacao_de_Gravidade.docx`,
-4.196.608 bytes, SHA-256 `f7056462…caf5b4871`, versão operacional 1.9.
+Fonte publicada: `POP_DLE_HID_001_v1.9_Linguagem_Operacional_Revisada.docx`,
+7.294.663 bytes, SHA-256 `d66151bd…962d83d4`, versão operacional 1.9.
 
-## 1. A classificação de gravidade saiu
+## 1. A escala ordinal de achados saiu
 
 A escala não é usada nos relatórios do dia a dia, e por isso saiu do POP e da
 plataforma. O substituto já estava no próprio texto: o encaminhamento decorre da
@@ -16,24 +16,25 @@ consequência técnica e da possibilidade de saneamento, não de um rótulo.
 No documento:
 
 - a seção 5.3 e o Quadro 11, que existiam só para definir a escala;
-- a coluna "Gravidade" de 15 tabelas de checklist e análise;
-- a tabela de "Gravidade típica" virou "Consequência técnica", com as células
+- a coluna da antiga escala em 15 tabelas de checklist e análise;
+- a tabela de enquadramento típico virou "Consequência técnica", com as células
   reescritas, porque ali a coluna carregava condição técnica real e apagá-la
   perderia conteúdo;
 - 15 frases reescritas, das quais a mais estrutural é a do item 26.6;
 - os quadros 12 a 46 renumerados para 11 a 45, com as 78 referências cruzadas.
 
-Resultado conferido: zero ocorrências de "gravidade" e zero da escala crítico,
-médio e baixo. O arquivo de entrada não foi alterado.
+Resultado conferido: zero ocorrências do vocabulário da antiga escala. O
+arquivo de entrada não foi alterado.
 
 Na plataforma, 70 ocorrências em 12 arquivos de conteúdo autoral, mais 60 no
-conteúdo derivado, que sumiram sozinhas na re-extração. `src/hydro.jsx` não foi
-tocado: ali "gravidade" é física, a barragem a gravidade e o `g` da fórmula da
-potência.
+conteúdo derivado, que sumiram sozinhas na re-extração. O guia de
+hidrelétricas também foi revisto: a barragem passou a ser descrita como
+estabilizada pelo peso próprio, e `g` como constante física correspondente à
+aceleração local.
 
 ## 2. O conteúdo do v1.9 entrou
 
-| Medida | v1.7 | v1.9 sem gravidade |
+| Medida | v1.7 | v1.9 revisada |
 |---|---:|---:|
 | Seções | 167 | 176 |
 | Títulos substantivos | 161 | 170 |

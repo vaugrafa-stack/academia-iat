@@ -108,6 +108,6 @@ for (const sev of ['ERRO', 'ALERTA', 'INFO']) {
   for (const f of items) console.log(`  [${f.number}] ${f.id}: ${f.msg}`);
 }
 
-const critical = bySev('ERRO').length + bySev('ALERTA').length;
-console.log(`\n${critical === 0 ? 'OK — nenhum erro estrutural ou de roteamento.' : `Revisar ${critical} item(ns) de ERRO/ALERTA.`}`);
-process.exit(critical === 0 ? 0 : 1);
+const blockingCount = bySev('ERRO').length + bySev('ALERTA').length;
+console.log(`\n${blockingCount === 0 ? 'OK — nenhum erro estrutural ou de roteamento.' : `Revisar ${blockingCount} item(ns) de ERRO/ALERTA.`}`);
+process.exit(blockingCount === 0 ? 0 : 1);

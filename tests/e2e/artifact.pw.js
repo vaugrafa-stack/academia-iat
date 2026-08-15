@@ -62,7 +62,7 @@ const ROUTES = [
   },
 ];
 
-test('artefato final mantém build, rotas críticas e console íntegros', async ({
+test('artefato final mantém build, rotas principais e console íntegros', async ({
   page,
   baseURL,
 }) => {

@@ -60,7 +60,7 @@ Light mode must preserve the same hue relationships with true white surfaces, no
 - body desktop: 15–17 px, 1.55–1.7;
 - body mobile: minimum 16 px, 1.55;
 - control text: 14–16 px, 650–750;
-- metadata: 12–14 px, never the only carrier of critical information.
+- metadata: 12–14 px, never the only carrier of essential information.
 
 No control may depend on browser-default typography.
 
@@ -79,7 +79,7 @@ No control may depend on browser-default typography.
 ### Dashboard
 
 - open two-column first viewport: purpose/action on the left and current learning media on the right;
-- one factual metrics row: 17 modules, 160 lessons, 21 cases;
+- one factual metrics row: 17 modules, 168 lessons, 26 cases;
 - river path in one wide band, showing partial viewport as “8 de 17 módulos”;
 - lower split: next actions and source/status;
 - source/status may show only facts supported by manifests.
@@ -143,14 +143,14 @@ Every icon-only control requires an accessible name. Selected, hover, focus, dis
 - “8 de 17 módulos”
 - “Próximas ações”
 - “Fontes e status”
-- “Fonte carregada — POP v1.7 · julho de 2026”
-- “Cobertura — 161/161 seções substantivas”
+- “Fonte carregada — POP v1.9 · agosto de 2026”
+- “Cobertura — 170/170 seções substantivas”
 - “Natureza do material — Minuta técnica · validação institucional pendente”
 
 ### Lesson 26.3
 
 - “Títulos, numeração, sumário e navegação”
-- “POP v1.7 · seção 26.3 · minuta técnica”
+- “POP v1.9 · seção 26.3 · minuta técnica”
 - “Ao final, você será capaz de revisar títulos, numeração e sumário antes da assinatura.”
 - “Aprender”, “Fonte integral”, “Praticar”, “Anotações”
 - “Problema”, “Padrão esperado”, “Iniciar prática”

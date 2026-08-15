@@ -84,12 +84,12 @@ export const NOVOS_CENARIOS = [
     steps: ['Objeto', 'Histórico', 'Inconsistência', 'Titularidade', 'Saída'],
     questions: [
       ['A leitura deve começar pelo objeto do requerimento e pelo histórico, antes da suficiência?', 'sim'],
-      ['Documento de outro empreendimento ou outro corpo hídrico é inconsistência geralmente crítica?', 'sim'],
+      ['Documento de outro empreendimento ou outro corpo hídrico é inconsistência que impede decisão segura até o saneamento?', 'sim'],
       ['Estudo antigo só é aproveitável se compatível com projeto, fase, área de influência e realidade atual?', 'sim'],
       ['Mudança de titularidade sem ato formal pode ser tratada como simples observação?', 'nao'],
       ['Cabe deferir antes de concluir a conferência do SGA/e-Protocolo e resolver as inconsistências cadastrais e documentais identificadas?', 'nao'],
     ],
-    outcome: 'Classificar o anexo divergente como inconsistência crítica, tratar a titularidade sem ato formal como pendência crítica e diligenciar antes do mérito. O estudo de 2016 só serve se demonstrada a compatibilidade com o projeto e com a realidade ambiental atuais.',
+    outcome: 'Registrar que o anexo divergente impede seu uso seguro, tratar a titularidade sem ato formal como pendência a ser sanada antes do mérito e diligenciar de forma consolidada. O estudo de 2016 só serve se demonstrada a compatibilidade com o projeto e com a realidade ambiental atuais.',
   },
   {
     id: 'barragem', track: 'm07', label: 'Segurança e sistemas', type: 'PCH',
@@ -177,10 +177,10 @@ export const NOVOS_CENARIOS = [
   },
   {
     id: 'condicionantes', track: 'm12', label: 'Condicionantes', type: 'PCH',
-    title: 'Minuta com condicionante genérica e pendência crítica convertida',
+    title: 'Minuta com condicionante genérica e pendência impeditiva convertida',
     facts: [
       'Uma condicionante repete obrigação legal, sem prazo nem indicador',
-      'Uma pendência crítica foi convertida em condicionante',
+      'Uma pendência que impede a decisão foi convertida em condicionante',
       'As diligências vêm sendo comunicadas em parcelas sucessivas',
       'O estudo descreve impacto residual como não mitigável',
     ],
@@ -193,12 +193,12 @@ export const NOVOS_CENARIOS = [
     steps: ['Suficiência', 'Condicionante', 'Diligência', 'Compensação', 'Conclusão'],
     questions: [
       ['Condicionante sem prazo, indicador ou forma de comprovação atende ao padrão de qualidade?', 'nao'],
-      ['Pendência crítica que impede decisão segura pode ser convertida em condicionante?', 'nao'],
+      ['Pendência que impede decisão segura pode ser convertida em condicionante?', 'nao'],
       ['A diligência deve ser consolidada e comunicada, em regra, de uma única vez?', 'sim'],
       ['A compensação por impacto não mitigável se aplica automaticamente pela potência ou pela tipologia?', 'nao'],
       ['Manifestação não favorável é resposta adequada para lacuna sanável por diligência?', 'nao'],
     ],
-    outcome: 'Reescrever a condicionante com prazo, indicador e forma de comprovação, devolver a pendência crítica para diligência em vez de condicionante e consolidar as exigências em comunicação única, conforme o art. 48 da Lei Federal nº 15.190/2025. A compensação só entra se o estudo demonstrar impacto residual não mitigável, com o regime jurídico identificado.',
+    outcome: 'Reescrever a condicionante com prazo, indicador e forma de comprovação, devolver para diligência a pendência que precisa ser sanada antes da decisão e consolidar as exigências em comunicação única, conforme o art. 48 da Lei Federal nº 15.190/2025. A compensação só entra se o estudo demonstrar impacto residual não mitigável, com o regime jurídico identificado.',
   },
   {
     id: 'revisao', track: 'm13', label: 'Revisão final', type: 'UHE',
@@ -473,7 +473,7 @@ export const NOVOS_CENARIOS = [
       'Minuta de licença com seis condicionantes propostas pela equipe',
       'O Quadro 40 do POP define verbo de ação, objeto, prazo, indicador, responsabilidade e forma de comprovação',
       'O item 24.1 lista as condicionantes que devem ser evitadas',
-      'Uma das pendências do processo é crítica e impede a decisão segura',
+      'Uma das pendências do processo impede a decisão segura',
     ],
     evidence: [
       'Quadro 40 do POP, padrão de qualidade das condicionantes',
@@ -499,10 +499,10 @@ export const NOVOS_CENARIOS = [
       ['As condicionantes 1 e 5 atendem ao padrão de qualidade, com objeto, prazo, indicador, responsabilidade e forma de comprovação?', 'nao'],
       ['A condicionante 2 reúne verbo de ação, objeto definido, prazo, indicador, responsabilidade e forma de comprovação?', 'sim'],
       ['A condicionante 3 é admissível, mandando o empreendedor decidir se cabe autorização?', 'nao'],
-      ['A condicionante 4 pode substituir a diligência de uma pendência crítica que impede a decisão?', 'nao'],
+      ['A condicionante 4 pode substituir a diligência de uma pendência que impede a decisão?', 'nao'],
       ['A condicionante 6 pode manter a redação transitória depois do Decreto Estadual nº 7.150/2024?', 'nao'],
     ],
-    outcome: 'Só a condicionante 2 sobrevive: ela tem verbo de ação, objeto definido, prazo, indicador, responsabilidade do titular da licença e forma de comprovação. A 1 repete obrigação legal sem relação direta com o empreendimento e sem nada verificável. A 3 transfere ao empreendedor competência decisória do órgão. A 4 tenta resolver por condicionante uma pendência crítica que precisa ser sanada antes do deferimento, e por isso volta para diligência. A 5 não tem prazo, indicador, responsabilidade nem forma de comprovação. A 6 mantém redação transitória que não deve mais ser utilizada depois da publicação do Decreto Estadual nº 7.150/2024.',
+    outcome: 'Só a condicionante 2 sobrevive: ela tem verbo de ação, objeto definido, prazo, indicador, responsabilidade do titular da licença e forma de comprovação. A 1 repete obrigação legal sem relação direta com o empreendimento e sem nada verificável. A 3 transfere ao empreendedor competência decisória do órgão. A 4 tenta resolver por condicionante uma pendência que precisa ser sanada antes do deferimento, e por isso volta para diligência. A 5 não tem prazo, indicador, responsabilidade nem forma de comprovação. A 6 mantém redação transitória que não deve mais ser utilizada depois da publicação do Decreto Estadual nº 7.150/2024.',
   },
 ];
 
@@ -574,7 +574,7 @@ export const TAREFAS_LAB = {
       items: [
         { evidenceIndex: 0, expectedUse: 'direta', rationale: 'Requerimento e capa fixam o objeto e a identidade do protocolo que deve ser analisado.', sourceRefs: ['pop-section-017'] },
         { evidenceIndex: 1, expectedUse: 'condicional', rationale: 'Estudo antigo só é aproveitável depois de demonstrada compatibilidade com projeto, fase, área de influência e realidade atual.', sourceRefs: ['pop-section-019'] },
-        { evidenceIndex: 2, expectedUse: 'inapta', distrator: true, rationale: 'O anexo de outro empreendimento e corpo hídrico não sustenta o mérito atual; ele demonstra uma inconsistência geralmente crítica.', sourceRefs: ['pop-section-019'] },
+        { evidenceIndex: 2, expectedUse: 'inapta', distrator: true, rationale: 'O anexo de outro empreendimento e corpo hídrico não sustenta o mérito atual; a incompatibilidade impede seu uso seguro.', sourceRefs: ['pop-section-019'] },
         { evidenceIndex: 3, expectedUse: 'direta', rationale: 'SGA e e-Protocolo permitem conferir histórico, titularidade e correspondência entre os atos do processo.', sourceRefs: ['pop-section-017', 'pop-section-048'] },
       ],
     },
@@ -593,12 +593,12 @@ export const TAREFAS_LAB = {
   },
   condicionantes: {
     openTask: {
-      prompt: 'Redija o encaminhamento técnico do caso. Explique por que a condicionante genérica deve ser reescrita ou suprimida, por que a pendência crítica deve retornar à diligência, como consolidar as solicitações e em que condição a compensação poderia ser analisada. Não crie prazo, indicador ou dado inexistente no cenário.',
+      prompt: 'Redija o encaminhamento técnico do caso. Explique por que a condicionante genérica deve ser reescrita ou suprimida, por que a pendência que impede a decisão deve retornar à diligência, como consolidar as solicitações e em que condição a compensação poderia ser analisada. Não crie prazo, indicador ou dado inexistente no cenário.',
       minCharacters: 240,
       requiredEvidenceIndexes: [0, 1, 2, 3],
       criteria: [
         { id: 'qualidade', label: 'Qualidade mensurável e verificável da condicionante', requiredConceptGroups: [['condicionante'], ['prazo', 'indicador', 'comprovação', 'comprovacao']], sourceRefs: ['pop-section-094', 'pop-section-095'] },
-        { id: 'critica', label: 'Pendência crítica tratada antes do deferimento', requiredConceptGroups: [['pendência crítica', 'pendencia critica'], ['diligência', 'diligencia', 'antes do deferimento']], sourceRefs: ['pop-section-095'] },
+        { id: 'saneamento_previo', label: 'Pendência impeditiva tratada antes do deferimento', requiredConceptGroups: [['impede', 'impeditiva', 'impeditivo', 'antes da decisão'], ['diligência', 'diligencia', 'antes do deferimento']], sourceRefs: ['pop-section-095'] },
         { id: 'consolidacao', label: 'Diligência consolidada, em regra de uma única vez', requiredConceptGroups: [['consolidada', 'consolidadas'], ['única vez', 'unica vez', 'art. 48']], sourceRefs: ['pop-section-092'] },
         { id: 'compensacao', label: 'Compensação condicionada à demonstração do impacto residual', requiredConceptGroups: [['compensação', 'compensacao'], ['impacto residual', 'não mitigável', 'nao mitigavel']], sourceRefs: ['pop-section-153'] },
         { id: 'encaminhamento', label: 'Consequência técnica e encaminhamento proporcional', requiredConceptGroups: [['lacuna sanável', 'lacuna sanavel', 'diligência', 'diligencia'], ['não é resposta automática', 'nao e resposta automatica', 'manifestação não favorável', 'manifestacao nao favoravel']], sourceRefs: ['pop-section-098'] },
@@ -696,9 +696,9 @@ export const RUBRICAS = {
       { rot: 'Os seis elementos do padrão', termos: ['prazo', 'indicador', 'comprova', 'verbo', 'objeto', 'responsab'] },
       { rot: 'Obrigação legal genérica não é condicionante', termos: ['generic', 'genéric', 'obrigacao legal', 'obrigação legal', 'repete', 'relacao direta', 'relação direta'] },
       { rot: 'Competência decisória não se transfere', termos: ['competenc', 'competênc', 'transfer', 'decisor', 'decisór', 'orgao', 'órgão'] },
-      { rot: 'Pendência crítica volta para diligência', termos: ['critic', 'crític', 'diligencia', 'diligência', 'antes do deferimento', 'impede'] },
+      { rot: 'Pendência impeditiva volta para diligência', termos: ['impede', 'impeditiv', 'sanead', 'diligencia', 'diligência', 'antes do deferimento'] },
     ],
-    modelo: 'Análise: das seis condicionantes propostas, apenas a segunda reúne os elementos do Quadro 40, porque identifica o titular da licença como responsável e traz verbo de ação, objeto definido, prazo de seis meses, indicador na forma de laudos laboratoriais e forma de comprovação com ART. A primeira repete obrigação legal genérica, sem relação direta com o empreendimento e sem nada verificável; a quinta não tem prazo, indicador, responsabilidade nem forma de comprovação. Comentário: a terceira transfere ao empreendedor competência decisória do órgão ambiental, o que o item 24.1 veda expressamente. A quarta tenta resolver por condicionante uma pendência crítica que impede a decisão segura e que, por isso, deve ser sanada antes do deferimento. A sexta mantém redação transitória que não deve mais ser utilizada depois da publicação do Decreto Estadual nº 7.150/2024. Solicitações: manter apenas a segunda condicionante; reescrever a primeira e a quinta com os seis elementos do padrão, ou suprimi-las; devolver a quarta para diligência; e retirar a terceira e a sexta da minuta.',
+    modelo: 'Análise: das seis condicionantes propostas, apenas a segunda reúne os elementos do Quadro 40, porque identifica o titular da licença como responsável e traz verbo de ação, objeto definido, prazo de seis meses, indicador na forma de laudos laboratoriais e forma de comprovação com ART. A primeira repete obrigação legal genérica, sem relação direta com o empreendimento e sem nada verificável; a quinta não tem prazo, indicador, responsabilidade nem forma de comprovação. Comentário: a terceira transfere ao empreendedor competência decisória do órgão ambiental, o que o item 24.1 veda expressamente. A quarta tenta resolver por condicionante uma pendência que impede a decisão segura e que, por isso, deve ser sanada antes do deferimento. A sexta mantém redação transitória que não deve mais ser utilizada depois da publicação do Decreto Estadual nº 7.150/2024. Solicitações: manter apenas a segunda condicionante; reescrever a primeira e a quinta com os seis elementos do padrão, ou suprimi-las; devolver a quarta para diligência; e retirar a terceira e a sexta da minuta.',
   },
   'prog-residuos': {
     elementos: [
@@ -847,11 +847,11 @@ export const RUBRICAS = {
   triagem: {
     elementos: [
       { rot: 'Objeto e histórico antes da suficiência', termos: ['objeto', 'historico', 'histórico', 'cronolog', 'requerimento'] },
-      { rot: 'Documento de outro empreendimento', termos: ['outro empreendimento', 'corpo hidrico', 'corpo hídrico', 'inconsisten', 'critic', 'crític'] },
+      { rot: 'Documento de outro empreendimento', termos: ['outro empreendimento', 'corpo hidrico', 'corpo hídrico', 'inconsisten', 'impede'] },
       { rot: 'Titularidade sem ato formal', termos: ['titular', 'transferenc', 'transferênc', 'anuenc', 'anuênc'] },
       { rot: 'Aproveitamento do estudo antigo', termos: ['2016', 'estudo antigo', 'compativ', 'compatív', 'atual'] },
     ],
-    modelo: 'A leitura partiu do objeto do requerimento e do histórico do processo, antes de qualquer juízo de suficiência. O anexo que identifica outro empreendimento e outro corpo hídrico é inconsistência que impede a decisão, por afetar a própria identificação do objeto analisado. A divergência de titularidade sem ato administrativo formal de transferência, anuência e assunção de condicionantes constitui pendência crítica. O estudo de 2016 só é aproveitável mediante demonstração de compatibilidade com o projeto atual, a fase, a área de influência e a realidade ambiental atuais, razão pela qual proponho diligência antes do mérito.',
+    modelo: 'A leitura partiu do objeto do requerimento e do histórico do processo, antes de qualquer juízo de suficiência. O anexo que identifica outro empreendimento e outro corpo hídrico é inconsistência que impede a decisão, por afetar a própria identificação do objeto analisado. A divergência de titularidade sem ato administrativo formal de transferência, anuência e assunção de condicionantes precisa ser sanada antes do mérito. O estudo de 2016 só é aproveitável mediante demonstração de compatibilidade com o projeto atual, a fase, a área de influência e a realidade ambiental atuais, razão pela qual proponho diligência antes do mérito.',
   },
   barragem: {
     elementos: [
@@ -883,11 +883,11 @@ export const RUBRICAS = {
   condicionantes: {
     elementos: [
       { rot: 'Qualidade da condicionante', termos: ['prazo', 'indicador', 'comprovac', 'comprovaç', 'mensurav', 'mensuráv', 'verificav', 'verificáv'] },
-      { rot: 'Pendência crítica não vira condicionante', termos: ['critic', 'crític', 'impede', 'diligencia', 'diligência', 'antes do deferimento'] },
+      { rot: 'Pendência impeditiva não vira condicionante', termos: ['impede', 'impeditiv', 'diligencia', 'diligência', 'antes do deferimento'] },
       { rot: 'Diligência de uma única vez', termos: ['unica vez', 'única vez', 'consolidad', '48', 'integrada'] },
       { rot: 'Compensação só com impacto não mitigável', termos: ['nao mitigav', 'não mitigáv', 'residual', 'compensac', 'compensaç'] },
     ],
-    modelo: 'A condicionante que apenas repete obrigação legal, sem prazo, indicador ou forma de comprovação, não atende ao padrão de qualidade e deve ser reescrita ou suprimida. A pendência crítica convertida em condicionante impede decisão segura e precisa retornar à diligência, porque condicionante não sana o que deveria ser resolvido antes do deferimento. As exigências devem ser consolidadas após análise integrada e comunicadas, em regra, de uma única vez, conforme o art. 48 da Lei Federal nº 15.190/2025. A compensação por impacto não mitigável só é analisada se os estudos demonstrarem o impacto residual e o fundamento de sua caracterização, não decorrendo automaticamente da potência ou da tipologia. Concluo por diligência, uma vez que a lacuna é sanável e a manifestação não favorável não é resposta automática.',
+    modelo: 'A condicionante que apenas repete obrigação legal, sem prazo, indicador ou forma de comprovação, não atende ao padrão de qualidade e deve ser reescrita ou suprimida. A pendência convertida em condicionante impede decisão segura e precisa retornar à diligência, porque condicionante não sana o que deveria ser resolvido antes do deferimento. As exigências devem ser consolidadas após análise integrada e comunicadas, em regra, de uma única vez, conforme o art. 48 da Lei Federal nº 15.190/2025. A compensação por impacto não mitigável só é analisada se os estudos demonstrarem o impacto residual e o fundamento de sua caracterização, não decorrendo automaticamente da potência ou da tipologia. Concluo por diligência, uma vez que a lacuna é sanável e a manifestação não favorável não é resposta automática.',
   },
   revisao: {
     elementos: [

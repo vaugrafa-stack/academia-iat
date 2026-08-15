@@ -50,11 +50,11 @@ DEFAULT_POP_SOURCE = (
     Path(os.environ["IAT_POP_SOURCE"]) if os.environ.get("IAT_POP_SOURCE") else None
 )
 
-PIPELINE_VERSION = "2.0.0"
+PIPELINE_VERSION = "2.1.0"
 EXPECTED = {
-    "fileName": "POP_DLE_HID_001_v1.9_Sem_Classificacao_de_Gravidade.docx",
-    "bytes": 4_196_608,
-    "sha256": "f7056462b84de383c8e2dbb1e22d3bb732d90fbd876a933e0596642caf5b4871",
+    "fileName": "POP_DLE_HID_001_v1.9_Linguagem_Operacional_Revisada.docx",
+    "bytes": 7_294_663,
+    "sha256": "d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4",
     "version": "1.9",
     "sections": 176,
     "learningSections": 170,
@@ -959,7 +959,7 @@ def build_validation(
             "fluxogramas": flows.get("stats", {}),
             "totalAssets": manifest["assetCount"],
             "notes": [
-                "A identidade da minuta-fonte v1.7 é travada por nome, tamanho e SHA-256.",
+                "A identidade da minuta-fonte v1.9 é travada por nome, tamanho e SHA-256.",
                 "As seis seções exclusivamente navegacionais são preservadas, mas não viram aulas.",
                 "A seção 26.3 é conteúdo substantivo e integra a trilha de aprendizagem.",
                 "Os artefatos são propostas de treinamento pendentes de validação humana e institucional.",
@@ -1019,7 +1019,7 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
         nargs="?",
         type=Path,
         default=DEFAULT_POP_SOURCE,
-        help="Caminho da minuta DOCX v1.7.",
+        help="Caminho da minuta DOCX v1.9.",
     )
     parser.add_argument(
         "--check-only",
@@ -1055,7 +1055,7 @@ def main(argv: list[str] | None = None) -> int:
     if source_sha != EXPECTED["sha256"]:
         identity_errors.append(f"SHA-256: esperado {EXPECTED['sha256']}, recebido {source_sha}")
     if identity_errors:
-        print("FALHA: a fonte não corresponde à minuta v1.7 aprovada para extração.", file=sys.stderr)
+        print("FALHA: a fonte não corresponde à minuta v1.9 aprovada para extração.", file=sys.stderr)
         for error in identity_errors:
             print(f"  - {error}", file=sys.stderr)
         return 1

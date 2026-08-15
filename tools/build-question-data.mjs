@@ -57,7 +57,7 @@ function cognitiveLevel(question) {
   // Prazos, escalas, periodicidade e gatilhos numericos pedem recuperacao de
   // um dado expresso. Antes, sete itens desse tipo caiam no retorno generico
   // "compreender", enquanto "quanto aos" era classificado como recordar.
-  if (/^(por quanto tempo|com que periodicidade|em quantos dias|quantos |quantas |qual(?: e)?(?: o| a)? (?:prazo|escala|gatilho(?: tipologico)? numerico|gatilho de entorno))/.test(stem)) {
+  if (/^(por quanto tempo|com que periodicidade|em quantos dias|quantos |quantas |qual(?: e)?(?: o| a)? (?:prazo|escala|criterio numerico|gatilho(?: tipologico)? numerico|gatilho de entorno))/.test(stem)) {
     return 'recordar';
   }
   if (/\b(distinguir|comparar|coerencia|conflito|compatibil\w*|classificar|fundamenta\w*|relacao entre|divisao de papeis|avaliar)\b/.test(stem)) {
@@ -121,13 +121,13 @@ function difficulty(question, level) {
   };
 }
 
-// Prioridade de remediacao nao e gravidade de pendencia processual. Ela apenas
-// ordena a revisao didatica quando o estudante erra um conceito sensivel.
+// Prioridade de remediacao ordena apenas a revisao didatica quando o estudante
+// erra um conceito sensivel; nao qualifica achados do processo.
 function remediationPriority(question, level) {
   const context = canonical(
     `${question.question} ${question.explanation} ${question.source?.quote || ''}`,
   );
-  if (/\b(competencia|outorga|titularidade|seguranca de barragem|eia|rima|inviabilidade|deferimento|decisao segura|pendencia critica|modalidade|dlam|iphan|pacuera)\b/.test(context)) {
+  if (/\b(competencia|outorga|titularidade|seguranca de barragem|eia|rima|inviabilidade|deferimento|decisao segura|pendencia impeditiva|modalidade|dlam|iphan|pacuera)\b/.test(context)) {
     return 'alta';
   }
   if (level === 'aplicar' || level === 'analisar' || /\b(documento|relatorio|estudo|processo|checklist|vistoria|condicionante)\b/.test(context)) {

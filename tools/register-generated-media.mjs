@@ -70,6 +70,11 @@ const specifications = [
 for (const specification of specifications) {
   const absolute = path.join(ROOT, specification.path);
   const [contents, info] = await Promise.all([readFile(absolute), stat(absolute)]);
+  if (specification.path.endsWith('.vtt') && contents.includes(0x0d)) {
+    throw new Error(
+      `${specification.path}: VTT deve estar em LF antes de registrar o hash publicável`,
+    );
+  }
   const existing = changesByPath.get(specification.path);
   const change = {
     cycle: existing?.cycle || policy.currentCycle,

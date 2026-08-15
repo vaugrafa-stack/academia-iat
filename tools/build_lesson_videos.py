@@ -528,7 +528,11 @@ def vtt(spec, path: Path):
     valida, porque o portao junta as linhas com espaco; dividir em cues nao.
     """
     blocos = blocos_da_legenda(spec)
-    path.write_text(escrever_vtt(blocos), encoding="utf-8")
+    # O ledger de mídia registra os bytes que serão publicados pelo Git.
+    # `write_text` traduz `\n` para CRLF no Windows, embora .gitattributes
+    # normalize VTT para LF no commit; isso fazia o CI Linux ver outro hash.
+    texto = escrever_vtt(blocos).replace("\r\n", "\n").replace("\r", "\n")
+    path.write_bytes(texto.encode("utf-8"))
     return len(blocos)
 
 

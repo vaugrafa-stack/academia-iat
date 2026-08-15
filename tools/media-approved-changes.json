@@ -195,7 +195,7 @@
       "sourceLocator": "tools de mídia sobre POP-DLE-HID-001 v1.9 sha256 d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4",
       "rightsBasis": "conteúdo derivado da minuta institucional do IAT; narração Piper offline sem voz humana ou material de terceiros",
       "reviewedBy": "portões automatizados de conteúdo, mídia, proveniência e privacidade desta rodada",
-      "reviewedAt": "2026-08-14"
+      "reviewedAt": "2026-08-15"
     },
     {
       "cycle": "2026-08",
@@ -210,22 +210,22 @@
       "sourceLocator": "tools de mídia sobre POP-DLE-HID-001 v1.9 sha256 d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4",
       "rightsBasis": "conteúdo derivado da minuta institucional do IAT; narração Piper offline sem voz humana ou material de terceiros",
       "reviewedBy": "portões automatizados de conteúdo, mídia, proveniência e privacidade desta rodada",
-      "reviewedAt": "2026-08-14"
+      "reviewedAt": "2026-08-15"
     },
     {
       "cycle": "2026-08",
       "action": "add",
       "path": "public/media/aula/pop-section-177.vtt",
       "reason": "videoaula regenerada para refletir a linguagem operacional e a fonte documental vigentes",
-      "bytes": 1272,
-      "sha256": "a31750d531c91a451d5406efa1f7f5f8e589350295dbe32b1e5bf519ef2b5a5b",
+      "bytes": 1214,
+      "sha256": "ff59d7fad3f3e38ee7440665140a18627bd4209981f114d46a0afa90a6760906",
       "sourceType": "project-generated",
       "privacyReview": "synthetic-no-personal-data",
       "technicalReview": "approved",
       "sourceLocator": "tools de mídia sobre POP-DLE-HID-001 v1.9 sha256 d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4",
       "rightsBasis": "conteúdo derivado da minuta institucional do IAT; narração Piper offline sem voz humana ou material de terceiros",
       "reviewedBy": "portões automatizados de conteúdo, mídia, proveniência e privacidade desta rodada",
-      "reviewedAt": "2026-08-14"
+      "reviewedAt": "2026-08-15"
     },
     {
       "cycle": "2026-08",
@@ -240,7 +240,7 @@
       "sourceLocator": "tools de mídia sobre POP-DLE-HID-001 v1.9 sha256 d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4",
       "rightsBasis": "conteúdo derivado da minuta institucional do IAT; narração Piper offline sem voz humana ou material de terceiros",
       "reviewedBy": "portões automatizados de conteúdo, mídia, proveniência e privacidade desta rodada",
-      "reviewedAt": "2026-08-14"
+      "reviewedAt": "2026-08-15"
     },
     {
       "cycle": "2026-08",
@@ -315,7 +315,7 @@
       "sourceLocator": "tools de mídia sobre POP-DLE-HID-001 v1.9 sha256 d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4",
       "rightsBasis": "conteúdo derivado da minuta institucional do IAT; narração Piper offline sem voz humana ou material de terceiros",
       "reviewedBy": "portões automatizados de conteúdo, mídia, proveniência e privacidade desta rodada",
-      "reviewedAt": "2026-08-14"
+      "reviewedAt": "2026-08-15"
     },
     {
       "cycle": "2026-08",
@@ -330,22 +330,22 @@
       "sourceLocator": "tools de mídia sobre POP-DLE-HID-001 v1.9 sha256 d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4",
       "rightsBasis": "conteúdo derivado da minuta institucional do IAT; narração Piper offline sem voz humana ou material de terceiros",
       "reviewedBy": "portões automatizados de conteúdo, mídia, proveniência e privacidade desta rodada",
-      "reviewedAt": "2026-08-14"
+      "reviewedAt": "2026-08-15"
     },
     {
       "cycle": "2026-08",
       "action": "add",
       "path": "public/media/aula/pop-section-179.vtt",
       "reason": "videoaula regenerada para refletir a linguagem operacional e a fonte documental vigentes",
-      "bytes": 1007,
-      "sha256": "b757cc03d17081da6a170d1f64a6e1d2d79e247026080fed3d50c02429110734",
+      "bytes": 963,
+      "sha256": "356710fad7753a5fb0c69ede89eb26dd1c3e85127cb45f14707017fa08e4bb03",
       "sourceType": "project-generated",
       "privacyReview": "synthetic-no-personal-data",
       "technicalReview": "approved",
       "sourceLocator": "tools de mídia sobre POP-DLE-HID-001 v1.9 sha256 d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4",
       "rightsBasis": "conteúdo derivado da minuta institucional do IAT; narração Piper offline sem voz humana ou material de terceiros",
       "reviewedBy": "portões automatizados de conteúdo, mídia, proveniência e privacidade desta rodada",
-      "reviewedAt": "2026-08-14"
+      "reviewedAt": "2026-08-15"
     },
     {
       "cycle": "2026-08",
@@ -360,7 +360,7 @@
       "sourceLocator": "tools de mídia sobre POP-DLE-HID-001 v1.9 sha256 d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4",
       "rightsBasis": "conteúdo derivado da minuta institucional do IAT; narração Piper offline sem voz humana ou material de terceiros",
       "reviewedBy": "portões automatizados de conteúdo, mídia, proveniência e privacidade desta rodada",
-      "reviewedAt": "2026-08-14"
+      "reviewedAt": "2026-08-15"
     },
     {
       "cycle": "2026-08",
@@ -615,7 +615,7 @@
       "sourceLocator": "tools de mídia sobre POP-DLE-HID-001 v1.9 sha256 d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4",
       "rightsBasis": "conteúdo derivado da minuta institucional do IAT; narração Piper offline sem voz humana ou material de terceiros",
       "reviewedBy": "portões automatizados de conteúdo, mídia, proveniência e privacidade desta rodada",
-      "reviewedAt": "2026-08-14"
+      "reviewedAt": "2026-08-15"
     },
     {
       "cycle": "2026-08",
@@ -630,22 +630,22 @@
       "sourceLocator": "tools de mídia sobre POP-DLE-HID-001 v1.9 sha256 d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4",
       "rightsBasis": "conteúdo derivado da minuta institucional do IAT; narração Piper offline sem voz humana ou material de terceiros",
       "reviewedBy": "portões automatizados de conteúdo, mídia, proveniência e privacidade desta rodada",
-      "reviewedAt": "2026-08-14"
+      "reviewedAt": "2026-08-15"
     },
     {
       "cycle": "2026-08",
       "action": "replace",
       "path": "public/media/aula/pop-section-072.vtt",
       "reason": "videoaula regenerada para refletir a linguagem operacional e a fonte documental vigentes",
-      "bytes": 1165,
-      "sha256": "942313d40c11f9081e9b8f83b55e0f3847378109de1d106842ba627ba9c8cc95",
+      "bytes": 1113,
+      "sha256": "e54803f4916e35e6aac7a528814b1f6b2c275c5f5fe82e2c6d6918d3014da24e",
       "sourceType": "project-generated",
       "privacyReview": "synthetic-no-personal-data",
       "technicalReview": "approved",
       "sourceLocator": "tools de mídia sobre POP-DLE-HID-001 v1.9 sha256 d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4",
       "rightsBasis": "conteúdo derivado da minuta institucional do IAT; narração Piper offline sem voz humana ou material de terceiros",
       "reviewedBy": "portões automatizados de conteúdo, mídia, proveniência e privacidade desta rodada",
-      "reviewedAt": "2026-08-14"
+      "reviewedAt": "2026-08-15"
     },
     {
       "cycle": "2026-08",
@@ -660,7 +660,7 @@
       "sourceLocator": "tools de mídia sobre POP-DLE-HID-001 v1.9 sha256 d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4",
       "rightsBasis": "conteúdo derivado da minuta institucional do IAT; narração Piper offline sem voz humana ou material de terceiros",
       "reviewedBy": "portões automatizados de conteúdo, mídia, proveniência e privacidade desta rodada",
-      "reviewedAt": "2026-08-14"
+      "reviewedAt": "2026-08-15"
     },
     {
       "cycle": "2026-08",
@@ -1134,7 +1134,7 @@
       "sourceLocator": "tools de mídia sobre POP-DLE-HID-001 v1.9 sha256 d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4",
       "rightsBasis": "conteúdo derivado da minuta institucional do IAT; narração Piper offline sem voz humana ou material de terceiros",
       "reviewedBy": "portões automatizados de conteúdo, mídia, proveniência e privacidade desta rodada",
-      "reviewedAt": "2026-08-14"
+      "reviewedAt": "2026-08-15"
     },
     {
       "cycle": "2026-08",
@@ -1149,22 +1149,22 @@
       "sourceLocator": "tools de mídia sobre POP-DLE-HID-001 v1.9 sha256 d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4",
       "rightsBasis": "conteúdo derivado da minuta institucional do IAT; narração Piper offline sem voz humana ou material de terceiros",
       "reviewedBy": "portões automatizados de conteúdo, mídia, proveniência e privacidade desta rodada",
-      "reviewedAt": "2026-08-14"
+      "reviewedAt": "2026-08-15"
     },
     {
       "cycle": "2026-08",
       "action": "replace",
       "path": "public/media/aula/pop-section-005.vtt",
       "reason": "videoaula regenerada para refletir a linguagem operacional e a fonte documental vigentes",
-      "bytes": 1451,
-      "sha256": "c416ff969f21dbccff83e958be78dc6f833939932ac762d029d77613ac2024eb",
+      "bytes": 1387,
+      "sha256": "48eb1125544fe3b9f9601d87088e81f54a25d54babd5564c2ea180c14fd3dbec",
       "sourceType": "project-generated",
       "privacyReview": "synthetic-no-personal-data",
       "technicalReview": "approved",
       "sourceLocator": "tools de mídia sobre POP-DLE-HID-001 v1.9 sha256 d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4",
       "rightsBasis": "conteúdo derivado da minuta institucional do IAT; narração Piper offline sem voz humana ou material de terceiros",
       "reviewedBy": "portões automatizados de conteúdo, mídia, proveniência e privacidade desta rodada",
-      "reviewedAt": "2026-08-14"
+      "reviewedAt": "2026-08-15"
     },
     {
       "cycle": "2026-08",
@@ -1179,7 +1179,7 @@
       "sourceLocator": "tools de mídia sobre POP-DLE-HID-001 v1.9 sha256 d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4",
       "rightsBasis": "conteúdo derivado da minuta institucional do IAT; narração Piper offline sem voz humana ou material de terceiros",
       "reviewedBy": "portões automatizados de conteúdo, mídia, proveniência e privacidade desta rodada",
-      "reviewedAt": "2026-08-14"
+      "reviewedAt": "2026-08-15"
     },
     {
       "cycle": "2026-08",
@@ -1194,7 +1194,7 @@
       "sourceLocator": "tools de mídia sobre POP-DLE-HID-001 v1.9 sha256 d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4",
       "rightsBasis": "conteúdo derivado da minuta institucional do IAT; narração Piper offline sem voz humana ou material de terceiros",
       "reviewedBy": "portões automatizados de conteúdo, mídia, proveniência e privacidade desta rodada",
-      "reviewedAt": "2026-08-14"
+      "reviewedAt": "2026-08-15"
     },
     {
       "cycle": "2026-08",
@@ -1209,22 +1209,22 @@
       "sourceLocator": "tools de mídia sobre POP-DLE-HID-001 v1.9 sha256 d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4",
       "rightsBasis": "conteúdo derivado da minuta institucional do IAT; narração Piper offline sem voz humana ou material de terceiros",
       "reviewedBy": "portões automatizados de conteúdo, mídia, proveniência e privacidade desta rodada",
-      "reviewedAt": "2026-08-14"
+      "reviewedAt": "2026-08-15"
     },
     {
       "cycle": "2026-08",
       "action": "replace",
       "path": "public/media/aula/pop-section-016.vtt",
       "reason": "videoaula regenerada para refletir a linguagem operacional e a fonte documental vigentes",
-      "bytes": 907,
-      "sha256": "46b56ba4d9baa7feb51b703e2ba11df2aa79705705f8be6831ee17bd919cfc1b",
+      "bytes": 866,
+      "sha256": "3264cf95e49782c63375e043ccc8539e9f1202f70f3200983c27990ed8b95f80",
       "sourceType": "project-generated",
       "privacyReview": "synthetic-no-personal-data",
       "technicalReview": "approved",
       "sourceLocator": "tools de mídia sobre POP-DLE-HID-001 v1.9 sha256 d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4",
       "rightsBasis": "conteúdo derivado da minuta institucional do IAT; narração Piper offline sem voz humana ou material de terceiros",
       "reviewedBy": "portões automatizados de conteúdo, mídia, proveniência e privacidade desta rodada",
-      "reviewedAt": "2026-08-14"
+      "reviewedAt": "2026-08-15"
     },
     {
       "cycle": "2026-08",
@@ -1239,7 +1239,7 @@
       "sourceLocator": "tools de mídia sobre POP-DLE-HID-001 v1.9 sha256 d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4",
       "rightsBasis": "conteúdo derivado da minuta institucional do IAT; narração Piper offline sem voz humana ou material de terceiros",
       "reviewedBy": "portões automatizados de conteúdo, mídia, proveniência e privacidade desta rodada",
-      "reviewedAt": "2026-08-14"
+      "reviewedAt": "2026-08-15"
     },
     {
       "cycle": "2026-08",
@@ -1254,7 +1254,7 @@
       "sourceLocator": "tools de mídia sobre POP-DLE-HID-001 v1.9 sha256 d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4",
       "rightsBasis": "conteúdo derivado da minuta institucional do IAT; narração Piper offline sem voz humana ou material de terceiros",
       "reviewedBy": "portões automatizados de conteúdo, mídia, proveniência e privacidade desta rodada",
-      "reviewedAt": "2026-08-14"
+      "reviewedAt": "2026-08-15"
     },
     {
       "cycle": "2026-08",
@@ -1269,22 +1269,22 @@
       "sourceLocator": "tools de mídia sobre POP-DLE-HID-001 v1.9 sha256 d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4",
       "rightsBasis": "conteúdo derivado da minuta institucional do IAT; narração Piper offline sem voz humana ou material de terceiros",
       "reviewedBy": "portões automatizados de conteúdo, mídia, proveniência e privacidade desta rodada",
-      "reviewedAt": "2026-08-14"
+      "reviewedAt": "2026-08-15"
     },
     {
       "cycle": "2026-08",
       "action": "replace",
       "path": "public/media/aula/pop-section-019.vtt",
       "reason": "videoaula regenerada para refletir a linguagem operacional e a fonte documental vigentes",
-      "bytes": 1076,
-      "sha256": "3716e84cbcc96d6dbd98cb77ba6c5cf5cdda2172ae4a978cc7b244d2a888906a",
+      "bytes": 1031,
+      "sha256": "db77b159761f2a4880dfb016bc4c5ac69fe6c1e06ae13d672d5433690f19e074",
       "sourceType": "project-generated",
       "privacyReview": "synthetic-no-personal-data",
       "technicalReview": "approved",
       "sourceLocator": "tools de mídia sobre POP-DLE-HID-001 v1.9 sha256 d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4",
       "rightsBasis": "conteúdo derivado da minuta institucional do IAT; narração Piper offline sem voz humana ou material de terceiros",
       "reviewedBy": "portões automatizados de conteúdo, mídia, proveniência e privacidade desta rodada",
-      "reviewedAt": "2026-08-14"
+      "reviewedAt": "2026-08-15"
     },
     {
       "cycle": "2026-08",
@@ -1299,7 +1299,7 @@
       "sourceLocator": "tools de mídia sobre POP-DLE-HID-001 v1.9 sha256 d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4",
       "rightsBasis": "conteúdo derivado da minuta institucional do IAT; narração Piper offline sem voz humana ou material de terceiros",
       "reviewedBy": "portões automatizados de conteúdo, mídia, proveniência e privacidade desta rodada",
-      "reviewedAt": "2026-08-14"
+      "reviewedAt": "2026-08-15"
     },
     {
       "cycle": "2026-08",
@@ -1314,7 +1314,7 @@
       "sourceLocator": "tools de mídia sobre POP-DLE-HID-001 v1.9 sha256 d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4",
       "rightsBasis": "conteúdo derivado da minuta institucional do IAT; narração Piper offline sem voz humana ou material de terceiros",
       "reviewedBy": "portões automatizados de conteúdo, mídia, proveniência e privacidade desta rodada",
-      "reviewedAt": "2026-08-14"
+      "reviewedAt": "2026-08-15"
     },
     {
       "cycle": "2026-08",
@@ -1329,22 +1329,22 @@
       "sourceLocator": "tools de mídia sobre POP-DLE-HID-001 v1.9 sha256 d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4",
       "rightsBasis": "conteúdo derivado da minuta institucional do IAT; narração Piper offline sem voz humana ou material de terceiros",
       "reviewedBy": "portões automatizados de conteúdo, mídia, proveniência e privacidade desta rodada",
-      "reviewedAt": "2026-08-14"
+      "reviewedAt": "2026-08-15"
     },
     {
       "cycle": "2026-08",
       "action": "replace",
       "path": "public/media/aula/pop-section-021.vtt",
       "reason": "videoaula regenerada para refletir a linguagem operacional e a fonte documental vigentes",
-      "bytes": 902,
-      "sha256": "587e3652b7a878b81a883f288e4367976c2e73a11e260a3dfbbd79092066b952",
+      "bytes": 863,
+      "sha256": "25a169d42b59040cf3383708e3b95bf10f474a8fa00d67c67b6831b0b7d25b39",
       "sourceType": "project-generated",
       "privacyReview": "synthetic-no-personal-data",
       "technicalReview": "approved",
       "sourceLocator": "tools de mídia sobre POP-DLE-HID-001 v1.9 sha256 d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4",
       "rightsBasis": "conteúdo derivado da minuta institucional do IAT; narração Piper offline sem voz humana ou material de terceiros",
       "reviewedBy": "portões automatizados de conteúdo, mídia, proveniência e privacidade desta rodada",
-      "reviewedAt": "2026-08-14"
+      "reviewedAt": "2026-08-15"
     },
     {
       "cycle": "2026-08",
@@ -1359,7 +1359,7 @@
       "sourceLocator": "tools de mídia sobre POP-DLE-HID-001 v1.9 sha256 d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4",
       "rightsBasis": "conteúdo derivado da minuta institucional do IAT; narração Piper offline sem voz humana ou material de terceiros",
       "reviewedBy": "portões automatizados de conteúdo, mídia, proveniência e privacidade desta rodada",
-      "reviewedAt": "2026-08-14"
+      "reviewedAt": "2026-08-15"
     },
     {
       "cycle": "2026-08",
@@ -1374,7 +1374,7 @@
       "sourceLocator": "tools de mídia sobre POP-DLE-HID-001 v1.9 sha256 d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4",
       "rightsBasis": "conteúdo derivado da minuta institucional do IAT; narração Piper offline sem voz humana ou material de terceiros",
       "reviewedBy": "portões automatizados de conteúdo, mídia, proveniência e privacidade desta rodada",
-      "reviewedAt": "2026-08-14"
+      "reviewedAt": "2026-08-15"
     },
     {
       "cycle": "2026-08",
@@ -1389,22 +1389,22 @@
       "sourceLocator": "tools de mídia sobre POP-DLE-HID-001 v1.9 sha256 d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4",
       "rightsBasis": "conteúdo derivado da minuta institucional do IAT; narração Piper offline sem voz humana ou material de terceiros",
       "reviewedBy": "portões automatizados de conteúdo, mídia, proveniência e privacidade desta rodada",
-      "reviewedAt": "2026-08-14"
+      "reviewedAt": "2026-08-15"
     },
     {
       "cycle": "2026-08",
       "action": "replace",
       "path": "public/media/aula/pop-section-022.vtt",
       "reason": "videoaula regenerada para refletir a linguagem operacional e a fonte documental vigentes",
-      "bytes": 1095,
-      "sha256": "3ba82bd083c94e0bce6e131263a61cd8508bfd9e5b351aa7199de4e3ff39adfd",
+      "bytes": 1047,
+      "sha256": "b629b0933837d7b73004e8eb5169a189d4b5f2b112f50ca9833355e375050622",
       "sourceType": "project-generated",
       "privacyReview": "synthetic-no-personal-data",
       "technicalReview": "approved",
       "sourceLocator": "tools de mídia sobre POP-DLE-HID-001 v1.9 sha256 d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4",
       "rightsBasis": "conteúdo derivado da minuta institucional do IAT; narração Piper offline sem voz humana ou material de terceiros",
       "reviewedBy": "portões automatizados de conteúdo, mídia, proveniência e privacidade desta rodada",
-      "reviewedAt": "2026-08-14"
+      "reviewedAt": "2026-08-15"
     },
     {
       "cycle": "2026-08",
@@ -1419,7 +1419,7 @@
       "sourceLocator": "tools de mídia sobre POP-DLE-HID-001 v1.9 sha256 d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4",
       "rightsBasis": "conteúdo derivado da minuta institucional do IAT; narração Piper offline sem voz humana ou material de terceiros",
       "reviewedBy": "portões automatizados de conteúdo, mídia, proveniência e privacidade desta rodada",
-      "reviewedAt": "2026-08-14"
+      "reviewedAt": "2026-08-15"
     },
     {
       "cycle": "2026-08",
@@ -1434,7 +1434,7 @@
       "sourceLocator": "tools de mídia sobre POP-DLE-HID-001 v1.9 sha256 d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4",
       "rightsBasis": "conteúdo derivado da minuta institucional do IAT; narração Piper offline sem voz humana ou material de terceiros",
       "reviewedBy": "portões automatizados de conteúdo, mídia, proveniência e privacidade desta rodada",
-      "reviewedAt": "2026-08-14"
+      "reviewedAt": "2026-08-15"
     },
     {
       "cycle": "2026-08",
@@ -1449,22 +1449,22 @@
       "sourceLocator": "tools de mídia sobre POP-DLE-HID-001 v1.9 sha256 d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4",
       "rightsBasis": "conteúdo derivado da minuta institucional do IAT; narração Piper offline sem voz humana ou material de terceiros",
       "reviewedBy": "portões automatizados de conteúdo, mídia, proveniência e privacidade desta rodada",
-      "reviewedAt": "2026-08-14"
+      "reviewedAt": "2026-08-15"
     },
     {
       "cycle": "2026-08",
       "action": "replace",
       "path": "public/media/aula/pop-section-026.vtt",
       "reason": "videoaula regenerada para refletir a linguagem operacional e a fonte documental vigentes",
-      "bytes": 1036,
-      "sha256": "fe022efa292bc1c84059f151f785b00d2a56a523c477ce9f39db87acba2c7219",
+      "bytes": 990,
+      "sha256": "fb3850dfc2b88a8392cf85d2f8102127fdc0b88c767e187095422a0d055f9ac1",
       "sourceType": "project-generated",
       "privacyReview": "synthetic-no-personal-data",
       "technicalReview": "approved",
       "sourceLocator": "tools de mídia sobre POP-DLE-HID-001 v1.9 sha256 d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4",
       "rightsBasis": "conteúdo derivado da minuta institucional do IAT; narração Piper offline sem voz humana ou material de terceiros",
       "reviewedBy": "portões automatizados de conteúdo, mídia, proveniência e privacidade desta rodada",
-      "reviewedAt": "2026-08-14"
+      "reviewedAt": "2026-08-15"
     },
     {
       "cycle": "2026-08",
@@ -1479,7 +1479,7 @@
       "sourceLocator": "tools de mídia sobre POP-DLE-HID-001 v1.9 sha256 d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4",
       "rightsBasis": "conteúdo derivado da minuta institucional do IAT; narração Piper offline sem voz humana ou material de terceiros",
       "reviewedBy": "portões automatizados de conteúdo, mídia, proveniência e privacidade desta rodada",
-      "reviewedAt": "2026-08-14"
+      "reviewedAt": "2026-08-15"
     },
     {
       "cycle": "2026-08",
@@ -1494,7 +1494,7 @@
       "sourceLocator": "tools de mídia sobre POP-DLE-HID-001 v1.9 sha256 d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4",
       "rightsBasis": "conteúdo derivado da minuta institucional do IAT; narração Piper offline sem voz humana ou material de terceiros",
       "reviewedBy": "portões automatizados de conteúdo, mídia, proveniência e privacidade desta rodada",
-      "reviewedAt": "2026-08-14"
+      "reviewedAt": "2026-08-15"
     },
     {
       "cycle": "2026-08",
@@ -1509,22 +1509,22 @@
       "sourceLocator": "tools de mídia sobre POP-DLE-HID-001 v1.9 sha256 d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4",
       "rightsBasis": "conteúdo derivado da minuta institucional do IAT; narração Piper offline sem voz humana ou material de terceiros",
       "reviewedBy": "portões automatizados de conteúdo, mídia, proveniência e privacidade desta rodada",
-      "reviewedAt": "2026-08-14"
+      "reviewedAt": "2026-08-15"
     },
     {
       "cycle": "2026-08",
       "action": "replace",
       "path": "public/media/aula/pop-section-029.vtt",
       "reason": "videoaula regenerada para refletir a linguagem operacional e a fonte documental vigentes",
-      "bytes": 1389,
-      "sha256": "20d28ece5959c43401d1d800b0f9b6551f8d23c5cfe0bf7e785a2d96ac2a1868",
+      "bytes": 1327,
+      "sha256": "b82ec567f1a6e251a59e1da1fd03edf8ef913818be4457b26f7533315c3bbd9c",
       "sourceType": "project-generated",
       "privacyReview": "synthetic-no-personal-data",
       "technicalReview": "approved",
       "sourceLocator": "tools de mídia sobre POP-DLE-HID-001 v1.9 sha256 d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4",
       "rightsBasis": "conteúdo derivado da minuta institucional do IAT; narração Piper offline sem voz humana ou material de terceiros",
       "reviewedBy": "portões automatizados de conteúdo, mídia, proveniência e privacidade desta rodada",
-      "reviewedAt": "2026-08-14"
+      "reviewedAt": "2026-08-15"
     },
     {
       "cycle": "2026-08",
@@ -1539,7 +1539,7 @@
       "sourceLocator": "tools de mídia sobre POP-DLE-HID-001 v1.9 sha256 d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4",
       "rightsBasis": "conteúdo derivado da minuta institucional do IAT; narração Piper offline sem voz humana ou material de terceiros",
       "reviewedBy": "portões automatizados de conteúdo, mídia, proveniência e privacidade desta rodada",
-      "reviewedAt": "2026-08-14"
+      "reviewedAt": "2026-08-15"
     },
     {
       "cycle": "2026-08",
@@ -1554,7 +1554,7 @@
       "sourceLocator": "tools de mídia sobre POP-DLE-HID-001 v1.9 sha256 d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4",
       "rightsBasis": "conteúdo derivado da minuta institucional do IAT; narração Piper offline sem voz humana ou material de terceiros",
       "reviewedBy": "portões automatizados de conteúdo, mídia, proveniência e privacidade desta rodada",
-      "reviewedAt": "2026-08-14"
+      "reviewedAt": "2026-08-15"
     },
     {
       "cycle": "2026-08",
@@ -1569,22 +1569,22 @@
       "sourceLocator": "tools de mídia sobre POP-DLE-HID-001 v1.9 sha256 d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4",
       "rightsBasis": "conteúdo derivado da minuta institucional do IAT; narração Piper offline sem voz humana ou material de terceiros",
       "reviewedBy": "portões automatizados de conteúdo, mídia, proveniência e privacidade desta rodada",
-      "reviewedAt": "2026-08-14"
+      "reviewedAt": "2026-08-15"
     },
     {
       "cycle": "2026-08",
       "action": "replace",
       "path": "public/media/aula/pop-section-032.vtt",
       "reason": "videoaula regenerada para refletir a linguagem operacional e a fonte documental vigentes",
-      "bytes": 702,
-      "sha256": "e43da57e699f6eebcca80df0a8e25e8762bdf6cebf9ecf172ce3b034092262f6",
+      "bytes": 669,
+      "sha256": "811e92e4e51a3cff02312d1cb89ef7efb8264d1fdd87a89874ab678ebe7b81f6",
       "sourceType": "project-generated",
       "privacyReview": "synthetic-no-personal-data",
       "technicalReview": "approved",
       "sourceLocator": "tools de mídia sobre POP-DLE-HID-001 v1.9 sha256 d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4",
       "rightsBasis": "conteúdo derivado da minuta institucional do IAT; narração Piper offline sem voz humana ou material de terceiros",
       "reviewedBy": "portões automatizados de conteúdo, mídia, proveniência e privacidade desta rodada",
-      "reviewedAt": "2026-08-14"
+      "reviewedAt": "2026-08-15"
     },
     {
       "cycle": "2026-08",
@@ -1599,7 +1599,7 @@
       "sourceLocator": "tools de mídia sobre POP-DLE-HID-001 v1.9 sha256 d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4",
       "rightsBasis": "conteúdo derivado da minuta institucional do IAT; narração Piper offline sem voz humana ou material de terceiros",
       "reviewedBy": "portões automatizados de conteúdo, mídia, proveniência e privacidade desta rodada",
-      "reviewedAt": "2026-08-14"
+      "reviewedAt": "2026-08-15"
     },
     {
       "cycle": "2026-08",
@@ -1614,7 +1614,7 @@
       "sourceLocator": "tools de mídia sobre POP-DLE-HID-001 v1.9 sha256 d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4",
       "rightsBasis": "conteúdo derivado da minuta institucional do IAT; narração Piper offline sem voz humana ou material de terceiros",
       "reviewedBy": "portões automatizados de conteúdo, mídia, proveniência e privacidade desta rodada",
-      "reviewedAt": "2026-08-14"
+      "reviewedAt": "2026-08-15"
     },
     {
       "cycle": "2026-08",
@@ -1629,22 +1629,22 @@
       "sourceLocator": "tools de mídia sobre POP-DLE-HID-001 v1.9 sha256 d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4",
       "rightsBasis": "conteúdo derivado da minuta institucional do IAT; narração Piper offline sem voz humana ou material de terceiros",
       "reviewedBy": "portões automatizados de conteúdo, mídia, proveniência e privacidade desta rodada",
-      "reviewedAt": "2026-08-14"
+      "reviewedAt": "2026-08-15"
     },
     {
       "cycle": "2026-08",
       "action": "replace",
       "path": "public/media/aula/pop-section-035.vtt",
       "reason": "videoaula regenerada para refletir a linguagem operacional e a fonte documental vigentes",
-      "bytes": 878,
-      "sha256": "63aeb2f11845129ed05735d6e4e7568431c6a4cc5c26335a032d147f5c1ab7d4",
+      "bytes": 837,
+      "sha256": "87cb53772a70b350c83bbda7e8319cd001f379cb49ba5821b4973bb52d3a7b15",
       "sourceType": "project-generated",
       "privacyReview": "synthetic-no-personal-data",
       "technicalReview": "approved",
       "sourceLocator": "tools de mídia sobre POP-DLE-HID-001 v1.9 sha256 d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4",
       "rightsBasis": "conteúdo derivado da minuta institucional do IAT; narração Piper offline sem voz humana ou material de terceiros",
       "reviewedBy": "portões automatizados de conteúdo, mídia, proveniência e privacidade desta rodada",
-      "reviewedAt": "2026-08-14"
+      "reviewedAt": "2026-08-15"
     },
     {
       "cycle": "2026-08",
@@ -1659,7 +1659,7 @@
       "sourceLocator": "tools de mídia sobre POP-DLE-HID-001 v1.9 sha256 d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4",
       "rightsBasis": "conteúdo derivado da minuta institucional do IAT; narração Piper offline sem voz humana ou material de terceiros",
       "reviewedBy": "portões automatizados de conteúdo, mídia, proveniência e privacidade desta rodada",
-      "reviewedAt": "2026-08-14"
+      "reviewedAt": "2026-08-15"
     },
     {
       "cycle": "2026-08",
@@ -1674,7 +1674,7 @@
       "sourceLocator": "tools de mídia sobre POP-DLE-HID-001 v1.9 sha256 d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4",
       "rightsBasis": "conteúdo derivado da minuta institucional do IAT; narração Piper offline sem voz humana ou material de terceiros",
       "reviewedBy": "portões automatizados de conteúdo, mídia, proveniência e privacidade desta rodada",
-      "reviewedAt": "2026-08-14"
+      "reviewedAt": "2026-08-15"
     },
     {
       "cycle": "2026-08",
@@ -1689,22 +1689,22 @@
       "sourceLocator": "tools de mídia sobre POP-DLE-HID-001 v1.9 sha256 d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4",
       "rightsBasis": "conteúdo derivado da minuta institucional do IAT; narração Piper offline sem voz humana ou material de terceiros",
       "reviewedBy": "portões automatizados de conteúdo, mídia, proveniência e privacidade desta rodada",
-      "reviewedAt": "2026-08-14"
+      "reviewedAt": "2026-08-15"
     },
     {
       "cycle": "2026-08",
       "action": "replace",
       "path": "public/media/aula/pop-section-037.vtt",
       "reason": "videoaula regenerada para refletir a linguagem operacional e a fonte documental vigentes",
-      "bytes": 897,
-      "sha256": "b4a91e464159a5d4d8bbba2aaf291d422aa1fa6b0ae80f810e2f51a6301bd11b",
+      "bytes": 853,
+      "sha256": "ce3e05cbc9023404da55ef0c9453f5a49c05a7aaf1df5bf420be06c7430dc027",
       "sourceType": "project-generated",
       "privacyReview": "synthetic-no-personal-data",
       "technicalReview": "approved",
       "sourceLocator": "tools de mídia sobre POP-DLE-HID-001 v1.9 sha256 d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4",
       "rightsBasis": "conteúdo derivado da minuta institucional do IAT; narração Piper offline sem voz humana ou material de terceiros",
       "reviewedBy": "portões automatizados de conteúdo, mídia, proveniência e privacidade desta rodada",
-      "reviewedAt": "2026-08-14"
+      "reviewedAt": "2026-08-15"
     },
     {
       "cycle": "2026-08",
@@ -1719,7 +1719,7 @@
       "sourceLocator": "tools de mídia sobre POP-DLE-HID-001 v1.9 sha256 d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4",
       "rightsBasis": "conteúdo derivado da minuta institucional do IAT; narração Piper offline sem voz humana ou material de terceiros",
       "reviewedBy": "portões automatizados de conteúdo, mídia, proveniência e privacidade desta rodada",
-      "reviewedAt": "2026-08-14"
+      "reviewedAt": "2026-08-15"
     },
     {
       "cycle": "2026-08",
@@ -1734,7 +1734,7 @@
       "sourceLocator": "tools de mídia sobre POP-DLE-HID-001 v1.9 sha256 d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4",
       "rightsBasis": "conteúdo derivado da minuta institucional do IAT; narração Piper offline sem voz humana ou material de terceiros",
       "reviewedBy": "portões automatizados de conteúdo, mídia, proveniência e privacidade desta rodada",
-      "reviewedAt": "2026-08-14"
+      "reviewedAt": "2026-08-15"
     },
     {
       "cycle": "2026-08",
@@ -1749,22 +1749,22 @@
       "sourceLocator": "tools de mídia sobre POP-DLE-HID-001 v1.9 sha256 d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4",
       "rightsBasis": "conteúdo derivado da minuta institucional do IAT; narração Piper offline sem voz humana ou material de terceiros",
       "reviewedBy": "portões automatizados de conteúdo, mídia, proveniência e privacidade desta rodada",
-      "reviewedAt": "2026-08-14"
+      "reviewedAt": "2026-08-15"
     },
     {
       "cycle": "2026-08",
       "action": "replace",
       "path": "public/media/aula/pop-section-039.vtt",
       "reason": "videoaula regenerada para refletir a linguagem operacional e a fonte documental vigentes",
-      "bytes": 840,
-      "sha256": "f19bb71f1265a7c5b4b334db593e8def1271d027f7b7cd882d36004a94d0e056",
+      "bytes": 801,
+      "sha256": "0bed56137c8a94629338ec1e0b017d6bf7bffb918b7f20751cdb56863d6adafd",
       "sourceType": "project-generated",
       "privacyReview": "synthetic-no-personal-data",
       "technicalReview": "approved",
       "sourceLocator": "tools de mídia sobre POP-DLE-HID-001 v1.9 sha256 d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4",
       "rightsBasis": "conteúdo derivado da minuta institucional do IAT; narração Piper offline sem voz humana ou material de terceiros",
       "reviewedBy": "portões automatizados de conteúdo, mídia, proveniência e privacidade desta rodada",
-      "reviewedAt": "2026-08-14"
+      "reviewedAt": "2026-08-15"
     },
     {
       "cycle": "2026-08",
@@ -1779,7 +1779,7 @@
       "sourceLocator": "tools de mídia sobre POP-DLE-HID-001 v1.9 sha256 d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4",
       "rightsBasis": "conteúdo derivado da minuta institucional do IAT; narração Piper offline sem voz humana ou material de terceiros",
       "reviewedBy": "portões automatizados de conteúdo, mídia, proveniência e privacidade desta rodada",
-      "reviewedAt": "2026-08-14"
+      "reviewedAt": "2026-08-15"
     },
     {
       "cycle": "2026-08",
@@ -1794,7 +1794,7 @@
       "sourceLocator": "tools de mídia sobre POP-DLE-HID-001 v1.9 sha256 d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4",
       "rightsBasis": "conteúdo derivado da minuta institucional do IAT; narração Piper offline sem voz humana ou material de terceiros",
       "reviewedBy": "portões automatizados de conteúdo, mídia, proveniência e privacidade desta rodada",
-      "reviewedAt": "2026-08-14"
+      "reviewedAt": "2026-08-15"
     },
     {
       "cycle": "2026-08",
@@ -1809,22 +1809,22 @@
       "sourceLocator": "tools de mídia sobre POP-DLE-HID-001 v1.9 sha256 d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4",
       "rightsBasis": "conteúdo derivado da minuta institucional do IAT; narração Piper offline sem voz humana ou material de terceiros",
       "reviewedBy": "portões automatizados de conteúdo, mídia, proveniência e privacidade desta rodada",
-      "reviewedAt": "2026-08-14"
+      "reviewedAt": "2026-08-15"
     },
     {
       "cycle": "2026-08",
       "action": "replace",
       "path": "public/media/aula/pop-section-042.vtt",
       "reason": "videoaula regenerada para refletir a linguagem operacional e a fonte documental vigentes",
-      "bytes": 866,
-      "sha256": "e9b0de7959b986f76e5a9bb63be6e4b17f69876040168a7951810c7134f9096e",
+      "bytes": 827,
+      "sha256": "08d43f7f2abd89bdcfce01deeab53c122656a56dcf4a97c2dccc3629e173822d",
       "sourceType": "project-generated",
       "privacyReview": "synthetic-no-personal-data",
       "technicalReview": "approved",
       "sourceLocator": "tools de mídia sobre POP-DLE-HID-001 v1.9 sha256 d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4",
       "rightsBasis": "conteúdo derivado da minuta institucional do IAT; narração Piper offline sem voz humana ou material de terceiros",
       "reviewedBy": "portões automatizados de conteúdo, mídia, proveniência e privacidade desta rodada",
-      "reviewedAt": "2026-08-14"
+      "reviewedAt": "2026-08-15"
     },
     {
       "cycle": "2026-08",
@@ -1839,7 +1839,7 @@
       "sourceLocator": "tools de mídia sobre POP-DLE-HID-001 v1.9 sha256 d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4",
       "rightsBasis": "conteúdo derivado da minuta institucional do IAT; narração Piper offline sem voz humana ou material de terceiros",
       "reviewedBy": "portões automatizados de conteúdo, mídia, proveniência e privacidade desta rodada",
-      "reviewedAt": "2026-08-14"
+      "reviewedAt": "2026-08-15"
     },
     {
       "cycle": "2026-08",
@@ -1854,7 +1854,7 @@
       "sourceLocator": "tools de mídia sobre POP-DLE-HID-001 v1.9 sha256 d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4",
       "rightsBasis": "conteúdo derivado da minuta institucional do IAT; narração Piper offline sem voz humana ou material de terceiros",
       "reviewedBy": "portões automatizados de conteúdo, mídia, proveniência e privacidade desta rodada",
-      "reviewedAt": "2026-08-14"
+      "reviewedAt": "2026-08-15"
     },
     {
       "cycle": "2026-08",
@@ -1869,22 +1869,22 @@
       "sourceLocator": "tools de mídia sobre POP-DLE-HID-001 v1.9 sha256 d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4",
       "rightsBasis": "conteúdo derivado da minuta institucional do IAT; narração Piper offline sem voz humana ou material de terceiros",
       "reviewedBy": "portões automatizados de conteúdo, mídia, proveniência e privacidade desta rodada",
-      "reviewedAt": "2026-08-14"
+      "reviewedAt": "2026-08-15"
     },
     {
       "cycle": "2026-08",
       "action": "replace",
       "path": "public/media/aula/pop-section-043.vtt",
       "reason": "videoaula regenerada para refletir a linguagem operacional e a fonte documental vigentes",
-      "bytes": 1505,
-      "sha256": "87b6cb6ad88ebb93bfc4de74780cf90440fee0fbfe454805c0aa5431ac8d27de",
+      "bytes": 1437,
+      "sha256": "db627bc5bddd1e382ac385e2616adfef717630acb808fc472b156bb02bec2ac2",
       "sourceType": "project-generated",
       "privacyReview": "synthetic-no-personal-data",
       "technicalReview": "approved",
       "sourceLocator": "tools de mídia sobre POP-DLE-HID-001 v1.9 sha256 d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4",
       "rightsBasis": "conteúdo derivado da minuta institucional do IAT; narração Piper offline sem voz humana ou material de terceiros",
       "reviewedBy": "portões automatizados de conteúdo, mídia, proveniência e privacidade desta rodada",
-      "reviewedAt": "2026-08-14"
+      "reviewedAt": "2026-08-15"
     },
     {
       "cycle": "2026-08",
@@ -1899,7 +1899,7 @@
       "sourceLocator": "tools de mídia sobre POP-DLE-HID-001 v1.9 sha256 d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4",
       "rightsBasis": "conteúdo derivado da minuta institucional do IAT; narração Piper offline sem voz humana ou material de terceiros",
       "reviewedBy": "portões automatizados de conteúdo, mídia, proveniência e privacidade desta rodada",
-      "reviewedAt": "2026-08-14"
+      "reviewedAt": "2026-08-15"
     },
     {
       "cycle": "2026-08",
@@ -1914,7 +1914,7 @@
       "sourceLocator": "tools de mídia sobre POP-DLE-HID-001 v1.9 sha256 d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4",
       "rightsBasis": "conteúdo derivado da minuta institucional do IAT; narração Piper offline sem voz humana ou material de terceiros",
       "reviewedBy": "portões automatizados de conteúdo, mídia, proveniência e privacidade desta rodada",
-      "reviewedAt": "2026-08-14"
+      "reviewedAt": "2026-08-15"
     },
     {
       "cycle": "2026-08",
@@ -1929,22 +1929,22 @@
       "sourceLocator": "tools de mídia sobre POP-DLE-HID-001 v1.9 sha256 d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4",
       "rightsBasis": "conteúdo derivado da minuta institucional do IAT; narração Piper offline sem voz humana ou material de terceiros",
       "reviewedBy": "portões automatizados de conteúdo, mídia, proveniência e privacidade desta rodada",
-      "reviewedAt": "2026-08-14"
+      "reviewedAt": "2026-08-15"
     },
     {
       "cycle": "2026-08",
       "action": "replace",
       "path": "public/media/aula/pop-section-049.vtt",
       "reason": "videoaula regenerada para refletir a linguagem operacional e a fonte documental vigentes",
-      "bytes": 927,
-      "sha256": "c83dfbd84890f53fd0b76a99186729cba828e99a21f5ae4a4ca55c008d11847d",
+      "bytes": 884,
+      "sha256": "276d77aac7ced09d03b99d6d0a09edb65ba9875c3fff1847f5416d590e72bcf1",
       "sourceType": "project-generated",
       "privacyReview": "synthetic-no-personal-data",
       "technicalReview": "approved",
       "sourceLocator": "tools de mídia sobre POP-DLE-HID-001 v1.9 sha256 d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4",
       "rightsBasis": "conteúdo derivado da minuta institucional do IAT; narração Piper offline sem voz humana ou material de terceiros",
       "reviewedBy": "portões automatizados de conteúdo, mídia, proveniência e privacidade desta rodada",
-      "reviewedAt": "2026-08-14"
+      "reviewedAt": "2026-08-15"
     },
     {
       "cycle": "2026-08",
@@ -1959,7 +1959,7 @@
       "sourceLocator": "tools de mídia sobre POP-DLE-HID-001 v1.9 sha256 d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4",
       "rightsBasis": "conteúdo derivado da minuta institucional do IAT; narração Piper offline sem voz humana ou material de terceiros",
       "reviewedBy": "portões automatizados de conteúdo, mídia, proveniência e privacidade desta rodada",
-      "reviewedAt": "2026-08-14"
+      "reviewedAt": "2026-08-15"
     },
     {
       "cycle": "2026-08",
@@ -1974,7 +1974,7 @@
       "sourceLocator": "tools de mídia sobre POP-DLE-HID-001 v1.9 sha256 d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4",
       "rightsBasis": "conteúdo derivado da minuta institucional do IAT; narração Piper offline sem voz humana ou material de terceiros",
       "reviewedBy": "portões automatizados de conteúdo, mídia, proveniência e privacidade desta rodada",
-      "reviewedAt": "2026-08-14"
+      "reviewedAt": "2026-08-15"
     },
     {
       "cycle": "2026-08",
@@ -1989,22 +1989,22 @@
       "sourceLocator": "tools de mídia sobre POP-DLE-HID-001 v1.9 sha256 d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4",
       "rightsBasis": "conteúdo derivado da minuta institucional do IAT; narração Piper offline sem voz humana ou material de terceiros",
       "reviewedBy": "portões automatizados de conteúdo, mídia, proveniência e privacidade desta rodada",
-      "reviewedAt": "2026-08-14"
+      "reviewedAt": "2026-08-15"
     },
     {
       "cycle": "2026-08",
       "action": "replace",
       "path": "public/media/aula/pop-section-052.vtt",
       "reason": "videoaula regenerada para refletir a linguagem operacional e a fonte documental vigentes",
-      "bytes": 888,
-      "sha256": "d4379ea3cce95785cba29d26a63bfe80b33191e8e690bff5ebba2448c4ddf0ce",
+      "bytes": 845,
+      "sha256": "2d535e1a9de9c27c514f4ea52eca50dc8a7ce18323bf0eb6315878c787386e79",
       "sourceType": "project-generated",
       "privacyReview": "synthetic-no-personal-data",
       "technicalReview": "approved",
       "sourceLocator": "tools de mídia sobre POP-DLE-HID-001 v1.9 sha256 d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4",
       "rightsBasis": "conteúdo derivado da minuta institucional do IAT; narração Piper offline sem voz humana ou material de terceiros",
       "reviewedBy": "portões automatizados de conteúdo, mídia, proveniência e privacidade desta rodada",
-      "reviewedAt": "2026-08-14"
+      "reviewedAt": "2026-08-15"
     },
     {
       "cycle": "2026-08",
@@ -2019,7 +2019,7 @@
       "sourceLocator": "tools de mídia sobre POP-DLE-HID-001 v1.9 sha256 d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4",
       "rightsBasis": "conteúdo derivado da minuta institucional do IAT; narração Piper offline sem voz humana ou material de terceiros",
       "reviewedBy": "portões automatizados de conteúdo, mídia, proveniência e privacidade desta rodada",
-      "reviewedAt": "2026-08-14"
+      "reviewedAt": "2026-08-15"
     },
     {
       "cycle": "2026-08",
@@ -2034,7 +2034,7 @@
       "sourceLocator": "tools de mídia sobre POP-DLE-HID-001 v1.9 sha256 d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4",
       "rightsBasis": "conteúdo derivado da minuta institucional do IAT; narração Piper offline sem voz humana ou material de terceiros",
       "reviewedBy": "portões automatizados de conteúdo, mídia, proveniência e privacidade desta rodada",
-      "reviewedAt": "2026-08-14"
+      "reviewedAt": "2026-08-15"
     },
     {
       "cycle": "2026-08",
@@ -2049,22 +2049,22 @@
       "sourceLocator": "tools de mídia sobre POP-DLE-HID-001 v1.9 sha256 d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4",
       "rightsBasis": "conteúdo derivado da minuta institucional do IAT; narração Piper offline sem voz humana ou material de terceiros",
       "reviewedBy": "portões automatizados de conteúdo, mídia, proveniência e privacidade desta rodada",
-      "reviewedAt": "2026-08-14"
+      "reviewedAt": "2026-08-15"
     },
     {
       "cycle": "2026-08",
       "action": "replace",
       "path": "public/media/aula/pop-section-055.vtt",
       "reason": "videoaula regenerada para refletir a linguagem operacional e a fonte documental vigentes",
-      "bytes": 1069,
-      "sha256": "d94a4f8971502a4a44d02231c2172c437570a7a513341bb03f8eb0f722150425",
+      "bytes": 1021,
+      "sha256": "fbd71e2490b917dcafcfac08cde6b0e87001864d2fd05ece3aa2dd18f1f2a4ee",
       "sourceType": "project-generated",
       "privacyReview": "synthetic-no-personal-data",
       "technicalReview": "approved",
       "sourceLocator": "tools de mídia sobre POP-DLE-HID-001 v1.9 sha256 d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4",
       "rightsBasis": "conteúdo derivado da minuta institucional do IAT; narração Piper offline sem voz humana ou material de terceiros",
       "reviewedBy": "portões automatizados de conteúdo, mídia, proveniência e privacidade desta rodada",
-      "reviewedAt": "2026-08-14"
+      "reviewedAt": "2026-08-15"
     },
     {
       "cycle": "2026-08",
@@ -2079,7 +2079,7 @@
       "sourceLocator": "tools de mídia sobre POP-DLE-HID-001 v1.9 sha256 d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4",
       "rightsBasis": "conteúdo derivado da minuta institucional do IAT; narração Piper offline sem voz humana ou material de terceiros",
       "reviewedBy": "portões automatizados de conteúdo, mídia, proveniência e privacidade desta rodada",
-      "reviewedAt": "2026-08-14"
+      "reviewedAt": "2026-08-15"
     },
     {
       "cycle": "2026-08",
@@ -2094,7 +2094,7 @@
       "sourceLocator": "tools de mídia sobre POP-DLE-HID-001 v1.9 sha256 d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4",
       "rightsBasis": "conteúdo derivado da minuta institucional do IAT; narração Piper offline sem voz humana ou material de terceiros",
       "reviewedBy": "portões automatizados de conteúdo, mídia, proveniência e privacidade desta rodada",
-      "reviewedAt": "2026-08-14"
+      "reviewedAt": "2026-08-15"
     },
     {
       "cycle": "2026-08",
@@ -2109,22 +2109,22 @@
       "sourceLocator": "tools de mídia sobre POP-DLE-HID-001 v1.9 sha256 d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4",
       "rightsBasis": "conteúdo derivado da minuta institucional do IAT; narração Piper offline sem voz humana ou material de terceiros",
       "reviewedBy": "portões automatizados de conteúdo, mídia, proveniência e privacidade desta rodada",
-      "reviewedAt": "2026-08-14"
+      "reviewedAt": "2026-08-15"
     },
     {
       "cycle": "2026-08",
       "action": "replace",
       "path": "public/media/aula/pop-section-062.vtt",
       "reason": "videoaula regenerada para refletir a linguagem operacional e a fonte documental vigentes",
-      "bytes": 967,
-      "sha256": "03cf3eb418f7dd8481b9a5c4be1e58dbe7d6f57eda10078d94f1066c02b99dd8",
+      "bytes": 924,
+      "sha256": "00eea749e9137acd0b7fe497c21456cb638b1eecd03fc66091f32bba278609be",
       "sourceType": "project-generated",
       "privacyReview": "synthetic-no-personal-data",
       "technicalReview": "approved",
       "sourceLocator": "tools de mídia sobre POP-DLE-HID-001 v1.9 sha256 d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4",
       "rightsBasis": "conteúdo derivado da minuta institucional do IAT; narração Piper offline sem voz humana ou material de terceiros",
       "reviewedBy": "portões automatizados de conteúdo, mídia, proveniência e privacidade desta rodada",
-      "reviewedAt": "2026-08-14"
+      "reviewedAt": "2026-08-15"
     },
     {
       "cycle": "2026-08",
@@ -2139,7 +2139,7 @@
       "sourceLocator": "tools de mídia sobre POP-DLE-HID-001 v1.9 sha256 d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4",
       "rightsBasis": "conteúdo derivado da minuta institucional do IAT; narração Piper offline sem voz humana ou material de terceiros",
       "reviewedBy": "portões automatizados de conteúdo, mídia, proveniência e privacidade desta rodada",
-      "reviewedAt": "2026-08-14"
+      "reviewedAt": "2026-08-15"
     },
     {
       "cycle": "2026-08",
@@ -2154,7 +2154,7 @@
       "sourceLocator": "tools de mídia sobre POP-DLE-HID-001 v1.9 sha256 d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4",
       "rightsBasis": "conteúdo derivado da minuta institucional do IAT; narração Piper offline sem voz humana ou material de terceiros",
       "reviewedBy": "portões automatizados de conteúdo, mídia, proveniência e privacidade desta rodada",
-      "reviewedAt": "2026-08-14"
+      "reviewedAt": "2026-08-15"
     },
     {
       "cycle": "2026-08",
@@ -2169,22 +2169,22 @@
       "sourceLocator": "tools de mídia sobre POP-DLE-HID-001 v1.9 sha256 d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4",
       "rightsBasis": "conteúdo derivado da minuta institucional do IAT; narração Piper offline sem voz humana ou material de terceiros",
       "reviewedBy": "portões automatizados de conteúdo, mídia, proveniência e privacidade desta rodada",
-      "reviewedAt": "2026-08-14"
+      "reviewedAt": "2026-08-15"
     },
     {
       "cycle": "2026-08",
       "action": "replace",
       "path": "public/media/aula/pop-section-064.vtt",
       "reason": "videoaula regenerada para refletir a linguagem operacional e a fonte documental vigentes",
-      "bytes": 1453,
-      "sha256": "765d2ae4ab3f6229cc98a50132d9811af591df074b4306439d4af43ca910cd45",
+      "bytes": 1388,
+      "sha256": "2b951f1935897465a7a0f4b4728b0403bfda109ccee62cece15c6e8752c0d48c",
       "sourceType": "project-generated",
       "privacyReview": "synthetic-no-personal-data",
       "technicalReview": "approved",
       "sourceLocator": "tools de mídia sobre POP-DLE-HID-001 v1.9 sha256 d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4",
       "rightsBasis": "conteúdo derivado da minuta institucional do IAT; narração Piper offline sem voz humana ou material de terceiros",
       "reviewedBy": "portões automatizados de conteúdo, mídia, proveniência e privacidade desta rodada",
-      "reviewedAt": "2026-08-14"
+      "reviewedAt": "2026-08-15"
     },
     {
       "cycle": "2026-08",
@@ -2199,7 +2199,7 @@
       "sourceLocator": "tools de mídia sobre POP-DLE-HID-001 v1.9 sha256 d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4",
       "rightsBasis": "conteúdo derivado da minuta institucional do IAT; narração Piper offline sem voz humana ou material de terceiros",
       "reviewedBy": "portões automatizados de conteúdo, mídia, proveniência e privacidade desta rodada",
-      "reviewedAt": "2026-08-14"
+      "reviewedAt": "2026-08-15"
     },
     {
       "cycle": "2026-08",
@@ -2214,7 +2214,7 @@
       "sourceLocator": "tools de mídia sobre POP-DLE-HID-001 v1.9 sha256 d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4",
       "rightsBasis": "conteúdo derivado da minuta institucional do IAT; narração Piper offline sem voz humana ou material de terceiros",
       "reviewedBy": "portões automatizados de conteúdo, mídia, proveniência e privacidade desta rodada",
-      "reviewedAt": "2026-08-14"
+      "reviewedAt": "2026-08-15"
     },
     {
       "cycle": "2026-08",
@@ -2229,22 +2229,22 @@
       "sourceLocator": "tools de mídia sobre POP-DLE-HID-001 v1.9 sha256 d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4",
       "rightsBasis": "conteúdo derivado da minuta institucional do IAT; narração Piper offline sem voz humana ou material de terceiros",
       "reviewedBy": "portões automatizados de conteúdo, mídia, proveniência e privacidade desta rodada",
-      "reviewedAt": "2026-08-14"
+      "reviewedAt": "2026-08-15"
     },
     {
       "cycle": "2026-08",
       "action": "replace",
       "path": "public/media/aula/pop-section-076.vtt",
       "reason": "videoaula regenerada para refletir a linguagem operacional e a fonte documental vigentes",
-      "bytes": 810,
-      "sha256": "e99626611abd47d921bd3053c5540767aeaa1ac5748d56aa4b4f78a26f9a4cab",
+      "bytes": 775,
+      "sha256": "05399f18f43118b978b299e67fe60064be9d158ecb1fc00eab1066ee0c6e1a32",
       "sourceType": "project-generated",
       "privacyReview": "synthetic-no-personal-data",
       "technicalReview": "approved",
       "sourceLocator": "tools de mídia sobre POP-DLE-HID-001 v1.9 sha256 d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4",
       "rightsBasis": "conteúdo derivado da minuta institucional do IAT; narração Piper offline sem voz humana ou material de terceiros",
       "reviewedBy": "portões automatizados de conteúdo, mídia, proveniência e privacidade desta rodada",
-      "reviewedAt": "2026-08-14"
+      "reviewedAt": "2026-08-15"
     },
     {
       "cycle": "2026-08",
@@ -2259,7 +2259,7 @@
       "sourceLocator": "tools de mídia sobre POP-DLE-HID-001 v1.9 sha256 d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4",
       "rightsBasis": "conteúdo derivado da minuta institucional do IAT; narração Piper offline sem voz humana ou material de terceiros",
       "reviewedBy": "portões automatizados de conteúdo, mídia, proveniência e privacidade desta rodada",
-      "reviewedAt": "2026-08-14"
+      "reviewedAt": "2026-08-15"
     },
     {
       "cycle": "2026-08",
@@ -2274,7 +2274,7 @@
       "sourceLocator": "tools de mídia sobre POP-DLE-HID-001 v1.9 sha256 d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4",
       "rightsBasis": "conteúdo derivado da minuta institucional do IAT; narração Piper offline sem voz humana ou material de terceiros",
       "reviewedBy": "portões automatizados de conteúdo, mídia, proveniência e privacidade desta rodada",
-      "reviewedAt": "2026-08-14"
+      "reviewedAt": "2026-08-15"
     },
     {
       "cycle": "2026-08",
@@ -2289,22 +2289,22 @@
       "sourceLocator": "tools de mídia sobre POP-DLE-HID-001 v1.9 sha256 d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4",
       "rightsBasis": "conteúdo derivado da minuta institucional do IAT; narração Piper offline sem voz humana ou material de terceiros",
       "reviewedBy": "portões automatizados de conteúdo, mídia, proveniência e privacidade desta rodada",
-      "reviewedAt": "2026-08-14"
+      "reviewedAt": "2026-08-15"
     },
     {
       "cycle": "2026-08",
       "action": "replace",
       "path": "public/media/aula/pop-section-078.vtt",
       "reason": "videoaula regenerada para refletir a linguagem operacional e a fonte documental vigentes",
-      "bytes": 768,
-      "sha256": "f5ce4a9ad30a67984b2aa1b8befa192e4be500b89509b80d2776de6065ed12d1",
+      "bytes": 731,
+      "sha256": "11674ce24e356c00a2ef261bf13162b2bb94481dcc94dce3fa5a49c07e19c883",
       "sourceType": "project-generated",
       "privacyReview": "synthetic-no-personal-data",
       "technicalReview": "approved",
       "sourceLocator": "tools de mídia sobre POP-DLE-HID-001 v1.9 sha256 d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4",
       "rightsBasis": "conteúdo derivado da minuta institucional do IAT; narração Piper offline sem voz humana ou material de terceiros",
       "reviewedBy": "portões automatizados de conteúdo, mídia, proveniência e privacidade desta rodada",
-      "reviewedAt": "2026-08-14"
+      "reviewedAt": "2026-08-15"
     },
     {
       "cycle": "2026-08",
@@ -2319,7 +2319,7 @@
       "sourceLocator": "tools de mídia sobre POP-DLE-HID-001 v1.9 sha256 d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4",
       "rightsBasis": "conteúdo derivado da minuta institucional do IAT; narração Piper offline sem voz humana ou material de terceiros",
       "reviewedBy": "portões automatizados de conteúdo, mídia, proveniência e privacidade desta rodada",
-      "reviewedAt": "2026-08-14"
+      "reviewedAt": "2026-08-15"
     },
     {
       "cycle": "2026-08",
@@ -2334,7 +2334,7 @@
       "sourceLocator": "tools de mídia sobre POP-DLE-HID-001 v1.9 sha256 d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4",
       "rightsBasis": "conteúdo derivado da minuta institucional do IAT; narração Piper offline sem voz humana ou material de terceiros",
       "reviewedBy": "portões automatizados de conteúdo, mídia, proveniência e privacidade desta rodada",
-      "reviewedAt": "2026-08-14"
+      "reviewedAt": "2026-08-15"
     },
     {
       "cycle": "2026-08",
@@ -2349,22 +2349,22 @@
       "sourceLocator": "tools de mídia sobre POP-DLE-HID-001 v1.9 sha256 d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4",
       "rightsBasis": "conteúdo derivado da minuta institucional do IAT; narração Piper offline sem voz humana ou material de terceiros",
       "reviewedBy": "portões automatizados de conteúdo, mídia, proveniência e privacidade desta rodada",
-      "reviewedAt": "2026-08-14"
+      "reviewedAt": "2026-08-15"
     },
     {
       "cycle": "2026-08",
       "action": "replace",
       "path": "public/media/aula/pop-section-080.vtt",
       "reason": "videoaula regenerada para refletir a linguagem operacional e a fonte documental vigentes",
-      "bytes": 1433,
-      "sha256": "341606643da35dfe7849b254e682ce5460519abc4c46660bde58b6658bd277e5",
+      "bytes": 1374,
+      "sha256": "4fda42187695da23afd79fac2dea00156ec01a8650dd83e3bf52d3e18bac2fb6",
       "sourceType": "project-generated",
       "privacyReview": "synthetic-no-personal-data",
       "technicalReview": "approved",
       "sourceLocator": "tools de mídia sobre POP-DLE-HID-001 v1.9 sha256 d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4",
       "rightsBasis": "conteúdo derivado da minuta institucional do IAT; narração Piper offline sem voz humana ou material de terceiros",
       "reviewedBy": "portões automatizados de conteúdo, mídia, proveniência e privacidade desta rodada",
-      "reviewedAt": "2026-08-14"
+      "reviewedAt": "2026-08-15"
     },
     {
       "cycle": "2026-08",
@@ -2379,7 +2379,7 @@
       "sourceLocator": "tools de mídia sobre POP-DLE-HID-001 v1.9 sha256 d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4",
       "rightsBasis": "conteúdo derivado da minuta institucional do IAT; narração Piper offline sem voz humana ou material de terceiros",
       "reviewedBy": "portões automatizados de conteúdo, mídia, proveniência e privacidade desta rodada",
-      "reviewedAt": "2026-08-14"
+      "reviewedAt": "2026-08-15"
     },
     {
       "cycle": "2026-08",
@@ -2394,7 +2394,7 @@
       "sourceLocator": "tools de mídia sobre POP-DLE-HID-001 v1.9 sha256 d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4",
       "rightsBasis": "conteúdo derivado da minuta institucional do IAT; narração Piper offline sem voz humana ou material de terceiros",
       "reviewedBy": "portões automatizados de conteúdo, mídia, proveniência e privacidade desta rodada",
-      "reviewedAt": "2026-08-14"
+      "reviewedAt": "2026-08-15"
     },
     {
       "cycle": "2026-08",
@@ -2409,22 +2409,22 @@
       "sourceLocator": "tools de mídia sobre POP-DLE-HID-001 v1.9 sha256 d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4",
       "rightsBasis": "conteúdo derivado da minuta institucional do IAT; narração Piper offline sem voz humana ou material de terceiros",
       "reviewedBy": "portões automatizados de conteúdo, mídia, proveniência e privacidade desta rodada",
-      "reviewedAt": "2026-08-14"
+      "reviewedAt": "2026-08-15"
     },
     {
       "cycle": "2026-08",
       "action": "replace",
       "path": "public/media/aula/pop-section-081.vtt",
       "reason": "videoaula regenerada para refletir a linguagem operacional e a fonte documental vigentes",
-      "bytes": 666,
-      "sha256": "2281f96832119aa4958d9bd361e6d7a2f3eae79c9fcb5bcdb74babf3e2737862",
+      "bytes": 632,
+      "sha256": "0624f46aa6271f42c9a1dbaf1e8e8af7076aca39935a8427bf2e1208b0dc0dcb",
       "sourceType": "project-generated",
       "privacyReview": "synthetic-no-personal-data",
       "technicalReview": "approved",
       "sourceLocator": "tools de mídia sobre POP-DLE-HID-001 v1.9 sha256 d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4",
       "rightsBasis": "conteúdo derivado da minuta institucional do IAT; narração Piper offline sem voz humana ou material de terceiros",
       "reviewedBy": "portões automatizados de conteúdo, mídia, proveniência e privacidade desta rodada",
-      "reviewedAt": "2026-08-14"
+      "reviewedAt": "2026-08-15"
     },
     {
       "cycle": "2026-08",
@@ -2439,7 +2439,7 @@
       "sourceLocator": "tools de mídia sobre POP-DLE-HID-001 v1.9 sha256 d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4",
       "rightsBasis": "conteúdo derivado da minuta institucional do IAT; narração Piper offline sem voz humana ou material de terceiros",
       "reviewedBy": "portões automatizados de conteúdo, mídia, proveniência e privacidade desta rodada",
-      "reviewedAt": "2026-08-14"
+      "reviewedAt": "2026-08-15"
     },
     {
       "cycle": "2026-08",
@@ -2454,7 +2454,7 @@
       "sourceLocator": "tools de mídia sobre POP-DLE-HID-001 v1.9 sha256 d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4",
       "rightsBasis": "conteúdo derivado da minuta institucional do IAT; narração Piper offline sem voz humana ou material de terceiros",
       "reviewedBy": "portões automatizados de conteúdo, mídia, proveniência e privacidade desta rodada",
-      "reviewedAt": "2026-08-14"
+      "reviewedAt": "2026-08-15"
     },
     {
       "cycle": "2026-08",
@@ -2469,22 +2469,22 @@
       "sourceLocator": "tools de mídia sobre POP-DLE-HID-001 v1.9 sha256 d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4",
       "rightsBasis": "conteúdo derivado da minuta institucional do IAT; narração Piper offline sem voz humana ou material de terceiros",
       "reviewedBy": "portões automatizados de conteúdo, mídia, proveniência e privacidade desta rodada",
-      "reviewedAt": "2026-08-14"
+      "reviewedAt": "2026-08-15"
     },
     {
       "cycle": "2026-08",
       "action": "replace",
       "path": "public/media/aula/pop-section-087.vtt",
       "reason": "videoaula regenerada para refletir a linguagem operacional e a fonte documental vigentes",
-      "bytes": 675,
-      "sha256": "16c14315dceb97218d16376e0fae7a50f24c877d4d52f10c0bb7dbe59125b4c8",
+      "bytes": 644,
+      "sha256": "8c137d486734d7062c56ac1c412b89dc181d92fbb0b46dcfda71b368659f806f",
       "sourceType": "project-generated",
       "privacyReview": "synthetic-no-personal-data",
       "technicalReview": "approved",
       "sourceLocator": "tools de mídia sobre POP-DLE-HID-001 v1.9 sha256 d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4",
       "rightsBasis": "conteúdo derivado da minuta institucional do IAT; narração Piper offline sem voz humana ou material de terceiros",
       "reviewedBy": "portões automatizados de conteúdo, mídia, proveniência e privacidade desta rodada",
-      "reviewedAt": "2026-08-14"
+      "reviewedAt": "2026-08-15"
     },
     {
       "cycle": "2026-08",
@@ -2499,7 +2499,7 @@
       "sourceLocator": "tools de mídia sobre POP-DLE-HID-001 v1.9 sha256 d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4",
       "rightsBasis": "conteúdo derivado da minuta institucional do IAT; narração Piper offline sem voz humana ou material de terceiros",
       "reviewedBy": "portões automatizados de conteúdo, mídia, proveniência e privacidade desta rodada",
-      "reviewedAt": "2026-08-14"
+      "reviewedAt": "2026-08-15"
     },
     {
       "cycle": "2026-08",
@@ -2514,7 +2514,7 @@
       "sourceLocator": "tools de mídia sobre POP-DLE-HID-001 v1.9 sha256 d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4",
       "rightsBasis": "conteúdo derivado da minuta institucional do IAT; narração Piper offline sem voz humana ou material de terceiros",
       "reviewedBy": "portões automatizados de conteúdo, mídia, proveniência e privacidade desta rodada",
-      "reviewedAt": "2026-08-14"
+      "reviewedAt": "2026-08-15"
     },
     {
       "cycle": "2026-08",
@@ -2529,22 +2529,22 @@
       "sourceLocator": "tools de mídia sobre POP-DLE-HID-001 v1.9 sha256 d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4",
       "rightsBasis": "conteúdo derivado da minuta institucional do IAT; narração Piper offline sem voz humana ou material de terceiros",
       "reviewedBy": "portões automatizados de conteúdo, mídia, proveniência e privacidade desta rodada",
-      "reviewedAt": "2026-08-14"
+      "reviewedAt": "2026-08-15"
     },
     {
       "cycle": "2026-08",
       "action": "replace",
       "path": "public/media/aula/pop-section-088.vtt",
       "reason": "videoaula regenerada para refletir a linguagem operacional e a fonte documental vigentes",
-      "bytes": 866,
-      "sha256": "e91e81477804b7973013c1c2f07b6c7aa1d13dd405fd6f0d8daac3b62b6f5ed4",
+      "bytes": 824,
+      "sha256": "01adb769503b5cebcb63d44f93ba73bc1f9546bb1f79ace5c07f3ba216080ade",
       "sourceType": "project-generated",
       "privacyReview": "synthetic-no-personal-data",
       "technicalReview": "approved",
       "sourceLocator": "tools de mídia sobre POP-DLE-HID-001 v1.9 sha256 d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4",
       "rightsBasis": "conteúdo derivado da minuta institucional do IAT; narração Piper offline sem voz humana ou material de terceiros",
       "reviewedBy": "portões automatizados de conteúdo, mídia, proveniência e privacidade desta rodada",
-      "reviewedAt": "2026-08-14"
+      "reviewedAt": "2026-08-15"
     },
     {
       "cycle": "2026-08",
@@ -2559,7 +2559,7 @@
       "sourceLocator": "tools de mídia sobre POP-DLE-HID-001 v1.9 sha256 d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4",
       "rightsBasis": "conteúdo derivado da minuta institucional do IAT; narração Piper offline sem voz humana ou material de terceiros",
       "reviewedBy": "portões automatizados de conteúdo, mídia, proveniência e privacidade desta rodada",
-      "reviewedAt": "2026-08-14"
+      "reviewedAt": "2026-08-15"
     },
     {
       "cycle": "2026-08",
@@ -2574,7 +2574,7 @@
       "sourceLocator": "tools de mídia sobre POP-DLE-HID-001 v1.9 sha256 d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4",
       "rightsBasis": "conteúdo derivado da minuta institucional do IAT; narração Piper offline sem voz humana ou material de terceiros",
       "reviewedBy": "portões automatizados de conteúdo, mídia, proveniência e privacidade desta rodada",
-      "reviewedAt": "2026-08-14"
+      "reviewedAt": "2026-08-15"
     },
     {
       "cycle": "2026-08",
@@ -2589,22 +2589,22 @@
       "sourceLocator": "tools de mídia sobre POP-DLE-HID-001 v1.9 sha256 d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4",
       "rightsBasis": "conteúdo derivado da minuta institucional do IAT; narração Piper offline sem voz humana ou material de terceiros",
       "reviewedBy": "portões automatizados de conteúdo, mídia, proveniência e privacidade desta rodada",
-      "reviewedAt": "2026-08-14"
+      "reviewedAt": "2026-08-15"
     },
     {
       "cycle": "2026-08",
       "action": "replace",
       "path": "public/media/aula/pop-section-093.vtt",
       "reason": "videoaula regenerada para refletir a linguagem operacional e a fonte documental vigentes",
-      "bytes": 1306,
-      "sha256": "e9900876a6eb086d647cede271fed34cda32864c7c9a6230d89efaf2bc4d78ca",
+      "bytes": 1246,
+      "sha256": "85935e08d2bc51c8734371c763ee1a592c6597f88f06d1015b26736d1771b05e",
       "sourceType": "project-generated",
       "privacyReview": "synthetic-no-personal-data",
       "technicalReview": "approved",
       "sourceLocator": "tools de mídia sobre POP-DLE-HID-001 v1.9 sha256 d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4",
       "rightsBasis": "conteúdo derivado da minuta institucional do IAT; narração Piper offline sem voz humana ou material de terceiros",
       "reviewedBy": "portões automatizados de conteúdo, mídia, proveniência e privacidade desta rodada",
-      "reviewedAt": "2026-08-14"
+      "reviewedAt": "2026-08-15"
     },
     {
       "cycle": "2026-08",
@@ -2619,7 +2619,7 @@
       "sourceLocator": "tools de mídia sobre POP-DLE-HID-001 v1.9 sha256 d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4",
       "rightsBasis": "conteúdo derivado da minuta institucional do IAT; narração Piper offline sem voz humana ou material de terceiros",
       "reviewedBy": "portões automatizados de conteúdo, mídia, proveniência e privacidade desta rodada",
-      "reviewedAt": "2026-08-14"
+      "reviewedAt": "2026-08-15"
     },
     {
       "cycle": "2026-08",
@@ -2634,7 +2634,7 @@
       "sourceLocator": "tools de mídia sobre POP-DLE-HID-001 v1.9 sha256 d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4",
       "rightsBasis": "conteúdo derivado da minuta institucional do IAT; narração Piper offline sem voz humana ou material de terceiros",
       "reviewedBy": "portões automatizados de conteúdo, mídia, proveniência e privacidade desta rodada",
-      "reviewedAt": "2026-08-14"
+      "reviewedAt": "2026-08-15"
     },
     {
       "cycle": "2026-08",
@@ -2649,22 +2649,22 @@
       "sourceLocator": "tools de mídia sobre POP-DLE-HID-001 v1.9 sha256 d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4",
       "rightsBasis": "conteúdo derivado da minuta institucional do IAT; narração Piper offline sem voz humana ou material de terceiros",
       "reviewedBy": "portões automatizados de conteúdo, mídia, proveniência e privacidade desta rodada",
-      "reviewedAt": "2026-08-14"
+      "reviewedAt": "2026-08-15"
     },
     {
       "cycle": "2026-08",
       "action": "replace",
       "path": "public/media/aula/pop-section-095.vtt",
       "reason": "videoaula regenerada para refletir a linguagem operacional e a fonte documental vigentes",
-      "bytes": 714,
-      "sha256": "74dd399cf7f4040013e3cd679120680a7d99178066d2e50f656dfdb5b0f3e18d",
+      "bytes": 680,
+      "sha256": "331068aedbc90f68adf05035bae9a343319f14dd6ba698cff506642ba8101c15",
       "sourceType": "project-generated",
       "privacyReview": "synthetic-no-personal-data",
       "technicalReview": "approved",
       "sourceLocator": "tools de mídia sobre POP-DLE-HID-001 v1.9 sha256 d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4",
       "rightsBasis": "conteúdo derivado da minuta institucional do IAT; narração Piper offline sem voz humana ou material de terceiros",
       "reviewedBy": "portões automatizados de conteúdo, mídia, proveniência e privacidade desta rodada",
-      "reviewedAt": "2026-08-14"
+      "reviewedAt": "2026-08-15"
     },
     {
       "cycle": "2026-08",
@@ -2679,7 +2679,7 @@
       "sourceLocator": "tools de mídia sobre POP-DLE-HID-001 v1.9 sha256 d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4",
       "rightsBasis": "conteúdo derivado da minuta institucional do IAT; narração Piper offline sem voz humana ou material de terceiros",
       "reviewedBy": "portões automatizados de conteúdo, mídia, proveniência e privacidade desta rodada",
-      "reviewedAt": "2026-08-14"
+      "reviewedAt": "2026-08-15"
     },
     {
       "cycle": "2026-08",
@@ -2694,7 +2694,7 @@
       "sourceLocator": "tools de mídia sobre POP-DLE-HID-001 v1.9 sha256 d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4",
       "rightsBasis": "conteúdo derivado da minuta institucional do IAT; narração Piper offline sem voz humana ou material de terceiros",
       "reviewedBy": "portões automatizados de conteúdo, mídia, proveniência e privacidade desta rodada",
-      "reviewedAt": "2026-08-14"
+      "reviewedAt": "2026-08-15"
     },
     {
       "cycle": "2026-08",
@@ -2709,22 +2709,22 @@
       "sourceLocator": "tools de mídia sobre POP-DLE-HID-001 v1.9 sha256 d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4",
       "rightsBasis": "conteúdo derivado da minuta institucional do IAT; narração Piper offline sem voz humana ou material de terceiros",
       "reviewedBy": "portões automatizados de conteúdo, mídia, proveniência e privacidade desta rodada",
-      "reviewedAt": "2026-08-14"
+      "reviewedAt": "2026-08-15"
     },
     {
       "cycle": "2026-08",
       "action": "replace",
       "path": "public/media/aula/pop-section-098.vtt",
       "reason": "videoaula regenerada para refletir a linguagem operacional e a fonte documental vigentes",
-      "bytes": 1335,
-      "sha256": "37603018e392e0ad2d593d0bcad611c1934e50bf9e6d75e4b20cbb98d7a3d341",
+      "bytes": 1276,
+      "sha256": "74af133520bbbb82c76cee24391ed91e661d88f05bc81a1bfe9dc26117a79e14",
       "sourceType": "project-generated",
       "privacyReview": "synthetic-no-personal-data",
       "technicalReview": "approved",
       "sourceLocator": "tools de mídia sobre POP-DLE-HID-001 v1.9 sha256 d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4",
       "rightsBasis": "conteúdo derivado da minuta institucional do IAT; narração Piper offline sem voz humana ou material de terceiros",
       "reviewedBy": "portões automatizados de conteúdo, mídia, proveniência e privacidade desta rodada",
-      "reviewedAt": "2026-08-14"
+      "reviewedAt": "2026-08-15"
     },
     {
       "cycle": "2026-08",
@@ -2739,7 +2739,7 @@
       "sourceLocator": "tools de mídia sobre POP-DLE-HID-001 v1.9 sha256 d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4",
       "rightsBasis": "conteúdo derivado da minuta institucional do IAT; narração Piper offline sem voz humana ou material de terceiros",
       "reviewedBy": "portões automatizados de conteúdo, mídia, proveniência e privacidade desta rodada",
-      "reviewedAt": "2026-08-14"
+      "reviewedAt": "2026-08-15"
     },
     {
       "cycle": "2026-08",
@@ -2754,7 +2754,7 @@
       "sourceLocator": "tools de mídia sobre POP-DLE-HID-001 v1.9 sha256 d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4",
       "rightsBasis": "conteúdo derivado da minuta institucional do IAT; narração Piper offline sem voz humana ou material de terceiros",
       "reviewedBy": "portões automatizados de conteúdo, mídia, proveniência e privacidade desta rodada",
-      "reviewedAt": "2026-08-14"
+      "reviewedAt": "2026-08-15"
     },
     {
       "cycle": "2026-08",
@@ -2769,22 +2769,22 @@
       "sourceLocator": "tools de mídia sobre POP-DLE-HID-001 v1.9 sha256 d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4",
       "rightsBasis": "conteúdo derivado da minuta institucional do IAT; narração Piper offline sem voz humana ou material de terceiros",
       "reviewedBy": "portões automatizados de conteúdo, mídia, proveniência e privacidade desta rodada",
-      "reviewedAt": "2026-08-14"
+      "reviewedAt": "2026-08-15"
     },
     {
       "cycle": "2026-08",
       "action": "replace",
       "path": "public/media/aula/pop-section-101.vtt",
       "reason": "videoaula regenerada para refletir a linguagem operacional e a fonte documental vigentes",
-      "bytes": 1443,
-      "sha256": "d16a2d019ef8557936ce0c870c7554f90ee8df4f6f4983c3cab4a765d9c3077c",
+      "bytes": 1382,
+      "sha256": "565832f91dd86e4caabe2d5993f21fe0934753ca13af0ca38ca4ca2776f796eb",
       "sourceType": "project-generated",
       "privacyReview": "synthetic-no-personal-data",
       "technicalReview": "approved",
       "sourceLocator": "tools de mídia sobre POP-DLE-HID-001 v1.9 sha256 d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4",
       "rightsBasis": "conteúdo derivado da minuta institucional do IAT; narração Piper offline sem voz humana ou material de terceiros",
       "reviewedBy": "portões automatizados de conteúdo, mídia, proveniência e privacidade desta rodada",
-      "reviewedAt": "2026-08-14"
+      "reviewedAt": "2026-08-15"
     },
     {
       "cycle": "2026-08",
@@ -2799,7 +2799,7 @@
       "sourceLocator": "tools de mídia sobre POP-DLE-HID-001 v1.9 sha256 d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4",
       "rightsBasis": "conteúdo derivado da minuta institucional do IAT; narração Piper offline sem voz humana ou material de terceiros",
       "reviewedBy": "portões automatizados de conteúdo, mídia, proveniência e privacidade desta rodada",
-      "reviewedAt": "2026-08-14"
+      "reviewedAt": "2026-08-15"
     },
     {
       "cycle": "2026-08",
@@ -2814,7 +2814,7 @@
       "sourceLocator": "tools de mídia sobre POP-DLE-HID-001 v1.9 sha256 d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4",
       "rightsBasis": "conteúdo derivado da minuta institucional do IAT; narração Piper offline sem voz humana ou material de terceiros",
       "reviewedBy": "portões automatizados de conteúdo, mídia, proveniência e privacidade desta rodada",
-      "reviewedAt": "2026-08-14"
+      "reviewedAt": "2026-08-15"
     },
     {
       "cycle": "2026-08",
@@ -2829,22 +2829,22 @@
       "sourceLocator": "tools de mídia sobre POP-DLE-HID-001 v1.9 sha256 d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4",
       "rightsBasis": "conteúdo derivado da minuta institucional do IAT; narração Piper offline sem voz humana ou material de terceiros",
       "reviewedBy": "portões automatizados de conteúdo, mídia, proveniência e privacidade desta rodada",
-      "reviewedAt": "2026-08-14"
+      "reviewedAt": "2026-08-15"
     },
     {
       "cycle": "2026-08",
       "action": "replace",
       "path": "public/media/aula/pop-section-109.vtt",
       "reason": "videoaula regenerada para refletir a linguagem operacional e a fonte documental vigentes",
-      "bytes": 795,
-      "sha256": "d0905c5e2653355e10c0c660071027956f9524527e5132c6cc842f4b13e9a4ed",
+      "bytes": 756,
+      "sha256": "bc76607f0b550e8e1e2fa1d56b73b57c728ab3bd8a44512e9e65e02b3d80eb1e",
       "sourceType": "project-generated",
       "privacyReview": "synthetic-no-personal-data",
       "technicalReview": "approved",
       "sourceLocator": "tools de mídia sobre POP-DLE-HID-001 v1.9 sha256 d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4",
       "rightsBasis": "conteúdo derivado da minuta institucional do IAT; narração Piper offline sem voz humana ou material de terceiros",
       "reviewedBy": "portões automatizados de conteúdo, mídia, proveniência e privacidade desta rodada",
-      "reviewedAt": "2026-08-14"
+      "reviewedAt": "2026-08-15"
     },
     {
       "cycle": "2026-08",
@@ -2859,7 +2859,7 @@
       "sourceLocator": "tools de mídia sobre POP-DLE-HID-001 v1.9 sha256 d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4",
       "rightsBasis": "conteúdo derivado da minuta institucional do IAT; narração Piper offline sem voz humana ou material de terceiros",
       "reviewedBy": "portões automatizados de conteúdo, mídia, proveniência e privacidade desta rodada",
-      "reviewedAt": "2026-08-14"
+      "reviewedAt": "2026-08-15"
     },
     {
       "cycle": "2026-08",
@@ -2874,7 +2874,7 @@
       "sourceLocator": "tools de mídia sobre POP-DLE-HID-001 v1.9 sha256 d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4",
       "rightsBasis": "conteúdo derivado da minuta institucional do IAT; narração Piper offline sem voz humana ou material de terceiros",
       "reviewedBy": "portões automatizados de conteúdo, mídia, proveniência e privacidade desta rodada",
-      "reviewedAt": "2026-08-14"
+      "reviewedAt": "2026-08-15"
     },
     {
       "cycle": "2026-08",
@@ -2889,22 +2889,22 @@
       "sourceLocator": "tools de mídia sobre POP-DLE-HID-001 v1.9 sha256 d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4",
       "rightsBasis": "conteúdo derivado da minuta institucional do IAT; narração Piper offline sem voz humana ou material de terceiros",
       "reviewedBy": "portões automatizados de conteúdo, mídia, proveniência e privacidade desta rodada",
-      "reviewedAt": "2026-08-14"
+      "reviewedAt": "2026-08-15"
     },
     {
       "cycle": "2026-08",
       "action": "replace",
       "path": "public/media/aula/pop-section-110.vtt",
       "reason": "videoaula regenerada para refletir a linguagem operacional e a fonte documental vigentes",
-      "bytes": 681,
-      "sha256": "ec64337587b34bc3ba4a578da80d1eb8481e247f768ae71c9f1fb7ab9326c459",
+      "bytes": 649,
+      "sha256": "ee2c8abfc43b62978e21de424e97ca03e8ee60cf69a0dea65a3e77716a14d5ed",
       "sourceType": "project-generated",
       "privacyReview": "synthetic-no-personal-data",
       "technicalReview": "approved",
       "sourceLocator": "tools de mídia sobre POP-DLE-HID-001 v1.9 sha256 d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4",
       "rightsBasis": "conteúdo derivado da minuta institucional do IAT; narração Piper offline sem voz humana ou material de terceiros",
       "reviewedBy": "portões automatizados de conteúdo, mídia, proveniência e privacidade desta rodada",
-      "reviewedAt": "2026-08-14"
+      "reviewedAt": "2026-08-15"
     },
     {
       "cycle": "2026-08",
@@ -2919,7 +2919,7 @@
       "sourceLocator": "tools de mídia sobre POP-DLE-HID-001 v1.9 sha256 d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4",
       "rightsBasis": "conteúdo derivado da minuta institucional do IAT; narração Piper offline sem voz humana ou material de terceiros",
       "reviewedBy": "portões automatizados de conteúdo, mídia, proveniência e privacidade desta rodada",
-      "reviewedAt": "2026-08-14"
+      "reviewedAt": "2026-08-15"
     },
     {
       "cycle": "2026-08",
@@ -2934,7 +2934,7 @@
       "sourceLocator": "tools de mídia sobre POP-DLE-HID-001 v1.9 sha256 d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4",
       "rightsBasis": "conteúdo derivado da minuta institucional do IAT; narração Piper offline sem voz humana ou material de terceiros",
       "reviewedBy": "portões automatizados de conteúdo, mídia, proveniência e privacidade desta rodada",
-      "reviewedAt": "2026-08-14"
+      "reviewedAt": "2026-08-15"
     },
     {
       "cycle": "2026-08",
@@ -2949,22 +2949,22 @@
       "sourceLocator": "tools de mídia sobre POP-DLE-HID-001 v1.9 sha256 d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4",
       "rightsBasis": "conteúdo derivado da minuta institucional do IAT; narração Piper offline sem voz humana ou material de terceiros",
       "reviewedBy": "portões automatizados de conteúdo, mídia, proveniência e privacidade desta rodada",
-      "reviewedAt": "2026-08-14"
+      "reviewedAt": "2026-08-15"
     },
     {
       "cycle": "2026-08",
       "action": "replace",
       "path": "public/media/aula/pop-section-117.vtt",
       "reason": "videoaula regenerada para refletir a linguagem operacional e a fonte documental vigentes",
-      "bytes": 164,
-      "sha256": "a73e753e69f2d1b1389aa336d1ebdbf5091f260803fdfdbb4417729396a595fb",
+      "bytes": 156,
+      "sha256": "03619dcf88ac5fda76413b89c514b65a0b770f1a1cc0c1b9ae1b4475115280b5",
       "sourceType": "project-generated",
       "privacyReview": "synthetic-no-personal-data",
       "technicalReview": "approved",
       "sourceLocator": "tools de mídia sobre POP-DLE-HID-001 v1.9 sha256 d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4",
       "rightsBasis": "conteúdo derivado da minuta institucional do IAT; narração Piper offline sem voz humana ou material de terceiros",
       "reviewedBy": "portões automatizados de conteúdo, mídia, proveniência e privacidade desta rodada",
-      "reviewedAt": "2026-08-14"
+      "reviewedAt": "2026-08-15"
     },
     {
       "cycle": "2026-08",
@@ -2979,7 +2979,7 @@
       "sourceLocator": "tools de mídia sobre POP-DLE-HID-001 v1.9 sha256 d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4",
       "rightsBasis": "conteúdo derivado da minuta institucional do IAT; narração Piper offline sem voz humana ou material de terceiros",
       "reviewedBy": "portões automatizados de conteúdo, mídia, proveniência e privacidade desta rodada",
-      "reviewedAt": "2026-08-14"
+      "reviewedAt": "2026-08-15"
     },
     {
       "cycle": "2026-08",
@@ -2994,7 +2994,7 @@
       "sourceLocator": "tools de mídia sobre POP-DLE-HID-001 v1.9 sha256 d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4",
       "rightsBasis": "conteúdo derivado da minuta institucional do IAT; narração Piper offline sem voz humana ou material de terceiros",
       "reviewedBy": "portões automatizados de conteúdo, mídia, proveniência e privacidade desta rodada",
-      "reviewedAt": "2026-08-14"
+      "reviewedAt": "2026-08-15"
     },
     {
       "cycle": "2026-08",
@@ -3009,22 +3009,22 @@
       "sourceLocator": "tools de mídia sobre POP-DLE-HID-001 v1.9 sha256 d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4",
       "rightsBasis": "conteúdo derivado da minuta institucional do IAT; narração Piper offline sem voz humana ou material de terceiros",
       "reviewedBy": "portões automatizados de conteúdo, mídia, proveniência e privacidade desta rodada",
-      "reviewedAt": "2026-08-14"
+      "reviewedAt": "2026-08-15"
     },
     {
       "cycle": "2026-08",
       "action": "replace",
       "path": "public/media/aula/pop-section-122.vtt",
       "reason": "videoaula regenerada para refletir a linguagem operacional e a fonte documental vigentes",
-      "bytes": 828,
-      "sha256": "c6a993adc42803e1cf37bd21d0fcd6672ae30676b80071e8eb3ef60088b70a0e",
+      "bytes": 789,
+      "sha256": "cff8f1ad40a8942f1f2c6ff263ae77b4cbb21d2e6a8fe9f1a61fba16fb0cdb68",
       "sourceType": "project-generated",
       "privacyReview": "synthetic-no-personal-data",
       "technicalReview": "approved",
       "sourceLocator": "tools de mídia sobre POP-DLE-HID-001 v1.9 sha256 d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4",
       "rightsBasis": "conteúdo derivado da minuta institucional do IAT; narração Piper offline sem voz humana ou material de terceiros",
       "reviewedBy": "portões automatizados de conteúdo, mídia, proveniência e privacidade desta rodada",
-      "reviewedAt": "2026-08-14"
+      "reviewedAt": "2026-08-15"
     },
     {
       "cycle": "2026-08",
@@ -3039,7 +3039,7 @@
       "sourceLocator": "tools de mídia sobre POP-DLE-HID-001 v1.9 sha256 d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4",
       "rightsBasis": "conteúdo derivado da minuta institucional do IAT; narração Piper offline sem voz humana ou material de terceiros",
       "reviewedBy": "portões automatizados de conteúdo, mídia, proveniência e privacidade desta rodada",
-      "reviewedAt": "2026-08-14"
+      "reviewedAt": "2026-08-15"
     },
     {
       "cycle": "2026-08",
@@ -3054,7 +3054,7 @@
       "sourceLocator": "tools de mídia sobre POP-DLE-HID-001 v1.9 sha256 d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4",
       "rightsBasis": "conteúdo derivado da minuta institucional do IAT; narração Piper offline sem voz humana ou material de terceiros",
       "reviewedBy": "portões automatizados de conteúdo, mídia, proveniência e privacidade desta rodada",
-      "reviewedAt": "2026-08-14"
+      "reviewedAt": "2026-08-15"
     },
     {
       "cycle": "2026-08",
@@ -3069,22 +3069,22 @@
       "sourceLocator": "tools de mídia sobre POP-DLE-HID-001 v1.9 sha256 d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4",
       "rightsBasis": "conteúdo derivado da minuta institucional do IAT; narração Piper offline sem voz humana ou material de terceiros",
       "reviewedBy": "portões automatizados de conteúdo, mídia, proveniência e privacidade desta rodada",
-      "reviewedAt": "2026-08-14"
+      "reviewedAt": "2026-08-15"
     },
     {
       "cycle": "2026-08",
       "action": "replace",
       "path": "public/media/aula/pop-section-123.vtt",
       "reason": "videoaula regenerada para refletir a linguagem operacional e a fonte documental vigentes",
-      "bytes": 1002,
-      "sha256": "d07c97d6fc0e30a227252acf936956eb14f4c60c4b588da8ca8451962928aa2a",
+      "bytes": 958,
+      "sha256": "9892ef22eb98d7d4ca8b2769e782a7e449339245fd0c2a30a6f1ed1f4bcb2511",
       "sourceType": "project-generated",
       "privacyReview": "synthetic-no-personal-data",
       "technicalReview": "approved",
       "sourceLocator": "tools de mídia sobre POP-DLE-HID-001 v1.9 sha256 d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4",
       "rightsBasis": "conteúdo derivado da minuta institucional do IAT; narração Piper offline sem voz humana ou material de terceiros",
       "reviewedBy": "portões automatizados de conteúdo, mídia, proveniência e privacidade desta rodada",
-      "reviewedAt": "2026-08-14"
+      "reviewedAt": "2026-08-15"
     },
     {
       "cycle": "2026-08",
@@ -3099,7 +3099,7 @@
       "sourceLocator": "tools de mídia sobre POP-DLE-HID-001 v1.9 sha256 d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4",
       "rightsBasis": "conteúdo derivado da minuta institucional do IAT; narração Piper offline sem voz humana ou material de terceiros",
       "reviewedBy": "portões automatizados de conteúdo, mídia, proveniência e privacidade desta rodada",
-      "reviewedAt": "2026-08-14"
+      "reviewedAt": "2026-08-15"
     },
     {
       "cycle": "2026-08",
@@ -3114,7 +3114,7 @@
       "sourceLocator": "tools de mídia sobre POP-DLE-HID-001 v1.9 sha256 d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4",
       "rightsBasis": "conteúdo derivado da minuta institucional do IAT; narração Piper offline sem voz humana ou material de terceiros",
       "reviewedBy": "portões automatizados de conteúdo, mídia, proveniência e privacidade desta rodada",
-      "reviewedAt": "2026-08-14"
+      "reviewedAt": "2026-08-15"
     },
     {
       "cycle": "2026-08",
@@ -3129,22 +3129,22 @@
       "sourceLocator": "tools de mídia sobre POP-DLE-HID-001 v1.9 sha256 d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4",
       "rightsBasis": "conteúdo derivado da minuta institucional do IAT; narração Piper offline sem voz humana ou material de terceiros",
       "reviewedBy": "portões automatizados de conteúdo, mídia, proveniência e privacidade desta rodada",
-      "reviewedAt": "2026-08-14"
+      "reviewedAt": "2026-08-15"
     },
     {
       "cycle": "2026-08",
       "action": "replace",
       "path": "public/media/aula/pop-section-125.vtt",
       "reason": "videoaula regenerada para refletir a linguagem operacional e a fonte documental vigentes",
-      "bytes": 841,
-      "sha256": "464296f46f3c91b3c0338e1f05ccd16efb262024ee78661e6204edf50570f521",
+      "bytes": 803,
+      "sha256": "905afeed7e8a1dac94230911c84d9107fbbfdccf81107769da8a23cdd0ad0a1d",
       "sourceType": "project-generated",
       "privacyReview": "synthetic-no-personal-data",
       "technicalReview": "approved",
       "sourceLocator": "tools de mídia sobre POP-DLE-HID-001 v1.9 sha256 d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4",
       "rightsBasis": "conteúdo derivado da minuta institucional do IAT; narração Piper offline sem voz humana ou material de terceiros",
       "reviewedBy": "portões automatizados de conteúdo, mídia, proveniência e privacidade desta rodada",
-      "reviewedAt": "2026-08-14"
+      "reviewedAt": "2026-08-15"
     },
     {
       "cycle": "2026-08",
@@ -3159,7 +3159,7 @@
       "sourceLocator": "tools de mídia sobre POP-DLE-HID-001 v1.9 sha256 d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4",
       "rightsBasis": "conteúdo derivado da minuta institucional do IAT; narração Piper offline sem voz humana ou material de terceiros",
       "reviewedBy": "portões automatizados de conteúdo, mídia, proveniência e privacidade desta rodada",
-      "reviewedAt": "2026-08-14"
+      "reviewedAt": "2026-08-15"
     },
     {
       "cycle": "2026-08",
@@ -3174,7 +3174,7 @@
       "sourceLocator": "tools de mídia sobre POP-DLE-HID-001 v1.9 sha256 d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4",
       "rightsBasis": "conteúdo derivado da minuta institucional do IAT; narração Piper offline sem voz humana ou material de terceiros",
       "reviewedBy": "portões automatizados de conteúdo, mídia, proveniência e privacidade desta rodada",
-      "reviewedAt": "2026-08-14"
+      "reviewedAt": "2026-08-15"
     },
     {
       "cycle": "2026-08",
@@ -3189,22 +3189,22 @@
       "sourceLocator": "tools de mídia sobre POP-DLE-HID-001 v1.9 sha256 d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4",
       "rightsBasis": "conteúdo derivado da minuta institucional do IAT; narração Piper offline sem voz humana ou material de terceiros",
       "reviewedBy": "portões automatizados de conteúdo, mídia, proveniência e privacidade desta rodada",
-      "reviewedAt": "2026-08-14"
+      "reviewedAt": "2026-08-15"
     },
     {
       "cycle": "2026-08",
       "action": "replace",
       "path": "public/media/aula/pop-section-133.vtt",
       "reason": "videoaula regenerada para refletir a linguagem operacional e a fonte documental vigentes",
-      "bytes": 1081,
-      "sha256": "69013fabf94cce1f5527a283b25e8c90f3a872a7af75de5444831aae5ff7d83a",
+      "bytes": 1034,
+      "sha256": "34ee32f476eb5654505220129194a13f6dd40b3f694b80909f03960894a9881e",
       "sourceType": "project-generated",
       "privacyReview": "synthetic-no-personal-data",
       "technicalReview": "approved",
       "sourceLocator": "tools de mídia sobre POP-DLE-HID-001 v1.9 sha256 d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4",
       "rightsBasis": "conteúdo derivado da minuta institucional do IAT; narração Piper offline sem voz humana ou material de terceiros",
       "reviewedBy": "portões automatizados de conteúdo, mídia, proveniência e privacidade desta rodada",
-      "reviewedAt": "2026-08-14"
+      "reviewedAt": "2026-08-15"
     },
     {
       "cycle": "2026-08",
@@ -3219,7 +3219,7 @@
       "sourceLocator": "tools de mídia sobre POP-DLE-HID-001 v1.9 sha256 d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4",
       "rightsBasis": "conteúdo derivado da minuta institucional do IAT; narração Piper offline sem voz humana ou material de terceiros",
       "reviewedBy": "portões automatizados de conteúdo, mídia, proveniência e privacidade desta rodada",
-      "reviewedAt": "2026-08-14"
+      "reviewedAt": "2026-08-15"
     },
     {
       "cycle": "2026-08",
@@ -3234,7 +3234,7 @@
       "sourceLocator": "tools de mídia sobre POP-DLE-HID-001 v1.9 sha256 d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4",
       "rightsBasis": "conteúdo derivado da minuta institucional do IAT; narração Piper offline sem voz humana ou material de terceiros",
       "reviewedBy": "portões automatizados de conteúdo, mídia, proveniência e privacidade desta rodada",
-      "reviewedAt": "2026-08-14"
+      "reviewedAt": "2026-08-15"
     },
     {
       "cycle": "2026-08",
@@ -3249,22 +3249,22 @@
       "sourceLocator": "tools de mídia sobre POP-DLE-HID-001 v1.9 sha256 d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4",
       "rightsBasis": "conteúdo derivado da minuta institucional do IAT; narração Piper offline sem voz humana ou material de terceiros",
       "reviewedBy": "portões automatizados de conteúdo, mídia, proveniência e privacidade desta rodada",
-      "reviewedAt": "2026-08-14"
+      "reviewedAt": "2026-08-15"
     },
     {
       "cycle": "2026-08",
       "action": "replace",
       "path": "public/media/aula/pop-section-137.vtt",
       "reason": "videoaula regenerada para refletir a linguagem operacional e a fonte documental vigentes",
-      "bytes": 1017,
-      "sha256": "08da13a2358df662e1b534f8fd75ff3794602286345de462a38248a73b640cb4",
+      "bytes": 971,
+      "sha256": "a0c8531b7794ef8044a1ad95ce44575061e94f73a4fc2d433bba34731967aa68",
       "sourceType": "project-generated",
       "privacyReview": "synthetic-no-personal-data",
       "technicalReview": "approved",
       "sourceLocator": "tools de mídia sobre POP-DLE-HID-001 v1.9 sha256 d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4",
       "rightsBasis": "conteúdo derivado da minuta institucional do IAT; narração Piper offline sem voz humana ou material de terceiros",
       "reviewedBy": "portões automatizados de conteúdo, mídia, proveniência e privacidade desta rodada",
-      "reviewedAt": "2026-08-14"
+      "reviewedAt": "2026-08-15"
     },
     {
       "cycle": "2026-08",
@@ -3279,7 +3279,7 @@
       "sourceLocator": "tools de mídia sobre POP-DLE-HID-001 v1.9 sha256 d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4",
       "rightsBasis": "conteúdo derivado da minuta institucional do IAT; narração Piper offline sem voz humana ou material de terceiros",
       "reviewedBy": "portões automatizados de conteúdo, mídia, proveniência e privacidade desta rodada",
-      "reviewedAt": "2026-08-14"
+      "reviewedAt": "2026-08-15"
     },
     {
       "cycle": "2026-08",
@@ -3384,7 +3384,7 @@
       "sourceLocator": "tools de mídia sobre POP-DLE-HID-001 v1.9 sha256 d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4",
       "rightsBasis": "conteúdo derivado da minuta institucional do IAT; narração Piper offline sem voz humana ou material de terceiros",
       "reviewedBy": "portões automatizados de conteúdo, mídia, proveniência e privacidade desta rodada",
-      "reviewedAt": "2026-08-14"
+      "reviewedAt": "2026-08-15"
     },
     {
       "cycle": "2026-08",
@@ -3399,22 +3399,22 @@
       "sourceLocator": "tools de mídia sobre POP-DLE-HID-001 v1.9 sha256 d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4",
       "rightsBasis": "conteúdo derivado da minuta institucional do IAT; narração Piper offline sem voz humana ou material de terceiros",
       "reviewedBy": "portões automatizados de conteúdo, mídia, proveniência e privacidade desta rodada",
-      "reviewedAt": "2026-08-14"
+      "reviewedAt": "2026-08-15"
     },
     {
       "cycle": "2026-08",
       "action": "replace",
       "path": "public/media/aula/pop-section-034.vtt",
       "reason": "videoaula regenerada para refletir a linguagem operacional e a fonte documental vigentes",
-      "bytes": 1859,
-      "sha256": "aa9c8340fbc3d4261fe5cf3f07ce71ecbee797e5b917ff589d51ef5fad0bc48c",
+      "bytes": 1777,
+      "sha256": "077851486b5a0f992831b46c08d268f4a0f530f46e6cb84b41267bf983a44145",
       "sourceType": "project-generated",
       "privacyReview": "synthetic-no-personal-data",
       "technicalReview": "approved",
       "sourceLocator": "tools de mídia sobre POP-DLE-HID-001 v1.9 sha256 d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4",
       "rightsBasis": "conteúdo derivado da minuta institucional do IAT; narração Piper offline sem voz humana ou material de terceiros",
       "reviewedBy": "portões automatizados de conteúdo, mídia, proveniência e privacidade desta rodada",
-      "reviewedAt": "2026-08-14"
+      "reviewedAt": "2026-08-15"
     },
     {
       "cycle": "2026-08",
@@ -3429,7 +3429,7 @@
       "sourceLocator": "tools de mídia sobre POP-DLE-HID-001 v1.9 sha256 d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4",
       "rightsBasis": "conteúdo derivado da minuta institucional do IAT; narração Piper offline sem voz humana ou material de terceiros",
       "reviewedBy": "portões automatizados de conteúdo, mídia, proveniência e privacidade desta rodada",
-      "reviewedAt": "2026-08-14"
+      "reviewedAt": "2026-08-15"
     },
     {
       "cycle": "2026-08",
@@ -3444,7 +3444,7 @@
       "sourceLocator": "tools de mídia sobre POP-DLE-HID-001 v1.9 sha256 d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4",
       "rightsBasis": "conteúdo derivado da minuta institucional do IAT; narração Piper offline sem voz humana ou material de terceiros",
       "reviewedBy": "portões automatizados de conteúdo, mídia, proveniência e privacidade desta rodada",
-      "reviewedAt": "2026-08-14"
+      "reviewedAt": "2026-08-15"
     },
     {
       "cycle": "2026-08",
@@ -3459,22 +3459,22 @@
       "sourceLocator": "tools de mídia sobre POP-DLE-HID-001 v1.9 sha256 d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4",
       "rightsBasis": "conteúdo derivado da minuta institucional do IAT; narração Piper offline sem voz humana ou material de terceiros",
       "reviewedBy": "portões automatizados de conteúdo, mídia, proveniência e privacidade desta rodada",
-      "reviewedAt": "2026-08-14"
+      "reviewedAt": "2026-08-15"
     },
     {
       "cycle": "2026-08",
       "action": "replace",
       "path": "public/media/aula/pop-section-082.vtt",
       "reason": "videoaula regenerada para refletir a linguagem operacional e a fonte documental vigentes",
-      "bytes": 1333,
-      "sha256": "892a7445ed53abff2fccc6bfb7a01260c0f0ee11968bdcc69b6c7d3886198192",
+      "bytes": 1271,
+      "sha256": "986969387a08a9d3809b304d8d05919bd6adc0df924b3fa1bde6ab39831dfab0",
       "sourceType": "project-generated",
       "privacyReview": "synthetic-no-personal-data",
       "technicalReview": "approved",
       "sourceLocator": "tools de mídia sobre POP-DLE-HID-001 v1.9 sha256 d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4",
       "rightsBasis": "conteúdo derivado da minuta institucional do IAT; narração Piper offline sem voz humana ou material de terceiros",
       "reviewedBy": "portões automatizados de conteúdo, mídia, proveniência e privacidade desta rodada",
-      "reviewedAt": "2026-08-14"
+      "reviewedAt": "2026-08-15"
     },
     {
       "cycle": "2026-08",
@@ -3489,7 +3489,7 @@
       "sourceLocator": "tools de mídia sobre POP-DLE-HID-001 v1.9 sha256 d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4",
       "rightsBasis": "conteúdo derivado da minuta institucional do IAT; narração Piper offline sem voz humana ou material de terceiros",
       "reviewedBy": "portões automatizados de conteúdo, mídia, proveniência e privacidade desta rodada",
-      "reviewedAt": "2026-08-14"
+      "reviewedAt": "2026-08-15"
     },
     {
       "cycle": "2026-08",

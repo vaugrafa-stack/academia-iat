@@ -177,7 +177,9 @@ test('corte hidrelétrico interativo carrega o ativo original e responde em qual
   await expect(image).toHaveJSProperty('complete', true);
   await expect.poll(() => image.evaluate((node) => node.naturalWidth)).toBe(1600);
   await expect(cutaway.getByRole('tab')).toHaveCount(8);
-  await expect(cutaway.locator('.hec-hotspot')).toHaveCount(8);
+  await expect(cutaway.locator('.hec-callout')).toHaveCount(16);
+  await expect(cutaway.locator('.hec-leader')).toHaveCount(16);
+  await expect(cutaway.locator('.hec-equipment-key button')).toHaveCount(16);
 
   await cutaway.getByRole('tab', { name: /Transformação/ }).click();
   await expect(cutaway.locator('.hec-stage-panel strong')).toHaveText('Transformador');
@@ -185,11 +187,15 @@ test('corte hidrelétrico interativo carrega o ativo original e responde em qual
   await expect(cutaway.getByRole('button', { name: /Reproduzir/ })).toBeVisible();
 
   const viewport = page.viewportSize();
+  if (viewport.width <= 900) {
+    await expect(cutaway.locator('.hec-equipment-key')).toBeVisible();
+    await expect(cutaway.locator('.hec-callouts')).toBeHidden();
+  }
   if (viewport.width <= 430) {
     await expect.poll(() => cutaway.evaluate((node) => (
       node.scrollWidth <= node.clientWidth + 1
     ))).toBe(true);
-    const controls = cutaway.locator('button');
+    const controls = cutaway.locator('button:visible');
     for (let index = 0; index < await controls.count(); index += 1) {
       const box = await controls.nth(index).boundingBox();
       expect(Math.min(box?.width ?? 0, box?.height ?? 0)).toBeGreaterThanOrEqual(44);

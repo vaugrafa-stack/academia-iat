@@ -1,10 +1,13 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useId, useRef, useState } from 'react';
 import { Pause, Play, Waves, Zap } from 'lucide-react';
 // Mantém este estilo pesado no chunk sob demanda de Hidrelétricas. Importá-lo
 // como folha global faria todas as outras rotas pagarem pelo corte técnico.
 import CUTAWAY_STYLES from './hydroelectricCutaway.css?raw';
 
 const BASE_URL = (import.meta.env.BASE_URL || '/').replace(/\/$/, '');
+const WATER_PATH = 'M322 315 C405 318 448 355 487 433 C548 556 629 703 797 750';
+const TAILRACE_PATH = 'M850 787 C934 852 1085 829 1328 774';
+const ENERGY_PATH = 'M925 357 C1017 347 1064 338 1130 336 C1260 330 1337 234 1410 125';
 
 export const CUTAWAY_STAGES = Object.freeze([
   {
@@ -14,7 +17,9 @@ export const CUTAWAY_STAGES = Object.freeze([
     description: 'A água alcança a tomada protegida por grades. As comportas permitem isolar o circuito para inspeção e manutenção.',
     x: 20,
     y: 33,
-    labelPosition: 'right',
+    labelX: 10.5,
+    labelY: 23,
+    focusEquipmentId: 'tomada',
   },
   {
     id: 'aducao',
@@ -23,7 +28,9 @@ export const CUTAWAY_STAGES = Object.freeze([
     description: 'O conduto leva a água sob pressão até a unidade geradora. O traçado e as perdas hidráulicas influenciam a energia disponível.',
     x: 36,
     y: 57,
-    labelPosition: 'left',
+    labelX: 23,
+    labelY: 55,
+    focusEquipmentId: 'conduto',
   },
   {
     id: 'turbina',
@@ -32,7 +39,9 @@ export const CUTAWAY_STAGES = Object.freeze([
     description: 'O escoamento transfere energia ao rotor da turbina. A seleção da máquina depende, entre outros fatores, da queda e da faixa de vazões.',
     x: 53.5,
     y: 81,
-    labelPosition: 'left-up',
+    labelX: 42.5,
+    labelY: 87,
+    focusEquipmentId: 'turbina',
   },
   {
     id: 'eixo',
@@ -41,7 +50,9 @@ export const CUTAWAY_STAGES = Object.freeze([
     description: 'O eixo transmite a rotação da turbina ao rotor do gerador, mantendo os dois equipamentos mecanicamente acoplados.',
     x: 53.5,
     y: 62,
-    labelPosition: 'right',
+    labelX: 64,
+    labelY: 61,
+    focusEquipmentId: 'eixo',
   },
   {
     id: 'gerador',
@@ -50,7 +61,9 @@ export const CUTAWAY_STAGES = Object.freeze([
     description: 'A rotação do conjunto produz energia elétrica no gerador por indução eletromagnética.',
     x: 53.5,
     y: 39,
-    labelPosition: 'left',
+    labelX: 43,
+    labelY: 31,
+    focusEquipmentId: 'gerador',
   },
   {
     id: 'transformacao',
@@ -59,26 +72,51 @@ export const CUTAWAY_STAGES = Object.freeze([
     description: 'O transformador adequa a tensão elétrica às condições definidas para a conexão do empreendimento.',
     x: 75,
     y: 38,
-    labelPosition: 'right',
+    labelX: 83,
+    labelY: 48,
+    focusEquipmentId: 'transformador',
   },
   {
     id: 'rede',
     label: 'Conexão',
-    component: 'Subestação e rede',
+    component: 'Subestação e linhas',
     description: 'Equipamentos de manobra e proteção conduzem a energia ao ponto de conexão, em rede de distribuição ou transmissão conforme o acesso definido para o empreendimento.',
     x: 88,
     y: 16,
-    labelPosition: 'left-down',
+    labelX: 78.5,
+    labelY: 13,
+    focusEquipmentId: 'subestacao',
   },
   {
     id: 'restituicao',
     label: 'Restituição',
-    component: 'Tubo de sucção e canal de fuga',
-    description: 'Depois de atravessar a turbina, a água segue pelo tubo de sucção e retorna ao rio a jusante.',
+    component: 'Canal de fuga',
+    description: 'Depois de atravessar a turbina, a água segue pelo tubo de sucção e retorna ao rio a jusante pelo canal de fuga.',
     x: 74,
     y: 87,
-    labelPosition: 'left-up',
+    labelX: 82,
+    labelY: 85,
+    focusEquipmentId: 'canal-fuga',
   },
+]);
+
+export const CUTAWAY_EQUIPMENT = Object.freeze([
+  { id: 'reservatorio', name: 'Reservatório a montante', stageId: 'captacao', x: 8, y: 29, labelX: 7, labelY: 15 },
+  { id: 'barragem', name: 'Barragem', stageId: 'captacao', x: 30, y: 32, labelX: 30, labelY: 16 },
+  { id: 'grade', name: 'Grade de proteção', stageId: 'captacao', x: 18.5, y: 26, labelX: 8.5, labelY: 30 },
+  { id: 'comporta', name: 'Comporta', stageId: 'captacao', x: 20, y: 30.5, labelX: 9.5, labelY: 38 },
+  { id: 'tomada', name: 'Tomada d’água', stageId: 'captacao', x: 20.5, y: 35, labelX: 11.5, labelY: 46 },
+  { id: 'conduto', name: 'Conduto forçado', stageId: 'aducao', x: 36, y: 58, labelX: 23, labelY: 58 },
+  { id: 'casa-forca', name: 'Casa de força', stageId: 'gerador', x: 47, y: 27, labelX: 42, labelY: 19 },
+  { id: 'ponte-rolante', name: 'Ponte rolante', stageId: 'gerador', x: 55, y: 22, labelX: 63, labelY: 18 },
+  { id: 'gerador', name: 'Gerador', stageId: 'gerador', x: 53.5, y: 39, labelX: 43, labelY: 35 },
+  { id: 'eixo', name: 'Eixo', stageId: 'eixo', x: 53.5, y: 62, labelX: 64, labelY: 59 },
+  { id: 'turbina', name: 'Turbina / rotor', stageId: 'turbina', x: 53.5, y: 78, labelX: 43, labelY: 82 },
+  { id: 'tubo-succao', name: 'Tubo de sucção', stageId: 'restituicao', x: 55, y: 87, labelX: 63, labelY: 91 },
+  { id: 'canal-fuga', name: 'Canal de fuga', stageId: 'restituicao', x: 70, y: 87, labelX: 81, labelY: 85 },
+  { id: 'transformador', name: 'Transformador', stageId: 'transformacao', x: 75, y: 40, labelX: 83, labelY: 48 },
+  { id: 'subestacao', name: 'Subestação', stageId: 'rede', x: 77, y: 29, labelX: 86.5, labelY: 34 },
+  { id: 'linhas', name: 'Linhas de transmissão', stageId: 'rede', x: 88, y: 14, labelX: 82.5, labelY: 11 },
 ]);
 
 function useReducedMotion() {
@@ -96,96 +134,201 @@ function useReducedMotion() {
   return reduced;
 }
 
-function SystemOverlay({ activeId }) {
+function useSceneVisibility(sceneRef) {
+  const [visible, setVisible] = useState(true);
+
+  useEffect(() => {
+    if (typeof IntersectionObserver !== 'function' || !sceneRef.current) return undefined;
+    const observer = new IntersectionObserver(
+      ([entry]) => setVisible(entry.isIntersecting),
+      { rootMargin: '120px 0px', threshold: 0.05 },
+    );
+    observer.observe(sceneRef.current);
+    return () => observer.disconnect();
+  }, [sceneRef]);
+
+  return visible;
+}
+
+function SystemOverlay({ activeId, focusPoint, idPrefix }) {
   const waterActive = ['captacao', 'aducao', 'turbina', 'restituicao'].includes(activeId);
   const machineActive = ['turbina', 'eixo', 'gerador'].includes(activeId);
   const electricityActive = ['gerador', 'transformacao', 'rede'].includes(activeId);
+  const waterGlowId = `${idPrefix}-water-glow`;
+  const energyGlowId = `${idPrefix}-energy-glow`;
+  const rotorGlowId = `${idPrefix}-rotor-glow`;
 
   return (
     <svg className="hec-overlay" viewBox="0 0 1600 900" aria-hidden="true">
       <defs>
-        <filter id="hec-water-glow" x="-40%" y="-40%" width="180%" height="180%">
+        <filter id={waterGlowId} x="-40%" y="-40%" width="180%" height="180%">
           <feGaussianBlur stdDeviation="5" result="blur" />
           <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
         </filter>
-        <filter id="hec-energy-glow" x="-50%" y="-50%" width="200%" height="200%">
+        <filter id={energyGlowId} x="-50%" y="-50%" width="200%" height="200%">
           <feGaussianBlur stdDeviation="4" result="blur" />
           <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
         </filter>
-        <radialGradient id="hec-rotor-glow">
+        <radialGradient id={rotorGlowId}>
           <stop offset="0" stopColor="#d9fff5" stopOpacity=".95" />
           <stop offset=".5" stopColor="#56e2b0" stopOpacity=".52" />
           <stop offset="1" stopColor="#56e2b0" stopOpacity="0" />
         </radialGradient>
       </defs>
 
-      <g className={`hec-water-system${waterActive ? ' is-active' : ''}`}>
-        <path className="hec-water-aura" d="M322 315 C405 318 448 355 487 433 C548 556 629 703 797 750" />
-        <path className="hec-water-flow" d="M322 315 C405 318 448 355 487 433 C548 556 629 703 797 750" />
-        <path className="hec-tailrace-aura" d="M850 787 C934 852 1085 829 1328 774" />
-        <path className="hec-tailrace-flow" d="M850 787 C934 852 1085 829 1328 774" />
+      <g
+        className={`hec-water-system${waterActive ? ' is-active' : ''}`}
+        data-motion-layer="agua"
+      >
+        <g className="hec-reservoir-motion">
+          <path d="M36 281 Q100 264 164 281 T292 281" />
+          <path d="M55 302 Q115 286 175 302 T295 302" />
+          <path d="M82 323 Q132 310 182 323 T282 323" />
+        </g>
+        <path className="hec-water-aura" d={WATER_PATH} style={{ filter: `url(#${waterGlowId})` }} />
+        <path className="hec-water-flow" d={WATER_PATH} style={{ filter: `url(#${waterGlowId})` }} />
+        <path className="hec-water-packets" d={WATER_PATH} style={{ filter: `url(#${waterGlowId})` }} />
+        <path className="hec-tailrace-aura" d={TAILRACE_PATH} style={{ filter: `url(#${waterGlowId})` }} />
+        <path className="hec-tailrace-flow" d={TAILRACE_PATH} style={{ filter: `url(#${waterGlowId})` }} />
+        <path className="hec-tailrace-packets" d={TAILRACE_PATH} style={{ filter: `url(#${waterGlowId})` }} />
       </g>
 
       <g className={`hec-machine-system${machineActive ? ' is-active' : ''}`}>
-        <path className="hec-shaft-light" d="M855 362 L855 696" />
-        <g className="hec-runner" style={{ transformOrigin: '855px 733px' }}>
-          <circle cx="855" cy="733" r="48" fill="url(#hec-rotor-glow)" />
-          <circle cx="855" cy="733" r="27" className="hec-runner-ring" />
-          {[0, 60, 120, 180, 240, 300].map((angle) => (
-            <path
-              key={angle}
-              d="M855 706 C872 711 879 720 882 733 C869 726 859 727 855 733 Z"
-              className="hec-runner-blade"
-              transform={`rotate(${angle} 855 733)`}
-            />
+        <g data-motion-layer="eixo" className="hec-shaft-system">
+          <path className="hec-shaft-light" d="M855 362 L855 696" style={{ filter: `url(#${waterGlowId})` }} />
+          <path className="hec-shaft-helix" d="M840 414 Q855 398 870 414 T840 446 T870 478 T840 510 T870 542 T840 574 T870 606 T840 638 T870 670" />
+          {[430, 500, 570, 640].map((cy) => (
+            <ellipse key={cy} className="hec-shaft-coupling" cx="855" cy={cy} rx="20" ry="7" />
           ))}
         </g>
-        <g className="hec-generator-field">
-          <ellipse cx="855" cy="365" rx="65" ry="25" />
-          <ellipse cx="855" cy="365" rx="88" ry="35" />
+        <g data-motion-layer="turbina" className="hec-runner-wrap">
+          <g className="hec-runner" style={{ transformOrigin: '855px 733px' }}>
+            <circle cx="855" cy="733" r="52" fill={`url(#${rotorGlowId})`} />
+            <circle cx="855" cy="733" r="29" className="hec-runner-ring" />
+            {[0, 60, 120, 180, 240, 300].map((angle) => (
+              <path
+                key={angle}
+                d="M855 703 C875 709 884 720 886 733 C871 726 860 727 855 733 Z"
+                className="hec-runner-blade"
+                transform={`rotate(${angle} 855 733)`}
+              />
+            ))}
+          </g>
+          <circle className="hec-runner-orbit" cx="855" cy="733" r="58" />
+        </g>
+        <g data-motion-layer="gerador" className="hec-generator-system">
+          <g className="hec-generator-field" style={{ transformOrigin: '855px 365px' }}>
+            <ellipse cx="855" cy="365" rx="63" ry="24" />
+            <ellipse cx="855" cy="365" rx="86" ry="34" />
+            <path d="M773 365 C796 327 914 327 937 365" />
+            <path d="M773 365 C796 403 914 403 937 365" />
+          </g>
+          <circle className="hec-generator-core" cx="855" cy="365" r="24" />
         </g>
       </g>
 
-      <g className={`hec-electric-system${electricityActive ? ' is-active' : ''}`}>
-        <path className="hec-energy-aura" d="M925 357 C1017 347 1064 338 1130 336 C1260 330 1337 234 1410 125" />
-        <path className="hec-energy-flow" d="M925 357 C1017 347 1064 338 1130 336 C1260 330 1337 234 1410 125" />
-        <g className="hec-transformer-pulse">
+      <g
+        className={`hec-electric-system${electricityActive ? ' is-active' : ''}`}
+        data-motion-layer="energia"
+      >
+        <path className="hec-energy-aura" d={ENERGY_PATH} style={{ filter: `url(#${energyGlowId})` }} />
+        <path className="hec-energy-flow" d={ENERGY_PATH} style={{ filter: `url(#${energyGlowId})` }} />
+        <path className="hec-energy-packets" d={ENERGY_PATH} style={{ filter: `url(#${energyGlowId})` }} />
+        <g className="hec-transformer-pulse" style={{ filter: `url(#${energyGlowId})` }}>
           <path d="M1160 312 q20 -20 40 0 t40 0" />
           <path d="M1154 325 q24 -25 48 0 t48 0" />
         </g>
       </g>
+
+      <g
+        className="hec-stage-focus"
+        data-focus-equipment={focusPoint.id}
+        transform={`translate(${focusPoint.x * 16} ${focusPoint.y * 9})`}
+      >
+        <circle className="hec-stage-focus__pulse" r="43" />
+        <circle className="hec-stage-focus__ring" r="22" />
+        <path d="M-31 0 H-20 M20 0 H31 M0 -31 V-20 M0 20 V31" />
+      </g>
+    </svg>
+  );
+}
+
+function LeaderOverlay({ activeId, selectedEquipmentId }) {
+  return (
+    <svg className="hec-leaders" viewBox="0 0 1600 900" aria-hidden="true">
+      {CUTAWAY_EQUIPMENT.map((equipment) => (
+        <g
+          key={equipment.id}
+          data-active={equipment.stageId === activeId ? 'true' : 'false'}
+          data-selected={equipment.id === selectedEquipmentId ? 'true' : 'false'}
+        >
+          <line
+            className="hec-leader"
+            x1={equipment.x * 16}
+            y1={equipment.y * 9}
+            x2={equipment.labelX * 16}
+            y2={equipment.labelY * 9}
+            vectorEffect="non-scaling-stroke"
+          />
+          <circle className="hec-leader__anchor" cx={equipment.x * 16} cy={equipment.y * 9} r="7" />
+          <circle className="hec-leader__core" cx={equipment.x * 16} cy={equipment.y * 9} r="3" />
+        </g>
+      ))}
     </svg>
   );
 }
 
 export default function HydroelectricCutaway() {
   const reducedMotion = useReducedMotion();
-  const [activeId, setActiveId] = useState(CUTAWAY_STAGES[0].id);
+  const sceneRef = useRef(null);
+  const isSceneVisible = useSceneVisibility(sceneRef);
+  const idPrefix = `hec-${useId().replace(/:/g, '')}`;
+  const [selection, setSelection] = useState({
+    stageId: CUTAWAY_STAGES[0].id,
+    equipmentId: CUTAWAY_STAGES[0].focusEquipmentId,
+  });
   const [playing, setPlaying] = useState(true);
+  const [autoTour, setAutoTour] = useState(true);
   const [flow, setFlow] = useState(72);
+  const activeId = selection.stageId;
+  const selectedEquipmentId = selection.equipmentId;
   const activeIndex = CUTAWAY_STAGES.findIndex((stage) => stage.id === activeId);
-  const activeStage = useMemo(
-    () => CUTAWAY_STAGES[activeIndex] || CUTAWAY_STAGES[0],
-    [activeIndex],
-  );
+  const activeStage = CUTAWAY_STAGES[activeIndex] || CUTAWAY_STAGES[0];
+  const selectedEquipment = CUTAWAY_EQUIPMENT.find(({ id }) => id === selectedEquipmentId)
+    || CUTAWAY_EQUIPMENT[0];
+  const motionActive = playing && !reducedMotion && isSceneVisible;
+  const tourActive = motionActive && autoTour;
 
   useEffect(() => {
     if (reducedMotion) setPlaying(false);
   }, [reducedMotion]);
 
   useEffect(() => {
-    if (!playing || reducedMotion) return undefined;
+    if (!tourActive) return undefined;
     const timer = window.setInterval(() => {
-      setActiveId((currentId) => {
-        const current = CUTAWAY_STAGES.findIndex((stage) => stage.id === currentId);
-        return CUTAWAY_STAGES[(current + 1) % CUTAWAY_STAGES.length].id;
+      setSelection((currentSelection) => {
+        const current = CUTAWAY_STAGES.findIndex((stage) => stage.id === currentSelection.stageId);
+        const nextStage = CUTAWAY_STAGES[(current + 1) % CUTAWAY_STAGES.length];
+        return {
+          stageId: nextStage.id,
+          equipmentId: nextStage.focusEquipmentId,
+        };
       });
-    }, 3200);
+    }, 3600);
     return () => window.clearInterval(timer);
-  }, [playing, reducedMotion]);
+  }, [tourActive]);
 
   const selectStage = (id) => {
-    setActiveId(id);
+    const stage = CUTAWAY_STAGES.find((candidate) => candidate.id === id) || CUTAWAY_STAGES[0];
+    setSelection({
+      stageId: stage.id,
+      equipmentId: stage.focusEquipmentId,
+    });
+    setPlaying(false);
+  };
+
+  const selectEquipment = (equipment) => {
+    setSelection({ stageId: equipment.stageId, equipmentId: equipment.id });
     setPlaying(false);
   };
 
@@ -204,19 +347,28 @@ export default function HydroelectricCutaway() {
     selectStage(tabs[next].dataset.stageId);
   };
 
-  const flowDuration = Math.max(0.75, 2.45 - (flow * 0.016));
+  const flowDuration = Math.max(0.72, 2.55 - (flow * 0.017));
   const visualStyle = {
     '--hec-flow-duration': `${flowDuration}s`,
-    '--hec-flow-strength': `${0.36 + (flow / 160)}`,
+    '--hec-machine-duration': `${Math.max(0.78, flowDuration * 0.92)}s`,
+    '--hec-energy-duration': `${Math.max(0.6, flowDuration * 0.72)}s`,
+    '--hec-flow-strength': `${0.42 + (flow / 150)}`,
   };
+  const playbackLabel = reducedMotion
+    ? 'Movimento reduzido ativo'
+    : motionActive ? 'Animação em movimento' : 'Animação pausada';
 
   return (
     <figure
       className="hec-shell"
       style={visualStyle}
-      data-playing={playing && !reducedMotion ? 'true' : 'false'}
+      data-playing={motionActive ? 'true' : 'false'}
+      data-tour-active={tourActive ? 'true' : 'false'}
+      data-motion-preference={reducedMotion ? 'reduced' : 'full'}
       aria-labelledby="hec-title"
-      aria-describedby="hec-description"
+      aria-describedby="hec-description hec-layer-description"
+      onPointerDown={() => setAutoTour(false)}
+      onFocusCapture={() => setAutoTour(false)}
     >
       <style>{CUTAWAY_STYLES}</style>
       <header className="hec-toolbar">
@@ -224,31 +376,35 @@ export default function HydroelectricCutaway() {
           <span aria-hidden="true"><Waves /></span>
           <div>
             <h2 id="hec-title">Usina hidrelétrica em operação</h2>
-            <p>Explore o caminho da água e da energia no corte técnico.</p>
+            <p>Observe o percurso animado e selecione cada equipamento.</p>
           </div>
         </div>
         <div className="hec-controls">
           <label className="hec-flow-control">
-            <span>Fluxo visual <strong>{flow}%</strong></span>
+            <span>Velocidade do fluxo <strong>{flow}%</strong></span>
             <input
               type="range"
               min="35"
               max="100"
               value={flow}
               onChange={(event) => setFlow(Number(event.target.value))}
+              aria-valuetext={`${flow}% da velocidade visual`}
               aria-describedby="hec-flow-note"
             />
           </label>
           <button
             type="button"
             className="hec-play"
-            onClick={() => setPlaying((current) => !current)}
+            onClick={() => {
+              setAutoTour(true);
+              setPlaying((current) => !current);
+            }}
             disabled={reducedMotion}
-            aria-pressed={playing && !reducedMotion}
-            aria-label={playing && !reducedMotion ? 'Pausar animação' : 'Reproduzir animação'}
+            aria-pressed={motionActive}
+            aria-label={motionActive ? 'Pausar animação didática' : 'Reproduzir animação didática'}
           >
-            {playing && !reducedMotion ? <Pause aria-hidden="true" /> : <Play aria-hidden="true" />}
-            <span>{playing && !reducedMotion ? 'Pausar' : 'Reproduzir'}</span>
+            {motionActive ? <Pause aria-hidden="true" /> : <Play aria-hidden="true" />}
+            <span>{motionActive ? 'Pausar' : 'Reproduzir'}</span>
           </button>
         </div>
       </header>
@@ -256,33 +412,49 @@ export default function HydroelectricCutaway() {
       <p id="hec-description" className="hec-visually-hidden">
         Corte de uma usina: a água sai do reservatório, atravessa a tomada e o conduto forçado,
         movimenta a turbina e o eixo, aciona o gerador, retorna ao rio e a energia segue pelo
-        transformador até o ponto de conexão em rede de distribuição ou transmissão.
+        transformador e pela subestação até o ponto de conexão em rede de distribuição ou transmissão.
       </p>
 
-      <div className="hec-scene" data-stage={activeId}>
+      <div className="hec-layer-status" id="hec-layer-description">
+        <span><i className="hec-layer-status__static" aria-hidden="true" />Base ilustrada estática</span>
+        <span><i className="hec-layer-status__motion" aria-hidden="true" />Água, turbina, eixo, gerador e energia animados</span>
+      </div>
+
+      <div className="hec-scene" data-stage={activeId} ref={sceneRef}>
         <img
+          className="hec-static-base"
+          data-visual-layer="base-estatica"
           src={`${BASE_URL}/hidro/usina-corte-realista.webp`}
           alt=""
+          aria-hidden="true"
           width="1600"
           height="900"
           loading="eager"
           fetchPriority="high"
           decoding="async"
         />
-        <SystemOverlay activeId={activeId} />
-        <div className="hec-hotspots" aria-label="Componentes da usina">
-          {CUTAWAY_STAGES.map((stage, index) => (
+        <SystemOverlay activeId={activeId} focusPoint={selectedEquipment} idPrefix={idPrefix} />
+        <LeaderOverlay activeId={activeId} selectedEquipmentId={selectedEquipmentId} />
+
+        <div className="hec-playback-status" role="status" aria-live="polite">
+          <i aria-hidden="true" />{playbackLabel}
+        </div>
+
+        <div className="hec-callouts" aria-label="Equipamentos identificados no corte técnico">
+          {CUTAWAY_EQUIPMENT.map((equipment, index) => (
             <button
-              key={stage.id}
+              key={equipment.id}
               type="button"
-              className={`hec-hotspot hec-hotspot--${stage.labelPosition}`}
-              style={{ '--hec-x': `${stage.x}%`, '--hec-y': `${stage.y}%` }}
-              aria-label={`${index + 1}. ${stage.component}`}
-              aria-pressed={stage.id === activeId}
-              onClick={() => selectStage(stage.id)}
+              className="hec-callout"
+              style={{ '--hec-label-x': `${equipment.labelX}%`, '--hec-label-y': `${equipment.labelY}%` }}
+              aria-label={`Localizar ${equipment.name}`}
+              aria-pressed={equipment.id === selectedEquipmentId}
+              aria-controls="hec-stage-panel"
+              data-stage-active={equipment.stageId === activeId ? 'true' : 'false'}
+              onClick={() => selectEquipment(equipment)}
             >
-              <span className="hec-hotspot__marker" aria-hidden="true">{index + 1}</span>
-              <span className="hec-hotspot__label" aria-hidden="true">{stage.component}</span>
+              <span className="hec-callout__number" aria-hidden="true">{index + 1}</span>
+              <span className="hec-callout__label">{equipment.name}</span>
             </button>
           ))}
         </div>
@@ -290,6 +462,26 @@ export default function HydroelectricCutaway() {
           <span><Waves /> água</span><i /><span>rotação</span><i /><span><Zap /> energia</span>
         </div>
       </div>
+
+      <nav className="hec-equipment-key" aria-label="Legenda dos equipamentos">
+        <p>Equipamentos — toque para localizar</p>
+        <ol>
+          {CUTAWAY_EQUIPMENT.map((equipment, index) => (
+            <li key={equipment.id}>
+              <button
+                type="button"
+                aria-pressed={equipment.id === selectedEquipmentId}
+                aria-controls="hec-stage-panel"
+                data-stage-active={equipment.stageId === activeId ? 'true' : 'false'}
+                onClick={() => selectEquipment(equipment)}
+              >
+                <span aria-hidden="true">{index + 1}</span>
+                {equipment.name}
+              </button>
+            </li>
+          ))}
+        </ol>
+      </nav>
 
       <div className="hec-tour">
         <div
@@ -319,6 +511,8 @@ export default function HydroelectricCutaway() {
           className="hec-stage-panel"
           role="tabpanel"
           aria-labelledby={`hec-tab-${activeStage.id}`}
+          aria-live={tourActive ? 'off' : 'polite'}
+          aria-atomic="true"
           tabIndex="0"
         >
           <span>{String(activeIndex + 1).padStart(2, '0')}</span>
@@ -326,10 +520,11 @@ export default function HydroelectricCutaway() {
             <strong>{activeStage.component}</strong>
             <p>{activeStage.description}</p>
           </div>
+          <i className="hec-stage-progress" aria-hidden="true"><b /></i>
         </div>
         <small id="hec-flow-note" className="hec-note">
           Representação didática, sem escala e sem vínculo com empreendimento específico. O controle altera
-          somente a velocidade da animação; não representa vazão ou desempenho de projeto.
+          somente a velocidade visual das camadas; não representa vazão ou desempenho de projeto.
         </small>
       </div>
     </figure>

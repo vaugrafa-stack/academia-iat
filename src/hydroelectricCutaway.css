@@ -10,6 +10,12 @@
   background: #071b21;
   color: #f4fbfa;
   box-shadow: 0 22px 60px rgba(1, 14, 17, 0.3);
+  container-type: inline-size;
+}
+
+.hydro-hero--cutaway {
+  grid-template-columns: minmax(0, 1fr);
+  align-items: start;
 }
 
 .hec-toolbar {
@@ -27,6 +33,9 @@
 .hec-controls,
 .hec-flow-control > span,
 .hec-play,
+.hec-layer-status,
+.hec-layer-status span,
+.hec-playback-status,
 .hec-conversion,
 .hec-conversion span,
 .hec-stage-panel {
@@ -76,7 +85,7 @@
 
 .hec-flow-control {
   display: grid;
-  width: 154px;
+  width: 174px;
   gap: 5px;
   color: #bfcecf;
   font-size: 11px;
@@ -94,6 +103,7 @@
 
 .hec-flow-control input {
   width: 100%;
+  min-height: 24px;
   margin: 0;
   accent-color: var(--hec-cyan);
 }
@@ -101,15 +111,17 @@
 .hec-play {
   justify-content: center;
   gap: 7px;
-  min-width: 104px;
+  min-width: 108px;
   min-height: 44px;
   padding: 8px 12px;
   border: 1px solid rgba(89, 226, 173, 0.48);
   border-radius: 8px;
   background: rgba(27, 99, 81, 0.42);
   color: #ebfff8;
+  font: inherit;
   font-size: 12px;
   font-weight: 800;
+  cursor: pointer;
 }
 
 .hec-play:hover:not(:disabled) {
@@ -118,11 +130,49 @@
 
 .hec-play:disabled {
   cursor: not-allowed;
-  opacity: 0.58;
+  opacity: 0.62;
 }
 
 .hec-play svg {
   width: 16px;
+}
+
+.hec-layer-status {
+  justify-content: center;
+  gap: 9px 18px;
+  min-height: 34px;
+  padding: 6px 14px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  background: #092128;
+  color: #b9cdcc;
+  font-size: 11px;
+  font-weight: 750;
+  letter-spacing: 0.01em;
+}
+
+.hec-layer-status span {
+  gap: 7px;
+}
+
+.hec-layer-status i,
+.hec-playback-status i {
+  display: block;
+  flex: 0 0 auto;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.hec-layer-status__static {
+  border: 1px solid #9bb3b5;
+  background: #4d676a;
+}
+
+.hec-layer-status__motion,
+.hec-playback-status i {
+  background: var(--hec-green);
+  box-shadow: 0 0 0 4px rgba(89, 226, 173, 0.13), 0 0 12px rgba(89, 226, 173, 0.7);
+  animation: hec-status-pulse 1.35s ease-in-out infinite;
 }
 
 .hec-scene {
@@ -130,30 +180,32 @@
   isolation: isolate;
   overflow: hidden;
   aspect-ratio: 16 / 9;
+  contain: layout paint;
   background: radial-gradient(circle at 55% 54%, #254047, #071b21 72%);
 }
 
 .hec-scene::after {
   position: absolute;
-  z-index: 3;
+  z-index: 2;
   inset: 0;
   background:
-    linear-gradient(180deg, rgba(2, 13, 16, 0.03) 56%, rgba(2, 13, 16, 0.3) 100%),
-    linear-gradient(90deg, rgba(3, 17, 20, 0.11), transparent 13%, transparent 88%, rgba(3, 17, 20, 0.1));
+    linear-gradient(180deg, rgba(2, 13, 16, 0.01) 54%, rgba(2, 13, 16, 0.24) 100%),
+    linear-gradient(90deg, rgba(3, 17, 20, 0.1), transparent 13%, transparent 88%, rgba(3, 17, 20, 0.08));
   content: '';
   pointer-events: none;
 }
 
-.hec-scene > img,
+.hec-static-base,
 .hec-overlay,
-.hec-hotspots {
+.hec-leaders,
+.hec-callouts {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
 }
 
-.hec-scene > img {
+.hec-static-base {
   z-index: 0;
   display: block;
   object-fit: cover;
@@ -167,97 +219,163 @@
 .hec-water-system,
 .hec-machine-system,
 .hec-electric-system {
-  opacity: 0.54;
-  transition: opacity 240ms ease, filter 240ms ease;
+  opacity: 0.43;
+  transition: opacity 260ms ease, filter 260ms ease;
 }
 
 .hec-water-system.is-active,
 .hec-machine-system.is-active,
 .hec-electric-system.is-active {
   opacity: 1;
-  filter: saturate(1.16);
+  filter: saturate(1.18);
 }
 
 .hec-water-aura,
 .hec-tailrace-aura,
 .hec-energy-aura,
-.hec-shaft-light {
+.hec-shaft-light,
+.hec-shaft-helix,
+.hec-runner-orbit,
+.hec-generator-core {
   fill: none;
   stroke-linecap: round;
+}
+
+.hec-reservoir-motion {
+  fill: none;
+  stroke: rgba(191, 242, 255, 0.88);
+  stroke-width: 4;
+  stroke-linecap: round;
+  stroke-dasharray: 42 25;
+  filter: drop-shadow(0 0 7px rgba(72, 189, 230, 0.85));
+  animation: hec-reservoir 2.4s ease-in-out infinite;
 }
 
 .hec-water-aura,
 .hec-tailrace-aura {
   stroke: rgba(55, 183, 226, var(--hec-flow-strength));
-  stroke-width: 23;
-  filter: url(#hec-water-glow);
+  stroke-width: 25;
+}
+
+.hec-water-flow,
+.hec-tailrace-flow,
+.hec-water-packets,
+.hec-tailrace-packets,
+.hec-energy-flow,
+.hec-energy-packets {
+  fill: none;
+  stroke-linecap: round;
 }
 
 .hec-water-flow,
 .hec-tailrace-flow {
-  fill: none;
-  stroke: #c5f5ff;
+  stroke: #d4f8ff;
   stroke-width: 5;
-  stroke-linecap: round;
-  stroke-dasharray: 18 32;
-  filter: url(#hec-water-glow);
-  animation: hec-flow var(--hec-flow-duration) linear infinite;
+  stroke-dasharray: 22 30;
+  animation: hec-water-flow var(--hec-flow-duration) linear infinite;
+}
+
+.hec-water-packets,
+.hec-tailrace-packets {
+  stroke: #fff;
+  stroke-width: 9;
+  stroke-dasharray: 2 108;
+  animation: hec-water-packets calc(var(--hec-flow-duration) * 1.3) linear infinite;
 }
 
 .hec-tailrace-aura {
-  stroke-width: 18;
+  stroke-width: 21;
 }
 
-.hec-tailrace-flow {
-  stroke-width: 4;
+.hec-tailrace-flow,
+.hec-tailrace-packets {
   animation-direction: reverse;
 }
 
 .hec-shaft-light {
-  stroke: rgba(89, 226, 173, 0.78);
-  stroke-width: 8;
-  stroke-dasharray: 8 18;
-  filter: url(#hec-water-glow);
-  animation: hec-shaft 1.35s linear infinite;
+  stroke: rgba(89, 226, 173, 0.82);
+  stroke-width: 9;
+  stroke-dasharray: 10 18;
+  animation: hec-shaft-rise var(--hec-machine-duration) linear infinite;
+}
+
+.hec-shaft-helix {
+  stroke: rgba(228, 255, 247, 0.92);
+  stroke-width: 4;
+  stroke-dasharray: 24 18;
+  filter: drop-shadow(0 0 6px rgba(89, 226, 173, 0.85));
+  animation: hec-shaft-helix var(--hec-machine-duration) linear infinite;
+}
+
+.hec-shaft-coupling {
+  fill: rgba(7, 34, 35, 0.58);
+  stroke: #bffff0;
+  stroke-width: 3;
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: hec-coupling var(--hec-machine-duration) ease-in-out infinite alternate;
 }
 
 .hec-runner {
-  animation: hec-spin 1.75s linear infinite;
+  animation: hec-spin var(--hec-machine-duration) linear infinite;
 }
 
 .hec-runner-ring {
-  fill: rgba(5, 30, 34, 0.45);
-  stroke: #c6fff0;
+  fill: rgba(5, 30, 34, 0.5);
+  stroke: #d5fff4;
   stroke-width: 4;
 }
 
 .hec-runner-blade {
-  fill: rgba(198, 255, 240, 0.92);
+  fill: rgba(213, 255, 244, 0.96);
+  filter: drop-shadow(0 0 4px rgba(89, 226, 173, 0.75));
+}
+
+.hec-runner-orbit {
+  stroke: rgba(116, 255, 212, 0.82);
+  stroke-width: 4;
+  stroke-dasharray: 8 22;
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: hec-spin-reverse calc(var(--hec-machine-duration) * 1.35) linear infinite;
 }
 
 .hec-generator-field {
   fill: none;
   stroke: var(--hec-green);
   stroke-width: 3;
-  opacity: 0.25;
-  filter: url(#hec-water-glow);
-  animation: hec-field 1.8s ease-in-out infinite;
+  stroke-dasharray: 34 18;
+  opacity: 0.58;
+  filter: drop-shadow(0 0 7px rgba(89, 226, 173, 0.78));
+  animation: hec-field-rotate calc(var(--hec-machine-duration) * 2.6) linear infinite;
+}
+
+.hec-generator-core {
+  stroke: #d9fff5;
+  stroke-width: 5;
+  stroke-dasharray: 6 9;
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: hec-spin var(--hec-machine-duration) linear infinite;
 }
 
 .hec-energy-aura {
-  stroke: rgba(255, 199, 104, 0.38);
-  stroke-width: 15;
-  filter: url(#hec-energy-glow);
+  stroke: rgba(255, 199, 104, 0.4);
+  stroke-width: 17;
 }
 
 .hec-energy-flow {
-  fill: none;
   stroke: #fff2ba;
   stroke-width: 4;
-  stroke-linecap: round;
-  stroke-dasharray: 10 24;
-  filter: url(#hec-energy-glow);
-  animation: hec-energy 1.15s linear infinite;
+  stroke-dasharray: 12 23;
+  animation: hec-energy-flow var(--hec-energy-duration) linear infinite;
+}
+
+.hec-energy-packets {
+  stroke: #fff;
+  stroke-width: 9;
+  stroke-dasharray: 2 76;
+  animation: hec-energy-packets calc(var(--hec-energy-duration) * 1.55) linear infinite;
 }
 
 .hec-transformer-pulse {
@@ -265,120 +383,176 @@
   stroke: #ffe8a1;
   stroke-width: 3;
   stroke-linecap: round;
-  opacity: 0.58;
-  filter: url(#hec-energy-glow);
-  animation: hec-field 1.4s ease-in-out infinite;
+  opacity: 0.7;
+  animation: hec-field-pulse 1.25s ease-in-out infinite;
 }
 
-.hec-hotspots {
+.hec-stage-focus {
+  fill: none;
+  stroke: #fff;
+  stroke-width: 3;
+  filter: drop-shadow(0 0 8px rgba(89, 226, 173, 0.95));
+  transition: transform 420ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.hec-stage-focus__pulse {
+  stroke: rgba(89, 226, 173, 0.82);
+  stroke-width: 4;
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: hec-focus-pulse 1.55s ease-out infinite;
+}
+
+.hec-stage-focus__ring {
+  fill: rgba(8, 73, 58, 0.18);
+  stroke: #eafff8;
+}
+
+.hec-leaders {
+  z-index: 3;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.hec-leader {
+  stroke: rgba(239, 255, 251, 0.7);
+  stroke-width: 1.4;
+  stroke-dasharray: 3 3;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.92));
+  transition: opacity 220ms ease, stroke 220ms ease, stroke-width 220ms ease;
+}
+
+.hec-leader__anchor {
+  fill: rgba(4, 25, 29, 0.72);
+  stroke: rgba(235, 255, 250, 0.92);
+  stroke-width: 2;
+}
+
+.hec-leader__core {
+  fill: #eafff8;
+}
+
+.hec-leaders g[data-active='true'] .hec-leader {
+  stroke: #71f1bd;
+  stroke-width: 2.4;
+  stroke-dasharray: none;
+}
+
+.hec-leaders g[data-active='true'] .hec-leader__anchor {
+  fill: #167b5f;
+  stroke: #fff;
+  filter: drop-shadow(0 0 7px rgba(89, 226, 173, 0.95));
+}
+
+.hec-leaders g[data-active='true'] .hec-leader__core {
+  fill: #fff;
+}
+
+.hec-leaders g[data-selected='true'] .hec-leader {
+  stroke: #fff;
+  stroke-width: 3.2;
+  filter: drop-shadow(0 0 5px rgba(89, 226, 173, 0.95));
+}
+
+.hec-callouts {
   z-index: 5;
   pointer-events: none;
 }
 
-.hec-hotspot {
+.hec-callout {
   position: absolute;
-  top: var(--hec-y);
-  left: var(--hec-x);
+  top: var(--hec-label-y);
+  left: clamp(70px, var(--hec-label-x), calc(100% - 70px));
   display: flex;
   align-items: center;
-  gap: 7px;
+  gap: 5px;
   min-width: 44px;
   min-height: 44px;
-  justify-content: center;
-  padding: 0;
-  border: 0;
-  background: transparent;
+  max-width: 142px;
+  padding: 5px 7px 5px 5px;
+  border: 1px solid rgba(239, 255, 251, 0.42);
+  border-radius: 6px;
+  background: rgba(3, 23, 27, 0.82);
   color: #fff;
-  transform: translate(-50%, -50%);
-  pointer-events: auto;
-}
-
-.hec-hotspot__marker {
-  position: relative;
-  z-index: 1;
-  display: grid;
-  flex: 0 0 30px;
-  width: 30px;
-  height: 30px;
-  place-items: center;
-  border: 2px solid rgba(255, 255, 255, 0.92);
-  border-radius: 50%;
-  background: rgba(4, 25, 29, 0.86);
-  box-shadow: 0 3px 13px rgba(1, 12, 15, 0.48);
-  font-size: 11px;
-  font-weight: 900;
-  transition: transform 180ms ease, background 180ms ease, box-shadow 180ms ease;
-}
-
-.hec-hotspot__marker::after {
-  position: absolute;
-  inset: -7px;
-  border: 1px solid rgba(116, 220, 255, 0.68);
-  border-radius: inherit;
-  content: '';
-  opacity: 0;
-  animation: hec-pulse 2.2s ease-out infinite;
-}
-
-.hec-hotspot__label {
-  max-width: 150px;
-  padding: 5px 8px;
-  border: 1px solid rgba(255, 255, 255, 0.22);
-  border-radius: 5px;
-  background: rgba(4, 23, 27, 0.76);
-  box-shadow: 0 5px 18px rgba(0, 0, 0, 0.24);
-  font-size: clamp(9px, 0.72vw, 11px);
-  font-weight: 750;
-  line-height: 1.18;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
+  font: inherit;
+  font-size: clamp(12px, 0.78vw, 13px);
+  font-weight: 780;
+  line-height: 1.12;
   text-align: left;
   text-shadow: 0 1px 3px #000;
-  backdrop-filter: blur(5px);
+  transform: translate(-50%, -50%);
+  transition: border-color 180ms ease, background 180ms ease, box-shadow 180ms ease, transform 180ms ease;
+  pointer-events: auto;
+  cursor: pointer;
 }
 
-.hec-hotspot--left,
-.hec-hotspot--left-up,
-.hec-hotspot--left-down {
-  flex-direction: row-reverse;
+.hec-callout__number {
+  display: grid;
+  flex: 0 0 22px;
+  width: 22px;
+  height: 22px;
+  place-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.76);
+  border-radius: 50%;
+  background: rgba(9, 54, 58, 0.9);
+  color: var(--hec-cyan);
+  font-size: 12px;
+  font-weight: 900;
+  text-shadow: none;
 }
 
-.hec-hotspot--left-up .hec-hotspot__label,
-.hec-hotspot--right-up .hec-hotspot__label {
-  transform: translateY(-25px);
+.hec-callout__label {
+  display: block;
+  min-width: 0;
 }
 
-.hec-hotspot--left-down .hec-hotspot__label,
-.hec-hotspot--right-down .hec-hotspot__label {
-  transform: translateY(25px);
+.hec-callout[data-stage-active='true'] {
+  border-color: rgba(117, 246, 198, 0.62);
+  background: rgba(7, 58, 49, 0.9);
 }
 
-.hec-hotspot:hover .hec-hotspot__marker,
-.hec-hotspot[aria-pressed='true'] .hec-hotspot__marker {
-  border-color: #fff;
-  background: #137358;
-  box-shadow: 0 0 0 5px rgba(89, 226, 173, 0.2), 0 4px 18px rgba(0, 0, 0, 0.5);
-  transform: scale(1.12);
+.hec-callout:hover,
+.hec-callout[aria-pressed='true'] {
+  border-color: rgba(117, 246, 198, 0.9);
+  background: rgba(7, 73, 57, 0.94);
+  box-shadow: 0 0 0 3px rgba(89, 226, 173, 0.14), 0 5px 18px rgba(0, 0, 0, 0.45);
+  transform: translate(-50%, -50%) scale(1.04);
 }
 
-.hec-hotspot[aria-pressed='true'] .hec-hotspot__label {
-  border-color: rgba(117, 246, 198, 0.74);
-  background: rgba(8, 67, 54, 0.92);
+.hec-playback-status {
+  position: absolute;
+  z-index: 6;
+  right: 10px;
+  bottom: 10px;
+  gap: 7px;
+  min-height: 30px;
+  padding: 5px 9px;
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  border-radius: 7px;
+  background: rgba(4, 22, 26, 0.86);
+  color: #f0fbf9;
+  font-size: 13px;
+  font-weight: 800;
+  pointer-events: none;
 }
 
 .hec-conversion {
   position: absolute;
   z-index: 6;
-  right: 13px;
-  bottom: 12px;
+  top: 9px;
+  left: 50%;
   gap: 7px;
-  padding: 7px 9px;
+  padding: 6px 9px;
   border: 1px solid rgba(255, 255, 255, 0.22);
   border-radius: 7px;
-  background: rgba(4, 22, 26, 0.78);
+  background: rgba(4, 22, 26, 0.82);
   color: #e9f6f4;
   box-shadow: 0 5px 18px rgba(0, 0, 0, 0.24);
   font-size: 11px;
   font-weight: 800;
-  backdrop-filter: blur(6px);
+  transform: translateX(-50%);
+  pointer-events: none;
 }
 
 .hec-conversion span {
@@ -398,6 +572,71 @@
 .hec-conversion i {
   width: 16px;
   border-top: 1px solid rgba(255, 255, 255, 0.46);
+}
+
+.hec-equipment-key {
+  display: none;
+  padding: 10px 12px 4px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  background: #081f25;
+}
+
+.hec-equipment-key p {
+  margin: 0 0 7px;
+  color: #bcd1d0;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.hec-equipment-key ol {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 5px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.hec-equipment-key button {
+  display: flex;
+  width: 100%;
+  min-height: 44px;
+  align-items: center;
+  gap: 7px;
+  padding: 5px 7px;
+  border: 1px solid rgba(255, 255, 255, 0.13);
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.035);
+  color: #c3d5d4;
+  font: inherit;
+  font-size: 11px;
+  font-weight: 730;
+  line-height: 1.2;
+  text-align: left;
+}
+
+.hec-equipment-key button > span {
+  display: grid;
+  flex: 0 0 23px;
+  width: 23px;
+  height: 23px;
+  place-items: center;
+  border-radius: 50%;
+  background: rgba(116, 220, 255, 0.1);
+  color: var(--hec-cyan);
+  font-size: 11px;
+  font-weight: 900;
+}
+
+.hec-equipment-key button[aria-pressed='true'] {
+  border-color: rgba(89, 226, 173, 0.6);
+  background: rgba(28, 117, 91, 0.34);
+  color: #fff;
+}
+
+.hec-equipment-key button[data-stage-active='true']:not([aria-pressed='true']) {
+  border-color: rgba(89, 226, 173, 0.3);
+  background: rgba(28, 117, 91, 0.13);
 }
 
 .hec-tour {
@@ -427,6 +666,7 @@
   border-radius: 6px;
   background: rgba(255, 255, 255, 0.035);
   color: #a9c0c0;
+  font: inherit;
   font-size: 11px;
   font-weight: 800;
   white-space: nowrap;
@@ -455,9 +695,11 @@
 }
 
 .hec-stage-panel {
-  min-height: 64px;
+  position: relative;
+  min-height: 68px;
   gap: 12px;
-  padding: 10px 11px;
+  overflow: hidden;
+  padding: 10px 11px 13px;
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 7px;
   background: rgba(255, 255, 255, 0.035);
@@ -484,6 +726,25 @@
   line-height: 1.45;
 }
 
+.hec-stage-progress {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 2px;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.hec-stage-progress b {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, var(--hec-water), var(--hec-green));
+  transform: scaleX(0);
+  transform-origin: left;
+  animation: hec-stage-progress 3.6s linear infinite;
+}
+
 .hec-note {
   display: block;
   margin-top: 7px;
@@ -502,85 +763,198 @@
   white-space: nowrap;
 }
 
+.hec-play:focus-visible,
+.hec-flow-control input:focus-visible,
+.hec-callout:focus-visible,
+.hec-equipment-key button:focus-visible,
+.hec-tabs button:focus-visible,
+.hec-stage-panel:focus-visible {
+  outline: 3px solid #fff;
+  outline-offset: 2px;
+}
+
 .hec-shell[data-playing='false'] :is(
+  .hec-layer-status__motion,
+  .hec-playback-status i,
+  .hec-reservoir-motion,
   .hec-water-flow,
   .hec-tailrace-flow,
+  .hec-water-packets,
+  .hec-tailrace-packets,
   .hec-shaft-light,
+  .hec-shaft-helix,
+  .hec-shaft-coupling,
   .hec-runner,
+  .hec-runner-orbit,
   .hec-generator-field,
+  .hec-generator-core,
   .hec-energy-flow,
+  .hec-energy-packets,
   .hec-transformer-pulse,
-  .hec-hotspot__marker::after
+  .hec-stage-focus__pulse,
+  .hec-stage-progress b
 ) {
   animation-play-state: paused;
 }
 
-@keyframes hec-flow {
-  to { stroke-dashoffset: -50; }
+.hec-shell[data-tour-active='false'] .hec-stage-progress b {
+  animation-play-state: paused;
 }
 
-@keyframes hec-shaft {
-  to { stroke-dashoffset: 52; }
+.hec-shell[data-playing='false'] .hec-playback-status i {
+  background: #9db0b1;
+  box-shadow: none;
 }
 
-@keyframes hec-energy {
-  to { stroke-dashoffset: -68; }
+@keyframes hec-status-pulse {
+  0%, 100% { opacity: 0.55; transform: scale(0.78); }
+  50% { opacity: 1; transform: scale(1); }
+}
+
+@keyframes hec-reservoir {
+  0%, 100% { opacity: 0.42; transform: translateX(-7px); }
+  50% { opacity: 0.95; transform: translateX(8px); }
+}
+
+@keyframes hec-water-flow {
+  to { stroke-dashoffset: -104; }
+}
+
+@keyframes hec-water-packets {
+  to { stroke-dashoffset: -220; }
+}
+
+@keyframes hec-shaft-rise {
+  to { stroke-dashoffset: 84; }
+}
+
+@keyframes hec-shaft-helix {
+  to { stroke-dashoffset: -84; }
+}
+
+@keyframes hec-coupling {
+  from { opacity: 0.46; transform: scaleX(0.82); }
+  to { opacity: 1; transform: scaleX(1.1); }
 }
 
 @keyframes hec-spin {
   to { transform: rotate(360deg); }
 }
 
-@keyframes hec-field {
-  0%, 100% { opacity: 0.18; transform: scale(0.92); }
-  50% { opacity: 0.78; transform: scale(1.04); }
+@keyframes hec-spin-reverse {
+  to { transform: rotate(-360deg); }
 }
 
-@keyframes hec-pulse {
-  0% { opacity: 0.72; transform: scale(0.7); }
-  75%, 100% { opacity: 0; transform: scale(1.35); }
+@keyframes hec-field-rotate {
+  0% { opacity: 0.35; transform: rotate(0deg) scale(0.93); }
+  50% { opacity: 0.9; transform: rotate(180deg) scale(1.04); }
+  100% { opacity: 0.35; transform: rotate(360deg) scale(0.93); }
 }
 
-@media (min-width: 1180px) {
+@keyframes hec-field-pulse {
+  0%, 100% { opacity: 0.25; transform: translateY(2px); }
+  50% { opacity: 0.95; transform: translateY(-3px); }
+}
+
+@keyframes hec-energy-flow {
+  to { stroke-dashoffset: -105; }
+}
+
+@keyframes hec-energy-packets {
+  to { stroke-dashoffset: -156; }
+}
+
+@keyframes hec-focus-pulse {
+  0% { opacity: 0.85; transform: scale(0.62); }
+  80%, 100% { opacity: 0; transform: scale(1.42); }
+}
+
+@keyframes hec-stage-progress {
+  to { transform: scaleX(1); }
+}
+
+@media (min-width: 1700px) {
   .hydro-hero--cutaway {
     grid-template-columns: minmax(0, 1.55fr) minmax(280px, 0.72fr);
     align-items: start;
   }
 }
 
+@container (max-width: 950px) {
+  .hec-equipment-key {
+    display: block;
+  }
+
+  .hec-callouts,
+  .hec-leaders {
+    display: none;
+  }
+}
+
+@media (max-width: 900px) {
+  .hec-equipment-key {
+    display: block;
+  }
+
+  .hec-callouts,
+  .hec-leaders {
+    display: none;
+  }
+}
+
 @media (max-width: 760px) {
   .hec-toolbar {
-    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 10px;
     padding: 12px;
   }
 
-  .hec-heading p,
-  .hec-flow-control,
-  .hec-play span {
-    display: none;
+  .hec-heading {
+    flex: 1 0 100%;
   }
 
   .hec-controls {
-    gap: 7px;
+    width: 100%;
+  }
+
+  .hec-flow-control {
+    flex: 1 1 auto;
+    width: auto;
   }
 
   .hec-play {
-    min-width: 44px;
-    min-height: 44px;
-    padding: 8px;
+    flex: 0 0 auto;
   }
 
-  .hec-hotspot__label,
+  .hec-layer-status {
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    gap: 4px 14px;
+    padding: 6px 12px;
+  }
+
   .hec-conversion {
     display: none;
   }
 
-  .hec-hotspot__marker {
-    width: 27px;
-    height: 27px;
-    flex-basis: 27px;
-    border-width: 1.5px;
+  .hec-playback-status {
+    right: 6px;
+    bottom: 6px;
+    min-height: 26px;
+    padding: 4px 7px;
     font-size: 11px;
+  }
+
+  .hec-callout {
+    min-height: 40px;
+    padding: 4px;
+    border-radius: 5px;
+  }
+
+  .hec-callout__number {
+    flex-basis: 20px;
+    width: 20px;
+    height: 20px;
   }
 
   .hec-stage-panel {
@@ -603,14 +977,32 @@
     font-size: 14px;
   }
 
-  .hec-hotspot__marker {
-    width: 24px;
-    height: 24px;
-    flex-basis: 24px;
+  .hec-heading p {
+    font-size: 11px;
   }
 
-  .hec-tabs button {
-    min-height: 44px;
+  .hec-play {
+    min-width: 96px;
+  }
+
+  .hec-layer-status {
+    align-items: flex-start;
+    flex-direction: column;
+    font-size: 11px;
+  }
+
+  .hec-equipment-key ol {
+    gap: 4px;
+  }
+
+  .hec-equipment-key button {
+    padding: 4px 5px;
+    font-size: 13px;
+  }
+
+  .hec-callout {
+    max-width: 105px;
+    font-size: 11px;
   }
 
   .hec-stage-panel > span {
@@ -622,18 +1014,31 @@
   .hec-water-system,
   .hec-machine-system,
   .hec-electric-system,
-  .hec-hotspot__marker {
+  .hec-stage-focus,
+  .hec-leader,
+  .hec-callout {
     transition: none;
   }
 
+  .hec-layer-status__motion,
+  .hec-playback-status i,
+  .hec-reservoir-motion,
   .hec-water-flow,
   .hec-tailrace-flow,
+  .hec-water-packets,
+  .hec-tailrace-packets,
   .hec-shaft-light,
+  .hec-shaft-helix,
+  .hec-shaft-coupling,
   .hec-runner,
+  .hec-runner-orbit,
   .hec-generator-field,
+  .hec-generator-core,
   .hec-energy-flow,
+  .hec-energy-packets,
   .hec-transformer-pulse,
-  .hec-hotspot__marker::after {
+  .hec-stage-focus__pulse,
+  .hec-stage-progress b {
     animation: none;
   }
 }
@@ -645,9 +1050,14 @@
   }
 
   .hec-controls,
-  .hec-hotspots,
+  .hec-playback-status,
+  .hec-callouts,
   .hec-tabs,
   .hec-note {
     display: none;
+  }
+
+  .hec-equipment-key {
+    display: block;
   }
 }

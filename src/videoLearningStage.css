@@ -113,10 +113,26 @@
   background-size: 300% 400%, 400% 100%;
   background-position: 0% 0%, 0% 0%;
   filter: drop-shadow(0 12px 20px #0008);
-  transform: translateX(-50%);
+  /* Presença ligada à fala. `--vls-mouth-level` já era calculado a partir das
+     legendas e exposto pelo componente, e nenhuma regra lia: a energia da voz
+     chegava ao DOM e era descartada. Uma inclinação mínima para a frente
+     enquanto ele fala é o que separa um retrato de alguém explicando, e sai
+     de graça porque o dado já existe.
+
+     Sem clamp() aqui: aninhado no calc de uma porcentagem ele invalida a
+     declaração inteira e o transform cai para `none`, levando junto o
+     translateX que centraliza. O nível já chega entre 0 e 1. */
+  --vls-presenca: var(--vls-mouth-level, 0);
+  transform:
+    translateX(-50%)
+    translateY(calc(var(--vls-presenca) * -0.9%));
   transform-origin: 50% 84%;
-  transition: opacity 180ms ease, transform 180ms ease;
-  animation: vls-breathe 4.8s ease-in-out infinite;
+  transition: opacity 180ms ease, transform 120ms ease-out;
+  /* Durações que não fecham em múltiplo uma da outra, senão as duas batem no
+     mesmo ponto a cada ciclo e o olho reconhece a repetição. */
+  animation:
+    vls-breathe 4.8s ease-in-out infinite,
+    vls-presenca-oscila 11.3s ease-in-out infinite;
 }
 
 .vls-professor-mouth {
@@ -329,6 +345,15 @@
     bottom: -8px;
     width: 88px;
     transform: none;
+    /* Em contêiner estreito o professor vira um busto de 88px numa faixa
+       horizontal, e aqui já se zerava o transform. A oscilação do tronco usa
+       `rotate`, propriedade separada, e num busto pequeno encostado na borda
+       inclinar lê como torto, não como vivo.
+       Desligar é pela animação, e não pela propriedade: animação em execução
+       vence declaração normal na cascata, então `rotate: 0deg` aqui seria
+       ignorado enquanto o keyframe estivesse rodando. A respiração fica. */
+    animation: vls-breathe 4.8s ease-in-out infinite;
+    --vls-presenca: 0;
   }
 
   .vls-stage:not(.vls-compact) .vls-professor-label {
@@ -349,7 +374,24 @@
     scale: 1;
   }
   50% {
-    scale: 1.006;
+    scale: 1.008;
+  }
+}
+
+/* Micro oscilação do tronco, independente da fala.
+   Ninguém fica imóvel enquanto explica, e a imobilidade absoluta é o que
+   denuncia a figura como retrato. A amplitude é de fração de grau: precisa ser
+   percebida sem ser notada. Usa `rotate` e `scale` isolados de propósito, para
+   compor com o `transform` da presença em vez de disputar a mesma propriedade,
+   e para que a regra de contêiner estreito, que zera só o transform, continue
+   valendo sem herdar movimento por outro caminho. */
+@keyframes vls-presenca-oscila {
+  0%,
+  100% {
+    rotate: -0.22deg;
+  }
+  50% {
+    rotate: 0.22deg;
   }
 }
 
@@ -395,7 +437,13 @@
 
   .vls-professor {
     animation: none;
+    /* Zera também a inclinação por fala e a oscilação do tronco. Elas não vêm
+       da animação: uma vem da variável e a outra de `rotate`, então desligar
+       `animation` sozinho deixaria movimento de pé para quem pediu para não ter. */
+    --vls-presenca: 0;
     transform: translateX(-50%);
+    rotate: 0deg;
+    scale: 1;
   }
 
   .vls-professor-mouth {

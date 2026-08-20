@@ -330,34 +330,63 @@ function DamMini({ kind }) {
         <marker id="dm-ponta" markerWidth="5" markerHeight="5" refX="4" refY="2.5" orient="auto">
           <path d="M0 0 L5 2.5 L0 5 Z" fill="#8fd0ff" />
         </marker>
+        <marker id="dm-ponta-r" markerWidth="5" markerHeight="5" refX="4" refY="2.5" orient="auto">
+          <path d="M0 0 L5 2.5 L0 5 Z" fill="#ffd479" />
+        </marker>
       </defs>
+      {/* A REACAO de cada tipo, em contrafase com o empuxo.
+          O empuxo azul e o mesmo nos seis desenhos, de proposito: a forca da
+          agua nao muda. O que muda e o caminho que cada estrutura da a ela, e
+          era exatamente isso que faltava. A tabela ao lado diz "resiste pelo
+          peso proprio", "transfere a carga as ombreiras" e "laje apoiada em
+          contrafortes", e nos seis desenhos nada respondia ao empuxo. */}
       {kind === 'peso-proprio' && <>
         <rect x="2" y="30" width="52" height="22" {...water} />
         <path d="M56 52 L56 20 L76 52 Z" fill="#7f918a" stroke="#3fe0a6" strokeWidth="1.5" />
+        {/* Peso proprio: a reacao desce, para a fundacao. */}
+        <path className="dm-reacao" d="M64 30 L64 48" stroke="#ffd479" strokeWidth="2"
+              strokeLinecap="round" markerEnd="url(#dm-ponta-r)" />
       </>}
       {kind === 'arco' && <>
         <rect x="2" y="30" width="52" height="22" {...water} />
         <path d="M56 20 Q70 36 56 52" {...common} />
+        {/* Arco: a carga sai pelas ombreiras, para os lados. */}
+        <path className="dm-reacao" d="M62 30 L74 22" stroke="#ffd479" strokeWidth="2"
+              strokeLinecap="round" markerEnd="url(#dm-ponta-r)" />
+        <path className="dm-reacao" d="M62 42 L74 50" stroke="#ffd479" strokeWidth="2"
+              strokeLinecap="round" markerEnd="url(#dm-ponta-r)" />
       </>}
       {kind === 'contraforte' && <>
         <rect x="2" y="30" width="52" height="22" {...water} />
         <path d="M56 18 L70 52" {...common} />
         <path d="M60 52 L66 40 M64 52 L70 44" stroke="#3fe0a6" strokeWidth="1.5" />
+        {/* Contraforte: a laje entrega a carga aos contrafortes, na diagonal. */}
+        <path className="dm-reacao" d="M62 34 L70 50" stroke="#ffd479" strokeWidth="2"
+              strokeLinecap="round" markerEnd="url(#dm-ponta-r)" />
       </>}
       {kind === 'terra' && <>
         <rect x="2" y="34" width="48" height="18" {...water} />
         <path d="M50 52 L66 24 L86 52 Z" fill="#b8a888" stroke="#c9b98a" strokeWidth="1.5" />
         <path d="M64 24 L68 24 L68 52 L64 52 Z" fill="#a89868" />
+        {/* Macico: a reacao e o peso do proprio aterro, espalhado na base. */}
+        <path className="dm-reacao" d="M66 34 L66 50" stroke="#ffd479" strokeWidth="2"
+              strokeLinecap="round" markerEnd="url(#dm-ponta-r)" />
       </>}
       {kind === 'enrocamento' && <>
         <rect x="2" y="34" width="48" height="18" {...water} />
         <path d="M50 52 L66 24 L86 52 Z" fill="#7f8a90" stroke="#8399a0" strokeWidth="1.5" />
         <path d="M63 26 L69 26 L67 52 L61 52 Z" fill="#67727c" />
+        <path className="dm-reacao" d="M66 34 L66 50" stroke="#ffd479" strokeWidth="2"
+              strokeLinecap="round" markerEnd="url(#dm-ponta-r)" />
       </>}
       {kind === 'ccr' && <>
         <rect x="2" y="30" width="52" height="22" {...water} />
         <path d="M56 52 L56 20 L74 52 Z" fill="#7f918a" stroke="#3fe0a6" strokeWidth="1.5" />
         <path d="M56 28 L70 28 M56 36 L73 36 M56 44 L74 44" stroke="#6f817a" strokeWidth="1" />
+        {/* CCR resiste como o peso proprio; o que muda e a execucao em camadas,
+            e as camadas ja estao desenhadas acima. */}
+        <path className="dm-reacao" d="M63 30 L63 48" stroke="#ffd479" strokeWidth="2"
+              strokeLinecap="round" markerEnd="url(#dm-ponta-r)" />
       </>}
     </svg>
   );

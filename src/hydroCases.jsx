@@ -183,14 +183,27 @@ function SvgReversivel() {
       <path d="M260 210 L440 210 L440 192 L260 192 Z" fill="#bfe3ff" stroke="#7db8e8" />
       <text x="300" y="238" fontSize="12" fontWeight="800" fill="#4cc4f5">reservatório INFERIOR</text>
       <path d="M198 58 C 240 90, 250 150, 268 198" stroke="#93a7af" strokeWidth="12" fill="none" strokeLinecap="round" />
-      <path className="jet-anim" d="M198 58 C 240 90, 250 150, 268 198" stroke="#57d8bf" strokeWidth="4" fill="none" strokeLinecap="round" strokeDasharray="10 12" />
+      {/* Reversivel e uma usina de DOIS regimes que se revezam, e o desenho
+          mostrava um so: um fluxo unico descendo para sempre, com as duas setas
+          de legenda paradas. Assim ela ficava indistinguivel de uma usina
+          comum, e a palavra reversivel nao aparecia em lugar nenhum do desenho.
+
+          Agora os dois se alternam no mesmo conduto, em contrafase: enquanto um
+          corre, o outro apaga. O ciclo e longo porque o que se alterna aqui e
+          ponta e fora de ponta, que e questao de horas, nao de segundos. */}
+      <path className="rv-gera" d="M198 58 C 240 90, 250 150, 268 198" stroke="#57d8bf" strokeWidth="4" fill="none" strokeLinecap="round" strokeDasharray="10 12" />
+      <path className="rv-bombeia" d="M268 198 C 250 150, 240 90, 198 58" stroke="#f4c05a" strokeWidth="4" fill="none" strokeLinecap="round" strokeDasharray="10 12" />
       <circle cx="252" cy="150" r="20" fill="#2fa07a" />
       <path d="M252 138 l6 8 h-4 v8 h-4 v-8 h-4 Z" fill="#f3bd4f" />
       <text x="280" y="146" fontSize="12" fontWeight="700" fill="#bcd0c7">bomba-turbina</text>
       <text x="280" y="161" fontSize="12" fontWeight="700" fill="#bcd0c7">reversível</text>
-      <g>
+      {/* As legendas acendem junto do regime que esta ativo, para o leitor ligar
+          a seta ao fluxo em vez de ler os dois como se fossem simultaneos. */}
+      <g className="rv-gera-rotulo">
         <path d="M120 96 l0 34" stroke="#37d39a" strokeWidth="4" markerEnd="url(#seta1)" />
         <text x="130" y="112" fontSize="11.5" fill="#37d39a" fontWeight="800">GERA na ponta (desce)</text>
+      </g>
+      <g className="rv-bombeia-rotulo">
         <path d="M96 176 l0 -34" stroke="#e5a000" strokeWidth="4" />
         <text x="106" y="168" fontSize="11.5" fill="#f4c05a" fontWeight="800">BOMBEIA fora de ponta (sobe)</text>
       </g>

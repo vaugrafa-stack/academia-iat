@@ -206,7 +206,15 @@ button.sidebar-help{background:transparent;font:inherit;color:inherit;cursor:poi
 .dm-empuxo{transform-box:fill-box;transform-origin:0% 50%;animation:dmEmpuxo 2.2s ease-in-out infinite;opacity:.85}
 @keyframes dmAgua{0%,100%{transform:scaleY(1)}50%{transform:scaleY(1.05)}}
 @keyframes dmEmpuxo{0%,100%{transform:translateX(0);opacity:.5}55%{transform:translateX(4px);opacity:1}}
-@media(prefers-reduced-motion:reduce){.dm-agua,.dm-empuxo{animation:none}}
+/* A reacao responde ao empuxo, com meio ciclo de atraso.
+   O empuxo azul e identico nos seis desenhos de proposito, porque a forca da
+   agua nao muda; o que muda e o caminho que cada estrutura da a ela. Sem esta
+   seta, a tabela ao lado dizia "transfere a carga as ombreiras" e o desenho
+   nao transferia nada. O atraso existe para ler como resposta, e nao como duas
+   forcas simultaneas. */
+.dm-reacao{transform-box:fill-box;transform-origin:0% 50%;animation:dmReacao 2.2s ease-in-out infinite;animation-delay:.55s;opacity:.9}
+@keyframes dmReacao{0%,100%{opacity:.3;transform:scale(.82)}55%{opacity:1;transform:scale(1)}}
+@media(prefers-reduced-motion:reduce){.dm-agua,.dm-empuxo,.dm-reacao{animation:none}}
 .dam-card strong{display:block;font-size:14px}
 .dam-card small{display:block;font-size:12px;color:var(--ink2);margin:3px 0}
 .dam-card em{display:block;font-size:11px;font-style:normal;font-weight:700;color:var(--muted)}
@@ -245,7 +253,7 @@ button.sidebar-help{background:transparent;font:inherit;color:inherit;cursor:poi
 :root{--shadow-1:0 1px 2px #0f2a2008,0 2px 8px #0f2a200a;--shadow-2:0 2px 6px #0f2a200d,0 10px 28px #0f2a2014;--shadow-3:0 6px 16px #0f2a2014,0 22px 48px #0f2a201f;--ease:cubic-bezier(.22,.9,.3,1)}
 .view-anim{animation:routeIn .18s var(--ease)}
 @keyframes routeIn{from{transform:translateY(4px)}to{transform:none}}
-@media(prefers-reduced-motion:reduce){.view-anim,.cs-flow,.cs-spill,.cs-turbine,.cs-hot::after,.cs-energia,.cs-gerador,.cs-lamina,.arr-fluxo,.arr-fluxo-tvr,.spin-slow,.jet-anim,.pelton-deflete,.fr-radial,.fr-axial,.kp-fluxo,.kp-passo,.bl-fluxo{animation:none!important}}
+@media(prefers-reduced-motion:reduce){.view-anim,.cs-flow,.cs-spill,.cs-turbine,.cs-hot::after,.cs-energia,.cs-gerador,.cs-lamina,.arr-fluxo,.arr-fluxo-tvr,.spin-slow,.jet-anim,.pelton-deflete,.fr-radial,.fr-axial,.kp-fluxo,.kp-passo,.bl-fluxo,.rv-gera,.rv-bombeia,.rv-gera-rotulo,.rv-bombeia-rotulo{animation:none!important}}
 /* botoes e cartoes respiram */
 button{transition:background .18s var(--ease),border-color .18s var(--ease),color .18s var(--ease),box-shadow .18s var(--ease),transform .18s var(--ease)}
 button.primary{background:linear-gradient(135deg,var(--green2),var(--green));border:none;color:#fff;box-shadow:0 4px 14px #16563C33;border-radius:9px;padding:11px 20px;font-weight:800;display:inline-flex;align-items:center;gap:8px;cursor:pointer}
@@ -327,6 +335,15 @@ button.primary:active{transform:translateY(0);box-shadow:0 2px 8px #16563C33}
    corria, entao a agua passava por cima e nada por baixo: o bulbo parecia
    apoiado no fundo em vez de imerso. As duas linhas contornam a carcaca. */
 .bl-fluxo{stroke-dasharray:11 15;animation:csflow 1.25s linear infinite}
+/* Usina reversivel: dois regimes que se revezam, e o desenho mostrava um so.
+   O ciclo e longo porque o que se alterna e ponta e fora de ponta, questao de
+   horas, nao de segundos. Enquanto um corre, o outro apaga, e a legenda de cada
+   um acende junto do seu fluxo. */
+.rv-gera{animation:csflow 1.1s linear infinite,rvTurno 9s ease-in-out infinite}
+.rv-bombeia{animation:csflow 1.6s linear infinite,rvTurno 9s ease-in-out infinite;animation-delay:0s,4.5s}
+.rv-gera-rotulo{animation:rvTurno 9s ease-in-out infinite}
+.rv-bombeia-rotulo{animation:rvTurno 9s ease-in-out infinite;animation-delay:4.5s}
+@keyframes rvTurno{0%,42%{opacity:1}50%,92%{opacity:.12}100%{opacity:1}}
 /* ===== Casos reais no Parana ===== */
 .prc-note{display:flex;gap:8px;align-items:flex-start;font-size:13px;color:var(--muted);margin:12px 0}
 .prc-note svg{flex:none;margin-top:1px;color:var(--blue)}

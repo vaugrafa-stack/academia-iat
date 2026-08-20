@@ -431,9 +431,15 @@ function CrossSection({ selected, onSelect }) {
         {/* terreno */}
         <path d="M0 300 L250 300 L250 250 L0 250 Z" fill="#243330" />
         <path d="M0 470 L900 470 L900 340 L640 340 L560 420 L250 420 L250 300 L0 300 Z" fill="#1e2c27" />
-        {/* reservatorio */}
+        {/* reservatorio.
+            A lamina era um retangulo parado com uma linha reta em cima, e agua
+            parada le como piscina, nao como reservatorio de usina. A ondulacao
+            e de amplitude minima e periodo longo: o reservatorio nao tem
+            correnteza visivel, o que ele tem e respiracao. */}
         <rect x="0" y="250" width="250" height="120" fill="url(#wtr)" />
-        <line x1="0" y1="250" x2="250" y2="250" stroke="#bfe3ff" strokeWidth="3" />
+        <path className="cs-lamina"
+              d="M0 250 Q 31 246, 62 250 T 125 250 T 188 250 T 250 250 T 312 250"
+              stroke="#bfe3ff" strokeWidth="3" fill="none" />
         {/* barragem */}
         <path d="M250 250 L250 420 L320 420 L300 250 Z" fill="#8a9a93" stroke="#8399a0" strokeWidth="2" />
         {/* vertedouro (agua caindo) */}
@@ -459,9 +465,21 @@ function CrossSection({ selected, onSelect }) {
         <rect x="640" y="405" width="260" height="30" fill="url(#wtr)" opacity="0.85" />
         <path className="cs-flow" d="M664 420 L890 420" stroke="#bfe3ff" strokeWidth="4"
               strokeLinecap="round" fill="none" opacity="0.9" />
-        {/* linha de transmissao */}
+        {/* linha de transmissao.
+            O desenho fechava o circuito pela metade: a agua descia, girava a
+            turbina e a energia nao ia a lugar nenhum, porque a torre e o cabo
+            eram tracos parados. Quem olhava via a usina gerar e a geracao
+            morrer ali. O pulso percorre o cabo no sentido da subestacao, e o
+            periodo e mais curto que o da agua de proposito: eletricidade nao
+            viaja na velocidade da vazao, e o contraste entre os dois ritmos e
+            parte do que o desenho ensina. */}
         <path d="M690 360 L690 300 M672 316 L708 316 M676 300 L704 300" stroke="#3a4750" strokeWidth="2.5" fill="none" />
         <path d="M690 300 C 760 290, 820 300, 880 285" stroke="#3a4750" strokeWidth="1.5" fill="none" />
+        <path className="cs-energia" d="M690 300 C 760 290, 820 300, 880 285"
+              stroke="#ffd479" strokeWidth="2.6" fill="none" strokeLinecap="round" />
+        {/* Acoplamento: o gerador so entrega quando o eixo gira. O brilho
+            pulsa no mesmo compasso do pulso do cabo. */}
+        <circle className="cs-gerador" cx="690" cy="372" r="7" fill="#ffd479" opacity="0.9" />
         {/* rotulos de queda */}
         <line x1="130" y1="250" x2="130" y2="405" stroke="#3fe0a6" strokeWidth="1.2" strokeDasharray="4 4" />
         <text x="138" y="330" fontSize="15" fill="#3fe0a6" fontWeight="700">H (queda)</text>

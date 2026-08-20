@@ -139,6 +139,21 @@ button.sidebar-help{background:transparent;font:inherit;color:inherit;cursor:poi
 .cs-spill{stroke-dasharray:5 12;animation:csflow 1.6s linear infinite}
 .cs-turbine{transform-box:fill-box;transform-origin:center;animation:csspin 2.6s linear infinite}
 @keyframes csspin{to{transform:rotate(360deg)}}
+/* O circuito so fecha se a energia sair da casa de forca. Antes disto, a agua
+   descia, girava a turbina e a geracao morria num traco parado: o desenho
+   mostrava meia usina. O periodo do pulso eletrico e bem menor que o da agua
+   porque eletricidade nao viaja na velocidade da vazao, e esse contraste entre
+   os dois ritmos e parte do que o corte ensina. */
+.cs-energia{stroke-dasharray:3 26;animation:csenergia .85s linear infinite}
+@keyframes csenergia{to{stroke-dashoffset:-29}}
+/* O gerador acende no mesmo compasso do cabo, para ligar causa e efeito. */
+.cs-gerador{animation:csgerador .85s ease-in-out infinite}
+@keyframes csgerador{0%,100%{opacity:.45;r:6}50%{opacity:1;r:7.6}}
+/* Amplitude minima e periodo longo: reservatorio nao tem correnteza visivel,
+   tem respiracao. Deslocar 62 fecha um ciclo inteiro da onda, entao a volta e
+   invisivel. */
+.cs-lamina{animation:cslamina 7s linear infinite}
+@keyframes cslamina{to{transform:translateX(-62px)}}
 .cs-hots{position:absolute;inset:0;pointer-events:none}
 .cs-hot{position:absolute;width:26px;height:26px;margin:-13px;border-radius:50%;border:2px solid var(--line);background:var(--green);cursor:pointer;pointer-events:auto;display:grid;place-items:center;box-shadow:0 1px 6px #0003}
 .cs-hot span{width:8px;height:8px;border-radius:50%;background:var(--surface);display:block}
@@ -230,7 +245,7 @@ button.sidebar-help{background:transparent;font:inherit;color:inherit;cursor:poi
 :root{--shadow-1:0 1px 2px #0f2a2008,0 2px 8px #0f2a200a;--shadow-2:0 2px 6px #0f2a200d,0 10px 28px #0f2a2014;--shadow-3:0 6px 16px #0f2a2014,0 22px 48px #0f2a201f;--ease:cubic-bezier(.22,.9,.3,1)}
 .view-anim{animation:routeIn .18s var(--ease)}
 @keyframes routeIn{from{transform:translateY(4px)}to{transform:none}}
-@media(prefers-reduced-motion:reduce){.view-anim,.cs-flow,.cs-spill,.cs-turbine,.cs-hot::after{animation:none!important}}
+@media(prefers-reduced-motion:reduce){.view-anim,.cs-flow,.cs-spill,.cs-turbine,.cs-hot::after,.cs-energia,.cs-gerador,.cs-lamina,.arr-fluxo,.arr-fluxo-tvr{animation:none!important}}
 /* botoes e cartoes respiram */
 button{transition:background .18s var(--ease),border-color .18s var(--ease),color .18s var(--ease),box-shadow .18s var(--ease),transform .18s var(--ease)}
 button.primary{background:linear-gradient(135deg,var(--green2),var(--green));border:none;color:#fff;box-shadow:0 4px 14px #16563C33;border-radius:9px;padding:11px 20px;font-weight:800;display:inline-flex;align-items:center;gap:8px;cursor:pointer}
@@ -307,6 +322,15 @@ button.primary:active{transform:translateY(0);box-shadow:0 2px 8px #16563C33}
 .arr-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:16px;margin-top:14px}
 .arr-grid figure{margin:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;box-shadow:var(--shadow-1)}
 .arr-svg{width:100%;display:block}
+/* Os esquemas de arranjo tinham caminhos de agua parados: tres dos quatro nao
+   animavam nada. Arranjo se explica pelo PERCURSO, entao agua imovel tira do
+   desenho justamente o que ele deveria ensinar. */
+.arr-fluxo{stroke-dasharray:10 14;animation:arrfluxo 1.15s linear infinite}
+@keyframes arrfluxo{to{stroke-dashoffset:-24}}
+/* O trecho de vazao reduzida corre a um sexto da velocidade do desvio, e com
+   traco mais fino. Nao e escolha estetica: entre a tomada e a restituicao o rio
+   fica com uma fracao da vazao, e ver os dois ritmos lado a lado e a licao. */
+.arr-fluxo-tvr{stroke-dasharray:5 20;animation:arrfluxo 7s linear infinite}
 .arr-grid figcaption{padding:10px 12px;font-size:12.5px;color:var(--muted)}
 /* ===== Aba Legislacoes ===== */
 .leis-view{display:grid;grid-template-columns:340px minmax(0,1fr);gap:22px;align-items:start}

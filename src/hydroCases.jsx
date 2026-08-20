@@ -256,9 +256,16 @@ function ArrPeBarragem() {
       <path d="M0 150 L180 150 L180 120 L0 120 Z" fill="#bfe3ff" />
       <path d="M180 120 L180 205 L225 205 L212 120 Z" fill="#8a9a93" stroke="#8399a0" strokeWidth="2" />
       <path d="M186 128 L212 200" stroke="#93a7af" strokeWidth="8" strokeLinecap="round" />
+      {/* A agua estava parada dentro do conduto e do canal, e arranjo de pe de
+          barragem se explica justamente pelo percurso curto: o que o desenho
+          precisa mostrar e que a restituicao acontece logo ali. */}
+      <path className="arr-fluxo" d="M186 128 L212 200" stroke="#57d8bf" strokeWidth="3.4"
+            strokeLinecap="round" fill="none" />
       <rect x="214" y="178" width="52" height="30" fill="#fff" stroke="#3fe0a6" strokeWidth="2" />
       <path d="M214 178 L240 164 L266 178 Z" fill="#2fa07a" />
       <rect x="266" y="196" width="194" height="16" fill="#bfe3ff" />
+      <path className="arr-fluxo" d="M272 204 L454 204" stroke="#dff1ff" strokeWidth="3"
+            strokeLinecap="round" fill="none" opacity="0.95" />
       <text x="10" y="112" fontSize="12" fontWeight="700" fill="#3fe0a6">reservatório</text>
       <text x="164" y="228" fontSize="12" fontWeight="700" fill="#3fe0a6">barragem</text>
       <text x="276" y="170" fontSize="12" fontWeight="700" fill="#3fe0a6">casa de força no pé</text>
@@ -273,11 +280,25 @@ function ArrDerivacao() {
       <path d="M0 90 Q120 70 200 96 T460 120" fill="none" stroke="#bfe3ff" strokeWidth="16" />
       <path d="M60 84 L74 108" stroke="#8399a0" strokeWidth="8" />
       <path d="M74 96 C160 96 260 96 330 150" fill="none" stroke="#93a7af" strokeWidth="9" strokeDasharray="2 0" />
+      {/* O desvio leva a vazao cheia, e e por isso que ele existe. */}
+      <path className="arr-fluxo" d="M74 96 C160 96 260 96 330 150" fill="none"
+            stroke="#57d8bf" strokeWidth="3.6" strokeLinecap="round" />
+      {/* Trecho de vazao reduzida, desenhado como o que ele e.
+          O leito natural continuava com o mesmo traco grosso do rio cheio, e o
+          arranjo de derivacao se explica exatamente pelo contrario: entre a
+          tomada e a restituicao, o rio fica com uma fracao da vazao. O fluxo
+          aqui e mais fino e MUITO mais lento que o do desvio, e o contraste
+          entre os dois ritmos e a licao do desenho, nao enfeite. */}
+      <path className="arr-fluxo-tvr" d="M78 100 Q170 112 250 118 T460 126" fill="none"
+            stroke="#8fb8d6" strokeWidth="2" strokeLinecap="round" opacity="0.8" />
       <circle cx="250" cy="96" r="10" fill="none" stroke="#f3bd4f" strokeWidth="3" />
       <text x="222" y="80" fontSize="11" fontWeight="700" fill="#f4c05a">chaminé de equilíbrio</text>
       <rect x="318" y="146" width="52" height="30" fill="#fff" stroke="#3fe0a6" strokeWidth="2" />
       <path d="M318 146 L344 132 L370 146 Z" fill="#2fa07a" />
       <path d="M370 164 Q420 176 460 168" fill="none" stroke="#bfe3ff" strokeWidth="12" />
+      {/* Restituicao: a vazao desviada volta ao rio depois do TVR. */}
+      <path className="arr-fluxo" d="M372 165 Q420 177 458 169" fill="none"
+            stroke="#dff1ff" strokeWidth="3" strokeLinecap="round" opacity="0.95" />
       <text x="18" y="70" fontSize="12" fontWeight="700" fill="#3fe0a6">açude de derivação</text>
       <text x="120" y="128" fontSize="12" fontWeight="700" fill="#3fe0a6">túnel/canal + conduto forçado</text>
       <text x="300" y="200" fontSize="12" fontWeight="700" fill="#3fe0a6">casa de força afastada</text>
@@ -295,6 +316,9 @@ function ArrFioAgua() {
       <path d="M110 132 L110 190 L138 190 L130 132 Z" fill="#8a9a93" stroke="#8399a0" strokeWidth="1.6" />
       <rect x="138" y="172" width="34" height="20" fill="#fff" stroke="#3fe0a6" strokeWidth="1.6" />
       <path d="M172 184 L212 184" stroke="#bfe3ff" strokeWidth="10" />
+      {/* Fio d'agua gera conforme o rio, entao a agua atravessa sem parar. */}
+      <path className="arr-fluxo" d="M176 184 L208 184" stroke="#dff1ff" strokeWidth="2.6"
+            strokeLinecap="round" fill="none" />
       <text x="22" y="66" fontSize="12" fontWeight="800" fill="#4cc4f5">FIO D'ÁGUA</text>
       <text x="22" y="82" fontSize="10.5" fill="#bcd0c7">reservatório mínimo</text>
       <text x="22" y="96" fontSize="10.5" fill="#bcd0c7">gera conforme o rio</text>

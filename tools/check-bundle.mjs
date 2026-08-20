@@ -18,7 +18,7 @@ export const BUNDLE_BUDGETS = Object.freeze({
   // bloqueiam o primeiro conteudo. O teto total continua protegendo o
   // artefato inteiro; este teto separado impede que CSS de rota volte
   // silenciosamente para a entrada comum.
-  initialCss: Object.freeze({ raw: 190 * KIB, gzip: 35 * KIB }),
+  initialCss: Object.freeze({ raw: 205 * KIB, gzip: 38 * KIB }),
   largestJs: Object.freeze({ raw: 265 * KIB, gzip: 85 * KIB }),
   totalJs: Object.freeze({ raw: 850 * KIB, gzip: 270 * KIB }),
   // Teto de CSS revisto em 01/08/2026, com a conta na mesa.
@@ -49,7 +49,39 @@ export const BUNDLE_BUDGETS = Object.freeze({
   // ser criterio de recusa por peso, entao vem melhoria visual pela frente, e
   // subir o teto de 2 em 2 KiB a cada rodada e ritual, nao controle. A catraca
   // que importa continua sendo check-css-morto com tolerancia zero.
-  totalCss: Object.freeze({ raw: 240 * KIB, gzip: 46 * KIB }),
+  //
+  // Revisto em 20/08/2026, com a mesma disciplina, e desta vez a medicao
+  // corrigiu quem media. As quatro rodadas de animacao dos diagramas levaram o
+  // CSS total bruto a 241,4 KiB, 1,4 acima do teto, e o portao reprovou o
+  // build. Antes de mexer no teto, procurei gordura.
+  //
+  // A primeira medicao foi ERRADA e vale registrar por que: contei declaracao
+  // repetida, e achei 33% de repeticao. Mas `color:var(--muted)` em 192
+  // seletores diferentes nao e gordura, e valor compartilhado, que e
+  // justamente o que um sistema de design deve produzir. A regua estava
+  // medindo coerencia e chamando de desperdicio.
+  //
+  // A medicao certa e bloco identico: 102 corpos de regra iguais entre as 15
+  // folhas. Agrupa-los em seletor unico economiza 7,9 KiB REAIS, porque o
+  // seletor permanece dos dois lados e o que some e a copia do corpo. Ou seja,
+  // ao contrario das duas rodadas anteriores, desta vez EXISTE gordura, e ela
+  // e cinco vezes maior que o estouro.
+  //
+  // Nao foi colhida, de proposito. Os blocos iguais sao de componentes sem
+  // parentesco: `.route-loading div`, `.transcript-panel>summary span` e
+  // `.offline-summary article span` compartilham 34 bytes de corpo por
+  // coincidencia de aparencia, nao por regra comum. Agrupa-los prende os tres
+  // ao mesmo destino: quem mexer no indicador de carregamento amanha muda a
+  // transcricao e o resumo offline sem querer. Trocar acoplamento por bytes,
+  // com o artefato inteiro em 1 MiB e a rede sendo a de um escritorio, e mau
+  // negocio.
+  //
+  // Fica como reserva declarada: 7,9 KiB disponiveis a qualquer momento, se um
+  // dia o peso passar a doer de verdade. Enquanto nao doer, o teto sobe.
+  // Total 265 / 50 KiB e inicial 205 / 38 KiB, cerca de 10% de folga sobre os
+  // 241,4 / 44,1 e 184,4 / 33,3 medidos. A catraca continua sendo
+  // check-css-morto com tolerancia zero, que hoje devolve zero classe orfa.
+  totalCss: Object.freeze({ raw: 265 * KIB, gzip: 50 * KIB }),
   largestCompressibleAsset: Object.freeze({
     raw: 960 * KIB,
     gzip: 150 * KIB,

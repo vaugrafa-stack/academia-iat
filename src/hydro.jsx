@@ -314,10 +314,23 @@ export function turbinasCompativeisPorQueda(h) {
 function DamMini({ kind }) {
   // pequenos diagramas esquematicos por tipo de barragem
   const common = { fill: 'none', stroke: '#3fe0a6', strokeWidth: 2 };
-  const water = { fill: '#bfe3ff' };
+  // A agua da miniatura recebe classe para oscilar. Sem isso, seis desenhos de
+  // tipo de barragem ficavam parados ao lado de um corte animado, e a diferenca
+  // entre eles, que e COMO cada um resiste, nao aparecia em lugar nenhum: o
+  // aluno via seis silhuetas e tinha de deduzir a estatica pelo texto ao lado.
+  const water = { fill: '#bfe3ff', className: 'dm-agua' };
   return (
     <svg viewBox="0 0 120 70" className="dam-mini" aria-hidden="true">
       <rect x="0" y="52" width="120" height="18" fill="#1e2c27" />
+      {/* Empuxo da agua contra a estrutura: a mesma forca em todos os tipos, e o
+          desenho ao lado mostra o que cada um faz com ela. */}
+      <path className="dm-empuxo" d="M30 41 L52 41" stroke="#8fd0ff" strokeWidth="2"
+            strokeLinecap="round" markerEnd="url(#dm-ponta)" />
+      <defs>
+        <marker id="dm-ponta" markerWidth="5" markerHeight="5" refX="4" refY="2.5" orient="auto">
+          <path d="M0 0 L5 2.5 L0 5 Z" fill="#8fd0ff" />
+        </marker>
+      </defs>
       {kind === 'peso-proprio' && <>
         <rect x="2" y="30" width="52" height="22" {...water} />
         <path d="M56 52 L56 20 L76 52 Z" fill="#7f918a" stroke="#3fe0a6" strokeWidth="1.5" />
@@ -347,6 +360,44 @@ function DamMini({ kind }) {
         <path d="M56 28 L70 28 M56 36 L73 36 M56 44 L74 44" stroke="#6f817a" strokeWidth="1" />
       </>}
     </svg>
+  );
+}
+
+// Rotulos permanentes do corte, com linha-guia ate a peca.
+//
+// O desenho tinha nove pontos clicaveis e UM unico texto no SVG inteiro, o
+// "H (queda)". Quem abria a pagina via um esquema bonito e nao sabia o que
+// estava olhando ate clicar ponto por ponto. Descobrir o nome da peca nao pode
+// ser a recompensa por acertar onde clicar.
+//
+// Coordenadas no espaco do viewBox, 900 por 470. `ancora` decide de que lado o
+// texto cresce, para o rotulo nunca invadir a peca que ele nomeia. A pastilha
+// escura atras do texto existe porque o corte tem fundo escuro no ceu e claro
+// na agua: sem ela, um mesmo tom de texto falha em metade do desenho.
+const ROTULOS_CORTE = [
+  { id: 'reservatorio', texto: 'Reservatório', x: 16, y: 232, ancora: 'start', guia: [96, 240, 120, 286] },
+  { id: 'barragem', texto: 'Barragem', x: 262, y: 214, ancora: 'end', guia: [232, 222, 268, 292] },
+  { id: 'vertedouro', texto: 'Vertedouro', x: 360, y: 250, ancora: 'start', guia: [356, 244, 318, 300] },
+  { id: 'tomada', texto: "Tomada d'água", x: 150, y: 392, ancora: 'end', guia: [156, 386, 234, 348] },
+  { id: 'conduto', texto: 'Conduto forçado', x: 348, y: 350, ancora: 'start', guia: [344, 356, 396, 380] },
+  { id: 'casa', texto: 'Casa de força', x: 600, y: 306, ancora: 'middle', guia: [600, 312, 600, 332] },
+  { id: 'turbina', texto: 'Turbina e gerador', x: 585, y: 458, ancora: 'middle', guia: [585, 446, 585, 414] },
+  { id: 'fuga', texto: 'Canal de fuga', x: 800, y: 386, ancora: 'middle', guia: [800, 392, 800, 406] },
+  { id: 'subestacao', texto: 'Subestação', x: 716, y: 276, ancora: 'start', guia: [712, 282, 692, 302] },
+];
+
+function RotuloDoCorte({ item, ativo, onSelect }) {
+  const largura = item.texto.length * 7.4 + 16;
+  const x = item.ancora === 'end' ? item.x - largura : item.ancora === 'middle' ? item.x - largura / 2 : item.x;
+  return (
+    <g
+      className={'cs-rotulo' + (ativo ? ' ativo' : '')}
+      onClick={() => onSelect(item.id)}
+    >
+      <line x1={item.guia[0]} y1={item.guia[1]} x2={item.guia[2]} y2={item.guia[3]} />
+      <rect x={x} y={item.y - 13} width={largura} height={19} rx={9} />
+      <text x={item.x} y={item.y} textAnchor={item.ancora}>{item.texto}</text>
+    </g>
   );
 }
 
@@ -414,6 +465,14 @@ function CrossSection({ selected, onSelect }) {
         {/* rotulos de queda */}
         <line x1="130" y1="250" x2="130" y2="405" stroke="#3fe0a6" strokeWidth="1.2" strokeDasharray="4 4" />
         <text x="138" y="330" fontSize="15" fill="#3fe0a6" fontWeight="700">H (queda)</text>
+        {ROTULOS_CORTE.map((item) => (
+          <RotuloDoCorte
+            key={item.id}
+            item={item}
+            ativo={selected === item.id}
+            onSelect={onSelect}
+          />
+        ))}
       </svg>
       {/* hotspots posicionados em % sobre o svg */}
       <div className="cs-hots">

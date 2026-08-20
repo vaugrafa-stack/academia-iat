@@ -325,12 +325,17 @@ function DamMini({ kind }) {
       {/* Empuxo da agua contra a estrutura: a mesma forca em todos os tipos, e o
           desenho ao lado mostra o que cada um faz com ela. */}
       <path className="dm-empuxo" d="M30 41 L52 41" stroke="#8fd0ff" strokeWidth="2"
-            strokeLinecap="round" markerEnd="url(#dm-ponta)" />
+            strokeLinecap="round" markerEnd={`url(#dm-ponta-${kind})`} />
+      {/* O id leva o tipo no nome porque as seis miniaturas coexistem na mesma
+          pagina. Com id fixo, os seis cards declaravam "dm-ponta" e o documento
+          ficava com seis elementos de mesmo id: invalido, e leitor de tela e
+          `getElementById` passam a resolver sempre o primeiro. O portao de
+          acessibilidade pegou exatamente isso. */}
       <defs>
-        <marker id="dm-ponta" markerWidth="5" markerHeight="5" refX="4" refY="2.5" orient="auto">
+        <marker id={`dm-ponta-${kind}`} markerWidth="5" markerHeight="5" refX="4" refY="2.5" orient="auto">
           <path d="M0 0 L5 2.5 L0 5 Z" fill="#8fd0ff" />
         </marker>
-        <marker id="dm-ponta-r" markerWidth="5" markerHeight="5" refX="4" refY="2.5" orient="auto">
+        <marker id={`dm-ponta-r-${kind}`} markerWidth="5" markerHeight="5" refX="4" refY="2.5" orient="auto">
           <path d="M0 0 L5 2.5 L0 5 Z" fill="#ffd479" />
         </marker>
       </defs>
@@ -345,16 +350,16 @@ function DamMini({ kind }) {
         <path d="M56 52 L56 20 L76 52 Z" fill="#7f918a" stroke="#3fe0a6" strokeWidth="1.5" />
         {/* Peso proprio: a reacao desce, para a fundacao. */}
         <path className="dm-reacao" d="M64 30 L64 48" stroke="#ffd479" strokeWidth="2"
-              strokeLinecap="round" markerEnd="url(#dm-ponta-r)" />
+              strokeLinecap="round" markerEnd={`url(#dm-ponta-r-${kind})`} />
       </>}
       {kind === 'arco' && <>
         <rect x="2" y="30" width="52" height="22" {...water} />
         <path d="M56 20 Q70 36 56 52" {...common} />
         {/* Arco: a carga sai pelas ombreiras, para os lados. */}
         <path className="dm-reacao" d="M62 30 L74 22" stroke="#ffd479" strokeWidth="2"
-              strokeLinecap="round" markerEnd="url(#dm-ponta-r)" />
+              strokeLinecap="round" markerEnd={`url(#dm-ponta-r-${kind})`} />
         <path className="dm-reacao" d="M62 42 L74 50" stroke="#ffd479" strokeWidth="2"
-              strokeLinecap="round" markerEnd="url(#dm-ponta-r)" />
+              strokeLinecap="round" markerEnd={`url(#dm-ponta-r-${kind})`} />
       </>}
       {kind === 'contraforte' && <>
         <rect x="2" y="30" width="52" height="22" {...water} />
@@ -362,7 +367,7 @@ function DamMini({ kind }) {
         <path d="M60 52 L66 40 M64 52 L70 44" stroke="#3fe0a6" strokeWidth="1.5" />
         {/* Contraforte: a laje entrega a carga aos contrafortes, na diagonal. */}
         <path className="dm-reacao" d="M62 34 L70 50" stroke="#ffd479" strokeWidth="2"
-              strokeLinecap="round" markerEnd="url(#dm-ponta-r)" />
+              strokeLinecap="round" markerEnd={`url(#dm-ponta-r-${kind})`} />
       </>}
       {kind === 'terra' && <>
         <rect x="2" y="34" width="48" height="18" {...water} />
@@ -370,14 +375,14 @@ function DamMini({ kind }) {
         <path d="M64 24 L68 24 L68 52 L64 52 Z" fill="#a89868" />
         {/* Macico: a reacao e o peso do proprio aterro, espalhado na base. */}
         <path className="dm-reacao" d="M66 34 L66 50" stroke="#ffd479" strokeWidth="2"
-              strokeLinecap="round" markerEnd="url(#dm-ponta-r)" />
+              strokeLinecap="round" markerEnd={`url(#dm-ponta-r-${kind})`} />
       </>}
       {kind === 'enrocamento' && <>
         <rect x="2" y="34" width="48" height="18" {...water} />
         <path d="M50 52 L66 24 L86 52 Z" fill="#7f8a90" stroke="#8399a0" strokeWidth="1.5" />
         <path d="M63 26 L69 26 L67 52 L61 52 Z" fill="#67727c" />
         <path className="dm-reacao" d="M66 34 L66 50" stroke="#ffd479" strokeWidth="2"
-              strokeLinecap="round" markerEnd="url(#dm-ponta-r)" />
+              strokeLinecap="round" markerEnd={`url(#dm-ponta-r-${kind})`} />
       </>}
       {kind === 'ccr' && <>
         <rect x="2" y="30" width="52" height="22" {...water} />
@@ -386,7 +391,7 @@ function DamMini({ kind }) {
         {/* CCR resiste como o peso proprio; o que muda e a execucao em camadas,
             e as camadas ja estao desenhadas acima. */}
         <path className="dm-reacao" d="M63 30 L63 48" stroke="#ffd479" strokeWidth="2"
-              strokeLinecap="round" markerEnd="url(#dm-ponta-r)" />
+              strokeLinecap="round" markerEnd={`url(#dm-ponta-r-${kind})`} />
       </>}
     </svg>
   );

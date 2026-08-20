@@ -35,6 +35,7 @@
     "test:unit": "vitest run",
     "test:pwa": "node tools/test-pwa.mjs && vitest run src/offline.test.js",
     "offline:packages": "node tools/build-offline-packages.mjs",
+    "verificar": "node tools/verificar-como-o-ci.mjs",
     "check:bundle": "node tools/check-bundle.mjs",
     "check:referencias": "node tools/check-referencias.mjs",
     "check:security": "node tools/security-check.mjs",

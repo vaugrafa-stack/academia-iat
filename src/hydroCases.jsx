@@ -29,7 +29,18 @@ function SvgPelton() {
         ))}
       </g>
       <rect x="10" y="98" width="66" height="14" rx="7" fill="#93a7af" />
-      <path d="M76 105 L118 105" stroke="#34a9e1" strokeWidth="8" strokeLinecap="round" className="jet-anim" strokeDasharray="8 10" />
+      {/* O jato parava a 30 px da roda, entao a legenda dizia turbina de ACAO e
+          o desenho mostrava agua que nunca encostava em concha nenhuma. Agora
+          ele alcanca o ponto de impacto. */}
+      <path d="M76 105 L128 105" stroke="#34a9e1" strokeWidth="8" strokeLinecap="round" className="jet-anim" strokeDasharray="8 10" />
+      {/* Agua defletida. Pelton e turbina de acao: o jato bate na dupla colher,
+          entrega a energia e SAI para os lados em pressao atmosferica. Sem esta
+          saida, o desenho sugeria que a agua sumia dentro da roda, que e
+          justamente a confusao entre acao e reacao. */}
+      <path className="pelton-deflete" d="M132 100 q16 -14 30 -18" stroke="#8fd0ff" strokeWidth="3"
+            fill="none" strokeLinecap="round" />
+      <path className="pelton-deflete" d="M132 112 q16 14 30 18" stroke="#8fd0ff" strokeWidth="3"
+            fill="none" strokeLinecap="round" />
       <polygon points="70,96 92,105 70,114" fill="#93a7af" />
       <text x="14" y="88" fontSize="11" fill="#bcd0c7" fontWeight="700">bocal / injetor</text>
       <text x="292" y="40" textAnchor="end" fontSize="11" fill="#bcd0c7" fontWeight="700">conchas (dupla colher)</text>
@@ -40,6 +51,11 @@ function SvgFrancis() {
   return (
     <svg viewBox="0 0 300 220" className="turb-svg" aria-label="Esquema de turbina Francis">
       <path d="M150 110 m66 0 a66 66 0 1 1 -18 -46" fill="none" stroke="#4cc4f5" strokeWidth="16" strokeLinecap="round" opacity=".85" />
+      {/* Fluxo radial na caixa espiral. A legenda promete fluxo radial que vira
+          axial sob pressao, e a caixa era um arco parado: o desenho nao mostrava
+          nem o radial nem a virada. */}
+      <path className="fr-radial" d="M150 110 m66 0 a66 66 0 1 1 -18 -46" fill="none"
+            stroke="#bfe3ff" strokeWidth="4" strokeLinecap="round" />
       <text x="212" y="52" fontSize="11" fill="#bcd0c7" fontWeight="700">caixa espiral</text>
       {Array.from({ length: 10 }, (_, i) => i * 36).map((a) => (
         <g key={a} transform={`rotate(${a} 150 110)`}>
@@ -57,6 +73,10 @@ function SvgFrancis() {
       <text x="52" y="52" fontSize="11" fill="#bcd0c7" fontWeight="700">distribuidor (palhetas)</text>
       <rect x="142" y="150" width="16" height="46" fill="#8fd0ff" opacity=".8" />
       <path d="M142 196 q8 12 16 0" fill="#8fd0ff" opacity=".8" />
+      {/* A saida axial pelo tubo de succao, que e a segunda metade da frase
+          radial vira axial. Desce, porque a agua sai por baixo do rotor. */}
+      <path className="fr-axial" d="M150 152 L150 198" stroke="#dff1ff" strokeWidth="3"
+            strokeLinecap="round" fill="none" />
       <text x="166" y="182" fontSize="11" fill="#bcd0c7" fontWeight="700">tubo de sucção</text>
     </svg>
   );
@@ -65,12 +85,22 @@ function SvgKaplan() {
   return (
     <svg viewBox="0 0 300 220" className="turb-svg" aria-label="Esquema de turbina Kaplan">
       <path d="M40 40 L120 70 L120 150 L40 180 Z" fill="#bfe3ff" opacity=".7" />
+      {/* O rotulo dizia fluxo axial sobre um poligono imovel. */}
+      <path className="kp-fluxo" d="M46 74 L118 92 M46 110 L118 110 M46 146 L118 128"
+            stroke="#dff1ff" strokeWidth="2.6" strokeLinecap="round" fill="none" />
       <text x="42" y="32" fontSize="11" fill="#bcd0c7" fontWeight="700">fluxo axial</text>
       <rect x="120" y="96" width="90" height="28" rx="6" fill="#93a7af" />
       <g className="spin-slow" style={{ transformOrigin: '150px 110px' }}>
         {[0, 90, 180, 270].map((a) => (
           <g key={a} transform={`rotate(${a} 150 110)`}>
-            <path d="M150 110 q34 -10 52 -34 q10 18 -6 34 q-22 12 -46 0 Z" fill="#37d39a" stroke="#2fa07a" strokeWidth="1.2" opacity=".92" />
+            {/* Passo variavel, que e a razao de existir da Kaplan e o que a
+                legenda promete. As pas eram fixas, entao o desenho ficava
+                indistinguivel de uma helice comum: o unico sinal de ajuste
+                eram duas setas amarelas paradas ao lado. A oscilacao lenta em
+                torno do proprio eixo mostra a pa mudando de angulo, e o periodo
+                e longo de proposito, porque o ajuste acompanha a vazao do rio e
+                nao o giro do rotor. */}
+            <path className="kp-passo" d="M150 110 q34 -10 52 -34 q10 18 -6 34 q-22 12 -46 0 Z" fill="#37d39a" stroke="#2fa07a" strokeWidth="1.2" opacity=".92" />
           </g>
         ))}
         <circle cx="150" cy="110" r="16" fill="#2fa07a" />
@@ -85,6 +115,15 @@ function SvgBulbo() {
     <svg viewBox="0 0 300 220" className="turb-svg" aria-label="Esquema de turbina bulbo">
       <path d="M10 70 L290 70 M10 160 L290 160" stroke="#9fb5aa" strokeWidth="2" />
       <path d="M10 78 L290 78" stroke="#8fd0ff" strokeWidth="10" opacity=".7" className="jet-anim" strokeDasharray="14 16" />
+      {/* A legenda diz conjunto horizontal SUBMERSO no proprio fluxo, e so a
+          linha de cima corria: a agua passava por cima do bulbo e nada por
+          baixo, entao ele parecia apoiado no fundo em vez de imerso. As duas
+          linhas contornam a carcaca e voltam a se juntar depois do rotor, que e
+          o que submerso quer dizer aqui. */}
+      <path className="bl-fluxo" d="M10 100 Q70 100 92 112 T196 118 T290 108" fill="none"
+            stroke="#bfe3ff" strokeWidth="3.2" strokeLinecap="round" opacity=".85" />
+      <path className="bl-fluxo" d="M10 148 Q70 148 92 136 T196 132 T290 144" fill="none"
+            stroke="#bfe3ff" strokeWidth="3.2" strokeLinecap="round" opacity=".85" />
       <ellipse cx="130" cy="118" rx="66" ry="30" fill="#93a7af" />
       <text x="96" y="122" fontSize="12" fill="#8fe3cf" fontWeight="700">GERADOR</text>
       <g className="spin-slow" style={{ transformOrigin: '208px 118px' }}>

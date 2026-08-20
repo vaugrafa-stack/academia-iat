@@ -245,7 +245,7 @@ button.sidebar-help{background:transparent;font:inherit;color:inherit;cursor:poi
 :root{--shadow-1:0 1px 2px #0f2a2008,0 2px 8px #0f2a200a;--shadow-2:0 2px 6px #0f2a200d,0 10px 28px #0f2a2014;--shadow-3:0 6px 16px #0f2a2014,0 22px 48px #0f2a201f;--ease:cubic-bezier(.22,.9,.3,1)}
 .view-anim{animation:routeIn .18s var(--ease)}
 @keyframes routeIn{from{transform:translateY(4px)}to{transform:none}}
-@media(prefers-reduced-motion:reduce){.view-anim,.cs-flow,.cs-spill,.cs-turbine,.cs-hot::after,.cs-energia,.cs-gerador,.cs-lamina,.arr-fluxo,.arr-fluxo-tvr{animation:none!important}}
+@media(prefers-reduced-motion:reduce){.view-anim,.cs-flow,.cs-spill,.cs-turbine,.cs-hot::after,.cs-energia,.cs-gerador,.cs-lamina,.arr-fluxo,.arr-fluxo-tvr,.spin-slow,.jet-anim,.pelton-deflete,.fr-radial,.fr-axial,.kp-fluxo,.kp-passo,.bl-fluxo{animation:none!important}}
 /* botoes e cartoes respiram */
 button{transition:background .18s var(--ease),border-color .18s var(--ease),color .18s var(--ease),box-shadow .18s var(--ease),transform .18s var(--ease)}
 button.primary{background:linear-gradient(135deg,var(--green2),var(--green));border:none;color:#fff;box-shadow:0 4px 14px #16563C33;border-radius:9px;padding:11px 20px;font-weight:800;display:inline-flex;align-items:center;gap:8px;cursor:pointer}
@@ -304,6 +304,29 @@ button.primary:active{transform:translateY(0);box-shadow:0 2px 8px #16563C33}
 .tg-pr svg{flex:none;margin-top:2px;color:var(--green)}
 .spin-slow{transform-box:fill-box;transform-origin:center;animation:csspin 7s linear infinite}
 .jet-anim{animation:csflow 1s linear infinite}
+/* Cada turbina tem uma frase na legenda, e cada frase promete um comportamento
+   que o desenho nao mostrava. As animacoes abaixo existem para que o desenho
+   diga o que a legenda afirma, e nao para enfeitar.
+
+   Pelton, turbina de ACAO: o jato bate na dupla colher e SAI para os lados em
+   pressao atmosferica. Sem a saida, parecia que a agua sumia dentro da roda,
+   que e exatamente a confusao entre acao e reacao. */
+.pelton-deflete{stroke-dasharray:4 10;animation:csflow .55s linear infinite;opacity:.85}
+/* Francis, fluxo radial que vira axial sob pressao. Sao duas animacoes porque
+   sao os dois tempos da frase: entra pela caixa espiral, sai pelo tubo de
+   succao. O eixo desce mais devagar, ja que a secao e maior. */
+.fr-radial{stroke-dasharray:12 20;animation:csflow 1.6s linear infinite;opacity:.9}
+.fr-axial{stroke-dasharray:8 14;animation:csflow 2.4s linear infinite;opacity:.9}
+/* Kaplan, helice de passo variavel. As pas eram fixas e o unico sinal de ajuste
+   eram duas setas paradas ao lado. O periodo e longo de proposito: o passo
+   acompanha a vazao do rio, nao o giro do rotor. */
+.kp-fluxo{stroke-dasharray:9 13;animation:csflow 1.3s linear infinite;opacity:.85}
+.kp-passo{transform-box:fill-box;transform-origin:20% 50%;animation:kppasso 9s ease-in-out infinite}
+@keyframes kppasso{0%,100%{transform:rotate(-9deg)}50%{transform:rotate(9deg)}}
+/* Bulbo, conjunto horizontal submerso no proprio fluxo. So a linha de cima
+   corria, entao a agua passava por cima e nada por baixo: o bulbo parecia
+   apoiado no fundo em vez de imerso. As duas linhas contornam a carcaca. */
+.bl-fluxo{stroke-dasharray:11 15;animation:csflow 1.25s linear infinite}
 /* ===== Casos reais no Parana ===== */
 .prc-note{display:flex;gap:8px;align-items:flex-start;font-size:13px;color:var(--muted);margin:12px 0}
 .prc-note svg{flex:none;margin-top:1px;color:var(--blue)}

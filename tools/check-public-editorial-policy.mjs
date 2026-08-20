@@ -131,10 +131,20 @@ for (const file of [...candidates, ...operationalCandidates]) {
     const isBuiltArtifact = distArgument
       && path.resolve(file).startsWith(path.resolve(ROOT, distArgument.slice('--dist='.length)));
     const pattern = editorialPatternFor(rule, { builtArtifact: isBuiltArtifact });
-    const match = pattern.exec(text);
+    // Exceção declarada uma a uma, com justificativa escrita ao lado, em vez de
+    // afrouxar o padrão. Assim a regra continua pegando o caso novo, e cada
+    // permissão fica visível para ser revista ou derrubada.
+    const excecoes = rule.excecoes || [];
+    const global = new RegExp(pattern.source, pattern.flags.includes('g') ? pattern.flags : `${pattern.flags}g`);
+    let match = null;
+    for (const candidato of text.matchAll(global)) {
+      if (excecoes.some((permitido) => text.startsWith(permitido, candidato.index))) continue;
+      match = candidato;
+      break;
+    }
     if (!match) continue;
     const line = text.slice(0, match.index).split(/\r?\n/u).length;
-    failures.push(`${relative(file)}:${line} — ${rule.label}`);
+    failures.push(`${relative(file)}:${line} — ${rule.label}: ${String(match[0]).slice(0, 60)}`);
   }
 }
 for (const file of publicBinaryCandidates) {

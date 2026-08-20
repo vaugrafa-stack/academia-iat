@@ -2,12 +2,12 @@
   "schemaVersion": "1.1.0",
   "source": {
     "popVersion": "1.9",
-    "popSha256": "d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4"
+    "popSha256": "ad33a4939ac5f73d5669fc4784c43319d1c1cae0193c7c3a0aa04bdfd669b353"
   },
   "packageCount": 17,
   "lessonCount": 168,
   "itemCount": 555,
-  "totalBytes": 212943799,
+  "totalBytes": 212798370,
   "packages": [
     {
       "id": "m00",
@@ -1573,7 +1573,7 @@
       "title": "Licenciamento federal delegado: ACT e RTAA",
       "lessonCount": 17,
       "itemCount": 54,
-      "bytes": 22343321,
+      "bytes": 22197892,
       "items": [
         {
           "path": "media/m16.mp4",
@@ -1769,15 +1769,15 @@
         },
         {
           "path": "media/aula/pop-section-172.mp4",
-          "bytes": 1425070
+          "bytes": 1288675
         },
         {
           "path": "media/aula/pop-section-172.jpg",
-          "bytes": 40534
+          "bytes": 31286
         },
         {
           "path": "media/aula/pop-section-172.vtt",
-          "bytes": 1150
+          "bytes": 1364
         },
         {
           "path": "media/aula/pop-section-173.mp4",

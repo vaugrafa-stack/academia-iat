@@ -337,7 +337,10 @@ export const QUESTOES_COBERTURA = [
     ['Sim, janeiro, fevereiro e março passam a ser etapas legais obrigatórias para todo órgão delegatário', 'Não; são recomendações de organização, e o prazo geral indicado permanece 31 de março', 'Sim, mas somente quando a equipe deixa de atualizar continuamente as movimentações do empreendimento'], 1,
     'A rotina distribui o trabalho interno sem alterar o prazo previsto no instrumento normativo.',
     { sec: 'pop-section-171', quote: 'A rotina abaixo é recomendação operacional interna e não cria novos prazos jurídicos. O único prazo geral indicado pela IN IBAMA nº 08/2019 para o RTAA é o encaminhamento até 31 de março.' }],
-  ['m16', 'O exemplo de peticionamento da UHE Segredo em 2026 define os documentos obrigatórios para todos os RTAA?',
+  // O enunciado nomeava um empreendimento real e o amarrava a um peticionamento
+  // concreto. O que a questão mede, que exemplo demonstra possibilidade e não
+  // cria obrigação, não depende de saber qual empreendimento foi.
+  ['m16', 'Um exemplo de peticionamento já observado define os documentos obrigatórios para todos os RTAA?',
     ['Sim, formulário, relatório textual, licença e documentos técnicos devem acompanhar toda entrega futura', 'Não; a equipe só deve encaminhar o que for aplicável ao ACT e à orientação vigente', 'Sim, exceto quando o relatório anual não registrar nenhuma licença emitida no período de referência'], 1,
     'Um exemplo operacional demonstra uma possibilidade, mas não substitui a conferência do caso e do exercício.',
     { sec: 'pop-section-172', quote: 'isso não significa que a mesma composição seja obrigatória para todos os empreendimentos ou exercícios' }],

@@ -3565,6 +3565,66 @@
       "rightsBasis": "figura integrante da minuta institucional do IAT, extraída localmente sem material externo",
       "reviewedBy": "portões automatizados de conteúdo, mídia, proveniência e privacidade desta rodada",
       "reviewedAt": "2026-08-14"
+    },
+    {
+      "cycle": "2026-08",
+      "action": "replace",
+      "path": "public/media/aula/pop-section-172.mp4",
+      "reason": "secao F.5 teve o nome de empreendimento retirado da fonte; narracao regerada para nao citar usina pelo nome",
+      "bytes": 1288675,
+      "sha256": "6133924c7b368a7b665f1882628f58139ceddade28a6d13388faeb9df6b65ce3",
+      "sourceType": "project-generated",
+      "privacyReview": "synthetic-no-personal-data",
+      "technicalReview": "approved",
+      "sourceLocator": "tools/build_lesson_videos.py e tools/visemas_das_aulas.py sobre POP-DLE-HID-001 v1.9 sha256 ad33a4939ac5f73d5669fc4784c43319d1c1cae0193c7c3a0aa04bdfd669b353",
+      "rightsBasis": "conteudo derivado da minuta institucional do proprio IAT; narracao em voz sintetica Piper offline, sem locutor humano e sem material de terceiros",
+      "reviewedBy": "portoes tecnicos automatizados desta rodada (check-videoaulas, check-media-governance, check-public-editorial-policy); aprovacao humana institucional pendente",
+      "reviewedAt": "2026-08-15"
+    },
+    {
+      "cycle": "2026-08",
+      "action": "replace",
+      "path": "public/media/aula/pop-section-172.jpg",
+      "reason": "secao F.5 teve o nome de empreendimento retirado da fonte; narracao regerada para nao citar usina pelo nome",
+      "bytes": 31286,
+      "sha256": "e3cf9a9c2da9ce0ce51a64a69d5b9e5ba9041b0c99d7f7095a01f855bc34ba4e",
+      "sourceType": "project-generated",
+      "privacyReview": "synthetic-no-personal-data",
+      "technicalReview": "approved",
+      "sourceLocator": "tools/build_lesson_videos.py e tools/visemas_das_aulas.py sobre POP-DLE-HID-001 v1.9 sha256 ad33a4939ac5f73d5669fc4784c43319d1c1cae0193c7c3a0aa04bdfd669b353",
+      "rightsBasis": "conteudo derivado da minuta institucional do proprio IAT; narracao em voz sintetica Piper offline, sem locutor humano e sem material de terceiros",
+      "reviewedBy": "portoes tecnicos automatizados desta rodada (check-videoaulas, check-media-governance, check-public-editorial-policy); aprovacao humana institucional pendente",
+      "reviewedAt": "2026-08-15"
+    },
+    {
+      "cycle": "2026-08",
+      "action": "replace",
+      "path": "public/media/aula/pop-section-172.vtt",
+      "reason": "secao F.5 teve o nome de empreendimento retirado da fonte; narracao regerada para nao citar usina pelo nome",
+      "bytes": 1364,
+      "sha256": "46c5099d217a65a0679d4949b3bfff60c43d572106a432652a12de49dea98e62",
+      "sourceType": "project-generated",
+      "privacyReview": "synthetic-no-personal-data",
+      "technicalReview": "approved",
+      "sourceLocator": "tools/build_lesson_videos.py e tools/visemas_das_aulas.py sobre POP-DLE-HID-001 v1.9 sha256 ad33a4939ac5f73d5669fc4784c43319d1c1cae0193c7c3a0aa04bdfd669b353",
+      "rightsBasis": "conteudo derivado da minuta institucional do proprio IAT; narracao em voz sintetica Piper offline, sem locutor humano e sem material de terceiros",
+      "reviewedBy": "portoes tecnicos automatizados desta rodada (check-videoaulas, check-media-governance, check-public-editorial-policy); aprovacao humana institucional pendente",
+      "reviewedAt": "2026-08-15"
+    },
+    {
+      "cycle": "2026-08",
+      "action": "replace",
+      "path": "public/media/aula/pop-section-172.visemes.json",
+      "reason": "secao F.5 teve o nome de empreendimento retirado da fonte; narracao regerada para nao citar usina pelo nome",
+      "bytes": 56483,
+      "sha256": "860731cd57cd06ad06d558a776c663c80b514a7b6ce53adce3ac0cf277a49b43",
+      "sourceType": "project-generated",
+      "privacyReview": "synthetic-no-personal-data",
+      "technicalReview": "approved",
+      "sourceLocator": "tools/build_lesson_videos.py e tools/visemas_das_aulas.py sobre POP-DLE-HID-001 v1.9 sha256 ad33a4939ac5f73d5669fc4784c43319d1c1cae0193c7c3a0aa04bdfd669b353",
+      "rightsBasis": "conteudo derivado da minuta institucional do proprio IAT; narracao em voz sintetica Piper offline, sem locutor humano e sem material de terceiros",
+      "reviewedBy": "portoes tecnicos automatizados desta rodada (check-videoaulas, check-media-governance, check-public-editorial-policy); aprovacao humana institucional pendente",
+      "reviewedAt": "2026-08-15"
     }
   ]
 }

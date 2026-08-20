@@ -1,1 +1,639 @@
-{"background":{"bytes":387812,"path":"/media/learning-stage/thematic-atlas.webp","rightsBasis":"ativo temático já aprovado e incorporado à plataforma","sha256":"1800c76226a8f9c3f4572d0c6803456aa7482fc82149d3791e979f32f5a9ae01"},"generatedAt":"2026-08-14T23:01:41Z","generatorVersion":1,"items":[{"assets":{"captions":{"bytes":3745,"path":"/media/piloto/pop-section-018.vtt","sha256":"9e02cc91913696095b29616e8cb705227d8fb5c993f09dc57f7b8685c8baf8f7"},"poster":{"bytes":41881,"path":"/media/piloto/pop-section-018.jpg","sha256":"ec4a00392da3804f8999dd4d8a97d520c39e14b5ebc7421ff4657f46341fbfe0"},"transcript":{"bytes":3564,"path":"/media/piloto/pop-section-018.txt","sha256":"d77b3ebff18176c65795002b66cb524f8910adbddc95e89f1c9e07ac8dadf4b8"},"video":{"bytes":4430777,"path":"/media/piloto/pop-section-018.mp4","sha256":"066755188f968c4817227226f7c98d1ae133a7ffafb854d4ca2649b59959ba7c"},"visemes":{"bytes":99382,"path":"/media/piloto/pop-section-018.visemes.json","sha256":"fc43ff20817790dc053efe63d00babd8d24b099098f998fa72cee43cd213e87b"}},"captionContract":{"maxCueSeconds":6,"maxLineCharacters":42},"classification":"microaula-piloto","durationSeconds":174.2,"id":"pilot-pop-section-018","lessonId":"pop-section-018","objective":"Aplicar a sequência inicial de triagem sem antecipar a conclusão técnica.","presenterCoverage":0.35,"presenterWindows":[[0.0,10.323],[14.213,24.355],[28.18,39.01],[108.546,120.042],[124.348,133.542],[137.03,146.017]],"sceneCount":12,"scriptSha256":"238a3bf729578bdf63418e3fafd4deda7d8f2016d54978f971cb7f169aa716a9","sourceRefs":[{"id":"pop-7.1","kind":"pop","locator":"POP, item 7.1","paragraphIds":["pop-paragraph-0163","pop-paragraph-0164","pop-paragraph-0165","pop-paragraph-0166","pop-paragraph-0167","pop-paragraph-0168","pop-paragraph-0169","pop-paragraph-0170","pop-paragraph-0171","pop-paragraph-0172","pop-paragraph-0173"],"sectionId":"pop-section-018"}],"title":"Procedimento passo a passo","trackId":"m02","transitionSeconds":0.24,"wordsPerMinute":131.57},{"assets":{"captions":{"bytes":3414,"path":"/media/piloto/pop-section-059.vtt","sha256":"90e3063869f586068f7b89771922fed6bfd0b6dd180f97c7a3ee6410198ebbd9"},"poster":{"bytes":48390,"path":"/media/piloto/pop-section-059.jpg","sha256":"7f729bc0d999dc4d5538dca8d5ca27e26a19b6b4e2fd840e7053c36f76d00c68"},"transcript":{"bytes":3239,"path":"/media/piloto/pop-section-059.txt","sha256":"445156b41020d1cf15a64c613ff4a95b5c22be172f185805213cdd12b4c59473"},"video":{"bytes":4138490,"path":"/media/piloto/pop-section-059.mp4","sha256":"078d25a75274879e950e0962c46f6f44816b7e35ce41fcac86312d1db6207e76"},"visemes":{"bytes":60459,"path":"/media/piloto/pop-section-059.visemes.json","sha256":"c3f7e6304926c9bf04cceaa91f894888a3fd05289bcc94ec8c6ece0a3f6eb2a4"}},"captionContract":{"maxCueSeconds":6,"maxLineCharacters":42},"classification":"microaula-piloto","durationSeconds":160.217,"id":"pilot-pop-section-059","lessonId":"pop-section-059","objective":"Distinguir a função principal e o limite de cada documento antes de avaliar sua suficiência.","presenterCoverage":0.35,"presenterWindows":[[0.0,12.331],[18.685,26.478],[30.575,40.099],[98.427,110.12],[116.158,122.169],[125.38,134.104]],"sceneCount":11,"scriptSha256":"eed4b74c76d9c089dd4986d94696b5e24362a07b2b06ec1c9ef0c872e63726e3","sourceRefs":[{"id":"pop-18.2","kind":"pop","locator":"POP, item 18.2","sectionId":"pop-section-059","tableIds":["pop-table-031"]}],"title":"Distinção entre documentos","trackId":"m08","transitionSeconds":0.24,"wordsPerMinute":137.44},{"assets":{"captions":{"bytes":3952,"path":"/media/piloto/pop-section-069.vtt","sha256":"924376841ec20b7235ef988e86ae4ad22a17b7f36c5599a2a7a57132824faa93"},"poster":{"bytes":53170,"path":"/media/piloto/pop-section-069.jpg","sha256":"a78872c0f82e1d2d06f78351c643bb68f732a598cade6918ef96e0abb6cac62a"},"transcript":{"bytes":3993,"path":"/media/piloto/pop-section-069.txt","sha256":"ccffa283f6eec2eca1b5346b0c23990e8915a25e03af6471b6519dc78b9fd202"},"video":{"bytes":5562275,"path":"/media/piloto/pop-section-069.mp4","sha256":"686b6b49eed8a5da6e9e930233f4e90688f338152ee145347bbdbff1accfd038"},"visemes":{"bytes":72400,"path":"/media/piloto/pop-section-069.visemes.json","sha256":"5ae6103be5b824a75d8d2c3a012f1bab5a4982e4e6571b5ec66ee2795e18c7fe"}},"captionContract":{"maxCueSeconds":6,"maxLineCharacters":42},"classification":"microaula-piloto","durationSeconds":188.559,"id":"pilot-pop-section-069","lessonId":"pop-section-069","objective":"Reconhecer como os principais blocos de análise do PACUERA se conectam e localizar o checklist integral no POP e no termo vigente.","presenterCoverage":0.35,"presenterWindows":[[0.0,11.052],[14.818,28.919],[33.663,45.797],[119.303,130.661],[134.525,142.431],[145.187,154.631]],"sceneCount":12,"scriptSha256":"dc695e80ffc1d603be60f87ba8549a7142b24ca16c011ad9f16a09e428d85761","sourceRefs":[{"id":"pop-18.10.2","kind":"pop","locator":"POP, item 18.10.2","sectionId":"pop-section-069","tableIds":["pop-table-039"]},{"id":"tr-pacuera-2026","kind":"official","locator":"IAT, TR PACUERA 2026","officialSourceId":"official-pacuera-tr-2026"}],"title":"Visão geral dos blocos de análise do PACUERA","trackId":"m09","transitionSeconds":0.24,"wordsPerMinute":135.24},{"assets":{"captions":{"bytes":3330,"path":"/media/piloto/pop-section-094.vtt","sha256":"da12cc73419fe80a5ea6c09a2a544d25bdde9bcfec4f8c404dcc10050a55c374"},"poster":{"bytes":47339,"path":"/media/piloto/pop-section-094.jpg","sha256":"fff4e38e0f38ef4b71222e954073e36710944efc497e7768ef7e625bf7cf84e3"},"transcript":{"bytes":3255,"path":"/media/piloto/pop-section-094.txt","sha256":"6797b5d6eed5b9306329b779a3aff263226bbcaf92e7e39a782f1d3f9e142192"},"video":{"bytes":3818045,"path":"/media/piloto/pop-section-094.mp4","sha256":"8cc36d01024aa7bd66896ea9acdfe7d42a0a3974b724e410bd4e27a297551153"},"visemes":{"bytes":46956,"path":"/media/piloto/pop-section-094.visemes.json","sha256":"b3b8b13331213b0645e43d104e96ac81d857be4c869670613f42a99ed17e118d"}},"captionContract":{"maxCueSeconds":6,"maxLineCharacters":42},"classification":"microaula-piloto","durationSeconds":149.177,"id":"pilot-pop-section-094","lessonId":"pop-section-094","objective":"Redigir condicionante relacionada ao impacto e verificável por evidência.","presenterCoverage":0.35,"presenterWindows":[[0.0,9.429],[13.681,21.335],[24.828,32.971],[83.298,91.841],[95.714,104.085],[107.885,117.956]],"sceneCount":11,"scriptSha256":"532650551ae6baaadb52f40b643847a3701933749a25d2ae2a0ccde855ffa8b7","sourceRefs":[{"id":"pop-24","kind":"pop","locator":"POP, item 24","paragraphIds":["pop-paragraph-0625"],"sectionId":"pop-section-094","tableIds":["pop-table-056"]},{"id":"pop-24.1","kind":"pop","locator":"POP, item 24.1","paragraphIds":["pop-paragraph-0631","pop-paragraph-0632","pop-paragraph-0633","pop-paragraph-0634","pop-paragraph-0635","pop-paragraph-0636","pop-paragraph-0638"],"sectionId":"pop-section-095"}],"title":"Formulação de condicionantes","trackId":"m12","transitionSeconds":0.24,"wordsPerMinute":136.35},{"assets":{"captions":{"bytes":3756,"path":"/media/piloto/pop-section-108.vtt","sha256":"667c6e98f2f86868eb3a98335eb705cb4eb5991e882b8f691d9e744bb60e51c8"},"poster":{"bytes":43619,"path":"/media/piloto/pop-section-108.jpg","sha256":"6a04b5cac6a90595a08e9cee3c1100331e917a1385c37b3b19acaa6f8e403356"},"transcript":{"bytes":3748,"path":"/media/piloto/pop-section-108.txt","sha256":"8400ecf89bf2ff98edc556afc66557d49435707cbb484841ecc495b8465d89d7"},"video":{"bytes":4486043,"path":"/media/piloto/pop-section-108.mp4","sha256":"df92341d327d11b6e4ca5c184165225f1194477c3b545de4fe3b6ba43ba2571f"},"visemes":{"bytes":88120,"path":"/media/piloto/pop-section-108.visemes.json","sha256":"a5aa0ae06b62ad4158560f281b5734c528936e42f7cf431436debd3ea1b325e6"}},"captionContract":{"maxCueSeconds":6,"maxLineCharacters":42},"classification":"microaula-piloto","durationSeconds":175.226,"id":"pilot-pop-section-108","lessonId":"pop-section-108","objective":"Executar revisão final técnica, normativa, documental, linguística e visual antes da assinatura.","presenterCoverage":0.35,"presenterWindows":[[0.0,12.981],[16.21,25.929],[28.401,39.263],[116.397,127.55],[130.354,139.01],[141.236,149.195]],"sceneCount":13,"scriptSha256":"b2795677b7e7f280d469783f5bb46f6434f3e82a9c57b309816b460512afedf0","sourceRefs":[{"id":"pop-27","kind":"pop","locator":"POP, item 27","paragraphIds":["pop-paragraph-0720"],"sectionId":"pop-section-108"},{"id":"pop-quality-checklist","kind":"pop","locator":"POP, Tabela 14","sectionId":"pop-section-109","tableIds":["pop-table-060"]}],"title":"Controle final de qualidade","trackId":"m13","transitionSeconds":0.24,"wordsPerMinute":130.8},{"assets":{"captions":{"bytes":3100,"path":"/media/piloto/pop-section-134.vtt","sha256":"eb119760e2a7d413116b4409488e4219ac54bf942a6f3ee06cdc28b9d648e54e"},"poster":{"bytes":54914,"path":"/media/piloto/pop-section-134.jpg","sha256":"b131a0f8b333e993e2861f6b0a512188e8d36b10a6ab67b9ada876d38bb89c1f"},"transcript":{"bytes":3196,"path":"/media/piloto/pop-section-134.txt","sha256":"1d63246075d4de5d4a41770644302db6779d8125b3578194350fed06d1c9b8e3"},"video":{"bytes":4216957,"path":"/media/piloto/pop-section-134.mp4","sha256":"a32f8a962848915f8d4d17b49fb47034e0b73eef3ade03fdc3ef94d5d49198ad"},"visemes":{"bytes":61295,"path":"/media/piloto/pop-section-134.visemes.json","sha256":"95b8e89e84573788035f05a9aa67f15f8a2f7e7494940bf6c101ec5abd06302f"}},"captionContract":{"maxCueSeconds":6,"maxLineCharacters":42},"classification":"microaula-piloto","durationSeconds":144.691,"id":"pilot-pop-section-134","lessonId":"pop-section-134","objective":"Usar GeoPR, GeoParaná e bases oficiais como apoio rastreável, sem substituir a geometria do processo nem o ato legal.","presenterCoverage":0.35,"presenterWindows":[[0.0,9.532],[14.866,23.035],[27.637,36.791],[84.12,91.647],[95.906,102.158],[105.731,115.739]],"sceneCount":11,"scriptSha256":"b57fc2795c4e4f7de42c853af4ae592d1572248884b20bf0d821bec5bf1a9ad3","sourceRefs":[{"id":"pop-19.1.1","kind":"pop","locator":"POP, item 19.1.1","paragraphIds":["pop-paragraph-0477","pop-paragraph-0478","pop-paragraph-0479","pop-paragraph-0480"],"sectionId":"pop-section-134"},{"id":"iat-geodados","kind":"official","locator":"IAT, Geodados","officialSourceId":"official-geodados-aplicacoes"},{"id":"iat-uc-data","kind":"official","locator":"IAT, Dados de UCs","officialSourceId":"official-uc-data"},{"id":"iat-management-plans","kind":"official","locator":"IAT, Planos de Manejo","officialSourceId":"official-management-plans"}],"title":"Bases geoespaciais oficiais","trackId":"m10","transitionSeconds":0.24,"wordsPerMinute":140.99}],"kind":"MediaAssetCollection","presenterSprite":{"grid":{"columns":3,"frames":12,"rows":4},"optimized":{"bytes":157938,"path":"/media/learning-stage/professor-visemes-v2.webp","sha256":"5a256fdd0449fb896bb477fd40cac0b41dee7f90ceb20bfa7ec99669c24c77d0"},"order":["rest","MBP","IE","A","O","U","FV","L","CHJ","E_OPEN","SCHWA","rest_alt"],"rightsBasis":"ativo visual fictício criado para uso na plataforma","source":{"bytes":2283656,"path":"/media/learning-stage/professor-visemes-v2.png","sha256":"ef077fddc5e5141e721fdea7c23db2d8ae695773595acc6f5871cf2b826daa47"}},"runtime":{"ffmpeg":"ffmpeg version 7.1-essentials_build-www.gyan.dev Copyright (c) 2000-2024 the FFmpeg developers"},"schemaVersion":"1.0.0","selection":["pop-section-018","pop-section-059","pop-section-069","pop-section-094","pop-section-108","pop-section-134"],"sourceDocument":{"code":"POP-DLE-HID-001","sha256":"d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4","status":"minuta técnica pendente de validação técnica e institucional","version":"1.9"},"voice":{"allowedWordsPerMinute":[130,150],"clonedVoice":false,"configSha256":"7e694de195ae3fc36dd732c445eb04fb49b649854893cb5506b978f0d50a1d6f","datasetLicense":"CC0","engine":"Piper","id":"pt_BR-faber-medium","language":"pt-BR","modelCard":"https://huggingface.co/rhasspy/piper-voices/blob/main/pt/pt_BR/faber/medium/MODEL_CARD","modelRepositoryLicense":"MIT","modelSha256":"858555e3a064209c57088fe6bd70c4c3dc54d03eaa00c45d5ecaf43a33f95aa7","modelSource":"https://huggingface.co/rhasspy/piper-voices/tree/main/pt/pt_BR/faber/medium","provider":"piper-faber","quality":"medium","sampleRate":22050,"targetWordsPerMinute":140}}
+{
+  "background": {
+    "bytes": 387812,
+    "path": "/media/learning-stage/thematic-atlas.webp",
+    "rightsBasis": "ativo temático já aprovado e incorporado à plataforma",
+    "sha256": "1800c76226a8f9c3f4572d0c6803456aa7482fc82149d3791e979f32f5a9ae01"
+  },
+  "generatedAt": "2026-08-14T23:01:41Z",
+  "generatorVersion": 1,
+  "items": [
+    {
+      "assets": {
+        "captions": {
+          "bytes": 3745,
+          "path": "/media/piloto/pop-section-018.vtt",
+          "sha256": "9e02cc91913696095b29616e8cb705227d8fb5c993f09dc57f7b8685c8baf8f7"
+        },
+        "poster": {
+          "bytes": 41881,
+          "path": "/media/piloto/pop-section-018.jpg",
+          "sha256": "ec4a00392da3804f8999dd4d8a97d520c39e14b5ebc7421ff4657f46341fbfe0"
+        },
+        "transcript": {
+          "bytes": 3564,
+          "path": "/media/piloto/pop-section-018.txt",
+          "sha256": "d77b3ebff18176c65795002b66cb524f8910adbddc95e89f1c9e07ac8dadf4b8"
+        },
+        "video": {
+          "bytes": 4430777,
+          "path": "/media/piloto/pop-section-018.mp4",
+          "sha256": "066755188f968c4817227226f7c98d1ae133a7ffafb854d4ca2649b59959ba7c"
+        },
+        "visemes": {
+          "bytes": 99382,
+          "path": "/media/piloto/pop-section-018.visemes.json",
+          "sha256": "fc43ff20817790dc053efe63d00babd8d24b099098f998fa72cee43cd213e87b"
+        }
+      },
+      "captionContract": {
+        "maxCueSeconds": 6,
+        "maxLineCharacters": 42
+      },
+      "classification": "microaula-piloto",
+      "durationSeconds": 174.2,
+      "id": "pilot-pop-section-018",
+      "lessonId": "pop-section-018",
+      "objective": "Aplicar a sequência inicial de triagem sem antecipar a conclusão técnica.",
+      "presenterCoverage": 0.35,
+      "presenterWindows": [
+        [
+          0.0,
+          10.323
+        ],
+        [
+          14.213,
+          24.355
+        ],
+        [
+          28.18,
+          39.01
+        ],
+        [
+          108.546,
+          120.042
+        ],
+        [
+          124.348,
+          133.542
+        ],
+        [
+          137.03,
+          146.017
+        ]
+      ],
+      "sceneCount": 12,
+      "scriptSha256": "238a3bf729578bdf63418e3fafd4deda7d8f2016d54978f971cb7f169aa716a9",
+      "sourceRefs": [
+        {
+          "id": "pop-7.1",
+          "kind": "pop",
+          "locator": "POP, item 7.1",
+          "paragraphIds": [
+            "pop-paragraph-0163",
+            "pop-paragraph-0164",
+            "pop-paragraph-0165",
+            "pop-paragraph-0166",
+            "pop-paragraph-0167",
+            "pop-paragraph-0168",
+            "pop-paragraph-0169",
+            "pop-paragraph-0170",
+            "pop-paragraph-0171",
+            "pop-paragraph-0172",
+            "pop-paragraph-0173"
+          ],
+          "sectionId": "pop-section-018"
+        }
+      ],
+      "title": "Procedimento passo a passo",
+      "trackId": "m02",
+      "transitionSeconds": 0.24,
+      "wordsPerMinute": 131.57
+    },
+    {
+      "assets": {
+        "captions": {
+          "bytes": 3414,
+          "path": "/media/piloto/pop-section-059.vtt",
+          "sha256": "90e3063869f586068f7b89771922fed6bfd0b6dd180f97c7a3ee6410198ebbd9"
+        },
+        "poster": {
+          "bytes": 48390,
+          "path": "/media/piloto/pop-section-059.jpg",
+          "sha256": "7f729bc0d999dc4d5538dca8d5ca27e26a19b6b4e2fd840e7053c36f76d00c68"
+        },
+        "transcript": {
+          "bytes": 3239,
+          "path": "/media/piloto/pop-section-059.txt",
+          "sha256": "445156b41020d1cf15a64c613ff4a95b5c22be172f185805213cdd12b4c59473"
+        },
+        "video": {
+          "bytes": 4138490,
+          "path": "/media/piloto/pop-section-059.mp4",
+          "sha256": "078d25a75274879e950e0962c46f6f44816b7e35ce41fcac86312d1db6207e76"
+        },
+        "visemes": {
+          "bytes": 60459,
+          "path": "/media/piloto/pop-section-059.visemes.json",
+          "sha256": "c3f7e6304926c9bf04cceaa91f894888a3fd05289bcc94ec8c6ece0a3f6eb2a4"
+        }
+      },
+      "captionContract": {
+        "maxCueSeconds": 6,
+        "maxLineCharacters": 42
+      },
+      "classification": "microaula-piloto",
+      "durationSeconds": 160.217,
+      "id": "pilot-pop-section-059",
+      "lessonId": "pop-section-059",
+      "objective": "Distinguir a função principal e o limite de cada documento antes de avaliar sua suficiência.",
+      "presenterCoverage": 0.35,
+      "presenterWindows": [
+        [
+          0.0,
+          12.331
+        ],
+        [
+          18.685,
+          26.478
+        ],
+        [
+          30.575,
+          40.099
+        ],
+        [
+          98.427,
+          110.12
+        ],
+        [
+          116.158,
+          122.169
+        ],
+        [
+          125.38,
+          134.104
+        ]
+      ],
+      "sceneCount": 11,
+      "scriptSha256": "eed4b74c76d9c089dd4986d94696b5e24362a07b2b06ec1c9ef0c872e63726e3",
+      "sourceRefs": [
+        {
+          "id": "pop-18.2",
+          "kind": "pop",
+          "locator": "POP, item 18.2",
+          "sectionId": "pop-section-059",
+          "tableIds": [
+            "pop-table-031"
+          ]
+        }
+      ],
+      "title": "Distinção entre documentos",
+      "trackId": "m08",
+      "transitionSeconds": 0.24,
+      "wordsPerMinute": 137.44
+    },
+    {
+      "assets": {
+        "captions": {
+          "bytes": 3952,
+          "path": "/media/piloto/pop-section-069.vtt",
+          "sha256": "924376841ec20b7235ef988e86ae4ad22a17b7f36c5599a2a7a57132824faa93"
+        },
+        "poster": {
+          "bytes": 53170,
+          "path": "/media/piloto/pop-section-069.jpg",
+          "sha256": "a78872c0f82e1d2d06f78351c643bb68f732a598cade6918ef96e0abb6cac62a"
+        },
+        "transcript": {
+          "bytes": 3993,
+          "path": "/media/piloto/pop-section-069.txt",
+          "sha256": "ccffa283f6eec2eca1b5346b0c23990e8915a25e03af6471b6519dc78b9fd202"
+        },
+        "video": {
+          "bytes": 5562275,
+          "path": "/media/piloto/pop-section-069.mp4",
+          "sha256": "686b6b49eed8a5da6e9e930233f4e90688f338152ee145347bbdbff1accfd038"
+        },
+        "visemes": {
+          "bytes": 72400,
+          "path": "/media/piloto/pop-section-069.visemes.json",
+          "sha256": "5ae6103be5b824a75d8d2c3a012f1bab5a4982e4e6571b5ec66ee2795e18c7fe"
+        }
+      },
+      "captionContract": {
+        "maxCueSeconds": 6,
+        "maxLineCharacters": 42
+      },
+      "classification": "microaula-piloto",
+      "durationSeconds": 188.559,
+      "id": "pilot-pop-section-069",
+      "lessonId": "pop-section-069",
+      "objective": "Reconhecer como os principais blocos de análise do PACUERA se conectam e localizar o checklist integral no POP e no termo vigente.",
+      "presenterCoverage": 0.35,
+      "presenterWindows": [
+        [
+          0.0,
+          11.052
+        ],
+        [
+          14.818,
+          28.919
+        ],
+        [
+          33.663,
+          45.797
+        ],
+        [
+          119.303,
+          130.661
+        ],
+        [
+          134.525,
+          142.431
+        ],
+        [
+          145.187,
+          154.631
+        ]
+      ],
+      "sceneCount": 12,
+      "scriptSha256": "dc695e80ffc1d603be60f87ba8549a7142b24ca16c011ad9f16a09e428d85761",
+      "sourceRefs": [
+        {
+          "id": "pop-18.10.2",
+          "kind": "pop",
+          "locator": "POP, item 18.10.2",
+          "sectionId": "pop-section-069",
+          "tableIds": [
+            "pop-table-039"
+          ]
+        },
+        {
+          "id": "tr-pacuera-2026",
+          "kind": "official",
+          "locator": "IAT, TR PACUERA 2026",
+          "officialSourceId": "official-pacuera-tr-2026"
+        }
+      ],
+      "title": "Visão geral dos blocos de análise do PACUERA",
+      "trackId": "m09",
+      "transitionSeconds": 0.24,
+      "wordsPerMinute": 135.24
+    },
+    {
+      "assets": {
+        "captions": {
+          "bytes": 3330,
+          "path": "/media/piloto/pop-section-094.vtt",
+          "sha256": "da12cc73419fe80a5ea6c09a2a544d25bdde9bcfec4f8c404dcc10050a55c374"
+        },
+        "poster": {
+          "bytes": 47339,
+          "path": "/media/piloto/pop-section-094.jpg",
+          "sha256": "fff4e38e0f38ef4b71222e954073e36710944efc497e7768ef7e625bf7cf84e3"
+        },
+        "transcript": {
+          "bytes": 3255,
+          "path": "/media/piloto/pop-section-094.txt",
+          "sha256": "6797b5d6eed5b9306329b779a3aff263226bbcaf92e7e39a782f1d3f9e142192"
+        },
+        "video": {
+          "bytes": 3818045,
+          "path": "/media/piloto/pop-section-094.mp4",
+          "sha256": "8cc36d01024aa7bd66896ea9acdfe7d42a0a3974b724e410bd4e27a297551153"
+        },
+        "visemes": {
+          "bytes": 46956,
+          "path": "/media/piloto/pop-section-094.visemes.json",
+          "sha256": "b3b8b13331213b0645e43d104e96ac81d857be4c869670613f42a99ed17e118d"
+        }
+      },
+      "captionContract": {
+        "maxCueSeconds": 6,
+        "maxLineCharacters": 42
+      },
+      "classification": "microaula-piloto",
+      "durationSeconds": 149.177,
+      "id": "pilot-pop-section-094",
+      "lessonId": "pop-section-094",
+      "objective": "Redigir condicionante relacionada ao impacto e verificável por evidência.",
+      "presenterCoverage": 0.35,
+      "presenterWindows": [
+        [
+          0.0,
+          9.429
+        ],
+        [
+          13.681,
+          21.335
+        ],
+        [
+          24.828,
+          32.971
+        ],
+        [
+          83.298,
+          91.841
+        ],
+        [
+          95.714,
+          104.085
+        ],
+        [
+          107.885,
+          117.956
+        ]
+      ],
+      "sceneCount": 11,
+      "scriptSha256": "532650551ae6baaadb52f40b643847a3701933749a25d2ae2a0ccde855ffa8b7",
+      "sourceRefs": [
+        {
+          "id": "pop-24",
+          "kind": "pop",
+          "locator": "POP, item 24",
+          "paragraphIds": [
+            "pop-paragraph-0625"
+          ],
+          "sectionId": "pop-section-094",
+          "tableIds": [
+            "pop-table-056"
+          ]
+        },
+        {
+          "id": "pop-24.1",
+          "kind": "pop",
+          "locator": "POP, item 24.1",
+          "paragraphIds": [
+            "pop-paragraph-0631",
+            "pop-paragraph-0632",
+            "pop-paragraph-0633",
+            "pop-paragraph-0634",
+            "pop-paragraph-0635",
+            "pop-paragraph-0636",
+            "pop-paragraph-0638"
+          ],
+          "sectionId": "pop-section-095"
+        }
+      ],
+      "title": "Formulação de condicionantes",
+      "trackId": "m12",
+      "transitionSeconds": 0.24,
+      "wordsPerMinute": 136.35
+    },
+    {
+      "assets": {
+        "captions": {
+          "bytes": 3756,
+          "path": "/media/piloto/pop-section-108.vtt",
+          "sha256": "667c6e98f2f86868eb3a98335eb705cb4eb5991e882b8f691d9e744bb60e51c8"
+        },
+        "poster": {
+          "bytes": 43619,
+          "path": "/media/piloto/pop-section-108.jpg",
+          "sha256": "6a04b5cac6a90595a08e9cee3c1100331e917a1385c37b3b19acaa6f8e403356"
+        },
+        "transcript": {
+          "bytes": 3748,
+          "path": "/media/piloto/pop-section-108.txt",
+          "sha256": "8400ecf89bf2ff98edc556afc66557d49435707cbb484841ecc495b8465d89d7"
+        },
+        "video": {
+          "bytes": 4486043,
+          "path": "/media/piloto/pop-section-108.mp4",
+          "sha256": "df92341d327d11b6e4ca5c184165225f1194477c3b545de4fe3b6ba43ba2571f"
+        },
+        "visemes": {
+          "bytes": 88120,
+          "path": "/media/piloto/pop-section-108.visemes.json",
+          "sha256": "a5aa0ae06b62ad4158560f281b5734c528936e42f7cf431436debd3ea1b325e6"
+        }
+      },
+      "captionContract": {
+        "maxCueSeconds": 6,
+        "maxLineCharacters": 42
+      },
+      "classification": "microaula-piloto",
+      "durationSeconds": 175.226,
+      "id": "pilot-pop-section-108",
+      "lessonId": "pop-section-108",
+      "objective": "Executar revisão final técnica, normativa, documental, linguística e visual antes da assinatura.",
+      "presenterCoverage": 0.35,
+      "presenterWindows": [
+        [
+          0.0,
+          12.981
+        ],
+        [
+          16.21,
+          25.929
+        ],
+        [
+          28.401,
+          39.263
+        ],
+        [
+          116.397,
+          127.55
+        ],
+        [
+          130.354,
+          139.01
+        ],
+        [
+          141.236,
+          149.195
+        ]
+      ],
+      "sceneCount": 13,
+      "scriptSha256": "b2795677b7e7f280d469783f5bb46f6434f3e82a9c57b309816b460512afedf0",
+      "sourceRefs": [
+        {
+          "id": "pop-27",
+          "kind": "pop",
+          "locator": "POP, item 27",
+          "paragraphIds": [
+            "pop-paragraph-0720"
+          ],
+          "sectionId": "pop-section-108"
+        },
+        {
+          "id": "pop-quality-checklist",
+          "kind": "pop",
+          "locator": "POP, Tabela 14",
+          "sectionId": "pop-section-109",
+          "tableIds": [
+            "pop-table-060"
+          ]
+        }
+      ],
+      "title": "Controle final de qualidade",
+      "trackId": "m13",
+      "transitionSeconds": 0.24,
+      "wordsPerMinute": 130.8
+    },
+    {
+      "assets": {
+        "captions": {
+          "bytes": 3100,
+          "path": "/media/piloto/pop-section-134.vtt",
+          "sha256": "eb119760e2a7d413116b4409488e4219ac54bf942a6f3ee06cdc28b9d648e54e"
+        },
+        "poster": {
+          "bytes": 54914,
+          "path": "/media/piloto/pop-section-134.jpg",
+          "sha256": "b131a0f8b333e993e2861f6b0a512188e8d36b10a6ab67b9ada876d38bb89c1f"
+        },
+        "transcript": {
+          "bytes": 3196,
+          "path": "/media/piloto/pop-section-134.txt",
+          "sha256": "1d63246075d4de5d4a41770644302db6779d8125b3578194350fed06d1c9b8e3"
+        },
+        "video": {
+          "bytes": 4216957,
+          "path": "/media/piloto/pop-section-134.mp4",
+          "sha256": "a32f8a962848915f8d4d17b49fb47034e0b73eef3ade03fdc3ef94d5d49198ad"
+        },
+        "visemes": {
+          "bytes": 61295,
+          "path": "/media/piloto/pop-section-134.visemes.json",
+          "sha256": "95b8e89e84573788035f05a9aa67f15f8a2f7e7494940bf6c101ec5abd06302f"
+        }
+      },
+      "captionContract": {
+        "maxCueSeconds": 6,
+        "maxLineCharacters": 42
+      },
+      "classification": "microaula-piloto",
+      "durationSeconds": 144.691,
+      "id": "pilot-pop-section-134",
+      "lessonId": "pop-section-134",
+      "objective": "Usar GeoPR, GeoParaná e bases oficiais como apoio rastreável, sem substituir a geometria do processo nem o ato legal.",
+      "presenterCoverage": 0.35,
+      "presenterWindows": [
+        [
+          0.0,
+          9.532
+        ],
+        [
+          14.866,
+          23.035
+        ],
+        [
+          27.637,
+          36.791
+        ],
+        [
+          84.12,
+          91.647
+        ],
+        [
+          95.906,
+          102.158
+        ],
+        [
+          105.731,
+          115.739
+        ]
+      ],
+      "sceneCount": 11,
+      "scriptSha256": "b57fc2795c4e4f7de42c853af4ae592d1572248884b20bf0d821bec5bf1a9ad3",
+      "sourceRefs": [
+        {
+          "id": "pop-19.1.1",
+          "kind": "pop",
+          "locator": "POP, item 19.1.1",
+          "paragraphIds": [
+            "pop-paragraph-0477",
+            "pop-paragraph-0478",
+            "pop-paragraph-0479",
+            "pop-paragraph-0480"
+          ],
+          "sectionId": "pop-section-134"
+        },
+        {
+          "id": "iat-geodados",
+          "kind": "official",
+          "locator": "IAT, Geodados",
+          "officialSourceId": "official-geodados-aplicacoes"
+        },
+        {
+          "id": "iat-uc-data",
+          "kind": "official",
+          "locator": "IAT, Dados de UCs",
+          "officialSourceId": "official-uc-data"
+        },
+        {
+          "id": "iat-management-plans",
+          "kind": "official",
+          "locator": "IAT, Planos de Manejo",
+          "officialSourceId": "official-management-plans"
+        }
+      ],
+      "title": "Bases geoespaciais oficiais",
+      "trackId": "m10",
+      "transitionSeconds": 0.24,
+      "wordsPerMinute": 140.99
+    }
+  ],
+  "kind": "MediaAssetCollection",
+  "presenterSprite": {
+    "grid": {
+      "columns": 3,
+      "frames": 12,
+      "rows": 4
+    },
+    "optimized": {
+      "bytes": 157938,
+      "path": "/media/learning-stage/professor-visemes-v2.webp",
+      "sha256": "5a256fdd0449fb896bb477fd40cac0b41dee7f90ceb20bfa7ec99669c24c77d0"
+    },
+    "order": [
+      "rest",
+      "MBP",
+      "IE",
+      "A",
+      "O",
+      "U",
+      "FV",
+      "L",
+      "CHJ",
+      "E_OPEN",
+      "SCHWA",
+      "rest_alt"
+    ],
+    "rightsBasis": "ativo visual fictício criado para uso na plataforma",
+    "source": {
+      "bytes": 2283656,
+      "path": "/media/learning-stage/professor-visemes-v2.png",
+      "sha256": "ef077fddc5e5141e721fdea7c23db2d8ae695773595acc6f5871cf2b826daa47"
+    }
+  },
+  "runtime": {
+    "ffmpeg": "ffmpeg version 7.1-essentials_build-www.gyan.dev Copyright (c) 2000-2024 the FFmpeg developers"
+  },
+  "schemaVersion": "1.0.0",
+  "selection": [
+    "pop-section-018",
+    "pop-section-059",
+    "pop-section-069",
+    "pop-section-094",
+    "pop-section-108",
+    "pop-section-134"
+  ],
+  "sourceDocument": {
+    "code": "POP-DLE-HID-001",
+    "sha256": "ad33a4939ac5f73d5669fc4784c43319d1c1cae0193c7c3a0aa04bdfd669b353",
+    "status": "minuta técnica pendente de validação técnica e institucional",
+    "version": "1.9"
+  },
+  "voice": {
+    "allowedWordsPerMinute": [
+      130,
+      150
+    ],
+    "clonedVoice": false,
+    "configSha256": "7e694de195ae3fc36dd732c445eb04fb49b649854893cb5506b978f0d50a1d6f",
+    "datasetLicense": "CC0",
+    "engine": "Piper",
+    "id": "pt_BR-faber-medium",
+    "language": "pt-BR",
+    "modelCard": "https://huggingface.co/rhasspy/piper-voices/blob/main/pt/pt_BR/faber/medium/MODEL_CARD",
+    "modelRepositoryLicense": "MIT",
+    "modelSha256": "858555e3a064209c57088fe6bd70c4c3dc54d03eaa00c45d5ecaf43a33f95aa7",
+    "modelSource": "https://huggingface.co/rhasspy/piper-voices/tree/main/pt/pt_BR/faber/medium",
+    "provider": "piper-faber",
+    "quality": "medium",
+    "sampleRate": 22050,
+    "targetWordsPerMinute": 140
+  }
+}

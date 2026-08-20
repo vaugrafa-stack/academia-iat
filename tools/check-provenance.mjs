@@ -14,9 +14,9 @@ import { derivarAulas } from '../src/lessons.js';
 
 const root = resolve(import.meta.dirname, '..');
 const EXPECTED = {
-  fileName: 'POP_DLE_HID_001_v1.9_Linguagem_Operacional_Revisada.docx',
-  bytes: 7_294_663,
-  sha256: 'd66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4',
+  fileName: 'POP_DLE_HID_001_v1.9_Sem_Empreendimento_Nomeado.docx',
+  bytes: 4_007_838,
+  sha256: 'ad33a4939ac5f73d5669fc4784c43319d1c1cae0193c7c3a0aa04bdfd669b353',
   version: '1.9',
   sections: 176,
   learningSections: 170,

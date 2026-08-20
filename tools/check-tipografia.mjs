@@ -28,15 +28,44 @@ function semComentario(css) {
   return css.replace(/\/\*[\s\S]*?\*\//g, "");
 }
 
-/** Declarações de `font-size` em pixel, com o seletor a que pertencem. */
+// Raiz padrão do navegador. Nada no projeto redefine `font-size` no html, então
+// a conversão de rem é exata. Se um dia redefinir, esta linha passa a mentir.
+const RAIZ_PX = 16;
+
+/** Declarações de `font-size`, com o seletor a que pertencem.
+ *
+ * Mede pixel e rem. O padrão anterior só aceitava `px`, e o portão anunciava
+ * que nenhum texto ficava abaixo do piso de leitura enquanto rem, em e %
+ * passavam sem ser medidos. Entre os invisíveis estava
+ * `.vls-video::cue{font-size:78%}`, o tamanho da legenda do vídeo, que é
+ * justamente o texto de leitura corrida que este arquivo existe para proteger.
+ *
+ * em e % NÃO são convertidos: dependem do elemento pai e não são resolvíveis
+ * lendo o arquivo. Eles saem em `dependentes` para virar aviso visível, em vez
+ * de silêncio. */
 export function tamanhosDeclarados(css) {
   const achados = [];
+  const dependentes = [];
   for (const regra of semComentario(css).matchAll(/([^{}]+)\{([^}]*)\}/g)) {
     const seletor = regra[1].trim().replace(/\s+/g, " ");
-    for (const decl of regra[2].matchAll(/font-size:\s*(\d+(?:\.\d+)?)px/g)) {
-      achados.push({ seletor, px: Number(decl[1]) });
+    for (const decl of regra[2].matchAll(/font-size:\s*(\d*\.?\d+)(px|rem)\b/g)) {
+      const valor = Number(decl[1]);
+      achados.push({
+        seletor,
+        px: decl[2] === "rem" ? valor * RAIZ_PX : valor,
+        unidade: decl[2],
+      });
+    }
+    // O `%` não leva `\b`: ele não é caractere de palavra, e em
+    // `font-size:78%}` a fronteira entre `%` e `}` não existe. Com a fronteira
+    // exigida, o único caso que motivou este conserto, a legenda do vídeo em
+    // 78%, continuava invisível para a régua que passou a procurá-lo.
+    for (const decl of regra[2].matchAll(/font-size:\s*(\d*\.?\d+)(?:(em)\b|(%))/g)) {
+      const unidade = decl[2] || decl[3];
+      dependentes.push({ seletor, valor: Number(decl[1]), unidade });
     }
   }
+  achados.dependentes = dependentes;
   return achados;
 }
 
@@ -54,9 +83,16 @@ for (const arquivo of readdirSync(PASTA).filter((n) => n.endsWith(".css"))) {
 // portão quebrado, e este nasce com a árvore já corrigida, então sem armadilha
 // ele passaria para sempre sem provar nada.
 const DEVE_ACUSAR = ".alguma-coisa{font-size:9px}";
+// A armadilha em rem existe porque o autoteste atestava só o caso que a régua
+// já sabia medir: com 9px na entrada, ele provava que pixel funciona e nada
+// sobre o resto. Meio rem são 8px e precisam reprovar igual.
+const DEVE_ACUSAR_REM = ".pequena{font-size:.5rem}";
 const NAO_PODE_ACUSAR = "/* antes era font-size:9px aqui */\n.outra{font-size:11px}";
 if (!tamanhosDeclarados(DEVE_ACUSAR).some((d) => d.px < PISO)) {
   falhas.push("autoteste: deveria acusar 9px e nao acusou");
+}
+if (!tamanhosDeclarados(DEVE_ACUSAR_REM).some((d) => d.px < PISO)) {
+  falhas.push("autoteste: deveria acusar .5rem, que sao 8px, e nao acusou");
 }
 if (tamanhosDeclarados(NAO_PODE_ACUSAR).some((d) => d.px < PISO)) {
   falhas.push("autoteste: acusou tamanho que estava dentro de comentario");
@@ -72,7 +108,24 @@ if (falhas.length) {
   process.exit(1);
 }
 
-const total = readdirSync(PASTA)
-  .filter((n) => n.endsWith(".css"))
-  .reduce((n, f) => n + tamanhosDeclarados(readFileSync(join(PASTA, f), "utf8")).length, 0);
+let total = 0;
+const relativos = [];
+for (const arquivo of readdirSync(PASTA).filter((n) => n.endsWith(".css"))) {
+  const medidos = tamanhosDeclarados(readFileSync(join(PASTA, arquivo), "utf8"));
+  total += medidos.length;
+  for (const d of medidos.dependentes) {
+    relativos.push(`${arquivo}: ${d.valor}${d.unidade} em ${d.seletor.slice(0, 56)}`);
+  }
+}
 console.log(`OK: ${total} tamanhos declarados, nenhum abaixo de ${PISO}px.`);
+// O que a régua NÃO alcança sai por escrito. Silêncio sobre o não medido é o
+// que fazia este portão parecer cobrir a folha inteira: em e % dependem do
+// elemento pai, e a única forma honesta de tratá-los é dizer que existem e
+// pedir conferência humana, em vez de omitir.
+if (relativos.length) {
+  console.log(
+    `\n${relativos.length} tamanho(s) em unidade relativa ao pai, fora do alcance da régua.`
+    + " Confira na tela, porque o valor final depende do contexto:",
+  );
+  for (const r of relativos) console.log(`  ${r}`);
+}

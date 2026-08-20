@@ -148,8 +148,24 @@ for (const file of [...candidates, ...operationalCandidates]) {
   }
 }
 for (const file of publicBinaryCandidates) {
-  const searchable = (await readFile(file)).toString('latin1').toLocaleLowerCase('pt-BR');
-  const marker = PUBLIC_BINARY_MARKERS.find((value) => searchable.includes(value));
+  // Duas leituras do mesmo buffer, e não uma.
+  //
+  // A leitura era só em latin1, e um dos marcadores da lista é acentuado.
+  // Metadado de MP4, JPEG e XMP é UTF-8 por especificação: o 'ê' são dois bytes
+  // que, lidos como latin1, viram outra coisa. O marcador acentuado, portanto,
+  // nunca podia casar, e a lista dava a impressão de cobrir o que não cobria.
+  // Gravar a expressão acentuada no XMP de qualquer ativo passava batido.
+  //
+  // latin1 continua porque metadado antigo gravado nessa página de código
+  // existe, e uma passada só em UTF-8 perderia esse caso.
+  const bruto = await readFile(file);
+  const leituras = [
+    bruto.toString('latin1').toLocaleLowerCase('pt-BR'),
+    bruto.toString('utf8').toLocaleLowerCase('pt-BR'),
+  ];
+  const marker = PUBLIC_BINARY_MARKERS.find((value) =>
+    leituras.some((texto) => texto.includes(value)),
+  );
   if (marker) {
     failures.push(`${relative(file)} — metadado binário público proibido (${marker})`);
   }

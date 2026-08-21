@@ -183,7 +183,10 @@ button.sidebar-help{background:transparent;font:inherit;color:inherit;cursor:poi
 .pc-out div{border:1px solid var(--line);border-radius:10px;padding:12px 16px;background:var(--soft)}
 .pc-out span{display:block;font-size:12px;font-weight:700;color:var(--muted)}
 .pc-out strong{font-size:22px;color:var(--green)}
-.pc-note{font-size:12px;color:var(--muted);margin-top:12px}
+/* Linha de leitura. Medido em 1440px: estas frases corriam a 115 e 139
+   caracteres por linha, e acima de 100 o olho perde o retorno de linha. O teto
+   em ch acompanha o tamanho da fonte, entao continua valendo se a fonte mudar. */
+.pc-note{font-size:12px;color:var(--muted);margin-top:12px;max-width:76ch}
 .pot-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:16px;margin-top:14px}
 .pot-card{border:1px solid var(--line);border-left:5px solid var(--pc);border-radius:10px;padding:16px}
 .pot-sigla{font-size:24px;font-weight:800;color:var(--pc)}
@@ -381,7 +384,7 @@ button.primary:active{transform:translateY(0);box-shadow:0 2px 8px #16563C33}
 .prc-card h3{margin:2px 0;font-size:17px}
 .prc-crit,.prc-local{display:flex;align-items:flex-start;gap:6px;font-size:12.5px;color:var(--muted);margin:0;font-weight:600}
 .prc-crit svg,.prc-local svg{flex:none;margin-top:2px}
-.prc-dados{font-size:13.5px;line-height:1.55;color:var(--ink2);margin:2px 0}
+.prc-dados{font-size:13.5px;line-height:1.55;color:var(--ink2);margin:2px 0;max-width:76ch}
 .prc-site{display:inline-flex;align-items:center;gap:7px;margin-top:auto;font-size:13px;font-weight:800;color:var(--green2);text-decoration:none;border-top:1px solid var(--line);padding-top:10px}
 .prc-site:hover{color:var(--green)}
 /* ===== Esquemas de arranjo ===== */

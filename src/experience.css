@@ -236,6 +236,8 @@
   color: var(--muted);
   font-size: 12px;
   line-height: 1.55;
+  /* Corria a 139 caracteres por linha em 1440px. */
+  max-width: 76ch;
 }
 
 .formation-empty {

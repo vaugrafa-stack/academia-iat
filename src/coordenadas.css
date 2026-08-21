@@ -8,7 +8,11 @@
 .co-painel>header strong{font-size:14px;color:var(--ink);line-height:1.3}
 .co-painel>header small{font-size:12px;color:var(--muted);line-height:1.45}
 
-.co-ir{flex:none;min-height:30px;padding:0 13px;border-radius:8px;cursor:pointer;
+/* 44 x 44 e o piso de alvo de toque adotado neste projeto, acima dos 24 do
+   WCAG 2.2. O rotulo "Ir" tem duas letras: sem o piso explicito o botao
+   encolhia para 35 px de largura, e o portao de acessibilidade reprovou a
+   rota do mapa por causa dele. */
+.co-ir{flex:none;min-width:44px;min-height:44px;padding:0 13px;border-radius:8px;cursor:pointer;
  border:1px solid var(--ink2);background:var(--surface2);color:var(--ink);
  font:inherit;font-size:13px;font-weight:800}
 .co-ir:focus-visible{outline:3px solid var(--blue);outline-offset:2px}

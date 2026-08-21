@@ -236,7 +236,7 @@ test('experiência responsiva prioriza aprender e praticar sem overflow', async 
   if (mobile) await menuButton.click();
   const sidebar = page.locator('#navegacao-lateral');
   const geopr = sidebar.getByRole('link', {
-    name: 'Abrir GeoPR · mapas oficiais em nova aba (site externo)',
+    name: 'Abrir GeoPR · portal completo em nova aba (site externo)',
   });
   await expect(geopr).toHaveAttribute(
     'href',

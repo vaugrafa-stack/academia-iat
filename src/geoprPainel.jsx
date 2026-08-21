@@ -210,7 +210,7 @@ export default function GeoprPainel({ ativas, alternar, limpar, atributos }) {
       <header className="gp-cabecalho">
         <Layers3 size={16} aria-hidden="true" />
         <div>
-          <strong>Camadas oficiais do GeoPR</strong>
+          <h2>Camadas oficiais do GeoPR</h2>
           <small>Serviços publicados pelo IAT, desenhados sobre este mapa.</small>
         </div>
         {!!ativas.length && (

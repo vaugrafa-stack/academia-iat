@@ -81,7 +81,7 @@ test('navegação móvel abre categorias sem escolher uma página pelo usuário'
   const painelConsultar = page.getByRole('region', { name: 'Consultar' });
   await expect(painelConsultar.locator('.mobile-nav-panel__item')).toHaveCount(4);
   const geopr = painelConsultar.getByRole('link', {
-    name: 'Abrir GeoPR · mapas oficiais em nova aba (site externo)',
+    name: 'Abrir GeoPR · portal completo em nova aba (site externo)',
   });
   await expect(geopr).toBeVisible();
   await expect(geopr).toHaveAttribute(

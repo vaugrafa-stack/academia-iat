@@ -154,6 +154,57 @@ Corrigido também o desenho do arco: o banho de água cobria a largura inteira e
 planta, então o vale a jusante lia como água parada e a barragem parecia
 represar dos dois lados.
 
+### 6. Contraste e piso de prosa sem régua — FEITO
+
+Nenhum portão media contraste em varredura. O arquivo de teste de
+acessibilidade media dois pontos escolhidos a dedo, o gradiente e o contorno de
+foco, e nada passava por todo o texto renderizado.
+
+Virou teste em `tests/e2e/accessibility.artifact.pw.js`, que o CI já executa,
+reusando os helpers de cor que o arquivo tinha. E foi ao virar teste que o
+buraco apareceu: meus scripts avulsos varriam as dez rotas do menu, e a lista
+`ROUTES` do teste inclui as páginas de AULA. A tela mais lida da plataforma
+estava fora de toda medição.
+
+Três defeitos lá:
+
+- botão de velocidade ativo em 1,48:1, fundo menta fixo com `color:var(--ink)`,
+  que no tema escuro é quase branco
+- bloco `.analysis-alert` em 2,28:1, com hex fixo `#635943` ignorando os tokens
+  de âmbar por tema que o projeto já tem
+- sete regras de prosa em 11 e 11,5px, incluindo a definição do glossário
+
+Conferido antes de corrigir que os dois contrastes não eram falso positivo de
+fundo pintado por vídeo, que é a armadilha clássica. Não eram.
+
+### 7. Norma citada sem lastro — FEITO
+
+Das restrições permanentes, a de maior consequência e a de menor verificação:
+não inventar. Nada olhava para os números de lei escritos no texto das telas.
+
+Medido: 34 normas citadas, 32 no POP e 2 com URL oficial. Nenhuma inventada.
+Criado `tools/check-normas.mjs` com três armadilhas de autoteste, ligado à
+bateria, conferido nos dois sentidos.
+
+A régua errou duas vezes antes de acertar, e as duas ficam registradas dentro
+dela: exigir número e ano adjacentes reprovava a fonte por escrever certo, e
+codificar só o POP reprovava atos verificáveis, que a regra admite.
+
+### 8. Registro local apresentado como certificado — MEDIDO, LIMPO
+
+A regra permanente diz que marco local nunca é apresentado como certificado ou
+credencial institucional. O código nomeia a lista como `certificates`, o que
+levanta suspeita, mas nomeação interna não é apresentação.
+
+Medido na tela: o perfil mostra "Não é login seguro nem credencial institucional
+do IAT" e "Eles não são certificado, credencial profissional nem documento do
+IAT". Os botões "Baixar" são de pacote offline. Nenhum artefato é apresentado
+como certificado.
+
+Não criei portão aqui: a única regra escrevível confundiria o aviso, que contém
+a palavra, com a infração. Portão que acusa quem cumpre a regra ensina a
+desligar portão.
+
 ## Fora de escopo, e por quê
 
 - Chave HMAC derivada do segredo OIDC e limite global de login: estão em

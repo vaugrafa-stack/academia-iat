@@ -52,10 +52,19 @@ export default {
     name: 'academia-iat-csp-dev',
     apply: 'serve',
     transformIndexHtml(html) {
-      return html.replace(
-        "connect-src 'self' https://services.arcgisonline.com;",
-        "connect-src 'self' https://services.arcgisonline.com ws://127.0.0.1:* ws://localhost:*;",
-      );
+      // A troca precisa casar com o CSP escrito no index.html. Quando alguem
+      // acrescenta uma origem la e esquece daqui, o `replace` simplesmente nao
+      // encontra nada, devolve o HTML intacto e o dev perde a liberacao de
+      // WebSocket: o HMR para de atualizar a pagina sem dizer por que. Falhar
+      // aqui custa uma mensagem clara; nao falhar custa uma tarde.
+      const alvo = "connect-src 'self' https://services.arcgisonline.com https://geopr.iat.pr.gov.br;";
+      if (!html.includes(alvo)) {
+        throw new Error(
+          `vite.config.mjs: o CSP de index.html mudou e nao contem mais ${JSON.stringify(alvo)}.`
+          + ' Atualize o alvo desta troca junto com o index.html.',
+        );
+      }
+      return html.replace(alvo, alvo.replace(';', ' ws://127.0.0.1:* ws://localhost:*;'));
     },
   }],
   define: {

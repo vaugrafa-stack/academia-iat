@@ -12,6 +12,17 @@ import {
   SATELLITE_INFO_URL,
   useSatelliteLayer,
 } from './satelliteLayer.js';
+import {
+  atributosLegiveis,
+  pontoParaMercator,
+  mercatorParaMapa,
+  urlDeAtributos,
+  useCamadasGeopr,
+  useLegendas,
+} from './geoprCamadas.js';
+import GeoprPainel, { GeoprLegenda } from './geoprPainel.jsx';
+import PainelCoordenada from './painelCoordenada.jsx';
+import { dentroDoParana, geoParaMercator, mercatorParaGeo } from './coordenadas.js';
 
 const COR = { CGH: '#57d8bf', PCH: '#4cc4f5', UHE: '#9fb7ff' };
 const ORDEM = ['CGH', 'PCH', 'UHE'];
@@ -204,6 +215,13 @@ function MapaConteudo({ dados, state, setState }) {
     satelite: false,
   });
   const arrasto = useRef(null);
+  // Camadas do GeoPR ligadas. Guarda o objeto inteiro, e nao so o id, porque a
+  // busca no acervo produz camadas que nao estao no catalogo curado.
+  const [geopr, setGeopr] = useState([]);
+  const [atributos, setAtributos] = useState([]);
+  // Ponto marcado no mapa: vem do clique ou de uma coordenada digitada.
+  const [marca, setMarca] = useState(null);
+  const consultaAberta = useRef(null);
 
 
   const usinas = useMemo(() => {
@@ -301,6 +319,53 @@ function MapaConteudo({ dados, state, setState }) {
     escala,
   });
 
+  // Tamanho do SVG na tela, para pedir a imagem do GeoPR na resolucao certa.
+  // Pedir sempre 1000 de largura desperdicaria banda em telefone e sairia
+  // borrado em tela densa; medir custa um observador e acerta os dois casos.
+  const [quadro, setQuadro] = useState(null);
+  useEffect(() => {
+    const alvo = svgRef.current;
+    if (!alvo || typeof ResizeObserver === 'undefined') return undefined;
+    const medir = () => {
+      const caixa = alvo.getBoundingClientRect();
+      if (!caixa.width || !caixa.height) return;
+      // Teto de 1600: acima disso o servidor do IAT desenha mais do que a tela
+      // aproveita, e quem paga a conta e um servidor publico.
+      const densidade = Math.min(2, window.devicePixelRatio || 1);
+      setQuadro({
+        larguraPx: Math.min(1600, Math.round(caixa.width * densidade)),
+        alturaPx: Math.min(1600, Math.round(caixa.height * densidade)),
+      });
+    };
+    medir();
+    const observador = new ResizeObserver(medir);
+    observador.observe(alvo);
+    return () => observador.disconnect();
+  }, []);
+
+  const camadasGeopr = useCamadasGeopr({
+    camadas: geopr,
+    projecao: dados.tileProjection,
+    largura: larg,
+    altura: alt,
+    vista: v,
+    quadro,
+  });
+
+  const legendasGeopr = useLegendas(geopr);
+
+  const alternarGeopr = React.useCallback((camada) => {
+    setGeopr((atuais) => (atuais.some((c) => c.id === camada.id)
+      ? atuais.filter((c) => c.id !== camada.id)
+      : [...atuais, camada]));
+    setAtributos([]);
+  }, []);
+
+  const limparGeopr = React.useCallback(() => {
+    setGeopr([]);
+    setAtributos([]);
+  }, []);
+
   const aplicar = (nx, ny, nw, nh) => {
     // Nunca deixa a janela sair do mapa nem passar do mapa inteiro.
     const w = Math.min(larg, Math.max(larg / 8, nw));
@@ -347,6 +412,67 @@ function MapaConteudo({ dados, state, setState }) {
     arrasto.current = null;
     svgRef.current.releasePointerCapture?.(ev.pointerId);
   };
+
+  // Marca no mapa a coordenada em que a pessoa clicou, e le o valor dela. Vale
+  // com ou sem camada do GeoPR ligada: saber onde um ponto cai e util por si.
+  const marcarOndeClicou = (ev) => {
+    const { cx, cy } = noMapa(ev);
+    const ponto = pontoParaMercator(dados.tileProjection, larg, alt, cx, cy);
+    const geo = ponto && mercatorParaGeo(ponto.x, ponto.y);
+    if (geo) setMarca({ ...geo, x: cx, y: cy, forma: 'clique' });
+  };
+
+  /** Leva o mapa ate uma coordenada digitada e a marca. */
+  const irParaCoordenada = React.useCallback((lido) => {
+    const merc = geoParaMercator(lido.lat, lido.lon);
+    const noDesenho = merc && mercatorParaMapa(dados.tileProjection, larg, alt, merc.x, merc.y);
+    if (!noDesenho) return;
+    setMarca({ ...lido, x: noDesenho.x, y: noDesenho.y });
+    // Aproxima o suficiente para o ponto ter contexto, sem perder a referencia
+    // do Estado inteiro. Fora do Parana a janela nao mexe: arrastar a vista
+    // para um lugar que o desenho nao cobre deixaria a tela vazia, e a marca
+    // continua visivel na borda com o aviso do painel.
+    if (dentroDoParana(lido.lat, lido.lon)) {
+      const largura = larg / 5;
+      aplicar(noDesenho.x - largura / 2, noDesenho.y - (largura * (alt / larg)) / 2,
+              largura, largura * (alt / larg));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dados.tileProjection, larg, alt, v.w, v.h]);
+
+  // Pergunta ao GeoPR o que existe no ponto clicado. Complementa o que o mapa
+  // local ja faz no mesmo clique (filtrar bacia, escolher usina); nao substitui.
+  const consultarGeopr = (ev) => {
+    marcarOndeClicou(ev);
+    if (!geopr.length || !camadasGeopr.caixa) return;
+    const { cx, cy } = noMapa(ev);
+    const ponto = pontoParaMercator(dados.tileProjection, larg, alt, cx, cy);
+    if (!ponto) return;
+    consultaAberta.current?.abort();
+    const controle = new AbortController();
+    consultaAberta.current = controle;
+    // Tres camadas no maximo: cada consulta e um desenho no servidor do IAT, e
+    // um painel com dez blocos de atributo nao se le de qualquer forma.
+    Promise.all(geopr.slice(0, 3).map((camada) => {
+      const alvo = urlDeAtributos(camada, {
+        caixa: camadasGeopr.caixa,
+        larguraPx: camadasGeopr.larguraPx,
+        alturaPx: camadasGeopr.alturaPx,
+        x: ponto.x,
+        y: ponto.y,
+      });
+      if (!alvo) return Promise.resolve([]);
+      return fetch(alvo, { credentials: 'omit', mode: 'cors', signal: controle.signal })
+        .then((resposta) => (resposta.ok ? resposta.json() : null))
+        .then((corpo) => atributosLegiveis(corpo))
+        .catch(() => []);
+    })).then((listas) => {
+      if (controle.signal.aborted) return;
+      setAtributos(listas.flat().filter((achado) => achado.valores.length));
+    });
+  };
+
+  useEffect(() => () => consultaAberta.current?.abort(), []);
   // Teclado: a mesma navegacao sem depender de mouse.
   const tecla = (ev) => {
     const passo = v.w * 0.15;
@@ -371,7 +497,7 @@ function MapaConteudo({ dados, state, setState }) {
         <div>
           <small className="ph-kicker">TERRITÓRIO</small>
           <h1>Mapa das hidrelétricas do Paraná</h1>
-          <p>As {(dados.usinas || []).length} usinas do registro da ANEEL sobre as {(dados.bacias || []).length} bacias hidrográficas do Estado. O tamanho do ponto acompanha a potência.</p>
+          <p>As {(dados.usinas || []).length} usinas do registro da ANEEL sobre as {(dados.bacias || []).length} bacias hidrográficas do Estado. O tamanho do ponto acompanha a potência. As camadas oficiais do GeoPR desenham sobre este mesmo mapa, no painel ao lado.</p>
         </div>
       </header>
 
@@ -393,8 +519,8 @@ function MapaConteudo({ dados, state, setState }) {
             </div>
           </div>
           <p className="mp-limite-camada">
-            Bacias, usinas, busca e filtros funcionam sem internet. A camada Satélite é opcional e
-            carrega imagens online somente quando ativada.
+            Bacias, usinas, busca e filtros funcionam sem internet. As camadas Satélite e GeoPR são
+            opcionais e carregam imagens online somente quando ativadas.
           </p>
           <p className="mp-limite-camada">
             Os rótulos CGH, PCH e UHE dos pontos reproduzem o tipo do registro consultado. A faixa MCH,
@@ -408,9 +534,15 @@ function MapaConteudo({ dados, state, setState }) {
                  className={[
                    escala > 1.02 ? 'mp-arrastavel' : '',
                    camadas.satelite && satelite.online ? 'mp-satelite-on' : '',
+                   // Camada de fundo do GeoPR desenha ABAIXO das bacias locais,
+                   // que tem preenchimento opaco e a esconderiam por inteiro.
+                   // A marca abaixo deixa a bacia translucida, com o contorno
+                   // preservado, do mesmo jeito que o modo satelite ja fazia.
+                   camadasGeopr.pedidos.some((p) => p.camada.ordem !== 'topo') ? 'gp-fundo-on' : '',
                  ].filter(Boolean).join(' ')}
                  onWheel={roda} onPointerDown={pegar} onPointerMove={mover}
                  onPointerUp={soltar} onPointerCancel={soltar} onKeyDown={tecla}
+                 onClick={consultarGeopr}
                  aria-label={`Mapa do Paraná com ${(dados.bacias || []).length} bacias hidrográficas e ${usinas.length} usinas em exibição`}>
               {camadas.satelite && satelite.online && (
                 <g className="mp-satelite" aria-hidden="true">
@@ -427,6 +559,29 @@ function MapaConteudo({ dados, state, setState }) {
                       onError={() => satelite.registrar('failed', satelite.currentTileKeys[tileIndex])}
                     />
                   ))}
+                </g>
+              )}
+              {!!camadasGeopr.pedidos.length && (
+                <g className="gp-camadas gp-fundo" aria-hidden="true">
+                  {camadasGeopr.pedidos
+                    .filter((pedido) => pedido.camada.ordem !== 'topo')
+                    .map((pedido) => (
+                      <image
+                        key={pedido.chave}
+                        href={pedido.href}
+                        // O retangulo e o da vista em que a imagem FOI PEDIDA.
+                        // Enquanto a nova nao chega, a anterior continua no
+                        // lugar certo do mundo em vez de esticar sobre a area
+                        // errada durante o arrasto.
+                        x={pedido.retangulo.x}
+                        y={pedido.retangulo.y}
+                        width={pedido.retangulo.w}
+                        height={pedido.retangulo.h}
+                        preserveAspectRatio="none"
+                        onLoad={() => camadasGeopr.registrar('carregou', pedido.chave)}
+                        onError={() => camadasGeopr.registrar('falhou', pedido.chave)}
+                      />
+                    ))}
                 </g>
               )}
               {camadas.bacias && <g className="mp-bacias">
@@ -454,6 +609,36 @@ function MapaConteudo({ dados, state, setState }) {
                     ))}
                 </g>
               )}
+              {!!camadasGeopr.pedidos.length && (
+                <g className="gp-camadas gp-topo" aria-hidden="true">
+                  {camadasGeopr.pedidos
+                    .filter((pedido) => pedido.camada.ordem === 'topo')
+                    .map((pedido) => (
+                      <image
+                        key={pedido.chave}
+                        href={pedido.href}
+                        x={pedido.retangulo.x}
+                        y={pedido.retangulo.y}
+                        width={pedido.retangulo.w}
+                        height={pedido.retangulo.h}
+                        preserveAspectRatio="none"
+                        onLoad={() => camadasGeopr.registrar('carregou', pedido.chave)}
+                        onError={() => camadasGeopr.registrar('falhou', pedido.chave)}
+                      />
+                    ))}
+                </g>
+              )}
+              {marca && Number.isFinite(marca.x) && (
+                // Alvo, e nao um pino: pino aponta para um lugar aproximado, e
+                // aqui o que importa e o ponto exato onde a coordenada cai.
+                <g className="co-marca" aria-hidden="true">
+                  <circle cx={marca.x} cy={marca.y} r={12 / escala} />
+                  <line x1={marca.x - 19 / escala} y1={marca.y} x2={marca.x - 5 / escala} y2={marca.y} />
+                  <line x1={marca.x + 5 / escala} y1={marca.y} x2={marca.x + 19 / escala} y2={marca.y} />
+                  <line x1={marca.x} y1={marca.y - 19 / escala} x2={marca.x} y2={marca.y - 5 / escala} />
+                  <line x1={marca.x} y1={marca.y + 5 / escala} x2={marca.x} y2={marca.y + 19 / escala} />
+                </g>
+              )}
               {camadas.usinas && <g className="mp-usinas">
                 {usinas.map((u, i) => (
                   <circle key={`${u.nome}-${i}`} cx={u.x} cy={u.y} r={raio(u)}
@@ -466,6 +651,12 @@ function MapaConteudo({ dados, state, setState }) {
               </g>}
             </svg>
 
+            <GeoprLegenda
+              camadas={geopr}
+              legendas={legendasGeopr}
+              esperando={camadasGeopr.esperando}
+              aoDesligar={alternarGeopr}
+            />
             {camadas.satelite && satelite.status === 'loading' && (
               <div className="mp-satelite-estado" role="status">Carregando imagens de satélite…</div>
             )}
@@ -515,6 +706,17 @@ function MapaConteudo({ dados, state, setState }) {
         </figure>
 
         <aside className="mp-painel">
+          <PainelCoordenada
+            marca={marca}
+            aoBuscar={irParaCoordenada}
+            aoLimpar={() => setMarca(null)}
+          />
+          <GeoprPainel
+            ativas={geopr}
+            alternar={alternarGeopr}
+            limpar={limparGeopr}
+            atributos={atributos}
+          />
           {state && setState && <ExercicioEnquadrar usinas={dados.usinas} state={state} setState={setState} />}
           <div className="mp-busca">
             <Layers3 size={16} aria-hidden="true" />

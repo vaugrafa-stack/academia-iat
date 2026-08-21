@@ -1,0 +1,158 @@
+/* Painel e camadas do GeoPR.
+   Folha propria, carregada junto da rota do mapa: o painel so existe la, e
+   somar estas regras ao CSS inicial faria todo mundo pagar por uma tela que a
+   maioria nao abre. */
+
+.gp-camadas{pointer-events:none}
+/* A imagem do WMS vem com anti-serrilhado do servidor. Deixar o navegador
+   suavizar de novo no zoom borra linha fina de hidrografia. */
+.gp-camadas image{image-rendering:auto}
+/* Poligono grande no fundo entra translucido para nao apagar as bacias
+   proprias; ponto e linha no topo ficam opacos, senao somem. */
+.gp-fundo{opacity:.72}
+
+/* As bacias locais tem preenchimento OPACO. Sem esta regra, a camada de fundo
+   do GeoPR desenha embaixo delas e some por inteiro: o botao acende, a imagem
+   chega do servidor com 200, e a tela nao muda em nada. Foi o que aconteceu na
+   primeira montagem, e nenhum teste pegaria, porque tecnicamente tudo
+   funcionava.
+   O tratamento e o mesmo que o modo satelite ja usava: a bacia vira contorno
+   com preenchimento leve, e a informacao de baixo aparece sem que a divisao
+   hidrografica se perca.
+   A especificidade e deliberadamente maior que a da regra do satelite, porque
+   as duas moram em folhas diferentes e empatar deixaria o resultado na mao da
+   ordem de carregamento. */
+.mp-map-stage svg.gp-fundo-on .mp-bacias path{
+ fill:color-mix(in srgb,var(--surface) 15%,transparent);
+ stroke:color-mix(in srgb,var(--ink) 55%,transparent);
+ stroke-width:1.15;
+}
+.mp-map-stage svg.gp-fundo-on .mp-bacias path.par{
+ fill:color-mix(in srgb,var(--ink) 8%,transparent);
+}
+.mp-map-stage svg.gp-fundo-on .mp-bacias path:hover,
+.mp-map-stage svg.gp-fundo-on .mp-bacias path.ativa{
+ fill:color-mix(in srgb,var(--green2) 24%,transparent);
+ stroke:var(--green2);stroke-width:1.8;
+}
+.mp-map-stage svg.gp-fundo-on .mp-bacias path.escolhida{
+ fill:color-mix(in srgb,var(--green2) 33%,transparent);
+ stroke:var(--ink);stroke-width:2.1;
+}
+
+.gp-painel{display:flex;flex-direction:column;gap:11px;padding:13px;
+ border:1px solid var(--line);border-radius:12px;background:var(--surface2)}
+
+.gp-cabecalho{display:flex;align-items:flex-start;gap:9px}
+.gp-cabecalho>div{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.gp-cabecalho strong{font-size:14px;color:var(--ink);line-height:1.3}
+.gp-cabecalho small{font-size:12px;color:var(--muted);line-height:1.45}
+
+/* O limite do POP nao e nota de rodape. Ele fica no topo, com contraste
+   suficiente para ser lido, porque o erro que evita e concluir sobreposicao
+   olhando poligonal na tela. */
+.gp-limite{display:flex;gap:8px;margin:0;padding:9px 11px;border-radius:9px;
+ border:1px solid var(--line);background:var(--surface);
+ font-size:12.5px;line-height:1.5;color:var(--muted)}
+.gp-limite svg{flex:none;margin-top:2px;color:var(--amber,var(--ink2))}
+
+.gp-grupo{display:flex;flex-direction:column;gap:6px}
+.gp-grupo h3{margin:0;font-size:11px;font-weight:800;letter-spacing:.06em;
+ text-transform:uppercase;color:var(--muted)}
+.gp-grupo ul,.gp-achados{list-style:none;margin:0;padding:0;
+ display:flex;flex-direction:column;gap:5px}
+
+.gp-grupo li>button,.gp-achados li>button{
+ width:100%;display:flex;align-items:center;gap:9px;text-align:left;
+ min-height:44px;padding:9px 12px;border-radius:9px;cursor:pointer;
+ border:1px solid var(--line);background:var(--surface);color:var(--muted);
+ font:inherit;font-size:13px;font-weight:700}
+.gp-grupo li>button.on,.gp-achados li>button.on{
+ color:var(--ink);border-color:var(--ink2);background:var(--surface2)}
+.gp-grupo li>button:focus-visible,.gp-achados li>button:focus-visible{
+ outline:3px solid var(--blue);outline-offset:2px}
+.gp-titulo{flex:1;min-width:0;line-height:1.35}
+.gp-modulo{flex:none;font-size:11px;font-weight:700;letter-spacing:.04em;
+ padding:2px 7px;border-radius:999px;border:1px solid currentColor;opacity:.75}
+.gp-achados li>button small{flex:none;font-size:11px;font-weight:600;opacity:.7}
+
+.gp-detalhe{padding:7px 12px 2px}
+.gp-detalhe p{margin:0 0 5px;font-size:12.5px;line-height:1.5;color:var(--muted)}
+
+.gp-credito{display:block;font-size:11.5px;line-height:1.45;color:var(--muted)}
+/* Servico que nao declara origem recebe marca visual propria: a lacuna e
+   informacao, e o POP manda registrar a fonte. */
+.gp-sem-fonte{font-style:italic;opacity:.9}
+
+.gp-acervo{display:flex;flex-direction:column;gap:7px;
+ padding-top:10px;border-top:1px solid var(--line)}
+.gp-nota{margin:0;font-size:11.5px;line-height:1.5;color:var(--muted)}
+.gp-aviso{color:var(--ink2)}
+.gp-achados{max-height:230px;overflow-y:auto}
+
+.gp-atributos{display:flex;flex-direction:column;gap:8px;
+ padding-top:10px;border-top:1px solid var(--line)}
+.gp-atributos h3{margin:0;font-size:11px;font-weight:800;letter-spacing:.06em;
+ text-transform:uppercase;color:var(--muted)}
+.gp-atributos article{border:1px solid var(--line);border-radius:9px;
+ background:var(--surface);padding:9px 11px}
+.gp-atributos h4{margin:0 0 6px;font-size:12.5px;color:var(--ink);line-height:1.35}
+.gp-atributos dl{display:grid;grid-template-columns:minmax(0,auto) minmax(0,1fr);
+ gap:3px 11px;margin:0}
+.gp-atributos dt{font-size:11px;font-weight:700;color:var(--muted);
+ overflow-wrap:anywhere}
+.gp-atributos dd{margin:0;font-size:12px;color:var(--ink);overflow-wrap:anywhere}
+
+.gp-portal{display:inline-flex;align-items:center;gap:6px;align-self:flex-start;
+ min-height:44px;font-size:12.5px;font-weight:700;color:var(--blue)}
+
+@media (max-width:640px){
+  .gp-achados{max-height:190px}
+  .gp-atributos dl{grid-template-columns:minmax(0,1fr)}
+  .gp-atributos dt{margin-top:5px}
+}
+
+/* Legenda sobre o mapa.
+   Fica sobre o desenho, e nao ao lado, porque a pergunta que ela responde
+   ("o que e esse verde?") nasce olhando para o mapa. Obrigar a pessoa a
+   procurar a resposta noutro canto da pagina e o que havia antes. */
+.gp-legenda{position:absolute;left:10px;bottom:10px;z-index:2;
+ max-width:min(300px,calc(100% - 20px));max-height:min(58%,340px);overflow:auto;
+ border:1px solid var(--line);border-radius:10px;
+ background:color-mix(in srgb,var(--surface) 92%,transparent);
+ backdrop-filter:blur(3px)}
+
+.gp-legenda-topo{display:flex;align-items:center;gap:7px;width:100%;
+ min-height:34px;padding:7px 10px;border:0;background:none;cursor:pointer;
+ color:var(--ink);font:inherit;font-size:12px;font-weight:800;text-align:left}
+.gp-legenda-topo>span{flex:1;min-width:0}
+.gp-legenda-espera{font-weight:600;font-style:normal;font-size:11px;color:var(--muted)}
+.gp-legenda-seta{flex:none;transition:transform .18s ease}
+.gp-legenda.fechada .gp-legenda-seta{transform:rotate(-90deg)}
+.gp-legenda-topo:focus-visible{outline:3px solid var(--blue);outline-offset:-3px}
+
+.gp-legenda>ul{list-style:none;margin:0;padding:0 10px 9px;
+ display:flex;flex-direction:column;gap:9px}
+.gp-legenda>ul>li{display:flex;flex-direction:column;gap:2px}
+.gp-legenda-nome{display:flex;align-items:center;gap:6px}
+.gp-legenda-nome strong{flex:1;min-width:0;font-size:12px;line-height:1.35;color:var(--ink)}
+.gp-legenda-nome>button{flex:none;display:flex;border:0;background:none;
+ color:var(--muted);cursor:pointer;padding:2px}
+.gp-legenda-nome>button:focus-visible{outline:2px solid var(--blue);outline-offset:1px}
+.gp-legenda>ul>li>small{font-size:11px;line-height:1.4;color:var(--muted)}
+
+.gp-simbolos{list-style:none;margin:4px 0 0;padding:0;
+ display:flex;flex-direction:column;gap:3px}
+.gp-simbolos li{display:flex;align-items:center;gap:6px;
+ font-size:11px;line-height:1.35;color:var(--muted)}
+/* O simbolo vem do servico como PNG minusculo. `image-rendering` fica no
+   automatico: forcar pixelado deixaria o tracejado e a hachura ilegiveis. */
+.gp-simbolos img{flex:none;border-radius:2px}
+.gp-simbolos-resto{font-style:italic;opacity:.85}
+
+@media (max-width:640px){
+  .gp-legenda{left:8px;right:8px;bottom:8px;max-width:none;max-height:44%}
+}
+@media (prefers-reduced-motion:reduce){
+  .gp-legenda-seta{transition:none}
+}

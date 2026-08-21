@@ -358,7 +358,11 @@ const NAV_GRUPOS = [
     ["mapa", "Mapa do Paraná", MapIcon],
     [
       "geopr",
-      "GeoPR · mapas oficiais",
+      // As camadas do GeoPR passaram a desenhar dentro do Mapa do Parana.
+      // O rotulo antigo, "mapas oficiais", mandava para fora do site quem
+      // so queria ver camada oficial, que agora esta a um clique daqui. O
+      // link continua, apontando para o que so existe la: o acervo inteiro.
+      "GeoPR · portal completo",
       Layers3,
       "https://geopr.iat.pr.gov.br/portal/home/gallery.html?sortField=title&sortOrder=asc",
     ],

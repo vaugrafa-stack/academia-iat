@@ -113,7 +113,11 @@ describe("contratos incrementais de arquitetura", () => {
     expect(main).toContain('"Como funciona uma hidrelétrica"');
     expect(main).toContain('"Curso guiado pelo POP"');
     expect(main).toContain('"Redigir Informação Técnica"');
-    expect(main).toContain('"GeoPR · mapas oficiais"');
+    expect(main).toContain('"GeoPR · portal completo"');
+    // O rotulo importa: as camadas oficiais agora desenham dentro do Mapa
+    // do Parana, e um item de menu chamado "mapas oficiais" que leva para
+    // fora do site contradiz o que a plataforma passou a oferecer.
+    expect(main).not.toContain('"GeoPR · mapas oficiais"');
   });
 
   it("associa o painel de continuidade à mídia da própria aula", async () => {

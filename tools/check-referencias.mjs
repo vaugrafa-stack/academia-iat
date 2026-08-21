@@ -28,6 +28,79 @@ const AMBIENTE = new Set([
   'Response', 'PointerEvent', 'KeyboardEvent', 'MouseEvent', 'Event',
 ]);
 
+/**
+ * Nomes que um arquivo traz por `import`.
+ *
+ * As duas primeiras versoes disto liam so `import { A } from` e
+ * `import X from`. A forma COMBINADA, `import X, { A } from`, que e sintaxe
+ * padrao, escapava das duas: a primeira exige a chave logo depois de `import`,
+ * e a segunda para no nome do padrao. O efeito era falso positivo, acusando de
+ * solta uma referencia corretamente importada.
+ *
+ * Falso positivo em portao nao e defeito menor que falso negativo. Ele ensina
+ * quem trabalha no projeto a contornar o portao, e a partir dai ele nao protege
+ * mais nada.
+ */
+export function nomesImportados(texto) {
+  const nomes = new Set();
+  // Casa a clausula inteira entre `import` e `from`, e so depois separa. Tentar
+  // resolver as variantes com um regex por forma e o que produziu o ponto cego.
+  for (const m of texto.matchAll(/^import\s+([^;]*?)\s+from\s/gm)) {
+    const clausula = m[1].trim();
+    const chaves = clausula.match(/\{([^}]*)\}/);
+    if (chaves) {
+      for (const parte of chaves[1].split(',')) {
+        const nome = parte.trim().split(/\s+as\s+/).pop();
+        if (nome) nomes.add(nome);
+      }
+    }
+    // O que sobra fora das chaves: o padrao e o `* as NS`.
+    for (const parte of clausula.replace(/\{[^}]*\}/g, '').split(',')) {
+      const cru = parte.trim();
+      if (!cru) continue;
+      const apelido = cru.match(/^\*\s+as\s+(\w+)$/);
+      if (apelido) { nomes.add(apelido[1]); continue; }
+      if (/^\w+$/.test(cru)) nomes.add(cru);
+    }
+  }
+  return nomes;
+}
+
+// Um portao que nunca reprovou e indistinguivel de um portao quebrado, e este
+// passou tempo demais sem provar que le o que diz ler.
+function autoteste() {
+  const casos = [
+    ["import A from 'x';", ['A']],
+    ["import { B, C } from 'x';", ['B', 'C']],
+    ["import D, { E } from 'x';", ['D', 'E']],
+    ["import F, { G as H } from 'x';", ['F', 'H']],
+    ["import * as I from 'x';", ['I']],
+    ["import J, * as K from 'x';", ['J', 'K']],
+    ["import { L,\n  M } from 'x';", ['L', 'M']],
+  ];
+  const falhas = [];
+  for (const [fonte, esperados] of casos) {
+    const lidos = nomesImportados(fonte);
+    for (const nome of esperados) {
+      if (!lidos.has(nome)) {
+        falhas.push(`${JSON.stringify(fonte)}: nao enxergou ${nome}`);
+      }
+    }
+  }
+  // Contraprova: sem `from`, nao e importacao de nome.
+  if (nomesImportados("import 'apenas/efeito.css';").size) {
+    falhas.push('import de efeito colateral virou nome importado');
+  }
+  return falhas;
+}
+
+const falhasDoAutoteste = autoteste();
+if (falhasDoAutoteste.length) {
+  console.log('FALHA: o proprio verificador nao le as formas de import que promete ler.');
+  falhasDoAutoteste.forEach((f) => console.log(`  - ${f}`));
+  process.exit(1);
+}
+
 let erros = 0;
 
 for (const rel of ARQUIVOS) {
@@ -48,11 +121,7 @@ for (const rel of ARQUIVOS) {
   for (const m of s.matchAll(/<([A-Z]\w*)/g)) usados.add(m[1]);
   for (const m of s.matchAll(/[=:]\s*\{\s*([A-Z]\w*)\s*[}\s,)]/g)) usados.add(m[1]);
 
-  const definidos = new Set();
-  for (const m of s.matchAll(/^import\s*\{([^}]+)\}/gm)) {
-    for (const p of m[1].split(',')) definidos.add(p.trim().split(/\s+as\s+/).pop());
-  }
-  for (const m of s.matchAll(/^import\s+(\w+)/gm)) definidos.add(m[1]);
+  const definidos = new Set(nomesImportados(s));
   for (const m of s.matchAll(/^(?:export\s+)?(?:function|const|let|class)\s+([A-Za-z_]\w*)/gm)) definidos.add(m[1]);
   // declaracoes internas ao arquivo (funcoes aninhadas, consts em componentes)
   for (const m of s.matchAll(/(?:function|const|let|class)\s+([A-Z][A-Za-z0-9_]*)/g)) definidos.add(m[1]);

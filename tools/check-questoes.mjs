@@ -249,5 +249,63 @@ if (acertosEspertalhao > TETO_ESPERTALHAO) {
   erros += 1;
 }
 
+// ------------------------------------------------------------------ de onde
+// vem o excedente
+//
+// O numero acima diz QUANTO se ganha de graca, e nao ONDE. Sem a separacao
+// abaixo, quem for corrigir o banco nao sabe por onde comecar, e as tres
+// pistas nao se corrigem da mesma forma nem pela mesma pessoa:
+//
+//   ABSOLUTO decidindo sozinho: as unicas alternativas sem "sempre/qualquer/
+//   todo" sao a correta. Medido em 21/08/2026, isso ocorre em 9 questoes e
+//   acerta as 9. Li as nove uma a uma: em todas a pergunta e "vale uma regra
+//   automatica?" e a resposta certa e "depende, verifique". O distrator
+//   generaliza porque e assim que se erra em direito administrativo. Tirar a
+//   palavra muda o valor de verdade. Correcao possivel: acrescentar ao banco
+//   questoes em que a norma E categorica, com citacao, para que "absoluto e
+//   errado" pare de valer como regra. O POP tem material: a secao 011 diz que
+//   TODA manifestacao tecnica deve ser rastreavel, a 068 que o PACUERA e
+//   revisto OBRIGATORIAMENTE a cada 10 anos.
+//
+//   ECO DO ENUNCIADO: a alternativa que mais repete palavras da pergunta.
+//   Decide 86 e acerta 42. E artefato de redacao, nao do dominio, e se corrige
+//   sem tocar em afirmacao nenhuma: distribuir os termos do enunciado entre as
+//   alternativas, ou tira-los da correta.
+//
+//   COMPRIMENTO: o desempate, quando as duas pistas anteriores empatam. Decide
+//   129 e acerta 56. Tambem e redacao: a correta costuma ser a mais longa
+//   porque carrega as ressalvas que a tornam correta.
+//
+// Isto e relatorio, e nao portao: nao reprova. O teto acima e que segura o
+// numero. Aqui so fica dito onde os pontos moram, para a decisao de conteudo
+// ser tomada com o mapa a vista.
+const decisao = (q) => {
+  const indices = q.options.map((_, i) => i);
+  const semAbsoluto = indices.filter((i) => !ABSOLUTO.test(q.options[i]));
+  const vivos = semAbsoluto.length ? semAbsoluto : indices;
+  if (vivos.length === 1) return 'absoluto';
+  const doEnunciado = conteudo(q.question);
+  const eco = new Map(vivos.map((i) => [i, [...conteudo(q.options[i])].filter((w) => doEnunciado.has(w)).length]));
+  const maior = Math.max(...eco.values());
+  if (maior > 0 && vivos.filter((i) => eco.get(i) === maior).length === 1) return 'eco';
+  return 'comprimento';
+};
+const porPista = new Map([['absoluto', [0, 0]], ['eco', [0, 0]], ['comprimento', [0, 0]]]);
+for (const q of questionBank) {
+  const par = porPista.get(decisao(q));
+  par[0] += 1;
+  if (escolhaDeQuemNaoSabe(q) === q.answer) par[1] += 1;
+}
+const esperadoPorQuestao = questionBank.reduce((soma, q) => soma + 1 / q.options.length, 0)
+  / questionBank.length;
+for (const [pista, [casos, certos]] of porPista) {
+  const esperado = Math.round(casos * esperadoPorQuestao);
+  const taxa = casos ? Math.round((100 * certos) / casos) : 0;
+  console.log(
+    `   ${pista.padEnd(11)} decide ${String(casos).padStart(3)}, acerta `
+    + `${String(certos).padStart(3)} (${taxa}%), acaso ${esperado}, de graca ${certos - esperado}`,
+  );
+}
+
 if (erros) { console.log(`${erros} problema(s) no banco de questoes.`); process.exit(1); }
 console.log('OK: cobertura, estrutura e citacoes conferem.');

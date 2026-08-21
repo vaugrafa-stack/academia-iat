@@ -254,8 +254,30 @@ Continuar criando portão a partir daqui seria inventar trabalho.
 
 ## Fora de escopo, e por quê
 
-- Chave HMAC derivada do segredo OIDC e limite global de login: estão em
-  `iat-area-tecnica`, repositório separado.
+- Limite global de login: FEITO, em `iat-area-tecnica`, commit `bd9f605`. Estava
+  fora de escopo por engano meu: o que bloqueava era a abertura do PR, não o
+  acesso ao código, e o repositório está nesta máquina.
+
+- Chave HMAC derivada do segredo OIDC: NÃO É DEFEITO, e a anotação anterior
+  estava empobrecida. Corrijo aqui porque achado errado registrado é pior do que
+  achado nenhum.
+
+  Lida com o contexto, a derivação existe para o piloto local no Windows, onde o
+  operador tem um arquivo de segredos que contém apenas o `oidc_client_secret`.
+  Ela usa separação de domínio em vez de reutilizar o segredo bruto, vale só no
+  modo sintético, e vem acompanhada de verificação de ACL do arquivo, recusa de
+  ponto de reparse e validação de tamanho. Fora desse caminho o serviço exige a
+  variável própria e recusa iniciar.
+
+  É decisão de projeto deliberada e testada, e não descuido. Minha anotação
+  original descreveu o mecanismo sem o cenário, e nessa forma ela induziria
+  alguém a quebrar um desenho cuidadoso.
+
+  O que sobra como observação legítima, e é do dono decidir: os dois segredos
+  irmãos seguem políticas opostas na mesma função. O de privacidade recusa
+  iniciar sem variável própria, com a justificativa escrita de que "deve ser
+  exclusiva da API e nunca compartilhada com o worker". Essa justificativa,
+  se valer, vale para os dois.
 - Aprovação humana institucional da mídia: decisão de pessoa, registrada como
   pendente em `reviewedBy`.
 - Teto do `pop-public-content`, em 96,1%: cresce com o conteúdo do POP e não

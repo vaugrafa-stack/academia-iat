@@ -490,7 +490,9 @@
   border-radius: 8px;
   background: color-mix(in srgb, var(--blue) 6%, var(--surface));
   color: var(--ink2);
-  font-size: 11px;
+  /* Este bloco e o enunciado da tarefa, prosa corrida, e nao rotulo: o piso de
+     11px foi pensado para rotulo em caixa alta lido por reconhecimento. */
+  font-size: 12.5px;
   line-height: 1.5;
 }
 

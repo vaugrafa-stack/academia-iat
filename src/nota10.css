@@ -216,16 +216,16 @@
 }
 .learning-challenge>svg{width:19px;color:var(--amber)}
 .learning-challenge strong{font-size:12px}
-.learning-challenge p{margin:2px 0 0;color:var(--muted);font-size:11px;line-height:1.4}
+.learning-challenge p{margin:2px 0 0;color:var(--muted);font-size:12.5px;line-height:1.4}
 .learning-challenge>span{
   max-width:180px;
   color:var(--blue);
-  font-size:11px;
+  font-size:12.5px;
   font-weight:800;
   line-height:1.4;
   text-align:right;
 }
-.learning-contract>details{padding:0 14px 12px;color:var(--muted);font-size:11px}
+.learning-contract>details{padding:0 14px 12px;color:var(--muted);font-size:12.5px}
 .learning-contract>details summary{cursor:pointer;font-weight:800}
 .learning-contract>details ul{display:grid;gap:6px;margin:10px 0 0;padding:0;list-style:none}
 .learning-contract>details li{display:flex;gap:7px;align-items:flex-start}
@@ -715,7 +715,7 @@
 .lesson-active-counter>span,.lesson-active-practice>footer span{display:flex;align-items:center;gap:6px;color:var(--muted);font-size:12px;font-weight:700}
 .lesson-active-counter>span.done,.lesson-active-practice>footer span.done{color:var(--green)}
 .lesson-active-counter svg,.lesson-active-practice>footer svg{width:15px}
-.lesson-active-counter small{color:var(--muted);font-size:11px;text-align:right}
+.lesson-active-counter small{color:var(--muted);font-size:12.5px;text-align:right}
 .lesson-active-rubric{display:grid;gap:7px;margin:0;padding:0;border:0}
 .lesson-active-rubric legend{margin-bottom:8px;font-size:13px;font-weight:850}
 .lesson-active-rubric label{display:grid;grid-template-columns:20px minmax(0,1fr);gap:9px;align-items:start;min-height:44px;padding:9px 11px;border:1px solid var(--line);border-radius:7px;color:var(--ink2);font-size:12px;line-height:1.5;cursor:pointer}
@@ -724,7 +724,7 @@
 .lesson-active-rubric .lesson-active-criterion{display:block;min-width:0;overflow-wrap:anywhere}
 .lesson-active-rubric svg{width:17px;color:var(--green)}
 .lesson-active-practice>footer{display:flex;flex-wrap:wrap;gap:12px 20px;margin-top:13px;padding-top:12px;border-top:1px solid var(--line)}
-.lesson-active-limit{margin:12px 0 0;padding:10px;border-left:3px solid var(--amber);background:color-mix(in srgb,var(--amber) 9%,var(--surface));color:var(--muted);font-size:11px;line-height:1.5}
+.lesson-active-limit{margin:12px 0 0;padding:10px;border-left:3px solid var(--amber);background:color-mix(in srgb,var(--amber) 9%,var(--surface));color:var(--muted);font-size:12.5px;line-height:1.5}
 .lesson-completion-notice,.lesson-legacy-completion{flex:1 0 100%;margin:0;padding:9px 11px;border-left:3px solid var(--amber);background:color-mix(in srgb,var(--amber) 10%,var(--surface));color:var(--ink2);font-size:12px;line-height:1.45}
 .lesson-legacy-completion{border-left-color:var(--blue);background:color-mix(in srgb,var(--blue) 8%,var(--surface))}
 .lesson-footer button.needs-evidence{border-color:var(--amber);color:var(--ink2)}

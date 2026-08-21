@@ -454,3 +454,89 @@ test('primeiro acesso orienta o iniciante e a busca curricular explica o vazio',
   await expect(empty).toHaveCount(0);
   await expectHealthyPage(page, runtimeIssues);
 });
+
+// A varredura de contraste que existia neste arquivo media dois pontos
+// escolhidos a dedo, o gradiente e o contorno de foco. Nenhum portao passava
+// por TODO o texto renderizado, e foi assim que .offline-code ficou em 3,34:1
+// com 12px em peso 900, exigindo 4,5:1: nada olhava para ele.
+//
+// A mesma varredura cobre o piso de prosa. O piso de 11px de
+// tools/check-tipografia.mjs esta certo, mas a justificativa escrita dele fala
+// de "rotulo em caixa alta, lido por reconhecimento". Dezesseis trechos de
+// PROSA usavam esse piso, que e o caso que a propria justificativa exclui.
+// Portao estatico nao distingue os dois, porque a diferenca esta no texto que
+// chega a tela, e nao na folha de estilo.
+//
+// Roda so no projeto mais largo: multiplicar treze rotas por cinco larguras
+// nao acrescentaria achado, porque cor e tamanho de fonte nao mudam com a
+// largura, e custaria quatro vezes o tempo de CI.
+test('todo texto renderizado alcanca contraste minimo e piso de prosa', async ({
+  page,
+  baseURL,
+}) => {
+  test.skip(
+    (page.viewportSize()?.width || 0) < 1000,
+    'cor e corpo de fonte nao dependem da largura; a varredura roda uma vez',
+  );
+  const contrasteBaixo = [];
+  const prosaMiuda = [];
+
+  for (const { hash } of ROUTES) {
+    await page.goto(appUrl(baseURL, hash), { waitUntil: 'domcontentloaded' });
+    await expect(page.locator('#conteudo')).toBeVisible();
+    const amostras = await page.evaluate(() => {
+      const colhidas = [];
+      for (const el of document.querySelectorAll('#conteudo *, .sidebar-v2 *, .topbar *')) {
+        if (el.children.length) continue;
+        if (el.namespaceURI !== 'http://www.w3.org/1999/xhtml') continue;
+        const texto = (el.textContent || '').trim();
+        if (texto.length < 2) continue;
+        const estilo = getComputedStyle(el);
+        if (estilo.display === 'none' || estilo.visibility === 'hidden') continue;
+        if (Number.parseFloat(estilo.opacity) < 0.5) continue;
+        const caixa = el.getBoundingClientRect();
+        if (caixa.width < 3 || caixa.height < 3) continue;
+        const fundos = [];
+        for (let n = el; n && n !== document.documentElement; n = n.parentElement) {
+          fundos.push(getComputedStyle(n).backgroundColor);
+        }
+        const maiusculas = estilo.textTransform === 'uppercase'
+          || (texto === texto.toUpperCase() && /[A-ZÁÉÍÓÚÂÊÔÃÕÇ]/.test(texto));
+        colhidas.push({
+          onde: el.tagName.toLowerCase()
+            + (el.className ? '.' + String(el.className).split(' ')[0] : ''),
+          cor: estilo.color,
+          fundos,
+          px: Number.parseFloat(estilo.fontSize),
+          peso: Number.parseInt(estilo.fontWeight, 10) || 400,
+          // Prosa e frase, nao etiqueta: ou passa de 24 caracteres, ou tem
+          // pontuacao seguida de espaco.
+          prosa: !maiusculas && (texto.length > 24 || /[.,;:] /.test(texto)),
+          trecho: texto.slice(0, 40),
+        });
+      }
+      return colhidas;
+    });
+
+    for (const a of amostras) {
+      const frente = parseCssColor(a.cor);
+      if (!frente) continue;
+      const fundo = backgroundFromChain(a.fundos);
+      // WCAG 1.4.3: 3:1 para texto grande, 4,5:1 para o resto.
+      const exigido = a.px >= 24 || (a.px >= 18.66 && a.peso >= 700) ? 3 : 4.5;
+      const razao = contrastRatio(frente.rgb, fundo.rgb);
+      if (razao + 0.01 < exigido) {
+        contrasteBaixo.push(
+          `${hash || '#/'} ${a.onde} ${razao.toFixed(2)}:1 exige ${exigido} "${a.trecho}"`,
+        );
+      }
+      // O piso de 11px vale para rotulo. Prosa comeca em 12px.
+      if (a.prosa && a.px < 12) {
+        prosaMiuda.push(`${hash || '#/'} ${a.onde} ${a.px}px "${a.trecho}"`);
+      }
+    }
+  }
+
+  expect(contrasteBaixo, 'texto abaixo do contraste minimo').toEqual([]);
+  expect(prosaMiuda, 'prosa no piso pensado para rotulo').toEqual([]);
+});

@@ -205,6 +205,53 @@ Não criei portão aqui: a única regra escrevível confundiria o aviso, que con
 a palavra, com a infração. Portão que acusa quem cumpre a regra ensina a
 desligar portão.
 
+### 9. Identificador sensível e caractere de controle — FEITO
+
+A restrição permanente nomeia os identificadores um a um, e a sanitização
+cobria caminho de usuário, e-mail e metadado de DOCX, e nenhum dos brasileiros.
+Cinco padrões acrescentados, medidos antes contra a base para não nascerem
+reprovando por falso positivo, e provados de ponta a ponta com um CNPJ plantado
+em campo que a sanitização preserva.
+
+Ao escrever esses padrões por script eu gravei o byte 0x08 no lugar de `\b`,
+porque em string Python não bruta `\b` é escape de backspace. Quatro padrões
+exigindo backspace literal no meio do CNPJ: nunca casam. O portão passava e o
+grep mostrava a regra como correta, porque 0x08 é invisível no terminal.
+
+Portão inerte é pior que portão ausente. O `check-travessao` passou a guardar
+também caractere de controle em src, tools e tests.
+
+### 10. Foco em hidrelétrica — MEDIDO, LIMPO
+
+Última restrição permanente sem verificação. Zero conteúdo de outra tipologia.
+As duas suspeitas eram falso positivo meu: `ETE` sem diferenciar maiúscula casa
+dentro de "delete", e a Agência Nacional de Mineração é interveniente legítimo
+do licenciamento hidrelétrico, não licenciamento de mineração.
+
+### 11. Qualidade do objetivo de aula — TRAVADO
+
+A auditoria conferia estrutura e roteamento, e nada olhava para a promessa que
+cada aula faz. Medido: 168 textos distintos para 168 aulas, 156 derivados do POP
+e 156 com "como se vê". Estava bom e desguardado.
+
+As 12 no perfil genérico ficam como estão: são seções em que o POP não oferece
+quadro, ação nem exigência, e inventar objetivo ali é o que a regra proíbe.
+
+## Situação do levantamento
+
+As cinco restrições permanentes do manual estão cobertas: três ganharam régua
+nesta rodada, duas foram medidas e estavam limpas. A veia que vinha rendendo,
+procurar regra permanente sem verificação, está esgotada.
+
+O que resta exige decisão que não é de quem escreve o código:
+
+- a dívida de conteúdo do banco de questões, que precisa de quem responde pela
+  norma
+- a aprovação humana institucional da mídia
+- os itens do repositório da Área Técnica
+
+Continuar criando portão a partir daqui seria inventar trabalho.
+
 ## Fora de escopo, e por quê
 
 - Chave HMAC derivada do segredo OIDC e limite global de login: estão em

@@ -97,6 +97,41 @@ foi rastreado.
 
 Rótulo em caixa alta segue em 11px, que é o uso que o piso justifica.
 
+### 5. Pistas de eliminação no banco de questões — MEDIDO E TRAVADO, conteúdo pendente
+
+O projeto já travava a pista de COMPRIMENTO e parou ali. As outras duas
+clássicas estavam livres, e juntas valem mais do que a primeira valia sozinha.
+
+- Absoluto na alternativa: 84 alternativas usam sempre, nunca, todo, qualquer
+  ou exclusivamente, e apenas 6 são a correta. São 7% contra 33% esperado,
+  z de -5,1. Eliminar absolutos leva o chute de 33% para 50% numa questão de
+  três alternativas.
+- Eco do enunciado: em 89 questões uma alternativa repete mais palavras do
+  enunciado, e é a correta em 47% delas contra 33% do acaso, z de 2,8.
+
+Somadas, com desempate pela mais longa: quem não sabe NADA do POP acerta 107 de
+224, 48% contra 33%. Quinze pontos de graça num banco usado para avaliação.
+
+Não reescrevi os 78 distratores. Olhei um a um e na maioria o absoluto É o erro:
+"Sempre como renovação", "qualquer plano com ART comprova a execução", "sem
+qualquer material cartográfico". Tirar a palavra muda o valor de verdade e pode
+transformar o distrator em alternativa correta. Parte do sinal é intrínseca ao
+domínio: em direito administrativo a alternativa errada erra tipicamente POR
+generalizar.
+
+Isso explica o número e não o desculpa. A saída certa é de conteúdo, alternativa
+por alternativa, com quem responde pela norma. Travado em 112 para não piorar, e
+impresso em toda execução para a decisão ser tomada com o número à vista.
+
+PARA QUEM CONTINUAR: o alvo é aproximar os 48% dos 33%. O caminho de menor risco
+é acrescentar absolutos LEGÍTIMOS a alternativas corretas onde a norma de fato é
+absoluta, como prazo não prorrogável, e não abrandar distratores, porque abrandar
+troca uma pista medida por um erro não medido.
+
+Medido e LIMPO no mesmo levantamento, para não virar trabalho inventado depois:
+viés de posição da alternativa correta, [81, 70, 64] em três opções, qui-quadrado
+2,07 contra crítico 5,99. Está dentro do acaso.
+
 ### 4. Densidade dos cartões de tipo de barragem — FEITO
 
 Medido antes: no amplo eram três colunas, o texto ficava com 131px e quebrava

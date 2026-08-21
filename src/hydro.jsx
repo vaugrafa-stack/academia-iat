@@ -355,8 +355,13 @@ function DamMini({ kind }) {
 
       {kind === 'arco' ? (
         <>
-          {/* Planta: as duas paredes do vale, vistas de cima. */}
-          <rect width="120" height="70" fill={`url(#dm-agua-${kind})`} opacity="0.35" />
+          {/* Planta: as duas paredes do vale, vistas de cima. O banho de agua
+              cobria a largura inteira, entao o vale A JUSANTE lia como agua
+              parada e a barragem parecia represar dos dois lados. Montante e
+              agua; jusante e leito. */}
+          <rect x="0" y="18" width="58" height="34" fill={`url(#dm-agua-${kind})`} opacity="0.4" />
+          <rect x="58" y="18" width="62" height="34" fill="#7c6b52" opacity="0.55" />
+          <path d="M62 26 Q86 34 118 30 M64 44 Q88 38 118 42" stroke="#9c8a6c" strokeWidth="1" fill="none" opacity="0.7" />
           <rect x="0" y="0" width="120" height="20" fill={`url(#dm-rocha-${kind})`} />
           <rect x="0" y="50" width="120" height="20" fill={`url(#dm-rocha-${kind})`} />
           <rect x="0" y="18" width="120" height="2.2" fill="#4c7a56" />

@@ -97,12 +97,27 @@ foi rastreado.
 
 Rótulo em caixa alta segue em 11px, que é o uso que o piso justifica.
 
-### 4. Densidade dos cartões de tipo de barragem — ABERTO
+### 4. Densidade dos cartões de tipo de barragem — FEITO
 
-Seis cartões numa grade de 4+2. O desenho é uma miniatura pequena à esquerda e
-o texto ocupa o resto, sobrando área vazia no rodapé de cada cartão e uma
-lacuna grande na segunda fileira. Depois da requalificação os desenhos passaram
-a carregar informação de material que a miniatura atual não deixa ler.
+Medido antes: no amplo eram três colunas, o texto ficava com 131px e quebrava
+tanto que o cartão subia para 176px de altura ao lado de um desenho de 62px.
+Sobravam 114px de folga vazia, e o desenho ocupava 14% da área do cartão. Depois
+da requalificação os desenhos carregam a assinatura de material de cada tipo,
+camada de lançamento, núcleo impermeável, face de concreto, e em 104px isso não
+se lê.
+
+Passou a duas colunas, com desenho de 180px. Medido depois: cartão de 132px em
+vez de 176, desenho de 180x106 em vez de 104x62, ocupando 27% em vez de 14%. No
+estreito o cartão vira vertical e o desenho vai a 57% da área.
+
+No caminho eu criei e corrigi um defeito:  força o mínimo
+mesmo sem espaço, e o cartão saía com 380px dentro de uma grade de 316, ou seja,
+transbordo horizontal onde a varredura tinha zero. Trocado por
+ e reconferido: zero transbordo nas 30 combinações.
+
+Corrigido também o desenho do arco: o banho de água cobria a largura inteira em
+planta, então o vale a jusante lia como água parada e a barragem parecia
+represar dos dois lados.
 
 ## Fora de escopo, e por quê
 

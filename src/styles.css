@@ -195,9 +195,18 @@ button.sidebar-help{background:transparent;font:inherit;color:inherit;cursor:poi
 .res-card svg{width:22px;color:var(--blue);margin-bottom:6px}
 .res-card strong{display:block;margin-bottom:6px}
 .res-card p{font-size:13px;line-height:1.55;color:var(--ink2);margin:0}
-.dam-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:14px;margin-top:14px}
+/* Tres colunas no amplo deixavam 131px para o texto, e o texto quebrava tanto
+   que o cartao subia para 176px de altura ao lado de um desenho de 62px: 114px
+   de folga vazia, e o desenho ocupando 14% da area. Depois da requalificacao os
+   desenhos carregam a assinatura de material de cada tipo, camada de
+   lancamento, nucleo, face de concreto, e em 104px isso nao se le.
+   Duas colunas dao 320px de texto, que quase nao quebra, e desenho de 180px. */
+.dam-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(380px,100%),1fr));gap:14px;margin-top:14px}
 .dam-card{display:flex;gap:12px;align-items:center;border:1px solid var(--line);border-radius:10px;padding:12px 14px}
-.dam-mini{width:104px;flex:none;border:1px solid var(--line);border-radius:8px;background:var(--soft)}
+.dam-mini{width:180px;flex:none;border:1px solid var(--line);border-radius:8px;background:var(--soft)}
+/* No estreito, 180px de desenho deixariam 112px para o texto. O cartao vira
+   vertical: o desenho ocupa a largura toda e o texto tambem. */
+@media(max-width:560px){.dam-card{flex-direction:column;align-items:stretch}.dam-mini{width:100%}}
 /* Miniaturas de tipo de barragem: as seis eram silhuetas paradas ao lado de um
    corte animado. O que distingue os tipos e COMO cada um resiste ao empuxo, e
    isso nao aparecia. A agua oscila de leve e a seta de empuxo pulsa contra a

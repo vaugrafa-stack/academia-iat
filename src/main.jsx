@@ -327,6 +327,21 @@ const DADOS_FORMACAO = Object.freeze({
 //
 // "Visao geral" fica fora de grupo de proposito: ela e o ponto de partida, e
 // nao concorre com as outras.
+// A Area Tecnica restrita e outro servico: FastAPI com banco, provedor de
+// identidade e worker. Ela NAO pode ser hospedada aqui, porque este site e
+// estatico e serve arquivo em vez de executar codigo. O que cabe a Academia e
+// apontar para onde aquele servico estiver publicado.
+//
+// Por que uma variavel de compilacao e nao um endereco fixo: enquanto nao
+// houver implantacao, o item simplesmente nao existe. Link para servico que
+// nao responde e pior do que ausencia de link, porque quem clica conclui que a
+// plataforma esta quebrada. Definindo VITE_AREA_TECNICA_URL na compilacao, o
+// item aparece; sem ela, nada muda.
+//
+// O acesso continua sendo decidido la: conta nova entra como pendente e
+// autenticar nao concede permissao nenhuma.
+const URL_AREA_TECNICA = String(import.meta.env.VITE_AREA_TECNICA_URL || "").trim();
+
 const NAV_GRUPOS = [
   [null, [["dashboard", "Visão geral", Home]]],
   ["Aprender", [
@@ -348,6 +363,11 @@ const NAV_GRUPOS = [
       "https://geopr.iat.pr.gov.br/portal/home/gallery.html?sortField=title&sortOrder=asc",
     ],
     ["biblioteca", "Biblioteca", Library],
+    // Entra por ultimo para nao alterar a ordem que
+    // accessibilityContracts.test.js fixa entre mapa, GeoPR e biblioteca.
+    ...(URL_AREA_TECNICA
+      ? [["area-tecnica", "Área Técnica restrita", ShieldCheck, URL_AREA_TECNICA]]
+      : []),
   ]],
   ["Neste dispositivo", [
     ["perfil", "Meu progresso", BadgeCheck],

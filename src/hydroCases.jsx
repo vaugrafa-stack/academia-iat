@@ -12,6 +12,13 @@ const LOCAL_FOTO = {
   'Kaplan_turbine_bonneville.jpg': BASE + '/hidro/turbina-kaplan.jpg',
 };
 const WM = (f) => LOCAL_FOTO[f];
+// Tamanho natural de cada foto. A camada anotada usa isto como viewBox, e o
+// palco fixa a mesma proporcao: sem os dois numeros, a anotacao escorrega.
+const FOTO_MEDIDA = {
+  'Peltonturbine-1.jpg': [587, 800],
+  'Francis_Turbine_complete.jpg': [456, 461],
+  'Kaplan_turbine_bonneville.jpg': [294, 375],
+};
 const WMPAGE = (f) => `https://commons.wikimedia.org/wiki/File:${f}`;
 
 /* ============ ESQUEMAS DE TURBINA (SVG detalhados) ============ */
@@ -269,11 +276,107 @@ function SvgBulbo() {
 }
 
 export const TURBINES_RICH = [
-  { nome: 'Pelton', Svg: SvgPelton, vazao: 'Vazão baixa', legenda: "Jato em pressão atmosférica: turbina de AÇÃO.", foto: 'Peltonturbine-1.jpg', tipo: 'Ação (impulso)', faixa: 'Quedas altas: acima de ~250 m', usoPR: 'UHE Gov. Parigot de Souza (Antonina): 4 unidades Pelton, com desnível de 754 m.' },
-  { nome: 'Francis', Svg: SvgFrancis, vazao: 'Vazão média', legenda: "Fluxo radial que vira axial, sob pressão: turbina de REAÇÃO.", foto: 'Francis_Turbine_complete.jpg', tipo: 'Reação', faixa: 'Quedas médias: ~30 a 400 m', usoPR: 'UHE Foz do Areia (Pinhão): 4 Francis de 419 MW. Também Itaipu (20 unidades).' },
-  { nome: 'Kaplan', Svg: SvgKaplan, vazao: 'Vazão alta', legenda: "Hélice de passo variável: mantém rendimento com vazão variável.", foto: 'Kaplan_turbine_bonneville.jpg', tipo: 'Reação (pás ajustáveis)', faixa: 'Quedas baixas: ~10 a 70 m', usoPR: 'UHE Baixo Iguaçu (Capanema): 3 Kaplan de ~117 MW, a fio d\'água.' },
+  { nome: 'Pelton', camada: CamadaPelton, Svg: SvgPelton, vazao: 'Vazão baixa', legenda: "Jato em pressão atmosférica: turbina de AÇÃO.", foto: 'Peltonturbine-1.jpg', tipo: 'Ação (impulso)', faixa: 'Quedas altas: acima de ~250 m', usoPR: 'UHE Gov. Parigot de Souza (Antonina): 4 unidades Pelton, com desnível de 754 m.' },
+  { nome: 'Francis', camada: CamadaFrancis, Svg: SvgFrancis, vazao: 'Vazão média', legenda: "Fluxo radial que vira axial, sob pressão: turbina de REAÇÃO.", foto: 'Francis_Turbine_complete.jpg', tipo: 'Reação', faixa: 'Quedas médias: ~30 a 400 m', usoPR: 'UHE Foz do Areia (Pinhão): 4 Francis de 419 MW. Também Itaipu (20 unidades).' },
+  { nome: 'Kaplan', camada: CamadaKaplan, Svg: SvgKaplan, vazao: 'Vazão alta', legenda: "Hélice de passo variável: mantém rendimento com vazão variável.", foto: 'Kaplan_turbine_bonneville.jpg', tipo: 'Reação (pás ajustáveis)', faixa: 'Quedas baixas: ~10 a 70 m', usoPR: 'UHE Baixo Iguaçu (Capanema): 3 Kaplan de ~117 MW, a fio d\'água.' },
   { nome: 'Bulbo', Svg: SvgBulbo, vazao: 'Vazão muito alta', legenda: "Conjunto horizontal submerso no próprio fluxo, para quedas muito baixas.", foto: null, tipo: 'Reação (horizontal)', faixa: 'Quedas muito baixas: abaixo de ~15 m', usoPR: 'Sem unidade em operação no PR; no Brasil é típica das UHEs do rio Madeira (RO).' },
 ];
+
+/* Fotografia real com camada anotada por cima.
+   A camada usa o viewBox no tamanho natural da foto e o palco fixa a mesma
+   proporcao, entao os dois coincidem em qualquer largura. Foi assim que os
+   marcadores do corte anatomico saiam do lugar: a camada seguia um contentor
+   que esticava por fora e as coordenadas deixavam de valer. */
+function FotoAnotada({ src, alt, w, h, credito, children }) {
+  return (
+    <figure className="tg-photo">
+      <div className="fa-palco" style={{ aspectRatio: `${w} / ${h}` }}>
+        <img src={src} alt={alt} />
+        <svg className="fa-camada" viewBox={`0 0 ${w} ${h}`} aria-hidden="true"
+             preserveAspectRatio="xMidYMid slice">
+          <defs>
+            <marker id="fa-ponta" viewBox="0 0 10 10" refX="8" refY="5"
+                    markerWidth="4.6" markerHeight="4.6" orient="auto-start-reverse">
+              <path d="M0 1 L9 5 L0 9 Z" fill="context-stroke" />
+            </marker>
+          </defs>
+          {children}
+        </svg>
+      </div>
+      {credito}
+    </figure>
+  );
+}
+
+/* Rotulo sobre foto: precisa de chapa propria porque fotografia tem area clara
+   e area escura, e um mesmo tom de texto falha em metade dela. */
+function Chapa({ x, y, texto, ancora, ate }) {
+  const largura = texto.length * 6.2 + 16;
+  const bx = ancora === 'end' ? x - largura : x;
+  const tx = ancora === 'end' ? x - 8 : x + 8;
+  return (
+    <g>
+      {ate ? <path d={`M${ancora === 'end' ? bx : bx + largura} ${y - 3} L${ate[0]} ${ate[1]}`}
+                   stroke="#eaf7ff" strokeWidth="1.3" opacity="0.9" fill="none" /> : null}
+      <rect x={bx} y={y - 13} width={largura} height={19} rx={7} fill="#081813" opacity="0.82" />
+      <text x={tx} y={y + 1} textAnchor={ancora === 'end' ? 'end' : 'start'}
+            fontSize="11.5" fontWeight="700" fill="#eaf7ff">{texto}</text>
+    </g>
+  );
+}
+
+/* Pelton, 587 por 800. Rotor de museu fotografado de frente, levemente
+   inclinado: a roda aparece como elipse, entao o arco de rotacao segue a
+   elipse e nao um circulo. */
+function CamadaPelton() {
+  return (
+    <>
+      <path className="fa-rot" d="M120 190 A 272 340 0 0 1 404 106"
+            markerEnd="url(#fa-ponta)" />
+      <circle className="fa-alvo" cx="452" cy="150" r="46" />
+      <path className="fa-jato" d="M566 44 L470 128" markerEnd="url(#fa-ponta)" />
+      <Chapa x={579} y={30} ancora="end" texto="o jato bate na aresta divisora" ate={[470, 124]} />
+      <Chapa x={8} y={44} texto="cubo e eixo" ate={[176, 330]} />
+      <Chapa x={8} y={772} texto="concha em dupla colher" ate={[258, 690]} />
+    </>
+  );
+}
+
+/* Francis, 456 por 461. Conjunto completo ao ar livre: caixa espiral azul,
+   anel amarelo do distribuidor, eixo a esquerda ate o gerador.
+   A camada anota o que se VE. O caracol e opaco, entao nao ha percurso interno
+   desenhado por cima dele: inventar a espiral escondida seria afirmar sobre o
+   que a foto nao mostra. */
+function CamadaFrancis() {
+  return (
+    <>
+      <path className="fa-fluxo" d="M424 12 L380 44" markerEnd="url(#fa-ponta)" />
+      <circle className="fa-alvo" cx="292" cy="210" r="60" />
+      <path className="fa-rot" d="M232 196 A 66 66 0 0 1 340 178" markerEnd="url(#fa-ponta)" />
+      <path className="fa-fluxo" d="M330 300 L362 346" markerEnd="url(#fa-ponta)" />
+      <Chapa x={452} y={16} ancora="end" texto="entrada sob pressão" ate={[386, 40]} />
+      <Chapa x={6} y={22} texto="caixa espiral: a seção diminui" ate={[248, 86]} />
+      <Chapa x={6} y={400} texto="eixo e gerador" ate={[172, 216]} />
+      <Chapa x={6} y={434} texto="distribuidor (palhetas móveis)" ate={[245, 230]} />
+      <Chapa x={452} y={440} ancora="end" texto="tubo de sucção" ate={[356, 338]} />
+    </>
+  );
+}
+
+/* Kaplan, 294 por 375. Rotor sendo montado: eixo vertical, cubo e pas. */
+function CamadaKaplan() {
+  return (
+    <>
+      <path className="fa-fluxo" d="M62 112 C 74 158 92 178 118 192" markerEnd="url(#fa-ponta)" />
+      <path className="fa-fluxo" d="M256 112 C 244 158 226 178 202 192" markerEnd="url(#fa-ponta)" />
+      <circle className="fa-alvo" cx="162" cy="186" r="34" />
+      <path className="fa-rot" d="M126 178 A 38 38 0 0 1 196 170" markerEnd="url(#fa-ponta)" />
+      <Chapa x={4} y={22} texto="eixo vertical" ate={[126, 58]} />
+      <Chapa x={290} y={22} ancora="end" texto="fluxo axial desce" ate={[252, 106]} />
+      <Chapa x={4} y={360} texto="pás do rotor" ate={[112, 202]} />
+    </>
+  );
+}
 
 export function TurbineGallery() {
   const [i, setI] = useState(0);
@@ -286,10 +389,15 @@ export function TurbineGallery() {
       <div className="tg-body">
         <figure className="tg-schema"><t.Svg /><figcaption><span className="tg-cap-t">Esquema: {t.nome} ({t.tipo.toLowerCase()})</span><span className="tg-cap-d">{t.legenda}</span></figcaption></figure>
         {t.foto ? (
-          <figure className="tg-photo">
-            <img src={WM(t.foto)} alt={`Foto real de turbina ${t.nome}`} />
-            <figcaption><Camera size={13} /> Foto real · <a href={WMPAGE(t.foto)} target="_blank" rel="noreferrer">Wikimedia Commons</a> (licença livre)</figcaption>
-          </figure>
+          <FotoAnotada
+            src={WM(t.foto)}
+            alt={`Foto real de turbina ${t.nome}`}
+            w={FOTO_MEDIDA[t.foto][0]}
+            h={FOTO_MEDIDA[t.foto][1]}
+            credito={<figcaption><Camera size={13} /> Foto real anotada · <a href={WMPAGE(t.foto)} target="_blank" rel="noreferrer">Wikimedia Commons</a> (licença livre)</figcaption>}
+          >
+            {t.camada ? <t.camada /> : null}
+          </FotoAnotada>
         ) : (
           <div className="tg-nophoto"><Info /><p>Sem foto de licença livre confirmada para bulbo: o esquema ao lado mostra o conjunto gerador submerso no próprio fluxo.</p></div>
         )}

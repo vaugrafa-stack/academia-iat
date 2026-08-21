@@ -254,7 +254,7 @@ button.sidebar-help{background:transparent;font:inherit;color:inherit;cursor:poi
 :root{--shadow-1:0 1px 2px #0f2a2008,0 2px 8px #0f2a200a;--shadow-2:0 2px 6px #0f2a200d,0 10px 28px #0f2a2014;--shadow-3:0 6px 16px #0f2a2014,0 22px 48px #0f2a201f;--ease:cubic-bezier(.22,.9,.3,1)}
 .view-anim{animation:routeIn .18s var(--ease)}
 @keyframes routeIn{from{transform:translateY(4px)}to{transform:none}}
-@media(prefers-reduced-motion:reduce){.view-anim,.cs-flow,.cs-spill,.cs-turbine,.cs-hot::after,.cs-energia,.cs-gerador,.cs-lamina,.arr-fluxo,.arr-fluxo-tvr,.spin-slow,.jet-anim,.pelton-deflete,.fr-radial,.fr-axial,.kp-fluxo,.kp-passo,.bl-fluxo,.rv-gera,.rv-bombeia,.rv-gera-rotulo,.rv-bombeia-rotulo{animation:none!important}}
+@media(prefers-reduced-motion:reduce){.view-anim,.cs-flow,.cs-spill,.cs-turbine,.cs-hot::after,.cs-energia,.cs-gerador,.cs-lamina,.arr-fluxo,.arr-fluxo-tvr,.spin-slow,.jet-anim,.pelton-deflete,.fr-radial,.fr-axial,.kp-fluxo,.kp-passo,.bl-fluxo,.rv-gera,.rv-bombeia,.rv-gera-rotulo,.rv-bombeia-rotulo,.fa-jato,.fa-fluxo,.fa-alvo{animation:none!important}}
 /* botoes e cartoes respiram */
 button{transition:background .18s var(--ease),border-color .18s var(--ease),color .18s var(--ease),box-shadow .18s var(--ease),transform .18s var(--ease)}
 button.primary{background:linear-gradient(135deg,var(--green2),var(--green));border:none;color:#fff;box-shadow:0 4px 14px #16563C33;border-radius:9px;padding:11px 20px;font-weight:800;display:inline-flex;align-items:center;gap:8px;cursor:pointer}
@@ -304,6 +304,19 @@ button.primary:active{transform:translateY(0);box-shadow:0 2px 8px #16563C33}
 .tg-photo img{width:100%;display:block;max-height:320px;object-fit:cover}
 .tg-schema figcaption,.tg-photo figcaption{padding:9px 12px;font-size:12px;color:var(--muted);display:flex;align-items:center;gap:6px}
 .tg-photo a{color:var(--green2);font-weight:700}
+/* Foto real com camada anotada por cima: e o padrao da cena do topo da pagina,
+   aplicado as fotografias que o projeto ja tem no registro de midia.
+   O palco fixa a proporcao natural da imagem e a camada usa o mesmo viewBox,
+   entao os dois coincidem em qualquer largura. Foi por perder essa coincidencia
+   que os marcadores do corte anatomico apontavam abaixo da peca. */
+.fa-palco{position:relative;width:100%;border-radius:10px 10px 0 0;overflow:hidden;background:#0d1714}
+.fa-palco img{display:block;width:100%;height:100%;max-height:none;object-fit:cover}
+.fa-camada{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.fa-rot{fill:none;stroke:#8fe3cf;stroke-width:4;stroke-linecap:round;opacity:.92}
+.fa-jato{stroke:#8fdcff;stroke-width:6;stroke-linecap:round;fill:none;stroke-dasharray:9 11;animation:csflow .7s linear infinite}
+.fa-fluxo{stroke:#8fdcff;stroke-width:4.5;stroke-linecap:round;fill:none;stroke-dasharray:8 10;animation:csflow 1.5s linear infinite}
+.fa-alvo{fill:none;stroke:#ffd479;stroke-width:2.5;transform-box:fill-box;transform-origin:center;animation:faAlvo 2.4s ease-in-out infinite}
+@keyframes faAlvo{0%,100%{opacity:.25;transform:scale(.94)}55%{opacity:.95;transform:scale(1.04)}}
 .tg-nophoto{border:1px dashed var(--line);border-radius:10px;padding:18px;display:flex;gap:10px;align-items:flex-start;color:var(--muted);font-size:13px}
 .tg-nophoto svg{width:18px;flex:none;color:var(--blue)}
 .tg-info{grid-column:1/-1;border:1px solid var(--line);border-left:4px solid var(--green);border-radius:10px;padding:14px 18px;background:var(--soft)}

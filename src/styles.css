@@ -218,7 +218,7 @@ button.sidebar-help{background:transparent;font:inherit;color:inherit;cursor:poi
 @media(prefers-reduced-motion:reduce){.dm-agua,.dm-empuxo,.dm-reacao{animation:none}}
 .dam-card strong{display:block;font-size:14px}
 .dam-card small{display:block;font-size:12px;color:var(--ink2);margin:3px 0}
-.dam-card em{display:block;font-size:11px;font-style:normal;font-weight:700;color:var(--muted)}
+.dam-card em{display:block;font-size:12.5px;font-style:normal;font-weight:700;color:var(--muted)}
 .turb-picker{margin-top:14px;border:1px solid var(--line);border-radius:10px;padding:16px;background:var(--soft)}
 .tp-slider{display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:700;color:var(--ink2)}
 .tp-slider b{color:var(--green);font-size:16px}
@@ -1346,7 +1346,7 @@ button:disabled{cursor:not-allowed}
  stroke:var(--bg);stroke-width:2.4px;stroke-linejoin:round;pointer-events:none}
 @media(max-width:560px){.mp-controles{gap:7px}.mp-camadas button{padding:5px 9px;font-size:11px}}
 .mp-limite-camada{margin:0;padding:8px 11px;border-bottom:1px solid var(--line);
- background:var(--surface);font-size:11.5px;line-height:1.5;color:var(--muted)}
+ background:var(--surface);font-size:12.5px;line-height:1.5;color:var(--muted)}
 .mp-satelite{pointer-events:none}
 .mp-satelite image{image-rendering:auto}
 .mp-satelite-on .mp-bacias path{
@@ -1399,7 +1399,7 @@ button:disabled{cursor:not-allowed}
 .mp-ex-opcoes button{display:flex;flex-direction:column;gap:2px;padding:8px 6px;border-radius:9px;
  border:1px solid var(--line);background:var(--surface);cursor:pointer;text-align:center}
 .mp-ex-opcoes button b{font-size:13px;color:var(--ink)}
-.mp-ex-opcoes button small{font-size:11px;color:var(--muted);line-height:1.3}
+.mp-ex-opcoes button small{font-size:12.5px;color:var(--muted);line-height:1.3}
 .mp-ex-opcoes button:hover:not(:disabled){border-color:var(--blue)}
 .mp-ex-opcoes button:disabled{cursor:default}
 .mp-ex-opcoes button.certa{border-color:var(--green2);background:color-mix(in srgb,var(--green2) 14%,transparent)}
@@ -1430,7 +1430,7 @@ button:disabled{cursor:not-allowed}
 /* A ajuda de teclado do mapa fica visível: quem navega por teclado não sabe
    quais teclas existem, e esconder a informação só ajuda quem já sabe. */
 .mp-ajuda-teclado{margin:0;padding:6px 11px;border-bottom:1px solid var(--line);
- background:var(--surface2);font-size:11.5px;line-height:1.5;color:var(--muted)}
+ background:var(--surface2);font-size:12.5px;line-height:1.5;color:var(--muted)}
 
 /* Esquema tecnico sobre tela escura, em qualquer tema.
    ----------------------------------------------------
@@ -1478,14 +1478,14 @@ button:disabled{cursor:not-allowed}
 .feature-progress b{color:var(--green);font-size:14px}
 .feature-progress>i{display:block;height:6px;overflow:hidden;border-radius:999px;background:var(--track)}
 .feature-progress em{display:block;height:100%;border-radius:inherit;background:var(--green)}
-.feature-progress small{color:var(--muted);font-size:11px}
+.feature-progress small{color:var(--muted);font-size:12.5px}
 
 .current-objective-card{display:flex;flex-direction:column;justify-content:center;padding:25px 22px;background:color-mix(in srgb,var(--green3) 26%,var(--surface))}
 .current-objective-card>span,.dashboard-action-card>header{display:flex;align-items:center;gap:7px;color:var(--green);font-size:11px;font-weight:900;letter-spacing:.07em;text-transform:uppercase}
 .current-objective-card>span svg,.dashboard-action-card>header svg{width:18px;height:18px;flex:none}
 .current-objective-card h2{margin:10px 0 8px;font-size:17px;line-height:1.3}
 .current-objective-card p{margin:0;color:var(--ink2);font-size:13px;line-height:1.6}
-.current-objective-card>small{display:block;margin-top:14px;padding-top:12px;border-top:1px solid var(--line);color:var(--muted);font-size:11px;line-height:1.5}
+.current-objective-card>small{display:block;margin-top:14px;padding-top:12px;border-top:1px solid var(--line);color:var(--muted);font-size:12.5px;line-height:1.5}
 
 .dashboard-bottom{grid-template-columns:repeat(2,minmax(0,1fr));margin-bottom:20px}
 .dashboard-action-card{display:flex;min-height:235px;flex-direction:column;padding:22px;border:1px solid var(--line);border-radius:12px;background:var(--surface);box-shadow:var(--shadow-1)}
@@ -1526,7 +1526,7 @@ button:disabled{cursor:not-allowed}
 .dashboard-source-details[open]>summary>svg:last-child{transform:rotate(90deg)}
 .dashboard-source-details>summary span{display:flex;flex-direction:column}
 .dashboard-source-details>summary strong{font-size:14px}
-.dashboard-source-details>summary small{color:var(--muted);font-size:11px}
+.dashboard-source-details>summary small{color:var(--muted);font-size:12.5px}
 .dashboard-source-details>div{padding:0 16px 16px;border-top:1px solid var(--line)}
 .dashboard-source-details .source-assurance{margin:14px 0}
 .dashboard-source-metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:0}

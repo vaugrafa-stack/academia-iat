@@ -287,9 +287,20 @@ export const TURBINES_RICH = [
    proporcao, entao os dois coincidem em qualquer largura. Foi assim que os
    marcadores do corte anatomico saiam do lugar: a camada seguia um contentor
    que esticava por fora e as coordenadas deixavam de valer. */
-function FotoAnotada({ src, alt, w, h, credito, children }) {
+function FotoAnotada({ src, alt, w, h, credito, notas, children }) {
   return (
     <figure className="tg-photo">
+      {/* A camada e aria-hidden porque a geometria dela e mesmo decorativa. As
+          CHAMADAS nao sao: "a secao diminui", "o jato bate na aresta divisora"
+          e o que transforma a foto em material didatico, e estavam indo para
+          dentro do elemento escondido. Quem usa leitor de tela recebia a
+          fotografia e perdia a licao. Aqui elas saem em texto, da mesma lista
+          que desenha as chapas, para os dois nao poderem divergir. */}
+      {notas?.length ? (
+        <p className="sr-only">
+          {`Sobre a fotografia, a camada assinala: ${notas.join('; ')}.`}
+        </p>
+      ) : null}
       <div className="fa-palco" style={{ aspectRatio: `${w} / ${h}` }}>
         <img src={src} alt={alt} />
         <svg className="fa-camada" viewBox={`0 0 ${w} ${h}`} aria-hidden="true"
@@ -328,6 +339,11 @@ function Chapa({ x, y, texto, ancora, ate }) {
 /* Pelton, 587 por 800. Rotor de museu fotografado de frente, levemente
    inclinado: a roda aparece como elipse, entao o arco de rotacao segue a
    elipse e nao um circulo. */
+const CHAPAS_PELTON = [
+  { x: 579, y: 30, ancora: 'end', texto: 'o jato bate na aresta divisora', ate: [470, 124] },
+  { x: 8, y: 44, texto: 'cubo e eixo', ate: [176, 330] },
+  { x: 8, y: 772, texto: 'concha em dupla colher', ate: [258, 690] },
+];
 function CamadaPelton() {
   return (
     <>
@@ -335,18 +351,24 @@ function CamadaPelton() {
             markerEnd="url(#fa-ponta)" />
       <circle className="fa-alvo" cx="452" cy="150" r="46" />
       <path className="fa-jato" d="M566 44 L470 128" markerEnd="url(#fa-ponta)" />
-      <Chapa x={579} y={30} ancora="end" texto="o jato bate na aresta divisora" ate={[470, 124]} />
-      <Chapa x={8} y={44} texto="cubo e eixo" ate={[176, 330]} />
-      <Chapa x={8} y={772} texto="concha em dupla colher" ate={[258, 690]} />
+      {CHAPAS_PELTON.map((c) => <Chapa key={c.texto} {...c} />)}
     </>
   );
 }
+CamadaPelton.chapas = CHAPAS_PELTON;
 
 /* Francis, 456 por 461. Conjunto completo ao ar livre: caixa espiral azul,
    anel amarelo do distribuidor, eixo a esquerda ate o gerador.
    A camada anota o que se VE. O caracol e opaco, entao nao ha percurso interno
    desenhado por cima dele: inventar a espiral escondida seria afirmar sobre o
    que a foto nao mostra. */
+const CHAPAS_FRANCIS = [
+  { x: 452, y: 16, ancora: 'end', texto: 'entrada sob pressão', ate: [386, 40] },
+  { x: 6, y: 22, texto: 'caixa espiral: a seção diminui', ate: [248, 86] },
+  { x: 6, y: 400, texto: 'eixo e gerador', ate: [172, 216] },
+  { x: 6, y: 434, texto: 'distribuidor (palhetas móveis)', ate: [245, 230] },
+  { x: 452, y: 440, ancora: 'end', texto: 'tubo de sucção', ate: [356, 338] },
+];
 function CamadaFrancis() {
   return (
     <>
@@ -354,16 +376,18 @@ function CamadaFrancis() {
       <circle className="fa-alvo" cx="292" cy="210" r="60" />
       <path className="fa-rot" d="M232 196 A 66 66 0 0 1 340 178" markerEnd="url(#fa-ponta)" />
       <path className="fa-fluxo" d="M330 300 L362 346" markerEnd="url(#fa-ponta)" />
-      <Chapa x={452} y={16} ancora="end" texto="entrada sob pressão" ate={[386, 40]} />
-      <Chapa x={6} y={22} texto="caixa espiral: a seção diminui" ate={[248, 86]} />
-      <Chapa x={6} y={400} texto="eixo e gerador" ate={[172, 216]} />
-      <Chapa x={6} y={434} texto="distribuidor (palhetas móveis)" ate={[245, 230]} />
-      <Chapa x={452} y={440} ancora="end" texto="tubo de sucção" ate={[356, 338]} />
+      {CHAPAS_FRANCIS.map((c) => <Chapa key={c.texto} {...c} />)}
     </>
   );
 }
+CamadaFrancis.chapas = CHAPAS_FRANCIS;
 
 /* Kaplan, 294 por 375. Rotor sendo montado: eixo vertical, cubo e pas. */
+const CHAPAS_KAPLAN = [
+  { x: 4, y: 22, texto: 'eixo vertical', ate: [126, 58] },
+  { x: 290, y: 22, ancora: 'end', texto: 'fluxo axial desce', ate: [252, 106] },
+  { x: 4, y: 360, texto: 'pás do rotor', ate: [112, 202] },
+];
 function CamadaKaplan() {
   return (
     <>
@@ -371,12 +395,11 @@ function CamadaKaplan() {
       <path className="fa-fluxo" d="M256 112 C 244 158 226 178 202 192" markerEnd="url(#fa-ponta)" />
       <circle className="fa-alvo" cx="162" cy="186" r="34" />
       <path className="fa-rot" d="M126 178 A 38 38 0 0 1 196 170" markerEnd="url(#fa-ponta)" />
-      <Chapa x={4} y={22} texto="eixo vertical" ate={[126, 58]} />
-      <Chapa x={290} y={22} ancora="end" texto="fluxo axial desce" ate={[252, 106]} />
-      <Chapa x={4} y={360} texto="pás do rotor" ate={[112, 202]} />
+      {CHAPAS_KAPLAN.map((c) => <Chapa key={c.texto} {...c} />)}
     </>
   );
 }
+CamadaKaplan.chapas = CHAPAS_KAPLAN;
 
 export function TurbineGallery() {
   const [i, setI] = useState(0);
@@ -394,6 +417,7 @@ export function TurbineGallery() {
             alt={`Foto real de turbina ${t.nome}`}
             w={FOTO_MEDIDA[t.foto][0]}
             h={FOTO_MEDIDA[t.foto][1]}
+            notas={t.camada?.chapas?.map((c) => c.texto)}
             credito={<figcaption><Camera size={13} /> Foto real anotada · <a href={WMPAGE(t.foto)} target="_blank" rel="noreferrer">Wikimedia Commons</a> (licença livre)</figcaption>}
           >
             {t.camada ? <t.camada /> : null}

@@ -168,7 +168,7 @@ const LEARNING_PROFILES = [
     recognize:
       "Identifique objeto, histórico, documentos, método, achados, limitações, conclusão e responsável que precisam aparecer no produto.",
     apply:
-      "Redija cada achado em cadeia verificável — fato, evidência, critério, análise, consequência e saída — mantendo versões e referências.",
+      "Redija cada achado em cadeia verificável: fato, evidência, critério, análise, consequência e saída, mantendo versões e referências.",
     audit:
       "Faça leitura adversarial de coerência entre corpo, quadros, pendências, condicionantes, conclusão, anexos e assinatura.",
     mastery: [

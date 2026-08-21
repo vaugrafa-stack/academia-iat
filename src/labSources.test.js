@@ -321,7 +321,7 @@ describe('proveniência estruturada dos cenários do laboratório', () => {
   it('identifica inequivocamente a minuta técnica usada como fonte', () => {
     expect(LAB_SOURCE_POLICY).toMatchObject({
       schemaVersion: 1,
-      sourceVersion: '1.9 — agosto de 2026',
+      sourceVersion: '1.9, agosto de 2026',
       sourceSha256: 'd66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4',
       institutionalStatus: 'technical-draft',
     });

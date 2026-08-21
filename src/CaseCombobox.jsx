@@ -42,7 +42,7 @@ export default function CaseCombobox({
   );
   const selected = scenarios.find((scenario) => scenario.id === value) || scenarios[0];
   const selectedText = selected
-    ? `${selected.label} — ${selected.title}`
+    ? `${selected.label} · ${selected.title}`
     : '';
   const normalizedQuery = normalize(query.trim());
   const filteredGroups = useMemo(() => grouped

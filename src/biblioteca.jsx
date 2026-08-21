@@ -392,7 +392,7 @@ export default function KnowledgeLibrary({
                           <span>
                             {fonte.kind === "direct"
                               ? "Fonte oficial vinculada"
-                              : "Índice oficial — localizar o ato"}
+                              : "Índice oficial: localizar o ato"}
                           </span>
                           <span>
                             Link conferido em{" "}

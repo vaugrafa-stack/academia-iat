@@ -165,7 +165,7 @@ export function buildSupportDiagnostic({
   online = currentOnlineState(),
 } = {}) {
   return [
-    'Diagnóstico técnico — Academia IAT',
+    'Diagnóstico técnico · Academia IAT',
     `Versão da plataforma: ${safeSingleLine(version, 'não informada', 40)}`,
     `Build: ${safeSingleLine(build, 'não informado', 80)}`,
     `Página: ${safeSingleLine(route, '#/suporte', 180)}`,

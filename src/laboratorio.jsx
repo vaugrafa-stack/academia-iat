@@ -64,7 +64,7 @@ import {
 
 function rotuloAula(lesson, fallbackId) {
   if (!lesson) return fallbackId;
-  return [lesson.number, lesson.title].filter(Boolean).join(' — ');
+  return [lesson.number, lesson.title].filter(Boolean).join(' · ');
 }
 
 function DecisionProvenance({ provenance, lessonMap }) {
@@ -908,7 +908,7 @@ export default function Laboratorio({
               <option value="todas">Todas as complexidades</option>
               {complexities.map((complexity) => (
                 <option value={complexity.id} key={complexity.id}>
-                  {complexity.ordem}. {complexity.titulo} — {complexity.tarefa}
+                  {complexity.ordem}. {complexity.titulo} · {complexity.tarefa}
                 </option>
               ))}
             </select>
@@ -1144,7 +1144,7 @@ export default function Laboratorio({
               <h3>Evidências disponíveis</h3>
               <p className="evidence-instruction">
                 Abra e confronte ao menos {minimumEvidence} {minimumEvidence === 1 ? 'peça' : 'peças'}
-                {requiresAllEvidence ? ` — no nível ${measuredLevel.titulo}, todas são obrigatórias.` : '.'}
+                {requiresAllEvidence ? `, no nível ${measuredLevel.titulo}, todas são obrigatórias.` : '.'}
               </p>
               {scenario.evidenceTask && (
                 <aside className="lab-evidence-task" role="note">

@@ -185,7 +185,7 @@ export function AnswerSheetDrawer({ sheet, open, onClose }) {
               <small>
                 {sheet.group?.title || 'Caso prático'} · {sheet.complexity.title}
               </small>
-              <h3>{sheet.caseLabel} — {sheet.caseTitle}</h3>
+              <h3>{sheet.caseLabel} · {sheet.caseTitle}</h3>
               <p>{sheet.group?.summary}</p>
             </div>
             <span>{sheet.type}</span>
@@ -398,7 +398,7 @@ export function AnswerSheetDrawer({ sheet, open, onClose }) {
               <ul className="answer-sheet-evidence">
                 {sheet.glossary.map((entry) => (
                   <li key={entry.id}>
-                    <strong>{entry.acronym}</strong> — {entry.definition}
+                    <strong>{entry.acronym}</strong>: {entry.definition}
                   </li>
                 ))}
               </ul>

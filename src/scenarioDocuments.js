@@ -61,7 +61,7 @@ export function buildScenarioDocument(scenario, evidenceTitle, index) {
     id: scenarioCode(scenario, index),
     title: evidenceTitle,
     subtitle: `${profile.kind} · ${scenario.type} · ${scenario.label}`,
-    watermark: 'EXEMPLO DIDÁTICO — SEM VALIDADE',
+    watermark: 'EXEMPLO DIDÁTICO · SEM VALIDADE',
     fields: [
       ['Identificador sintético', scenarioCode(scenario, index)],
       ['Tipo documental', profile.kind],

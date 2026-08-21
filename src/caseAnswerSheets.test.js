@@ -114,7 +114,7 @@ describe('folhas-resposta dos casos práticos', () => {
     );
     const text = serializeCaseAnswerSheet(sheet);
 
-    expect(text).toContain('FOLHA-RESPOSTA — CONTEÚDO MÍNIMO ESPERADO');
+    expect(text).toContain('FOLHA-RESPOSTA: CONTEÚDO MÍNIMO ESPERADO');
     expect(text).toContain('3. DECISÕES ESPERADAS');
     expect(text).toContain('3.1 TAREFA ABERTA DE FUNDAMENTAÇÃO');
     expect(text).toContain('Critérios e fontes:');

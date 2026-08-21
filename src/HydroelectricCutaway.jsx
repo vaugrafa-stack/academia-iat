@@ -464,7 +464,7 @@ export default function HydroelectricCutaway() {
       </div>
 
       <nav className="hec-equipment-key" aria-label="Legenda dos equipamentos">
-        <p>Equipamentos — toque para localizar</p>
+        <p>Equipamentos: toque para localizar</p>
         <ol>
           {CUTAWAY_EQUIPMENT.map((equipment, index) => (
             <li key={equipment.id}>

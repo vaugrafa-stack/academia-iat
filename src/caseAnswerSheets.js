@@ -5,7 +5,7 @@ import {
 } from './labSources.js';
 import { nivelDoCaso } from './niveisLab.js';
 
-export const CASE_ANSWER_SHEET_TITLE = 'Folha-resposta — conteúdo mínimo esperado';
+export const CASE_ANSWER_SHEET_TITLE = 'Folha-resposta: conteúdo mínimo esperado';
 
 const EXPECTED_ANSWER_LABELS = Object.freeze({
   sim: 'Sim',
@@ -342,17 +342,17 @@ export function serializeCaseAnswerSheet(sheet) {
     sheet.title.toUpperCase(),
     'Material de consulta do exercício. Não é peça processual e não preenche dados ausentes.',
     '',
-    `Caso: ${sheet.caseLabel} — ${sheet.caseTitle}`,
+    `Caso: ${sheet.caseLabel} · ${sheet.caseTitle}`,
     `Tipologia do exercício: ${sheet.type}`,
     ...(sheet.group ? [`Categoria: ${sheet.group.title}`] : []),
-    `Complexidade da tarefa: ${sheet.complexity.title} — ${sheet.complexity.task}`,
+    `Complexidade da tarefa: ${sheet.complexity.title} · ${sheet.complexity.task}`,
     '',
     '1. FATOS DISPONÍVEIS',
   ];
   addList(lines, sheet.facts, (fact) => fact);
 
   if (sheet.series) {
-    lines.push('', `SÉRIE APRESENTADA${sheet.series.title ? ` — ${sheet.series.title}` : ''}`);
+    lines.push('', `SÉRIE APRESENTADA${sheet.series.title ? ` · ${sheet.series.title}` : ''}`);
     lines.push(sheet.series.columns.join(' | '));
     sheet.series.rows.forEach((row) => lines.push(row.join(' | ')));
     if (sheet.series.note) lines.push(`Nota: ${sheet.series.note}`);
@@ -424,7 +424,7 @@ export function serializeCaseAnswerSheet(sheet) {
   addList(lines, sheet.gaps, (gap) => `${gap.title}: ${gap.text}`);
   if (sheet.glossary.length) {
     lines.push('', 'GLOSSÁRIO DO CASO');
-    addList(lines, sheet.glossary, (entry) => `${entry.acronym} — ${entry.definition}`);
+    addList(lines, sheet.glossary, (entry) => `${entry.acronym}: ${entry.definition}`);
   }
   lines.push(
     '',

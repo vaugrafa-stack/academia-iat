@@ -10,7 +10,7 @@ export const LAB_SOURCE_POLICY = Object.freeze({
   schemaVersion: 1,
   sourceTitle: 'POP de Licenciamento Ambiental de Empreendimentos Hidrelétricos',
   sourceDocument: 'POP_DLE_HID_001_v1.9_Linguagem_Operacional_Revisada.docx',
-  sourceVersion: '1.9 — agosto de 2026',
+  sourceVersion: '1.9, agosto de 2026',
   sourceSha256: 'd66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4',
   institutionalStatus: 'technical-draft',
   institutionalStatusLabel: 'Minuta técnica',

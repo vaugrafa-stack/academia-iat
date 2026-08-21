@@ -1,0 +1,502 @@
+/* Motion and controls local to the hydro case studies. The existing route
+   keeps its base card styles; this layer owns only the interactive scenes. */
+.hydro-motion-surface {
+  --hcm-accent: var(--green, #197a59);
+  --hcm-water: #5ff2cd;
+  --hcm-control-bg: var(--surface, #fff);
+  --hcm-control-border: var(--line, #d8e3dc);
+}
+
+.hcm-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 0 0 12px;
+  padding: 10px 12px;
+  border: 1px solid var(--hcm-control-border);
+  border-radius: 12px;
+  background: var(--soft, #f3f7f4);
+}
+
+.hcm-motion-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  color: var(--ink2, #31463d);
+  font-size: 12.5px;
+  font-weight: 750;
+}
+
+.hcm-motion-status i {
+  width: 9px;
+  height: 9px;
+  flex: 0 0 9px;
+  border-radius: 50%;
+  background: var(--muted, #748078);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--muted, #748078) 16%, transparent);
+}
+
+.hydro-motion-surface[data-motion-state='running'] .hcm-motion-status i {
+  background: var(--hcm-accent);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--hcm-accent) 18%, transparent);
+}
+
+.hcm-motion-controls,
+.hcm-speed-control {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.hcm-speed-control {
+  min-height: 44px;
+  color: var(--muted, #65736b);
+  font-size: 11.5px;
+  font-weight: 650;
+}
+
+.hcm-speed-control span {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.25;
+  white-space: nowrap;
+}
+
+.hcm-speed-control strong {
+  color: var(--ink2, #31463d);
+  font-variant-numeric: tabular-nums;
+}
+
+.hcm-speed-control input {
+  width: 132px;
+  min-height: 32px;
+  accent-color: var(--hcm-accent);
+  cursor: pointer;
+}
+
+.hcm-speed-control input:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.hcm-play,
+.hcm-tabs button,
+.hcm-phase-selector button {
+  min-height: 44px;
+  border: 1px solid var(--hcm-control-border);
+  background: var(--hcm-control-bg);
+  color: var(--ink2, #31463d);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.hcm-play {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-width: 112px;
+  padding: 8px 14px;
+  border-radius: 10px;
+}
+
+.hcm-play svg {
+  width: 16px;
+  height: 16px;
+}
+
+.hcm-play:disabled {
+  cursor: not-allowed;
+  opacity: 0.58;
+}
+
+.hcm-play:not(:disabled):hover,
+.hcm-tabs button:hover,
+.hcm-phase-selector button:hover {
+  border-color: var(--hcm-accent);
+}
+
+.hcm-play:focus-visible,
+.hcm-tabs button:focus-visible,
+.hcm-phase-selector button:focus-visible,
+.hcm-speed-control input:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--hcm-accent) 34%, transparent);
+  outline-offset: 2px;
+}
+
+.hcm-tabs {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.hcm-tabs button {
+  padding: 8px 16px;
+  border-radius: 22px;
+}
+
+.hcm-tabs button.active,
+.hcm-tabs button[aria-selected='true'],
+.hcm-phase-selector button.active {
+  border-color: var(--hcm-accent);
+  background: var(--hcm-accent);
+  color: #fff;
+}
+
+.hcm-current-state {
+  grid-column: 1 / -1;
+  margin: 0;
+  padding: 10px 12px;
+  border-left: 4px solid var(--hcm-water);
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--hcm-water) 10%, var(--surface, #fff));
+  color: var(--ink2, #31463d);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.hcm-current-state strong {
+  margin-right: 0.25em;
+}
+
+.hcm-equipment-key {
+  grid-column: 1 / -1;
+  padding: 14px 16px;
+  border: 1px solid var(--hcm-control-border);
+  border-radius: 10px;
+  background: var(--soft, #f3f7f4);
+}
+
+.hcm-equipment-key h3 {
+  margin: 0 0 10px;
+  color: var(--ink, #173328);
+  font-size: 14px;
+}
+
+.hcm-equipment-key ol {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px 16px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.hcm-equipment-key li {
+  display: grid;
+  grid-template-columns: 28px minmax(0, 1fr);
+  gap: 9px;
+  align-items: start;
+  min-width: 0;
+}
+
+.hcm-equipment-key li > span {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--hcm-accent);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 850;
+}
+
+.hcm-equipment-key p {
+  margin: 0;
+  color: var(--muted, #65736b);
+  font-size: 12.5px;
+  line-height: 1.45;
+}
+
+.hcm-equipment-key strong {
+  display: block;
+  color: var(--ink2, #31463d);
+}
+
+/* Exact dash periods make the end frame identical to the first frame. */
+.hydro-motion-surface .hcm-flow {
+  animation: hcmFlow var(--hcm-flow-duration) linear infinite;
+}
+
+.hydro-motion-surface .hcm-flow--reverse {
+  animation-direction: reverse;
+}
+
+@keyframes hcmFlow {
+  to { stroke-dashoffset: calc(0px - var(--hcm-dash-period)); }
+}
+
+/* Pelton: the disk, spokes, buckets and hub are one mechanical rotor. */
+.hcm-turbine-motion .hcm-pelton-rotor,
+.hcm-turbine-motion .spin-slow {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: hcmRotate var(--hcm-d7) linear infinite;
+}
+
+@keyframes hcmRotate {
+  to { transform: rotate(360deg); }
+}
+
+/* Kaplan in side cut: pitch adjusts around each blade root. Rotation itself
+   is communicated by the two flow arcs, not by a false front-view fan. */
+.hcm-turbine-motion .kp-passo {
+  transform-box: fill-box;
+  animation-duration: var(--hcm-d9);
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+}
+
+.hcm-turbine-motion .kp-passo--left {
+  transform-origin: 100% 50%;
+  animation-name: hcmPitchLeft;
+}
+
+.hcm-turbine-motion .kp-passo--right {
+  transform-origin: 0 50%;
+  animation-name: hcmPitchRight;
+}
+
+@keyframes hcmPitchLeft {
+  0%, 100% { transform: rotate(-7deg); }
+  50% { transform: rotate(7deg); }
+}
+
+@keyframes hcmPitchRight {
+  0%, 100% { transform: rotate(7deg); }
+  50% { transform: rotate(-7deg); }
+}
+
+/* Bulbo is seen from the side. Foreshortening the blade profile indicates
+   rotation around the horizontal water axis without spinning it like a fan. */
+.hcm-turbine-motion .hcm-bulbo-rotor {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: hcmAxialTurn var(--hcm-d22) linear infinite;
+}
+
+@keyframes hcmAxialTurn {
+  0%, 100% { transform: scaleY(1); }
+  25% { transform: scaleY(0.16); }
+  50% { transform: scaleY(-1); }
+  75% { transform: scaleY(-0.16); }
+}
+
+.hcm-turbine-motion .hcm-bulbo-generator,
+.hcm-turbine-motion .fa-alvo {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: hcmPulse var(--hcm-d24) ease-in-out infinite;
+}
+
+@keyframes hcmPulse {
+  0%, 100% { opacity: 0.38; transform: scale(0.94); }
+  55% { opacity: 1; transform: scale(1.04); }
+}
+
+.hcm-phase-selector {
+  display: flex;
+  gap: 8px;
+  margin: 0 0 10px;
+}
+
+.hcm-phase-selector button {
+  min-width: 132px;
+  padding: 8px 14px;
+  border-radius: 10px;
+}
+
+.hcm-reversible-motion {
+  margin: 8px 0;
+  padding: 12px;
+  border: 1px solid var(--hcm-control-border);
+  border-radius: 12px;
+  background: var(--surface, #fff);
+}
+
+.hcm-reversible-motion .rv-gera,
+.hcm-reversible-motion .rv-bombeia,
+.hcm-reversible-motion .rv-gera-rotulo,
+.hcm-reversible-motion .rv-bombeia-rotulo {
+  transition: opacity 260ms ease;
+}
+
+.hcm-reversible-motion[data-reversible-mode='generate'] .rv-gera,
+.hcm-reversible-motion[data-reversible-mode='generate'] .rv-gera-rotulo,
+.hcm-reversible-motion[data-reversible-mode='pump'] .rv-bombeia,
+.hcm-reversible-motion[data-reversible-mode='pump'] .rv-bombeia-rotulo {
+  opacity: 1;
+}
+
+.hcm-reversible-motion[data-reversible-mode='generate'] .rv-bombeia,
+.hcm-reversible-motion[data-reversible-mode='generate'] .rv-bombeia-rotulo,
+.hcm-reversible-motion[data-reversible-mode='pump'] .rv-gera,
+.hcm-reversible-motion[data-reversible-mode='pump'] .rv-gera-rotulo {
+  opacity: 0.14;
+}
+
+.hcm-reversible-motion .hcm-reversible-rotor {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: hcmRotate var(--hcm-d22) linear infinite;
+}
+
+.hcm-reversible-motion[data-reversible-mode='pump'] .hcm-reversible-rotor {
+  animation-direction: reverse;
+}
+
+.hcm-arrangements {
+  margin-top: 14px;
+}
+
+.hcm-arrangement-tabs {
+  margin-bottom: 12px;
+}
+
+.hcm-arrangement-panel {
+  display: grid;
+  gap: 12px;
+}
+
+.hcm-arrangement-stage {
+  grid-template-columns: minmax(0, 1fr);
+  margin: 0;
+}
+
+.hcm-arrangement-stage figure {
+  width: 100%;
+}
+
+.hcm-arrangement-stage .arr-svg {
+  width: 100%;
+  min-height: 300px;
+  max-height: 520px;
+}
+
+.hcm-arrangement-stage figcaption {
+  padding: 12px 14px;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.hcm-arrangements .hcm-accumulation-band {
+  animation: hcmBand var(--hcm-d24) ease-in-out infinite;
+}
+
+@keyframes hcmBand {
+  0%, 100% { opacity: 0.42; stroke-width: 1.6; }
+  50% { opacity: 1; stroke-width: 2.5; }
+}
+
+/* Pausing includes every non-flow cue in the scene. Flow paths inherit the
+   same state, so the visible frame is preserved rather than reset. */
+.hydro-motion-surface[data-motion-state='paused'] :is(
+  .hcm-flow,
+  .hcm-pelton-rotor,
+  .spin-slow,
+  .kp-passo,
+  .hcm-bulbo-rotor,
+  .hcm-bulbo-generator,
+  .fa-alvo,
+  .hcm-reversible-rotor,
+  .hcm-accumulation-band
+) {
+  animation-play-state: paused !important;
+}
+
+@media (max-width: 700px) {
+  .hcm-toolbar {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .hcm-motion-controls {
+    justify-content: space-between;
+  }
+
+  .hcm-speed-control {
+    flex: 1 1 auto;
+  }
+
+  .hcm-speed-control input {
+    width: min(38vw, 150px);
+  }
+
+  .hcm-tabs {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding: 2px 2px 7px;
+    scrollbar-width: thin;
+  }
+
+  .hcm-tabs button {
+    flex: 0 0 auto;
+  }
+
+  .hcm-equipment-key ol {
+    grid-template-columns: 1fr;
+  }
+
+  .hcm-arrangement-stage .arr-svg {
+    min-height: 0;
+  }
+
+  /* At phone widths the SVG labels become too small. The complete names and
+     functions remain immediately below in semantic HTML. */
+  .hcm-arrangement-stage .hcm-svg-label {
+    display: none;
+  }
+}
+
+@media (max-width: 430px) {
+  .hcm-motion-controls {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .hcm-speed-control {
+    justify-content: space-between;
+  }
+
+  .hcm-speed-control input {
+    width: min(52vw, 168px);
+  }
+
+  .hcm-play {
+    width: 100%;
+  }
+
+  .hcm-phase-selector button {
+    flex: 1 1 0;
+    min-width: 0;
+  }
+
+  .hcm-reversible-motion {
+    padding: 9px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hydro-motion-surface :is(
+    .hcm-flow,
+    .hcm-pelton-rotor,
+    .spin-slow,
+    .kp-passo,
+    .hcm-bulbo-rotor,
+    .hcm-bulbo-generator,
+    .fa-alvo,
+    .hcm-reversible-rotor,
+    .hcm-accumulation-band
+  ) {
+    animation: none !important;
+  }
+
+  .hcm-reversible-motion :is(.rv-gera, .rv-bombeia, .rv-gera-rotulo, .rv-bombeia-rotulo) {
+    transition: none;
+  }
+}

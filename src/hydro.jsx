@@ -3,14 +3,13 @@
 import React, { useEffect, useState, useMemo, useRef } from 'react';
 import {
   Waves, Zap, Droplets, Factory, Mountain, Gauge, ArrowRight, Info,
-  Layers3, Activity, CircleHelp, TowerControl, Wind, MapPin,
+  Layers3, Activity, CircleHelp, TowerControl, Wind, MapPin, Play, Pause,
 } from 'lucide-react';
 import { TurbineGallery, PRCasesSection, ArrangementSchematics, LicensingPath } from './hydroCases';
 import NormativeAuthorityAxes from './NormativeAuthorityAxes.jsx';
 import HydroelectricCutaway from './HydroelectricCutaway.jsx';
 import './routeStyles.css';
-
-const ASSET = (p) => ((import.meta.env.BASE_URL || '/').replace(/\/$/, '')) + p;
+import './hydroMotion.css';
 
 export const HYDRO_SECTIONS = Object.freeze([
   { id: 'hydro-principio', label: 'Princípio' },
@@ -28,6 +27,93 @@ export const HYDRO_SECTIONS = Object.freeze([
 
 function clampPercent(value) {
   return Math.min(100, Math.max(0, Math.round(value)));
+}
+
+function prefersReducedMotion() {
+  return typeof window !== 'undefined'
+    && typeof window.matchMedia === 'function'
+    && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+}
+
+function useHydroMotion() {
+  const stageRef = useRef(null);
+  const [playing, setPlaying] = useState(() => !prefersReducedMotion());
+  const [speed, setSpeed] = useState(1);
+  const [inView, setInView] = useState(true);
+  const [reducedMotion, setReducedMotion] = useState(prefersReducedMotion);
+
+  useEffect(() => {
+    if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') return undefined;
+    const query = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const update = () => setReducedMotion(query.matches);
+    update();
+    query.addEventListener?.('change', update);
+    return () => query.removeEventListener?.('change', update);
+  }, []);
+
+  useEffect(() => {
+    const node = stageRef.current;
+    if (!node || typeof IntersectionObserver === 'undefined') return undefined;
+    const observer = new IntersectionObserver(
+      ([entry]) => setInView(entry.isIntersecting),
+      { rootMargin: '120px 0px', threshold: 0.01 },
+    );
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, []);
+
+  const active = playing && inView && !reducedMotion;
+  return {
+    stageRef,
+    playing,
+    setPlaying,
+    speed,
+    setSpeed,
+    inView,
+    reducedMotion,
+    active,
+    style: { '--hydro-motion-scale': (1 / speed).toFixed(3) },
+  };
+}
+
+function HydroMotionControls({ id, label, motion, activeDescription }) {
+  let status = activeDescription;
+  if (motion.reducedMotion) status = 'Movimento reduzido pelo dispositivo';
+  else if (!motion.playing) status = 'Animação pausada';
+  else if (!motion.inView) status = 'Pausada automaticamente fora da tela';
+
+  return (
+    <div className="hydro-motion-controls" aria-label={`Controles da animação: ${label}`}>
+      <div className="hydro-motion-status" role="status" aria-live="polite">
+        <span aria-hidden="true" />
+        <div><small>Agora na cena</small><strong>{status}</strong></div>
+      </div>
+      <button
+        type="button"
+        className="hydro-motion-toggle"
+        onClick={() => motion.setPlaying((value) => !value)}
+        aria-pressed={motion.playing}
+        disabled={motion.reducedMotion}
+      >
+        {motion.playing ? <Pause aria-hidden="true" /> : <Play aria-hidden="true" />}
+        {motion.playing ? 'Pausar' : 'Reproduzir'}
+      </button>
+      <label className="hydro-motion-speed" htmlFor={`${id}-speed`}>
+        <span>Velocidade <strong>{motion.speed.toFixed(2).replace('.00', '')}×</strong></span>
+        <input
+          id={`${id}-speed`}
+          type="range"
+          min="0.5"
+          max="2"
+          step="0.25"
+          value={motion.speed}
+          aria-valuetext={`${motion.speed.toFixed(2).replace('.00', '')} vezes a velocidade normal`}
+          onChange={(event) => motion.setSpeed(Number(event.target.value))}
+          disabled={motion.reducedMotion}
+        />
+      </label>
+    </div>
+  );
 }
 
 export function calculateHydroReadingState({
@@ -67,7 +153,7 @@ function topbarHeight() {
 let pendingSectionFrame = 0;
 let pendingSectionCleanup = null;
 
-function focusSection(id) {
+function focusSection(id, onSettled) {
   const section = document.getElementById(id);
   if (!section) return;
 
@@ -97,7 +183,12 @@ function focusSection(id) {
   section.scrollIntoView({ block: 'start', inline: 'nearest', behavior: 'auto' });
   section.focus({ preventScroll: true });
 
-  let framesLeft = 16;
+  // content-visibility pode recalcular a altura de vários blocos depois do
+  // primeiro quadro, sobretudo no celular. Mantemos uma janela curta de
+  // estabilização para corrigir esses deslocamentos tardios sem animação.
+  let framesLeft = 120;
+  let framesElapsed = 0;
+  let stableFrames = 0;
   const settle = () => {
     pendingSectionFrame = 0;
     const localNav = document.querySelector('.hydro-guide-nav');
@@ -106,17 +197,27 @@ function focusSection(id) {
     if (Math.abs(delta) > 1) {
       const scrollY = window.scrollY || document.documentElement.scrollTop || 0;
       window.scrollTo({ top: Math.max(0, scrollY + delta), behavior: 'auto' });
+      stableFrames = 0;
+    } else {
+      stableFrames += 1;
     }
     framesLeft -= 1;
-    if (framesLeft === 12) restoreVisibility();
-    if (framesLeft > 0) pendingSectionFrame = window.requestAnimationFrame(settle);
-    else restoreVisibility();
+    framesElapsed += 1;
+    if (framesElapsed === 4) restoreVisibility();
+    if (framesLeft > 0 && (framesElapsed < 60 || stableFrames < 12)) {
+      pendingSectionFrame = window.requestAnimationFrame(settle);
+    } else {
+      restoreVisibility();
+      onSettled?.();
+    }
   };
   pendingSectionFrame = window.requestAnimationFrame(settle);
 }
 
 export function HydroLocalNav() {
   const linksRef = useRef(null);
+  const manualTargetRef = useRef(null);
+  const scheduleUpdateRef = useRef(() => {});
   const [reading, setReading] = useState({
     activeId: HYDRO_SECTIONS[0].id,
     progress: 0,
@@ -142,8 +243,15 @@ export function HydroLocalNav() {
         sections: positions,
         scrollY,
         viewportHeight: window.innerHeight,
-        activationOffset: topbarHeight() + 96,
+        // Use a mesma linha visual adotada por focusSection. Em telas estreitas,
+        // a navegação local fica mais alta; um deslocamento fixo podia deixar o
+        // título focado abaixo da linha de leitura e devolver aria-current à
+        // seção anterior logo após o clique.
+        activationOffset: topbarHeight()
+          + (document.querySelector('.hydro-guide-nav')?.offsetHeight || 86)
+          + 10,
       });
+      if (manualTargetRef.current) next.activeId = manualTargetRef.current;
       setReading((current) => (
         current.activeId === next.activeId && current.progress === next.progress
           ? current
@@ -155,14 +263,34 @@ export function HydroLocalNav() {
       if (animationFrame) return;
       animationFrame = window.requestAnimationFrame(update);
     };
+    scheduleUpdateRef.current = scheduleUpdate;
+
+    const releaseManualTarget = () => {
+      if (!manualTargetRef.current) return;
+      manualTargetRef.current = null;
+      scheduleUpdate();
+    };
+    const releaseManualTargetByKey = (event) => {
+      if (!['ArrowUp', 'ArrowDown', 'PageUp', 'PageDown', 'Home', 'End', ' '].includes(event.key)) return;
+      releaseManualTarget();
+    };
 
     update();
     window.addEventListener('scroll', scheduleUpdate, { passive: true });
     window.addEventListener('resize', scheduleUpdate);
+    window.addEventListener('wheel', releaseManualTarget, { passive: true });
+    window.addEventListener('touchstart', releaseManualTarget, { passive: true });
+    window.addEventListener('pointerdown', releaseManualTarget, { passive: true });
+    window.addEventListener('keydown', releaseManualTargetByKey);
     return () => {
       window.removeEventListener('scroll', scheduleUpdate);
       window.removeEventListener('resize', scheduleUpdate);
+      window.removeEventListener('wheel', releaseManualTarget);
+      window.removeEventListener('touchstart', releaseManualTarget);
+      window.removeEventListener('pointerdown', releaseManualTarget);
+      window.removeEventListener('keydown', releaseManualTargetByKey);
       if (animationFrame) window.cancelAnimationFrame(animationFrame);
+      scheduleUpdateRef.current = () => {};
     };
   }, []);
 
@@ -214,8 +342,12 @@ export function HydroLocalNav() {
             data-hydro-nav-target={section.id}
             aria-current={reading.activeId === section.id ? 'location' : undefined}
             onClick={() => {
+              manualTargetRef.current = section.id;
               setReading((current) => ({ ...current, activeId: section.id }));
-              focusSection(section.id);
+              focusSection(section.id, () => {
+                if (manualTargetRef.current !== section.id) return;
+                scheduleUpdateRef.current();
+              });
             }}
           >
             {section.label}
@@ -470,6 +602,83 @@ function DamMini({ kind }) {
   );
 }
 
+function DamExplorer() {
+  const [selectedKind, setSelectedKind] = useState(BARRAGENS[0].svg);
+  const motion = useHydroMotion();
+  const selectedDam = BARRAGENS.find((dam) => dam.svg === selectedKind) || BARRAGENS[0];
+
+  const handleTabKey = (event, index) => {
+    let nextIndex = index;
+    if (event.key === 'ArrowRight' || event.key === 'ArrowDown') nextIndex = (index + 1) % BARRAGENS.length;
+    else if (event.key === 'ArrowLeft' || event.key === 'ArrowUp') nextIndex = (index - 1 + BARRAGENS.length) % BARRAGENS.length;
+    else if (event.key === 'Home') nextIndex = 0;
+    else if (event.key === 'End') nextIndex = BARRAGENS.length - 1;
+    else return;
+    event.preventDefault();
+    setSelectedKind(BARRAGENS[nextIndex].svg);
+    event.currentTarget.parentElement?.querySelectorAll('[role="tab"]')[nextIndex]?.focus();
+  };
+
+  return (
+    <div className="dam-explorer">
+      <HydroMotionControls
+        id="hydro-barramentos"
+        label="Tipos de barramento"
+        motion={motion}
+        activeDescription={`${selectedDam.nome}: acompanhe o empuxo da água e a reação da estrutura`}
+      />
+      <div className="dam-selector" role="tablist" aria-label="Escolha o tipo de barramento">
+        {BARRAGENS.map((dam, index) => (
+          <button
+            key={dam.svg}
+            id={`dam-tab-${dam.svg}`}
+            type="button"
+            role="tab"
+            aria-selected={dam.svg === selectedKind}
+            aria-controls="dam-selected-panel"
+            tabIndex={dam.svg === selectedKind ? 0 : -1}
+            className={dam.svg === selectedKind ? 'active' : ''}
+            onClick={() => setSelectedKind(dam.svg)}
+            onKeyDown={(event) => handleTabKey(event, index)}
+          >
+            <span aria-hidden="true">{String(index + 1).padStart(2, '0')}</span>
+            {dam.nome}
+          </button>
+        ))}
+      </div>
+      <article
+        id="dam-selected-panel"
+        className="dam-selected-panel"
+        role="tabpanel"
+        aria-labelledby={`dam-tab-${selectedDam.svg}`}
+      >
+        <figure
+          ref={motion.stageRef}
+          className="dam-stage hydro-motion-stage"
+          data-playing={motion.active ? 'true' : 'false'}
+          style={motion.style}
+        >
+          <DamMini kind={selectedDam.svg} />
+          <figcaption>
+            <strong>{selectedDam.nome}</strong>
+            <span>Representação técnica ampliada, corte esquemático sem escala.</span>
+          </figcaption>
+        </figure>
+        <div className="dam-facts" aria-live="polite">
+          <div><small>Como recebe a ação da água</small><strong>Empuxo a montante</strong></div>
+          <div><small>Como a estrutura responde</small><strong>{selectedDam.resiste}</strong></div>
+          <div><small>Condição típica de implantação</small><strong>{selectedDam.onde}</strong></div>
+        </div>
+        <div className="dam-force-legend" aria-label="Legenda das forças">
+          <span><i className="dam-force-legend__water" /> Água a montante</span>
+          <span><i className="dam-force-legend__thrust" /> Empuxo da água</span>
+          <span><i className="dam-force-legend__reaction" /> Reação da estrutura</span>
+        </div>
+      </article>
+    </div>
+  );
+}
+
 // Rotulos permanentes do corte, com linha-guia ate a peca.
 //
 // O desenho tinha nove pontos clicaveis e UM unico texto no SVG inteiro, o
@@ -493,6 +702,18 @@ const ROTULOS_CORTE = [
   { id: 'subestacao', texto: 'Subestação', x: 716, y: 276, ancora: 'start', guia: [712, 282, 692, 302] },
 ];
 
+const FOCOS_CORTE = Object.freeze({
+  reservatorio: { cx: 126, cy: 302, rx: 112, ry: 55 },
+  barragem: { cx: 278, cy: 338, rx: 45, ry: 92 },
+  vertedouro: { cx: 316, cy: 338, rx: 35, ry: 88 },
+  tomada: { cx: 248, cy: 344, rx: 35, ry: 34 },
+  conduto: { cx: 412, cy: 380, rx: 150, ry: 34 },
+  casa: { cx: 600, cy: 382, rx: 78, ry: 60 },
+  turbina: { cx: 585, cy: 398, rx: 34, ry: 31 },
+  fuga: { cx: 772, cy: 420, rx: 122, ry: 27 },
+  subestacao: { cx: 690, cy: 330, rx: 45, ry: 48 },
+});
+
 function RotuloDoCorte({ item, ativo, onSelect }) {
   const largura = item.texto.length * 7.4 + 16;
   const x = item.ancora === 'end' ? item.x - largura : item.ancora === 'middle' ? item.x - largura / 2 : item.x;
@@ -500,6 +721,7 @@ function RotuloDoCorte({ item, ativo, onSelect }) {
     <g
       className={'cs-rotulo' + (ativo ? ' ativo' : '')}
       onClick={() => onSelect(item.id)}
+      aria-hidden="true"
     >
       <line x1={item.guia[0]} y1={item.guia[1]} x2={item.guia[2]} y2={item.guia[3]} />
       <rect x={x} y={item.y - 13} width={largura} height={19} rx={9} />
@@ -509,7 +731,11 @@ function RotuloDoCorte({ item, ativo, onSelect }) {
 }
 
 function CrossSection({ selected, onSelect }) {
-  // corte transversal esquematico com hotspots e agua animada
+  const motion = useHydroMotion();
+  const selectedPart = PARTES.find((part) => part.id === selected) || PARTES[0];
+  const focus = FOCOS_CORTE[selected] || FOCOS_CORTE.reservatorio;
+  // Corte transversal esquematico com hotspots e camadas animadas. A moldura
+  // operacional e HTML para continuar legivel quando o SVG encolher.
   const hot = (id, cx, cy) => (
     <button
       key={id}
@@ -517,10 +743,25 @@ function CrossSection({ selected, onSelect }) {
       style={{ left: `${cx}%`, top: `${cy}%` }}
       onClick={() => onSelect(id)}
       aria-label={PARTES.find((p) => p.id === id)?.nome}
+      aria-pressed={selected === id}
+      aria-controls="hydro-anatomia-detail"
     ><span /></button>
   );
   return (
-    <div className="cross-wrap">
+    <div className="cross-explorer">
+      <HydroMotionControls
+        id="hydro-anatomia"
+        label="Anatomia do arranjo"
+        motion={motion}
+        activeDescription={`${selectedPart.nome}: água, rotação e energia mostram o percurso associado`}
+      />
+      <div
+        ref={motion.stageRef}
+        className="cross-wrap hydro-motion-stage"
+        data-playing={motion.active ? 'true' : 'false'}
+        data-selected={selected}
+        style={motion.style}
+      >
       {/* A descricao conta o PROCESSO, nao a aparencia: quem usa leitor de tela
           precisa da ordem e da direcao, que sao justamente o que o desenho
           ensina. "Corte esquematico de uma usina" nao informava nada. */}
@@ -669,7 +910,7 @@ function CrossSection({ selected, onSelect }) {
         {/* Perfil do vertedouro: a agua nao cai de uma parede reta, ela desce
             por uma calha curva. */}
         <path d="M300 250 C 314 292, 320 356, 320 420" fill="none" stroke="#6f7772" strokeWidth="3" opacity="0.75" />
-        <path className="cs-spill" d="M300 260 C 318 300, 322 360, 320 418" stroke="#cfeaff" strokeWidth="8" fill="none" strokeLinecap="round" opacity="0.85" />
+        <path className={`cs-spill${selected === 'vertedouro' ? ' is-active' : ''}`} d="M300 260 C 318 300, 322 360, 320 418" stroke="#cfeaff" strokeWidth="8" fill="none" strokeLinecap="round" />
         <ellipse cx="326" cy="418" rx="20" ry="6" fill="#dff2ff" opacity="0.4" />
 
         {/* Tomada d'agua com grade. */}
@@ -751,6 +992,14 @@ function CrossSection({ selected, onSelect }) {
           <rect x="138" y="270" width="86" height="22" rx="7" fill="#0f2a22" opacity="0.86" />
           <text x="146" y="285" fontSize="14" fill="#7ff0c4" fontWeight="700">H (queda)</text>
         </g>
+        <ellipse
+          className="cs-focus-ring"
+          cx={focus.cx}
+          cy={focus.cy}
+          rx={focus.rx}
+          ry={focus.ry}
+          aria-hidden="true"
+        />
         {ROTULOS_CORTE.map((item) => (
           <RotuloDoCorte
             key={item.id}
@@ -772,6 +1021,32 @@ function CrossSection({ selected, onSelect }) {
         {hot('fuga', 84, 86.6)}
         {hot('subestacao', 77, 53.0)}
       </div>
+      <div className="cross-stage-label" aria-live="polite">
+        <small>Equipamento em foco</small>
+        <strong>{selectedPart.nome}</strong>
+      </div>
+      </div>
+      <div className="hydro-motion-legend" aria-label="Camadas representadas na animação">
+        <span><i className="hydro-motion-legend__water" /> Água sob pressão</span>
+        <span><i className="hydro-motion-legend__rotation" /> Rotação mecânica</span>
+        <span><i className="hydro-motion-legend__energy" /> Energia elétrica</span>
+        <span className={selected === 'vertedouro' ? 'is-active' : ''}><i className="hydro-motion-legend__spill" /> Vertedouro de cheia</span>
+      </div>
+      <div className="cs-mobile-equipment" aria-label="Equipamentos do corte">
+        {PARTES.map((part, index) => (
+          <button
+            key={part.id}
+            type="button"
+            className={part.id === selected ? 'active' : ''}
+            onClick={() => onSelect(part.id)}
+            aria-pressed={part.id === selected}
+            aria-controls="hydro-anatomia-detail"
+          >
+            <span aria-hidden="true">{String(index + 1).padStart(2, '0')}</span>
+            {part.nome}
+          </button>
+        ))}
+      </div>
     </div>
   );
 }
@@ -782,7 +1057,6 @@ export function PowerCalc() {
   const [ef, setEf] = useState(90);
   const potKW = 9.81 * q * h * (ef / 100);
   const potMW = potKW / 1000;
-  const casas = Math.round(potKW / 0.2); // ~0,2 kW medios por domicilio, cerca de 150 kWh/mes (ilustrativo)
   const faixaDidatica = faixaDidaticaPorPotencia(potMW);
   const turbinasPorQueda = turbinasCompativeisPorQueda(h);
   return (
@@ -821,20 +1095,47 @@ export function PowerCalc() {
   );
 }
 
-function TurbinePicker() {
+const TURBINE_BANDS = Object.freeze([
+  { nome: 'Bulbo', min: 2, max: 15, sample: 10 },
+  { nome: 'Kaplan', min: 10, max: 70, sample: 40 },
+  { nome: 'Francis', min: 30, max: 400, sample: 120 },
+  { nome: 'Pelton', min: 250, max: 800, sample: 400 },
+]);
+
+function TurbinePicker({ selectedType, onSelectType }) {
   const [h, setH] = useState(60);
   const compativeis = turbinasCompativeisPorQueda(h);
+  const selectedName = TURBINE_BANDS.find((band) => band.nome.toLowerCase() === selectedType)?.nome || 'Francis';
+
+  const updateHeight = (value) => {
+    const nextHeight = Number(value);
+    const nextCompatible = turbinasCompativeisPorQueda(nextHeight);
+    setH(nextHeight);
+    if (!nextCompatible.includes(selectedName) && nextCompatible[0]) {
+      onSelectType(nextCompatible[0].toLowerCase());
+    }
+  };
+
   return (
     <div className="turb-picker">
       <label className="tp-slider">Arraste a queda de projeto, H <b>{h} m</b>
-        <input type="range" min="2" max="800" value={h} onChange={(e) => setH(+e.target.value)} />
+        <input type="range" min="2" max="800" value={h} onChange={(e) => updateHeight(e.target.value)} />
       </label>
-      <div className="tp-scale">
-        {[['Bulbo', 2, 15], ['Kaplan', 10, 70], ['Francis', 30, 400], ['Pelton', 250, 800]].map(([nome, a, b]) => (
-          <div key={nome} className={'tp-band' + (compativeis.includes(nome) ? ' rec' : '')}>
-            <span className="tp-name">{nome}</span>
-            <span className="tp-range">{a} a {b} m</span>
-          </div>
+      <div className="tp-scale" aria-label="Faixas ilustradas e turbina mostrada">
+        {TURBINE_BANDS.map((band) => (
+          <button
+            key={band.nome}
+            type="button"
+            className={'tp-band' + (compativeis.includes(band.nome) ? ' rec' : '') + (selectedName === band.nome ? ' selected' : '')}
+            aria-pressed={selectedName === band.nome}
+            onClick={() => {
+              setH(band.sample);
+              onSelectType(band.nome.toLowerCase());
+            }}
+          >
+            <span className="tp-name">{band.nome}</span>
+            <span className="tp-range">{band.min} a {band.max} m</span>
+          </button>
         ))}
       </div>
       <div className="tp-rec">
@@ -842,106 +1143,14 @@ function TurbinePicker() {
         <strong>{compativeis.length ? compativeis.join(' e ') : 'nenhuma das faixas ilustradas'}</strong>.
         Esta triagem não usa vazão nem substitui o dimensionamento da máquina.
       </div>
+      <p className="tp-selection" role="status">Ilustração ampliada: <strong>{selectedName}</strong>.</p>
     </div>
-  );
-}
-
-// Ciclo de geracao, animado em SVG.
-//
-// Substitui um GIF de 290 kB cujo texto estava sem acento ("Reservatorio",
-// "casa de forca") e serrilhava em tela grande. Em SVG o texto sai nitido em
-// qualquer tamanho e a animacao cai sozinha com prefers-reduced-motion.
-//
-// Os rotulos ficam FORA do desenho, numa legenda HTML: escritos sobre a
-// ilustracao eles se sobrepunham a barragem e ao reservatorio, e qualquer
-// ajuste de posicao quebrava em outra largura de tela.
-const CICLO_ETAPAS = [
-  ['Reservatório', 'a água represada acumula energia potencial'],
-  ['Conduto forçado', 'a queda vira velocidade'],
-  ['Turbina', 'a água em movimento gira o rotor'],
-  ['Gerador', 'a rotação vira energia elétrica'],
-  ['Restituição', 'a água turbinada volta ao rio'],
-];
-
-function CicloGeracao() {
-  const agua = '#4cc4f5';
-  const verde = '#3fe0a6';
-  const marcador = (x, y, n) => (
-    <g key={n}>
-      <circle cx={x} cy={y} r="13" fill="#0b1f1b" stroke={verde} strokeWidth="2" />
-      <text x={x} y={y} className="cg-num" textAnchor="middle" dominantBaseline="central">{n}</text>
-    </g>
-  );
-  return (
-    <>
-      <svg viewBox="0 0 640 280" className="ciclo-svg" role="img"
-           aria-label="Ciclo de geração de uma usina hidrelétrica: a água do reservatório desce pelo conduto forçado, gira a turbina, o gerador produz eletricidade que segue pelo sistema de conexão, em rede de distribuição ou transmissão conforme o ponto de acesso, e a água turbinada é restituída ao rio.">
-        <defs>
-          <linearGradient id="cg-ceu" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0" stopColor="#0d2b30" /><stop offset="1" stopColor="#10352f" />
-          </linearGradient>
-        </defs>
-
-        <rect width="640" height="280" fill="url(#cg-ceu)" rx="10" />
-        <path d="M0 150 L110 104 L214 150 Z" fill="#16463c" opacity=".85" />
-        <path d="M452 150 L536 108 L640 150 Z" fill="#16463c" opacity=".85" />
-
-        {/* reservatorio */}
-        <rect x="0" y="150" width="232" height="86" fill={agua} opacity=".7" />
-        <path className="cg-onda" d="M0 157 q29 -7 58 0 t58 0 t58 0 t58 0 t58 0"
-              fill="none" stroke="#bfe3ff" strokeWidth="2.5" opacity=".6" />
-        {marcador(60, 194, 1)}
-
-        {/* barragem e tomada d'agua */}
-        <path d="M232 150 L232 236 L268 236 L250 150 Z" fill="#8399a0" stroke={verde} strokeWidth="2" />
-        <rect x="208" y="192" width="24" height="22" fill="#0a4a38" stroke={verde} strokeWidth="2" rx="3" />
-
-        {/* conduto forcado, com o fluxo descendo */}
-        <line x1="232" y1="204" x2="392" y2="240" stroke="#2b3a3f" strokeWidth="14" strokeLinecap="round" />
-        <line className="cg-fluxo" x1="232" y1="204" x2="392" y2="240" stroke={verde} strokeWidth="6"
-              strokeLinecap="round" strokeDasharray="10 22" />
-        {marcador(312, 190, 2)}
-
-        {/* casa de forca: turbina girando e gerador pulsando */}
-        <rect x="392" y="206" width="98" height="54" fill="#0e3630" stroke={verde} strokeWidth="2" rx="4" />
-        <path d="M392 206 L441 184 L490 206 Z" fill="#0a4a38" stroke={verde} strokeWidth="2" />
-        <g className="cg-turbina" style={{ transformOrigin: '424px 234px' }}>
-          <circle cx="424" cy="234" r="14" fill="none" stroke={agua} strokeWidth="3" />
-          <path d="M424 234 L424 221 M424 234 L435 241 M424 234 L413 241"
-                stroke={agua} strokeWidth="3" strokeLinecap="round" />
-        </g>
-        {marcador(424, 172, 3)}
-        <rect className="cg-gerador" x="452" y="222" width="26" height="24" rx="3"
-              fill="#0a4a38" stroke="#f3bd4f" strokeWidth="2" />
-        {marcador(465, 172, 4)}
-
-        {/* subestacao e conexao eletrica */}
-        <path d="M566 214 L556 152 M566 214 L576 152 M559 178 L573 178 M557 194 L575 194"
-              stroke="#8399a0" strokeWidth="2.5" fill="none" />
-        <path className="cg-linha" d="M490 220 Q528 192 556 156"
-              stroke="#f3bd4f" strokeWidth="2" fill="none" strokeDasharray="6 6" />
-
-        {/* canal de fuga */}
-        <rect x="490" y="248" width="150" height="18" fill={agua} opacity=".7" />
-        <path className="cg-onda2" d="M490 256 q22 -5 44 0 t44 0 t44 0"
-              fill="none" stroke="#bfe3ff" strokeWidth="2" opacity=".55" />
-        {marcador(560, 236, 5)}
-      </svg>
-      {/* O numero vem do contador CSS, nao de um <span>: com o span, qualquer
-          falha de folha de estilo mostrava o numero duas vezes ("1. 1Reservatorio"),
-          porque o marcador nativo do <ol> reaparece junto. */}
-      <ol className="ciclo-legenda">
-        {CICLO_ETAPAS.map(([nome, desc]) => (
-          <li key={nome}><strong>{nome}</strong><small>{desc}</small></li>
-        ))}
-      </ol>
-    </>
   );
 }
 
 export default function HydroGuide({ go }) {
   const [parte, setParte] = useState('turbina');
-  const [turb, setTurb] = useState(0);
+  const [turbineType, setTurbineType] = useState('francis');
   const sel = useMemo(() => PARTES.find((p) => p.id === parte) || PARTES[0], [parte]);
   return (
     <div className="page hydro-page">
@@ -979,12 +1188,12 @@ export default function HydroGuide({ go }) {
         <div className="section-title"><div><h2>Anatomia do arranjo</h2><p>Clique em cada ponto do corte para entender a função.</p></div><Layers3 /></div>
         <div className="cross-layout">
           <CrossSection selected={parte} onSelect={setParte} />
-          <aside className="cross-detail" key={parte}>
+          <aside id="hydro-anatomia-detail" className="cross-detail" key={parte} aria-live="polite">
             <div className="cd-head"><sel.icon /><h3>{sel.nome}</h3></div>
             <p className="cd-resumo">{sel.resumo}</p>
             <p>{sel.detalhe}</p>
-            <div className="cd-nav">{PARTES.map((p) => (
-              <button key={p.id} className={p.id === parte ? 'active' : ''} onClick={() => setParte(p.id)}>{p.nome}</button>
+            <div className="cd-nav" aria-label="Selecionar componente">{PARTES.map((p) => (
+              <button key={p.id} type="button" className={p.id === parte ? 'active' : ''} aria-pressed={p.id === parte} onClick={() => setParte(p.id)}>{p.nome}</button>
             ))}</div>
           </aside>
         </div>
@@ -1020,15 +1229,13 @@ export default function HydroGuide({ go }) {
 
       <section className="hydro-block hydro-section hydro-long-section" id="hydro-barramentos" tabIndex="-1" data-hydro-section>
         <div className="section-title"><div><h2>Tipos de barramento</h2><p>A escolha depende do vale, da fundação e do material disponível.</p></div><Mountain /></div>
-        <div className="dam-grid">{BARRAGENS.map((b) => (
-          <article key={b.nome} className="dam-card"><DamMini kind={b.svg} /><div><strong>{b.nome}</strong><small>{b.resiste}</small><em>{b.onde}</em></div></article>
-        ))}</div>
+        <DamExplorer />
       </section>
 
       <section className="hydro-block hydro-section hydro-long-section" id="hydro-turbinas" tabIndex="-1" data-hydro-section>
         <div className="section-title"><div><h2>Turbinas: faixas de aplicação</h2><p>O projeto cruza queda e vazão; o seletor abaixo destaca somente as faixas de queda e explicita essa limitação.</p></div><Wind /></div>
-        <TurbinePicker />
-        <TurbineGallery />
+        <TurbinePicker selectedType={turbineType} onSelectType={setTurbineType} />
+        <TurbineGallery selectedType={turbineType} onSelectType={setTurbineType} />
       </section>
 
       <section className="hydro-block hydro-section hydro-long-section" id="hydro-casos" tabIndex="-1" data-hydro-section>

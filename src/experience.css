@@ -52,14 +52,9 @@
 .cs-hot {
   width: var(--target-min);
   height: var(--target-min);
-  margin: -22px;
   border-width: 8px;
   border-color: color-mix(in srgb, var(--surface) 88%, transparent);
   background-clip: padding-box;
-}
-
-.cs-hot::after {
-  inset: -2px;
 }
 
 .cs-hot:focus-visible {

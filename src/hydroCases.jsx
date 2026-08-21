@@ -1,7 +1,179 @@
 // Turbinas (esquema + foto real), casos reais do Parana e esquemas de arranjo.
 // Fatos verificados na web em 2026-07-22; fotos: Wikimedia Commons (hotlink com credito).
-import React, { useState } from 'react';
-import { Mountain, Droplets, ExternalLink, MapPin, Zap, Factory, Waves, Info, Camera } from 'lucide-react';
+import React, { useEffect, useId, useRef, useState } from 'react';
+import {
+  Mountain, Droplets, ExternalLink, MapPin, Zap, Factory, Waves, Info, Camera,
+  Pause, Play,
+} from 'lucide-react';
+import './hydroCasesMotion.css';
+
+const MOTION_DURATIONS = Object.freeze({
+  '--hcm-d055': 0.55,
+  '--hcm-d07': 0.7,
+  '--hcm-d1': 1,
+  '--hcm-d11': 1.1,
+  '--hcm-d115': 1.15,
+  '--hcm-d125': 1.25,
+  '--hcm-d13': 1.3,
+  '--hcm-d15': 1.5,
+  '--hcm-d16': 1.6,
+  '--hcm-d22': 2.2,
+  '--hcm-d24': 2.4,
+  '--hcm-d7': 7,
+  '--hcm-d9': 9,
+});
+
+const DURATION_TOKEN = Object.freeze({
+  0.55: '--hcm-d055',
+  0.7: '--hcm-d07',
+  1: '--hcm-d1',
+  1.1: '--hcm-d11',
+  1.15: '--hcm-d115',
+  1.25: '--hcm-d125',
+  1.3: '--hcm-d13',
+  1.5: '--hcm-d15',
+  1.6: '--hcm-d16',
+  2.2: '--hcm-d22',
+  2.4: '--hcm-d24',
+  7: '--hcm-d7',
+  9: '--hcm-d9',
+});
+
+function useReducedMotion() {
+  const [reduced, setReduced] = useState(false);
+
+  useEffect(() => {
+    if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') return undefined;
+    const query = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const update = () => setReduced(query.matches);
+    update();
+    query.addEventListener?.('change', update);
+    return () => query.removeEventListener?.('change', update);
+  }, []);
+
+  return reduced;
+}
+
+function useSceneVisibility(sceneRef) {
+  const [visible, setVisible] = useState(true);
+
+  useEffect(() => {
+    if (typeof IntersectionObserver !== 'function' || !sceneRef.current) return undefined;
+    const observer = new IntersectionObserver(
+      ([entry]) => setVisible(entry.isIntersecting),
+      { rootMargin: '120px 0px', threshold: 0.04 },
+    );
+    observer.observe(sceneRef.current);
+    return () => observer.disconnect();
+  }, [sceneRef]);
+
+  return visible;
+}
+
+function motionVariables(speed) {
+  const scale = 100 / speed;
+  return Object.fromEntries(Object.entries(MOTION_DURATIONS).map(([name, seconds]) => (
+    [name, `${Math.max(0.18, seconds * scale).toFixed(3)}s`]
+  )));
+}
+
+function useHydroMotion(defaultSpeed = 100) {
+  const sceneRef = useRef(null);
+  const reducedMotion = useReducedMotion();
+  const visible = useSceneVisibility(sceneRef);
+  const [playing, setPlaying] = useState(true);
+  const [speed, setSpeed] = useState(defaultSpeed);
+
+  useEffect(() => {
+    if (reducedMotion) setPlaying(false);
+  }, [reducedMotion]);
+
+  const motionActive = playing && visible && !reducedMotion;
+  return {
+    sceneRef,
+    playing,
+    setPlaying,
+    speed,
+    setSpeed,
+    reducedMotion,
+    motionActive,
+    surfaceStyle: motionVariables(speed),
+  };
+}
+
+function MotionControls({ motion, context }) {
+  const rangeId = `hcm-speed-${useId().replace(/:/g, '')}`;
+  const stateLabel = motion.reducedMotion
+    ? 'Movimento reduzido ativo'
+    : motion.motionActive ? `${context} em movimento` : `${context} pausada`;
+
+  return (
+    <div className="hcm-toolbar">
+      <span className="hcm-motion-status" role="status" aria-live="polite">
+        <i aria-hidden="true" />{stateLabel}
+      </span>
+      <div className="hcm-motion-controls">
+        <label htmlFor={rangeId} className="hcm-speed-control">
+          <span>Velocidade visual <strong>{motion.speed}%</strong></span>
+          <input
+            id={rangeId}
+            type="range"
+            min="50"
+            max="150"
+            step="10"
+            value={motion.speed}
+            disabled={motion.reducedMotion}
+            aria-valuetext={`${motion.speed}% da velocidade visual`}
+            onChange={(event) => motion.setSpeed(Number(event.target.value))}
+          />
+        </label>
+        <button
+          type="button"
+          className="hcm-play"
+          disabled={motion.reducedMotion}
+          aria-pressed={motion.motionActive}
+          aria-label={motion.motionActive ? `Pausar ${context.toLowerCase()}` : `Reproduzir ${context.toLowerCase()}`}
+          onClick={() => motion.setPlaying((current) => !current)}
+        >
+          {motion.motionActive ? <Pause aria-hidden="true" /> : <Play aria-hidden="true" />}
+          {motion.motionActive ? 'Pausar' : 'Reproduzir'}
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function AnimatedFlow({ dash, duration, className = '', style, ...props }) {
+  const period = dash.reduce((total, value) => total + value, 0);
+  const durationToken = DURATION_TOKEN[duration] || DURATION_TOKEN[1];
+  return (
+    <path
+      {...props}
+      className={`${className} hcm-flow`.trim()}
+      strokeDasharray={dash.join(' ')}
+      style={{
+        ...style,
+        '--hcm-dash-period': `${period}px`,
+        '--hcm-flow-duration': `var(${durationToken})`,
+      }}
+    />
+  );
+}
+
+function handleTabKeyDown(event) {
+  if (!['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) return;
+  const tabs = [...event.currentTarget.querySelectorAll('[role="tab"]')];
+  const current = tabs.indexOf(document.activeElement);
+  if (current < 0) return;
+  event.preventDefault();
+  let next = current;
+  if (event.key === 'Home') next = 0;
+  if (event.key === 'End') next = tabs.length - 1;
+  if (event.key === 'ArrowLeft') next = (current - 1 + tabs.length) % tabs.length;
+  if (event.key === 'ArrowRight') next = (current + 1) % tabs.length;
+  tabs[next]?.focus();
+  tabs[next]?.click();
+}
 
 // Fotos baixadas do Wikimedia Commons (licenca livre) e servidas localmente;
 // o credito com link para a pagina do arquivo (e sua licenca) fica na legenda.
@@ -57,7 +229,7 @@ function DefsTurbina({ p }) {
 function SvgPelton() {
   const conchas = Array.from({ length: 12 }, (_, i) => i * 30);
   return (
-    <svg viewBox="0 0 300 220" className="turb-svg" aria-label="Esquema de turbina Pelton">
+    <svg viewBox="0 0 300 220" className="turb-svg" role="img" aria-label="Esquema de turbina Pelton">
       <DefsTurbina p="pel" />
       {/* Poco de descarga: a Pelton entrega em pressao atmosferica, entao a
           agua cai livre embaixo da roda. */}
@@ -66,17 +238,18 @@ function SvgPelton() {
 
       {/* Disco do rotor, com raios. As conchas eram manchas soltas FORA de um
           circulo vazio: nao havia roda, so um contorno e doze borroes. */}
-      <g filter="url(#pel-sombra)">
-        <circle cx="178" cy="112" r="41" fill="url(#pel-aco)" stroke="#48545b" strokeWidth="1.6" />
-      </g>
-      <g stroke="#7f8c93" strokeWidth="3" opacity="0.75">
-        <path d="M178 73 L178 151 M139 112 L217 112 M150 84 L206 140 M206 84 L150 140" />
-      </g>
-      <circle cx="178" cy="112" r="27" fill="none" stroke="#93a0a7" strokeWidth="1" opacity="0.6" />
-
-      {/* Conchas montadas na periferia, cada uma com a aresta divisora que da
-          nome a dupla colher. */}
-      <g className="spin-slow">
+      {/* Disco, raios, conchas e cubo pertencem ao mesmo rotor. Girar apenas
+          as conchas fazia a Pelton parecer mecanicamente desmontada. */}
+      <g className="hcm-pelton-rotor" data-rotor="pelton">
+        <g filter="url(#pel-sombra)">
+          <circle cx="178" cy="112" r="41" fill="url(#pel-aco)" stroke="#48545b" strokeWidth="1.6" />
+        </g>
+        <g stroke="#7f8c93" strokeWidth="3" opacity="0.75">
+          <path d="M178 73 L178 151 M139 112 L217 112 M150 84 L206 140 M206 84 L150 140" />
+        </g>
+        <circle cx="178" cy="112" r="27" fill="none" stroke="#93a0a7" strokeWidth="1" opacity="0.6" />
+        {/* Conchas montadas na periferia, cada uma com a aresta divisora que da
+            nome a dupla colher. */}
         {conchas.map((a) => (
           <g key={a} transform={`rotate(${a} 178 112)`}>
             <path d="M178 38 c -12 0 -19 6 -19 13 c 0 8 8 15 19 15 c 11 0 19 -7 19 -15 c 0 -7 -7 -13 -19 -13 Z"
@@ -85,9 +258,9 @@ function SvgPelton() {
             <path d="M170 44 c -5 2 -7 7 -6 12" stroke="#e7fff5" strokeWidth="1.6" fill="none" opacity="0.65" />
           </g>
         ))}
+        <circle cx="178" cy="112" r="15" fill="url(#pel-cubo)" stroke="#3c484f" strokeWidth="1.4" />
+        <circle cx="178" cy="112" r="4" fill="#2b353b" />
       </g>
-      <circle cx="178" cy="112" r="15" fill="url(#pel-cubo)" stroke="#3c484f" strokeWidth="1.4" />
-      <circle cx="178" cy="112" r="4" fill="#2b353b" />
 
       {/* Injetor com agulha: e a agulha que regula a vazao, e sem ela o bocal
           era um retangulo cinza com um triangulo na ponta. */}
@@ -102,15 +275,17 @@ function SvgPelton() {
       {/* O jato alcanca a concha: a legenda diz turbina de ACAO e antes a agua
           parava a 30 px da roda. */}
       <path d="M74 113 L106 113" stroke="#5fc3ea" strokeWidth="9" strokeLinecap="round" opacity="0.35" />
-      <path d="M74 113 L106 113" stroke="#8fdcff" strokeWidth="9" strokeLinecap="round"
-            className="jet-anim" strokeDasharray="8 10" />
+      <AnimatedFlow d="M74 113 L106 113" stroke="#8fdcff" strokeWidth="9" strokeLinecap="round"
+                    className="jet-anim" dash={[8, 10]} duration={1} />
       {/* Agua defletida: bate na dupla colher, entrega a energia e sai para os
           lados. Sem isso o desenho sugeria que a agua sumia dentro da roda, que
           e a confusao entre acao e reacao. */}
-      <path className="pelton-deflete" d="M112 106 q-16 -12 -32 -16" stroke="#bfe6ff" strokeWidth="3"
-            fill="none" strokeLinecap="round" />
-      <path className="pelton-deflete" d="M112 120 q-16 12 -32 16" stroke="#bfe6ff" strokeWidth="3"
-            fill="none" strokeLinecap="round" />
+      <AnimatedFlow className="pelton-deflete" dash={[4, 10]} duration={0.55}
+                    d="M112 106 q-16 -12 -32 -16" stroke="#bfe6ff" strokeWidth="3"
+                    fill="none" strokeLinecap="round" />
+      <AnimatedFlow className="pelton-deflete" dash={[4, 10]} duration={0.55}
+                    d="M112 120 q-16 12 -32 16" stroke="#bfe6ff" strokeWidth="3"
+                    fill="none" strokeLinecap="round" />
 
       <text x="8" y="84" fontSize="11" fill="#dbe7e0" fontWeight="700">bocal / injetor</text>
       <text x="294" y="26" textAnchor="end" fontSize="11" fill="#dbe7e0" fontWeight="700">conchas (dupla colher)</text>
@@ -126,7 +301,7 @@ function SvgFrancis() {
     ['M177 31 A78 78 0 0 1 227 90', 11],
   ];
   return (
-    <svg viewBox="0 0 300 220" className="turb-svg" aria-label="Esquema de turbina Francis">
+    <svg viewBox="0 0 300 220" className="turb-svg" role="img" aria-label="Esquema de turbina Francis">
       <DefsTurbina p="fra" />
       {/* Caixa espiral de verdade: a secao DIMINUI ao longo do caracol, porque
           a vazao vai sendo entregue ao distribuidor. Antes era um arco de
@@ -142,8 +317,9 @@ function SvgFrancis() {
       ))}
       {/* Fluxo radial na caixa espiral: a legenda promete radial que vira
           axial, e a caixa era um arco parado. */}
-      <path className="fr-radial" d="M223 131 A78 78 0 0 1 123 177 A78 78 0 0 1 77 77 A78 78 0 0 1 177 31"
-            fill="none" stroke="#e2f4ff" strokeWidth="4" strokeLinecap="round" />
+      <AnimatedFlow className="fr-radial" dash={[12, 20]} duration={1.6}
+                    d="M223 131 A78 78 0 0 1 123 177 A78 78 0 0 1 77 77 A78 78 0 0 1 177 31"
+                    fill="none" stroke="#e2f4ff" strokeWidth="4" strokeLinecap="round" />
 
       {/* Palhetas do distribuidor, em aerofolio e inclinadas: sao elas que dao
           a rotacao a agua antes do rotor. */}
@@ -173,8 +349,9 @@ function SvgFrancis() {
           Era um retangulo azul de largura constante. */}
       <path d="M132 136 L168 136 L186 198 L114 198 Z" fill="url(#fra-agua)" opacity="0.85" />
       <path d="M132 136 L114 198 M168 136 L186 198" stroke="#7d8990" strokeWidth="2.4" />
-      <path className="fr-axial" d="M150 140 L150 194" stroke="#eaf7ff" strokeWidth="3"
-            strokeLinecap="round" fill="none" />
+      <AnimatedFlow className="fr-axial" dash={[8, 14]} duration={2.4}
+                    d="M150 140 L150 194" stroke="#eaf7ff" strokeWidth="3"
+                    strokeLinecap="round" fill="none" />
 
       <text x="206" y="90" fontSize="11" fill="#dbe7e0" fontWeight="700">caixa espiral</text>
       <path d="M62 40 L118 74" stroke="#8fa79a" strokeWidth="1.2" opacity="0.8" />
@@ -192,14 +369,15 @@ function SvgKaplan() {
   // conduto e continuo por construcao.
   const CONDUTO = 'M0 78 L118 78 Q 148 78 148 114 L148 150 Q 148 184 188 192 L300 198';
   return (
-    <svg viewBox="0 0 300 220" className="turb-svg" aria-label="Esquema de turbina Kaplan">
+    <svg viewBox="0 0 300 220" className="turb-svg" role="img" aria-label="Esquema de turbina Kaplan">
       <DefsTurbina p="kap" />
       <rect x="0" y="0" width="300" height="220" fill="url(#kap-concreto)" opacity="0.5" />
       <path d={CONDUTO} fill="none" stroke="#4e5751" strokeWidth="72" strokeLinejoin="round" />
       <path d={CONDUTO} fill="none" stroke="url(#kap-agua)" strokeWidth="58" strokeLinejoin="round" opacity="0.92" />
       {/* O rotulo dizia fluxo axial sobre um poligono imovel. */}
-      <path className="kp-fluxo" d={CONDUTO} fill="none" stroke="#eaf7ff" strokeWidth="3"
-            strokeLinecap="round" opacity="0.9" />
+      <AnimatedFlow className="kp-fluxo" dash={[9, 13]} duration={1.3}
+                    d={CONDUTO} fill="none" stroke="#eaf7ff" strokeWidth="3"
+                    strokeLinecap="round" opacity="0.9" />
 
       {/* Distribuidor: as palhetas dao rotacao a agua antes do rotor. */}
       <rect x="112" y="104" width="9" height="22" rx="2" fill="#9fb0b8" stroke="#5d686f" strokeWidth="0.9" />
@@ -210,11 +388,19 @@ function SvgKaplan() {
           conjunto lia como ventilador encostado na parede. O passo variavel e
           a razao de existir da Kaplan: a oscilacao e lenta de proposito,
           porque o ajuste acompanha a vazao do rio, nao o giro do rotor. */}
-      <path className="kp-passo" d="M144 140 q-16 -6 -34 -2 q3 11 15 15 q13 3 21 -4 Z"
+      <path className="kp-passo kp-passo--left" d="M144 140 q-16 -6 -34 -2 q3 11 15 15 q13 3 21 -4 Z"
             fill="url(#kap-bronze)" stroke="#12684c" strokeWidth="1.1" />
-      <path className="kp-passo" d="M152 140 q16 -6 34 -2 q-3 11 -15 15 q-13 3 -21 -4 Z"
+      <path className="kp-passo kp-passo--right" d="M152 140 q16 -6 34 -2 q-3 11 -15 15 q-13 3 -21 -4 Z"
             fill="url(#kap-bronze)" stroke="#12684c" strokeWidth="1.1" />
       <ellipse cx="148" cy="138" rx="13" ry="17" fill="url(#kap-cubo)" stroke="#3c484f" strokeWidth="1.4" />
+      {/* O corte lateral não deve fingir uma hélice frontal. Estes arcos
+          indicam o giro em torno do eixo sem deformar a leitura do perfil. */}
+      <AnimatedFlow className="hcm-kaplan-rotation" dash={[5, 7]} duration={1.1}
+                    d="M128 126 Q148 115 168 126" fill="none" stroke="#5ff2cd"
+                    strokeWidth="2" strokeLinecap="round" opacity="0.9" />
+      <AnimatedFlow className="hcm-kaplan-rotation hcm-flow--reverse" dash={[5, 7]} duration={1.1}
+                    d="M128 155 Q148 166 168 155" fill="none" stroke="#5ff2cd"
+                    strokeWidth="2" strokeLinecap="round" opacity="0.9" />
 
       <rect x="141" y="28" width="15" height="96" rx="2" fill="url(#kap-aco)" stroke="#4a565d" strokeWidth="1.1" />
       <rect x="120" y="12" width="58" height="20" rx="4" fill="#c3ccc6" stroke="#4a565d" strokeWidth="1.2" />
@@ -229,7 +415,7 @@ function SvgKaplan() {
 }
 function SvgBulbo() {
   return (
-    <svg viewBox="0 0 300 220" className="turb-svg" aria-label="Esquema de turbina bulbo">
+    <svg viewBox="0 0 300 220" className="turb-svg" role="img" aria-label="Esquema de turbina bulbo">
       <DefsTurbina p="bul" />
       <path d="M0 30 L300 30 L300 58 L0 58 Z" fill="url(#bul-concreto)" />
       <path d="M0 178 L300 178 L300 210 L0 210 Z" fill="url(#bul-concreto)" />
@@ -238,10 +424,12 @@ function SvgBulbo() {
       {/* As duas linhas contornam a carcaca e voltam a se juntar depois do
           rotor: e isso que submerso quer dizer aqui. Antes so a linha de cima
           corria, e o bulbo parecia apoiado no fundo. */}
-      <path className="bl-fluxo" d="M4 92 Q 60 92 92 78 T 200 88 T 298 96" fill="none"
-            stroke="#eaf7ff" strokeWidth="3.2" strokeLinecap="round" opacity="0.9" />
-      <path className="bl-fluxo" d="M4 148 Q 60 148 92 158 T 200 148 T 298 140" fill="none"
-            stroke="#eaf7ff" strokeWidth="3.2" strokeLinecap="round" opacity="0.9" />
+      <AnimatedFlow className="bl-fluxo" dash={[11, 15]} duration={1.25}
+                    d="M4 92 Q 60 92 92 78 T 200 88 T 298 96" fill="none"
+                    stroke="#eaf7ff" strokeWidth="3.2" strokeLinecap="round" opacity="0.9" />
+      <AnimatedFlow className="bl-fluxo" dash={[11, 15]} duration={1.25}
+                    d="M4 148 Q 60 148 92 158 T 200 148 T 298 140" fill="none"
+                    stroke="#eaf7ff" strokeWidth="3.2" strokeLinecap="round" opacity="0.9" />
 
       {/* Coluna de sustentacao: o bulbo nao flutua, ele e preso a estrutura. */}
       <path d="M112 82 L106 30 L132 30 L128 82 Z" fill="url(#bul-aco)" stroke="#4a565d" strokeWidth="1.2" opacity="0.95" />
@@ -258,17 +446,19 @@ function SvgBulbo() {
       <g stroke="#5fd7ae" strokeWidth="2" opacity="0.85" fill="none">
         <path d="M82 108 L82 128 M92 106 L92 130 M102 108 L102 128" />
       </g>
-      <circle cx="120" cy="118" r="11" fill="url(#bul-cubo)" stroke="#5fd7ae" strokeWidth="1.2" />
+      <circle className="hcm-bulbo-generator" cx="120" cy="118" r="11" fill="url(#bul-cubo)" stroke="#5fd7ae" strokeWidth="1.2" />
       <text x="137" y="122" fontSize="10" fill="#8fe3cf" fontWeight="700">gerador</text>
 
       {/* Em corte lateral o rotor axial mostra o cubo de perfil e duas pas,
           uma para cima e outra para baixo. A helice de frente que estava aqui
           pertencia a outra vista. */}
-      <path d="M212 108 q4 -30 12 -40 q10 8 6 24 q-4 12 -12 18 Z"
-            fill="url(#bul-bronze)" stroke="#12684c" strokeWidth="1.1" />
-      <path d="M212 128 q4 30 12 40 q10 -8 6 -24 q-4 -12 -12 -18 Z"
-            fill="url(#bul-bronze)" stroke="#12684c" strokeWidth="1.1" />
-      <ellipse cx="211" cy="118" rx="10" ry="15" fill="url(#bul-cubo)" stroke="#3c484f" strokeWidth="1.3" />
+      <g className="hcm-bulbo-rotor" data-rotor="bulbo">
+        <path d="M212 108 q4 -30 12 -40 q10 8 6 24 q-4 12 -12 18 Z"
+              fill="url(#bul-bronze)" stroke="#12684c" strokeWidth="1.1" />
+        <path d="M212 128 q4 30 12 40 q10 -8 6 -24 q-4 -12 -12 -18 Z"
+              fill="url(#bul-bronze)" stroke="#12684c" strokeWidth="1.1" />
+        <ellipse cx="211" cy="118" rx="10" ry="15" fill="url(#bul-cubo)" stroke="#3c484f" strokeWidth="1.3" />
+      </g>
       <path d="M198 110 L204 110 M198 126 L204 126" stroke="#5d686f" strokeWidth="2" />
       <text x="294" y="196" textAnchor="end" fontSize="11" fill="#dbe7e0" fontWeight="700">conjunto horizontal submerso</text>
     </svg>
@@ -276,11 +466,62 @@ function SvgBulbo() {
 }
 
 export const TURBINES_RICH = [
-  { nome: 'Pelton', camada: CamadaPelton, Svg: SvgPelton, vazao: 'Vazão baixa', legenda: "Jato em pressão atmosférica: turbina de AÇÃO.", foto: 'Peltonturbine-1.jpg', tipo: 'Ação (impulso)', faixa: 'Quedas altas: acima de ~250 m', usoPR: 'UHE Gov. Parigot de Souza (Antonina): 4 unidades Pelton, com desnível de 754 m.' },
-  { nome: 'Francis', camada: CamadaFrancis, Svg: SvgFrancis, vazao: 'Vazão média', legenda: "Fluxo radial que vira axial, sob pressão: turbina de REAÇÃO.", foto: 'Francis_Turbine_complete.jpg', tipo: 'Reação', faixa: 'Quedas médias: ~30 a 400 m', usoPR: 'UHE Foz do Areia (Pinhão): 4 Francis de 419 MW. Também Itaipu (20 unidades).' },
-  { nome: 'Kaplan', camada: CamadaKaplan, Svg: SvgKaplan, vazao: 'Vazão alta', legenda: "Hélice de passo variável: mantém rendimento com vazão variável.", foto: 'Kaplan_turbine_bonneville.jpg', tipo: 'Reação (pás ajustáveis)', faixa: 'Quedas baixas: ~10 a 70 m', usoPR: 'UHE Baixo Iguaçu (Capanema): 3 Kaplan de ~117 MW, a fio d\'água.' },
-  { nome: 'Bulbo', Svg: SvgBulbo, vazao: 'Vazão muito alta', legenda: "Conjunto horizontal submerso no próprio fluxo, para quedas muito baixas.", foto: null, tipo: 'Reação (horizontal)', faixa: 'Quedas muito baixas: abaixo de ~15 m', usoPR: 'Sem unidade em operação no PR; no Brasil é típica das UHEs do rio Madeira (RO).' },
+  {
+    id: 'pelton', nome: 'Pelton', camada: CamadaPelton, Svg: SvgPelton, vazao: 'Vazão baixa',
+    legenda: 'Jato em pressão atmosférica: turbina de AÇÃO.', foto: 'Peltonturbine-1.jpg',
+    tipo: 'Ação (impulso)', faixa: 'Quedas altas: acima de ~250 m',
+    usoPR: 'UHE Gov. Parigot de Souza (Antonina): 4 unidades Pelton, com desnível de 754 m.',
+    partes: [
+      ['Bocal e injetor', 'Concentram e regulam o jato de água.'],
+      ['Conchas de dupla colher', 'Recebem o jato e desviam a água para os lados.'],
+      ['Rotor, cubo e eixo', 'Giram como um único conjunto e transmitem torque ao gerador.'],
+      ['Poço de descarga', 'Recebe a água já em pressão atmosférica.'],
+    ],
+  },
+  {
+    id: 'francis', nome: 'Francis', camada: CamadaFrancis, Svg: SvgFrancis, vazao: 'Vazão média',
+    legenda: 'Fluxo radial que vira axial, sob pressão: turbina de REAÇÃO.', foto: 'Francis_Turbine_complete.jpg',
+    tipo: 'Reação', faixa: 'Quedas médias: ~30 a 400 m',
+    usoPR: 'UHE Foz do Areia (Pinhão): 4 Francis de 419 MW. Também Itaipu (20 unidades).',
+    partes: [
+      ['Caixa espiral', 'Distribui a água ao redor de todo o rotor.'],
+      ['Distribuidor', 'Palhetas móveis orientam e regulam o fluxo radial.'],
+      ['Rotor Francis', 'Converte o fluxo radial em rotação e saída axial.'],
+      ['Tubo de sucção', 'Recupera parte da energia e devolve a água a jusante.'],
+    ],
+  },
+  {
+    id: 'kaplan', nome: 'Kaplan', camada: CamadaKaplan, Svg: SvgKaplan, vazao: 'Vazão alta',
+    legenda: 'Hélice de passo variável: mantém rendimento com vazão variável.', foto: 'Kaplan_turbine_bonneville.jpg',
+    tipo: 'Reação (pás ajustáveis)', faixa: 'Quedas baixas: ~10 a 70 m',
+    usoPR: 'UHE Baixo Iguaçu (Capanema): 3 Kaplan de ~117 MW, a fio d\'água.',
+    partes: [
+      ['Conduto axial', 'Mantém a água aproximadamente paralela ao eixo.'],
+      ['Distribuidor', 'Regula a vazão e prepara o giro antes do rotor.'],
+      ['Pás ajustáveis', 'Mudam o passo para acompanhar a condição de vazão.'],
+      ['Eixo e gerador', 'Levam o torque do rotor ao gerador acima.'],
+    ],
+  },
+  {
+    id: 'bulbo', nome: 'Bulbo', Svg: SvgBulbo, vazao: 'Vazão muito alta',
+    legenda: 'Conjunto horizontal submerso no próprio fluxo, para quedas muito baixas.', foto: null,
+    tipo: 'Reação (horizontal)', faixa: 'Quedas muito baixas: abaixo de ~15 m',
+    usoPR: 'Sem unidade em operação no PR; no Brasil é típica das UHEs do rio Madeira (RO).',
+    partes: [
+      ['Carcaça hidrodinâmica', 'Abriga o gerador dentro do próprio canal.'],
+      ['Gerador', 'Recebe o torque pelo eixo horizontal.'],
+      ['Rotor axial', 'Trabalha submerso e alinhado ao fluxo.'],
+      ['Suporte estrutural', 'Fixa o conjunto à estrutura civil.'],
+    ],
+  },
 ];
+
+function normalizeTurbineType(value) {
+  const normalized = String(value ?? '').trim().toLocaleLowerCase('pt-BR');
+  return TURBINES_RICH.find((turbine) => (
+    turbine.id === normalized || turbine.nome.toLocaleLowerCase('pt-BR') === normalized
+  ))?.id;
+}
 
 /* Fotografia real com camada anotada por cima.
    A camada usa o viewBox no tamanho natural da foto e o palco fixa a mesma
@@ -350,7 +591,8 @@ function CamadaPelton() {
       <path className="fa-rot" d="M120 190 A 272 340 0 0 1 404 106"
             markerEnd="url(#fa-ponta)" />
       <circle className="fa-alvo" cx="452" cy="150" r="46" />
-      <path className="fa-jato" d="M566 44 L470 128" markerEnd="url(#fa-ponta)" />
+      <AnimatedFlow className="fa-jato" dash={[9, 11]} duration={0.7}
+                    d="M566 44 L470 128" markerEnd="url(#fa-ponta)" />
       {CHAPAS_PELTON.map((c) => <Chapa key={c.texto} {...c} />)}
     </>
   );
@@ -372,10 +614,12 @@ const CHAPAS_FRANCIS = [
 function CamadaFrancis() {
   return (
     <>
-      <path className="fa-fluxo" d="M424 12 L380 44" markerEnd="url(#fa-ponta)" />
+      <AnimatedFlow className="fa-fluxo" dash={[8, 10]} duration={1.5}
+                    d="M424 12 L380 44" markerEnd="url(#fa-ponta)" />
       <circle className="fa-alvo" cx="292" cy="210" r="60" />
       <path className="fa-rot" d="M232 196 A 66 66 0 0 1 340 178" markerEnd="url(#fa-ponta)" />
-      <path className="fa-fluxo" d="M330 300 L362 346" markerEnd="url(#fa-ponta)" />
+      <AnimatedFlow className="fa-fluxo" dash={[8, 10]} duration={1.5}
+                    d="M330 300 L362 346" markerEnd="url(#fa-ponta)" />
       {CHAPAS_FRANCIS.map((c) => <Chapa key={c.texto} {...c} />)}
     </>
   );
@@ -391,8 +635,10 @@ const CHAPAS_KAPLAN = [
 function CamadaKaplan() {
   return (
     <>
-      <path className="fa-fluxo" d="M62 112 C 74 158 92 178 118 192" markerEnd="url(#fa-ponta)" />
-      <path className="fa-fluxo" d="M256 112 C 244 158 226 178 202 192" markerEnd="url(#fa-ponta)" />
+      <AnimatedFlow className="fa-fluxo" dash={[8, 10]} duration={1.5}
+                    d="M62 112 C 74 158 92 178 118 192" markerEnd="url(#fa-ponta)" />
+      <AnimatedFlow className="fa-fluxo" dash={[8, 10]} duration={1.5}
+                    d="M256 112 C 244 158 226 178 202 192" markerEnd="url(#fa-ponta)" />
       <circle className="fa-alvo" cx="162" cy="186" r="34" />
       <path className="fa-rot" d="M126 178 A 38 38 0 0 1 196 170" markerEnd="url(#fa-ponta)" />
       {CHAPAS_KAPLAN.map((c) => <Chapa key={c.texto} {...c} />)}
@@ -401,15 +647,56 @@ function CamadaKaplan() {
 }
 CamadaKaplan.chapas = CHAPAS_KAPLAN;
 
-export function TurbineGallery() {
-  const [i, setI] = useState(0);
-  const t = TURBINES_RICH[i];
+export function TurbineGallery({ selectedType, onSelectType }) {
+  const motion = useHydroMotion();
+  const [localType, setLocalType] = useState(TURBINES_RICH[0].id);
+  const tabsId = useId().replace(/:/g, '');
+  const controlledType = selectedType === undefined ? undefined : normalizeTurbineType(selectedType);
+  const isControlled = controlledType !== undefined;
+  const activeType = controlledType || localType;
+  const t = TURBINES_RICH.find((item) => item.id === activeType) || TURBINES_RICH[0];
+
+  function selectType(type) {
+    if (!isControlled) setLocalType(type);
+    onSelectType?.(type);
+  }
+
   return (
-    <div className="turb-gallery">
-      <div className="tg-tabs">{TURBINES_RICH.map((x, k) => (
-        <button key={x.nome} className={k === i ? 'active' : ''} onClick={() => setI(k)}>{x.nome}</button>
-      ))}</div>
-      <div className="tg-body">
+    <div
+      ref={motion.sceneRef}
+      className="turb-gallery hydro-motion-surface hcm-turbine-motion"
+      style={motion.surfaceStyle}
+      data-motion-state={motion.motionActive ? 'running' : 'paused'}
+      data-playing={motion.playing ? 'true' : 'false'}
+    >
+      <MotionControls motion={motion} context={`Animação da turbina ${t.nome}`} />
+      <div className="tg-tabs hcm-tabs" role="tablist" aria-label="Tipo de turbina" onKeyDown={handleTabKeyDown}>
+        {TURBINES_RICH.map((item) => {
+          const active = item.id === t.id;
+          return (
+            <button
+              key={item.id}
+              type="button"
+              id={`${tabsId}-tab-${item.id}`}
+              role="tab"
+              aria-selected={active}
+              aria-controls={`${tabsId}-panel`}
+              tabIndex={active ? 0 : -1}
+              className={active ? 'active' : ''}
+              onClick={() => selectType(item.id)}
+            >
+              {item.nome}
+            </button>
+          );
+        })}
+      </div>
+      <div
+        id={`${tabsId}-panel`}
+        className="tg-body"
+        role="tabpanel"
+        aria-labelledby={`${tabsId}-tab-${t.id}`}
+      >
+        <p className="hcm-current-state"><strong>Em exibição:</strong> turbina {t.nome}. As linhas claras mostram o percurso da água; as peças móveis destacam como a energia chega ao eixo.</p>
         <figure className="tg-schema"><t.Svg /><figcaption><span className="tg-cap-t">Esquema: {t.nome} ({t.tipo.toLowerCase()})</span><span className="tg-cap-d">{t.legenda}</span></figcaption></figure>
         {t.foto ? (
           <FotoAnotada
@@ -430,6 +717,12 @@ export function TurbineGallery() {
           <p><strong>{t.tipo}</strong> · {t.faixa}{t.vazao ? ' · ' + t.vazao : ''}</p>
           <p className="tg-pr"><MapPin size={14} /> <strong>No Paraná:</strong> {t.usoPR}</p>
         </div>
+        <section className="hcm-equipment-key" aria-label={`Componentes da turbina ${t.nome}`}>
+          <h3>Como identificar os componentes</h3>
+          <ol>{t.partes.map(([nome, descricao], index) => (
+            <li key={nome}><span aria-hidden="true">{index + 1}</span><p><strong>{nome}</strong>{descricao}</p></li>
+          ))}</ol>
+        </section>
       </div>
     </div>
   );
@@ -484,7 +777,7 @@ function Etiqueta({ x, y, texto, cor, ancora, pequena }) {
   const bx = ancora === 'end' ? x - largura : ancora === 'middle' ? x - largura / 2 : x;
   const tx = ancora === 'end' ? x - 8 : ancora === 'middle' ? x : x + 8;
   return (
-    <g>
+    <g className="hcm-svg-label">
       <rect x={bx} y={y - (pequena ? 10 : 12)} width={largura} height={pequena ? 15 : 18}
             rx={pequena ? 6 : 7} fill="#0f2119" opacity="0.85" />
       <text x={tx} y={y + 1} textAnchor={ancora === 'middle' ? 'middle' : ancora === 'end' ? 'end' : 'start'}
@@ -496,7 +789,7 @@ function Etiqueta({ x, y, texto, cor, ancora, pequena }) {
 function SvgReversivel() {
   const CONDUTO = 'M196 66 C 236 96, 250 152, 268 196';
   return (
-    <svg viewBox="0 0 460 250" className="arr-svg" aria-label="Esquema de usina reversível (bombeamento)">
+    <svg viewBox="0 0 460 250" className="arr-svg" role="img" aria-label="Esquema de usina reversível com geração e bombeamento">
       <DefsArranjo p="rv" />
       <rect width="460" height="250" fill="url(#rv-ceu)" />
       {/* Os dois reservatorios eram retangulos azuis flutuando no vazio, sem
@@ -535,17 +828,25 @@ function SvgReversivel() {
           Agora os dois se alternam no mesmo conduto, em contrafase: enquanto um
           corre, o outro apaga. O ciclo e longo porque o que se alterna aqui e
           ponta e fora de ponta, que e questao de horas, nao de segundos. */}
-      <path className="rv-gera" d={CONDUTO} stroke="#5ff2cd" strokeWidth="4.4" fill="none"
-            strokeLinecap="round" strokeDasharray="10 12" />
-      <path className="rv-bombeia" d="M268 196 C 250 152, 236 96, 196 66" stroke="#ffc94f" strokeWidth="4.4"
-            fill="none" strokeLinecap="round" strokeDasharray="10 12" />
+      <AnimatedFlow className="rv-gera" dash={[10, 12]} duration={1.1}
+                    d={CONDUTO} stroke="#5ff2cd" strokeWidth="4.4" fill="none"
+                    strokeLinecap="round" />
+      <AnimatedFlow className="rv-bombeia" dash={[10, 12]} duration={1.6}
+                    d="M268 196 C 250 152, 236 96, 196 66" stroke="#ffc94f" strokeWidth="4.4"
+                    fill="none" strokeLinecap="round" />
 
       {/* Caverna da bomba-turbina: o conjunto fica enterrado, nao pendurado. */}
       <ellipse cx="248" cy="150" rx="30" ry="24" fill="#1d1a12" opacity="0.75" />
       <g filter="url(#rv-sombra)">
         <circle cx="248" cy="150" r="19" fill="#2f8f70" stroke="#d9efe4" strokeWidth="1.8" />
       </g>
-      <path d="M248 139 l7 9 h-4.5 v9 h-5 v-9 h-4.5 Z" fill="#ffd479" />
+      <g className="hcm-reversible-rotor" data-rotor="reversible">
+        <path d="M248 136 C253 137 257 141 258 146 C253 145 249 144 246 141 Z" fill="#ffd479" />
+        <path d="M262 150 C261 155 257 159 252 160 C253 155 254 151 257 148 Z" fill="#ffd479" />
+        <path d="M248 164 C243 163 239 159 238 154 C243 155 247 156 250 159 Z" fill="#ffd479" />
+        <path d="M234 150 C235 145 239 141 244 140 C243 145 242 149 239 152 Z" fill="#ffd479" />
+        <circle cx="248" cy="150" r="4" fill="#fff0ba" />
+      </g>
 
       <Etiqueta x={34} y={34} texto="reservatório SUPERIOR" cor="#bfe6ff" />
       <Etiqueta x={446} y={234} texto="reservatório INFERIOR" cor="#bfe6ff" ancora="end" />
@@ -562,6 +863,75 @@ function SvgReversivel() {
         <Etiqueta x={76} y={198} texto="BOMBEIA fora de ponta (sobe)" cor="#ffc94f" />
       </g>
     </svg>
+  );
+}
+
+const REVERSIBLE_PHASES = Object.freeze({
+  generate: {
+    label: 'Geração',
+    description: 'A água desce do reservatório superior e aciona a bomba-turbina para gerar energia.',
+  },
+  pump: {
+    label: 'Bombeamento',
+    description: 'A máquina inverte o sentido e consome energia para devolver água ao reservatório superior.',
+  },
+});
+
+function ReversibleCaseMedia() {
+  const motion = useHydroMotion();
+  const [phase, setPhase] = useState('generate');
+  const currentPhase = REVERSIBLE_PHASES[phase];
+
+  useEffect(() => {
+    if (!motion.motionActive) return undefined;
+    const interval = window.setInterval(
+      () => setPhase((current) => current === 'generate' ? 'pump' : 'generate'),
+      4500 * (100 / motion.speed),
+    );
+    return () => window.clearInterval(interval);
+  }, [motion.motionActive, motion.speed]);
+
+  return (
+    <section
+      ref={motion.sceneRef}
+      className="hydro-motion-surface hcm-reversible-motion"
+      style={motion.surfaceStyle}
+      data-motion-state={motion.motionActive ? 'running' : 'paused'}
+      data-playing={motion.playing ? 'true' : 'false'}
+      data-reversible-mode={phase}
+      aria-label="Funcionamento da usina reversível"
+    >
+      <MotionControls motion={motion} context="Animação da usina reversível" />
+      <div className="hcm-phase-selector" role="group" aria-label="Modo da usina reversível">
+        {Object.entries(REVERSIBLE_PHASES).map(([id, item]) => (
+          <button
+            type="button"
+            key={id}
+            className={phase === id ? 'active' : ''}
+            aria-pressed={phase === id}
+            onClick={() => setPhase(id)}
+          >
+            {item.label}
+          </button>
+        ))}
+      </div>
+      <p className="hcm-current-state" role="status" aria-live="polite">
+        <strong>Modo em destaque: {currentPhase.label}.</strong> {currentPhase.description}
+      </p>
+      <div className="prc-fotos">
+        <figure><SvgReversivel /><figcaption>Ciclo diário: funciona como bateria hídrica, consome energia para estocar água no reservatório superior e gera na hora de ponta.</figcaption></figure>
+        <figure><img src={BASE + '/hidro/reversivel-bath-county.jpg'} alt="Bath County Pumped Storage Station: casa de força e subestação" /><figcaption><Camera size={13} /> Foto real da usina · <a href={WMPAGE('Bath_County_Pumped_Storage_Station.jpg')} target="_blank" rel="noreferrer">Wikimedia Commons</a> (licença livre)</figcaption></figure>
+      </div>
+      <section className="hcm-equipment-key" aria-label="Componentes do armazenamento por bombeamento">
+        <h3>Como ler o esquema</h3>
+        <ol>
+          <li><span aria-hidden="true">1</span><p><strong>Reservatório superior</strong>Armazena água e energia potencial.</p></li>
+          <li><span aria-hidden="true">2</span><p><strong>Conduto reversível</strong>Leva água para baixo na geração e para cima no bombeamento.</p></li>
+          <li><span aria-hidden="true">3</span><p><strong>Bomba-turbina</strong>Opera nos dois sentidos dentro da casa de força.</p></li>
+          <li><span aria-hidden="true">4</span><p><strong>Reservatório inferior</strong>Recebe a água gerada e fornece água para o bombeamento.</p></li>
+        </ol>
+      </section>
+    </section>
   );
 }
 
@@ -606,10 +976,7 @@ export function PRCasesSection() {
           {c.criterioAlerta && <p className="prc-crit"><Info size={13} /><span><strong>Não misture os critérios.</strong> {c.criterioAlerta}</span></p>}
           <p className="prc-local"><MapPin size={13} /> {c.local}</p>
           <p className="prc-dados">{c.dados}</p>
-          {c.reversivel && <div className="prc-fotos">
-            <figure><SvgReversivel /><figcaption>Ciclo diário: funciona como bateria hídrica, consome energia barata para estocar água no reservatório superior e gera na hora de ponta.</figcaption></figure>
-            <figure><img src={BASE + '/hidro/reversivel-bath-county.jpg'} alt="Bath County Pumped Storage Station: casa de força e subestação" /><figcaption><Camera size={13} /> Foto real da usina · <a href={WMPAGE('Bath_County_Pumped_Storage_Station.jpg')} target="_blank" rel="noreferrer">Wikimedia Commons</a> (licença livre)</figcaption></figure>
-          </div>}
+          {c.reversivel && <ReversibleCaseMedia />}
           {c.site && <a className="prc-site" href={c.site} target="_blank" rel="noreferrer"><ExternalLink size={14} /> {c.siteLabel}</a>}
         </article>
       ))}</div>
@@ -656,7 +1023,7 @@ export function LicensingPath({ go }) {
 /* ============ ESQUEMAS DE ARRANJO (substituem as figuras confusas) ============ */
 function ArrPeBarragem() {
   return (
-    <svg viewBox="0 0 460 240" className="arr-svg" aria-label="Arranjo pé de barragem">
+    <svg viewBox="0 0 460 240" className="arr-svg" role="img" aria-label="Arranjo pé de barragem">
       <DefsArranjo p="pb" />
       <rect width="460" height="240" fill="url(#pb-ceu)" />
       <path d="M0 96 L120 84 L210 96 L300 82 L392 96 L460 86 L460 118 L0 118 Z" fill="url(#pb-mato)" opacity="0.5" />
@@ -679,8 +1046,9 @@ function ArrPeBarragem() {
       {/* A agua estava parada dentro do conduto e do canal, e arranjo de pe de
           barragem se explica justamente pelo percurso curto: o que o desenho
           precisa mostrar e que a restituicao acontece logo ali. */}
-      <path className="arr-fluxo" d="M186 130 L212 198" stroke="#5ff2cd" strokeWidth="3.4"
-            strokeLinecap="round" fill="none" />
+      <AnimatedFlow className="arr-fluxo" dash={[10, 14]} duration={1.15}
+                    d="M186 130 L212 198" stroke="#5ff2cd" strokeWidth="3.4"
+                    strokeLinecap="round" fill="none" />
 
       {/* Casa de forca com laje e volume, e nao caixa branca com telhado
           triangular verde. */}
@@ -694,8 +1062,9 @@ function ArrPeBarragem() {
 
       <rect x="266" y="196" width="194" height="18" fill="url(#pb-agua)" />
       <rect x="266" y="196" width="194" height="4" fill="#dff2ff" opacity="0.4" />
-      <path className="arr-fluxo" d="M272 205 L454 205" stroke="#eaf7ff" strokeWidth="3"
-            strokeLinecap="round" fill="none" opacity="0.95" />
+      <AnimatedFlow className="arr-fluxo" dash={[10, 14]} duration={1.15}
+                    d="M272 205 L454 205" stroke="#eaf7ff" strokeWidth="3"
+                    strokeLinecap="round" fill="none" opacity="0.95" />
 
       <Etiqueta x={8} y={110} texto="reservatório" cor="#bfe6ff" />
       <Etiqueta x={172} y={232} texto="barragem" ancora="end" />
@@ -706,7 +1075,7 @@ function ArrPeBarragem() {
 }
 function ArrDerivacao() {
   return (
-    <svg viewBox="0 0 460 240" className="arr-svg" aria-label="Arranjo de derivação">
+    <svg viewBox="0 0 460 240" className="arr-svg" role="img" aria-label="Arranjo de derivação">
       <DefsArranjo p="dv" />
       <rect width="460" height="240" fill="url(#dv-ceu)" />
       <path d="M0 62 L96 44 L188 66 L286 40 L380 66 L460 48 L460 240 L0 240 Z" fill="url(#dv-mato)" opacity="0.55" />
@@ -727,8 +1096,9 @@ function ArrDerivacao() {
       <path d="M76 100 C 150 112 250 118 320 150" fill="none" stroke="#2b2519" strokeWidth="15" strokeLinecap="round" />
       <path d="M76 100 C 150 112 250 118 320 150" fill="none" stroke="url(#dv-aco)" strokeWidth="10" strokeLinecap="round" />
       {/* O desvio leva a vazao cheia, e e por isso que ele existe. */}
-      <path className="arr-fluxo" d="M76 100 C 150 112 250 118 320 150" fill="none"
-            stroke="#5ff2cd" strokeWidth="3.6" strokeLinecap="round" />
+      <AnimatedFlow className="arr-fluxo" dash={[10, 14]} duration={1.15}
+                    d="M76 100 C 150 112 250 118 320 150" fill="none"
+                    stroke="#5ff2cd" strokeWidth="3.6" strokeLinecap="round" />
 
       {/* Trecho de vazao reduzida, desenhado como o que ele e.
           O leito natural continuava com o mesmo traco grosso do rio cheio, e o
@@ -736,8 +1106,9 @@ function ArrDerivacao() {
           tomada e a restituicao, o rio fica com uma fracao da vazao. O fluxo
           aqui e mais fino e MUITO mais lento que o do desvio, e o contraste
           entre os dois ritmos e a licao do desenho, nao enfeite. */}
-      <path className="arr-fluxo-tvr" d="M80 100 Q170 112 250 118 T460 126" fill="none"
-            stroke="#a8cfe6" strokeWidth="2" strokeLinecap="round" opacity="0.85" />
+      <AnimatedFlow className="arr-fluxo-tvr" dash={[5, 20]} duration={7}
+                    d="M80 100 Q170 112 250 118 T460 126" fill="none"
+                    stroke="#a8cfe6" strokeWidth="2" strokeLinecap="round" opacity="0.85" />
 
       {/* Chamine de equilibrio: e um poco vertical, nao um circulo solto. */}
       <rect x="246" y="52" width="17" height="58" rx="3" fill="url(#dv-concreto)" stroke="#6f7772" strokeWidth="1.2" />
@@ -753,8 +1124,9 @@ function ArrDerivacao() {
       <path d="M372 166 Q420 178 460 170" fill="none" stroke="#2b5e7f" strokeWidth="15" strokeLinecap="round" />
       <path d="M372 166 Q420 178 460 170" fill="none" stroke="url(#dv-agua)" strokeWidth="11" strokeLinecap="round" />
       {/* Restituicao: a vazao desviada volta ao rio depois do TVR. */}
-      <path className="arr-fluxo" d="M374 167 Q420 179 458 171" fill="none"
-            stroke="#eaf7ff" strokeWidth="3" strokeLinecap="round" opacity="0.95" />
+      <AnimatedFlow className="arr-fluxo" dash={[10, 14]} duration={1.15}
+                    d="M374 167 Q420 179 458 171" fill="none"
+                    stroke="#eaf7ff" strokeWidth="3" strokeLinecap="round" opacity="0.95" />
 
       <Etiqueta x={8} y={40} texto="açude de derivação" cor="#bfe6ff" />
       <Etiqueta x={250} y={44} texto="chaminé de equilíbrio" cor="#ffc94f" ancora="middle" />
@@ -773,7 +1145,7 @@ function ArrFioAgua() {
     </g>
   );
   return (
-    <svg viewBox="0 0 460 240" className="arr-svg" aria-label="Fio d'água vs acumulação">
+    <svg viewBox="0 0 460 240" className="arr-svg" role="img" aria-label="Comparação entre fio d'água e acumulação">
       <DefsArranjo p="fa" />
       <rect width="460" height="240" fill="url(#fa-ceu)" />
       {/* Os dois paineis eram retangulos BRANCOS numa pagina escura, e
@@ -792,19 +1164,23 @@ function ArrFioAgua() {
       <path d="M174 186 L212 186" stroke="#2b5e7f" strokeWidth="11" strokeLinecap="round" />
       <path d="M174 186 L212 186" stroke="url(#fa-agua)" strokeWidth="8" strokeLinecap="round" />
       {/* Fio d'agua gera conforme o rio, entao a agua atravessa sem parar. */}
-      <path className="arr-fluxo" d="M178 186 L208 186" stroke="#eaf7ff" strokeWidth="2.6"
-            strokeLinecap="round" fill="none" />
+      <AnimatedFlow className="arr-fluxo" dash={[10, 14]} duration={1.15}
+                    d="M178 186 L208 186" stroke="#eaf7ff" strokeWidth="2.6"
+                    strokeLinecap="round" fill="none" />
 
       {/* Acumulacao: reservatorio fundo, com faixa de deplecionamento. */}
       <path d="M250 210 L446 210 L446 168 L250 168 Z" fill="url(#fa-rocha)" />
       <path d="M252 150 L362 168 L362 110 L252 110 Z" fill="url(#fa-agua)" />
       <rect x="252" y="110" width="110" height="4" fill="#dff2ff" opacity="0.5" />
-      <path d="M252 132 L362 132" stroke="#ffc94f" strokeWidth="1.6" strokeDasharray="5 4" opacity="0.95" />
+      <path className="hcm-accumulation-band" d="M252 132 L362 132" stroke="#ffc94f" strokeWidth="1.6" strokeDasharray="5 4" opacity="0.95" />
       <path d="M362 104 L362 200 L396 200 L384 104 Z" fill="url(#fa-concreto)" />
       <path d="M392 184 L410 176 L428 184 L428 189 L410 180 L392 189 Z" fill="#93a29a" />
       <rect x="394" y="187" width="34" height="18" fill="#e9ece6" stroke="#7d867f" strokeWidth="1.1" />
       <path d="M428 196 L450 196" stroke="#2b5e7f" strokeWidth="11" strokeLinecap="round" />
       <path d="M428 196 L450 196" stroke="url(#fa-agua)" strokeWidth="8" strokeLinecap="round" />
+      <AnimatedFlow className="arr-fluxo" dash={[10, 14]} duration={1.6}
+                    d="M430 196 L448 196" stroke="#eaf7ff" strokeWidth="2.6"
+                    strokeLinecap="round" fill="none" />
 
       <Etiqueta x={20} y={62} texto="FIO D'ÁGUA" cor="#bfe6ff" />
       <Etiqueta x={20} y={84} texto="reservatório mínimo" cor="#cfe0d6" pequena />
@@ -817,12 +1193,100 @@ function ArrFioAgua() {
     </svg>
   );
 }
+
+const ARRANGEMENTS = Object.freeze([
+  {
+    id: 'pe-barragem',
+    label: 'Pé de barragem',
+    Svg: ArrPeBarragem,
+    caption: 'A queda vem só do barramento. O circuito é curto, a casa de força fica ao pé e a água retorna imediatamente ao rio.',
+    parts: [
+      ['Reservatório', 'Mantém a água a montante da barragem.'],
+      ['Barragem e tomada', 'Criam o desnível e conduzem a água ao circuito hidráulico.'],
+      ['Casa de força', 'Abriga turbina, eixo e gerador junto ao pé da barragem.'],
+      ['Restituição', 'Devolve a água ao rio logo depois da geração.'],
+    ],
+  },
+  {
+    id: 'derivacao',
+    label: 'Derivação',
+    Svg: ArrDerivacao,
+    caption: 'Um circuito longo aproveita a queda do relevo, como na UHE Parigot de Souza. Parte do leito natural forma o trecho de vazão reduzida.',
+    parts: [
+      ['Açude e tomada', 'Desviam parte da vazão do leito natural.'],
+      ['Túnel e conduto forçado', 'Transportam a água até a casa de força afastada.'],
+      ['Chaminé de equilíbrio', 'Amortece variações de pressão no circuito.'],
+      ['TVR e restituição', 'O leito recebe vazão reduzida até a água retornar depois da usina.'],
+    ],
+  },
+  {
+    id: 'regularizacao',
+    label: 'Fio d’água × acumulação',
+    Svg: ArrFioAgua,
+    caption: 'No fio d’água, a geração acompanha mais de perto a vazão afluente. Na acumulação, o reservatório permite regularização; área e volume influenciam operação e impactos, mas não os definem sozinhos.',
+    parts: [
+      ['Fio d’água', 'Tem reservatório mínimo e menor capacidade de regularização sazonal.'],
+      ['Acumulação', 'Armazena água entre períodos e ajuda a firmar a geração.'],
+      ['Faixa de deplecionamento', 'Indica a variação operacional do nível no reservatório.'],
+      ['Casas de força', 'Convertem a energia hidráulica e restituem a água a jusante.'],
+    ],
+  },
+]);
+
 export function ArrangementSchematics() {
+  const motion = useHydroMotion();
+  const [selected, setSelected] = useState(ARRANGEMENTS[0].id);
+  const tabsId = useId().replace(/:/g, '');
+  const active = ARRANGEMENTS.find((item) => item.id === selected) || ARRANGEMENTS[0];
+
   return (
-    <div className="arr-grid">
-      <figure><ArrPeBarragem /><figcaption>Pé de barragem: a queda vem só do barramento. Circuito curto, casa de força ao pé e restituição imediata ao rio.</figcaption></figure>
-      <figure><ArrDerivacao /><figcaption>Derivação: circuito longo que aproveita a queda do relevo (caso da UHE Parigot de Souza), com açude, adução, chaminé de equilíbrio e trecho de vazão reduzida.</figcaption></figure>
-      <figure><ArrFioAgua /><figcaption>Regularização: fio d'água (caso do Baixo Iguaçu) e acumulação (caso de Foz do Areia). Área e volume do reservatório influenciam a operação e os impactos, mas não os definem sozinhos; considere também arranjo, regra operativa, localização, conectividade e usos da água.</figcaption></figure>
-    </div>
+    <section
+      ref={motion.sceneRef}
+      className="hydro-motion-surface hcm-arrangements"
+      style={motion.surfaceStyle}
+      data-motion-state={motion.motionActive ? 'running' : 'paused'}
+      data-playing={motion.playing ? 'true' : 'false'}
+      aria-label="Esquemas de arranjos hidrelétricos"
+    >
+      <MotionControls motion={motion} context="Animação do arranjo" />
+      <p className="sr-only">Área e volume do reservatório influenciam a operação e os impactos, mas não os definem sozinhos.</p>
+      <div className="hcm-tabs hcm-arrangement-tabs" role="tablist" aria-label="Tipo de arranjo" onKeyDown={handleTabKeyDown}>
+        {ARRANGEMENTS.map((item) => {
+          const isActive = item.id === active.id;
+          return (
+            <button
+              key={item.id}
+              type="button"
+              id={`${tabsId}-tab-${item.id}`}
+              role="tab"
+              aria-selected={isActive}
+              aria-controls={`${tabsId}-panel`}
+              tabIndex={isActive ? 0 : -1}
+              className={isActive ? 'active' : ''}
+              onClick={() => setSelected(item.id)}
+            >
+              {item.label}
+            </button>
+          );
+        })}
+      </div>
+      <div
+        id={`${tabsId}-panel`}
+        role="tabpanel"
+        aria-labelledby={`${tabsId}-tab-${active.id}`}
+        className="hcm-arrangement-panel"
+      >
+        <p className="hcm-current-state"><strong>Em exibição: {active.label}.</strong> As linhas pontilhadas mostram o caminho e a velocidade relativa da água.</p>
+        <div className="arr-grid hcm-arrangement-stage">
+          <figure><active.Svg /><figcaption>{active.caption}</figcaption></figure>
+        </div>
+        <section className="hcm-equipment-key" aria-label={`Componentes do arranjo ${active.label}`}>
+          <h3>Como identificar o arranjo</h3>
+          <ol>{active.parts.map(([name, description], index) => (
+            <li key={name}><span aria-hidden="true">{index + 1}</span><p><strong>{name}</strong>{description}</p></li>
+          ))}</ol>
+        </section>
+      </div>
+    </section>
   );
 }

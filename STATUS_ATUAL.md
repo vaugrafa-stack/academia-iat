@@ -124,17 +124,63 @@ exibido pela aplicação online. O SHA corrente deve ser obtido da própria
 aplicação ou do artefato do workflow; este arquivo não tenta antecipar o hash
 do commit que o contém.
 
+### Candidato local de 21/08/2026 — animações hidrelétricas validadas
+
+O guia de hidrelétricas foi refeito para que as demais representações tenham o
+mesmo padrão didático do corte técnico principal. Anatomia, barragens, turbinas,
+usina reversível e arranjos agora usam cenas ampliadas, seleção por equipamento
+ou configuração, identificação textual externa ao desenho e movimento que
+representa água, rotor ou sentido operacional. Todas possuem pausa, velocidade,
+estado anunciado e respeito à preferência de movimento reduzido; fora da tela,
+o movimento é suspenso.
+
+Também foram corrigidos o deslocamento dos pontos da anatomia, a continuidade
+dos traçados, a mecânica visual de Pelton, Kaplan e Bulbo, a sincronização entre
+seletor e galeria de turbinas e o indicador da seção atual após navegação longa
+no celular. O vertedouro só mostra descarga quando esse componente é
+selecionado, evitando ensinar uma condição operacional permanente.
+
+As provas locais desta rodada são:
+
+- 66 arquivos de teste e 601 testes aprovados pelo portão integral;
+- build aprovado em 38 chunks, com 838,4 KiB de JavaScript e 264,5 KiB de CSS;
+- 54 cenários Playwright aprovados e seis omissões previstas, nas larguras
+  320, 360, 390, 430 e 1440 pixels, usando os dois trabalhadores do CI;
+- nova regressão de navegador cobrindo identificação, controles, toque,
+  sincronização, overflow e leitura móvel de todas as animações;
+- inspeção visual em desktop e 390 pixels, sem erro de console ou rolagem
+  horizontal.
+
+O CSS total ficou em 99,8% do teto bruto e 99,1% do teto compactado. O artefato
+passa, mas a próxima ampliação visual deve recuperar margem ou permanecer
+estritamente carregada sob demanda. As animações são representações didáticas e
+continuam sujeitas à revisão técnica e ao teste com usuários.
+
 ## Serviços separados
 
 | Serviço | Repositório | Estado comprovado | Não confundir com |
 |---|---|---|---|
 | Conta opcional de estudo | repositório privado separado | fonte validada e versionada no SHA `a89a81c130f4d784578ff02162b22b7511d95599`; 136 testes locais, wheel reproduzível, ciclo de e-mail/senha e sincronização exercitados; matriz Windows/Ubuntu e imagem Docker aprovadas no workflow `31509742433` | serviço implantado, conta obrigatória ou armazenamento de processos |
-| Área Técnica restrita | repositório privado separado | fonte validada e versionada no SHA `b64591ad3a266024840be2f0f1518cdb52a033ec`; execução local com `337 passed` e `3 skipped` de privilégio do Windows; matriz Windows/Ubuntu em Python 3.12/3.13 e imagem Docker aprovadas no workflow `31520073659`; OIDC, autorização, upload, conversa, fila, resultados, backup e retenção exercitados com dados sintéticos | ambiente institucional, processamento autônomo ou tratamento autorizado de processo real |
+| Área Técnica restrita | repositório privado separado | fonte limpa e sincronizada no SHA `2cf5a0d4d6245f02f5d70f2f5d0ee705120d3d03`; a última suíte integral registrada, no SHA pai `86e36f68f32b02e83e1496305fa6d2d4eb4f70f2`, teve 641 testes; OIDC, autorização, upload, conversa, fila, resultados, backup e retenção foram exercitados com dados sintéticos | processador automático conectado, ambiente institucional ou tratamento autorizado de processo real |
 
 Os dois serviços privados não possuem implantação ou pipeline de produção
 comprovados. A Academia pública continua utilizável sem conta remota. Nenhum
 documento real pode entrar na Área Técnica antes dos portões formais de
 governança, infraestrutura e autorização.
+
+A Área Técnica possui o corredor seguro para receber arquivos, gerar uma cópia
+sanitizada, enfileirar o pedido e reconciliar um resultado assinado. Ela ainda
+não contém cliente de modelo nem serviço que leia a Codex Inbox e produza o
+resultado. O worker atual apenas aguarda um processador externo. Portanto, o
+upload e a fila existem, mas checklist documental, minuta de IT, análise de
+programas e demais produtos ainda não são gerados automaticamente pela
+plataforma e o Projeto IAT do ChatGPT não está conectado a esse fluxo.
+
+A prontidão atual confirma aplicação, Banco, diretórios e worker, mas não prova
+que esse processador externo exista. O piloto permanece restrito a dados
+sintéticos e arquivos textuais UTF-8; PDF, DOCX, imagens, digitalizações, ZIP,
+KMZ e documentos reais continuam bloqueados até existirem extração isolada,
+antivírus, quarentena, governança institucional e autorização formal.
 
 Os dois candidatos privados incluem dependências travadas por hash, auditoria
 de vulnerabilidades, construção determinística de wheel e workflow de

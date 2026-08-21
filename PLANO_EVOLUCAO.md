@@ -947,3 +947,60 @@ ou permanecer carregada sob demanda.
 - nenhuma métrica automatizada desta rodada autoriza declarar validade
   normativa, eficácia pedagógica, aprovação institucional ou nota 10/10
   absoluta.
+
+## Adendo de execução — candidato de 21/08/2026
+
+### Animações técnicas concluídas nesta rodada
+
+- anatomia do arranjo com nove equipamentos identificados, foco coerente,
+  legenda externa e pontos corrigidos;
+- seis tipos de barragem convertidos em um explorador ampliado, com seleção,
+  fatos técnicos e legenda de elementos;
+- Francis, Kaplan, Pelton e Bulbo em uma galeria única sincronizada com o
+  seletor de queda e vazão, com movimentos mecânicos distintos;
+- usina reversível com modos Geração e Bombeamento e inversão explícita do
+  fluxo e do rotor;
+- arranjos a fio d'água, acumulação, derivação e reversível convertidos em uma
+  comparação ampliada e selecionável;
+- pausa, velocidade, preferência de movimento reduzido, suspensão fora da tela,
+  operação por teclado e alvos de toque em todas as novas superfícies;
+- correção da navegação local que perdia a seção atual no celular depois da
+  materialização tardia dos blocos.
+
+### Provas do candidato
+
+`pnpm test` aprovou 66 arquivos e 601 testes, junto dos portões de conteúdo,
+segurança, privacidade, mídia, proveniência, CSS e auditoria. `pnpm build`
+aprovou 38 chunks. O Playwright aprovou 54 cenários e omitiu os seis casos
+previstos em cinco larguras, com o mesmo paralelismo de dois trabalhadores usado
+no CI. A inspeção visual confirmou ausência de erro de console e overflow em
+desktop e 390 pixels.
+
+O CSS total está em 264,5 KiB de 265 KiB e 49,5 KiB compactado de 50 KiB. Esse é
+o principal limite técnico do próximo ciclo: novas ilustrações devem substituir
+regras antigas, compartilhar primitivas ou continuar isoladas no carregamento
+da rota.
+
+### Área Técnica, estado real e sequência de implementação
+
+O backend privado no SHA
+`2cf5a0d4d6245f02f5d70f2f5d0ee705120d3d03` já cobre identidade OIDC,
+autorização, upload sintético, sanitização, conversa, fila, leases, resultados
+assinados, download, retenção e auditoria. O SHA pai
+`86e36f68f32b02e83e1496305fa6d2d4eb4f70f2` registra 641 testes.
+
+O elo que falta é o processador: não existe cliente de modelo ou serviço ativo
+que consuma a Codex Inbox, carregue o POP e a base técnica versionados e produza
+checklist, análise de programas, minuta de IT e relatórios. A prontidão atual não
+mede esse elo. A sequência autorizável para o próximo ciclo é:
+
+1. implementar o processador remoto e seu heartbeat;
+2. versionar o prompt mestre, o POP, as referências aprovadas e os contratos dos
+   produtos;
+3. provar o ciclo sintético completo, do login ao download do relatório;
+4. adicionar extração isolada de PDF, DOCX e imagens, OCR, antivírus, quarentena
+   e limites de conteúdo;
+5. implantar em infraestrutura estável, rotacionar credenciais de demonstração
+   e só então ligar a Academia à Área Técnica;
+6. manter documentos reais bloqueados até aprovação institucional, base legal,
+   retenção, resposta a incidente e revisão humana estarem formalizadas.

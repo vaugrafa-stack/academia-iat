@@ -205,6 +205,79 @@ test('corte hidrelétrico interativo carrega o ativo original e responde em qual
   await expectHealthyPage(page, runtimeIssues);
 });
 
+test('demais animações hidrelétricas mantêm identificação, controles e leitura móvel', async ({
+  page,
+  baseURL,
+}) => {
+  const runtimeIssues = monitorRuntime(page, baseURL);
+  const viewport = page.viewportSize();
+  await page.goto(appUrl(baseURL, '#/hidreletricas'), {
+    waitUntil: 'domcontentloaded',
+  });
+
+  const anatomy = page.locator('#hydro-anatomia');
+  await anatomy.scrollIntoViewIfNeeded();
+  await expect(anatomy.locator('.cs-hot')).toHaveCount(9);
+  await expect(anatomy.locator('.cs-mobile-equipment button')).toHaveCount(9);
+  await anatomy.locator('.cd-nav').getByRole('button', { name: 'Vertedouro' }).click();
+  await expect(anatomy.locator('.cross-wrap')).toHaveAttribute('data-selected', 'vertedouro');
+  await expect(anatomy.locator('.cs-spill')).toHaveClass(/is-active/);
+  await expect(anatomy.locator('#hydro-anatomia-detail h3')).toHaveText('Vertedouro');
+
+  const dams = page.locator('#hydro-barramentos');
+  await dams.scrollIntoViewIfNeeded();
+  await expect(dams.locator('.dam-selector [role="tab"]')).toHaveCount(6);
+  await expect(dams.locator('.dam-stage .dam-mini')).toHaveCount(1);
+  await dams.getByRole('tab', { name: /Enrocamento/ }).click();
+  await expect(dams.locator('.dam-selected-panel')).toContainText('Maciço de rocha');
+
+  const turbines = page.locator('#hydro-turbinas');
+  await turbines.scrollIntoViewIfNeeded();
+  await turbines.locator('.tp-band').filter({ hasText: 'Kaplan' }).click();
+  await expect(turbines.locator('.tg-tabs').getByRole('tab', { name: 'Kaplan' }))
+    .toHaveAttribute('aria-selected', 'true');
+  await expect(turbines.locator('.tg-body .turb-svg')).toHaveCount(1);
+  await expect(turbines.locator('.hcm-equipment-key li')).toHaveCount(4);
+
+  const reversible = page.locator('.hcm-reversible-motion');
+  await reversible.scrollIntoViewIfNeeded();
+  await expect(reversible.locator('.hcm-phase-selector button')).toHaveCount(2);
+  await reversible.getByRole('button', { name: 'Bombeamento' }).click();
+  await expect(reversible).toHaveAttribute('data-reversible-mode', 'pump');
+  await expect(reversible.locator('.hcm-current-state')).toContainText('consome energia');
+
+  const arrangements = page.locator('#hydro-arranjos');
+  await arrangements.scrollIntoViewIfNeeded();
+  await expect(arrangements.locator('.hcm-arrangement-tabs [role="tab"]')).toHaveCount(3);
+  await arrangements.getByRole('tab', { name: 'Fio d’água × acumulação' }).click();
+  await expect(arrangements.locator('.hcm-arrangement-stage svg')).toHaveCount(1);
+  await expect(arrangements.locator('.hcm-equipment-key li')).toHaveCount(4);
+
+  if (viewport.width <= 720) {
+    await expect(anatomy.locator('.cs-rotulo').first()).toBeHidden();
+    await expect(anatomy.locator('.cs-hot').first()).toBeHidden();
+    await expect(anatomy.locator('.cs-mobile-equipment')).toBeVisible();
+  }
+  if (viewport.width <= 430) {
+    await expect.poll(() => page.locator('html').evaluate((node) => (
+      node.scrollWidth <= node.clientWidth + 1
+    )), {
+      message: 'as animações técnicas não podem alargar a página no celular',
+    }).toBe(true);
+    for (const selector of [
+      '.cross-explorer .hydro-motion-toggle',
+      '.dam-explorer .hydro-motion-toggle',
+      '.hcm-turbine-motion .hcm-play',
+      '.hcm-arrangements .hcm-play',
+    ]) {
+      const box = await page.locator(selector).boundingBox();
+      expect(box?.height ?? 0).toBeGreaterThanOrEqual(44);
+    }
+  }
+
+  await expectHealthyPage(page, runtimeIssues);
+});
+
 test('experiência responsiva prioriza aprender e praticar sem overflow', async ({
   page,
   baseURL,

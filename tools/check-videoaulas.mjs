@@ -86,6 +86,16 @@ const MAX_LINHAS_TITULO = 3;
 // 3.700, todas entre 43 e 46 caracteres. Se este numero crescer, a segmentacao
 // regrediu.
 const TOLERANCIA_LINHA_LONGA = 8;
+// Catraca do acervo legado, medida em 20/08/2026: 117 das 168 aulas ainda estao
+// no gerador 2, e o teto de linha nao e COBRADO nelas, so avisado. Sao 581
+// linhas acima de 42 caracteres, e o portao encerrava com "OK: legendas
+// conferem" mesmo assim: o veredito falava do acervo inteiro e a regua tinha
+// medido 51 aulas, 30% dele.
+//
+// O numero abaixo nao aprova as 581. Ele impede que virem 582. Migrar uma aula
+// para o gerador 3 derruba a contagem, e quando ela cair o portao pede para
+// baixar a catraca, porque catraca que so sobe deixa de ser catraca.
+const TETO_LEGADO_LINHA_LONGA = 581;
 const TAMANHO_MINIMO = { mp4: 100_000, vtt: 40, jpg: 20_000 };
 
 let manifesto = {};
@@ -165,6 +175,8 @@ const segundos = (valor) => {
 let cuesLegadosAcimaDoTeto = 0;
 // Linhas longas do acervo v2, onde cartao e faixa concordam entre si.
 let legadoLinhasLongas = 0;
+// Quantas aulas o teto de linha realmente cobra.
+let cobradas = 0;
 let maiorCpsLegado = { cps: 0, id: '' };
 const linhasLongas = [];
 
@@ -229,6 +241,7 @@ for (const [id, meta] of Object.entries(manifesto)) {
     // teto e exigido. Ate la, o acervo publicado e contado como legado.
     const ehTitulo = cueIndex === 0;
     const novaSegmentacao = meta.generatorVersion >= 3;
+    if (novaSegmentacao && cueIndex === 0) cobradas += 1;
     const maxLinhas = ehTitulo ? MAX_LINHAS_TITULO : MAX_LINHAS_CUE;
     if (novaSegmentacao && (cue.corpo?.length || 1) > maxLinhas) {
       fail(`${id}: cue com ${cue.corpo.length} linhas (maximo ${maxLinhas})`);
@@ -260,12 +273,6 @@ if (linhasLongas.length > TOLERANCIA_LINHA_LONGA) {
   fail(
     `${linhasLongas.length} linhas de legenda acima de ${MAX_LINHA_CHARS} caracteres `
     + `(tolerancia ${TOLERANCIA_LINHA_LONGA}); a maior tem ${maior.chars} em ${maior.id}`,
-  );
-} else if (legadoLinhasLongas) {
-  console.log(
-    `AVISO: acervo legado tem ${legadoLinhasLongas} linhas acima de ${MAX_LINHA_CHARS} caracteres. `
-    + 'No acervo v2 o cartao desenhado no MP4 e a faixa .vtt mostram a cena inteira e concordam entre si; '
-    + 'o gerador 3 reparticiona os DOIS a partir da mesma segmentacao.',
   );
 } else if (linhasLongas.length) {
   console.log(
@@ -302,7 +309,26 @@ if (semConteudoProprio.length) {
   );
 }
 
-console.log(`\n${Object.keys(manifesto).length} videoaulas de secao para ${lessons.length} aulas.`);
+// O que a regua alcanca, dito antes do veredito e nao depois dele.
+const totalAulas = Object.keys(manifesto).length;
+if (legadoLinhasLongas > TETO_LEGADO_LINHA_LONGA) {
+  fail(
+    `acervo legado passou de ${TETO_LEGADO_LINHA_LONGA} para ${legadoLinhasLongas} linhas `
+    + `acima de ${MAX_LINHA_CHARS} caracteres: a segmentacao regrediu onde o teto ainda nao e cobrado`,
+  );
+} else if (legadoLinhasLongas) {
+  const folga = TETO_LEGADO_LINHA_LONGA - legadoLinhasLongas;
+  console.log(
+    `AVISO: ${cobradas} de ${totalAulas} aulas estao no gerador 3 e tem o teto de linha COBRADO. `
+    + `As outras ${totalAulas - cobradas} sao do acervo legado, com ${legadoLinhasLongas} linhas `
+    + `acima de ${MAX_LINHA_CHARS} caracteres, fora do alcance desta regua.`
+    + (folga > 0
+      ? ` A catraca esta em ${TETO_LEGADO_LINHA_LONGA}: baixe para ${legadoLinhasLongas} neste commit.`
+      : ''),
+  );
+}
+
+console.log(`\n${totalAulas} videoaulas de secao para ${lessons.length} aulas.`);
 if (cuesLegadosAcimaDoTeto) {
   console.log(
     `AVISO: acervo legado tem ${cuesLegadosAcimaDoTeto} cues acima de ${MAX_CPS} cps `
@@ -311,4 +337,7 @@ if (cuesLegadosAcimaDoTeto) {
   );
 }
 if (erros) { console.log(`${erros} problema(s).`); process.exit(1); }
-console.log('OK: manifestos, arquivos, tempos e legendas conferem.');
+console.log(
+  'OK: manifestos, arquivos e tempos conferem nas ' + totalAulas + ' aulas; '
+  + 'o teto de linha da legenda foi cobrado em ' + cobradas + '.',
+);

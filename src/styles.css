@@ -213,7 +213,7 @@ button.sidebar-help{background:transparent;font:inherit;color:inherit;cursor:poi
    seta, a tabela ao lado dizia "transfere a carga as ombreiras" e o desenho
    nao transferia nada. O atraso existe para ler como resposta, e nao como duas
    forcas simultaneas. */
-.dm-reacao{transform-box:fill-box;transform-origin:0% 50%;animation:dmReacao 2.2s ease-in-out infinite;animation-delay:.55s;opacity:.9}
+.dm-reacao{transform-box:fill-box;transform-origin:0% 50%;animation:dmReacao 2.2s ease-in-out infinite;animation-delay:-1.65s;opacity:.9}
 @keyframes dmReacao{0%,100%{opacity:.3;transform:scale(.82)}55%{opacity:1;transform:scale(1)}}
 @media(prefers-reduced-motion:reduce){.dm-agua,.dm-empuxo,.dm-reacao{animation:none}}
 .dam-card strong{display:block;font-size:14px}
@@ -354,9 +354,12 @@ button.primary:active{transform:translateY(0);box-shadow:0 2px 8px #16563C33}
    horas, nao de segundos. Enquanto um corre, o outro apaga, e a legenda de cada
    um acende junto do seu fluxo. */
 .rv-gera{animation:csflow 1.1s linear infinite,rvTurno 9s ease-in-out infinite}
-.rv-bombeia{animation:csflow 1.6s linear infinite,rvTurno 9s ease-in-out infinite;animation-delay:0s,4.5s}
+.rv-bombeia{animation:csflow 1.6s linear infinite,rvTurno 9s ease-in-out infinite;animation-delay:0s,-4.5s}
 .rv-gera-rotulo{animation:rvTurno 9s ease-in-out infinite}
-.rv-bombeia-rotulo{animation:rvTurno 9s ease-in-out infinite;animation-delay:4.5s}
+.rv-bombeia-rotulo{animation:rvTurno 9s ease-in-out infinite;animation-delay:-4.5s}
+/* Contrafase conferida por amostragem no site publicado, e nao por leitura
+   da declaracao: 19 amostras ao longo de um ciclo, correlacao entre os dois
+   regimes. Foi assim que apareceu a espera do atraso positivo. */
 @keyframes rvTurno{0%,42%{opacity:1}50%,92%{opacity:.12}100%{opacity:1}}
 /* ===== Casos reais no Parana ===== */
 .prc-note{display:flex;gap:8px;align-items:flex-start;font-size:13px;color:var(--muted);margin:12px 0}

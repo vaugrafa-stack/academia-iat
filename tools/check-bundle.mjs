@@ -20,7 +20,32 @@ export const BUNDLE_BUDGETS = Object.freeze({
   // silenciosamente para a entrada comum.
   initialCss: Object.freeze({ raw: 205 * KIB, gzip: 38 * KIB }),
   largestJs: Object.freeze({ raw: 265 * KIB, gzip: 85 * KIB }),
-  totalJs: Object.freeze({ raw: 850 * KIB, gzip: 270 * KIB }),
+  // Revisto em 20/08/2026, e este era o unico teto do arquivo sem historico
+  // escrito, o que ja e um defeito: numero sem justificativa nao se revisa, so
+  // se afrouxa.
+  //
+  // A requalificacao dos quinze diagramas levou o JS de 761,9 para 788,3 KiB
+  // brutos e 258,3 gzip, ou seja, 95,4% do teto de gzip. Faltava uma rodada
+  // para o build reprovar, e reprovar DEPOIS de empurrar foi exatamente o erro
+  // que custou dois commits nesta mesma sessao.
+  //
+  // Procurei gordura antes, como manda o bloco do CSS logo abaixo. A medicao
+  // certa aqui nao e contar linha repetida, e sim procurar MODULO duplicado
+  // entre pedacos, que e o desperdicio real de empacotador: literal longo que
+  // aparece em dois arquivos denuncia o mesmo codigo emitido duas vezes.
+  // Resultado: ZERO literal repetido em 38 pedacos e 782 KiB. O empacotador
+  // nao esta duplicando nada, e o crescimento e desenho de verdade, no pedaco
+  // hydro, que passou a ser o segundo maior com 122,2 KiB.
+  //
+  // Sobe uma vez, com folga real: 900 / 300 KiB, cerca de 14% sobre o medido.
+  // Subir de 10 em 10 a cada rodada seria ritual, nao controle, que e o que o
+  // bloco do CSS ja registrou em 04/08.
+  //
+  // Ao contrario do CSS, o JS NAO tem catraca equivalente ao check-css-morto:
+  // nao existe aqui um detector de codigo orfao com tolerancia zero. Enquanto
+  // nao existir, este teto e a unica trava, e por isso a folga e generosa mas
+  // nao infinita.
+  totalJs: Object.freeze({ raw: 900 * KIB, gzip: 300 * KIB }),
   // Teto de CSS revisto em 01/08/2026, com a conta na mesa.
   //
   // O anterior (200 / 37 KiB) estava em 96,9% de uso e travaria a proxima
@@ -82,6 +107,12 @@ export const BUNDLE_BUDGETS = Object.freeze({
   // 241,4 / 44,1 e 184,4 / 33,3 medidos. A catraca continua sendo
   // check-css-morto com tolerancia zero, que hoje devolve zero classe orfa.
   totalCss: Object.freeze({ raw: 265 * KIB, gzip: 50 * KIB }),
+  // O proximo teto a chegar no limite NAO e o de JS: e este. Em 20/08/2026 o
+  // pop-public-content estava em 918,7 de 960 KiB brutos, 95,7%, e 144,2 de
+  // 150 gzip, 96,1%. Ele cresce com o conteudo do POP, e nao com codigo, entao
+  // quem for mexer precisa decidir se o caso e subir o teto ou fatiar o JSON
+  // por area. Nao mexi porque nao foi este trabalho que o fez crescer, e teto
+  // que se sobe sem entender a causa deixa de medir alguma coisa.
   largestCompressibleAsset: Object.freeze({
     raw: 960 * KIB,
     gzip: 150 * KIB,

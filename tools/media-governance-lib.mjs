@@ -349,24 +349,73 @@ function validateCycles(ledger, policy, failures) {
   }
 
   const additionsByCycle = new Map();
+  // Substituicao tambem move bytes. O orcamento so olhava 'add', e no ciclo
+  // 2026-08 isso deixou 199 substituicoes e 71,4 MB de trafego fora da conta,
+  // mais de tres vezes o teto inteiro de 20 MB, sem que nada acusasse.
+  const replacementsByCycle = new Map();
   for (const change of changes) {
-    if (change.action !== 'add' || !CYCLE_PATTERN.test(change.cycle || '')) continue;
+    if (!CYCLE_PATTERN.test(change.cycle || '')) continue;
     if (change.cycle < primeiroCiclo || change.cycle > cicloCorrente) continue;
-    const additions = additionsByCycle.get(change.cycle) || [];
-    additions.push(change);
-    additionsByCycle.set(change.cycle, additions);
+    const alvo = change.action === 'add' ? additionsByCycle
+      : change.action === 'replace' ? replacementsByCycle
+        : null;
+    if (!alvo) continue;
+    const lista = alvo.get(change.cycle) || [];
+    lista.push(change);
+    alvo.set(change.cycle, lista);
   }
 
   return {
     cicloCorrente,
     primeiroCiclo,
     additionsByCycle,
+    replacementsByCycle,
   };
 }
 
-function validateCycleBudgets(additionsByCycle, policy, failures) {
-  for (const [cycle, additions] of additionsByCycle) {
-    const growthBytes = additions.reduce((total, change) => total + (change.bytes || 0), 0);
+// Substituicao entra no orcamento de BYTES e fica fora do contador de
+// ARQUIVOS: ela nao cria arquivo novo, o acervo nao cresce em quantidade.
+// Somar as 199 substituicoes ao contador de 80 reprovaria o ciclo por um
+// crescimento que nao existe.
+//
+// Do delta conta so a parte POSITIVA. Pelo liquido, o ciclo 2026-08 daria
+// -2,35 MB, porque o acervo encolheu na regeneracao, e uma sobra dessas
+// compraria orcamento para adicao. Encolher em um lugar nao autoriza inchar em
+// outro: cada substituicao que cresce paga o proprio crescimento.
+//
+// A linha de base sempre tem o tamanho anterior, porque validateChange ja
+// reprova substituicao sem correspondencia nela.
+function validateCycleBudgets(additionsByCycle, replacementsByCycle, baselineByPath, policy, failures) {
+  const ciclos = new Set([...additionsByCycle.keys(), ...(replacementsByCycle?.keys() ?? [])]);
+  for (const cycle of ciclos) {
+    const additions = additionsByCycle.get(cycle) || [];
+    const replacements = replacementsByCycle?.get(cycle) || [];
+    let crescimentoDeSubstituicao = 0;
+    let movimentadoEmSubstituicao = 0;
+    for (const change of replacements) {
+      const anterior = baselineByPath?.get(change.path)?.bytes;
+      const atual = change.bytes || 0;
+      movimentadoEmSubstituicao += atual;
+      if (typeof anterior === 'number') {
+        crescimentoDeSubstituicao += Math.max(0, atual - anterior);
+      } else {
+        // Sem tamanho anterior nao da para saber o delta, entao paga o valor
+        // cheio. Silenciar o caso seria repetir o defeito que este trecho
+        // conserta.
+        crescimentoDeSubstituicao += atual;
+      }
+    }
+    const growthBytes = additions.reduce((total, change) => total + (change.bytes || 0), 0)
+      + crescimentoDeSubstituicao;
+    if (replacements.length) {
+      // Movimentacao grande com saldo pequeno continua sendo movimentacao
+      // grande, e precisa aparecer mesmo quando o orcamento passa. Numero que
+      // nao e dito e numero que ninguem revisa.
+      console.log(
+        `ciclo ${cycle}: ${replacements.length} substituicao(oes) movendo `
+        + `${movimentadoEmSubstituicao} bytes; ${crescimentoDeSubstituicao} contam como crescimento.`,
+      );
+    }
     if (additions.length > policy.maxApprovedGrowthFiles) {
       failures.push(
         `ledger excede o limite de novos arquivos no ciclo ${cycle}: `
@@ -536,8 +585,8 @@ export async function validateMediaGovernance({ root, policy, baseline, ledger, 
   // As entradas de ciclos anteriores continuam valendo como AUTORIZACAO do
   // ativo, mas precisam estar seladas. Sem o selo, bastaria declarar um mes
   // antigo para uma adicao nova escapar do orcamento corrente.
-  const { additionsByCycle } = validateCycles(ledger, policy, failures);
-  validateCycleBudgets(additionsByCycle, policy, failures);
+  const { additionsByCycle, replacementsByCycle } = validateCycles(ledger, policy, failures);
+  validateCycleBudgets(additionsByCycle, replacementsByCycle, baselineByPath, policy, failures);
   for (const path of await unclassifiedAssets(root, policy)) {
     failures.push(
       `${path}: extensao nao classificada; declare em managedExtensions `

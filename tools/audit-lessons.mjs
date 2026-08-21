@@ -95,6 +95,58 @@ for (const f of pop.figures) {
 // 7. Distribuição por módulo (para inspeção visual de plausibilidade)
 const perTrack = {};
 for (const l of lessons) perTrack[l.trackId] = (perTrack[l.trackId] || 0) + 1;
+// Qualidade do objetivo, e nao so a estrutura da aula.
+//
+// O objetivo mostrado no Inicio e dentro da aula sai de tres origens do proprio
+// POP, na ordem quadro, acao e exigencia, com recurso a um perfil por palavra
+// chave do titulo. O comentario de src/objetivoObservavel.js registra por que
+// isso importa: sao 11 perfis para 167 secoes, entao o perfil fazia um mesmo
+// texto aparecer em 41 aulas, e promessa repetida deixa de orientar.
+//
+// Medido em 21/08/2026: 168 textos DISTINTOS para 168 aulas, nenhuma repeticao,
+// 93% derivados do POP e 12 no perfil. A derivacao esta boa e nada guardava
+// esse resultado: mexer nela poderia voltar a repetir sem nada acusar.
+//
+// As 12 do perfil ficam como estao de proposito. Elas sao as secoes em que o
+// POP nao oferece quadro, acao nem exigencia, e inventar objetivo onde a fonte
+// nao da e exatamente o que a regra de nao inventar proibe.
+const { objetivoDaAula } = await import('../src/lessonObjective.js');
+const blocoPorId = new Map(pop.blocks.map((b) => [b.id, b]));
+const tabelaPorId = new Map(pop.tables.map((t) => [t.id, t]));
+const textoDoObjetivo = new Map();
+let derivados = 0;
+for (const lesson of lessons) {
+  const blocos = (lesson.blockIds || [])
+    .map((id) => blocoPorId.get(id))
+    .filter((b) => b && !b.navigationOnly);
+  const alvo = objetivoDaAula(lesson, blocos, tabelaPorId);
+  if (alvo.origem && alvo.origem !== 'perfil') derivados += 1;
+  const texto = String(alvo.objetivo || '').trim();
+  textoDoObjetivo.set(texto, (textoDoObjetivo.get(texto) || 0) + 1);
+}
+const repetidos = [...textoDoObjetivo].filter(([, n]) => n > 1);
+const PISO_DERIVADO = 150;
+console.log(
+  `\nObjetivo: ${textoDoObjetivo.size} texto(s) distinto(s) para ${lessons.length} aulas; `
+  + `${derivados} derivados do POP, piso ${PISO_DERIVADO}.`,
+);
+for (const [texto, n] of repetidos) {
+  findings.push({
+    sev: 'ALERTA',
+    number: '-',
+    id: 'objetivo',
+    msg: `${n} aulas prometem o mesmo objetivo: "${texto.slice(0, 70)}"`,
+  });
+}
+if (derivados < PISO_DERIVADO) {
+  findings.push({
+    sev: 'ALERTA',
+    number: '-',
+    id: 'objetivo',
+    msg: `so ${derivados} objetivos derivados do POP, abaixo do piso ${PISO_DERIVADO}`,
+  });
+}
+
 console.log('\nAulas por módulo:');
 for (const t of tracks) console.log(`  ${t.code} ${t.title.slice(0, 42).padEnd(42)} ${perTrack[t.id] || 0}`);
 

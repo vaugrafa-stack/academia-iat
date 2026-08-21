@@ -68,6 +68,38 @@ const UNSAFE_PATTERNS = [
     rule: 'email-in-source-artifact',
     pattern: /[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/i,
   },
+  // A restricao permanente nomeia estes identificadores um a um: nenhum
+  // empreendimento nomeado, pessoa, CNPJ, protocolo, numero de licenca ou
+  // municipio identificavel. A lista acima cobria caminho de usuario e e-mail,
+  // e nenhum dos identificadores brasileiros que a regra cita por nome.
+  //
+  // O vetor de vazamento aqui e a FONTE: estes tres arquivos saem da extracao
+  // de um documento institucional real, e nao de texto escrito por nos. E
+  // exatamente onde um numero de processo entra sem ninguem reparar.
+  //
+  // Medidos contra a base atual antes de entrar: zero ocorrencia dos cinco.
+  // Padrao que ja nasce reprovando por falso positivo nao vira portao, vira
+  // exclusao.
+  {
+    rule: 'cnpj-em-conteudo-publico',
+    pattern: /\b\d{2}\.\d{3}\.\d{3}\/\d{4}-\d{2}\b/,
+  },
+  {
+    rule: 'cpf-em-conteudo-publico',
+    pattern: /\b\d{3}\.\d{3}\.\d{3}-\d{2}\b/,
+  },
+  {
+    rule: 'protocolo-em-conteudo-publico',
+    pattern: /\b\d{2}\.\d{3}\.\d{3}-\d\b/,
+  },
+  {
+    rule: 'telefone-em-conteudo-publico',
+    pattern: /\(\d{2}\)\s?9?\d{4}-\d{4}/,
+  },
+  {
+    rule: 'cep-em-conteudo-publico',
+    pattern: /\b\d{5}-\d{3}\b/,
+  },
 ];
 
 function escapeRegExp(value) {

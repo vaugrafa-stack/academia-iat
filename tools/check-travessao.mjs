@@ -1,4 +1,10 @@
-// Portão: nenhum travessão em texto autoral de tela.
+// Portão: caractere que não devia estar no fonte.
+//
+// Guarda duas coisas, que parecem distantes e são o mesmo problema: um símbolo
+// escrito onde não podia. Uma é regra de estilo institucional, a outra é
+// correção pura.
+//
+// 1. Travessão em texto autoral de tela.
 //
 // A restrição é permanente e está no manual de operação do projeto: sem
 // travessão em texto autoral, inclusive legenda de vídeo. É estilo
@@ -23,7 +29,7 @@ import { join, relative } from "node:path";
 
 const RAIZ = process.cwd();
 const PASTAS = ["src"];
-const EXTENSOES = /\.(?:jsx?|css)$/;
+const EXTENSOES = /\.(?:jsx?|mjs|css)$/;
 const TRAVESSAO = /—/;
 
 async function arquivosDe(pasta) {
@@ -74,14 +80,74 @@ if (travessoesVisiveis(NAO_PODE_ACUSAR).length !== 0) {
   falhas.push("autoteste: acusou travessão em comentário de linha inteira");
 }
 
+// 2. Caractere de controle no fonte.
+//
+// Entrou nesta base em 21/08/2026 e quase passou. Um \\b escrito em string
+// Python não bruta vira o caractere backspace, 0x08, e o que foi gravado em
+// tools/sanitize-public-data.mjs foram quatro padrões exigindo backspaces
+// literais no meio do CNPJ. Padrão que nunca casa, portão que nunca acusa, e
+// grep mostrando a regra como se estivesse certa: o byte 0x08 é invisível na
+// saída do terminal.
+//
+// É a pior forma de defeito de portão, porque produz garantia falsa. Só
+// apareceu porque testei a função com um CNPJ plantado em vez de confiar na
+// leitura do código.
+//
+// A varredura cobre fonte, ferramentas e testes, que é onde regra escrita vira
+// regra executada. Tabulação, quebra de linha e retorno de carro ficam de fora,
+// porque são texto normal.
+const CONTROLE = /[\u0000-\u0008\u000b\u000c\u000e-\u001f\u007f]/;
+const NOME_DO_BYTE = (c) => "0x" + c.codePointAt(0).toString(16).padStart(2, "0");
+for (const pasta of ["src", "tools", "tests"]) {
+  let lista = [];
+  try {
+    lista = await arquivosDe(join(RAIZ, pasta));
+  } catch {
+    continue;
+  }
+  for (const arquivo of lista) {
+    const fonte = await readFile(arquivo, "utf8");
+    fonte.split(/\r?\n/).forEach((linha, i) => {
+      const m = linha.match(CONTROLE);
+      if (!m) return;
+      falhas.push(
+        `${relative(RAIZ, arquivo).replaceAll("\\", "/")}:${i + 1} caractere de `
+        + `controle ${NOME_DO_BYTE(m[0])}, invisivel no terminal e capaz de tornar `
+        + "um padrao inerte",
+      );
+    });
+  }
+}
+
+if (!CONTROLE.test("padrao \u0008 com backspace")) {
+  falhas.push("autoteste: nao reconheceu caractere de controle");
+}
+if (CONTROLE.test("linha\tcom\ttabulacao")) {
+  falhas.push("autoteste: acusou tabulacao como caractere de controle");
+}
+
 if (falhas.length) {
-  console.error("REPROVADO: travessão em texto autoral de tela.\n");
+  console.error("REPROVADO: caractere que nao devia estar no fonte.\n");
   for (const f of falhas) console.error(`  ${f}`);
-  console.error(
-    "\nSeparador entre rótulo e título usa ponto medio (·), que ja e o separador"
-    + " desta interface. Dentro de frase, use dois-pontos ou virgula.",
-  );
+  // A orientação segue o tipo de falha. Mandar trocar por ponto medio quem
+  // gravou um byte de controle manda consertar a coisa errada.
+  if (falhas.some((f) => f.includes("travessão") || f.includes("—"))) {
+    console.error(
+      "\nSeparador entre rótulo e título usa ponto medio (·), que ja e o separador"
+      + " desta interface. Dentro de frase, use dois-pontos ou virgula.",
+    );
+  }
+  if (falhas.some((f) => f.includes("controle"))) {
+    console.error(
+      "\nCaractere de controle costuma vir de escape resolvido cedo demais: um \\b"
+      + " em string Python nao bruta vira backspace, e um \\0 vira nulo. Escreva o"
+      + " arquivo com string bruta, ou monte o padrao no proprio JavaScript.",
+    );
+  }
   process.exit(1);
 }
 
-console.log("OK: nenhum travessão em texto autoral de tela; 2 armadilhas do autoteste conferidas.");
+console.log(
+  "OK: nenhum travessão em texto autoral de tela e nenhum caractere de controle"
+  + " em src, tools e tests; 4 armadilhas do autoteste conferidas.",
+);

@@ -175,5 +175,79 @@ if (percentual > acaso + 8) {
     + 'uma questao, deixe as alternativas com comprimento parecido e baixe o teto.',
   );
 }
+// ---------------------------------------------------------------- pistas de
+// eliminacao: absoluto e eco do enunciado
+//
+// O portao acima travou a pista de COMPRIMENTO e parou ali. Medidas em
+// 21/08/2026, as outras duas pistas classicas de prova estavam livres, e
+// juntas valiam mais que a primeira valia sozinha.
+//
+// Absoluto na alternativa: 84 alternativas usam sempre, nunca, todo, qualquer,
+// exclusivamente. Apenas 6 delas sao a correta. Sao 7% contra 33% esperado,
+// z = -5,1. A regra "se diz sempre, esta errada" elimina um distrator em 78 de
+// 84 vezes, e numa questao de tres alternativas isso leva o chute de 33% para
+// 50%.
+//
+// Eco do enunciado: em 89 questoes uma alternativa repete mais palavras do
+// enunciado que as outras, e e a correta em 47% delas contra 33% do acaso,
+// z = 2,8.
+//
+// Somadas, com desempate pela mais longa: quem nao sabe NADA do POP acerta 107
+// de 224, 48%, contra 33% do acaso. Sao 15 pontos de graca num banco usado
+// para avaliacao.
+//
+// O que este portao NAO faz, e por que:
+//
+// Nao mando reescrever os 78 distratores. Olhei um a um e na maioria o
+// absoluto E o erro: "Sempre como renovacao", "qualquer plano com ART comprova
+// a execucao", "sem qualquer material cartografico". Tirar a palavra muda o
+// valor de verdade e pode transformar o distrator em alternativa correta.
+// Parte deste sinal e intrinseca ao dominio: em direito administrativo a
+// alternativa errada erra tipicamente POR generalizar.
+//
+// Isso explica o numero, mas nao o desculpa: o aluno continua acertando sem
+// saber. A saida certa e de conteudo, alternativa por alternativa, com quem
+// responde pela norma, e nao um conserto mecanico de texto feito por quem nao
+// pode conferir cada afirmacao contra o POP.
+//
+// Entao o teto abaixo nao aprova os 48%. Ele impede que virem 49%, e mantem o
+// numero visivel em toda execucao para que a decisao de conteudo seja tomada
+// com ele a vista, e nao esquecida.
+const ABSOLUTO = /\b(sempre|nunca|jamais|todo|todos|toda|todas|qualquer|nenhum|nenhuma|obrigatoriamente|exclusivamente)\b/i;
+const VAZIAS = new Set(
+  'a o as os de do da das dos e ou que um uma para com por no na nos nas ao aos se nao em ser sao pode deve qual quais'.split(' '),
+);
+const conteudo = (t) => new Set(
+  (t.toLowerCase().match(/[a-zà-ú]{4,}/g) || []).filter((w) => !VAZIAS.has(w)),
+);
+
+/** Indice que um respondente sem conhecimento marcaria usando so as pistas. */
+export function escolhaDeQuemNaoSabe(q) {
+  const indices = q.options.map((_, i) => i);
+  const semAbsoluto = indices.filter((i) => !ABSOLUTO.test(q.options[i]));
+  const vivos = semAbsoluto.length ? semAbsoluto : indices;
+  const doEnunciado = conteudo(q.question);
+  const eco = new Map(vivos.map((i) => [i, [...conteudo(q.options[i])].filter((w) => doEnunciado.has(w)).length]));
+  const maior = Math.max(...eco.values());
+  const lideres = vivos.filter((i) => eco.get(i) === maior);
+  if (maior > 0 && lideres.length === 1) return lideres[0];
+  return lideres.reduce((a, b) => (q.options[b].length > q.options[a].length ? b : a));
+}
+
+const TETO_ESPERTALHAO = 112;
+const acertosEspertalhao = questionBank.filter((q) => escolhaDeQuemNaoSabe(q) === q.answer).length;
+const pctEspertalhao = Math.round((100 * acertosEspertalhao) / questionBank.length);
+console.log(
+  `pistas de eliminacao: quem nao sabe acerta ${acertosEspertalhao} (${pctEspertalhao}%), `
+  + `acaso ${acaso}%, teto ${TETO_ESPERTALHAO}`,
+);
+if (acertosEspertalhao > TETO_ESPERTALHAO) {
+  console.error(
+    `FALHA: eliminar absolutos e seguir o eco do enunciado leva a ${acertosEspertalhao} acertos, `
+    + `acima do teto ${TETO_ESPERTALHAO}. A pista de formato cresceu.`,
+  );
+  erros += 1;
+}
+
 if (erros) { console.log(`${erros} problema(s) no banco de questoes.`); process.exit(1); }
 console.log('OK: cobertura, estrutura e citacoes conferem.');

@@ -312,86 +312,154 @@ export function turbinasCompativeisPorQueda(h) {
 }
 
 function DamMini({ kind }) {
-  // pequenos diagramas esquematicos por tipo de barragem
-  const common = { fill: 'none', stroke: '#3fe0a6', strokeWidth: 2 };
-  // A agua da miniatura recebe classe para oscilar. Sem isso, seis desenhos de
-  // tipo de barragem ficavam parados ao lado de um corte animado, e a diferenca
-  // entre eles, que e COMO cada um resiste, nao aparecia em lugar nenhum: o
-  // aluno via seis silhuetas e tinha de deduzir a estatica pelo texto ao lado.
-  const water = { fill: '#bfe3ff', className: 'dm-agua' };
+  // Seis miniaturas de 120 por 70. O tamanho e pequeno, mas o que cada tipo
+  // TEM de proprio cabe: camada de lancamento no CCR, nucleo impermeavel no
+  // aterro, face de concreto no enrocamento, contraforte sob a laje. Antes as
+  // seis eram a mesma silhueta trocando de cor, e o aluno precisava deduzir o
+  // material pelo texto ao lado.
+  const agua = { className: 'dm-agua', fill: `url(#dm-agua-${kind})` };
+  const seta = `url(#dm-ponta-r-${kind})`;
   return (
     <svg viewBox="0 0 120 70" className="dam-mini" aria-hidden="true">
-      <rect x="0" y="52" width="120" height="18" fill="#1e2c27" />
-      {/* Empuxo da agua contra a estrutura: a mesma forca em todos os tipos, e o
-          desenho ao lado mostra o que cada um faz com ela. */}
-      <path className="dm-empuxo" d="M30 41 L52 41" stroke="#8fd0ff" strokeWidth="2"
-            strokeLinecap="round" markerEnd={`url(#dm-ponta-${kind})`} />
       {/* O id leva o tipo no nome porque as seis miniaturas coexistem na mesma
           pagina. Com id fixo, os seis cards declaravam "dm-ponta" e o documento
           ficava com seis elementos de mesmo id: invalido, e leitor de tela e
           `getElementById` passam a resolver sempre o primeiro. O portao de
           acessibilidade pegou exatamente isso. */}
       <defs>
+        <linearGradient id={`dm-ceu-${kind}`} x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stopColor="#6ea9d6" /><stop offset="1" stopColor="#c6dce3" />
+        </linearGradient>
+        <linearGradient id={`dm-agua-${kind}`} x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stopColor="#8ed0f2" /><stop offset="1" stopColor="#1c5f88" />
+        </linearGradient>
+        <linearGradient id={`dm-rocha-${kind}`} x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stopColor="#6d5f4c" /><stop offset="1" stopColor="#2f2a22" />
+        </linearGradient>
+        <linearGradient id={`dm-conc-${kind}`} x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0" stopColor="#e0e3dc" /><stop offset="1" stopColor="#87908a" />
+        </linearGradient>
+        <linearGradient id={`dm-terra-${kind}`} x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stopColor="#cbbb92" /><stop offset="1" stopColor="#8a7a55" />
+        </linearGradient>
+        <linearGradient id={`dm-enroc-${kind}`} x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stopColor="#a2acb2" /><stop offset="1" stopColor="#556069" />
+        </linearGradient>
         <marker id={`dm-ponta-${kind}`} markerWidth="5" markerHeight="5" refX="4" refY="2.5" orient="auto">
-          <path d="M0 0 L5 2.5 L0 5 Z" fill="#8fd0ff" />
+          <path d="M0 0 L5 2.5 L0 5 Z" fill="#eaf7ff" />
         </marker>
         <marker id={`dm-ponta-r-${kind}`} markerWidth="5" markerHeight="5" refX="4" refY="2.5" orient="auto">
           <path d="M0 0 L5 2.5 L0 5 Z" fill="#ffd479" />
         </marker>
       </defs>
+
+      {kind === 'arco' ? (
+        <>
+          {/* Planta: as duas paredes do vale, vistas de cima. */}
+          <rect width="120" height="70" fill={`url(#dm-agua-${kind})`} opacity="0.35" />
+          <rect x="0" y="0" width="120" height="20" fill={`url(#dm-rocha-${kind})`} />
+          <rect x="0" y="50" width="120" height="20" fill={`url(#dm-rocha-${kind})`} />
+          <rect x="0" y="18" width="120" height="2.2" fill="#4c7a56" />
+          <rect x="0" y="50" width="120" height="2.2" fill="#4c7a56" />
+        </>
+      ) : (
+        <>
+          <rect width="120" height="52" fill={`url(#dm-ceu-${kind})`} />
+          <path d="M0 42 L26 34 L52 43 L78 32 L104 43 L120 36 L120 52 L0 52 Z" fill="#7d9d84" opacity="0.45" />
+          <rect x="0" y="52" width="120" height="18" fill={`url(#dm-rocha-${kind})`} />
+          <rect x="0" y="52" width="120" height="2.4" fill="#4c7a56" />
+        </>
+      )}
+
+      {/* Empuxo da agua contra a estrutura: a mesma forca em todos os tipos, e o
+          desenho ao lado mostra o que cada um faz com ela. */}
+      <path className="dm-empuxo" d={kind === 'arco' ? 'M30 35 L52 35' : 'M30 41 L52 41'}
+            stroke="#eaf7ff" strokeWidth="2"
+            strokeLinecap="round" markerEnd={`url(#dm-ponta-${kind})`} />
+
       {/* A REACAO de cada tipo, em contrafase com o empuxo.
-          O empuxo azul e o mesmo nos seis desenhos, de proposito: a forca da
-          agua nao muda. O que muda e o caminho que cada estrutura da a ela, e
-          era exatamente isso que faltava. A tabela ao lado diz "resiste pelo
-          peso proprio", "transfere a carga as ombreiras" e "laje apoiada em
+          O empuxo e o mesmo nos seis desenhos, de proposito: a forca da agua
+          nao muda. O que muda e o caminho que cada estrutura da a ela, e era
+          exatamente isso que faltava. A tabela ao lado diz "resiste pelo peso
+          proprio", "transfere a carga as ombreiras" e "laje apoiada em
           contrafortes", e nos seis desenhos nada respondia ao empuxo. */}
       {kind === 'peso-proprio' && <>
-        <rect x="2" y="30" width="52" height="22" {...water} />
-        <path d="M56 52 L56 20 L76 52 Z" fill="#7f918a" stroke="#3fe0a6" strokeWidth="1.5" />
+        <rect x="2" y="30" width="54" height="22" {...agua} />
+        <rect x="2" y="30" width="54" height="2" fill="#dff2ff" opacity="0.5" />
+        <path d="M56 52 L56 20 L78 52 Z" fill={`url(#dm-conc-${kind})`} stroke="#5f6a63" strokeWidth="1" />
+        <path d="M54 18 L60 18 L60 23 L54 23 Z" fill="#eef1eb" stroke="#5f6a63" strokeWidth="0.8" />
+        <path d="M61 30 L61 52 M66 38 L66 52 M71 45 L71 52" stroke="#9aa39c" strokeWidth="0.7" opacity="0.8" />
         {/* Peso proprio: a reacao desce, para a fundacao. */}
         <path className="dm-reacao" d="M64 30 L64 48" stroke="#ffd479" strokeWidth="2"
-              strokeLinecap="round" markerEnd={`url(#dm-ponta-r-${kind})`} />
+              strokeLinecap="round" markerEnd={seta} />
       </>}
       {kind === 'arco' && <>
-        <rect x="2" y="30" width="52" height="22" {...water} />
-        <path d="M56 20 Q70 36 56 52" {...common} />
+        <rect x="2" y="20" width="54" height="30" {...agua} />
+        {/* Em planta: a casca curva empurra as duas paredes do vale. Antes era
+            um traco curvo sem espessura e sem apoio nas pontas, e a palavra
+            ombreira nao tinha a que se referir no desenho. */}
+        <path d="M56 20 Q74 35 56 50 L62 50 Q80 35 62 20 Z" fill={`url(#dm-conc-${kind})`}
+              stroke="#5f6a63" strokeWidth="1" />
+        <path d="M54 16 L64 16 L64 22 L54 22 Z" fill="#8d7f66" />
+        <path d="M54 54 L64 54 L64 48 L54 48 Z" fill="#8d7f66" />
         {/* Arco: a carga sai pelas ombreiras, para os lados. */}
-        <path className="dm-reacao" d="M62 30 L74 22" stroke="#ffd479" strokeWidth="2"
-              strokeLinecap="round" markerEnd={`url(#dm-ponta-r-${kind})`} />
-        <path className="dm-reacao" d="M62 42 L74 50" stroke="#ffd479" strokeWidth="2"
-              strokeLinecap="round" markerEnd={`url(#dm-ponta-r-${kind})`} />
+        <path className="dm-reacao" d="M63 29 L70 20" stroke="#ffd479" strokeWidth="2"
+              strokeLinecap="round" markerEnd={seta} />
+        <path className="dm-reacao" d="M63 41 L70 50" stroke="#ffd479" strokeWidth="2"
+              strokeLinecap="round" markerEnd={seta} />
       </>}
       {kind === 'contraforte' && <>
-        <rect x="2" y="30" width="52" height="22" {...water} />
-        <path d="M56 18 L70 52" {...common} />
-        <path d="M60 52 L66 40 M64 52 L70 44" stroke="#3fe0a6" strokeWidth="1.5" />
+        <rect x="2" y="30" width="54" height="22" {...agua} />
+        <rect x="2" y="30" width="54" height="2" fill="#dff2ff" opacity="0.5" />
+        {/* Laje inclinada apoiada em contrafortes: sao os contrafortes que
+            fazem o tipo, e antes eram dois riscos finos sob um traco. */}
+        <path d="M54 17 L60 16 L78 52 L70 52 Z" fill={`url(#dm-conc-${kind})`} stroke="#5f6a63" strokeWidth="1" />
+        <path d="M62 52 L69 34 L72 34 L68 52 Z" fill="#9aa39c" stroke="#5f6a63" strokeWidth="0.7" />
+        <path d="M72 52 L75 42 L78 42 L77 52 Z" fill="#9aa39c" stroke="#5f6a63" strokeWidth="0.7" />
         {/* Contraforte: a laje entrega a carga aos contrafortes, na diagonal. */}
-        <path className="dm-reacao" d="M62 34 L70 50" stroke="#ffd479" strokeWidth="2"
-              strokeLinecap="round" markerEnd={`url(#dm-ponta-r-${kind})`} />
+        <path className="dm-reacao" d="M62 32 L71 49" stroke="#ffd479" strokeWidth="2"
+              strokeLinecap="round" markerEnd={seta} />
       </>}
       {kind === 'terra' && <>
-        <rect x="2" y="34" width="48" height="18" {...water} />
-        <path d="M50 52 L66 24 L86 52 Z" fill="#b8a888" stroke="#c9b98a" strokeWidth="1.5" />
-        <path d="M64 24 L68 24 L68 52 L64 52 Z" fill="#a89868" />
+        <rect x="2" y="34" width="48" height="18" {...agua} />
+        <rect x="2" y="34" width="48" height="2" fill="#dff2ff" opacity="0.5" />
+        <path d="M48 52 L62 24 L70 24 L88 52 Z" fill={`url(#dm-terra-${kind})`} stroke="#7a6a45" strokeWidth="1" />
+        {/* Nucleo impermeavel: e ele que segura a agua, e o macico ao redor so
+            da peso e estabilidade. */}
+        <path d="M63 24 L69 24 L74 52 L60 52 Z" fill="#6b5c3a" opacity="0.92" />
+        <g fill="#a89868" opacity="0.5">
+          <circle cx="55" cy="44" r="1.4" /><circle cx="58" cy="36" r="1.1" />
+          <circle cx="79" cy="45" r="1.4" /><circle cx="76" cy="38" r="1.1" />
+        </g>
         {/* Macico: a reacao e o peso do proprio aterro, espalhado na base. */}
-        <path className="dm-reacao" d="M66 34 L66 50" stroke="#ffd479" strokeWidth="2"
-              strokeLinecap="round" markerEnd={`url(#dm-ponta-r-${kind})`} />
+        <path className="dm-reacao" d="M66 32 L66 49" stroke="#ffd479" strokeWidth="2"
+              strokeLinecap="round" markerEnd={seta} />
       </>}
       {kind === 'enrocamento' && <>
-        <rect x="2" y="34" width="48" height="18" {...water} />
-        <path d="M50 52 L66 24 L86 52 Z" fill="#7f8a90" stroke="#8399a0" strokeWidth="1.5" />
-        <path d="M63 26 L69 26 L67 52 L61 52 Z" fill="#67727c" />
-        <path className="dm-reacao" d="M66 34 L66 50" stroke="#ffd479" strokeWidth="2"
-              strokeLinecap="round" markerEnd={`url(#dm-ponta-r-${kind})`} />
+        <rect x="2" y="34" width="48" height="18" {...agua} />
+        <rect x="2" y="34" width="48" height="2" fill="#dff2ff" opacity="0.5" />
+        <path d="M48 52 L62 24 L70 24 L88 52 Z" fill={`url(#dm-enroc-${kind})`} stroke="#4e5860" strokeWidth="1" />
+        {/* Face de concreto a montante, que e o CFRD do texto ao lado. */}
+        <path d="M48 52 L62 24 L65 24 L52 52 Z" fill="#dfe3dd" stroke="#5f6a63" strokeWidth="0.7" />
+        <g fill="#7b858c" opacity="0.75">
+          <path d="M68 34 l4 -3 l3 4 l-4 2 Z M74 42 l5 -3 l3 4 l-5 3 Z M66 44 l4 -3 l3 4 l-4 2 Z M78 48 l4 -3 l3 4 l-4 2 Z" />
+        </g>
+        <path className="dm-reacao" d="M68 34 L68 49" stroke="#ffd479" strokeWidth="2"
+              strokeLinecap="round" markerEnd={seta} />
       </>}
       {kind === 'ccr' && <>
-        <rect x="2" y="30" width="52" height="22" {...water} />
-        <path d="M56 52 L56 20 L74 52 Z" fill="#7f918a" stroke="#3fe0a6" strokeWidth="1.5" />
-        <path d="M56 28 L70 28 M56 36 L73 36 M56 44 L74 44" stroke="#6f817a" strokeWidth="1" />
-        {/* CCR resiste como o peso proprio; o que muda e a execucao em camadas,
-            e as camadas ja estao desenhadas acima. */}
+        <rect x="2" y="30" width="54" height="22" {...agua} />
+        <rect x="2" y="30" width="54" height="2" fill="#dff2ff" opacity="0.5" />
+        <path d="M56 52 L56 20 L78 52 Z" fill={`url(#dm-conc-${kind})`} stroke="#5f6a63" strokeWidth="1" />
+        {/* Camadas de lancamento: e a assinatura do CCR, concreto seco
+            compactado como aterro. A estatica e a mesma do peso proprio; o que
+            distingue os dois desenhos e a camada. */}
+        <g stroke="#8f988f" strokeWidth="0.8" opacity="0.95">
+          <path d="M56 26 L60 26 M56 31 L63 31 M56 36 L67 36 M56 41 L70 41 M56 46 L74 46" />
+        </g>
+        <path d="M54 18 L60 18 L60 23 L54 23 Z" fill="#eef1eb" stroke="#5f6a63" strokeWidth="0.8" />
         <path className="dm-reacao" d="M63 30 L63 48" stroke="#ffd479" strokeWidth="2"
-              strokeLinecap="round" markerEnd={`url(#dm-ponta-r-${kind})`} />
+              strokeLinecap="round" markerEnd={seta} />
       </>}
     </svg>
   );
@@ -451,72 +519,233 @@ function CrossSection({ selected, onSelect }) {
       {/* A descricao conta o PROCESSO, nao a aparencia: quem usa leitor de tela
           precisa da ordem e da direcao, que sao justamente o que o desenho
           ensina. "Corte esquematico de uma usina" nao informava nada. */}
-      <svg viewBox="0 0 900 470" className="cross-svg" role="img"
+      <svg viewBox="0 120 900 350" className="cross-svg" role="img"
            aria-label="Corte esquemático de uma usina hidrelétrica. A água represada no reservatório entra pela tomada d'água, desce pelo conduto forçado até a casa de força, gira a turbina acoplada ao gerador e é restituída ao rio pelo canal de fuga. A diferença entre o nível do reservatório e o nível do canal de fuga é a queda bruta. O vertedouro escoa o excedente sem passar pela turbina.">
         <defs>
-          <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0" stopColor="#15201c" /><stop offset="1" stopColor="#1a2620" />
+          {/* O corte era noturno por herdar o fundo escuro da pagina, e isso
+              custava caro: agua so parece agua quando ha ceu para ela
+              refletir, e concreto so parece concreto quando ha luz vinda de
+              algum lado. A cena passa a ser diurna, como a foto do topo, e
+              fica emoldurada pelo cartao escuro do mesmo jeito. */}
+          <linearGradient id="cs-ceu" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stopColor="#6ea9d6" />
+            <stop offset="0.5" stopColor="#a6cbe1" />
+            <stop offset="1" stopColor="#cadfd9" />
           </linearGradient>
-          <linearGradient id="wtr" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0" stopColor="#5db4f0" /><stop offset="1" stopColor="#4cc4f5" />
+          {/* Profundidade. Um tom chapado le como piscina; o reservatorio
+              precisa clarear na lamina e escurecer no fundo. */}
+          <linearGradient id="cs-agua" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stopColor="#86ccf0" />
+            <stop offset="0.3" stopColor="#3f9fd4" />
+            <stop offset="1" stopColor="#164f74" />
           </linearGradient>
+          <linearGradient id="cs-agua-fuga" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stopColor="#8ed2f4" /><stop offset="1" stopColor="#276e9c" />
+          </linearGradient>
+          {/* Concreto com face iluminada a esquerda e sombreada a direita: e o
+              que faz o macico ter volume em vez de ser uma silhueta. */}
+          <linearGradient id="cs-concreto" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0" stopColor="#dcdfd8" />
+            <stop offset="0.42" stopColor="#b9bdb5" />
+            <stop offset="1" stopColor="#7f8780" />
+          </linearGradient>
+          <linearGradient id="cs-concreto-topo" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stopColor="#eceee8" /><stop offset="1" stopColor="#c2c7bf" />
+          </linearGradient>
+          {/* Rocha em corte: escurece com a profundidade, como talude exposto. */}
+          <linearGradient id="cs-rocha" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stopColor="#6d5f4c" />
+            <stop offset="0.4" stopColor="#544a3c" />
+            <stop offset="1" stopColor="#332e26" />
+          </linearGradient>
+          {/* Aco do conduto: o brilho especular estreito e o que transforma um
+              traco grosso em cilindro. */}
+          <linearGradient id="cs-aco" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stopColor="#5c676d" />
+            <stop offset="0.32" stopColor="#c2ccd1" />
+            <stop offset="0.5" stopColor="#93a0a7" />
+            <stop offset="1" stopColor="#3f484d" />
+          </linearGradient>
+          <linearGradient id="cs-morro" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stopColor="#8fae9b" /><stop offset="1" stopColor="#6b8d79" />
+          </linearGradient>
+          <linearGradient id="cs-encosta" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stopColor="#6e9179" /><stop offset="0.55" stopColor="#587a62" /><stop offset="1" stopColor="#41604b" />
+          </linearGradient>
+          <linearGradient id="cs-mata" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stopColor="#3f6b4a" /><stop offset="1" stopColor="#2c4f36" />
+          </linearGradient>
+          <clipPath id="cs-recorte-rocha">
+            <path d="M0 470 L900 470 L900 340 L640 340 L560 420 L250 420 L250 300 L0 300 Z" />
+          </clipPath>
+          <clipPath id="cs-recorte-agua">
+            <rect x="0" y="250" width="250" height="120" />
+          </clipPath>
+          {/* Sombra de contato. Estrutura sem sombra flutua, e era isso que
+              fazia a casa de forca parecer colada por cima do desenho. */}
+          <filter id="cs-sombra" x="-20%" y="-20%" width="150%" height="160%">
+            <feDropShadow dx="3" dy="5" stdDeviation="4" floodColor="#16211c" floodOpacity="0.42" />
+          </filter>
         </defs>
-        <rect width="900" height="470" fill="url(#sky)" />
-        {/* terreno */}
-        <path d="M0 300 L250 300 L250 250 L0 250 Z" fill="#243330" />
-        <path d="M0 470 L900 470 L900 340 L640 340 L560 420 L250 420 L250 300 L0 300 Z" fill="#1e2c27" />
-        {/* reservatorio.
-            A lamina era um retangulo parado com uma linha reta em cima, e agua
-            parada le como piscina, nao como reservatorio de usina. A ondulacao
-            e de amplitude minima e periodo longo: o reservatorio nao tem
-            correnteza visivel, o que ele tem e respiracao. */}
-        <rect x="0" y="250" width="250" height="120" fill="url(#wtr)" />
+
+        <rect width="900" height="470" fill="url(#cs-ceu)" />
+        {/* Serra ao fundo, com neblina: duas camadas de opacidade diferente
+            dao distancia sem custar detalhe. */}
+        <path d="M0 214 L92 176 L150 200 L228 158 L300 196 L372 168 L448 202 L520 172 L604 204 L688 176 L768 206 L840 184 L900 208 L900 250 L0 250 Z"
+              fill="url(#cs-morro)" opacity="0.5" />
+        <path d="M0 236 L74 208 L156 232 L236 198 L322 230 L404 206 L486 234 L566 208 L652 236 L740 212 L820 238 L900 220 L900 252 L0 252 Z"
+              fill="url(#cs-morro)" opacity="0.82" />
+        <path d="M318 258 L360 236 L404 252 L462 230 L522 250 L588 232 L654 252 L722 234 L790 252 L858 238 L900 248 L900 272 L318 272 Z"
+              fill="url(#cs-mata)" opacity="0.68" />
+        {/* Fundo de vale a jusante. Sem ele, entre a serra e o terreno sobrava
+            um vazio pastel de 80 px que o olho lia como agua ou neblina, e a
+            usina parecia construida na beira de nada. */}
+        <path d="M320 288 Q 470 276, 620 292 T 900 284 L900 344 L320 344 Z" fill="#7d9d84" opacity="0.55" />
+        <path d="M320 312 Q 500 302, 680 316 T 900 308 L900 344 L320 344 Z" fill="#5f8468" opacity="0.7" />
+
+        {/* Encosta a jusante, atras das obras. Sem ela sobrava ceu entre a
+            linha da mata e o terreno, e ceu abaixo do horizonte le como agua
+            parada: a barragem parecia represar dos dois lados. */}
+        <path d="M300 266 Q 480 258, 660 268 T 900 262 L900 420 L300 420 Z" fill="url(#cs-encosta)" />
+        <path d="M300 336 Q 470 328, 640 342 T 900 334 L900 420 L300 420 Z" fill="#4a6f55" opacity="0.45" />
+        {/* Macico rochoso em corte, com estratos. A rocha era um bloco de uma
+            cor so; camada e o que faz ler como terreno cortado e nao como
+            fundo de tela. */}
+        <path d="M0 470 L900 470 L900 340 L640 340 L560 420 L250 420 L250 300 L0 300 Z" fill="url(#cs-rocha)" />
+        <g clipPath="url(#cs-recorte-rocha)" opacity="0.55">
+          <path d="M-20 332 Q 220 320, 460 344 T 920 336 L920 360 Q 460 368, 0 356 Z" fill="#7a6a54" opacity="0.5" />
+          <path d="M-20 386 Q 240 374, 500 398 T 920 388 L920 410 Q 500 420, 0 408 Z" fill="#453d31" opacity="0.6" />
+          <path d="M-20 432 Q 260 424, 520 442 T 920 434 L920 470 L-20 470 Z" fill="#2a251e" opacity="0.55" />
+          <path d="M60 452 L96 428 L134 452 Z M300 462 L336 440 L372 462 Z M700 456 L742 432 L784 456 Z"
+                fill="#8a7a62" opacity="0.28" />
+        </g>
+        {/* Solo vegetado sobre a rocha, com a linha de mata. */}
+        <path d="M640 340 L900 340 L900 330 L640 330 Z" fill="#4c7a56" />
+        <path d="M250 300 L250 288 L0 288 L0 300 Z" fill="#4c7a56" />
+        <g fill="#3d6b48" opacity="0.92">
+          <path d="M644 331 q6 -15 13 -3 q5 -18 12 -1 q7 -11 12 4 Z" />
+          <path d="M688 331 q8 -20 15 -4 q6 -12 11 4 Z" />
+          <path d="M726 331 q5 -12 11 -2 q7 -17 14 2 q6 -9 10 0 Z" />
+          <path d="M778 331 q7 -16 14 -3 q6 -11 11 3 Z" />
+          <path d="M818 331 q6 -13 12 -2 q8 -19 15 2 q5 -8 9 0 Z" />
+          <path d="M868 331 q7 -17 14 -2 q5 -10 10 2 Z" />
+        </g>
+        <g fill="#3d6b48" opacity="0.85">
+          <path d="M8 289 q7 -16 14 -3 q6 -12 12 3 Z" />
+          <path d="M56 289 q6 -13 12 -2 q8 -18 15 2 Z" />
+          <path d="M116 289 q8 -19 15 -3 q5 -9 10 3 Z" />
+          <path d="M182 289 q6 -14 13 -2 q7 -15 13 2 Z" />
+        </g>
+
+        {/* Reservatorio. */}
+        <rect x="0" y="250" width="250" height="120" fill="url(#cs-agua)" />
+        <g clipPath="url(#cs-recorte-agua)">
+          {/* Caustica: bandas horizontais claras muito sutis. Sem elas a agua
+              e um retangulo com degrade; com elas tem superficie. */}
+          <path d="M0 274 Q 62 268, 124 274 T 250 274" stroke="#bfe6ff" strokeWidth="1.6" fill="none" opacity="0.24" />
+          <path d="M0 296 Q 62 302, 124 296 T 250 296" stroke="#bfe6ff" strokeWidth="1.2" fill="none" opacity="0.16" />
+          <path d="M0 324 Q 62 318, 124 324 T 250 324" stroke="#bfe6ff" strokeWidth="1" fill="none" opacity="0.1" />
+          <rect x="0" y="250" width="250" height="9" fill="#dff2ff" opacity="0.34" />
+        </g>
         <path className="cs-lamina"
               d="M0 250 Q 31 246, 62 250 T 125 250 T 188 250 T 250 250 T 312 250"
-              stroke="#bfe3ff" strokeWidth="3" fill="none" />
-        {/* barragem */}
-        <path d="M250 250 L250 420 L320 420 L300 250 Z" fill="#8a9a93" stroke="#8399a0" strokeWidth="2" />
-        {/* vertedouro (agua caindo) */}
-        <path className="cs-spill" d="M300 260 C 318 300, 322 360, 320 418" stroke="#8fd0ff" strokeWidth="8" fill="none" strokeLinecap="round" opacity="0.8" />
-        {/* tomada d'agua */}
-        <rect x="235" y="330" width="26" height="26" fill="#2fa07a" stroke="#3fe0a6" strokeWidth="2" />
-        <path d="M237 332 L259 354 M237 344 L253 360 M245 332 L259 346" stroke="#6fe3c6" strokeWidth="1.5" />
-        {/* conduto forçado */}
-        <path d="M258 343 L560 405" stroke="#93a7af" strokeWidth="14" strokeLinecap="round" />
+              stroke="#eaf7ff" strokeWidth="3" fill="none" />
+
+        {/* Barragem de concreto. Ganha coroamento, marcas de forma e sombra de
+            contato com a rocha. */}
+        <g filter="url(#cs-sombra)">
+          <path d="M250 250 L250 420 L320 420 L300 250 Z" fill="url(#cs-concreto)" />
+          <path d="M248 250 L302 250 L303 258 L248 258 Z" fill="url(#cs-concreto-topo)" />
+        </g>
+        <g stroke="#959c94" strokeWidth="0.9" opacity="0.5">
+          <path d="M262 252 L266 420 M275 252 L281 420 M288 252 L296 420" />
+        </g>
+        <path d="M250 250 L250 420" stroke="#f0f2ec" strokeWidth="1.6" opacity="0.5" />
+        {/* Perfil do vertedouro: a agua nao cai de uma parede reta, ela desce
+            por uma calha curva. */}
+        <path d="M300 250 C 314 292, 320 356, 320 420" fill="none" stroke="#6f7772" strokeWidth="3" opacity="0.75" />
+        <path className="cs-spill" d="M300 260 C 318 300, 322 360, 320 418" stroke="#cfeaff" strokeWidth="8" fill="none" strokeLinecap="round" opacity="0.85" />
+        <ellipse cx="326" cy="418" rx="20" ry="6" fill="#dff2ff" opacity="0.4" />
+
+        {/* Tomada d'agua com grade. */}
+        <rect x="233" y="328" width="30" height="30" rx="2" fill="#4a5b55" stroke="#e6ece7" strokeWidth="1.6" />
+        <path d="M238 330 L238 356 M245 330 L245 356 M252 330 L252 356 M259 330 L259 356"
+              stroke="#c9d6cf" strokeWidth="1.4" opacity="0.9" />
+        <path d="M234 338 L262 338 M234 348 L262 348" stroke="#c9d6cf" strokeWidth="1" opacity="0.55" />
+
+        {/* Conduto forcado como cilindro: contorno escuro, corpo com degrade
+            transversal e blocos de ancoragem apoiando no terreno. */}
+        <g filter="url(#cs-sombra)">
+          <path d="M348 358 L372 363 L366 386 L342 381 Z" fill="#8f978f" />
+          <path d="M452 380 L476 385 L470 408 L446 403 Z" fill="#8f978f" />
+          <path d="M258 343 L560 405" stroke="#2f373b" strokeWidth="18" strokeLinecap="round" />
+          <path d="M258 343 L560 405" stroke="url(#cs-aco)" strokeWidth="15" strokeLinecap="round" />
+        </g>
+        <path d="M262 340 L556 402" stroke="#e8f1f5" strokeWidth="1.8" strokeLinecap="round" opacity="0.45" />
         <path className="cs-flow" d="M258 343 L560 405" stroke="#57d8bf" strokeWidth="5" strokeLinecap="round" fill="none" />
-        {/* casa de forca */}
-        <rect x="540" y="360" width="120" height="70" fill="#fff" stroke="#3fe0a6" strokeWidth="2" />
-        <path d="M540 360 L600 330 L660 360 Z" fill="#2fa07a" />
-        {/* turbina (circulo) */}
-        <circle cx="585" cy="398" r="17" fill="none" stroke="#3fe0a6" strokeWidth="3" />
-        <circle className="cs-turbine" cx="585" cy="398" r="10" fill="#4cc4f5" />
+
+        {/* Casa de forca em corte, e nao uma caixa branca com telhado
+            triangular. Ganha subestrutura enterrada, laje de piso, ponte
+            rolante e o tubo de suducao levando ao canal de fuga. */}
+        <g filter="url(#cs-sombra)">
+          <path d="M536 352 L600 330 L664 352 L664 360 L600 339 L536 360 Z" fill="#93a29a" />
+          <rect x="540" y="358" width="120" height="72" fill="#e9ece6" />
+          <rect x="540" y="358" width="120" height="72" fill="none" stroke="#7d867f" strokeWidth="1.6" />
+        </g>
+        <rect x="540" y="358" width="120" height="72" fill="url(#cs-concreto)" opacity="0.28" />
+        <rect x="540" y="404" width="120" height="4" fill="#aab3ab" />
+        <rect x="540" y="358" width="120" height="10" fill="#cdd4cc" opacity="0.7" />
+        <path d="M548 372 L652 372" stroke="#aab3ab" strokeWidth="2" />
+        <rect x="576" y="366" width="20" height="8" rx="1.5" fill="#8d968e" />
+        <g fill="#c3cbc3">
+          <rect x="546" y="378" width="9" height="22" rx="1" />
+          <rect x="645" y="378" width="9" height="22" rx="1" />
+        </g>
+
+        {/* Caixa espiral, rotor e eixo ate o gerador. */}
+        <path d="M560 396 Q 585 372, 610 396 Q 610 418, 585 420 Q 560 418, 560 396 Z"
+              fill="#9aa6ad" stroke="#69747a" strokeWidth="1.4" />
+        <circle cx="585" cy="398" r="17" fill="#40525c" stroke="#dfe7e2" strokeWidth="2" />
+        <circle className="cs-turbine" cx="585" cy="398" r="10" fill="#5cc9f2" />
         <path className="cs-turbine" d="M585 388 L585 408 M575 398 L595 398 M578 391 L592 405 M592 391 L578 405" stroke="#fff" strokeWidth="1.6" />
-        {/* canal de fuga: a agua turbinada volta ao rio.
-            Sem o traco em movimento o circuito nao fechava: a agua descia pelo
-            conduto, girava a turbina e ficava parada aqui, como se a usina
-            consumisse a agua. Ela nao consome, restitui. O periodo e o mesmo
-            do conduto (.cs-flow), porque e a mesma vazao. */}
-        <rect x="640" y="405" width="260" height="30" fill="url(#wtr)" opacity="0.85" />
-        <path className="cs-flow" d="M664 420 L890 420" stroke="#bfe3ff" strokeWidth="4"
+        <rect x="581" y="368" width="8" height="16" fill="#b6c0b8" />
+        {/* O brilho do gerador estava em 690,372, que e o pe da torre, fora da
+            casa de forca. O gerador fica no eixo da turbina. */}
+        <rect x="568" y="356" width="34" height="14" rx="3" fill="#8d968e" stroke="#dfe7e2" strokeWidth="1.2" />
+        <circle className="cs-gerador" cx="585" cy="363" r="6.5" fill="#ffd479" opacity="0.9" />
+        {/* Tubo de suducao: e por ele que a agua turbinada sai para o canal. */}
+        <path d="M585 420 Q 585 442, 616 440 L648 428" fill="none" stroke="#7f8a84" strokeWidth="11" strokeLinecap="round" />
+
+        {/* Canal de fuga. */}
+        <rect x="640" y="405" width="260" height="30" fill="url(#cs-agua-fuga)" />
+        <rect x="640" y="405" width="260" height="5" fill="#dff2ff" opacity="0.35" />
+        <path className="cs-flow" d="M664 420 L890 420" stroke="#eaf7ff" strokeWidth="4"
               strokeLinecap="round" fill="none" opacity="0.9" />
-        {/* linha de transmissao.
-            O desenho fechava o circuito pela metade: a agua descia, girava a
-            turbina e a energia nao ia a lugar nenhum, porque a torre e o cabo
-            eram tracos parados. Quem olhava via a usina gerar e a geracao
-            morrer ali. O pulso percorre o cabo no sentido da subestacao, e o
-            periodo e mais curto que o da agua de proposito: eletricidade nao
-            viaja na velocidade da vazao, e o contraste entre os dois ritmos e
-            parte do que o desenho ensina. */}
-        <path d="M690 360 L690 300 M672 316 L708 316 M676 300 L704 300" stroke="#3a4750" strokeWidth="2.5" fill="none" />
-        <path d="M690 300 C 760 290, 820 300, 880 285" stroke="#3a4750" strokeWidth="1.5" fill="none" />
+
+        {/* Transformador ao pe da torre e torre em trelica de verdade. */}
+        <rect x="676" y="352" width="28" height="20" rx="2" fill="#8d968e" stroke="#5d665f" strokeWidth="1.2" />
+        <path d="M681 352 L681 344 M690 352 L690 342 M699 352 L699 344" stroke="#5d665f" strokeWidth="2" />
+        <g stroke="#4b565c" strokeWidth="2.2" fill="none" strokeLinecap="round">
+          <path d="M682 344 L690 296 L698 344" />
+          <path d="M674 316 L706 316 M678 300 L702 300" />
+        </g>
+        <g stroke="#4b565c" strokeWidth="1.1" fill="none" opacity="0.9">
+          <path d="M684 332 L696 332 M685 324 L695 324 M683 340 L697 340" />
+          <path d="M684 332 L690 324 L696 332 L690 340 Z" />
+        </g>
+        <path d="M690 300 C 760 290, 820 300, 880 285" stroke="#39444a" strokeWidth="1.5" fill="none" />
         <path className="cs-energia" d="M690 300 C 760 290, 820 300, 880 285"
-              stroke="#ffd479" strokeWidth="2.6" fill="none" strokeLinecap="round" />
-        {/* Acoplamento: o gerador so entrega quando o eixo gira. O brilho
-            pulsa no mesmo compasso do pulso do cabo. */}
-        <circle className="cs-gerador" cx="690" cy="372" r="7" fill="#ffd479" opacity="0.9" />
-        {/* rotulos de queda */}
-        <line x1="130" y1="250" x2="130" y2="405" stroke="#3fe0a6" strokeWidth="1.2" strokeDasharray="4 4" />
-        <text x="138" y="330" fontSize="15" fill="#3fe0a6" fontWeight="700">H (queda)</text>
+              stroke="#ffcf5f" strokeWidth="2.6" fill="none" strokeLinecap="round" />
+
+        {/* Cota da queda. O texto ficava verde sobre a agua azul, sem
+            contraste; passa a ter chapa propria, como cota de desenho
+            tecnico. */}
+        <g>
+          <line x1="130" y1="250" x2="130" y2="405" stroke="#0f2a22" strokeWidth="1.4" strokeDasharray="5 4" opacity="0.85" />
+          <path d="M124 254 L130 246 L136 254 M124 401 L130 409 L136 401" stroke="#0f2a22" strokeWidth="1.6" fill="none" opacity="0.85" />
+          <rect x="138" y="270" width="86" height="22" rx="7" fill="#0f2a22" opacity="0.86" />
+          <text x="146" y="285" fontSize="14" fill="#7ff0c4" fontWeight="700">H (queda)</text>
+        </g>
         {ROTULOS_CORTE.map((item) => (
           <RotuloDoCorte
             key={item.id}
@@ -528,15 +757,15 @@ function CrossSection({ selected, onSelect }) {
       </svg>
       {/* hotspots posicionados em % sobre o svg */}
       <div className="cs-hots">
-        {hot('reservatorio', 13, 62)}
-        {hot('barragem', 31, 70)}
-        {hot('vertedouro', 34, 74)}
-        {hot('tomada', 27.5, 74)}
-        {hot('conduto', 45, 82)}
-        {hot('casa', 66, 84)}
-        {hot('turbina', 65, 85)}
-        {hot('fuga', 84, 90)}
-        {hot('subestacao', 77, 65)}
+        {hot('reservatorio', 13, 49.0)}
+        {hot('barragem', 31, 59.7)}
+        {hot('vertedouro', 34, 65.1)}
+        {hot('tomada', 27.5, 65.1)}
+        {hot('conduto', 45, 75.8)}
+        {hot('casa', 61.5, 71.8)}
+        {hot('turbina', 65, 79.9)}
+        {hot('fuga', 84, 86.6)}
+        {hot('subestacao', 77, 53.0)}
       </div>
     </div>
   );

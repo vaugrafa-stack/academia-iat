@@ -1,0 +1,52 @@
+Procedimento passo a passo
+
+Objetivo: Aplicar a sequência inicial de triagem sem antecipar a conclusão técnica.
+Pré-requisito: Conhecer os campos básicos de identificação de um processo.
+
+[0.0s] A triagem protege a análise
+Uma análise pode começar errada antes mesmo da leitura do estudo: basta confundir o objeto, ignorar a data do protocolo ou deixar de localizar uma licença anterior. O procedimento passo a passo existe para impedir esse desvio.
+Fonte: POP, item 7.1
+
+[14.2s] Quatro blocos de triagem
+Ao final, você deverá organizar a triagem em quatro blocos: identificação e regime temporal; natureza do pedido e histórico; território e integridade documental; matriz, limitações e competência.
+Fonte: POP, item 7.1
+
+[28.2s] Vocabulário da triagem
+Nesta triagem, objeto é o empreendimento e o pedido realmente analisados. Histórico é a sequência de atos e processos vinculados. Matriz é o registro que conecta documento, suficiência, consequência e encaminhamento.
+Fonte: POP, item 7.1
+
+[43.1s] Bloco 1 · Identidade e tempo
+Primeiro, abra o protocolo e registre número, interessado, CNPJ, empreendimento, município, modalidade requerida e data. Em seguida, fixe a data de entrada em vigor considerada, o estágio processual, o regime aplicado e a justificativa da transição.
+Fonte: POP, item 7.1
+
+[61.4s] Bloco 2 · Pedido e histórico
+Depois, identifique a natureza do pedido: processo novo, renovação, regularização, alteração, transferência, autorização, complementação ou condicionante. Levante licenças, Consulta Prévia, prazos, outorga, ato da ANEEL e processos vinculados.
+Fonte: POP, item 7.1
+
+[78.4s] Bloco 3 · Território e integridade
+A triagem territorial deve observar o arranjo integral em bases oficiais e registrar fonte, camada e data quando isso influenciar a análise. Também confira duplicidades, estudos antigos, titular anterior, assinatura e ART.
+Fonte: POP, item 7.1
+
+[94.0s] Bloco 4 · Matriz e limites
+Separe os documentos por grupo e crie a matriz de análise. Para cada achado, registre status, consequência técnica e encaminhamento. Se a documentação não permitir conclusão segura, registre a limitação em vez de preencher a lacuna.
+Fonte: POP, item 7.1
+
+[108.5s] Erro: ignorar a competência
+Um erro que invalida o enquadramento é aplicar o fluxo estadual ordinário sem verificar indício de competência federal, processo no SEI do IBAMA, acordo de cooperação, termo aditivo, delegação cautelar ou decisão judicial relacionada.
+Fonte: POP, item 7.1
+
+[124.3s] Decida antes de continuar
+Pausa para decidir. O processo apresenta outorga em nome do titular anterior e não traz transferência formal. Você segue para a conclusão, ou registra a incompatibilidade na matriz e define o encaminhamento?
+Fonte: POP, item 7.1
+
+[137.0s] Resposta comentada
+Registre a incompatibilidade e o encaminhamento. O procedimento manda conferir titular anterior sem transferência formal e registrar limitações quando os documentos não sustentam conclusão segura.
+Fonte: POP, item 7.1
+
+[149.4s] Síntese do procedimento
+A sequência é simples de lembrar: identificar, situar no tempo, entender o pedido, reconstruir o histórico, conferir território e integridade, organizar a matriz e declarar os limites. Só então começa a conclusão.
+Fonte: POP, item 7.1
+
+[164.2s] Próximo passo
+No próximo passo, aplique os quatro blocos a um processo sintético. Preencha a matriz sem concluir o mérito e destaque uma incompatibilidade que exige encaminhamento.
+Fonte: POP, item 7.1

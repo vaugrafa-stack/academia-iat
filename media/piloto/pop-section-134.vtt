@@ -1,0 +1,135 @@
+WEBVTT
+
+00:00.000 --> 00:04.956
+Um ponto no mapa aparece fora
+de uma unidade de conservação. Isso prova
+
+00:05.036 --> 00:09.780
+que reservatório, barramento, TVR,
+acessos e linha de conexão também
+
+00:09.860 --> 00:14.826
+estão fora? Não. A geometria consultada
+define o alcance da conclusão.
+
+00:14.866 --> 00:18.558
+Ao final, você deverá usar
+as bases oficiais como apoio,
+
+00:18.638 --> 00:23.408
+registrar a consulta e reconhecer
+quando é necessário confrontar camada,
+
+00:23.488 --> 00:27.597
+ato legal, Plano de Manejo
+e arquivo geoespacial do processo.
+
+00:27.637 --> 00:32.096
+Camada é a representação temática
+consultada. Geometria é a forma
+
+00:32.176 --> 00:36.495
+espacial efetivamente analisada,
+como ponto, linha ou polígono.
+
+00:36.575 --> 00:41.881
+Rastreabilidade é o registro da base,
+data, recorte e limitação da consulta.
+
+00:41.921 --> 00:46.110
+GeoPR e o visualizador do IAT
+apoiam a triagem locacional
+
+00:46.190 --> 00:51.426
+e a conferência espacial. Para unidades
+de conservação, consulte também
+
+00:51.506 --> 00:56.523
+a página de dados das unidades
+e o repositório de Planos de Manejo.
+
+00:56.563 --> 00:58.687
+A ferramenta não substitui a leitura
+
+00:58.767 --> 01:01.257
+do ato legal nem a delimitação geoespacial
+
+01:01.337 --> 01:05.541
+do empreendimento apresentada
+no processo. A camada orienta perguntas;
+
+01:05.621 --> 01:10.028
+a conclusão depende do confronto
+com a fonte e com a geometria adequada.
+
+01:10.068 --> 01:14.212
+Torne a consulta reproduzível.
+Quando relevante, registre data,
+
+01:14.292 --> 01:16.424
+nome da camada, fonte, metadados,
+
+01:16.504 --> 01:19.642
+sistema de referência
+e atualização. Uma captura
+
+01:19.722 --> 01:24.080
+de tela isolada não deve ser a única
+memória da análise espacial.
+
+01:24.120 --> 01:27.771
+Se a camada divergir do ato
+de criação ou do Plano de Manejo,
+
+01:27.851 --> 01:32.176
+não redesenhe o limite por interpretação
+própria. Registre a divergência
+
+01:32.256 --> 01:35.866
+como pendente de validação
+e consulte a unidade competente.
+
+01:35.906 --> 01:39.740
+Pausa para decidir. A camada
+de usinas mostra apenas um ponto,
+
+01:39.820 --> 01:42.202
+e ele está fora da área protegida. Você
+
+01:42.282 --> 01:45.691
+conclui ausência de interferência
+para todo o arranjo?
+
+01:45.731 --> 01:49.874
+Não. A camada pontual ajuda
+a localizar o empreendimento,
+
+01:49.954 --> 01:52.985
+mas não demonstra a posição de barramento,
+
+01:53.065 --> 01:55.800
+reservatório, TVR, acessos ou sistemas
+
+01:55.880 --> 02:01.287
+associados. Solicite ou confronte
+a geometria completa antes de concluir.
+
+02:01.327 --> 02:06.146
+Use a sequência: fonte oficial,
+camada identificada, data registrada,
+
+02:06.226 --> 02:10.833
+geometria compatível, confronto
+com os atos e tratamento explícito
+
+02:10.913 --> 02:15.244
+das divergências. O mapa apoia
+a decisão; não decide sozinho.
+
+02:15.284 --> 02:19.887
+Na prática, compare um ponto cadastral
+com um arranjo completo. Liste
+
+02:19.967 --> 02:24.651
+quais conclusões cada geometria
+permite e quais permanecem pendentes.

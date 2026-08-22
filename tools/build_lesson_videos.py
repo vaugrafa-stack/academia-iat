@@ -156,9 +156,9 @@ def roteiro(sec, blocos, tabelas):
 def _linhas_quadro(quadros, limite):
     """Transforma linhas de quadro em falas.
 
-    A primeira coluna costuma ser um rotulo de uma palavra ("Critico", "Medio",
+    A primeira coluna costuma ser um rotulo de uma palavra ("Status",
     "Outorga"). Narrar rotulo solto nao ensina nada, entao ele so vira fala
-    acompanhado da coluna que o explica: "Critico: impede decisao segura...".
+    acompanhado da coluna que o explica: "Status: pendente de validacao...".
     """
     out = []
     for q in quadros:

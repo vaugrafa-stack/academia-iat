@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client';
 import { AlertTriangle, RefreshCw } from 'lucide-react';
 import { AppErrorBoundary } from './AppErrorBoundary.jsx';
 import { describeAppDataError } from './appData.js';
+import { preloadStartupData } from './startupDataRequests.js';
 
 function reloadCurrentPage() {
   window.location.reload();
@@ -64,10 +65,20 @@ export function reportStartupError(error, logger = console) {
   logger.error('[Academia IAT] falha de inicialização', { code: issue.code });
 }
 
+export function loadMainApplication({
+  preloadData = preloadStartupData,
+  importApplication = () => import('./main.jsx'),
+} = {}) {
+  // A rede do conteúdo começa antes do download/avaliação do chunk principal.
+  // main.jsx reutiliza estas promessas, portanto não há requisição duplicada.
+  preloadData();
+  return importApplication();
+}
+
 export async function bootstrapApplication({
   rootElement,
   createRootImpl = createRoot,
-  loadApplication = () => import('./main.jsx'),
+  loadApplication = () => loadMainApplication(),
   onReload = reloadCurrentPage,
   reportError = reportStartupError,
 } = {}) {

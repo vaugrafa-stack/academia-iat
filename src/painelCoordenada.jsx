@@ -13,7 +13,7 @@
 // numeros cai em lugares diferentes conforme o fuso, sem nenhum aviso de erro.
 // Ver o fuso ao lado do valor e a maneira mais barata de aprender isso.
 
-import React, { useEffect, useId, useRef, useState } from 'react';
+import React, { useEffect, useId, useLayoutEffect, useRef, useState } from 'react';
 import { AlertTriangle, Check, Copy, Crosshair, Search, X } from 'lucide-react';
 import {
   dentroDoParana,
@@ -58,6 +58,34 @@ const ESTILO_RESULTADOS = {
   background: 'var(--surface)',
   boxShadow: '0 16px 34px rgba(18, 43, 35, .18)',
 };
+
+function medirListaDeResultados(combo) {
+  if (!combo || typeof window === 'undefined') {
+    return { acima: false, altura: 310 };
+  }
+
+  const caixa = combo.getBoundingClientRect();
+  const viewport = window.visualViewport;
+  const topoVisivel = viewport?.offsetTop || 0;
+  const baseVisivel = topoVisivel + (viewport?.height || window.innerHeight);
+  const navegacaoMovel = document.querySelector('.mobile-bottom-nav');
+  const caixaNavegacao = navegacaoMovel?.getBoundingClientRect();
+  const topoNavegacao = caixaNavegacao?.height > 0
+    ? caixaNavegacao.top
+    : Number.POSITIVE_INFINITY;
+  const limiteInferior = Math.min(baseVisivel - 8, topoNavegacao - 8);
+  const espacoAbaixo = limiteInferior - caixa.bottom - 6;
+  const espacoAcima = caixa.top - topoVisivel - 6;
+  const acima = espacoAbaixo < 156 && espacoAcima > espacoAbaixo;
+  const disponivel = acima ? espacoAcima : espacoAbaixo;
+
+  return {
+    acima,
+    // Uma opcao inteira continua utilizavel mesmo com teclado virtual aberto.
+    // Em viewports normais, o teto original de 310 px permanece inalterado.
+    altura: Math.max(96, Math.min(310, Math.floor(Math.max(0, disponivel)))),
+  };
+}
 const ESTILO_OPCAO = {
   display: 'grid',
   flex: '0 0 auto',
@@ -98,6 +126,8 @@ export default function PainelCoordenada({
   const relogioOficial = useRef(null);
   const idAtivo = useRef(null);
   const opcoesRef = useRef([]);
+  const comboRef = useRef(null);
+  const [geometriaLista, setGeometriaLista] = useState({ acima: false, altura: 310 });
   const idBase = useId().replace(/:/g, '');
   const idAjuda = `${idBase}-ajuda`;
   const idEstado = `${idBase}-estado`;
@@ -124,6 +154,24 @@ export default function PainelCoordenada({
     if (!aberto || ativo < 0) return;
     opcoesRef.current[ativo]?.scrollIntoView?.({ block: 'nearest' });
   }, [aberto, ativo]);
+
+  useLayoutEffect(() => {
+    if (!aberto || !resultados.length) return undefined;
+    const recalcular = () => setGeometriaLista(medirListaDeResultados(comboRef.current));
+    recalcular();
+    window.addEventListener('resize', recalcular);
+    // A lista usa coordenadas da viewport. Scroll de qualquer ancestral muda
+    // essas coordenadas sem disparar resize, inclusive no painel lateral.
+    window.addEventListener('scroll', recalcular, true);
+    window.visualViewport?.addEventListener('resize', recalcular);
+    window.visualViewport?.addEventListener('scroll', recalcular);
+    return () => {
+      window.removeEventListener('resize', recalcular);
+      window.removeEventListener('scroll', recalcular, true);
+      window.visualViewport?.removeEventListener('resize', recalcular);
+      window.visualViewport?.removeEventListener('scroll', recalcular);
+    };
+  }, [aberto, resultados.length]);
 
   useEffect(() => {
     const atual = ++versao.current;
@@ -311,7 +359,7 @@ export default function PainelCoordenada({
         </div>
       </header>
 
-      <div style={ESTILO_COMBO}>
+      <div ref={comboRef} style={ESTILO_COMBO}>
         <form className="mp-busca" onSubmit={buscar}>
           <Crosshair size={15} aria-hidden="true" />
           <input
@@ -355,7 +403,18 @@ export default function PainelCoordenada({
         </form>
 
         {aberto && !!resultados.length && (
-          <div id={idLista} role="listbox" aria-label="Resultados da busca no mapa" style={ESTILO_RESULTADOS}>
+          <div
+            id={idLista}
+            role="listbox"
+            aria-label="Resultados da busca no mapa"
+            style={{
+              ...ESTILO_RESULTADOS,
+              maxHeight: `${geometriaLista.altura}px`,
+              ...(geometriaLista.acima
+                ? { top: 'auto', bottom: 'calc(100% + 6px)' }
+                : null),
+            }}
+          >
             {resultados.map((resultado, indice) => (
               <button
                 id={`${idLista}-${indice}`}

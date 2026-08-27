@@ -80,6 +80,13 @@ nos registros gerados. Builds locais usam o SHA atual com o sufixo `-local`.
 - Redator de Informação Técnica organizado pelos 12 elementos do item 23.1, seleção pesquisável de caso e a divergência em relação às 10 seções do Anexo B mantida visível;
 - registro das 60 referências do POP: 22 vínculos diretos para fonte oficial, 38 vínculos para índice oficial e nenhuma referência sem portal oficial mapeado; vigência e aplicação continuam pendentes de revisão humana;
 - busca sobre 3.396 nós textuais, 69 quadros/tabelas e 35 imagens extraídas das fontes;
+- busca unificada do mapa para coordenadas decimais, grau/minuto/segundo e UTM,
+  empreendimentos, municípios, bacias, APP, unidades de conservação, PACUERA,
+  planos, zoneamentos e camadas do acervo GeoPR; a escolha marca ou enquadra o
+  resultado e mostra os atributos públicos quando o serviço os fornece;
+- identificação das feições GeoPR por hover, clique, toque e teclado, com resumo,
+  detalhes fixáveis, origem, horário da consulta e filtragem de identificadores
+  que não devem aparecer no material público;
 - favoritos, caderno pessoal, progresso, resultados e retomada no navegador;
 - PWA com 17 pacotes opcionais de mídia para estudo offline, totalizando aproximadamente 203,1 MiB; a reprodução online usa streaming e só persiste mídia após comando explícito;
 - quatro catálogos volumosos — mapa, índice do laboratório, mídia piloto e pacotes offline — são carregados como JSON externos validados, somente quando necessários;
@@ -92,11 +99,27 @@ As travas de conclusão das aulas comprovam apenas que uma resposta foi registra
 
 Os laboratórios usam casos e documentos sintéticos marcados como exemplos didáticos sem validade administrativa. Nenhum processo real ou dado pessoal deve ser inserido na plataforma.
 
-No candidato integralmente validado em 10/08/2026, o JavaScript soma 710,6 KiB
+No candidato integralmente validado em 10/08/2026, o JavaScript somava 710,6 KiB
 de um orçamento de 850 KiB em tamanho bruto e 237,4 KiB de 270 KiB compactado,
 distribuído em 35 chunks. O CSS inicial mede 181,3 KiB bruto e 32,5 KiB
 compactado; o total mede 236,5/43,0 KiB. Folhas exclusivas de rota e perfil
 ficam fora da inicialização, sem elevar os limites existentes.
+
+No candidato local corrente de 27/08/2026, a suíte aprovou 69 arquivos e 634
+testes. O Playwright aprovou 65 cenários do artefato, com 30 omissões esperadas
+pela matriz aplicável, e o ensaio PWA local aprovou um cenário em Chromium com o
+Service Worker real. Build e auditoria premium foram aprovados. Os 38 chunks
+JavaScript somam 878,8/900,0 KiB brutos e 286,1/300,0 KiB compactados. O CSS
+inicial mede 183,7/205,0 KiB bruto e 33,2/38,0 KiB compactado; o total mede
+264,5/265,0 e 49,5/50,0 KiB. Todos os limites passam, com pouca margem no CSS
+total e no JSON público do POP.
+
+A rodada também antecipou os quatro JSON iniciais, 1.414.558 bytes sem
+compressão, para o mesmo intervalo de download do chunk principal, reutilizando
+as promessas sem duplicar requisições. A lista da busca do mapa se adapta ao
+espaço visível no celular; leitura de backup, nomes acessíveis e duplicidade
+semântica dos símbolos ganharam regressões próprias; o status offline consulta
+o cache em conjunto e limita a concorrência ao verificar muitas URLs.
 
 ### Candidato integralmente validado — 10/08/2026
 
@@ -135,16 +158,24 @@ Com essa superfície opcional, o artefato atual possui 38 chunks JavaScript,
 margem de CSS total ficou estreita e deve ser preservada nos próximos ciclos.
 
 A Área Técnica restrita é outro produto e outra fronteira de segurança. O
-commit `b64591ad3a266024840be2f0f1518cdb52a033ec` do repositório privado
-`iat-area-tecnica` entrega, para piloto local exclusivamente sintético, OIDC,
-papéis, concessão nominal por processo, upload, conversa, fila, resultados,
-histórico, backup, retenção e trilha. A execução local registrou `337 passed`
-e `3 skipped`; Windows e Ubuntu em Python 3.12/3.13 e a imagem Docker foram
-aprovados no [workflow 31520073659](https://github.com/vaugrafa-stack/iat-area-tecnica/actions/runs/31520073659).
-Os casos ignorados exigem privilégio de symlink no Windows. Isso não constitui
-implantação institucional, não autoriza documento real e não transforma o
-worker em um serviço autônomo: a análise ainda depende de processador externo
-aprovado ou de conferência técnica.
+repositório privado `iat-area-tecnica` entrega, para piloto local exclusivamente
+sintético, OIDC, papéis, concessão nominal por processo, upload, derivação
+sanitizada, conversa, fila, resultados, histórico, backup, retenção e trilha.
+Ele também contém um processador independente para a API Responses, com saída
+estruturada e renderização determinística dos 11 produtos: inventário,
+checklist, linha do tempo, divergências, suficiência, condicionantes, programas
+ambientais e séries, diligência, Informação Técnica, síntese executiva e anexos
+de evidências.
+
+Esse processador não é uma conexão com o Projeto IAT do ChatGPT. Seu provedor
+padrão permanece `desabilitado`; sem configuração explícita e chave injetada
+fora do repositório, o serviço informa
+`analise_automatica_disponivel: false` e não chama modelo algum. O build público
+da Academia também não possui URL da Área Técnica configurada, portanto não
+oferece hoje um portal restrito público. A implementação e os testes sintéticos
+não constituem implantação institucional nem autorização para receber processo
+real; OCR, antimalware, quarentena, infraestrutura institucional e governança
+formal continuam necessários antes desse uso.
 
 ## Avaliação e registro pessoal
 
@@ -162,7 +193,17 @@ pnpm test:e2e:artifact
 pnpm test:e2e:pwa:local
 ```
 
-A suíte cobre testes unitários, PWA/offline, proveniência, referências, rubricas, questões, mídia e auditoria das aulas. O Playwright valida o artefato renderizado em navegador real nas cinco larguras previstas; o candidato de 10/08/2026 acrescenta uma auditoria permanente de semântica, operação por toque e legibilidade em 13 rotas. Em um portão próprio, o Playwright também comprova respostas offline do Service Worker e a atualização controlada do aplicativo. O workflow exige os dois portões antes de armazenar o artefato publicável. O portão premium procura falhas de governança, privacidade e exposição acidental. Nenhum teste automatizado substitui revisão especializada de conteúdo, acessibilidade, usabilidade ou aprendizagem.
+A suíte cobre testes unitários, PWA/offline, proveniência, referências, rubricas,
+questões, mídia e auditoria das aulas. No candidato corrente, 69 arquivos e 634
+testes foram aprovados. O Playwright valida o artefato renderizado em navegador
+real nas cinco larguras previstas e mantém auditoria de semântica, operação por
+toque e legibilidade; 65 cenários foram aprovados e 30 foram omitidos conforme a
+matriz aplicável. Em um portão próprio, um cenário aprovado comprova respostas
+offline do Service Worker e a atualização controlada do aplicativo. O workflow
+exige os dois portões antes de armazenar o artefato publicável. O portão premium
+procura falhas de governança, privacidade e exposição acidental. Nenhum teste
+automatizado substitui revisão especializada de conteúdo, acessibilidade,
+usabilidade ou aprendizagem.
 
 ## Arquivos principais
 

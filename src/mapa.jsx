@@ -1037,7 +1037,7 @@ function MapaConteudo({ dados, state, setState }) {
                   <line x1={marca.x} y1={marca.y + 5 / escala} x2={marca.x} y2={marca.y + 19 / escala} />
                 </g>
               )}
-              {camadas.usinas && <g className="mp-usinas">
+              {camadas.usinas && <g className="mp-usinas" aria-hidden="true">
                 {usinas.map((u, i) => (
                   <circle key={`${u.nome}-${i}`} cx={u.x} cy={u.y} r={raio(u)}
                           fill={COR[u.tipo]}

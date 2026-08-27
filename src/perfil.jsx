@@ -107,6 +107,30 @@ export default function Profile({
     );
     return true;
   };
+  const restaurarBackup = async (evento) => {
+    const input = evento.currentTarget;
+    const arquivo = input.files?.[0];
+    if (!arquivo) return;
+    try {
+      const texto = await arquivo.text();
+      const resultado = importBackup(texto);
+      if (resultado.ok) reloadFade();
+      else operationFailed(resultado, "Não foi possível restaurar o backup.");
+    } catch {
+      operationFailed(
+        {
+          ok: false,
+          code: "BACKUP_READ",
+          error: "Não foi possível ler o arquivo de backup neste dispositivo.",
+          recoverable: true,
+        },
+        "Não foi possível restaurar o backup.",
+      );
+    } finally {
+      // Permite escolher de novo o mesmo arquivo depois de corrigir uma falha.
+      input.value = "";
+    }
+  };
   const profileError = profileStatus && (
     <div className="profile-storage-error" role="alert">
       <AlertTriangle aria-hidden="true" />
@@ -256,15 +280,7 @@ export default function Profile({
             <input
               type="file"
               accept="application/json"
-              onChange={(e) => {
-                const f = e.target.files[0];
-                if (!f) return;
-                f.text().then((t) => {
-                  const r = importBackup(t);
-                  if (r.ok) reloadFade();
-                  else operationFailed(r, "Não foi possível restaurar o backup.");
-                });
-              }}
+              onChange={restaurarBackup}
             />
           </label>
         </div>
@@ -452,15 +468,7 @@ export default function Profile({
             <input
               type="file"
               accept="application/json"
-              onChange={(e) => {
-                const f = e.target.files[0];
-                if (!f) return;
-                f.text().then((t) => {
-                  const r = importBackup(t);
-                  if (r.ok) reloadFade();
-                  else operationFailed(r, "Não foi possível restaurar o backup.");
-                });
-              }}
+              onChange={restaurarBackup}
             />
           </label>
         </div>
@@ -595,12 +603,14 @@ export default function Profile({
                 <span className="cert-mod-pct">{p}%</span>
                 {pr.pronto ? (
                   <button
+                    type="button"
                     className="cert-mod-dl"
+                    aria-label={`Baixar registro do módulo ${t.code} · ${t.title}`}
                     onClick={() =>
                       baixarCert("Autoestudo do módulo " + t.code + " · " + t.title, 100)
                     }
                   >
-                    <Download size={14} />
+                    <Download size={14} aria-hidden="true" />
                   </button>
                 ) : (
                   <span className="cert-mod-pending">

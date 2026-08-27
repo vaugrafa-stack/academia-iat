@@ -302,25 +302,47 @@ async function reconciliarRevisoesDeMidia() {
   }
 }
 
+async function mapearComConcorrencia(itens, limite, tarefa) {
+  if (!itens.length) return [];
+  const resultados = new Array(itens.length);
+  let proximo = 0;
+  const trabalhadores = Array.from(
+    { length: Math.min(limite, itens.length) },
+    async () => {
+      while (proximo < itens.length) {
+        const indice = proximo;
+        proximo += 1;
+        resultados[indice] = await tarefa(itens[indice], indice);
+      }
+    },
+  );
+  await Promise.all(trabalhadores);
+  return resultados;
+}
+
 async function estadoDosCaches(urlConsultada, urlsConsultadas) {
   const nomes = await caches.keys();
   const cacheNucleo = await caches.open(CACHE_NUCLEO);
   const cacheMidia = await caches.open(CACHE_MIDIA);
   const chaves = (await cacheMidia.keys()).filter((chave) => chave.url !== META_MIDIA_URL);
+  const urlsEmCache = new Set(chaves.map((chave) => chave.url));
   let bytesConhecidos = 0;
   let itensSemTamanho = 0;
 
-  for (const chave of chaves) {
+  const tamanhos = await mapearComConcorrencia(chaves, 12, async (chave) => {
     const resposta = await cacheMidia.match(chave, { ignoreVary: true });
     const tamanho = Number(resposta && resposta.headers.get('content-length'));
-    if (Number.isFinite(tamanho) && tamanho >= 0) bytesConhecidos += tamanho;
-    else itensSemTamanho += 1;
+    return Number.isFinite(tamanho) && tamanho >= 0 ? tamanho : null;
+  });
+  for (const tamanho of tamanhos) {
+    if (tamanho === null) itensSemTamanho += 1;
+    else bytesConhecidos += tamanho;
   }
 
   let urlGuardada;
   if (urlConsultada) {
     const url = validarUrlDeMidia(urlConsultada);
-    urlGuardada = Boolean(await cacheMidia.match(pedidoCompletoDaUrl(url), { ignoreVary: true }));
+    urlGuardada = urlsEmCache.has(pedidoCompletoDaUrl(url).url);
   }
   const urlsGuardadas = {};
   const consultas = [...new Set(
@@ -328,9 +350,7 @@ async function estadoDosCaches(urlConsultada, urlsConsultadas) {
   )].slice(0, 700);
   for (const item of consultas) {
     const url = validarUrlDeMidia(item);
-    urlsGuardadas[item] = Boolean(
-      await cacheMidia.match(pedidoCompletoDaUrl(url), { ignoreVary: true }),
-    );
+    urlsGuardadas[item] = urlsEmCache.has(pedidoCompletoDaUrl(url).url);
   }
 
   return {

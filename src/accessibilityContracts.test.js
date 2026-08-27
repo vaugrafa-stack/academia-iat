@@ -40,6 +40,9 @@ describe('contratos de acessibilidade das superfícies principais', () => {
       'className="toast" role="status" aria-live="polite" aria-atomic="true"',
     );
     expect(perfil).toContain('aria-label={`Excluir perfil ${u.name}`}');
+    expect(perfil).toContain('aria-label={`Baixar registro do módulo ${t.code} · ${t.title}`}');
+    expect(perfil).toContain('onChange={restaurarBackup}');
+    expect(perfil).toContain('input.value = ""');
     expect(licao).toContain('"Resposta correta."');
     expect(licao).toContain('"Sua resposta, incorreta."');
   });

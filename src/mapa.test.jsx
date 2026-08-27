@@ -453,6 +453,7 @@ describe('didática e acesso por teclado no mapa', () => {
 
     expect(host.querySelectorAll('.mp-bacias path')).toHaveLength(2);
     expect(host.querySelectorAll('.mp-usinas circle')).toHaveLength(2);
+    expect(host.querySelector('.mp-usinas')?.getAttribute('aria-hidden')).toBe('true');
     expect(host.querySelector('.mp-satelite-credito')?.textContent).toContain('Esri, Vantor');
 
     await act(async () => {

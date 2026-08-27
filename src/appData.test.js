@@ -1,5 +1,10 @@
-import { describe, expect, it } from 'vitest';
-import { applyBasePath, fetchJson } from './appData.js';
+import { describe, expect, it, vi } from 'vitest';
+import {
+  applyBasePath,
+  fetchJson,
+  loadAppData,
+  startAppDataRequests,
+} from './appData.js';
 
 function pendingFetch(_url, { signal }) {
   return new Promise((_resolve, reject) => {
@@ -12,6 +17,44 @@ function pendingFetch(_url, { signal }) {
 }
 
 describe('carregamento resiliente dos dados', () => {
+  it('reutiliza as requisições antecipadas sem buscar os dados duas vezes', async () => {
+    const payloads = new Map([
+      ['/pop.json', {
+        blocks: [{}],
+        sections: [{ id: 'secao-1' }],
+        tables: [],
+        figures: [],
+      }],
+      ['/flows.json', { flowcharts: [] }],
+      ['/media.json', {}],
+      ['/questions.json', []],
+    ]);
+    const fetchImpl = vi.fn(async (url) => ({
+      ok: true,
+      headers: { get: () => 'application/json' },
+      json: async () => payloads.get(url),
+    }));
+    const urls = {
+      popDataUrl: '/pop.json',
+      flowDataUrl: '/flows.json',
+      aulaMediaUrl: '/media.json',
+      questionBankUrl: '/questions.json',
+    };
+
+    const preloaded = startAppDataRequests({ ...urls, fetchImpl });
+    expect(fetchImpl).toHaveBeenCalledTimes(4);
+
+    const loaded = await loadAppData({
+      ...urls,
+      fetchImpl,
+      featuredMedia: {},
+      preloaded,
+    });
+
+    expect(fetchImpl).toHaveBeenCalledTimes(4);
+    expect(loaded.popData.sections[0].id).toBe('secao-1');
+  });
+
   it('interrompe uma fonte obrigatória que excede o prazo', async () => {
     await expect(
       fetchJson('/pop.json', 'o POP', { fetchImpl: pendingFetch, timeoutMs: 5 }),

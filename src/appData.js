@@ -149,6 +149,42 @@ export function applyBasePath(value, base = '') {
   return walk(value);
 }
 
+function observeRejection(promise) {
+  // O preload pode terminar antes de o chunk principal ser avaliado. Anexar
+  // um observador evita `unhandledrejection`; a promessa original permanece
+  // rejeitada e o fluxo normal ainda apresenta a tela de recuperação.
+  promise.catch(() => {});
+  return promise;
+}
+
+export function startAppDataRequests({
+  popDataUrl,
+  flowDataUrl,
+  aulaMediaUrl,
+  questionBankUrl,
+  fetchImpl = fetch,
+}) {
+  return {
+    popData: observeRejection(
+      fetchJson(popDataUrl, 'o conteúdo do POP', { fetchImpl }),
+    ),
+    flowData: observeRejection(
+      fetchJson(flowDataUrl, 'os fluxogramas', { fetchImpl }),
+    ),
+    aulaMedia: observeRejection(
+      fetchJson(aulaMediaUrl, 'o índice de resumos em vídeo', {
+        fetchImpl,
+        optional: true,
+      }),
+    ),
+    questionBank: questionBankUrl
+      ? observeRejection(
+        fetchJson(questionBankUrl, 'o banco de questões', { fetchImpl }),
+      )
+      : Promise.resolve([]),
+  };
+}
+
 export async function loadAppData({
   popDataUrl,
   flowDataUrl,
@@ -162,13 +198,18 @@ export async function loadAppData({
   base = '',
   featuredMedia,
   fetchImpl = fetch,
+  preloaded,
 }) {
   const [popData, flowData, loadedAulaMedia, loadedQuestionBank] = await Promise.all([
-    fetchJson(popDataUrl, 'o conteúdo do POP', { fetchImpl }),
-    fetchJson(flowDataUrl, 'os fluxogramas', { fetchImpl }),
-    fetchJson(aulaMediaUrl, 'o índice de resumos em vídeo', { fetchImpl, optional: true }),
+    preloaded?.popData
+      ?? fetchJson(popDataUrl, 'o conteúdo do POP', { fetchImpl }),
+    preloaded?.flowData
+      ?? fetchJson(flowDataUrl, 'os fluxogramas', { fetchImpl }),
+    preloaded?.aulaMedia
+      ?? fetchJson(aulaMediaUrl, 'o índice de resumos em vídeo', { fetchImpl, optional: true }),
     questionBankUrl
-      ? fetchJson(questionBankUrl, 'o banco de questões', { fetchImpl })
+      ? preloaded?.questionBank
+        ?? fetchJson(questionBankUrl, 'o banco de questões', { fetchImpl })
       : Promise.resolve([]),
   ]);
   const warnings = loadedAulaMedia.__loadWarning

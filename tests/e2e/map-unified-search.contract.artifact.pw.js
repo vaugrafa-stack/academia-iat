@@ -332,3 +332,51 @@ test('em 390 px o resultado e acionavel por toque e permanece dentro da tela', a
 
   await expectHealthyPage(page, runtimeIssues);
 });
+
+test('em 320 px uma lista longa termina antes da navegacao fixa', async ({
+  page,
+  baseURL,
+}) => {
+  test.skip(page.viewportSize()?.width !== 320, 'Regressao da lista longa executada em 320 px.');
+  const runtimeIssues = monitorRuntime(page, baseURL);
+  await abrirMapa(page, baseURL);
+
+  const { regiao, campo, resultados } = buscaUnica(page);
+  await regiao.scrollIntoViewIfNeeded();
+  await campo.fill('APP');
+  await expect(resultados).toBeVisible();
+  expect(await resultados.getByRole('option').count()).toBeGreaterThan(1);
+
+  const navegacao = page.locator('.mobile-bottom-nav');
+  await expect(navegacao).toBeVisible();
+  const [viewport, caixaResultados, caixaNavegacao] = await Promise.all([
+    Promise.resolve(page.viewportSize()),
+    resultados.boundingBox(),
+    navegacao.boundingBox(),
+  ]);
+  expect(caixaResultados).not.toBeNull();
+  expect(caixaNavegacao).not.toBeNull();
+  expect(caixaResultados.x).toBeGreaterThanOrEqual(-1);
+  expect(caixaResultados.x + caixaResultados.width).toBeLessThanOrEqual(viewport.width + 1);
+  expect(caixaResultados.y).toBeGreaterThanOrEqual(-1);
+  expect(caixaResultados.y + caixaResultados.height).toBeLessThanOrEqual(caixaNavegacao.y - 1);
+
+  const rolagemInicial = await page.evaluate(() => window.scrollY);
+  await page.evaluate((atual) => {
+    const destino = atual > 60 ? atual - 60 : atual + 80;
+    window.scrollTo({ top: destino, behavior: 'instant' });
+  }, rolagemInicial);
+  await expect.poll(async () => {
+    const [lista, barra] = await Promise.all([
+      resultados.boundingBox(),
+      navegacao.boundingBox(),
+    ]);
+    return !!lista && !!barra
+      && lista.y >= -1
+      && lista.y + lista.height <= barra.y - 1;
+  }, {
+    message: 'A lista precisa recalcular sua geometria depois da rolagem.',
+  }).toBe(true);
+
+  await expectHealthyPage(page, runtimeIssues);
+});

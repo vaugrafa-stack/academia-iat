@@ -19,9 +19,11 @@ class CacheMemoria {
   constructor() {
     this.itens = new Map();
     this.falharPorQuota = false;
+    this.matchCalls = 0;
   }
 
   async match(pedido) {
+    this.matchCalls += 1;
     const resposta = this.itens.get(chaveDoPedido(pedido));
     return resposta ? resposta.clone() : undefined;
   }
@@ -392,6 +394,33 @@ async function testarRangeEDownloadVerificavel() {
     status.resultado.midia.urlsGuardadas[`${ORIGIN}/academia-iat/media/aula/ausente.mp4`],
     false,
   );
+
+  const urlsGuardadasEmEscala = Array.from(
+    { length: 120 },
+    (_, indice) => `${ORIGIN}/academia-iat/media/aula/escala-${indice}.mp4`,
+  );
+  await Promise.all(urlsGuardadasEmEscala.map((url) => cacheMidia.put(
+    url,
+    new Response(Uint8Array.from([1]), { headers: { 'Content-Length': '1' } }),
+  )));
+  const consultasEmEscala = Array.from(
+    { length: 700 },
+    (_, indice) => `${ORIGIN}/academia-iat/media/aula/escala-${indice}.mp4`,
+  );
+  const chamadasAntes = cacheMidia.matchCalls;
+  const respostasEmEscala = [];
+  await runtime.disparar('message', {
+    data: { tipo: 'IAT_GET_STATUS', urls: consultasEmEscala },
+    ports: [{ postMessage: (mensagem) => respostasEmEscala.push(mensagem) }],
+  });
+  const chamadasDoStatus = cacheMidia.matchCalls - chamadasAntes;
+  assert.ok(
+    chamadasDoStatus <= urlsGuardadasEmEscala.length + 2,
+    `status deve reutilizar o indice do cache; recebeu ${chamadasDoStatus} leituras`,
+  );
+  const statusEmEscala = respostasEmEscala.find((mensagem) => mensagem.tipo === 'IAT_RESPONSE');
+  assert.equal(statusEmEscala.resultado.midia.urlsGuardadas[consultasEmEscala[0]], true);
+  assert.equal(statusEmEscala.resultado.midia.urlsGuardadas[consultasEmEscala.at(-1)], false);
 }
 
 async function testarFalhasClaras() {

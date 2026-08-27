@@ -185,31 +185,87 @@ pontuais curados foram conferidos, mas uma camada encontrada pela busca pode nã
 publicar subcamada consultável ou ficar temporariamente indisponível; nesses
 casos a interface informa a limitação em vez de inventar atributos.
 
+### Candidato local de 27/08/2026 — busca unificada e robustez do artefato
+
+O mapa agora possui um único campo que reconhece coordenada decimal, grau/minuto/
+segundo e UTM, além de empreendimento, município, bacia, APP, unidade de
+conservação, PACUERA, plano, zoneamento e demais camadas do acervo GeoPR. A
+seleção enquadra ou marca a feição quando o serviço fornece geometria, ativa a
+camada correspondente e abre os atributos públicos disponíveis. Quando um tema
+não representa um ponto único, a interface orienta a aproximar e consultar uma
+feição, sem fabricar uma localização.
+
+O texto digitado e as coordenadas não são enviados como termo de pesquisa. A
+aplicação baixa índices públicos por consultas fixas, filtra-os no navegador e
+recusa entradas com aparência de CPF, CNPJ, protocolo, contato ou CEP. A busca
+local continua funcionando sem rede; uma indisponibilidade parcial do GeoPR é
+declarada na própria lista. No celular, a lista mede o espaço visível e abre
+acima ou abaixo do campo para não ficar encoberta pela navegação inferior.
+
+Também foram reforçados os contratos de acessibilidade e recuperação: o download
+de registro de módulo tem nome acessível; falha ao ler um backup é anunciada e
+libera a seleção para nova tentativa; os pontos visuais do mapa não duplicam a
+lista acessível. O Service Worker passou a consultar chaves de cache em conjunto
+e a verificar centenas de URLs com concorrência limitada. No arranque, os quatro
+JSON necessários, 1.414.558 bytes sem compressão, começam a ser buscados em
+paralelo ao chunk principal e são reutilizados sem segunda requisição.
+
+A validação corrente deste candidato obteve:
+
+- 69 arquivos de teste e 634 testes aprovados;
+- 65 cenários Playwright aprovados sobre o artefato, com 30 omissões esperadas
+  pela matriz de projeto, largura e capacidade aplicável;
+- um cenário PWA local aprovado em Chromium contra o Service Worker real;
+- `pnpm build` e auditoria premium aprovados;
+- 38 chunks JavaScript, 878,8/900,0 KiB brutos e 286,1/300,0 KiB compactados;
+- CSS inicial em 183,7/205,0 KiB bruto e 33,2/38,0 KiB compactado; CSS total em
+  264,5/265,0 KiB bruto e 49,5/50,0 KiB compactado;
+- maior ativo compressível, o conteúdo público do POP, em 918,7/960,0 KiB bruto
+  e 144,2/150,0 KiB compactado.
+
+Todos os limites automatizados foram respeitados. A margem do CSS total e do
+conteúdo público do POP permanece pequena; novas ampliações devem continuar
+sob demanda ou recuperar espaço antes de acrescentar volume inicial.
+
 ## Serviços separados
 
 | Serviço | Repositório | Estado comprovado | Não confundir com |
 |---|---|---|---|
 | Conta opcional de estudo | repositório privado separado | fonte validada e versionada no SHA `a89a81c130f4d784578ff02162b22b7511d95599`; 136 testes locais, wheel reproduzível, ciclo de e-mail/senha e sincronização exercitados; matriz Windows/Ubuntu e imagem Docker aprovadas no workflow `31509742433` | serviço implantado, conta obrigatória ou armazenamento de processos |
-| Área Técnica restrita | repositório privado separado | fonte limpa e sincronizada no SHA `2cf5a0d4d6245f02f5d70f2f5d0ee705120d3d03`; a última suíte integral registrada, no SHA pai `86e36f68f32b02e83e1496305fa6d2d4eb4f70f2`, teve 641 testes; OIDC, autorização, upload, conversa, fila, resultados, backup e retenção foram exercitados com dados sintéticos | processador automático conectado, ambiente institucional ou tratamento autorizado de processo real |
+| Área Técnica restrita | repositório privado separado | candidato local independente com OIDC, autorização nominal, upload, sanitização, conversa, fila, renderização, resultados, backup e retenção exercitados somente com dados sintéticos; há cliente opcional para a API Responses e catálogo de 11 produtos | Projeto IAT do ChatGPT, implantação pública, processamento automático habilitado ou tratamento autorizado de processo real |
 
-Os dois serviços privados não possuem implantação ou pipeline de produção
-comprovados. A Academia pública continua utilizável sem conta remota. Nenhum
-documento real pode entrar na Área Técnica antes dos portões formais de
-governança, infraestrutura e autorização.
+Os dois serviços privados não possuem implantação de produção comprovada. A
+Academia pública continua utilizável sem conta remota e seu build atual não
+configura uma URL pública para a Área Técnica; por isso o ponto de entrada
+restrito não é exibido aos usuários do GitHub Pages. Nenhum documento real pode
+entrar na Área Técnica antes dos portões formais de governança, infraestrutura e
+autorização.
 
-A Área Técnica possui o corredor seguro para receber arquivos, gerar uma cópia
-sanitizada, enfileirar o pedido e reconciliar um resultado assinado. Ela ainda
-não contém cliente de modelo nem serviço que leia a Codex Inbox e produza o
-resultado. O worker atual apenas aguarda um processador externo. Portanto, o
-upload e a fila existem, mas checklist documental, minuta de IT, análise de
-programas e demais produtos ainda não são gerados automaticamente pela
-plataforma e o Projeto IAT do ChatGPT não está conectado a esse fluxo.
+A Área Técnica possui o corredor para receber arquivos, gerar derivados
+textuais sanitizados, enfileirar o pedido, validar uma resposta estruturada,
+renderizar entregáveis e reconciliar um resultado assinado. O processador é um
+serviço independente que pode chamar diretamente a API Responses com
+`store: false`, `tools: []` e saída estruturada. Ele não usa upload de arquivos
+da API, busca web ou file search e **não está conectado ao Projeto IAT do
+ChatGPT**; método, contrato de produtos e representação do POP são locais e
+versionados no próprio backend.
 
-A prontidão atual confirma aplicação, Banco, diretórios e worker, mas não prova
-que esse processador externo exista. O piloto permanece restrito a dados
-sintéticos e arquivos textuais UTF-8; PDF, DOCX, imagens, digitalizações, ZIP,
-KMZ e documentos reais continuam bloqueados até existirem extração isolada,
-antivírus, quarentena, governança institucional e autorização formal.
+O catálogo contém 11 produtos: inventário documental, checklist documental,
+linha do tempo processual, matriz de divergências, análise de suficiência
+técnica, análise de condicionantes, programas ambientais e séries históricas,
+minuta de diligência, minuta de Informação Técnica, síntese executiva e relação
+de anexos com quadro de evidências. São minutas e análises auxiliares sujeitas à
+conferência do técnico; a existência do catálogo não prova que uma análise
+automática esteja disponível.
+
+O estado seguro padrão mantém o provedor `desabilitado`. Sem selecionar
+explicitamente `openai_responses` e injetar uma chave fora do repositório, a
+prontidão publica `analise_automatica_disponivel: false` e nenhuma chamada de
+modelo ocorre. O piloto permanece limitado a dados sintéticos. PDF e DOCX com
+texto podem produzir derivados no gateway, mas não há OCR nem antimalware;
+imagens, digitalizações sem camada textual, ZIP, KMZ e documentos reais
+continuam fora do uso autorizado até existirem quarentena, isolamento,
+governança institucional e autorização formal.
 
 Os dois candidatos privados incluem dependências travadas por hash, auditoria
 de vulnerabilidades, construção determinística de wheel e workflow de

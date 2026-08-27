@@ -5,6 +5,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import { AppErrorBoundary } from './AppErrorBoundary.jsx';
 import {
   bootstrapApplication,
+  loadMainApplication,
   reportStartupError,
   StartupFailure,
 } from './bootstrap.jsx';
@@ -28,6 +29,22 @@ afterEach(async () => {
 });
 
 describe('recuperação no ponto de entrada', () => {
+  it('inicia os dados antes de importar o chunk principal', async () => {
+    const order = [];
+    const application = { default: () => null };
+
+    const result = await loadMainApplication({
+      preloadData: () => order.push('dados'),
+      importApplication: async () => {
+        order.push('aplicação');
+        return application;
+      },
+    });
+
+    expect(order).toEqual(['dados', 'aplicação']);
+    expect(result).toBe(application);
+  });
+
   it('mantém o caminho normal e monta o App dentro do limite de erro', async () => {
     const host = document.createElement('div');
     document.body.append(host);

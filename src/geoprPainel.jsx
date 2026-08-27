@@ -18,9 +18,49 @@ import {
   camadaDoAcervo,
   carregarAcervo,
   filtrarAcervo,
+  resumoDoAchado,
+  rotuloDeAtributo,
+  tituloDoAchado,
 } from './geoprCamadas.js';
 import { CAMADAS_GEOPR, GRUPOS, creditoDe } from './geoprCatalogo.js';
 import './geopr.css';
+
+// O CSS da rota ja opera no limite bruto do artefato. Estes estilos pequenos e
+// exclusivos do estado dinamico ficam junto do componente para nao ampliar a
+// folha entregue a quem abre o mapa sem consultar atributos.
+const ESTILO_TOOLTIP = {
+  position: 'absolute',
+  zIndex: 4,
+  pointerEvents: 'none',
+  width: 'min(290px, calc(100% - 16px))',
+  maxWidth: 'calc(100% - 16px)',
+  minWidth: 0,
+  maxHeight: 'calc(60% - 8px)',
+  overflowY: 'auto',
+  display: 'flex',
+  flexDirection: 'column',
+  gap: 5,
+  padding: '9px 11px',
+  border: '1px solid color-mix(in srgb, var(--ink) 22%, var(--line))',
+  borderRadius: 10,
+  background: 'color-mix(in srgb, var(--surface) 96%, transparent)',
+  boxShadow: '0 8px 24px color-mix(in srgb, var(--ink) 16%, transparent)',
+  backdropFilter: 'blur(5px)',
+  color: 'var(--ink)',
+  lineHeight: 1.35,
+};
+
+const ESTILO_ESTADO = {
+  margin: 0,
+  padding: '10px 11px',
+  border: '1px solid var(--line)',
+  borderRadius: 9,
+  background: 'var(--surface)',
+  fontSize: 12,
+  lineHeight: 1.5,
+  color: 'var(--muted)',
+};
+const ESTILO_NOTA_TOOLTIP = { fontSize: 11, color: 'var(--muted)' };
 
 /**
  * Legenda sobre o mapa.
@@ -103,6 +143,218 @@ function Credito({ camada }) {
     <small className={'gp-credito' + (camada.fonte ? '' : ' gp-sem-fonte')}>
       {creditoDe(camada)}
     </small>
+  );
+}
+
+function dataDaConsulta(valor) {
+  if (!valor) return null;
+  const data = new Date(valor);
+  if (Number.isNaN(data.getTime())) return null;
+  return new Intl.DateTimeFormat('pt-BR', {
+    dateStyle: 'short',
+    timeStyle: 'short',
+  }).format(data);
+}
+
+/** Resumo ancorado no simbolo; no toque, permanece ate a proxima consulta. */
+export function GeoprResumoNoMapa({ consulta }) {
+  if (!consulta?.posicao || ['ociosa', 'aguardando'].includes(consulta.estado)) return null;
+  const xPct = Math.min(100, Math.max(0, Number(consulta.posicao.xPct) || 0));
+  const yPct = Math.min(100, Math.max(0, Number(consulta.posicao.yPct) || 0));
+  const classes = [
+    'gp-tooltip',
+    consulta.tipo === 'fixada' ? 'fixada' : '',
+  ].filter(Boolean).join(' ');
+  const achado = consulta.achados?.[0];
+  const resumo = achado ? resumoDoAchado(achado, 3) : [];
+  const pelaDireita = xPct > 50;
+  const porBaixo = yPct <= 50;
+  // O inset maximo reserva os 290 px do balao e oito de margem. Em mapas mais
+  // estreitos, `max(8px, ...)` reduz tudo a oito e a largura fluida ocupa o que
+  // couber. Assim nenhum ponto intermediario corta o balao no overflow do mapa.
+  const insetMaximo = 'max(8px, calc(100% - 298px))';
+  const insetHorizontal = pelaDireita
+    ? `clamp(8px, calc(${100 - xPct}% + 12px), ${insetMaximo})`
+    : `clamp(8px, calc(${xPct}% + 12px), ${insetMaximo})`;
+  // No eixo vertical, o balao usa no maximo 60% do quadro e nasce nos 40% mais
+  // proximos ao ponto; os oito pixels restantes garantem que tambem nao corte.
+  const insetVertical = porBaixo
+    ? `clamp(8px, calc(${yPct}% + 12px), 40%)`
+    : `clamp(8px, calc(${100 - yPct}% + 12px), 40%)`;
+
+  return (
+    <div
+      className={classes}
+      style={{
+        ...ESTILO_TOOLTIP,
+        left: pelaDireita ? undefined : insetHorizontal,
+        right: pelaDireita ? insetHorizontal : undefined,
+        top: porBaixo ? insetVertical : undefined,
+        bottom: porBaixo ? undefined : insetVertical,
+        borderColor: consulta.tipo === 'fixada' ? 'var(--green2)' : undefined,
+      }}
+      role="tooltip"
+    >
+      {consulta.estado === 'carregando' && <strong>Consultando o GeoPR…</strong>}
+      {consulta.estado === 'vazio' && (
+        <>
+          <strong>Nenhum objeto identificado</strong>
+          <span style={ESTILO_NOTA_TOOLTIP}>
+            {consulta.falhas > 0
+              ? 'Nenhum objeto nas camadas que responderam; houve resposta parcial.'
+              : 'Tente o centro do símbolo ou aproxime o mapa.'}
+          </span>
+        </>
+      )}
+      {consulta.estado === 'erro' && (
+        <>
+          <strong>Consulta indisponível</strong>
+          <span style={ESTILO_NOTA_TOOLTIP}>O mapa continua visível; tente novamente em instantes.</span>
+        </>
+      )}
+      {consulta.estado === 'pronto' && achado && (
+        <>
+          <small style={{ fontSize: 10.5, fontWeight: 800, letterSpacing: '.035em', textTransform: 'uppercase', color: 'var(--muted)', overflowWrap: 'anywhere' }}>
+            {achado.origem?.titulo || achado.camada || 'Camada do GeoPR'}
+          </small>
+          <strong style={{ fontSize: 13.5, overflowWrap: 'anywhere' }}>{tituloDoAchado(achado, 120)}</strong>
+          {!!resumo.length && (
+            <dl style={{ display: 'grid', gridTemplateColumns: 'auto minmax(0,1fr)', gap: '2px 8px', margin: 0 }}>
+              {resumo.map((par) => (
+                <React.Fragment key={par.chave}>
+                  <dt style={{ fontSize: 10.5, fontWeight: 700, color: 'var(--muted)' }}>{par.rotulo}</dt>
+                  <dd style={{ margin: 0, fontSize: 11.5, overflowWrap: 'anywhere' }}>{par.valor}</dd>
+                </React.Fragment>
+              ))}
+            </dl>
+          )}
+          {consulta.achados.length > 1 && (
+            <span style={ESTILO_NOTA_TOOLTIP}>
+              + {consulta.achados.length - 1} {consulta.achados.length === 2 ? 'registro próximo' : 'registros próximos'} ao ponto consultado
+            </span>
+          )}
+          <em style={{ paddingTop: 4, borderTop: '1px solid var(--line)', fontSize: 11, color: 'var(--muted)', fontStyle: 'normal' }}>
+            {consulta.tipo === 'fixada' ? 'Detalhes fixados no painel' : 'Clique para fixar os detalhes'}
+          </em>
+        </>
+      )}
+    </div>
+  );
+}
+
+function DetalhesDaConsulta({ consulta, aoFechar }) {
+  if (!consulta || consulta.estado === 'ociosa') return null;
+  const momento = dataDaConsulta(consulta.consultadoEm);
+  const limiteVisual = 12;
+  const achadosVisiveis = (consulta.achados || []).slice(0, limiteVisual);
+  const resultadosOmitidos = Math.max(0, (consulta.achados || []).length - achadosVisiveis.length);
+  return (
+    <div className="gp-atributos">
+      <div className="gp-atributos-topo" style={{ display: 'flex', alignItems: 'center', gap: 8, minHeight: 44 }}>
+        <h3>Detalhes do ponto</h3>
+        <button
+          type="button"
+          className="mp-limpar"
+          style={{ width: 44, height: 44, padding: 0, justifyContent: 'center', marginLeft: 'auto' }}
+          onClick={aoFechar}
+          aria-label="Fechar detalhes do ponto"
+        >
+          <X size={13} aria-hidden="true" />
+        </button>
+      </div>
+
+      {consulta.estado === 'carregando' && (
+        <p className="gp-consulta-estado" style={ESTILO_ESTADO} role="status">Consultando as camadas ativas do GeoPR…</p>
+      )}
+      {consulta.estado === 'vazio' && (
+        <p className="gp-consulta-estado" style={ESTILO_ESTADO} role="status">
+          Nenhum objeto foi identificado nas camadas que responderam nesse ponto.
+          {consulta.falhas > 0
+            ? ` ${consulta.falhas === 1 ? 'Uma camada ativa não respondeu.' : `${consulta.falhas} camadas ativas não responderam.`}`
+            : ' Aproxime o mapa ou clique mais perto do centro do símbolo.'}
+        </p>
+      )}
+      {consulta.estado === 'erro' && (
+        <p className="gp-consulta-estado gp-aviso" style={ESTILO_ESTADO} role="alert">
+          O serviço de atributos não respondeu agora. A imagem da camada continua sendo apenas uma referência visual.
+        </p>
+      )}
+
+      {consulta.estado === 'pronto' && (
+        <p className="sr-only" role="status" aria-live="polite" aria-atomic="true">
+          {consulta.achados.length === 1
+            ? 'Um resultado do GeoPR identificado; detalhes disponíveis no painel.'
+            : `${consulta.achados.length} resultados do GeoPR identificados; detalhes disponíveis no painel.`}
+        </p>
+      )}
+
+      {consulta.estado === 'pronto' && achadosVisiveis.map((achado, indice) => (
+        <article key={`${achado.origem?.id}-${achado.camada}-${indice}`}>
+          <small className="gp-camada-consultada" style={{ display: 'block', marginBottom: 3, fontSize: 10.5, fontWeight: 800, letterSpacing: '.035em', textTransform: 'uppercase', color: 'var(--muted)' }}>
+            {achado.origem?.titulo || 'Camada do GeoPR'}
+          </small>
+          <h4>{tituloDoAchado(achado, 180)}</h4>
+          {achado.origem?.paraQue && (
+            <p className="gp-resumo-camada" style={{ margin: '0 0 8px', fontSize: 11.5, lineHeight: 1.45, color: 'var(--muted)' }}>
+              {achado.origem.paraQue}
+            </p>
+          )}
+          {achado.camada && achado.camada !== achado.origem?.titulo && (
+            <p className="gp-nota">Subcamada do serviço: {achado.camada}</p>
+          )}
+          {achado.origem?.caminho && (
+            <p className="gp-nota" style={{ overflowWrap: 'anywhere' }}>
+              Serviço oficial: <code>{achado.origem.caminho}</code>
+            </p>
+          )}
+          {achado.valores.length ? (
+            <dl>
+              {achado.valores.map((par) => (
+                <React.Fragment key={par.chave}>
+                  <dt>{rotuloDeAtributo(par.chave)}</dt>
+                  <dd>{par.valor}</dd>
+                </React.Fragment>
+              ))}
+            </dl>
+          ) : (
+            <p className="gp-nota">O objeto existe, mas o serviço não devolveu atributos exibíveis.</p>
+          )}
+          {achado.origem && <Credito camada={achado.origem} />}
+          {achado.ocultos > 0 && (
+            <p className="gp-nota">
+              {achado.ocultos === 1
+                ? '1 campo não exibido por proteção de dados ou por não ser necessário para identificar a feição.'
+                : `${achado.ocultos} campos não exibidos por proteção de dados ou por não serem necessários para identificar a feição.`}
+            </p>
+          )}
+          {achado.omitidos > 0 && (
+            <p className="gp-nota">
+              {achado.omitidos === 1
+                ? '1 atributo técnico adicional omitido para manter o painel legível.'
+                : `${achado.omitidos} atributos técnicos adicionais omitidos para manter o painel legível.`}
+            </p>
+          )}
+        </article>
+      ))}
+
+      {consulta.estado === 'pronto' && resultadosOmitidos > 0 && (
+        <p className="gp-nota gp-aviso">
+          {resultadosOmitidos} resultados adicionais não foram expandidos. Desligue camadas ou aproxime o mapa para refinar o ponto.
+        </p>
+      )}
+
+      {consulta.estado === 'pronto' && consulta.falhas > 0 && (
+        <p className="gp-nota gp-aviso">
+          {consulta.falhas === 1
+            ? 'Uma camada ativa não respondeu; os demais resultados foram preservados.'
+            : `${consulta.falhas} camadas ativas não responderam; os demais resultados foram preservados.`}
+        </p>
+      )}
+      {momento && <p className="gp-nota">Consulta ao serviço oficial em {momento}.</p>}
+      <p className="gp-nota">
+        Atributos lidos do serviço, sem conferência do ato legal. Use como pista.
+      </p>
+    </div>
   );
 }
 
@@ -195,7 +447,7 @@ function BuscaNoAcervo({ ativas, alternar }) {
   );
 }
 
-export default function GeoprPainel({ ativas, alternar, limpar, atributos }) {
+export default function GeoprPainel({ ativas, alternar, limpar, consulta, aoFecharConsulta }) {
   const porGrupo = useMemo(
     () => GRUPOS.map((g) => ({
       ...g,
@@ -228,6 +480,8 @@ export default function GeoprPainel({ ativas, alternar, limpar, atributos }) {
           registre a camada, a fonte e a data da consulta.
         </span>
       </p>
+
+      <DetalhesDaConsulta consulta={consulta} aoFechar={aoFecharConsulta} />
 
       {porGrupo.map((grupo) => (
         <div key={grupo.id} className="gp-grupo">
@@ -268,42 +522,6 @@ export default function GeoprPainel({ ativas, alternar, limpar, atributos }) {
       ))}
 
       <BuscaNoAcervo ativas={ativas} alternar={alternar} />
-
-      {!!atributos?.length && (
-        <div className="gp-atributos">
-          <h3>No ponto consultado</h3>
-          {atributos.map((achado, indice) => (
-            <article key={`${achado.camada}-${indice}`}>
-              <h4>{achado.camada || 'Camada sem nome'}</h4>
-              {achado.valores.length ? (
-                <dl>
-                  {achado.valores.map((par) => (
-                    <React.Fragment key={par.chave}>
-                      <dt>{par.chave}</dt>
-                      <dd>{par.valor}</dd>
-                    </React.Fragment>
-                  ))}
-                </dl>
-              ) : (
-                <p className="gp-nota">O serviço respondeu sem atributos legíveis.</p>
-              )}
-              {achado.ocultos > 0 && (
-                // Dizer que houve retencao, e quantos campos, evita a leitura
-                // errada de que o servico respondeu apenas isto. Quem precisa
-                // do campo retido consulta o portal do GeoPR, no fim do painel.
-                <p className="gp-nota">
-                  {achado.ocultos === 1
-                    ? '1 campo não exibido aqui por ser dado identificável de processo.'
-                    : `${achado.ocultos} campos não exibidos aqui por serem dado identificável de processo.`}
-                </p>
-              )}
-            </article>
-          ))}
-          <p className="gp-nota">
-            Atributo lido do serviço, sem conferência do ato legal. Use como pista.
-          </p>
-        </div>
-      )}
 
       <a className="gp-portal" href={GEOPR_PORTAL} target="_blank" rel="noopener noreferrer">
         Abrir o portal completo do GeoPR <ExternalLink size={13} aria-hidden="true" />

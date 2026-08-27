@@ -140,6 +140,12 @@ test('menu lateral móvel é modal, contém o foco e navega por teclado', async 
   await trigger.press('Enter');
   const reopened = page.locator('#navegacao-lateral[role="dialog"]');
   const formation = reopened.getByRole('button', { name: /Curso guiado pelo POP/i });
+  // Sob paralelismo alto, a tecla que abre o painel pode terminar antes de a
+  // transicao montar e focar o dialogo. Fixar a pre-condicao conserva o que o
+  // teste quer provar (navegacao por teclado) sem pressionar um alvo em montagem.
+  await expect(reopened).toBeVisible();
+  await formation.focus();
+  await expect(formation).toBeFocused();
   await formation.press('Enter');
   await expect(page).toHaveURL(/#\/formacao$/);
   await expect(

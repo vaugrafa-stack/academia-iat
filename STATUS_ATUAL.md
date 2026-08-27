@@ -1,6 +1,6 @@
 # Status atual da Academia IAT
 
-Atualizado em 14/08/2026. Este é o único documento de situação corrente. Os
+Atualizado em 27/08/2026. Este é o único documento de situação corrente. Os
 planos detalhados do repositório preservam decisões e snapshots históricos.
 Quando houver divergência, prevalecem os manifestos gerados, os testes do commit
 identificado e este status.
@@ -155,6 +155,35 @@ O CSS total ficou em 99,8% do teto bruto e 99,1% do teto compactado. O artefato
 passa, mas a próxima ampliação visual deve recuperar margem ou permanecer
 estritamente carregada sob demanda. As animações são representações didáticas e
 continuam sujeitas à revisão técnica e ao teste com usuários.
+
+### Candidato local de 27/08/2026 — atributos das camadas GeoPR
+
+Os símbolos das camadas oficiais agora são identificados por consulta ao
+`MapServer/identify`: hover mostra um resumo junto ao ponto; clique ou toque
+fixa o resultado e abre detalhes no topo do painel. Nome, tipo, situação,
+município, bacia, rio, potência, finalidade, fonte e horário aparecem quando o
+serviço os declara. Enter consulta o centro visível e Escape fecha o resultado.
+
+A consulta percorre todas as camadas ativas na mesma ordem em que são pintadas,
+com concorrência limitada, prazo por serviço e preservação das respostas já
+obtidas. Ela distingue ponto vazio, erro e resposta parcial. Protocolo,
+portaria, códigos de usuário e ponto, coordenadas, CPF, CNPJ, contato,
+responsável e demais identificadores continuam retidos pela política pública da
+Academia; camadas arbitrárias do acervo usam uma lista conservadora de campos
+semânticos.
+
+As provas locais aprovadas são 67 arquivos e 616 testes no portão integral,
+build em 38 chunks, auditoria premium, 59 cenários Playwright aprovados com seis
+omissões previstas e o cenário PWA/offline aprovado. A inspeção com o serviço
+oficial real passou em desktop e 390 px, sem erro de console ou overflow. O CSS
+total foi preservado em 264,5/265 KiB ao manter o estado visual novo no chunk
+sob demanda do mapa. O workflow público ainda precisa aprovar e publicar o
+mesmo SHA antes de declarar este candidato em produção.
+
+O acervo pesquisável contém mais de mil MapServers externos. Os serviços
+pontuais curados foram conferidos, mas uma camada encontrada pela busca pode não
+publicar subcamada consultável ou ficar temporariamente indisponível; nesses
+casos a interface informa a limitação em vez de inventar atributos.
 
 ## Serviços separados
 

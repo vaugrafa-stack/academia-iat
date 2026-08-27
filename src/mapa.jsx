@@ -13,19 +13,22 @@ import {
   useSatelliteLayer,
 } from './satelliteLayer.js';
 import {
-  atributosLegiveis,
+  consultarCamadasNoPonto,
   pontoParaMercator,
   mercatorParaMapa,
-  urlDeAtributos,
   useCamadasGeopr,
   useLegendas,
 } from './geoprCamadas.js';
-import GeoprPainel, { GeoprLegenda } from './geoprPainel.jsx';
+import GeoprPainel, { GeoprLegenda, GeoprResumoNoMapa } from './geoprPainel.jsx';
 import PainelCoordenada from './painelCoordenada.jsx';
 import { dentroDoParana, geoParaMercator, mercatorParaGeo } from './coordenadas.js';
 
 const COR = { CGH: '#57d8bf', PCH: '#4cc4f5', UHE: '#9fb7ff' };
 const ORDEM = ['CGH', 'PCH', 'UHE'];
+const ESPERA_HOVER_GEOPR_MS = 220;
+const VALIDADE_CACHE_HOVER_GEOPR_MS = 45000;
+const LIMITE_CACHE_HOVER_GEOPR = 40;
+const consultaOciosa = () => ({ estado: 'ociosa', tipo: null, achados: [], falhas: 0 });
 
 let promessaMapa = null;
 let cacheMapa = null;
@@ -218,10 +221,16 @@ function MapaConteudo({ dados, state, setState }) {
   // Camadas do GeoPR ligadas. Guarda o objeto inteiro, e nao so o id, porque a
   // busca no acervo produz camadas que nao estao no catalogo curado.
   const [geopr, setGeopr] = useState([]);
-  const [atributos, setAtributos] = useState([]);
+  const [consultaHover, setConsultaHover] = useState(consultaOciosa);
+  const [consultaFixada, setConsultaFixada] = useState(consultaOciosa);
   // Ponto marcado no mapa: vem do clique ou de uma coordenada digitada.
   const [marca, setMarca] = useState(null);
-  const consultaAberta = useRef(null);
+  const consultaHoverAberta = useRef(null);
+  const consultaFixadaAberta = useRef(null);
+  const esperaHover = useRef(null);
+  const chaveHover = useRef(null);
+  const cacheHoverGeopr = useRef(new Map());
+  const ignorarProximoClique = useRef(false);
 
 
   const usinas = useMemo(() => {
@@ -354,19 +363,45 @@ function MapaConteudo({ dados, state, setState }) {
 
   const legendasGeopr = useLegendas(geopr);
 
+  const encerrarHoverGeopr = React.useCallback(() => {
+    clearTimeout(esperaHover.current);
+    esperaHover.current = null;
+    chaveHover.current = null;
+    consultaHoverAberta.current?.abort();
+    consultaHoverAberta.current = null;
+    setConsultaHover((atual) => (atual.estado === 'ociosa' ? atual : consultaOciosa()));
+  }, []);
+
+  const encerrarConsultaFixada = React.useCallback(() => {
+    consultaFixadaAberta.current?.abort();
+    consultaFixadaAberta.current = null;
+    setConsultaFixada((atual) => (atual.estado === 'ociosa' ? atual : consultaOciosa()));
+  }, []);
+
+  const fecharConsultaPeloPainel = React.useCallback(() => {
+    encerrarConsultaFixada();
+    // O botao desaparece junto com o painel. Devolver o foco ao mapa evita que
+    // teclado/leitor de tela caiam no corpo da pagina sem referencia.
+    svgRef.current?.focus({ preventScroll: true });
+  }, [encerrarConsultaFixada]);
+
   const alternarGeopr = React.useCallback((camada) => {
     setGeopr((atuais) => (atuais.some((c) => c.id === camada.id)
       ? atuais.filter((c) => c.id !== camada.id)
       : [...atuais, camada]));
-    setAtributos([]);
-  }, []);
+    encerrarHoverGeopr();
+    encerrarConsultaFixada();
+  }, [encerrarHoverGeopr, encerrarConsultaFixada]);
 
   const limparGeopr = React.useCallback(() => {
     setGeopr([]);
-    setAtributos([]);
-  }, []);
+    encerrarHoverGeopr();
+    encerrarConsultaFixada();
+  }, [encerrarHoverGeopr, encerrarConsultaFixada]);
 
   const aplicar = (nx, ny, nw, nh) => {
+    encerrarHoverGeopr();
+    encerrarConsultaFixada();
     // Nunca deixa a janela sair do mapa nem passar do mapa inteiro.
     const w = Math.min(larg, Math.max(larg / 8, nw));
     const h = w * (alt / larg);
@@ -380,7 +415,11 @@ function MapaConteudo({ dados, state, setState }) {
     const nw = v.w / fator;
     aplicar(cx - (cx - v.x) / fator, cy - (cy - v.y) / fator, nw, nw * (alt / larg));
   };
-  const inteiro = () => setVista(null);
+  const inteiro = () => {
+    encerrarHoverGeopr();
+    encerrarConsultaFixada();
+    setVista(null);
+  };
 
   // Converte ponto do ecra para coordenada do mapa, para o zoom seguir o cursor.
   const noMapa = (ev) => {
@@ -390,25 +429,65 @@ function MapaConteudo({ dados, state, setState }) {
       cy: v.y + ((ev.clientY - r.top) / r.height) * v.h,
     };
   };
+  const contextoDoPonteiro = (ev) => {
+    const r = svgRef.current?.getBoundingClientRect();
+    if (!r?.width || !r?.height) return null;
+    const pixelX = Math.min(r.width, Math.max(0, ev.clientX - r.left));
+    const pixelY = Math.min(r.height, Math.max(0, ev.clientY - r.top));
+    const cx = v.x + (pixelX / r.width) * v.w;
+    const cy = v.y + (pixelY / r.height) * v.h;
+    const ponto = pontoParaMercator(dados.tileProjection, larg, alt, cx, cy);
+    if (!ponto) return null;
+    return {
+      cx,
+      cy,
+      ponto,
+      pixelX,
+      pixelY,
+      posicao: {
+        xPct: (pixelX / r.width) * 100,
+        yPct: (pixelY / r.height) * 100,
+      },
+    };
+  };
   const roda = (ev) => {
     ev.preventDefault();
     const { cx, cy } = noMapa(ev);
     ampliar(ev.deltaY < 0 ? 1.25 : 1 / 1.25, cx, cy);
   };
   const pegar = (ev) => {
+    encerrarHoverGeopr();
+    if (escala > 1.02) encerrarConsultaFixada();
+    ignorarProximoClique.current = false;
     if (escala <= 1.02) return;                  // sem zoom nao ha o que arrastar
-    arrasto.current = { ...noMapa(ev), x0: v.x, y0: v.y };
+    arrasto.current = {
+      ...noMapa(ev),
+      x0: v.x,
+      y0: v.y,
+      clientX0: ev.clientX,
+      clientY0: ev.clientY,
+      moveu: false,
+    };
     svgRef.current.setPointerCapture?.(ev.pointerId);
   };
   const mover = (ev) => {
     if (!arrasto.current) return;
+    if (!arrasto.current.moveu) {
+      const distancia = Math.hypot(
+        ev.clientX - arrasto.current.clientX0,
+        ev.clientY - arrasto.current.clientY0,
+      );
+      if (distancia < 4) return;
+    }
     const r = svgRef.current.getBoundingClientRect();
     const dx = ((ev.clientX - r.left) / r.width) * v.w;
     const dy = ((ev.clientY - r.top) / r.height) * v.h;
+    arrasto.current.moveu = true;
     aplicar(arrasto.current.x0 + (arrasto.current.cx - arrasto.current.x0 - dx),
             arrasto.current.y0 + (arrasto.current.cy - arrasto.current.y0 - dy), v.w, v.h);
   };
   const soltar = (ev) => {
+    if (arrasto.current?.moveu) ignorarProximoClique.current = true;
     arrasto.current = null;
     svgRef.current.releasePointerCapture?.(ev.pointerId);
   };
@@ -440,41 +519,161 @@ function MapaConteudo({ dados, state, setState }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dados.tileProjection, larg, alt, v.w, v.h]);
 
-  // Pergunta ao GeoPR o que existe no ponto clicado. Complementa o que o mapa
-  // local ja faz no mesmo clique (filtrar bacia, escolher usina); nao substitui.
-  const consultarGeopr = (ev) => {
-    marcarOndeClicou(ev);
-    if (!geopr.length || !camadasGeopr.caixa) return;
-    const { cx, cy } = noMapa(ev);
-    const ponto = pontoParaMercator(dados.tileProjection, larg, alt, cx, cy);
-    if (!ponto) return;
-    consultaAberta.current?.abort();
+  const iniciarConsultaGeopr = ({ tipo, ponto, posicao, chaveCache = null }) => {
+    const fixada = tipo === 'fixada';
+    const referencia = fixada ? consultaFixadaAberta : consultaHoverAberta;
+    const atualizar = fixada ? setConsultaFixada : setConsultaHover;
+    referencia.current?.abort();
     const controle = new AbortController();
-    consultaAberta.current = controle;
-    // Tres camadas no maximo: cada consulta e um desenho no servidor do IAT, e
-    // um painel com dez blocos de atributo nao se le de qualquer forma.
-    Promise.all(geopr.slice(0, 3).map((camada) => {
-      const alvo = urlDeAtributos(camada, {
-        caixa: camadasGeopr.caixa,
-        larguraPx: camadasGeopr.larguraPx,
-        alturaPx: camadasGeopr.alturaPx,
-        x: ponto.x,
-        y: ponto.y,
-      });
-      if (!alvo) return Promise.resolve([]);
-      return fetch(alvo, { credentials: 'omit', mode: 'cors', signal: controle.signal })
-        .then((resposta) => (resposta.ok ? resposta.json() : null))
-        .then((corpo) => atributosLegiveis(corpo))
-        .catch(() => []);
-    })).then((listas) => {
+    referencia.current = controle;
+    const base = {
+      tipo,
+      estado: 'carregando',
+      posicao,
+      achados: [],
+      falhas: 0,
+      consultadas: 0,
+      consultadoEm: new Date().toISOString(),
+    };
+    atualizar(base);
+
+    const densidade = Math.min(2, window.devicePixelRatio || 1);
+    consultarCamadasNoPonto({
+      camadas: geopr,
+      caixa: camadasGeopr.caixa,
+      larguraPx: camadasGeopr.larguraPx,
+      alturaPx: camadasGeopr.alturaPx,
+      ponto,
+      // A imagem WMS e pedida na densidade fisica da tela. A tolerancia precisa
+      // acompanhar essa mesma densidade para nao encolher em monitores HiDPI.
+      tolerancia: Math.round((fixada ? 13 : 9) * densidade),
+      sinal: controle.signal,
+      pararNoPrimeiro: !fixada,
+      concorrencia: 3,
+    }).then((resultado) => {
       if (controle.signal.aborted) return;
-      setAtributos(listas.flat().filter((achado) => achado.valores.length));
+      const estado = resultado.achados.length
+        ? 'pronto'
+        : (resultado.consultadas === 0 && resultado.falhas > 0 ? 'erro' : 'vazio');
+      const concluida = { ...base, ...resultado, estado, consultadoEm: new Date().toISOString() };
+      atualizar(concluida);
+      if (!fixada && chaveCache && ['pronto', 'vazio'].includes(estado)) {
+        const cache = cacheHoverGeopr.current;
+        cache.delete(chaveCache);
+        cache.set(chaveCache, { consulta: concluida, guardadoEm: Date.now() });
+        while (cache.size > LIMITE_CACHE_HOVER_GEOPR) {
+          cache.delete(cache.keys().next().value);
+        }
+      }
+    }).catch(() => {
+      if (!controle.signal.aborted) atualizar({ ...base, estado: 'erro', falhas: geopr.length });
     });
   };
 
-  useEffect(() => () => consultaAberta.current?.abort(), []);
+  // Hover nao e um fluxo separado de dados: apenas faz a mesma identificacao
+  // do clique, com atraso e parando na primeira camada visivel que responder.
+  const moverComConsulta = (ev) => {
+    mover(ev);
+    if (arrasto.current || ev.pointerType === 'touch' || !geopr.length || !camadasGeopr.caixa) {
+      if (arrasto.current || ev.pointerType === 'touch') encerrarHoverGeopr();
+      return;
+    }
+    const contexto = contextoDoPonteiro(ev);
+    if (!contexto) return;
+    const caixa = camadasGeopr.caixa;
+    // Celula de oito pixels: tremor natural do mouse sobre o mesmo simbolo nao
+    // cancela e repete a mesma consulta. Vista e camadas fazem parte da chave.
+    const chave = [
+      geopr.map((camada) => camada.id).join(','),
+      caixa.minX.toFixed(0), caixa.minY.toFixed(0), caixa.maxX.toFixed(0), caixa.maxY.toFixed(0),
+      camadasGeopr.larguraPx, camadasGeopr.alturaPx,
+      v.x.toFixed(3), v.y.toFixed(3), v.w.toFixed(3), v.h.toFixed(3),
+      Math.floor(contexto.pixelX / 8), Math.floor(contexto.pixelY / 8),
+    ].join(':');
+    if (chaveHover.current === chave) return;
+    chaveHover.current = chave;
+    clearTimeout(esperaHover.current);
+    consultaHoverAberta.current?.abort();
+    const emCache = cacheHoverGeopr.current.get(chave);
+    if (emCache && Date.now() - emCache.guardadoEm <= VALIDADE_CACHE_HOVER_GEOPR_MS) {
+      // A -> B -> A volta instantaneamente e evita repetir a mesma bateria de
+      // requests no servidor publico. A posicao acompanha o cursor atual.
+      cacheHoverGeopr.current.delete(chave);
+      cacheHoverGeopr.current.set(chave, emCache);
+      setConsultaHover({ ...emCache.consulta, tipo: 'hover', posicao: contexto.posicao });
+      return;
+    }
+    if (emCache) cacheHoverGeopr.current.delete(chave);
+    setConsultaHover({
+      estado: 'aguardando',
+      tipo: 'hover',
+      posicao: contexto.posicao,
+      achados: [],
+      falhas: 0,
+    });
+    esperaHover.current = setTimeout(() => {
+      iniciarConsultaGeopr({
+        tipo: 'hover',
+        ponto: contexto.ponto,
+        posicao: contexto.posicao,
+        chaveCache: chave,
+      });
+    }, ESPERA_HOVER_GEOPR_MS);
+  };
+
+  // Clique e toque fixam o resultado e consultam TODAS as camadas ativas. O
+  // marcador de coordenada continua sendo atualizado pelo mesmo gesto.
+  const consultarGeopr = (ev) => {
+    if (ignorarProximoClique.current) {
+      ignorarProximoClique.current = false;
+      return;
+    }
+    marcarOndeClicou(ev);
+    encerrarHoverGeopr();
+    if (!geopr.length || !camadasGeopr.caixa) return;
+    const contexto = contextoDoPonteiro(ev);
+    if (!contexto) return;
+    iniciarConsultaGeopr({
+      tipo: 'fixada',
+      ponto: contexto.ponto,
+      posicao: contexto.posicao,
+    });
+  };
+
+  useEffect(() => () => {
+    clearTimeout(esperaHover.current);
+    consultaHoverAberta.current?.abort();
+    consultaFixadaAberta.current?.abort();
+  }, []);
+
+  const consultarCentroGeopr = () => {
+    if (!geopr.length || !camadasGeopr.caixa) return;
+    encerrarHoverGeopr();
+    const cx = v.x + v.w / 2;
+    const cy = v.y + v.h / 2;
+    const ponto = pontoParaMercator(dados.tileProjection, larg, alt, cx, cy);
+    const geo = ponto && mercatorParaGeo(ponto.x, ponto.y);
+    if (!ponto) return;
+    if (geo) setMarca({ ...geo, x: cx, y: cy, forma: 'teclado' });
+    iniciarConsultaGeopr({
+      tipo: 'fixada',
+      ponto,
+      posicao: { xPct: 50, yPct: 50 },
+    });
+  };
+
   // Teclado: a mesma navegacao sem depender de mouse.
   const tecla = (ev) => {
+    if (ev.key === 'Escape' && consultaFixada.estado !== 'ociosa') {
+      ev.preventDefault();
+      encerrarConsultaFixada();
+      return;
+    }
+    if ((ev.key === 'Enter' || ev.key === ' ') && geopr.length) {
+      ev.preventDefault();
+      consultarCentroGeopr();
+      return;
+    }
     const passo = v.w * 0.15;
     const acoes = {
       '+': () => ampliar(1.3), '=': () => ampliar(1.3), '-': () => ampliar(1 / 1.3),
@@ -489,6 +688,9 @@ function MapaConteudo({ dados, state, setState }) {
   const camada = (id) => setCamadas((c) => ({ ...c, [id]: !c[id] }));
 
   const raio = (u) => (u.mw ? Math.max(3.2, Math.min(11, 3 + Math.sqrt(u.mw) * 0.75)) : 3.2);
+  const consultaNoMapa = ['carregando', 'pronto', 'vazio', 'erro'].includes(consultaHover.estado)
+    ? consultaHover
+    : consultaFixada;
 
   return (
     <div className="page mapa-page">
@@ -527,7 +729,12 @@ function MapaConteudo({ dados, state, setState }) {
             MGH, CGH, PCH ou UHE calculada no exercício é apenas a leitura didática da potência pelo POP;
             uma divergência exige conferência oficial e não altera o cadastro automaticamente.
           </p>
-          <p id="mp-ajuda-teclado" className="mp-ajuda-teclado">Com o mapa em foco: setas deslocam, mais e menos aproximam e afastam, zero volta ao mapa inteiro. Para selecionar uma bacia sem mouse, use a lista “Bacia hidrográfica” no painel.</p>
+          <p id="mp-ajuda-teclado" className="mp-ajuda-teclado">Com o mapa em foco: setas deslocam, mais e menos aproximam e afastam, zero volta ao mapa inteiro. Com uma camada GeoPR ligada, Enter consulta o centro visível. Para selecionar uma bacia sem mouse, use a lista “Bacia hidrográfica” no painel.</p>
+          {!!geopr.length && (
+            <p className="mp-limite-camada gp-ajuda-consulta">
+              Passe o mouse sobre um símbolo do GeoPR para ver o resumo. Clique ou toque para fixar os detalhes; identificadores e dados desnecessários não são exibidos.
+            </p>
+          )}
           <div className="mp-map-stage">
             <svg ref={svgRef} viewBox={`${v.x} ${v.y} ${v.w} ${v.h}`} role="img" tabIndex={0}
                  aria-describedby="mp-ajuda-teclado"
@@ -540,8 +747,9 @@ function MapaConteudo({ dados, state, setState }) {
                    // preservado, do mesmo jeito que o modo satelite ja fazia.
                    camadasGeopr.pedidos.some((p) => p.camada.ordem !== 'topo') ? 'gp-fundo-on' : '',
                  ].filter(Boolean).join(' ')}
-                 onWheel={roda} onPointerDown={pegar} onPointerMove={mover}
-                 onPointerUp={soltar} onPointerCancel={soltar} onKeyDown={tecla}
+                 onWheel={roda} onPointerDown={pegar} onPointerMove={moverComConsulta}
+                 onPointerUp={soltar} onPointerCancel={soltar} onPointerLeave={encerrarHoverGeopr}
+                 onKeyDown={tecla}
                  onClick={consultarGeopr}
                  aria-label={`Mapa do Paraná com ${(dados.bacias || []).length} bacias hidrográficas e ${usinas.length} usinas em exibição`}>
               {camadas.satelite && satelite.online && (
@@ -651,6 +859,8 @@ function MapaConteudo({ dados, state, setState }) {
               </g>}
             </svg>
 
+            <GeoprResumoNoMapa consulta={consultaNoMapa} />
+
             <GeoprLegenda
               camadas={geopr}
               legendas={legendasGeopr}
@@ -715,7 +925,8 @@ function MapaConteudo({ dados, state, setState }) {
             ativas={geopr}
             alternar={alternarGeopr}
             limpar={limparGeopr}
-            atributos={atributos}
+            consulta={consultaFixada}
+            aoFecharConsulta={fecharConsultaPeloPainel}
           />
           {state && setState && <ExercicioEnquadrar usinas={dados.usinas} state={state} setState={setState} />}
           <div className="mp-busca">

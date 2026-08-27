@@ -1004,3 +1004,63 @@ mede esse elo. A sequência autorizável para o próximo ciclo é:
    e só então ligar a Academia à Área Técnica;
 6. manter documentos reais bloqueados até aprovação institucional, base legal,
    retenção, resposta a incidente e revisão humana estarem formalizadas.
+
+## Adendo de execução — identificação das camadas GeoPR — 27/08/2026
+
+### Problema e evidência
+
+As camadas oficiais eram desenhadas como uma imagem WMS única. Por isso os
+símbolos não possuíam elementos próprios no navegador e não podiam responder ao
+hover. O `identify` REST já existente só era disparado por clique, consultava as
+três primeiras camadas ativas e escondia, com o mesmo estado vazio, falha de
+rede, ponto sem feição e objeto cujos atributos haviam sido retidos.
+
+Os sete serviços pontuais do catálogo curado responderam ao `identify` oficial
+com CORS para o domínio público. A camada de usinas devolveu nome, tipo,
+situação, município, bacia, rio e potência; portanto, a lacuna era de interação
+e apresentação, não de disponibilidade dos dados.
+
+### Solução implementada
+
+- hover de mouse e caneta com espera de 220 ms, célula de estabilização, cache
+  curto e cancelamento da consulta anterior;
+- busca da camada visualmente superior para a inferior, respeitando as faixas
+  reais `topo` e `fundo` e interrompida no primeiro acerto durante o hover;
+- tooltip junto ao símbolo com camada, nome e resumo semântico;
+- clique ou toque fixando todos os resultados seguros, com no máximo três
+  consultas simultâneas, sem corte a partir da quarta camada;
+- painel de detalhes movido para o topo das camadas, com fonte, identificador do
+  serviço, data da consulta, finalidade, atributos e estados distintos de
+  carregamento, ponto vazio, resposta parcial e indisponibilidade;
+- Enter consultando o centro visível e Escape fechando o resultado, para que o
+  conteúdo não dependa apenas de hover;
+- retenção de protocolo, portaria, códigos, coordenadas, CPF, CNPJ, contatos,
+  responsáveis e outros identificadores, com allowlist conservadora para
+  camadas arbitrárias; valores extensos são limitados e continuam sendo
+  renderizados apenas como texto;
+- prazo por camada e prazo total que convertem serviço lento em falha parcial,
+  sem apagar o resultado das camadas que já responderam;
+- limite de expansão no painel, com contagem explícita de resultados adicionais
+  em consultas muito amplas;
+- tooltip responsivo e controle de fechamento com alvo de 44 × 44 px.
+
+### Provas e limites
+
+Os testes cobrem resumo, privacidade, valor extenso, ordem visual, quarta camada,
+timeout parcial, cache de hover, clique, toque, teclado, vazio, erro e recorte em
+320, 360, 390, 430 e 1440 px. O portão integral aprovou 67 arquivos e 616 testes;
+o build passou em 38 chunks, a matriz Playwright aprovou 59 cenários com seis
+omissões previstas e o cenário
+PWA/offline também passou. O build preserva o orçamento: CSS total em
+264,5/265 KiB e JavaScript total em 854,0/900 KiB; os estilos exclusivos do
+estado dinâmico permanecem no chunk sob demanda do mapa.
+
+A validação com o serviço real identificou quatro registros sobrepostos de uma
+usina no hover e no clique, exibiu nome, tipo, situação e município, reteve o
+número de protocolo e mostrou fonte e horário. Em 390 px não houve overflow, o
+tooltip permaneceu dentro do mapa e o painel completo ficou disponível abaixo.
+
+Serviços encontrados pela busca do acervo completo continuam sujeitos às
+capacidades declaradas por cada MapServer. Um serviço sem subcamada consultável
+ou temporariamente indisponível agora informa a limitação, mas a Academia não
+pode garantir atributos para cada um dos mais de mil serviços externos.

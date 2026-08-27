@@ -134,10 +134,9 @@ export function urlDaImagem(camada, { bbox, larguraPx, alturaPx }) {
 /**
  * Endereco da consulta de atributos num ponto.
  *
- * Usa o `identify` do REST da Esri, e nao o GetFeatureInfo do WMS, porque o
- * primeiro devolve JSON e o segundo, neste servidor, devolve HTML ou GML. Ler
- * HTML de terceiro para extrair atributo e fragil: muda o estilo do servidor e
- * a leitura quebra sem aviso.
+ * Usa o `identify` do REST da Esri, e nao o GetFeatureInfo do WMS. O WMS passou
+ * a anunciar GeoJSON em 2026, mas o REST continua sendo o contrato comum aos
+ * servicos curados e ja devolve o envelope JSON que a filtragem abaixo valida.
  */
 export function urlDeAtributos(camada, { caixa, larguraPx, alturaPx, x, y, tolerancia = 6 }) {
   if (!camada?.caminho || !caixa) return null;
@@ -168,7 +167,14 @@ export function urlDeAtributos(camada, { caixa, larguraPx, alturaPx, x, y, toler
 // emitiria: `Shape.STArea()` e `Shape.STLength()` do SQL Server, `st_area(shape)`
 // do PostGIS, alem do identificador de linha. Um teste pegou justamente a
 // versao ingenua desta lista deixando `Shape.STArea()` passar como atributo.
-const CAMPOS_IGNORADOS = /^(?:objectid\w*|fid|gid|globalid|se_anno\w*|shape\b.*|st_(?:area|length|perimeter)\s*\(.*)$/i;
+const normalizarChave = (chave) => String(chave || '')
+  .normalize('NFD')
+  .replace(/[\u0300-\u036f]/g, '')
+  .replace(/[^a-zA-Z0-9]+/g, '_')
+  .replace(/^_|_$/g, '')
+  .toLowerCase();
+
+const CAMPOS_IGNORADOS = /^(?:objectid\w*|fid|gid|globalid|se_anno\w*|shape(?:_|$).*|st_(?:area|length|perimeter).*)$/i;
 
 /**
  * Campos que esta plataforma nao exibe, mesmo vindo de servico publico.
@@ -183,12 +189,19 @@ const CAMPOS_IGNORADOS = /^(?:objectid\w*|fid|gid|globalid|se_anno\w*|shape\b.*|
  * O nome da usina continua: o mapa ja plota o registro publico da ANEEL com
  * nome, e a camada do IAT serve justamente para comparar as duas leituras.
  */
-const CAMPOS_SENSIVEIS = new RegExp(
-  '(protocolo|processo|cnpj|cpf|requerente|empreendedor|razao[_ ]?social'
-  + '|propriet|interessad|responsav|contato|e[-_ ]?mail|telefone|celular'
-  + '|endereco|logradouro|\\bcep\\b|\\bart\\b|\\bsei\\b|autuad|infrac)',
-  'i',
-);
+const CAMPOS_SENSIVEIS = new RegExp([
+  // Identificadores de processo, outorga, pessoa, usuario ou registro.
+  '(?:^|_)(?:protocolo|processo|cnpj|cpf|portaria|crh|sei|art|cep|documento|doc|inscricao)(?:_|$)',
+  '(?:^|_)(?:id|codigo|cod|usu_codigo|codigo_ponto)(?:_|$)',
+  // Localizacao exata nao e necessaria para explicar o simbolo: o proprio mapa
+  // ja mostra a posicao sem republicar coordenadas da tabela.
+  '(?:^|_)(?:coord(?:enada)?|latitude|longitude|lat|lon|lng|utm|easting|northing)(?:_|$)',
+  // Identidade e contato. A chave e normalizada antes do teste, portanto
+  // RESPONSÁVEL, ENDEREÇO e RAZÃO_SOCIAL entram aqui tambem.
+  'requerent|empreendedor|razao_social|nome_fantasia|propriet|interessad|responsav',
+  'contato|email|telefone|celular|endereco|logradouro|usuario|pessoa',
+  'autuad|infrac|matricula|imovel',
+].join('|'), 'i');
 
 /**
  * Formatos que denunciam dado identificavel independentemente do nome do campo.
@@ -207,27 +220,327 @@ const VALORES_SENSIVEIS = [
   /\d{5}-\d{3}(?:\D|$)/, // CEP
 ];
 
-export function atributosLegiveis(resposta, limite = 12) {
+// A interface nao despeja colunas desconhecidas. Camadas curadas podem mostrar
+// nomes de feicoes/empreendimentos e descricoes tecnicas; no acervo arbitrario,
+// o fallback e mais conservador porque um campo NOME pode ser o de uma pessoa.
+// Nos dois casos, tipo, situacao, municipio, rio, bacia e medidas ambientais
+// continuam disponiveis para explicar o que se ve.
+const CAMPOS_SEMANTICOS = [
+  { teste: /^(?:nome|denominacao|titulo|nm_empreendimento|caverna)$/, somenteCurada: true },
+  { teste: /^(?:nome|nm)_(?:uc|unidade|caverna|empreendimento|barragem|usina|aproveitamento|sitio|bem)$/, somenteCurada: true },
+  { teste: /^(?:tipo|tipologia|categoria|classe|esfera)(?:_|$)/ },
+  { teste: /(?:^|_)(?:situacao|status)(?:_|$)|^sitout_descricao$/ },
+  { teste: /^(?:municipio|nm_municipio|mun_nome|cidade)(?:_|$)/ },
+  { teste: /^(?:rio|rio_nome|nome_rio|hidrografia)(?:_|$)/ },
+  { teste: /^(?:bacia|bac_nome|nome_bacia)(?:_|$)/ },
+  { teste: /^(?:pot_solic|potencia|pot_mw|vazao|area(?:_ha|_m2)?|cota|altitude|capacidade|extensao|comprimento)(?:_|$)/ },
+  { teste: /^(?:bioma|zona|zoneamento|finalidade|uso|vegetacao|formacao|substrato|litologia)(?:_|$)/ },
+  { teste: /^(?:data_valid|data_proto|ano|vigencia|tipos_de_l)(?:_|$)/, somenteCurada: true },
+  { teste: /^(?:descricao|desc)(?:_|$)/, somenteCurada: true },
+];
+
+function prioridadeDoCampo(chave, camada) {
+  const normalizada = normalizarChave(chave);
+  const curada = camada?.doAcervo !== true;
+  for (let indice = 0; indice < CAMPOS_SEMANTICOS.length; indice += 1) {
+    const regra = CAMPOS_SEMANTICOS[indice];
+    if ((!regra.somenteCurada || curada) && regra.teste.test(normalizada)) return indice;
+  }
+  return null;
+}
+
+export function atributosLegiveis(resposta, limite = 12, camada = null) {
   const achados = Array.isArray(resposta?.results) ? resposta.results : [];
   return achados.slice(0, 4).map((achado) => {
     let ocultos = 0;
-    const valores = Object.entries(achado.attributes || {})
-      .filter(([chave, valor]) => {
-        if (CAMPOS_IGNORADOS.test(chave)) return false;
-        const texto = String(valor ?? '').trim();
-        if (texto === '' || texto.toLowerCase() === 'null') return false;
-        if (CAMPOS_SENSIVEIS.test(chave) || VALORES_SENSIVEIS.some((p) => p.test(texto))) {
-          ocultos += 1;
-          return false;
-        }
-        return true;
-      })
+    const elegiveis = [];
+    Object.entries(achado.attributes || {}).forEach(([chave, valor], indice) => {
+      const normalizada = normalizarChave(chave);
+      if (CAMPOS_IGNORADOS.test(normalizada)) return;
+      const texto = String(valor ?? '').trim();
+      if (texto === '' || texto.toLowerCase() === 'null') return;
+      const prioridade = prioridadeDoCampo(chave, camada);
+      if (
+        CAMPOS_SENSIVEIS.test(normalizada)
+        || VALORES_SENSIVEIS.some((p) => p.test(texto))
+        || prioridade == null
+      ) {
+        ocultos += 1;
+        return;
+      }
+      elegiveis.push({ chave, texto, prioridade, indice });
+    });
+    elegiveis.sort((a, b) => a.prioridade - b.prioridade || a.indice - b.indice);
+    const omitidos = Math.max(0, elegiveis.length - limite);
+    const valores = elegiveis
       .slice(0, limite)
-      .map(([chave, valor]) => ({ chave, valor: String(valor).trim() }));
+      .map(({ chave, texto }) => {
+        // Alguns servicos guardam observacoes inteiras num unico campo. O
+        // painel e uma identificacao espacial, nao um despejo da tabela: o
+        // limite preserva o contexto sem permitir que um valor cubra a tela.
+        return {
+          chave,
+          valor: texto.length > 500 ? `${texto.slice(0, 497)}...` : texto,
+        };
+      });
     // `ocultos` volta para a tela contar quantos campos foram retidos. Cortar
     // em silencio faria a pessoa acreditar que o servico respondeu so isso.
-    return { camada: String(achado.layerName || '').trim(), valores, ocultos };
+    return {
+      camada: String(achado.layerName || '').trim(),
+      valores,
+      ocultos,
+      omitidos,
+    };
   });
+}
+
+const ROTULOS_DE_ATRIBUTO = new Map([
+  ['nome', 'Nome'],
+  ['tipo', 'Tipo'],
+  ['categoria', 'Categoria'],
+  ['classe', 'Classe'],
+  ['situacao', 'Situação'],
+  ['status', 'Situação'],
+  ['municipio', 'Município'],
+  ['nm_municipio', 'Município'],
+  ['rio', 'Rio'],
+  ['rio_nome', 'Rio'],
+  ['hidrografia', 'Hidrografia'],
+  ['bacia', 'Bacia'],
+  ['bac_nome', 'Bacia'],
+  ['pot_solic', 'Potência solicitada'],
+  ['potencia', 'Potência'],
+  ['pot_mw', 'Potência (MW)'],
+  ['area_ha', 'Área (ha)'],
+  ['data_proto', 'Data do protocolo'],
+  ['data_valid', 'Data validada'],
+  ['tipos_de_l', 'Tipo de licença'],
+  ['descricao', 'Descrição'],
+  ['denominacao', 'Denominação'],
+  ['nm_empreendimento', 'Empreendimento'],
+  ['sitout_descricao', 'Situação'],
+  ['caverna', 'Caverna'],
+]);
+
+/** Traduz nomes de coluna do servico para rotulos que uma pessoa entende. */
+export function rotuloDeAtributo(chave) {
+  const normalizada = normalizarChave(chave);
+  const conhecido = ROTULOS_DE_ATRIBUTO.get(normalizada);
+  if (conhecido) return conhecido;
+  const texto = String(chave || '').replace(/[_-]+/g, ' ').replace(/\s+/g, ' ').trim();
+  return texto ? texto.charAt(0).toLocaleUpperCase('pt-BR') + texto.slice(1).toLocaleLowerCase('pt-BR') : 'Atributo';
+}
+
+const CHAVES_DE_TITULO = [
+  /^(?:nome|denominacao|titulo|nm_empreendimento|caverna)$/,
+  /^(?:nome|nm)_(?:uc|unidade|caverna|empreendimento|barragem|usina|aproveitamento|sitio|bem)$/,
+  /^hidrografia$/,
+  /^(?:descricao|desc)$/,
+];
+
+const encurtar = (valor, limite) => {
+  const texto = String(valor || '').trim();
+  return Number.isFinite(limite) && texto.length > limite
+    ? `${texto.slice(0, Math.max(0, limite - 3)).trimEnd()}...`
+    : texto;
+};
+
+/** Nome curto para o tooltip; cai para a camada quando o registro nao o declara. */
+export function tituloDoAchado(achado, limite = Infinity) {
+  const valores = Array.isArray(achado?.valores) ? achado.valores : [];
+  const principal = valores.find(({ chave }) => {
+    const normalizada = normalizarChave(chave);
+    return CHAVES_DE_TITULO.some((candidata) => candidata.test(normalizada));
+  });
+  return encurtar(principal?.valor
+    || String(achado?.camada || '').trim()
+    || String(achado?.origem?.titulo || '').trim()
+    || 'Registro do GeoPR', limite);
+}
+
+const ORDEM_DO_RESUMO = [
+  /^(?:tipo|tipologia|categoria|classe)(?:_|$)/,
+  /(?:^|_)(?:situacao|status)(?:_|$)|^sitout_descricao$/,
+  /^(?:municipio|nm_municipio|mun_nome|cidade)(?:_|$)/,
+  /^(?:rio|rio_nome|nome_rio|hidrografia)(?:_|$)/,
+  /^(?:bacia|bac_nome|nome_bacia)(?:_|$)/,
+  /^(?:pot_solic|potencia|pot_mw|vazao|area(?:_ha|_m2)?)(?:_|$)/,
+];
+
+/** Dois ou tres fatos uteis para a leitura rapida junto ao cursor. */
+export function resumoDoAchado(achado, limite = 3, limiteDoValor = 96) {
+  const titulo = tituloDoAchado(achado);
+  return (Array.isArray(achado?.valores) ? achado.valores : [])
+    .filter((par) => par.valor !== titulo)
+    .map((par, indice) => {
+      const normalizada = normalizarChave(par.chave);
+      const prioridade = ORDEM_DO_RESUMO.findIndex((padrao) => padrao.test(normalizada));
+      return { ...par, indice, prioridade: prioridade < 0 ? 999 : prioridade };
+    })
+    .sort((a, b) => a.prioridade - b.prioridade || a.indice - b.indice)
+    .slice(0, Math.max(0, limite))
+    .map(({ chave, valor }) => ({
+      chave,
+      rotulo: rotuloDeAtributo(chave),
+      valor: encurtar(valor, limiteDoValor),
+    }));
+}
+
+const origemPublica = (camada) => ({
+  id: String(camada?.id || ''),
+  titulo: String(camada?.titulo || ''),
+  fonte: camada?.fonte == null ? null : String(camada.fonte),
+  paraQue: String(camada?.paraQue || ''),
+  caminho: String(camada?.caminho || ''),
+});
+
+export const PRAZO_CAMADA_GEOPR_MS = 14000;
+export const PRAZO_TOTAL_GEOPR_MS = 20000;
+
+async function consultarUmaCamada(camada, opcoes, fetchImpl) {
+  const alvo = urlDeAtributos(camada, opcoes);
+  if (!alvo) return { achados: [], consultada: false };
+  const controle = new AbortController();
+  let relogio;
+  let cancelarExterno;
+  const abortada = () => {
+    const erro = new Error('GeoPR identify: consulta cancelada');
+    erro.name = 'AbortError';
+    return erro;
+  };
+  const externa = new Promise((_, rejeitar) => {
+    cancelarExterno = () => {
+      controle.abort();
+      rejeitar(abortada());
+    };
+    if (opcoes.sinal?.aborted) cancelarExterno();
+    else opcoes.sinal?.addEventListener('abort', cancelarExterno, { once: true });
+  });
+  const expirou = new Promise((_, rejeitar) => {
+    relogio = setTimeout(() => {
+      controle.abort();
+      const erro = new Error('GeoPR identify: prazo da camada excedido');
+      erro.name = 'TimeoutError';
+      rejeitar(erro);
+    }, opcoes.prazoCamadaMs);
+  });
+  const requisicao = (async () => {
+    const resposta = await fetchImpl(alvo, {
+      credentials: 'omit',
+      mode: 'cors',
+      signal: controle.signal,
+    });
+    if (!resposta.ok) throw new Error(`GeoPR identify: HTTP ${resposta.status}`);
+    const corpo = await resposta.json();
+    if (corpo?.error) throw new Error('GeoPR identify: resposta de erro');
+    const origem = origemPublica(camada);
+    return {
+      consultada: true,
+      achados: atributosLegiveis(corpo, 12, camada).map((achado) => ({ ...achado, origem })),
+    };
+  })();
+  try {
+    return await Promise.race([requisicao, externa, expirou]);
+  } finally {
+    clearTimeout(relogio);
+    opcoes.sinal?.removeEventListener('abort', cancelarExterno);
+  }
+}
+
+/**
+ * Consulta as camadas ativas no ponto, sem sobrecarregar o servidor publico.
+ *
+ * No hover, a ordem e do topo para o fundo e a busca para no primeiro acerto.
+ * No clique, todas sao consultadas, mas apenas tres requisicoes correm juntas.
+ */
+export async function consultarCamadasNoPonto({
+  camadas,
+  caixa,
+  larguraPx,
+  alturaPx,
+  ponto,
+  tolerancia = 10,
+  sinal,
+  pararNoPrimeiro = false,
+  concorrencia = 3,
+  prazoCamadaMs = PRAZO_CAMADA_GEOPR_MS,
+  prazoTotalMs = PRAZO_TOTAL_GEOPR_MS,
+  fetchImpl = globalThis.fetch,
+}) {
+  const base = [...(camadas || [])];
+  // O SVG pinta todas as camadas de fundo primeiro e todas as de topo depois,
+  // independentemente da ordem em que foram ligadas. Dentro de cada faixa, a
+  // ultima ativada fica por cima. A consulta precisa repetir exatamente isso.
+  const fila = [
+    ...base.filter((camada) => camada?.ordem === 'topo').reverse(),
+    ...base.filter((camada) => camada?.ordem !== 'topo').reverse(),
+  ];
+  if (!fila.length || !ponto || typeof fetchImpl !== 'function') {
+    return { achados: [], consultadas: 0, falhas: 0 };
+  }
+  const controleTotal = new AbortController();
+  const cancelarTotal = () => controleTotal.abort();
+  if (sinal?.aborted) cancelarTotal();
+  else sinal?.addEventListener('abort', cancelarTotal, { once: true });
+  const relogioTotal = setTimeout(cancelarTotal, Math.max(1, prazoTotalMs));
+  const opcoes = {
+    caixa,
+    larguraPx,
+    alturaPx,
+    x: ponto.x,
+    y: ponto.y,
+    tolerancia,
+    sinal: controleTotal.signal,
+    prazoCamadaMs: Math.max(1, prazoCamadaMs),
+  };
+  let consultadas = 0;
+  let falhas = 0;
+
+  const executar = async (camada) => {
+    try {
+      const resultado = await consultarUmaCamada(camada, opcoes, fetchImpl);
+      if (resultado.consultada) consultadas += 1;
+      return resultado.achados;
+    } catch (erro) {
+      // Abort externo significa que o cursor/consulta mudou e o resultado e
+      // obsoleto. Timeout interno, inclusive o prazo total, e falha parcial.
+      if (sinal?.aborted) throw erro;
+      falhas += 1;
+      return [];
+    }
+  };
+
+  try {
+    if (pararNoPrimeiro) {
+      for (const camada of fila) {
+        // Sequencial por intencao: o primeiro acerto e a camada visualmente mais
+        // alta, e as demais nem precisam receber uma requisicao de hover.
+        // eslint-disable-next-line no-await-in-loop
+        const achados = await executar(camada);
+        if (achados.length) return { achados, consultadas, falhas };
+      }
+      return { achados: [], consultadas, falhas };
+    }
+
+    const porCamada = Array.from({ length: fila.length }, () => []);
+    let proxima = 0;
+    const trabalhador = async () => {
+      while (proxima < fila.length) {
+        const indice = proxima;
+        proxima += 1;
+        // O indice preserva a ordem visual mesmo quando as respostas chegam fora
+        // de ordem; o limite de trabalhadores protege o servico compartilhado.
+        // eslint-disable-next-line no-await-in-loop
+        porCamada[indice] = await executar(fila[indice]);
+      }
+    };
+    const quantidade = Math.min(fila.length, Math.max(1, Math.floor(concorrencia) || 1));
+    await Promise.all(Array.from({ length: quantidade }, trabalhador));
+    return { achados: porCamada.flat(), consultadas, falhas };
+  } finally {
+    clearTimeout(relogioTotal);
+    sinal?.removeEventListener('abort', cancelarTotal);
+  }
 }
 
 // ---------------------------------------------------------------------------

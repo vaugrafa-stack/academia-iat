@@ -65,6 +65,7 @@ const dados = {
 };
 
 afterEach(() => {
+  vi.useRealTimers();
   document.body.innerHTML = '';
   vi.restoreAllMocks();
   vi.unstubAllGlobals();
@@ -319,6 +320,241 @@ describe('didática e acesso por teclado no mapa', () => {
     expect(host.querySelectorAll('.mp-bacias path')).toHaveLength(2);
     expect(host.querySelectorAll('.mp-usinas circle')).toHaveLength(2);
 
+    await act(async () => root.unmount());
+  });
+
+  it('identifica camada GeoPR no hover e fixa detalhes seguros no clique', async () => {
+    vi.useFakeTimers();
+    const fetchMock = vi.fn(async (alvo) => {
+      const url = String(alvo);
+      if (url.includes('/legend?')) {
+        return {
+          ok: true,
+          json: async () => ({ layers: [] }),
+        };
+      }
+      if (url.includes('/identify?')) {
+        return {
+          ok: true,
+          status: 200,
+          json: async () => ({
+            results: [{
+              layerName: 'Usinas de Geração de Energia Hidrelétrica - IAT',
+              attributes: {
+                OBJECTID: '318',
+                PROTOCOLO: '18.945.221-4',
+                NOME: 'Usina consultada',
+                TIPO: 'CGH',
+                'SITUAÇÃO': 'Em análise',
+                MUNICIPIO: 'Município de exemplo',
+                RIO: 'Rio de exemplo',
+              },
+            }],
+          }),
+        };
+      }
+      throw new Error(`Busca inesperada: ${url}`);
+    });
+    vi.stubGlobal('fetch', fetchMock);
+    const host = document.createElement('div');
+    document.body.append(host);
+    const root = createRoot(host);
+
+    await act(async () => {
+      root.render(<MapaParana dados={dados} />);
+    });
+    const botao = [...host.querySelectorAll('.gp-grupo button')]
+      .find((item) => item.textContent.includes('Usinas de geração hidrelétrica'));
+    await act(async () => botao.click());
+    expect(host.textContent).toContain('Passe o mouse sobre um símbolo do GeoPR');
+
+    const svg = host.querySelector('.mp-map-stage>svg');
+    Object.defineProperty(svg, 'getBoundingClientRect', {
+      configurable: true,
+      value: () => ({ left: 0, top: 0, right: 1000, bottom: 620, width: 1000, height: 620 }),
+    });
+    const mover = new MouseEvent('pointermove', {
+      bubbles: true,
+      clientX: 400,
+      clientY: 300,
+    });
+    Object.defineProperty(mover, 'pointerType', { value: 'mouse' });
+    await act(async () => {
+      svg.dispatchEvent(mover);
+      vi.advanceTimersByTime(221);
+      await Promise.resolve();
+      await Promise.resolve();
+    });
+
+    const tooltip = host.querySelector('.gp-tooltip');
+    expect(tooltip?.textContent).toContain('Usina consultada');
+    expect(tooltip?.textContent).toContain('CGH');
+    expect(tooltip?.textContent).toContain('Clique para fixar os detalhes');
+    expect(tooltip?.textContent).not.toContain('18.945.221-4');
+    expect(host.querySelector('.gp-atributos')).toBeNull();
+
+    // Voltar a uma celula consultada reutiliza o resultado por alguns segundos,
+    // em vez de repetir requests identicos no servidor publico (A -> B -> A).
+    const moverOutroPonto = new MouseEvent('pointermove', {
+      bubbles: true,
+      clientX: 440,
+      clientY: 300,
+    });
+    Object.defineProperty(moverOutroPonto, 'pointerType', { value: 'mouse' });
+    await act(async () => {
+      svg.dispatchEvent(moverOutroPonto);
+      vi.advanceTimersByTime(221);
+      await Promise.resolve();
+      await Promise.resolve();
+    });
+    expect(fetchMock.mock.calls.filter(([url]) => String(url).includes('/identify?'))).toHaveLength(2);
+    await act(async () => {
+      svg.dispatchEvent(mover);
+      await Promise.resolve();
+    });
+    expect(fetchMock.mock.calls.filter(([url]) => String(url).includes('/identify?'))).toHaveLength(2);
+
+    // A mesma celula depois de zoom representa outra coordenada e nao pode
+    // herdar o resultado armazenado antes de a imagem WMS estabilizar.
+    await act(async () => host.querySelector('button[aria-label="Aproximar"]').click());
+    await act(async () => {
+      svg.dispatchEvent(mover);
+      vi.advanceTimersByTime(221);
+      await Promise.resolve();
+      await Promise.resolve();
+    });
+    expect(fetchMock.mock.calls.filter(([url]) => String(url).includes('/identify?'))).toHaveLength(3);
+
+    await act(async () => {
+      svg.dispatchEvent(new MouseEvent('click', {
+        bubbles: true,
+        clientX: 400,
+        clientY: 300,
+      }));
+      await Promise.resolve();
+      await Promise.resolve();
+    });
+
+    const painel = host.querySelector('.gp-atributos');
+    expect(painel?.textContent).toContain('Detalhes do ponto');
+    expect(painel?.textContent).toContain('Usina consultada');
+    expect(painel?.textContent).toContain('Município de exemplo');
+    expect(painel?.textContent).toContain('Fonte declarada pelo serviço: IAT, 2021');
+    expect(painel?.textContent).toContain('1 campo não exibido');
+    expect(painel?.textContent).not.toContain('18.945.221-4');
+    expect(host.querySelector('.gp-tooltip.fixada')?.textContent).toContain('Detalhes fixados no painel');
+
+    const identify = fetchMock.mock.calls.filter(([url]) => String(url).includes('/identify?'));
+    expect(identify).toHaveLength(4);
+    await act(async () => host.querySelector('button[aria-label="Fechar detalhes do ponto"]').click());
+    expect(document.activeElement).toBe(svg);
+    expect(host.querySelector('.gp-atributos')).toBeNull();
+    await act(async () => root.unmount());
+  });
+
+  it('nao consulta hover de toque e diferencia ponto vazio de erro do servico', async () => {
+    vi.useFakeTimers();
+    let modo = 'vazio';
+    const fetchMock = vi.fn(async (alvo) => {
+      const url = String(alvo);
+      if (url.includes('/legend?')) return { ok: true, json: async () => ({ layers: [] }) };
+      if (url.includes('/identify?')) {
+        if (modo === 'erro') throw new TypeError('falha de rede');
+        return { ok: true, status: 200, json: async () => ({ results: [] }) };
+      }
+      throw new Error(`Busca inesperada: ${url}`);
+    });
+    vi.stubGlobal('fetch', fetchMock);
+    const host = document.createElement('div');
+    document.body.append(host);
+    const root = createRoot(host);
+    await act(async () => root.render(<MapaParana dados={dados} />));
+    const botao = [...host.querySelectorAll('.gp-grupo button')]
+      .find((item) => item.textContent.includes('Usinas de geração hidrelétrica'));
+    await act(async () => botao.click());
+    const svg = host.querySelector('.mp-map-stage>svg');
+    Object.defineProperty(svg, 'getBoundingClientRect', {
+      configurable: true,
+      value: () => ({ left: 0, top: 0, right: 1000, bottom: 620, width: 1000, height: 620 }),
+    });
+
+    const mouse = new MouseEvent('pointermove', { bubbles: true, clientX: 300, clientY: 200 });
+    Object.defineProperty(mouse, 'pointerType', { value: 'mouse' });
+    await act(async () => {
+      svg.dispatchEvent(mouse);
+      vi.advanceTimersByTime(221);
+      await Promise.resolve();
+      await Promise.resolve();
+    });
+    expect(host.querySelector('.gp-tooltip:not(.fixada)')?.textContent)
+      .toContain('Nenhum objeto identificado');
+    const antesDoToque = fetchMock.mock.calls.filter(([url]) => String(url).includes('/identify?')).length;
+
+    const toque = new MouseEvent('pointermove', { bubbles: true, clientX: 300, clientY: 200 });
+    Object.defineProperty(toque, 'pointerType', { value: 'touch' });
+    await act(async () => svg.dispatchEvent(toque));
+    expect(fetchMock.mock.calls.filter(([url]) => String(url).includes('/identify?'))).toHaveLength(antesDoToque);
+
+    await act(async () => {
+      svg.dispatchEvent(new MouseEvent('click', { bubbles: true, clientX: 300, clientY: 200 }));
+      await Promise.resolve();
+      await Promise.resolve();
+    });
+    expect(host.querySelector('.gp-atributos')?.textContent).toContain('Nenhum objeto foi identificado');
+    expect(host.querySelector('.gp-tooltip.fixada')?.textContent).toContain('Nenhum objeto identificado');
+
+    modo = 'erro';
+    await act(async () => {
+      svg.dispatchEvent(new MouseEvent('click', { bubbles: true, clientX: 320, clientY: 220 }));
+      await Promise.resolve();
+      await Promise.resolve();
+    });
+    expect(host.querySelector('.gp-atributos')?.textContent).toContain('serviço de atributos não respondeu');
+    expect(host.querySelector('.gp-tooltip.fixada')?.textContent).toContain('Consulta indisponível');
+
+    await act(async () => root.unmount());
+  });
+
+  it('encerra uma consulta GeoPR que nao responde em vez de carregar para sempre', async () => {
+    vi.useFakeTimers();
+    vi.stubGlobal('fetch', vi.fn(async (alvo, opcoes) => {
+      const url = String(alvo);
+      if (url.includes('/legend?')) return { ok: true, json: async () => ({ layers: [] }) };
+      if (url.includes('/identify?')) {
+        return new Promise((resolve, reject) => {
+          opcoes.signal.addEventListener('abort', () => {
+            const erro = new Error('consulta cancelada');
+            erro.name = 'AbortError';
+            reject(erro);
+          });
+        });
+      }
+      throw new Error(`Busca inesperada: ${url}`);
+    }));
+    const host = document.createElement('div');
+    document.body.append(host);
+    const root = createRoot(host);
+    await act(async () => root.render(<MapaParana dados={dados} />));
+    const botao = [...host.querySelectorAll('.gp-grupo button')]
+      .find((item) => item.textContent.includes('Usinas de geração hidrelétrica'));
+    await act(async () => botao.click());
+    const svg = host.querySelector('.mp-map-stage>svg');
+    Object.defineProperty(svg, 'getBoundingClientRect', {
+      configurable: true,
+      value: () => ({ left: 0, top: 0, right: 1000, bottom: 620, width: 1000, height: 620 }),
+    });
+    await act(async () => {
+      svg.dispatchEvent(new MouseEvent('click', { bubbles: true, clientX: 300, clientY: 200 }));
+    });
+    expect(host.querySelector('.gp-tooltip.fixada')?.textContent).toContain('Consultando o GeoPR');
+
+    await act(async () => {
+      vi.advanceTimersByTime(20_001);
+      await Promise.resolve();
+      await Promise.resolve();
+    });
+    expect(host.querySelector('.gp-tooltip.fixada')?.textContent).toContain('Consulta indisponível');
+    expect(host.querySelector('.gp-atributos')?.textContent).toContain('serviço de atributos não respondeu');
     await act(async () => root.unmount());
   });
 });

@@ -1,10 +1,14 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import {
   RAIO_MERCATOR,
   atributosLegiveis,
   caixaParaBBox,
+  consultarCamadasNoPonto,
   mercatorParaMapa,
   pontoParaMercator,
+  resumoDoAchado,
+  rotuloDeAtributo,
+  tituloDoAchado,
   urlDaImagem,
   urlDeAtributos,
   vistaParaCaixa,
@@ -161,8 +165,8 @@ describe('urlDeAtributos', () => {
     const url = new URL(
       urlDeAtributos(camada, { caixa, larguraPx: 800, alturaPx: 496, x: -5700000, y: -2800000 }),
     );
-    // O GetFeatureInfo deste servidor devolve HTML ou GML. Ler HTML de
-    // terceiro para extrair atributo quebra quando o estilo do servidor muda.
+    // O REST e o contrato comum do catalogo e devolve o envelope JSON que a
+    // filtragem de atributos da Academia ja valida.
     expect(url.pathname).toContain('/rest/services/');
     expect(url.pathname).toContain('/MapServer/identify');
     expect(url.searchParams.get('f')).toBe('json');
@@ -208,19 +212,59 @@ describe('atributosLegiveis', () => {
   });
 
   it('limita a quantidade para o painel nao virar despejo de tabela', () => {
-    const muitos = Object.fromEntries(
-      Array.from({ length: 40 }, (_, i) => [`campo${i}`, `valor${i}`]),
-    );
+    const muitos = {
+      NOME: 'Feição de exemplo',
+      TIPO: 'Ponto',
+      CATEGORIA: 'Ambiental',
+      SITUAÇÃO: 'Ativa',
+      MUNICIPIO: 'Curitiba',
+      RIO: 'Iguaçu',
+      BACIA: 'Iguaçu',
+      POTENCIA: '3,4',
+      AREA_HA: '12',
+      COTA: '600',
+    };
     const lido = atributosLegiveis({ results: [{ layerName: 'X', attributes: muitos }] }, 5);
     expect(lido[0].valores).toHaveLength(5);
+    expect(lido[0].omitidos).toBe(5);
   });
 
   it('aguenta resposta vazia ou malformada sem lancar', () => {
     expect(atributosLegiveis(null)).toEqual([]);
     expect(atributosLegiveis({})).toEqual([]);
     expect(atributosLegiveis({ results: [{}] })).toEqual([
-      { camada: '', valores: [], ocultos: 0 },
+      { camada: '', valores: [], ocultos: 0, omitidos: 0 },
     ]);
+  });
+
+  it('prioriza campos que explicam a feicao mesmo quando chegam no fim da tabela', () => {
+    const atributos = Object.fromEntries(
+      Array.from({ length: 20 }, (_, indice) => [`CAMPO_INTERNO_${indice}`, `valor ${indice}`]),
+    );
+    atributos.NOME = 'Nome que não pode sumir';
+    atributos.TIPO = 'Ponto';
+    atributos.SITUAÇÃO = 'Ativa';
+    const [lido] = atributosLegiveis({ results: [{ layerName: 'X', attributes: atributos }] }, 3);
+    expect(lido.valores.map(({ chave }) => chave)).toEqual(['NOME', 'TIPO', 'SITUAÇÃO']);
+    expect(lido.ocultos).toBe(20);
+  });
+
+  it('usa fallback conservador para uma camada arbitraria do acervo', () => {
+    const [lido] = atributosLegiveis({
+      results: [{
+        layerName: 'Serviço encontrado na busca',
+        attributes: {
+          NOME: 'Pode ser o nome de uma pessoa',
+          DESCRIÇÃO: 'Texto livre não auditado',
+          RESPONSÁVEL: 'Pessoa identificável',
+          TIPO: 'Captação',
+          MUNICIPIO: 'Palmas',
+          BACIA: 'Iguaçu',
+        },
+      }],
+    }, 12, { doAcervo: true });
+    expect(lido.valores.map(({ chave }) => chave)).toEqual(['TIPO', 'MUNICIPIO', 'BACIA']);
+    expect(lido.ocultos).toBe(3);
   });
 });
 
@@ -290,6 +334,34 @@ describe('atributosLegiveis: dado identificavel nao chega a tela', () => {
     expect(lido.ocultos).toBe(6);
   });
 
+  it('normaliza acentos e retira identificadores reais de outorga e coordenadas', () => {
+    const [lido] = atributosLegiveis({
+      results: [{
+        layerName: 'Outorgas',
+        attributes: {
+          'RESPONSÁVEL': 'Pessoa de exemplo',
+          'ENDEREÇO': 'Rua de exemplo',
+          'RAZÃO_SOCIAL': 'Empresa de exemplo',
+          USU_CODIGO: '9912',
+          CODIGO_PONTO: 'PT-88',
+          CRH: '12345',
+          PORTARIA: '123/2025',
+          NR_PORTARIA: '123',
+          COORD_LATITUDE: '-25.123',
+          COORD_LONGITUDE: '-49.123',
+          USU_NOME_FANTASIA: 'Nome identificável',
+          TIPO: 'Captação',
+          MUNICIPIO: 'Curitiba',
+        },
+      }],
+    });
+    expect(lido.valores).toEqual([
+      { chave: 'TIPO', valor: 'Captação' },
+      { chave: 'MUNICIPIO', valor: 'Curitiba' },
+    ]);
+    expect(lido.ocultos).toBe(11);
+  });
+
   it('nao derruba medida legitima que so parece documento', () => {
     // Armadilha ao contrario: se o padrao de CEP fosse \d{5}-?\d{3}, uma area
     // de oito digitos sumiria da tela sem motivo. Exigir a pontuacao evita isso.
@@ -298,5 +370,167 @@ describe('atributosLegiveis: dado identificavel nao chega a tela', () => {
     });
     expect(lido.valores.map((p) => p.chave)).toEqual(['AREA_M2', 'COTA']);
     expect(lido.ocultos).toBe(0);
+  });
+});
+
+describe('resumo humano da identificacao', () => {
+  const achado = {
+    camada: 'Usinas de Geração de Energia Hidrelétrica - IAT',
+    origem: { titulo: 'Usinas de geração hidrelétrica' },
+    valores: [
+      { chave: 'BACIA', valor: 'Iguaçu' },
+      { chave: 'TIPO', valor: 'CGH' },
+      { chave: 'NOME', valor: 'Usina de exemplo' },
+      { chave: 'RIO', valor: 'Rio Exemplo' },
+      { chave: 'SITUAÇÃO', valor: 'Em análise' },
+      { chave: 'POT_SOLIC', valor: '3,40' },
+    ],
+  };
+
+  it('usa o nome do registro como titulo e prioriza fatos que explicam o ponto', () => {
+    expect(tituloDoAchado(achado)).toBe('Usina de exemplo');
+    expect(resumoDoAchado(achado)).toEqual([
+      { chave: 'TIPO', rotulo: 'Tipo', valor: 'CGH' },
+      { chave: 'SITUAÇÃO', rotulo: 'Situação', valor: 'Em análise' },
+      { chave: 'RIO', rotulo: 'Rio', valor: 'Rio Exemplo' },
+    ]);
+  });
+
+  it('traduz campos conhecidos e torna os demais legiveis', () => {
+    expect(rotuloDeAtributo('POT_SOLIC')).toBe('Potência solicitada');
+    expect(rotuloDeAtributo('nome_do_curso')).toBe('Nome do curso');
+  });
+
+  it('limita valores enormes sem interpretar eventual HTML', () => {
+    const [lido] = atributosLegiveis({
+      results: [{ layerName: 'X', attributes: { DESCRICAO: `<b>${'x'.repeat(700)}</b>` } }],
+    });
+    expect(lido.valores[0].valor).toHaveLength(500);
+    expect(lido.valores[0].valor.startsWith('<b>')).toBe(true);
+    expect(lido.valores[0].valor.endsWith('...')).toBe(true);
+    expect(tituloDoAchado(lido, 120)).toHaveLength(120);
+    expect(tituloDoAchado(lido)).toHaveLength(500);
+  });
+
+  it('entende nomes de campos usados pelos servicos reais do GeoPR', () => {
+    const [lido] = atributosLegiveis({
+      results: [{
+        layerName: 'Aproveitamentos',
+        attributes: {
+          NM_EMPREENDIMENTO: 'CGH Exemplo',
+          SITOUT_DESCRICAO: 'Vigente',
+          NM_MUNICIPIO: 'Pato Branco',
+          BAC_NOME: 'Iguaçu',
+          RIO_NOME: 'Rio Chopim',
+        },
+      }],
+    });
+    expect(tituloDoAchado(lido)).toBe('CGH Exemplo');
+    expect(resumoDoAchado(lido)).toEqual([
+      { chave: 'SITOUT_DESCRICAO', rotulo: 'Situação', valor: 'Vigente' },
+      { chave: 'NM_MUNICIPIO', rotulo: 'Município', valor: 'Pato Branco' },
+      { chave: 'RIO_NOME', rotulo: 'Rio', valor: 'Rio Chopim' },
+    ]);
+  });
+});
+
+describe('consulta das camadas ativas', () => {
+  const caixa = { minX: -6150425, minY: -3100123, maxX: -5282139, maxY: -2561785.7 };
+  const ponto = { x: -5700000, y: -2800000 };
+  const camada = (id, ordem) => ({
+    id,
+    titulo: `Camada ${id}`,
+    caminho: `00_PUBLICACOES/${id}`,
+    camadas: '0',
+    fonte: 'IAT',
+    paraQue: `Explica ${id}`,
+    ordem,
+  });
+  const resposta = (nome) => ({
+    ok: true,
+    status: 200,
+    json: async () => ({
+      results: nome ? [{ layerName: nome, attributes: { NOME: nome, TIPO: 'Ponto' } }] : [],
+    }),
+  });
+  const opcoes = { caixa, larguraPx: 800, alturaPx: 496, ponto };
+
+  it('no hover comeca pela camada do topo e para no primeiro acerto', async () => {
+    const chamadas = [];
+    const fetchImpl = async (url) => {
+      chamadas.push(url);
+      return resposta(url.includes('/topo/') ? 'Registro superior' : 'Polígono de fundo');
+    };
+    const resultado = await consultarCamadasNoPonto({
+      ...opcoes,
+      // A camada de topo foi ligada primeiro. Um reverse simples consultaria o
+      // fundo por ultimo ativado; a ordem real do SVG continua topo > fundo.
+      camadas: [camada('topo', 'topo'), camada('fundo', 'fundo')],
+      pararNoPrimeiro: true,
+      fetchImpl,
+    });
+    expect(chamadas).toHaveLength(1);
+    expect(chamadas[0]).toContain('/topo/MapServer/identify');
+    expect(resultado.achados[0].origem.titulo).toBe('Camada topo');
+    expect(tituloDoAchado(resultado.achados[0])).toBe('Registro superior');
+  });
+
+  it('no clique consulta inclusive a quarta camada e preserva a ordem visual', async () => {
+    const chamadas = [];
+    const fetchImpl = async (url) => {
+      const id = /00_PUBLICACOES\/([^/]+)/.exec(url)?.[1];
+      chamadas.push(id);
+      return resposta(`Registro ${id}`);
+    };
+    const resultado = await consultarCamadasNoPonto({
+      ...opcoes,
+      camadas: ['um', 'dois', 'tres', 'quatro'].map(camada),
+      concorrencia: 2,
+      fetchImpl,
+    });
+    expect(chamadas).toHaveLength(4);
+    expect(resultado.achados.map((item) => item.origem.id)).toEqual([
+      'quatro', 'tres', 'dois', 'um',
+    ]);
+    expect(resultado.consultadas).toBe(4);
+    expect(resultado.achados[0].origem.caminho).toContain('00_PUBLICACOES/quatro');
+  });
+
+  it('distingue resposta parcial de indisponibilidade total', async () => {
+    const resultado = await consultarCamadasNoPonto({
+      ...opcoes,
+      camadas: [camada('ok'), camada('falha')],
+      fetchImpl: async (url) => {
+        if (url.includes('/falha/')) throw new TypeError('rede indisponivel');
+        return resposta('Registro preservado');
+      },
+    });
+    expect(resultado.achados).toHaveLength(1);
+    expect(resultado.consultadas).toBe(1);
+    expect(resultado.falhas).toBe(1);
+  });
+
+  it('preserva resultado rapido quando outra camada excede o prazo', async () => {
+    vi.useFakeTimers();
+    try {
+      const pendente = new Promise(() => {});
+      const consulta = consultarCamadasNoPonto({
+        ...opcoes,
+        camadas: [camada('lenta', 'topo'), camada('ok', 'topo')],
+        prazoCamadaMs: 50,
+        prazoTotalMs: 200,
+        fetchImpl: async (url) => (url.includes('/lenta/')
+          ? pendente
+          : resposta('Registro preservado')),
+      });
+      await vi.advanceTimersByTimeAsync(51);
+      const resultado = await consulta;
+      expect(resultado.achados).toHaveLength(1);
+      expect(tituloDoAchado(resultado.achados[0])).toBe('Registro preservado');
+      expect(resultado.consultadas).toBe(1);
+      expect(resultado.falhas).toBe(1);
+    } finally {
+      vi.useRealTimers();
+    }
   });
 });

@@ -226,15 +226,16 @@ const VALORES_SENSIVEIS = [
 // Nos dois casos, tipo, situacao, municipio, rio, bacia e medidas ambientais
 // continuam disponiveis para explicar o que se ve.
 const CAMPOS_SEMANTICOS = [
-  { teste: /^(?:nome|denominacao|titulo|nm_empreendimento|caverna)$/, somenteCurada: true },
-  { teste: /^(?:nome|nm)_(?:uc|unidade|caverna|empreendimento|barragem|usina|aproveitamento|sitio|bem)$/, somenteCurada: true },
+  { teste: /^(?:nome|denominacao|titulo|nm_empreendimento|empreendim|caverna)$/, somenteCurada: true },
+  { teste: /^(?:nome|nm)_(?:uc|unidade|caverna|empreendimento|barragem|usina|aproveitamento|sitio|bem|comite)$/, somenteCurada: true },
   { teste: /^(?:tipo|tipologia|categoria|classe|esfera)(?:_|$)/ },
   { teste: /(?:^|_)(?:situacao|status)(?:_|$)|^sitout_descricao$/ },
-  { teste: /^(?:municipio|nm_municipio|mun_nome|cidade)(?:_|$)/ },
+  { teste: /^(?:municipio|nm_municipio|nome_municipio|mun_nome|cidade)(?:_|$)/ },
   { teste: /^(?:rio|rio_nome|nome_rio|hidrografia)(?:_|$)/ },
   { teste: /^(?:bacia|bac_nome|nome_bacia)(?:_|$)/ },
-  { teste: /^(?:pot_solic|potencia|pot_mw|vazao|area(?:_ha|_m2)?|cota|altitude|capacidade|extensao|comprimento)(?:_|$)/ },
-  { teste: /^(?:bioma|zona|zoneamento|finalidade|uso|vegetacao|formacao|substrato|litologia)(?:_|$)/ },
+  { teste: /^(?:pot_solic|potencia|pot_mw|vazao|area(?:_ha|_m2|_km2|_decre)?|cota|altitude|capacidade|extensao|comprimento)(?:_|$)/ },
+  { teste: /^(?:bioma|zona|zoneamento|za|app|finalidade|uso|vegetacao|formacao|substrato|litologia|pl_manejo)(?:_|$)/ },
+  { teste: /^(?:label|ato_legal)$/, somenteCurada: true },
   { teste: /^(?:data_valid|data_proto|ano|vigencia|tipos_de_l)(?:_|$)/, somenteCurada: true },
   { teste: /^(?:descricao|desc)(?:_|$)/, somenteCurada: true },
 ];
@@ -318,8 +319,20 @@ const ROTULOS_DE_ATRIBUTO = new Map([
   ['descricao', 'Descrição'],
   ['denominacao', 'Denominação'],
   ['nm_empreendimento', 'Empreendimento'],
+  ['empreendim', 'Empreendimento'],
+  ['nome_uc', 'Unidade de conservação'],
+  ['nome_comite', 'Comitê de bacia'],
+  ['nome_municipio', 'Município'],
   ['sitout_descricao', 'Situação'],
   ['caverna', 'Caverna'],
+  ['area_km2', 'Área (km²)'],
+  ['area_decre', 'Área declarada'],
+  ['za', 'Zona de amortecimento'],
+  ['app', 'APP'],
+  ['classe_uso', 'Classe de uso'],
+  ['pl_manejo', 'Plano de manejo'],
+  ['ato_legal', 'Ato legal'],
+  ['label', 'Zona'],
 ]);
 
 /** Traduz nomes de coluna do servico para rotulos que uma pessoa entende. */
@@ -332,8 +345,8 @@ export function rotuloDeAtributo(chave) {
 }
 
 const CHAVES_DE_TITULO = [
-  /^(?:nome|denominacao|titulo|nm_empreendimento|caverna)$/,
-  /^(?:nome|nm)_(?:uc|unidade|caverna|empreendimento|barragem|usina|aproveitamento|sitio|bem)$/,
+  /^(?:nome|denominacao|titulo|nm_empreendimento|empreendim|caverna)$/,
+  /^(?:nome|nm)_(?:uc|unidade|caverna|empreendimento|barragem|usina|aproveitamento|sitio|bem|comite)$/,
   /^hidrografia$/,
   /^(?:descricao|desc)$/,
 ];
@@ -666,7 +679,7 @@ let acervoEmMemoria = null;
 /** Prazo de cada pasta. Passou disso, ela fica de fora e a busca segue. */
 export const PRAZO_DA_PASTA_MS = 15000;
 
-async function umaPasta(pasta, sinal) {
+async function umaPasta(pasta, sinal, fetchImpl = globalThis.fetch) {
   const alvo = pasta
     ? `${GEOPR_BASE}/rest/services/${encodeURIComponent(pasta)}?f=json`
     : `${GEOPR_BASE}/rest/services?f=json`;
@@ -677,7 +690,7 @@ async function umaPasta(pasta, sinal) {
   const repassar = () => controle.abort();
   sinal?.addEventListener('abort', repassar);
   try {
-    const resposta = await fetch(alvo, {
+    const resposta = await fetchImpl(alvo, {
       credentials: 'omit',
       mode: 'cors',
       signal: controle.signal,
@@ -709,14 +722,14 @@ async function umaPasta(pasta, sinal) {
  * vazia por causa das outras tres. Esperar o mais lento para mostrar o que ja
  * chegou e desperdicio puro: quem procura "caverna" ja tinha a resposta.
  */
-export async function carregarAcervo({ sinal, aoChegar } = {}) {
+export async function carregarAcervo({ sinal, aoChegar, fetchImpl = globalThis.fetch } = {}) {
   if (acervoEmMemoria) {
     aoChegar?.(acervoEmMemoria);
     return acervoEmMemoria;
   }
   const juntos = [];
   await Promise.all(PASTAS_DO_ACERVO.map(async (pasta) => {
-    const lista = await umaPasta(pasta, sinal);
+    const lista = await umaPasta(pasta, sinal, fetchImpl);
     if (!lista.length) return;
     juntos.push(...lista);
     aoChegar?.(juntos.slice());
@@ -725,6 +738,11 @@ export async function carregarAcervo({ sinal, aoChegar } = {}) {
   // deixaria a busca morta pelo resto da sessao.
   if (juntos.length) acervoEmMemoria = juntos;
   return juntos;
+}
+
+/** Evita que o índice de uma simulação atravesse outro teste. */
+export function limparCacheAcervoParaTestes() {
+  acervoEmMemoria = null;
 }
 
 const semAcento = (v) => String(v || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();

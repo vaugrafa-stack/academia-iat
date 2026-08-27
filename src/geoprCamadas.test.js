@@ -432,6 +432,36 @@ describe('resumo humano da identificacao', () => {
       { chave: 'RIO_NOME', rotulo: 'Rio', valor: 'Rio Chopim' },
     ]);
   });
+
+  it('preserva somente os campos ambientais verificados de APP e zoneamento', () => {
+    const [lido] = atributosLegiveis({
+      results: [{
+        layerName: 'APP e plano de manejo',
+        attributes: {
+          EMPREENDIM: 'Parque de exemplo',
+          NOME_MUNICIPIO: 'Guaraqueçaba',
+          AREA_KM2: '18,4',
+          AREA_DECRE: '1.840 ha',
+          ZA: 'Sim',
+          APP: 'APP hídrica',
+          CLASSE_USO: 'Vegetação nativa',
+          PL_MANEJO: 'Aprovado',
+          ATO_LEGAL: 'Decreto de exemplo',
+          LABEL: 'Zona de proteção',
+          ARQUIVO: 'caminho-interno.zip',
+          RESPONSAVEL: 'Pessoa identificável',
+        },
+      }],
+    }, 20, { id: 'apps-hidricas-fbds' });
+
+    expect(lido.valores.map(({ chave }) => chave)).toEqual([
+      'EMPREENDIM', 'CLASSE_USO', 'NOME_MUNICIPIO', 'AREA_KM2', 'AREA_DECRE',
+      'ZA', 'APP', 'PL_MANEJO', 'ATO_LEGAL', 'LABEL',
+    ]);
+    expect(lido.ocultos).toBe(2);
+    expect(rotuloDeAtributo('NOME_MUNICIPIO')).toBe('Município');
+    expect(rotuloDeAtributo('CLASSE_USO')).toBe('Classe de uso');
+  });
 });
 
 describe('consulta das camadas ativas', () => {

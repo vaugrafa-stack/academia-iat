@@ -6,7 +6,7 @@
 // As fontes sao publicas: a divisao hidrografica oficial do Parana e o SIGA da
 // ANEEL. Nada aqui vem da base de processos do IAT.
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { AlertTriangle, Map as MapIcon, Search, X, Layers3, Zap, ZoomIn, ZoomOut, Maximize2, Target, ChevronRight } from 'lucide-react';
+import { AlertTriangle, Map as MapIcon, X, Layers3, Zap, ZoomIn, ZoomOut, Maximize2, Target, ChevronRight } from 'lucide-react';
 import mapaDadosUrl from './data/mapa-parana.json?url';
 import {
   SATELLITE_INFO_URL,
@@ -22,6 +22,7 @@ import {
 import GeoprPainel, { GeoprLegenda, GeoprResumoNoMapa } from './geoprPainel.jsx';
 import PainelCoordenada from './painelCoordenada.jsx';
 import { dentroDoParana, geoParaMercator, mercatorParaGeo } from './coordenadas.js';
+import { localizarResultadoMapa, pesquisarMapa } from './mapaPesquisa.js';
 
 const COR = { CGH: '#57d8bf', PCH: '#4cc4f5', UHE: '#9fb7ff' };
 const ORDEM = ['CGH', 'PCH', 'UHE'];
@@ -231,6 +232,7 @@ function MapaConteudo({ dados, state, setState }) {
   const chaveHover = useRef(null);
   const cacheHoverGeopr = useRef(new Map());
   const ignorarProximoClique = useRef(false);
+  const versaoEscolhaBusca = useRef(0);
 
 
   const usinas = useMemo(() => {
@@ -241,6 +243,15 @@ function MapaConteudo({ dados, state, setState }) {
         && (!q || norm(`${u.nome} ${u.mun} ${u.bacia}`).includes(q)),
     );
   }, [dados.usinas, tipos, busca, baciaSel]);
+
+  const pesquisarNoMapa = React.useCallback(
+    (termo, { incluirOficiais = false } = {}) => pesquisarMapa({
+      dados,
+      termo,
+      incluirOficiais,
+    }),
+    [dados],
+  );
 
   // A identidade vem da posicao na base original, nao do filtro corrente. Ela
   // permanece estavel quando busca, tipo ou bacia mudam e tambem diferencia
@@ -393,6 +404,18 @@ function MapaConteudo({ dados, state, setState }) {
     encerrarConsultaFixada();
   }, [encerrarHoverGeopr, encerrarConsultaFixada]);
 
+  // Resultado de busca liga a camada de modo idempotente. Reutilizar o gesto
+  // de alternancia aqui desligaria justamente uma camada que ja estivesse
+  // visivel quando a pessoa escolhesse uma feicao dela.
+  const ativarGeopr = React.useCallback((camada) => {
+    if (!camada?.id) return;
+    setGeopr((atuais) => (atuais.some((item) => item.id === camada.id)
+      ? atuais
+      : [...atuais, camada]));
+    encerrarHoverGeopr();
+    encerrarConsultaFixada();
+  }, [encerrarHoverGeopr, encerrarConsultaFixada]);
+
   const limparGeopr = React.useCallback(() => {
     setGeopr([]);
     encerrarHoverGeopr();
@@ -518,6 +541,173 @@ function MapaConteudo({ dados, state, setState }) {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dados.tileProjection, larg, alt, v.w, v.h]);
+
+  const marcarPontoDoDesenho = (x, y, forma = 'busca') => {
+    if (!Number.isFinite(x) || !Number.isFinite(y)) return false;
+    const ponto = pontoParaMercator(dados.tileProjection, larg, alt, x, y);
+    const geo = ponto && mercatorParaGeo(ponto.x, ponto.y);
+    if (!geo) return false;
+    setMarca({ ...geo, x, y, forma });
+    return true;
+  };
+
+  const focarPontoDoDesenho = (x, y, fator = 6, formaDaMarca = 'busca') => {
+    if (!Number.isFinite(x) || !Number.isFinite(y)) return false;
+    const largura = larg / fator;
+    aplicar(
+      x - largura / 2,
+      y - (largura * (alt / larg)) / 2,
+      largura,
+      largura * (alt / larg),
+    );
+    if (formaDaMarca) marcarPontoDoDesenho(x, y, formaDaMarca);
+    return true;
+  };
+
+  const focarLocalizacaoOficial = (localizacao) => {
+    const ponto = localizacao?.pontoMercator;
+    if (!ponto) return false;
+    const desenho = mercatorParaMapa(dados.tileProjection, larg, alt, ponto.x, ponto.y);
+    if (!desenho) return false;
+    const caixa = localizacao.caixaMercator;
+    if (caixa) {
+      const superiorEsquerdo = mercatorParaMapa(
+        dados.tileProjection, larg, alt, caixa.minX, caixa.maxY,
+      );
+      const inferiorDireito = mercatorParaMapa(
+        dados.tileProjection, larg, alt, caixa.maxX, caixa.minY,
+      );
+      if (superiorEsquerdo && inferiorDireito) {
+        const larguraDaFeicao = Math.abs(inferiorDireito.x - superiorEsquerdo.x);
+        const alturaDaFeicao = Math.abs(inferiorDireito.y - superiorEsquerdo.y);
+        const largura = Math.min(larg, Math.max(
+          larg / 8,
+          larguraDaFeicao * 1.3,
+          alturaDaFeicao * (larg / alt) * 1.3,
+        ));
+        aplicar(
+          desenho.x - largura / 2,
+          desenho.y - (largura * (alt / larg)) / 2,
+          largura,
+          largura * (alt / larg),
+        );
+        return true;
+      }
+    }
+    return focarPontoDoDesenho(desenho.x, desenho.y, 6, 'busca-oficial');
+  };
+
+  const mostrarDetalheDaBusca = (resultado) => {
+    const achado = resultado?.achado || (resultado?.tipo === 'municipio' && resultado?.camada
+      ? {
+        camada: resultado.camada.titulo,
+        valores: [
+          { chave: 'nome', valor: resultado.titulo },
+          ...(resultado.resumo ? [{ chave: 'descricao', valor: resultado.resumo }] : []),
+        ],
+        ocultos: 0,
+        omitidos: 0,
+        origem: {
+          id: resultado.camada.id,
+          titulo: resultado.camada.titulo,
+          fonte: resultado.camada.fonte,
+          paraQue: resultado.camada.paraQue,
+          caminho: resultado.camada.caminho,
+        },
+      }
+      : null);
+    if (!achado) return;
+    consultaFixadaAberta.current?.abort();
+    consultaFixadaAberta.current = null;
+    setConsultaHover(consultaOciosa());
+    setConsultaFixada({
+      tipo: 'fixada',
+      origemBusca: 'pesquisa',
+      estado: 'pronto',
+      posicao: { xPct: 50, yPct: 50 },
+      achados: [achado],
+      falhas: 0,
+      consultadas: 1,
+      consultadoEm: new Date().toISOString(),
+    });
+  };
+
+  const escolherResultadoDaBusca = async (resultado) => {
+    const escolhaAtual = ++versaoEscolhaBusca.current;
+    if (resultado?.tipo === 'empreendimento' && resultado.registro) {
+      setTipos(new Set(ORDEM));
+      setBaciaSel(null);
+      setBusca(resultado.titulo);
+      setCamadas((atuais) => ({ ...atuais, usinas: true }));
+      escolher(resultado.registro);
+      focarPontoDoDesenho(resultado.registro.x, resultado.registro.y);
+      return { mensagem: 'Empreendimento localizado, marcado e aberto nos detalhes.' };
+    }
+
+    if (resultado?.tipo === 'bacia') {
+      setTipos(new Set(ORDEM));
+      setBusca('');
+      setSel(null);
+      setBaciaSel(resultado.titulo);
+      setMarca(null);
+      if (resultado.centro) focarPontoDoDesenho(resultado.centro.x, resultado.centro.y, 2.8, null);
+      return { mensagem: 'Bacia localizada; a lista agora mostra os empreendimentos correspondentes.' };
+    }
+
+    if (resultado?.tipo === 'municipio') {
+      setTipos(new Set(ORDEM));
+      setBaciaSel(null);
+      setBusca(resultado.titulo);
+      setSel(null);
+      setMarca(null);
+      if (resultado.centro) focarPontoDoDesenho(resultado.centro.x, resultado.centro.y, 4, null);
+    } else {
+      setTipos(new Set(ORDEM));
+      setBaciaSel(null);
+      setBusca('');
+      setSel(null);
+      setMarca(null);
+    }
+
+    const localizacao = await localizarResultadoMapa(resultado);
+    if (versaoEscolhaBusca.current !== escolhaAtual) return { mensagem: '' };
+    if (resultado?.camada) ativarGeopr(resultado.camada);
+    const localizada = localizacao ? focarLocalizacaoOficial(localizacao) : false;
+    mostrarDetalheDaBusca(resultado);
+
+    if (resultado?.tipo === 'municipio') {
+      return {
+        mensagem: localizada
+          ? 'Município filtrado e enquadrado pelo limite oficial do GeoPR.'
+          : (resultado.centro
+            ? 'Município filtrado e centralizado pela referência aproximada dos empreendimentos disponíveis; o limite oficial não respondeu agora.'
+            : 'Município filtrado; o limite oficial não respondeu e não há uma referência aproximada disponível para centralizar o mapa.'),
+      };
+    }
+    if (resultado?.tipo === 'empreendimento-geopr') {
+      return { mensagem: 'Empreendimento do GeoPR localizado, marcado e aberto nos detalhes.' };
+    }
+    if (resultado?.tipo === 'area-protegida') {
+      return {
+        mensagem: localizada
+          ? 'Área oficial enquadrada pela extensão da camada e aberta nos detalhes; o mapa não inventa um ponto central.'
+          : 'A camada foi ativada, mas o serviço não devolveu uma extensão utilizável agora.',
+      };
+    }
+    if (resultado?.tipo === 'zoneamento') {
+      return {
+        mensagem: localizada
+          ? 'Camada de plano ou zoneamento ativada e enquadrada. Clique numa zona para consultar os atributos e o ato legal.'
+          : 'Camada de plano ou zoneamento ativada. Aproxime e clique numa zona para consultar os atributos.',
+      };
+    }
+    if (resultado?.tipo === 'camada') {
+      return {
+        mensagem: 'Camada ativada. Como o tema não possui um único ponto, aproxime e clique numa feição para ver os detalhes.',
+      };
+    }
+    return { mensagem: localizada ? 'Resultado localizado e marcado no mapa.' : 'Resultado selecionado.' };
+  };
 
   const iniciarConsultaGeopr = ({ tipo, ponto, posicao, chaveCache = null }) => {
     const fixada = tipo === 'fixada';
@@ -919,6 +1109,20 @@ function MapaConteudo({ dados, state, setState }) {
           <PainelCoordenada
             marca={marca}
             aoBuscar={irParaCoordenada}
+            aoPesquisar={pesquisarNoMapa}
+            aoEscolher={escolherResultadoDaBusca}
+            aoAlterarBusca={(valor) => {
+              ++versaoEscolhaBusca.current;
+              if (!String(valor || '').trim()) {
+                setBusca('');
+                setBaciaSel(null);
+              }
+            }}
+            aoLimparBusca={() => {
+              ++versaoEscolhaBusca.current;
+              setBusca('');
+              setBaciaSel(null);
+            }}
             aoLimpar={() => setMarca(null)}
           />
           <GeoprPainel
@@ -955,13 +1159,6 @@ function MapaConteudo({ dados, state, setState }) {
                 {t} <small>{porTipo[t] || 0}</small>
               </button>
             ))}
-          </div>
-
-          <div className="mp-busca">
-            <Search size={16} />
-            <input value={busca} onChange={(e) => setBusca(e.target.value)}
-                   placeholder="Buscar usina, município ou bacia..." aria-label="Buscar usina, município ou bacia" />
-            {busca && <button onClick={() => setBusca('')} aria-label="Limpar busca"><X size={14} /></button>}
           </div>
 
           {sel && (
@@ -1004,7 +1201,9 @@ function MapaConteudo({ dados, state, setState }) {
               aria-live="polite"
               aria-atomic="true"
             >
-              {usinas.length} de {(dados.usinas || []).length} em exibição{baciaSel ? ` · bacia ${baciaSel}` : ''}
+              {usinas.length} de {(dados.usinas || []).length} em exibição
+              {baciaSel ? ` · bacia ${baciaSel}` : ''}
+              {busca ? ` · busca ${busca}` : ''}
             </div>
             <p id="mp-lista-instrucoes" className="sr-only">
               Na lista de usinas, use as setas para cima e para baixo para navegar, Home e End para ir ao

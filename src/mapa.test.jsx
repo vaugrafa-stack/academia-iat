@@ -176,10 +176,16 @@ describe('didática e acesso por teclado no mapa', () => {
     expect(itensIniciais[1].tabIndex).toBe(0);
     expect(itensIniciais[1].getAttribute('aria-current')).toBe('true');
 
-    const busca = host.querySelector('input[aria-label="Buscar usina, município ou bacia"]');
+    const busca = host.querySelector('input[aria-label="Buscar no mapa"]');
     await act(async () => {
       preencherCampo(busca, 'pequena');
+      await Promise.resolve();
     });
+
+    const opcao = [...host.querySelectorAll('[role="option"]')]
+      .find((item) => item.textContent.includes('Usina pequena'));
+    expect(opcao).toBeTruthy();
+    await act(async () => opcao.click());
 
     const itensFiltrados = [...host.querySelectorAll('.mp-item')];
     expect(itensFiltrados).toHaveLength(1);
@@ -188,10 +194,171 @@ describe('didática e acesso por teclado no mapa', () => {
     expect(host.querySelector('.mp-lista-cab')?.getAttribute('role')).toBe('status');
 
     await act(async () => {
-      preencherCampo(busca, 'inexistente');
+      preencherCampo(busca, '');
+      await Promise.resolve();
     });
-    expect(host.querySelectorAll('.mp-item')).toHaveLength(0);
-    expect(host.querySelector('.mp-vazio')?.textContent).toContain('Nenhuma usina');
+    expect(host.querySelectorAll('.mp-item')).toHaveLength(2);
+    expect(host.querySelector('.mp-lista-cab')?.textContent).not.toContain('· busca');
+
+    await act(async () => {
+      preencherCampo(busca, 'pequena');
+      await Promise.resolve();
+    });
+    const opcaoNovamente = [...host.querySelectorAll('[role="option"]')]
+      .find((item) => item.textContent.includes('Usina pequena'));
+    await act(async () => opcaoNovamente.click());
+
+    await act(async () => {
+      preencherCampo(busca, 'inexistente');
+      await Promise.resolve();
+    });
+    expect(host.querySelector('[role="status"]')?.textContent).toBeDefined();
+
+    const limparBusca = host.querySelector('button[aria-label="Limpar busca no mapa"]');
+    await act(async () => limparBusca.click());
+    expect(host.querySelectorAll('.mp-item')).toHaveLength(2);
+    expect(host.querySelector('.mp-lista-cab')?.textContent).not.toContain('· busca');
+
+    await act(async () => root.unmount());
+  });
+
+  it('centraliza uma bacia por referência sem inventar uma coordenada precisa', async () => {
+    const host = document.createElement('div');
+    document.body.append(host);
+    const root = createRoot(host);
+
+    await act(async () => root.render(<MapaParana dados={dados} />));
+    const busca = host.querySelector('input[aria-label="Buscar no mapa"]');
+    await act(async () => {
+      preencherCampo(busca, 'Bacia B');
+      await Promise.resolve();
+    });
+    const opcao = [...host.querySelectorAll('[role="option"]')]
+      .find((item) => item.textContent.includes('Bacia hidrográfica')
+        && item.textContent.includes('Bacia B'));
+    expect(opcao).toBeTruthy();
+    await act(async () => opcao.click());
+
+    expect(host.querySelector('.mp-lista-cab')?.textContent).toContain('bacia Bacia B');
+    expect(host.querySelector('.co-marca')).toBeNull();
+    expect(host.textContent).toContain('Bacia localizada');
+
+    await act(async () => root.unmount());
+  });
+
+  it('conclui a localização e mostra detalhes se Escape for pressionado durante a consulta', async () => {
+    let concluirExtensao;
+    vi.stubGlobal('fetch', vi.fn().mockImplementation((entrada) => {
+      const url = new URL(String(entrada));
+      if (url.searchParams.get('returnExtentOnly') === 'true') {
+        return new Promise((resolve) => {
+          concluirExtensao = () => resolve({
+            ok: true,
+            json: async () => ({
+              extent: {
+                xmin: -5500000,
+                ymin: -2960000,
+                xmax: -5470000,
+                ymax: -2920000,
+                spatialReference: { latestWkid: 3857 },
+              },
+            }),
+          });
+        });
+      }
+      return Promise.resolve({ ok: true, json: async () => ({ features: [], layers: [], services: [] }) });
+    }));
+
+    const host = document.createElement('div');
+    document.body.append(host);
+    const root = createRoot(host);
+    await act(async () => root.render(<MapaParana dados={dados} />));
+
+    const busca = host.querySelector('input[aria-label="Buscar no mapa"]');
+    await act(async () => {
+      preencherCampo(busca, 'Município A');
+      await Promise.resolve();
+    });
+    const municipio = [...host.querySelectorAll('[role="option"]')]
+      .find((item) => item.textContent.startsWith('MunicípioMunicípio A'));
+    await act(async () => {
+      municipio.click();
+      await Promise.resolve();
+    });
+    expect(concluirExtensao).toBeTypeOf('function');
+    expect(host.textContent).toContain('Localizando e preparando os detalhes');
+
+    await act(async () => {
+      busca.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+      concluirExtensao();
+      await Promise.resolve();
+      await Promise.resolve();
+    });
+
+    expect(host.textContent).not.toContain('Localizando e preparando os detalhes');
+    expect(host.textContent).toContain('Município filtrado e enquadrado pelo limite oficial');
+    expect(host.querySelector('.gp-atributos')?.textContent).toContain('Detalhes da busca');
+    expect(host.querySelector('.gp-atributos')?.textContent).toContain('Município A');
+    expect(host.querySelector('.co-marca')).toBeNull();
+
+    await act(async () => root.unmount());
+  });
+
+  it('ignora uma localização oficial antiga depois que a pessoa inicia outra busca', async () => {
+    let concluirExtensao;
+    const fetchMock = vi.fn().mockImplementation((entrada) => {
+      const url = new URL(String(entrada));
+      if (url.searchParams.get('returnExtentOnly') === 'true') {
+        return new Promise((resolve) => {
+          concluirExtensao = () => resolve({
+            ok: true,
+            json: async () => ({
+              extent: {
+                xmin: -5500000,
+                ymin: -2960000,
+                xmax: -5470000,
+                ymax: -2920000,
+                spatialReference: { latestWkid: 3857 },
+              },
+            }),
+          });
+        });
+      }
+      return Promise.resolve({ ok: true, json: async () => ({ features: [], layers: [], services: [] }) });
+    });
+    vi.stubGlobal('fetch', fetchMock);
+    const host = document.createElement('div');
+    document.body.append(host);
+    const root = createRoot(host);
+    await act(async () => root.render(<MapaParana dados={dados} />));
+
+    const busca = host.querySelector('input[aria-label="Buscar no mapa"]');
+    await act(async () => {
+      preencherCampo(busca, 'Município A');
+      await Promise.resolve();
+    });
+    const municipio = [...host.querySelectorAll('[role="option"]')]
+      .find((item) => item.textContent.startsWith('MunicípioMunicípio A'));
+    await act(async () => municipio.click());
+    expect(concluirExtensao).toBeTypeOf('function');
+
+    await act(async () => {
+      preencherCampo(busca, 'Usina pequena');
+      await Promise.resolve();
+    });
+    const usina = [...host.querySelectorAll('[role="option"]')]
+      .find((item) => item.textContent.includes('Usina pequena')
+        && item.textContent.includes('Empreendimento'));
+    await act(async () => usina.click());
+    expect(host.querySelector('.mp-detalhe')?.textContent).toContain('Usina pequena');
+
+    await act(async () => {
+      concluirExtensao();
+      await Promise.resolve();
+      await Promise.resolve();
+    });
+    expect(host.querySelector('.mp-detalhe')?.textContent).toContain('Usina pequena');
+    expect(host.querySelector('.mp-lista-cab')?.textContent).toContain('busca Usina pequena');
 
     await act(async () => root.unmount());
   });

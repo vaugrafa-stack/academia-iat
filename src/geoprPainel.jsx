@@ -251,13 +251,13 @@ function DetalhesDaConsulta({ consulta, aoFechar }) {
   return (
     <div className="gp-atributos">
       <div className="gp-atributos-topo" style={{ display: 'flex', alignItems: 'center', gap: 8, minHeight: 44 }}>
-        <h3>Detalhes do ponto</h3>
+        <h3>{consulta.origemBusca === 'pesquisa' ? 'Detalhes da busca' : 'Detalhes do ponto'}</h3>
         <button
           type="button"
           className="mp-limpar"
           style={{ width: 44, height: 44, padding: 0, justifyContent: 'center', marginLeft: 'auto' }}
           onClick={aoFechar}
-          aria-label="Fechar detalhes do ponto"
+          aria-label={consulta.origemBusca === 'pesquisa' ? 'Fechar detalhes da busca' : 'Fechar detalhes do ponto'}
         >
           <X size={13} aria-hidden="true" />
         </button>
@@ -352,7 +352,9 @@ function DetalhesDaConsulta({ consulta, aoFechar }) {
       )}
       {momento && <p className="gp-nota">Consulta ao serviço oficial em {momento}.</p>}
       <p className="gp-nota">
-        Atributos lidos do serviço, sem conferência do ato legal. Use como pista.
+        {consulta.origemBusca === 'pesquisa'
+          ? 'Resultado da busca em bases públicas; confira a feição, a fonte e o ato aplicável antes de concluir.'
+          : 'Atributos lidos do serviço, sem conferência do ato legal. Use como pista.'}
       </p>
     </div>
   );

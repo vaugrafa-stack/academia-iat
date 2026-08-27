@@ -139,6 +139,48 @@ export const CAMADAS_GEOPR = [
       + 'foram desenhados sabendo onde elas estão.',
   },
   {
+    id: 'apps-hidricas-fbds',
+    titulo: 'Áreas de Preservação Permanente hídricas',
+    grupo: 'protegidas',
+    ordem: 'fundo',
+    caminho: '00_PUBLICACOES/fbds_app',
+    camadas: '0',
+    fonte: 'FBDS, 2013',
+    modulo: 'M10',
+    paraQue:
+      'Mostra a delimitação cartográfica de APPs hídricas publicada no GeoPR. É apoio '
+      + 'à triagem espacial; a incidência e a largura aplicáveis precisam ser conferidas '
+      + 'na base adequada, na legislação e na geometria do processo.',
+  },
+  {
+    id: 'uso-apps-hidricas-fbds',
+    titulo: 'Uso e cobertura do solo nas APPs hídricas',
+    grupo: 'protegidas',
+    ordem: 'fundo',
+    caminho: '00_PUBLICACOES/fbds_app_uso',
+    camadas: '0',
+    fonte: 'FBDS, 2013',
+    modulo: 'M10',
+    paraQue:
+      'Apoia a leitura do uso e da cobertura existentes dentro das APPs hídricas '
+      + 'mapeadas. Não substitui levantamento atual, vistoria, delimitação do processo '
+      + 'nem análise sobre intervenção ou regularidade.',
+  },
+  {
+    id: 'apps-rios-litoral',
+    titulo: 'Áreas de Preservação Permanente de rios do litoral',
+    grupo: 'protegidas',
+    ordem: 'fundo',
+    caminho: '00_PUBLICACOES/zeelit_apps_rios',
+    camadas: '0',
+    fonte: 'ITCG, 2016',
+    modulo: 'M10',
+    paraQue:
+      'Acrescenta a referência territorial do ZEE-PR para APPs de rios no litoral. '
+      + 'A abrangência regional e a data da camada devem permanecer visíveis na '
+      + 'conferência com a cartografia atual do caso.',
+  },
+  {
     id: 'linhas-transmissao',
     titulo: 'Linhas de transmissão',
     grupo: 'energia',

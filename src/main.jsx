@@ -620,8 +620,13 @@ function App() {
   useEffect(() => {
     if (menuOpen || !restoreMenuFocusOnClose.current) return undefined;
     restoreMenuFocusOnClose.current = false;
-    const restoreFocus = () =>
+    const restoreFocus = () => {
+      // Se o painel reabriu antes dos 400 ms da transicao anterior, este
+      // temporizador antigo nao pode roubar o foco que ja esta no novo dialogo.
+      const drawerAtual = document.getElementById("navegacao-lateral");
+      if (drawerAtual?.getAttribute("aria-modal") === "true") return;
       mobileMenuButton.current?.focus({ preventScroll: true });
+    };
     const drawer = document.getElementById("navegacao-lateral");
     restoreFocus();
     // A cortina é removida no clique e o drawer ainda conclui sua transição.
@@ -663,7 +668,11 @@ function App() {
           element.getAttribute("aria-hidden") !== "true" &&
           element.getClientRects().length > 0,
       );
-    const focusId = setTimeout(() => focusable()[0]?.focus(), 0);
+    const focusId = setTimeout(() => {
+      // O foco inicial e um fallback. Se teclado/teste ja moveu o foco para um
+      // destino do dialogo enquanto a tarefa aguardava, preserve essa escolha.
+      if (!drawer.contains(document.activeElement)) focusable()[0]?.focus();
+    }, 0);
     const containFocus = (event) => {
       if (event.key === "Escape") {
         event.preventDefault();

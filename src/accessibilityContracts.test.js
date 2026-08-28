@@ -127,9 +127,9 @@ describe('contratos de acessibilidade das superfícies principais', () => {
       readFile(cssUrl, 'utf8'),
     ]);
 
-    const mapa = main.indexOf('["mapa", "Mapa do Paraná", MapIcon]');
+    const mapa = main.indexOf('["mapa", "Mapa GeoPR", MapIcon]');
     const geopr = main.indexOf('"https://geopr.iat.pr.gov.br/portal/home/gallery.html?sortField=title&sortOrder=asc"');
-    const biblioteca = main.indexOf('["biblioteca", "Biblioteca", Library]');
+    const biblioteca = main.indexOf('["biblioteca", "Biblioteca técnica", Library]');
     expect(mapa).toBeGreaterThan(-1);
     expect(geopr).toBeGreaterThan(mapa);
     expect(biblioteca).toBeGreaterThan(geopr);

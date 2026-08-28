@@ -77,7 +77,7 @@ try {
   );
 
   const navButtons = [...document.querySelectorAll('.sidebar-v2 nav button')];
-  await click(navButtons.find(x => x.textContent.includes('Curso guiado pelo POP')));
+  await click(navButtons.find(x => x.textContent.includes('Formação pelo POP')));
   await waitFor(
     () => document.querySelectorAll('.track-row').length === 17,
     'a rota lazy da formação não terminou de carregar os dezessete módulos',
@@ -167,7 +167,7 @@ try {
   const fonte = document.querySelector('.quiz-fonte blockquote');
   assert(fonte && fonte.textContent.trim().length > 20, 'feedback exibe o trecho do POP que sustenta a questão');
 
-  await click(navButtons.find(x => x.textContent.includes('Redigir Informação Técnica')));
+  await click(navButtons.find(x => x.textContent.includes('Redator de IT')));
   await waitFor(
     () => document.querySelectorAll('.rd-trilha button').length === 12,
     'redator não terminou de carregar os doze elementos do item 23.1',
@@ -188,7 +188,7 @@ try {
     'redator oferece todos os casos como base sem dropdown nativo gigante',
   );
 
-  await click(navButtons.find(x => x.textContent.includes('Mapa do Paraná')));
+  await click(navButtons.find(x => x.textContent.includes('Mapa GeoPR')));
   await waitFor(
     () => document.querySelectorAll('.mp-camadas button').length === 4,
     'mapa não terminou de carregar as camadas',
@@ -219,7 +219,7 @@ try {
   // Desmonta a tela que consulta o Service Worker antes de fechar o JSDOM.
   // Sem isso, um setState já enfileirado pode tentar ler window.location
   // depois de dom.window.close() e produzir um erro assíncrono enganoso.
-  await click(navButtons.find(x => x.textContent.includes('Visão geral')));
+  await click(navButtons.find(x => x.textContent.includes('Início')));
   await waitFor(
     () => Boolean(document.querySelector('.dashboard-page')),
     'painel inicial não reapareceu ao encerrar o smoke test',

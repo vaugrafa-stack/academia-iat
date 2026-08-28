@@ -4,8 +4,12 @@ Registro da migração concluída em 11/08/2026. Este documento nasceu como plan
 e virou relato: o que está aqui aconteceu e está verificado pelos portões do
 repositório.
 
-Fonte publicada: `POP_DLE_HID_001_v1.9_Linguagem_Operacional_Revisada.docx`,
-7.294.663 bytes, SHA-256 `d66151bd…962d83d4`, versão operacional 1.9.
+Fonte canônica atualmente publicada:
+`POP_DLE_HID_001_v1.9_Sem_Empreendimento_Nomeado.docx`, 4.007.838 bytes,
+SHA-256 `ad33a4939ac5f73d5669fc4784c43319d1c1cae0193c7c3a0aa04bdfd669b353`,
+versão operacional 1.9. É a cópia pública sanitizada, com quatro substituições
+de nomes em metadados de autoria; o conteúdo permanece registrado como minuta
+técnica pendente de validação humana e institucional.
 
 ## 1. A escala ordinal de achados saiu
 

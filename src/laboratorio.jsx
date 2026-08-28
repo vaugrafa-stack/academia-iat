@@ -167,7 +167,11 @@ function EvidenceDocument({
           onChange={(event) => onNote(event.target.value)}
           placeholder="Registre o achado, o trecho usado, a limitação e como esta peça afeta a decisão..."
         />
-        <small>{note.trim().length}/40 caracteres mínimos para considerar a peça analisada</small>
+        <small>
+          {note.trim().length >= 40
+            ? 'Registro suficiente para marcar a peça como analisada'
+            : 'Registre o achado, a fonte consultada e a limitação da peça'}
+        </small>
       </label>
       <p className="evidence-limit">{document.limitations}</p>
     </article>
@@ -797,19 +801,19 @@ export default function Laboratorio({
     <div className="page lab-page lab-premium">
       <PageHeader
         title="Pratique antes de assinar"
-        subtitle="Abra peças do caso, confronte evidências, decida e sustente a conclusão com uma rubrica explícita."
+        subtitle="Abra peças do caso, confronte evidências, decida e sustente a conclusão. O debriefing mostra o que foi registrado e o que ainda pede revisão."
         icon={FlaskConical}
       />
 
-      <div className="lab-trust-note">
-        <ShieldCheck aria-hidden="true" />
+      <details className="lab-trust-note">
+        <summary><ShieldCheck aria-hidden="true" /><strong>Caso sintético de treinamento</strong></summary>
         <p>
-          <strong>Ambiente de treinamento.</strong> Casos e documentos são sintéticos,
-          e o debriefing separa o fundamento extraído da minuta POP v1.9 dos fatos,
+          Casos e documentos são sintéticos. O debriefing separa o fundamento
+          extraído da minuta POP v1.9 dos fatos,
           cálculos e inferências produzidos para a prática. Nada aqui reproduz processo,
           empreendimento, assinatura, decisão ou aprovação institucional.
         </p>
-      </div>
+      </details>
 
       <button
         type="button"
@@ -851,7 +855,7 @@ export default function Laboratorio({
             <span className="lab-eyebrow"><ListFilter aria-hidden="true" /> Biblioteca de casos</span>
             <h2 id="lab-catalog-title">Escolha o caso certo para praticar</h2>
             <p>
-              Pesquise um tema ou combine categoria e complexidade. Seu último caso
+              Pesquise um tema ou combine categoria e nível da prática. Seu último caso
               praticado é retomado automaticamente.
             </p>
           </div>
@@ -899,13 +903,13 @@ export default function Laboratorio({
             </select>
           </label>
           <label htmlFor="lab-complexity-filter">
-            <span>Complexidade</span>
+            <span>Nível da prática</span>
             <select
               id="lab-complexity-filter"
               value={complexityFilter}
               onChange={(event) => setComplexityFilter(event.target.value)}
             >
-              <option value="todas">Todas as complexidades</option>
+              <option value="todas">Todos os níveis</option>
               {complexities.map((complexity) => (
                 <option value={complexity.id} key={complexity.id}>
                   {complexity.ordem}. {complexity.titulo} · {complexity.tarefa}
@@ -992,7 +996,7 @@ export default function Laboratorio({
             </ul>
           </div>
           <div className="lab-selected-meta" aria-label="Resumo do caso selecionado">
-            <span><strong>{nivelDoCaso(scenario)?.titulo || group?.nivel || 'Prática'}</strong>complexidade</span>
+            <span><strong>{nivelDoCaso(scenario)?.titulo || group?.nivel || 'Prática'}</strong>nível da prática</span>
             <span><strong>{scenario.evidence.length}</strong>evidências</span>
             <span><strong>{scenario.questions.length}</strong>decisões</span>
             <button type="button" onClick={scrollToWorkspace}>
@@ -1274,7 +1278,6 @@ export default function Laboratorio({
                     : <Circle aria-hidden="true" />}
                   <span>
                     <span>{item.label}<b>{item.detail}</b></span>
-                    <i><em style={{ width: `${item.percent}%` }} /></i>
                   </span>
                 </li>
               ))}
@@ -1283,7 +1286,7 @@ export default function Laboratorio({
 
           <p className="lab-readiness-note" aria-live="polite">
             <span>{ready ? 'Pronto para debriefing' : 'Complete os critérios para finalizar'}</span>
-            <span>{ready ? '100%' : `${completedReadiness}/${readiness.length}`}</span>
+            <span>{completedReadiness} de {readiness.length}</span>
           </p>
 
           <button type="button" className="primary" disabled={!ready || showResult} onClick={finish}>
@@ -1298,29 +1301,12 @@ export default function Laboratorio({
           {showResult && (
             <div className="debrief" aria-live="polite">
               <Trophy aria-hidden="true" />
-              <small>DEBRIEFING · RUBRICA V3</small>
-              <h3>{rubricTotal}% dos critérios automatizáveis registrados</h3>
+              <small>DEBRIEFING DA PRÁTICA</small>
+              <h3>Revise o registro antes de considerar o exercício encerrado</h3>
               <p>{scenario.outcome}</p>
-              <div className="lab-rubric">
-                <div>
-                  <span>Decisões alinhadas · peso {classificationItems.length > 0 ? '30%' : '40%'}</span>
-                  <b>{rubric.decisions}%</b>
-                </div>
-                <div><span>Evidências com registro mínimo · peso 20%</span><b>{rubric.evidence}%</b></div>
-                <div>
-                  <span>Indícios textuais encontrados · peso {classificationItems.length > 0 ? '30%' : '40%'}</span>
-                  <b>{rubric.reasoning}%</b>
-                </div>
-                {classificationItems.length > 0 && (
-                  <div>
-                    <span>Classificações de evidência alinhadas · peso 20%</span>
-                    <b>{rubric.classification}%</b>
-                  </div>
-                )}
-              </div>
               <p className="fund-nota">
-                Este índice mede respostas objetivas e presença/completude observável. Não avalia
-                coerência, mérito técnico ou competência; a conferência técnica continua pendente.
+                A conferência abaixo indica presença e completude observável. Ela não avalia
+                coerência, mérito técnico ou competência; a revisão técnica continua pendente.
               </p>
               <DecisionReview
                 scenario={scenario}

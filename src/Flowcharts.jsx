@@ -4,6 +4,7 @@ import {
   ArrowRight,
   Check,
   CheckCircle2,
+  ChevronDown,
   ChevronRight,
   Eye,
   GitBranch,
@@ -404,7 +405,7 @@ export default function Flowcharts({ state, setState, flowData }) {
                           <dd>{guidance.evidence}</dd>
                         </div>
                         <div>
-                          <dt>Risco se ignorar</dt>
+                          <dt>Consequência de omitir</dt>
                           <dd>{guidance.risk}</dd>
                         </div>
                         <div>
@@ -425,11 +426,13 @@ export default function Flowcharts({ state, setState, flowData }) {
           ) : (
             <FlowBuilder key={flow.id} flow={flow} record={record} />
           )}
-          <section className="source-flow-panel">
+          <details className="source-flow-panel">
+            <summary className="sfp-title">
+              <Eye /> Comparar com os fluxogramas vinculados
+              <ChevronDown className="sfp-chevron" aria-hidden="true" />
+            </summary>
             <div className="sfp-head">
-              <span className="sfp-title">
-                <Eye /> Proposta de fluxograma vinculada
-              </span>
+              <span className="flow-toolbar-label">Versão da proposta</span>
               <div className="variant-tabs">
                 {[
                   ["original", "Original"],
@@ -477,13 +480,7 @@ export default function Flowcharts({ state, setState, flowData }) {
                 Imagem não encontrada para esta versão.
               </p>
             )}
-            {source && (
-              <small className="sfp-meta">
-                Versão {variant} · {source.widthPx}×{source.heightPx}px · imagem
-                vinculada ao documento de fluxogramas
-              </small>
-            )}
-          </section>
+          </details>
         </section>
       </div>
     </div>

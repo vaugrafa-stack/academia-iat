@@ -178,9 +178,9 @@ const ContaLinkPage = lazy(() => import("./ContaLinkPage.jsx"));
 try {
   const _t = localStorage.getItem("academia-iat-theme");
   document.documentElement.dataset.theme =
-    _t === "light" || _t === "dark" ? _t : "dark";
+    _t === "light" || _t === "dark" ? _t : "light";
 } catch {
-  document.documentElement.dataset.theme = "dark";
+  document.documentElement.dataset.theme = "light";
 }
 
 // Sob deploy em subcaminho (GitHub Pages), os caminhos absolutos dos dados precisam do prefixo da base
@@ -347,19 +347,19 @@ const DADOS_INICIO = Object.freeze({
 const URL_AREA_TECNICA = String(import.meta.env.VITE_AREA_TECNICA_URL || "").trim();
 
 const NAV_GRUPOS = [
-  [null, [["dashboard", "Visão geral", Home]]],
-  ["Aprender", [
-    ["hidreletricas", "Como funciona uma hidrelétrica", Zap],
-    ["formacao", "Curso guiado pelo POP", BookOpen],
+  [null, [["dashboard", "Início", Home]]],
+  ["Formação", [
+    ["hidreletricas", "Entenda uma hidrelétrica", Zap],
+    ["formacao", "Formação pelo POP", BookOpen],
   ]],
-  ["Praticar", [
+  ["Prática técnica", [
     ["laboratorio", "Laboratório", FlaskConical],
-    ["redator", "Redigir Informação Técnica", FileText],
+    ["redator", "Redator de IT", FileText],
     ["avaliacoes", "Avaliações", ClipboardCheck],
   ]],
-  ["Consultar", [
+  ["Consulta", [
     ["fluxos", "Fluxogramas", GitBranch],
-    ["mapa", "Mapa do Paraná", MapIcon],
+    ["mapa", "Mapa GeoPR", MapIcon],
     [
       "geopr",
       // As camadas do GeoPR passaram a desenhar dentro do Mapa do Parana.
@@ -370,16 +370,16 @@ const NAV_GRUPOS = [
       Layers3,
       "https://geopr.iat.pr.gov.br/portal/home/gallery.html?sortField=title&sortOrder=asc",
     ],
-    ["biblioteca", "Biblioteca", Library],
+    ["biblioteca", "Biblioteca técnica", Library],
     // Entra por ultimo para nao alterar a ordem que
     // accessibilityContracts.test.js fixa entre mapa, GeoPR e biblioteca.
     ...(URL_AREA_TECNICA
       ? [["area-tecnica", "Área Técnica restrita", ShieldCheck, URL_AREA_TECNICA]]
       : []),
   ]],
-  ["Neste dispositivo", [
-    ["perfil", "Meu progresso", BadgeCheck],
-    ["suporte", "Suporte", CircleHelp],
+  ["Minha conta", [
+    ["perfil", "Progresso e conta", BadgeCheck],
+    ["suporte", "Ajuda", CircleHelp],
   ]],
 ];
 
@@ -827,7 +827,6 @@ function App() {
     dashboard: (
       <Inicio
         state={state}
-        progress={progress}
         go={go}
         openLesson={openLesson}
         labIndexStatus={labIndexStatus}
@@ -842,6 +841,7 @@ function App() {
         state={state}
         openLesson={openLesson}
         dados={DADOS_FORMACAO}
+        go={go}
       />
     ),
     fluxos: (
@@ -1146,10 +1146,9 @@ function Topbar({
         <Menu />
       </button>
       <div className="compact-brand">
-        <span className="brand-wave">IAT</span>
         <div>
           <strong>Academia IAT</strong>
-          <small>Licenciamento hidrelétrico</small>
+          <small>Ambiente independente de treinamento</small>
         </div>
       </div>
       <button
@@ -1228,99 +1227,8 @@ function Sidebar({
         </button>
       )}
       <div className="brand-panel">
-        <strong>Academia IAT</strong>
-        <span>
-          Licenciamento
-          <br />
-          Hidrelétrico
-        </span>
-        <svg viewBox="0 0 200 128" aria-hidden="true" className="brand-hydro">
-          <rect
-            x="8"
-            y="52"
-            width="62"
-            height="26"
-            rx="3"
-            fill="#57d8bf"
-            opacity=".85"
-          />
-          <path
-            d="M10 56 q8 -4 16 0 t16 0 t16 0 t14 0"
-            stroke="#eafff7"
-            strokeWidth="2.5"
-            fill="none"
-          />
-          <path
-            d="M70 46 L70 92 L92 92 L84 46 Z"
-            fill="#e6efe9"
-            stroke="#a8d5c2"
-            strokeWidth="1.5"
-          />
-          <path
-            d="M74 52 L74 88 M79 56 L80 88 M84 62 L86 88"
-            stroke="#9db8ab"
-            strokeWidth="1.4"
-          />
-          <path
-            d="M86 58 L112 84"
-            stroke="#0b3b2d"
-            strokeWidth="5"
-            strokeLinecap="round"
-          />
-          <path
-            d="M86 58 L112 84"
-            stroke="#57d8bf"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeDasharray="4 6"
-          />
-          <rect
-            x="110"
-            y="76"
-            width="30"
-            height="18"
-            rx="2"
-            fill="#fff"
-            stroke="#57d8bf"
-            strokeWidth="1.6"
-          />
-          <path d="M110 76 L125 66 L140 76 Z" fill="#57d8bf" />
-          <path d="M124 80 l-4 7 h4 l-3 7 8 -9 h-4 l4 -5 Z" fill="#f3bd4f" />
-          <path
-            d="M150 44 L150 94 M141 58 L159 58 M143 48 L157 48"
-            stroke="#eafff7"
-            strokeWidth="2.6"
-          />
-          <path d="M140 94 L160 94" stroke="#eafff7" strokeWidth="2.6" />
-          <path
-            d="M150 44 C162 38 174 42 186 34"
-            stroke="#f3bd4f"
-            strokeWidth="2"
-            fill="none"
-          />
-          <circle cx="188" cy="33" r="3.4" fill="#f3bd4f" />
-          <g transform="translate(18 88)">
-            <path
-              d="M0 12 C10 4 24 4 34 9 C44 4 58 4 68 12 L68 32 C58 25 44 25 34 29 C24 25 10 25 0 32 Z"
-              fill="#fff"
-              stroke="#57d8bf"
-              strokeWidth="2.4"
-            />
-            <path d="M34 9 L34 29" stroke="#57d8bf" strokeWidth="2.2" />
-            <path
-              d="M7 14 L28 12 M7 19 L28 17 M7 24 L28 22 M40 12 L61 14 M40 17 L61 19 M40 22 L61 24"
-              stroke="#0b3b2d"
-              strokeWidth="1.5"
-              opacity=".55"
-            />
-            <path
-              d="M26 -2 L42 -2 L34 3 Z M34 -2 L34 -8 M30 -8 L38 -8"
-              stroke="#f3bd4f"
-              strokeWidth="2"
-              fill="#f3bd4f"
-            />
-          </g>
-        </svg>
+        <span className="brand-name">Academia <strong>IAT</strong></span>
+        <small>Ambiente independente de treinamento</small>
       </div>
       <nav aria-label="Navegação principal">
         {NAV_GRUPOS.map(([grupo, itens]) => {
@@ -1404,22 +1312,22 @@ function MobileBottomNav({ view, go, inert }) {
   const home = { id: "dashboard", label: "Início" };
   const categories = [
     {
-      id: "aprender",
-      label: "Aprender",
+      id: "formacao",
+      label: "Formação",
       Icon: BookOpen,
-      items: NAV_GRUPOS.find(([grupo]) => grupo === "Aprender")?.[1] || [],
+      items: NAV_GRUPOS.find(([grupo]) => grupo === "Formação")?.[1] || [],
     },
     {
       id: "praticar",
-      label: "Praticar",
+      label: "Prática",
       Icon: FlaskConical,
-      items: NAV_GRUPOS.find(([grupo]) => grupo === "Praticar")?.[1] || [],
+      items: NAV_GRUPOS.find(([grupo]) => grupo === "Prática técnica")?.[1] || [],
     },
     {
       id: "consultar",
-      label: "Consultar",
+      label: "Consulta",
       Icon: Library,
-      items: NAV_GRUPOS.find(([grupo]) => grupo === "Consultar")?.[1] || [],
+      items: NAV_GRUPOS.find(([grupo]) => grupo === "Consulta")?.[1] || [],
     },
   ];
   const activeDestination = (id) =>

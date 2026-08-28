@@ -50,7 +50,7 @@ const ROUTES = [
   },
   {
     hash: '#/redator',
-    ready: (page) => page.getByRole('heading', { name: /Escrever uma Informação Técnica/i }),
+    ready: (page) => page.getByRole('heading', { name: /Redator de Informação Técnica/i }),
   },
   {
     hash: '#/mapa',
@@ -297,7 +297,7 @@ test('experiência responsiva prioriza aprender e praticar sem overflow', async 
   if (mobile) {
     await expect(bottomNav).toBeVisible();
     await expect(bottomNav.getByRole('button')).toHaveCount(4);
-    for (const label of ['Início', 'Aprender', 'Praticar', 'Consultar']) {
+    for (const label of ['Início', 'Formação', 'Prática', 'Consulta']) {
       await expect(bottomNav.getByRole('button', { name: label })).toBeVisible();
     }
   } else {
@@ -319,7 +319,7 @@ test('experiência responsiva prioriza aprender e praticar sem overflow', async 
   await expect(geopr).toHaveAttribute('rel', 'noopener noreferrer');
   await geopr.scrollIntoViewIfNeeded();
   await expect(geopr).toBeVisible();
-  const suporte = sidebar.getByRole('button', { name: 'Suporte' });
+  const suporte = sidebar.getByRole('button', { name: 'Ajuda' });
   await suporte.scrollIntoViewIfNeeded();
   await expect(suporte).toBeVisible();
   await suporte.click();

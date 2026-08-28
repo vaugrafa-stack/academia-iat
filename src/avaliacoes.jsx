@@ -39,56 +39,6 @@ const CONFIDENCE_LEVELS = Object.freeze([
   ["media", "Média", "Tenho alguma segurança"],
   ["alta", "Alta", "Estou convicto desta resposta"],
 ]);
-const COGNITIVE_LABELS = Object.freeze({
-  recordar: "Recordar",
-  compreender: "Compreender",
-  aplicar: "Aplicar",
-  analisar: "Analisar",
-});
-const DIFFICULTY_LABELS = Object.freeze({
-  introdutoria: "Introdutória",
-  intermediaria: "Intermediária",
-  avancada: "Avançada",
-});
-const REMEDIATION_LABELS = Object.freeze({
-  regular: "Regular",
-  media: "Média",
-  alta: "Alta",
-});
-
-function QuestionPedagogy({ pedagogy }) {
-  if (!pedagogy) return null;
-  return (
-    <aside
-      className="question-pedagogy"
-      aria-label="Objetivo e classificação pedagógica da questão"
-    >
-      <div className="question-objective">
-        <small>OBJETIVO OBSERVÁVEL</small>
-        <p>{pedagogy.objective}</p>
-      </div>
-      <dl>
-        <div>
-          <dt>Nível cognitivo</dt>
-          <dd>{COGNITIVE_LABELS[pedagogy.cognitiveLevel] || pedagogy.cognitiveLevel}</dd>
-        </div>
-        <div>
-          <dt>Dificuldade estrutural estimada</dt>
-          <dd>{DIFFICULTY_LABELS[pedagogy.difficulty] || pedagogy.difficulty}</dd>
-        </div>
-        <div>
-          <dt>Prioridade se errar</dt>
-          <dd>{REMEDIATION_LABELS[pedagogy.remediationPriority] || pedagogy.remediationPriority}</dd>
-        </div>
-      </dl>
-      <small className="pedagogy-method-note">
-        Classificação automática para apoio ao estudo. A dificuldade é estrutural,
-        não foi calibrada psicometricamente e a revisão especializada responsável
-        permanece pendente.
-      </small>
-    </aside>
-  );
-}
 
 // O que a pessoa errou volta, e volta cada vez mais tarde. Só aparece quando
 // há questão vencida, para a retomada útil não virar ruído em toda visita.
@@ -182,11 +132,22 @@ export default function Assessments({ state, setState, openLesson, dados }) {
   const q = questions[index];
   const score = questions.filter((x, i) => answers[i] === x.answer).length;
 
-  // Ao iniciar, avançar ou concluir, o foco acompanha o conteúdo que mudou.
-  // Isso preserva a posição de quem usa teclado ou leitor de tela sem rolar a
-  // página nem criar uma segunda fonte de estado.
+  // Ao iniciar, avançar ou concluir, a leitura chega ao conteúdo que mudou.
+  // O scroll-margin do título o mantém abaixo da barra fixa; só depois o foco
+  // é movido, evitando que o navegador o esconda novamente.
   useLayoutEffect(() => {
-    if (started) stageHeadingRef.current?.focus({ preventScroll: true });
+    if (!started) return;
+    const heading = stageHeadingRef.current;
+    if (!heading) return;
+    const reducedMotion =
+      typeof window !== "undefined" &&
+      typeof window.matchMedia === "function" &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    heading.scrollIntoView?.({
+      behavior: reducedMotion ? "auto" : "smooth",
+      block: "start",
+    });
+    heading.focus({ preventScroll: true });
   }, [started, index, done]);
 
   function reset(id = track) {
@@ -326,7 +287,7 @@ export default function Assessments({ state, setState, openLesson, dados }) {
                 <MessageSquareText /> Feedback imediato
               </span>
               <span>
-                <Trophy /> Autoacompanhamento não validado
+                <Trophy /> Resultado para orientar a revisão
               </span>
             </div>
             <button
@@ -337,7 +298,7 @@ export default function Assessments({ state, setState, openLesson, dados }) {
               }}
             >
               {state.diagnostico?.entrada
-                ? "Reaplicar os itens-âncora"
+                ? "Fazer a reavaliação"
                 : "Fazer a primeira aplicação"}{" "}
               <ArrowRight />
             </button>
@@ -526,7 +487,6 @@ export default function Assessments({ state, setState, openLesson, dados }) {
                 <h2 ref={stageHeadingRef} tabIndex={-1}>
                   {q.question}
                 </h2>
-                <QuestionPedagogy pedagogy={q.pedagogy} />
                 <div className="quiz-options" aria-label="Alternativas">
                   {q.options.map((option, optionIndex) => (
                     <button

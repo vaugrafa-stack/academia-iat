@@ -257,17 +257,19 @@
 
 /* Laboratório documental v2. */
 .lab-trust-note{
-  display:flex;
-  gap:10px;
-  align-items:flex-start;
+  display:block;
   margin-bottom:16px;
-  padding:12px 14px;
   border:1px solid var(--line);
   border-radius:7px;
   background:var(--surface);
+  overflow:hidden;
 }
+.lab-trust-note summary{display:flex;align-items:center;gap:9px;padding:12px 14px;cursor:pointer;list-style:none}
+.lab-trust-note summary::-webkit-details-marker{display:none}
+.lab-trust-note summary:after{content:'+';margin-left:auto;color:var(--muted);font-weight:800}
+.lab-trust-note[open] summary:after{content:'−'}
 .lab-trust-note svg{width:18px;flex:none;color:var(--amber)}
-.lab-trust-note p{margin:0;color:var(--ink2);font-size:12px;line-height:1.55}
+.lab-trust-note p{margin:0;padding:12px 14px;border-top:1px solid var(--line);color:var(--ink2);font-size:12px;line-height:1.55}
 .lab-trust-note strong{color:var(--ink)}
 .evidence-document{
   position:relative;
@@ -305,8 +307,6 @@
 .evidence-note textarea{width:100%;min-height:92px;resize:vertical;padding:9px;border:1px solid var(--line);border-radius:5px;background:var(--surface);color:var(--ink);font-size:11px;font-weight:500;line-height:1.5}
 .evidence-note small{color:var(--muted);font-size:11px;font-weight:500}
 .lab-readiness-note{display:flex;justify-content:space-between;gap:8px;color:var(--muted);font-size:11px}
-.lab-rubric{display:grid;gap:6px;margin:12px 0}
-.lab-rubric div{display:grid;grid-template-columns:1fr auto;gap:8px;padding:7px 9px;border:1px solid var(--line);border-radius:5px;font-size:11px}
 .lab-answer-review{margin:12px 0 0;padding:0;list-style:none}
 .lab-answer-review li{display:grid;grid-template-columns:1fr auto auto;gap:8px;padding:7px 0;border-top:1px solid var(--line);font-size:11px}
 .lab-answer-review li p{grid-column:1/-1;margin:0;color:var(--muted);line-height:1.5}
@@ -578,7 +578,6 @@
 .evidence-note textarea,
 .evidence-note small,
 .lab-readiness-note,
-.lab-rubric div,
 .lab-answer-review li,
 .route-loading small,
 .transcript-panel>summary strong,
@@ -728,7 +727,7 @@
 .lesson-footer button.ready{border-color:var(--green);background:var(--green3);color:var(--green)}
 
 /* Proveniência dos fluxos e decisões com evidência, risco e retorno. */
-.flow-source-warning,.rd-divergencia{
+.flow-source-warning{
   display:flex;
   gap:10px;
   align-items:flex-start;
@@ -738,9 +737,16 @@
   border-radius:9px;
   background:color-mix(in srgb,var(--amber) 10%,var(--surface));
 }
-.flow-source-warning>svg,.rd-divergencia>svg{width:18px;flex:none;color:var(--amber)}
-.flow-source-warning p,.rd-divergencia p{margin:0;color:var(--ink2);font-size:13px;line-height:1.55}
-.rd-divergencia strong{display:block;margin-bottom:3px}
+.flow-source-warning>svg{width:18px;flex:none;color:var(--amber)}
+.flow-source-warning p{margin:0;color:var(--ink2);font-size:13px;line-height:1.55}
+.rd-divergencia{margin:0 0 16px;border:1px solid color-mix(in srgb,var(--amber) 55%,var(--line));border-radius:9px;background:color-mix(in srgb,var(--amber) 10%,var(--surface));overflow:hidden}
+.rd-divergencia>summary{display:flex;align-items:center;gap:9px;padding:12px 14px;cursor:pointer;list-style:none}
+.rd-divergencia>summary::-webkit-details-marker{display:none}
+.rd-divergencia>summary svg{width:18px;flex:none;color:var(--amber)}
+.rd-divergencia>summary:after{content:'+';margin-left:auto;color:var(--muted);font-weight:800}
+.rd-divergencia[open]>summary:after{content:'−'}
+.rd-divergencia>div{padding:0 14px 13px 41px}
+.rd-divergencia p{margin:0;color:var(--ink2);font-size:13px;line-height:1.55}
 .flow-guidance{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:11px 0 0}
 .flow-guidance div{padding:9px;border:1px solid var(--line);border-radius:6px;background:var(--surface)}
 .flow-guidance dt{color:var(--blue);font-size:11px;font-weight:850}

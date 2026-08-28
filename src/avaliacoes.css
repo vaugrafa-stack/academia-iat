@@ -108,6 +108,13 @@
   background: color-mix(in srgb, var(--soft) 58%, var(--surface));
 }
 
+/* O cabeçalho da aplicação é fixo. Quando o estágio avança, o título precisa
+   parar logo abaixo dele para que foco e enunciado sejam percebidos juntos. */
+.quiz-question h2,
+.quiz-result h2 {
+  scroll-margin-top: calc(var(--top) + 20px);
+}
+
 .question-objective small {
   color: var(--blue);
   font-size: 12px;

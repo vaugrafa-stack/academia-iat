@@ -31,7 +31,7 @@ import { PageHeader } from './ui.jsx';
 
 const JUIZOS=[['sim','Tratei e sustentei'],['parcial','Mencionei sem sustentar'],['nao','Não tratei']];
 
-export function ThemeToggle(){const[t,setT]=useState(()=>(typeof document!=='undefined'&&document.documentElement.dataset.theme)||'dark');const toggle=()=>{const nx=t==='light'?'dark':'light';document.documentElement.dataset.theme=nx;try{localStorage.setItem('academia-iat-theme',nx)}catch{}setT(nx)};// O icone sozinho nao diz o que faz para quem nao esta acostumado com a
+export function ThemeToggle(){const[t,setT]=useState(()=>(typeof document!=='undefined'&&document.documentElement.dataset.theme)||'light');const toggle=()=>{const nx=t==='light'?'dark':'light';document.documentElement.dataset.theme=nx;try{localStorage.setItem('academia-iat-theme',nx)}catch{}setT(nx)};// O icone sozinho nao diz o que faz para quem nao esta acostumado com a
  // convencao de sol e lua. O rotulo acompanha, e some so no celular, onde a
  // barra do topo nao tem espaco: la o title e o aria-label seguem valendo.
  return <button className="theme-toggle" onClick={toggle} title={t==='light'?'Mudar para o modo escuro':'Mudar para o modo claro'} aria-label={t==='light'?'Mudar para o modo escuro':'Mudar para o modo claro'}>{t==='light'?<Moon size={18}/>:<Sun size={18}/>}<span>{t==='light'?'Modo Escuro':'Modo Claro'}</span></button>}
@@ -40,20 +40,6 @@ export const SUPPORT_EMAIL = 'bol.rafaelaugusto@iat.pr.gov.br';
 
 const BUILD_STAMP =
   typeof __BUILD_STAMP__ !== 'undefined' ? __BUILD_STAMP__ : 'local';
-
-const SUPPORT_AREAS = [
-  'Início',
-  'Formação',
-  'Hidrelétricas',
-  'Laboratório',
-  'Redigir uma IT',
-  'Avaliações',
-  'Fluxogramas',
-  'Mapa do Paraná',
-  'Biblioteca',
-  'Meu progresso neste dispositivo',
-  'Central de Suporte',
-];
 
 const SUPPORT_FAQS = [
   {
@@ -212,8 +198,6 @@ export function buildSupportMailto({
 }
 
 export function Suporte({ online: onlineFromApp } = {}) {
-  const [area, setArea] = useState('Central de Suporte');
-  const [page, setPage] = useState(currentRoute);
   const [expected, setExpected] = useState('');
   const [found, setFound] = useState('');
   const [browserOnline, setBrowserOnline] = useState(currentOnlineState);
@@ -237,8 +221,8 @@ export function Suporte({ online: onlineFromApp } = {}) {
   const userAgent = currentUserAgent();
   const diagnostic = buildSupportDiagnostic({ route, userAgent, online });
   const mailto = buildSupportMailto({
-    area,
-    page,
+    area: 'Relato enviado pela plataforma',
+    page: route,
     expected,
     found,
     route,
@@ -261,31 +245,14 @@ export function Suporte({ online: onlineFromApp } = {}) {
       icon={CircleHelp}
       kicker="Ajuda dentro da plataforma"
       title="Central de Suporte"
-      subtitle="Encontre orientações para os problemas mais comuns e prepare um pedido de suporte com diagnóstico seguro."
+      subtitle="Resolva os problemas mais comuns ou prepare um relato sem expor dados de trabalho."
     />
-
-    <section className="suporte-card" aria-labelledby="support-intro-title">
-      <div className="sup-avatar" aria-hidden="true"><CircleHelp size={36}/></div>
-      <div className="sup-info">
-        <h2 id="support-intro-title">Ajuda para usar a Academia IAT</h2>
-        <p className="sup-cargo">A central funciona mesmo sem conexão; somente o envio do e-mail depende do aplicativo de correio.</p>
-        <p className="sup-note">Comece pelas orientações abaixo. Se o problema continuar, descreva a página, o comportamento esperado e o que ocorreu.</p>
-      </div>
-    </section>
-
-    <section className="support-warning" aria-labelledby="support-privacy-title">
-      <AlertTriangle aria-hidden="true" size={22}/>
-      <div>
-        <h2 id="support-privacy-title">Proteja as informações de trabalho</h2>
-        <p>Não envie processos reais, documentos restritos, dados pessoais, respostas, notas, rascunhos ou arquivos de backup. Use somente exemplos genéricos para explicar o problema.</p>
-      </div>
-    </section>
 
     <section className="support-faq" aria-labelledby="support-faq-title">
       <div className="support-section-heading">
         <small>RESOLUÇÃO RÁPIDA</small>
         <h2 id="support-faq-title">Dúvidas frequentes</h2>
-        <p>Abra somente o assunto que corresponde ao que você precisa resolver.</p>
+        <p>Escolha a situação mais próxima do que você encontrou.</p>
       </div>
       <div className="support-faq-list">
         {SUPPORT_FAQS.map(({ id, icon: Icon, title, summary, steps, link }) =>
@@ -304,49 +271,43 @@ export function Suporte({ online: onlineFromApp } = {}) {
       </div>
     </section>
 
-    <section className="support-diagnostic" aria-labelledby="support-diagnostic-title">
-      <div className="support-section-heading">
-        <small>VERSÃO PUBLICADA</small>
-        <h2 id="support-diagnostic-title">Diagnóstico técnico seguro</h2>
+    <details className="support-diagnostic">
+      <summary>
+        <span><small>VERSÃO PUBLICADA</small><strong>Ver diagnóstico técnico seguro</strong></span>
+        <ChevronDown aria-hidden="true" size={20}/>
+      </summary>
+      <div className="support-diagnostic-body">
         <p>Este texto não consulta seu nome, progresso, notas, respostas, rascunhos, documentos ou dados de processo.</p>
+        <textarea
+          className="support-diagnostic-text"
+          aria-label="Diagnóstico técnico"
+          readOnly
+          rows={7}
+          value={diagnostic}
+        />
+        <div className="support-copy-row">
+          <button type="button" className="support-copy" onClick={copyDiagnostic}>
+            <Copy size={16}/> Copiar diagnóstico
+          </button>
+          <span role="status" aria-live="polite">{copyStatus}</span>
+        </div>
       </div>
-      <textarea
-        className="support-diagnostic-text"
-        aria-label="Diagnóstico técnico"
-        readOnly
-        rows={7}
-        value={diagnostic}
-      />
-      <div className="support-copy-row">
-        <button type="button" className="support-copy" onClick={copyDiagnostic}>
-          <Copy size={16}/> Copiar diagnóstico
-        </button>
-        <span role="status" aria-live="polite">{copyStatus}</span>
-      </div>
-    </section>
+    </details>
 
     <section className="support-contact" aria-labelledby="support-contact-title">
       <div className="support-section-heading">
         <small>CONTATO OFICIAL</small>
         <h2 id="support-contact-title">Ainda precisa de ajuda?</h2>
-        <p>Preencha apenas informações genéricas. O botão abrirá o aplicativo de e-mail já com a versão e o diagnóstico técnico.</p>
+        <p>Descreva o resultado esperado e o que ocorreu. A página e o diagnóstico técnico serão incluídos automaticamente.</p>
+      </div>
+      <div className="support-warning" aria-labelledby="support-privacy-title">
+        <AlertTriangle aria-hidden="true" size={22}/>
+        <div>
+          <h3 id="support-privacy-title">Proteja as informações de trabalho</h3>
+          <p>Não envie processos reais, documentos restritos, dados pessoais, respostas, notas, rascunhos ou arquivos de backup. Use somente exemplos genéricos.</p>
+        </div>
       </div>
       <div className="support-form-grid">
-        <label>
-          <span>Área da plataforma</span>
-          <select value={area} onChange={(event) => setArea(event.target.value)}>
-            {SUPPORT_AREAS.map((option) => <option key={option}>{option}</option>)}
-          </select>
-        </label>
-        <label>
-          <span>Página ou aula</span>
-          <input
-            value={page}
-            onChange={(event) => setPage(event.target.value)}
-            placeholder="Ex.: M08 › conteúdo mínimo"
-            maxLength={180}
-          />
-        </label>
         <label className="support-form-wide">
           <span>O que deveria acontecer?</span>
           <textarea
@@ -446,4 +407,3 @@ export function AutoAvaliacao({caso,texto,conf,state,setState}){
   {!completo&&<small className="aa-falta">Marque os {caso.elementos.length-marcados} restantes para fechar a autoavaliação.</small>}
  </div>
 }
-

@@ -111,6 +111,7 @@ export default function PainelCoordenada({
   aoLimpar,
   aoLimparBusca,
   aoAlterarBusca,
+  className = '',
 }) {
   const [texto, setTexto] = useState('');
   const [erro, setErro] = useState('');
@@ -350,7 +351,7 @@ export default function PainelCoordenada({
   const fora = marca && !dentroDoParana(marca.lat, marca.lon);
 
   return (
-    <section className="co-painel" role="search" aria-label="Busca no mapa">
+    <section className={`co-painel ${className}`.trim()} role="search" aria-label="Busca no mapa">
       <header>
         <Search size={16} aria-hidden="true" />
         <div>

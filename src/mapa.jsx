@@ -889,11 +889,32 @@ function MapaConteudo({ dados, state, setState }) {
         <div>
           <small className="ph-kicker">TERRITÓRIO</small>
           <h1>Mapa das hidrelétricas do Paraná</h1>
-          <p>As {(dados.usinas || []).length} usinas do registro da ANEEL sobre as {(dados.bacias || []).length} bacias hidrográficas do Estado. O tamanho do ponto acompanha a potência. As camadas oficiais do GeoPR desenham sobre este mesmo mapa, no painel ao lado.</p>
+          <p>Consulte empreendimentos, bacias e camadas públicas em um único mapa.</p>
         </div>
       </header>
 
       <div className="mapa-layout">
+        <PainelCoordenada
+          className="mp-pesquisa-unificada"
+          marca={marca}
+          aoBuscar={irParaCoordenada}
+          aoPesquisar={pesquisarNoMapa}
+          aoEscolher={escolherResultadoDaBusca}
+          aoAlterarBusca={(valor) => {
+            ++versaoEscolhaBusca.current;
+            if (!String(valor || '').trim()) {
+              setBusca('');
+              setBaciaSel(null);
+            }
+          }}
+          aoLimparBusca={() => {
+            ++versaoEscolhaBusca.current;
+            setBusca('');
+            setBaciaSel(null);
+          }}
+          aoLimpar={() => setMarca(null)}
+        />
+
         <figure className="mp-quadro">
           <div className="mp-controles">
             <div className="mp-camadas" role="group" aria-label="Camadas do mapa">
@@ -910,21 +931,6 @@ function MapaConteudo({ dados, state, setState }) {
               <span aria-live="polite" aria-atomic="true">{escala.toFixed(1)}x</span>
             </div>
           </div>
-          <p className="mp-limite-camada">
-            Bacias, usinas, busca e filtros funcionam sem internet. As camadas Satélite e GeoPR são
-            opcionais e carregam imagens online somente quando ativadas.
-          </p>
-          <p className="mp-limite-camada">
-            Os rótulos CGH, PCH e UHE dos pontos reproduzem o tipo do registro consultado. A faixa MCH,
-            MGH, CGH, PCH ou UHE calculada no exercício é apenas a leitura didática da potência pelo POP;
-            uma divergência exige conferência oficial e não altera o cadastro automaticamente.
-          </p>
-          <p id="mp-ajuda-teclado" className="mp-ajuda-teclado">Com o mapa em foco: setas deslocam, mais e menos aproximam e afastam, zero volta ao mapa inteiro. Com uma camada GeoPR ligada, Enter consulta o centro visível. Para selecionar uma bacia sem mouse, use a lista “Bacia hidrográfica” no painel.</p>
-          {!!geopr.length && (
-            <p className="mp-limite-camada gp-ajuda-consulta">
-              Passe o mouse sobre um símbolo do GeoPR para ver o resumo. Clique ou toque para fixar os detalhes; identificadores e dados desnecessários não são exibidos.
-            </p>
-          )}
           <div className="mp-map-stage">
             <svg ref={svgRef} viewBox={`${v.x} ${v.y} ${v.w} ${v.h}`} role="img" tabIndex={0}
                  aria-describedby="mp-ajuda-teclado"
@@ -1106,25 +1112,6 @@ function MapaConteudo({ dados, state, setState }) {
         </figure>
 
         <aside className="mp-painel">
-          <PainelCoordenada
-            marca={marca}
-            aoBuscar={irParaCoordenada}
-            aoPesquisar={pesquisarNoMapa}
-            aoEscolher={escolherResultadoDaBusca}
-            aoAlterarBusca={(valor) => {
-              ++versaoEscolhaBusca.current;
-              if (!String(valor || '').trim()) {
-                setBusca('');
-                setBaciaSel(null);
-              }
-            }}
-            aoLimparBusca={() => {
-              ++versaoEscolhaBusca.current;
-              setBusca('');
-              setBaciaSel(null);
-            }}
-            aoLimpar={() => setMarca(null)}
-          />
           <GeoprPainel
             ativas={geopr}
             alternar={alternarGeopr}
@@ -1232,6 +1219,34 @@ function MapaConteudo({ dados, state, setState }) {
           </div>
         </aside>
       </div>
+
+      <details className="mp-como-usar">
+        <summary>Como usar e interpretar este mapa</summary>
+        <div className="mp-como-usar-conteudo">
+          <p>
+            Bacias, usinas, busca e filtros funcionam sem internet. As camadas Satélite e GeoPR são
+            opcionais e carregam imagens online somente quando ativadas.
+          </p>
+          <p>
+            Os rótulos CGH, PCH e UHE dos pontos reproduzem o tipo do registro consultado. A faixa MCH,
+            MGH, CGH, PCH ou UHE calculada no exercício é apenas a leitura didática da potência pelo POP;
+            uma divergência exige conferência oficial e não altera o cadastro automaticamente.
+          </p>
+          <p>
+            Para filtrar, clique em uma bacia ou use a lista “Bacia hidrográfica”. Clique em um ponto para
+            ver a usina. As camadas do GeoPR apoiam a conferência territorial, mas não substituem o ato
+            legal, a geometria do processo ou a análise humana.
+          </p>
+          <p>
+            Passe o mouse sobre um símbolo do GeoPR para ver o resumo quando a camada estiver ligada.
+            Clique ou toque para fixar os detalhes; identificadores e dados desnecessários não são exibidos.
+          </p>
+          <p id="mp-ajuda-teclado">
+            Com o mapa em foco, use as setas para deslocar, mais e menos para aproximar ou afastar e zero
+            para voltar ao mapa inteiro. Com uma camada GeoPR ligada, Enter consulta o centro visível.
+          </p>
+        </div>
+      </details>
 
       <footer className="mp-fontes">
         <Zap size={14} />

@@ -5,10 +5,6 @@ import { createRoot } from "react-dom/client";
 import { renderToStaticMarkup } from "react-dom/server";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import LearningPaths, {
-  FOUNDATION_ACRONYMS,
-  FOUNDATION_COMPONENTS,
-  FOUNDATION_FLOW,
-  FOUNDATION_TYPOLOGIES,
   LEARNING_PATHS,
   learningPathMetrics,
 } from "./LearningPaths.jsx";
@@ -40,7 +36,11 @@ const trackLessons = new Map(tracks.map((track) => [track.id, [
 
 const roots = [];
 
-function mount({ completed = [], openLesson = vi.fn() } = {}) {
+function mount({
+  completed = [],
+  openLesson = vi.fn(),
+  onOpenFoundations,
+} = {}) {
   const host = document.createElement("div");
   document.body.append(host);
   const root = createRoot(host);
@@ -51,6 +51,7 @@ function mount({ completed = [], openLesson = vi.fn() } = {}) {
       trackLessons={trackLessons}
       state={{ completed }}
       openLesson={openLesson}
+      onOpenFoundations={onOpenFoundations}
     />,
   ));
   return { host, openLesson };
@@ -70,7 +71,7 @@ afterEach(async () => {
 });
 
 describe("rotas de entrada da formação", () => {
-  it("cobre necessidades diferentes sem fingir que substitui o percurso", () => {
+  it("cobre necessidades diferentes sem criar currículos paralelos", () => {
     expect(LEARNING_PATHS).toHaveLength(4);
     const html = renderToStaticMarkup(
       <LearningPaths
@@ -82,10 +83,12 @@ describe("rotas de entrada da formação", () => {
     );
     expect(html).toContain("Primeira semana");
     expect(html).toContain("Analisar um processo");
-    expect(html).toContain("não dispensam os módulos indispensáveis");
+    expect(html).toContain("mesma formação de M00 a M16");
+    expect(html).toContain("não são currículos alternativos");
     expect(html).toContain("não é certificação de competência profissional");
-    expect(html).toContain("Nunca estudou uma hidrelétrica?");
-    expect(html).toContain("Já domino estes fundamentos");
+    expect(html).toContain("Novo em hidrelétricas?");
+    expect(html).not.toContain("Como a água se transforma em eletricidade");
+    expect(html).not.toContain("Caminho da água até a rede elétrica");
   });
 
   it("abre a primeira aula ainda não registrada e calcula tempo e progresso", () => {
@@ -100,57 +103,33 @@ describe("rotas de entrada da formação", () => {
     expect(metrics.percent).toBe(13);
   });
 
-  it("cobre a cadeia física, os componentes, as tipologias e as siglas antes do POP", () => {
-    expect(FOUNDATION_FLOW.map((step) => step.title)).toEqual([
-      "Água disponível",
-      "Vazão e queda",
-      "Turbina",
-      "Gerador",
-      "Transformação e rede",
-    ]);
-    expect(FOUNDATION_COMPONENTS.map(([term]) => term)).toEqual(
-      expect.arrayContaining(["Barragem", "Tomada d'água", "Casa de força", "Canal de fuga"]),
-    );
-    expect(FOUNDATION_TYPOLOGIES.map(([term]) => term)).toEqual(
-      expect.arrayContaining(["Fio d'água", "Acumulação", "Derivação", "Reversível"]),
-    );
-    expect(FOUNDATION_ACRONYMS.flat().join(" ")).toContain("CGH, MGH, PCH e UHE");
+  it("abre os fundamentos fora da formação quando uma ação é fornecida", async () => {
+    const onOpenFoundations = vi.fn();
+    const { host } = mount({ onOpenFoundations });
+
+    await act(async () => buttonByText(host, "Ver fundamentos").click());
+
+    expect(onOpenFoundations).toHaveBeenCalledTimes(1);
+    expect(host.querySelector(".foundation-primer")).toBeNull();
   });
 
-  it("faz o iniciante passar pelos fundamentos antes de continuar ao POP", async () => {
-    const { host, openLesson } = mount();
-    const start = buttonByText(host, "Começar pelos fundamentos");
-
-    expect(start.getAttribute("aria-expanded")).toBe("false");
-    expect(host.querySelector("#foundation-primer")).toBeNull();
-
-    await act(async () => start.click());
-
-    const primer = host.querySelector("#foundation-primer");
-    expect(start.getAttribute("aria-expanded")).toBe("true");
-    expect(primer?.textContent).toContain("Como a água se transforma em eletricidade");
-    expect(primer?.textContent).toContain("não substitui cálculo de engenharia");
-    expect(primer?.textContent).toContain("Não define enquadramento, exigência, competência ou validação normativa");
-    expect(document.activeElement?.id).toBe("foundation-primer-title");
-    expect(openLesson).not.toHaveBeenCalled();
-
-    await act(async () => buttonByText(host, "Continuar para o curso POP").click());
-    expect(openLesson).toHaveBeenCalledWith("m00-1");
+  it("não deixa um controle sem destino quando a ação de fundamentos não é fornecida", () => {
+    const { host } = mount();
+    expect(buttonByText(host, "Ver fundamentos")).toBeUndefined();
   });
 
-  it("preserva a entrada direta ao POP para quem já domina a base", async () => {
+  it("mantém a primeira rota funcional sem inserir outra etapa antes do POP", async () => {
     const openLesson = vi.fn();
-    const { host } = mount({ completed: ["m00-1"], openLesson });
+    const { host } = mount({ openLesson });
 
-    await act(async () => buttonByText(host, "Já domino estes fundamentos").click());
+    await act(async () => buttonByText(host, "Começar rota").click());
 
-    expect(openLesson).toHaveBeenCalledWith("m00-2");
-    expect(host.querySelector("#foundation-primer")).toBeNull();
+    expect(openLesson).toHaveBeenCalledWith("m00-1");
   });
 
   it("mantém os controles principais com alvo mínimo de 44 px", () => {
     const css = readFileSync("src/LearningPaths.css", "utf8");
-    expect(css).toMatch(/\.foundation-gateway-actions button,[\s\S]*?min-height:\s*44px/);
-    expect(css).toContain(".foundation-primer footer button");
+    expect(css).toMatch(/\.foundation-gateway-action,[\s\S]*?min-height:\s*44px/);
+    expect(css).not.toContain(".foundation-primer");
   });
 });

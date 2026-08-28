@@ -113,6 +113,34 @@ describe('didática e acesso por teclado no mapa', () => {
     expect(indiceCatalogoPorTecla('ArrowDown', 0, 0)).toBeNull();
   });
 
+  it('ordena busca, mapa e camadas no DOM e recolhe a ajuda detalhada', async () => {
+    const host = document.createElement('div');
+    document.body.append(host);
+    const root = createRoot(host);
+
+    await act(async () => {
+      root.render(<MapaParana dados={dados} />);
+    });
+
+    const layout = host.querySelector('.mapa-layout');
+    const pesquisa = layout?.querySelector(':scope > .mp-pesquisa-unificada');
+    const mapa = layout?.querySelector(':scope > .mp-quadro');
+    const painel = layout?.querySelector(':scope > .mp-painel');
+    expect([...layout.children]).toEqual([pesquisa, mapa, painel]);
+
+    const ajuda = host.querySelector('details.mp-como-usar');
+    expect(ajuda?.open).toBe(false);
+    expect(ajuda?.querySelector('summary')?.textContent).toBe('Como usar e interpretar este mapa');
+    expect(ajuda?.textContent).toContain('Clique ou toque para fixar os detalhes');
+    expect(host.querySelector('.mp-limite-camada')).toBeNull();
+    expect(host.querySelector('.mp-map-stage > svg')?.getAttribute('aria-describedby'))
+      .toContain('mp-ajuda-teclado');
+    expect(host.querySelector('#mp-ajuda-teclado')?.classList.contains('sr-only')).toBe(false);
+    expect(host.querySelector('#mp-ajuda-teclado')?.textContent).toMatch(/setas para deslocar/i);
+
+    await act(async () => root.unmount());
+  });
+
   it('mantém somente uma usina no fluxo de Tab e permite navegar pelo teclado', async () => {
     vi.stubGlobal('requestAnimationFrame', (callback) => {
       callback();

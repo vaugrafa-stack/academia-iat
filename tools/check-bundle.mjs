@@ -131,7 +131,7 @@ export const AREA_MARKERS = Object.freeze([
   ["formação", "Formação guiada pelo POP"],
   ["fluxogramas", "Fluxos: proposta e atividade"],
   ["laboratório", "Pratique antes de assinar"],
-  ["redator de IT", "Escrever uma Informação Técnica"],
+  ["redator de IT", "Redator de Informação Técnica"],
   ["avaliações", "AUTOAVALIAÇÃO COMENTADA"],
   ["biblioteca", "Biblioteca operacional"],
   ["suporte", "Central de Suporte"],

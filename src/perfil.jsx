@@ -77,6 +77,13 @@ export default function Profile({
     role: profile.role || "",
     unit: profile.unit || "",
   });
+  // Operações como importar backup e alternar um perfil trocam o registro no
+  // armazenamento local. O componente precisa então carregar a nova leitura;
+  // antes a chamada abaixo não existia neste escopo e a ação bem-sucedida
+  // terminava em ReferenceError.
+  const reloadFade = () => {
+    if (typeof window !== "undefined") window.location.reload();
+  };
   const salvar = (e) => {
     e && e.preventDefault && e.preventDefault();
     const nome = (form.name || "").trim();
@@ -84,8 +91,11 @@ export default function Profile({
     const saved = setProfile((pr) => ({
       ...pr,
       name: nome,
-      role: (form.role || "").trim(),
-      unit: (form.unit || "").trim(),
+      // Cargo e órgão não são necessários para estudar. Registros antigos são
+      // preservados para não descartar informação por uma alteração visual,
+      // mas a tela deixa de coletá-los e de mostrá-los como dado principal.
+      role: pr.role || "",
+      unit: pr.unit || "",
       createdAt: pr.createdAt || new Date().toISOString(),
     }));
     if (saved !== false) setEditando(false);
@@ -238,22 +248,6 @@ export default function Profile({
               autoFocus
             />
           </label>
-          <label>
-            Cargo ou função
-            <input
-              value={form.role}
-              onChange={(e) => setForm((f) => ({ ...f, role: e.target.value }))}
-              placeholder="Opcional"
-            />
-          </label>
-          <label>
-            Órgão ou setor
-            <input
-              value={form.unit}
-              onChange={(e) => setForm((f) => ({ ...f, unit: e.target.value }))}
-              placeholder="Opcional"
-            />
-          </label>
           <div className="profile-actions">
             <button type="submit" className="primary">
               {conta ? "Salvar" : "Criar perfil"} <Check />
@@ -293,11 +287,8 @@ export default function Profile({
       <PageHeader
         icon={BadgeCheck}
         kicker="Meu progresso neste dispositivo"
-        title={profile.name}
-        subtitle={
-          [profile.role, profile.unit].filter(Boolean).join(" · ") ||
-          "Registro pessoal de estudo"
-        }
+        title="Meu progresso"
+        subtitle="Acompanhe seu estudo, cuide do backup e mantenha a conta opcional em um só lugar."
       />
       {profileError}
       <section className="profile-grid">
@@ -314,20 +305,10 @@ export default function Profile({
           </small>
         </article>
         <article className="profile-card profile-personal">
-          <h3>Meus dados</h3>
+          <h3>Perfil local</h3>
           <dl>
             <dt>Nome</dt>
             <dd>{profile.name}</dd>
-            <dt>Cargo</dt>
-            <dd>{profile.role || "-"}</dd>
-            <dt>Órgão</dt>
-            <dd>{profile.unit || "-"}</dd>
-            <dt>Desde</dt>
-            <dd>
-              {profile.createdAt
-                ? new Date(profile.createdAt).toLocaleDateString("pt-BR")
-                : "-"}
-            </dd>
           </dl>
           <button
             className="text-action"
@@ -340,7 +321,7 @@ export default function Profile({
               setEditando(true);
             }}
           >
-            Editar dados
+            Editar nome
           </button>
         </article>
         <ContaRemotaCard state={state} setState={setState} algoMaisNovo={algoMaisNovo} />
@@ -383,6 +364,12 @@ export default function Profile({
           )}
         </article>
       </section>
+      <details className="profile-details">
+        <summary>
+          <span><strong>Backup, perfis locais e uso offline</strong><small>Use quando precisar trocar de navegador, dispositivo ou trabalhar sem conexão.</small></span>
+          <ArrowRight aria-hidden="true" />
+        </summary>
+        <div className="profile-details-body">
       <section className="profile-users">
         <div className="section-title">
           <div>
@@ -478,6 +465,14 @@ export default function Profile({
         </p>
       </section>
       <OfflineManager />
+        </div>
+      </details>
+      <details className="profile-details profile-records">
+        <summary>
+          <span><strong>Registros pessoais de estudo</strong><small>Exportação opcional de marcos locais; não é certificado institucional.</small></span>
+          <ArrowRight aria-hidden="true" />
+        </summary>
+        <div className="profile-details-body">
       <section className="profile-cert-block">
         <div className="section-title">
           <div>
@@ -637,6 +632,8 @@ export default function Profile({
         Eles não comprovam identidade, competência profissional, aprovação
         institucional ou capacitação oficial do Instituto Água e Terra.
       </p>
+        </div>
+      </details>
     </div>
   );
 }

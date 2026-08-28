@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 import React, { act, useState } from "react";
 import { createRoot } from "react-dom/client";
-import { afterEach, describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import Assessments from "./avaliacoes.jsx";
 import generatedQuestionBank from "./data/question-bank.json";
 
@@ -110,17 +110,18 @@ afterEach(async () => {
 });
 
 describe("interação acessível das autoavaliações", () => {
-  it("expõe o objetivo, a estimativa pedagógica e a remediação do distrator", async () => {
+  it("preserva confiança e remediação sem expor metadados de autoria", async () => {
     const host = mount();
+
+    expect(host.textContent).toContain("Resultado para orientar a revisão");
+    expect(host.textContent).not.toContain("Autoacompanhamento não validado");
     await act(async () => buttonByText(host, TRACK.title).click());
 
-    expect(host.querySelector(".question-pedagogy")).toBeTruthy();
-    expect(host.textContent).toContain("OBJETIVO OBSERVÁVEL");
-    expect(host.textContent).toContain("Dificuldade estrutural estimada");
-    expect(host.textContent).toContain("dificuldade é estrutural");
-    expect(host.textContent).toContain("não foi calibrada psicometricamente");
-    expect(host.textContent).toContain("revisão especializada responsável");
-    expect(host.textContent).toContain("permanece pendente");
+    expect(host.querySelector(".question-pedagogy")).toBeNull();
+    expect(host.querySelector(".pedagogy-method-note")).toBeNull();
+    expect(host.textContent).not.toContain("Nível cognitivo");
+    expect(host.textContent).not.toContain("Dificuldade estrutural estimada");
+    expect(host.textContent).not.toContain("Prioridade se errar");
 
     const question = host.querySelector(".quiz-question h2").textContent;
     const distractor = question.includes("documento") ? "Documento B" : "Sim";
@@ -128,6 +129,7 @@ describe("interação acessível das autoavaliações", () => {
     await act(async () => buttonByText(host, "Alta").click());
     await act(async () => buttonByText(host, "Confirmar resposta").click());
 
+    expect(host.textContent).toContain("Confiança declarada: alta");
     expect(host.querySelector(".distractor-explanation")?.textContent)
       .toContain("Esta alternativa não é sustentada pelo trecho citado");
   });
@@ -169,6 +171,36 @@ describe("interação acessível das autoavaliações", () => {
     expect(document.activeElement).toBe(secondHeading);
     expect(host.querySelector('[role="progressbar"]')?.getAttribute("aria-valuenow"))
       .toBe("2");
+  });
+
+  it("rola o enunciado abaixo da barra fixa antes de movê-lo para o foco", async () => {
+    const previousScrollIntoView = HTMLElement.prototype.scrollIntoView;
+    const scrollIntoView = vi.fn();
+    Object.defineProperty(HTMLElement.prototype, "scrollIntoView", {
+      configurable: true,
+      value: scrollIntoView,
+    });
+
+    try {
+      const host = mount();
+      await act(async () => buttonByText(host, "Fazer a primeira aplicação").click());
+
+      const heading = host.querySelector(".quiz-question h2");
+      expect(scrollIntoView).toHaveBeenCalledWith({
+        behavior: "smooth",
+        block: "start",
+      });
+      expect(document.activeElement).toBe(heading);
+    } finally {
+      if (previousScrollIntoView) {
+        Object.defineProperty(HTMLElement.prototype, "scrollIntoView", {
+          configurable: true,
+          value: previousScrollIntoView,
+        });
+      } else {
+        delete HTMLElement.prototype.scrollIntoView;
+      }
+    }
   });
 
   it("leva o foco ao resumo quando a tentativa termina", async () => {

@@ -26,7 +26,6 @@ import { objetivoDaAula } from "./lessonObjective.js";
  */
 export default function Inicio({
   state,
-  progress,
   go,
   openLesson,
   labIndexStatus,
@@ -54,12 +53,22 @@ export default function Inicio({
   return (
     <div className="page dashboard-page">
       <section className="dashboard-intro">
-        <h1>
-          {startedJourney
-            ? "Onde você parou, e o que decidir a seguir."
-            : "Comece por aqui."}
-        </h1>
+        <small>ACADEMIA IAT</small>
+        <h1>{startedJourney ? "Onde você parou, e o que decidir a seguir." : "Comece por aqui."}</h1>
+        <p>
+          Aprenda o método do POP, confira a fonte e pratique decisões técnicas
+          em casos sintéticos antes de aplicar o raciocínio ao trabalho.
+        </p>
+        <div className="dashboard-hero-actions">
+          <button className="primary" onClick={() => openLesson(continueLesson.id)}>
+            {startedJourney ? "Continuar formação" : "Iniciar formação"} <ArrowRight />
+          </button>
+          <button className="secondary" onClick={() => go("laboratorio")}>
+            Abrir caso prático <FlaskConical />
+          </button>
+        </div>
       </section>
+      <h2 className="dashboard-section-label">Continue de onde parou</h2>
       <section className="dashboard-feature">
         <div className="feature-media">
           {pilotMediaStatus.loading ? (
@@ -76,10 +85,6 @@ export default function Inicio({
               compact
             />
           )}
-          <span>Resumo em vídeo desta aula</span>
-          <span className="fm-chip">
-            <Clock /> Conteúdo vinculado ao tópico
-          </span>
         </div>
         <div className="feature-copy">
           <small>
@@ -95,29 +100,14 @@ export default function Inicio({
               <Layers3 /> {trackLessons.get(continueTrack.id).length} tópicos
             </span>
           </div>
-          <div
-            className="feature-progress"
-            role="progressbar"
-            aria-label="Progresso geral"
-            aria-valuemin="0"
-            aria-valuemax="100"
-            aria-valuenow={progress}
-          >
-            <span>
-              Seu progresso <b>{progress}%</b>
-            </span>
-            <i>
-              <em style={{ width: `${progress}%` }} />
-            </i>
-            <small>
-              {state.completed.length} de {lessons.length} tópicos concluídos
-            </small>
-          </div>
+          <p className="feature-progress-summary">
+            {state.completed.length} de {lessons.length} tópicos concluídos
+          </p>
           <button
-            className="primary"
+            className="secondary feature-open-lesson"
             onClick={() => openLesson(continueLesson.id)}
           >
-            {startedJourney ? "Continuar aula" : "Iniciar orientação"} <Play />
+            {startedJourney ? "Abrir esta aula" : "Abrir orientação"} <Play />
           </button>
           <button
             className="text-action"
@@ -371,7 +361,7 @@ function DashboardPhases({ state, currentTrackId, openLesson, go, dados }) {
 }
 
 function DashboardSourceDetails({ go, dados }) {
-  const { flowData, lessons, popData } = dados;
+  const { lessons, popData } = dados;
   return (
     <details className="dashboard-source-details">
       <summary>
@@ -384,31 +374,10 @@ function DashboardSourceDetails({ go, dados }) {
       </summary>
       <div>
         <SourceAssurance popData={popData} lessonCount={lessons.length} />
-        <dl className="dashboard-source-metrics">
-          <div>
-            <dt>Tópicos didáticos</dt>
-            <dd>{lessons.length}</dd>
-          </div>
-          <div>
-            <dt>Quadros e tabelas</dt>
-            <dd>{popData.tables.filter((table) => !table.navigationOnly).length}</dd>
-          </div>
-          <div>
-            <dt>Figuras e fluxos</dt>
-            <dd>
-              {popData.figures.length +
-                new Set(flowData.flowcharts.map((flow) => flow.number)).size}
-            </dd>
-          </div>
-          <div>
-            <dt>Trechos pesquisáveis</dt>
-            <dd>
-              {(popData.stats?.allDocumentParagraphNodes || 0).toLocaleString(
-                "pt-BR",
-              )}
-            </dd>
-          </div>
-        </dl>
+        <p className="dashboard-source-note">
+          A versão, a integridade e a situação editorial permanecem registradas
+          aqui sem ocupar a navegação nem interromper a aprendizagem.
+        </p>
         <button type="button" onClick={() => go("biblioteca")}>
           Abrir biblioteca <ArrowRight />
         </button>

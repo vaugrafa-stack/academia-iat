@@ -11,7 +11,7 @@ import LearningPaths from "./LearningPaths.jsx";
 import { norm } from "./derivados.js";
 import { PageHeader } from "./ui.jsx";
 
-export default function Formation({ state, openLesson, dados }) {
+export default function Formation({ state, openLesson, dados, go }) {
   const {
     lessons,
     trackGroups,
@@ -67,6 +67,7 @@ export default function Formation({ state, openLesson, dados }) {
         trackLessons={trackLessons}
         state={state}
         openLesson={openLesson}
+        onOpenFoundations={() => go("hidreletricas")}
       />
       <div className="formation-toolbar">
         <div role="search">

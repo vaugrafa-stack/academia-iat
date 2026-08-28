@@ -19,7 +19,9 @@ describe('Central de Suporte', () => {
     expect(html).toContain('Mapa e camada de satélite');
     expect(html).toContain('Exportação e importação de backup');
     expect(html).toContain('Versão e diagnóstico técnico');
-    expect(html.match(/<details/g)).toHaveLength(7);
+    expect(html.match(/<details/g)).toHaveLength(8);
+    expect(html).not.toContain('Área da plataforma');
+    expect(html).not.toContain('Página ou aula');
     expect(html).not.toContain('github.com');
     expect(html).not.toContain('>AI<');
   });

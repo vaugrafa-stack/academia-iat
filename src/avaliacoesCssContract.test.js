@@ -25,14 +25,7 @@ function contrast(foreground, background) {
   return (values[0] + 0.05) / (values[1] + 0.05);
 }
 
-describe('contrato visual dos metadados pedagógicos', () => {
-  it('mantém microtextos essenciais com pelo menos 12 px e 13 px no móvel', () => {
-    expect(css).toMatch(/\.question-objective small\s*\{[^}]*font-size:\s*12px/s);
-    expect(css).toMatch(/\.question-pedagogy dt\s*\{[^}]*font-size:\s*12px/s);
-    expect(css).toMatch(/\.pedagogy-method-note\s*\{[^}]*font-size:\s*12px/s);
-    expect(css).toMatch(/@media \(max-width: 720px\)[\s\S]*font-size:\s*13px/);
-  });
-
+describe('contrato visual das autoavaliações', () => {
   it('preserva contraste AA no tema escuro para azul, âmbar e texto secundário', () => {
     expect(contrast('#7dd3fc', '#14252b')).toBeGreaterThanOrEqual(4.5);
     expect(contrast('#cbd5e1', '#14252b')).toBeGreaterThanOrEqual(4.5);

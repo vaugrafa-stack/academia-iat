@@ -70,10 +70,14 @@ describe("contratos incrementais de arquitetura", () => {
       'const Formation = lazy(() => import("./formacao.jsx"));',
     );
     expect(main).toContain("dados={DADOS_FORMACAO}");
+    expect(main).toMatch(
+      /<Formation[\s\S]*?dados=\{DADOS_FORMACAO\}[\s\S]*?go=\{go\}[\s\S]*?\/>/,
+    );
     expect(main).not.toMatch(/^function Formation\b/m);
     expect(formacao).toMatch(
-      /export default function Formation\(\{ state, openLesson, dados \}\)/,
+      /export default function Formation\(\{ state, openLesson, dados, go \}\)/,
     );
+    expect(formacao).toContain('onOpenFoundations={() => go("hidreletricas")}');
     expect(formacao).toContain('className="formation-empty"');
     expect(formacao).toContain("Limpar filtro");
   });
@@ -93,7 +97,8 @@ describe("contratos incrementais de arquitetura", () => {
       /export default function Assessments\(\{ state, setState, openLesson, dados \}\)/,
     );
     expect(avaliacoes).toContain('role="progressbar"');
-    expect(avaliacoes).toContain('stageHeadingRef.current?.focus({ preventScroll: true })');
+    expect(avaliacoes).toContain('heading.scrollIntoView?.({');
+    expect(avaliacoes).toContain('heading.focus({ preventScroll: true });');
   });
 
   it("mantém a navegação orientada por tarefa e o perfil explicitamente local", async () => {
@@ -102,19 +107,27 @@ describe("contratos incrementais de arquitetura", () => {
       readFile(perfilUrl, "utf8"),
     ]);
 
-    const aprender = main.slice(main.indexOf('["Aprender"'), main.indexOf('["Praticar"'));
-    const consultar = main.slice(main.indexOf('["Consultar"'), main.indexOf('["Neste dispositivo"'));
+    const aprender = main.slice(main.indexOf('["Formação"'), main.indexOf('["Prática técnica"'));
+    const consultar = main.slice(main.indexOf('["Consulta"'), main.indexOf('["Minha conta"'));
 
     expect(aprender).not.toContain('"Fluxogramas"');
     expect(consultar).toContain('"Fluxogramas"');
-    expect(main).toContain('["Neste dispositivo"');
-    expect(main).toContain('["perfil", "Meu progresso"');
+    expect(main).toContain('["Minha conta"');
+    expect(main).toContain('["perfil", "Progresso e conta"');
     expect(main).not.toContain('"Criar sua conta"');
     expect(perfil).toContain('kicker="Meu progresso neste dispositivo"');
-    expect(main).toContain('"Como funciona uma hidrelétrica"');
-    expect(main).toContain('"Curso guiado pelo POP"');
-    expect(main).toContain('"Redigir Informação Técnica"');
+    expect(main).toContain('"Entenda uma hidrelétrica"');
+    expect(main).toContain('"Formação pelo POP"');
+    expect(main).toContain('"Redator de IT"');
     expect(main).toContain('"GeoPR · portal completo"');
+    const marcaLateral = main.slice(
+      main.indexOf('<div className="brand-panel">'),
+      main.indexOf('<nav aria-label="Navegação principal">'),
+    );
+    expect(marcaLateral).toContain("Academia <strong>IAT</strong>");
+    expect(marcaLateral).toContain("Ambiente independente de treinamento");
+    expect(marcaLateral).not.toMatch(/<(?:img|svg)\b/i);
+    expect(marcaLateral).not.toContain("Instituto Água e Terra");
     // O rotulo importa: as camadas oficiais agora desenham dentro do Mapa
     // do Parana, e um item de menu chamado "mapas oficiais" que leva para
     // fora do site contradiz o que a plataforma passou a oferecer.
@@ -140,8 +153,9 @@ describe("contratos incrementais de arquitetura", () => {
     );
     expect(main).not.toContain('/media/tour-usina.mp4');
     expect(licao).not.toContain('/media/tour-usina.mp4');
-    // O rotulo pertence ao cartao de continuidade da tela inicial extraida.
-    expect(inicio).toContain("Resumo em vídeo desta aula");
+    // O cartão não precisa repetir que a mídia é um resumo; a associação à
+    // aula é garantida pelo mesmo resolvedor usado na tela de conteúdo.
+    expect(inicio).not.toContain("Resumo em vídeo desta aula");
   });
 
   it("mantém a tela de aula fora do orquestrador, com contrato de dados", async () => {
@@ -190,7 +204,7 @@ describe("contratos incrementais de arquitetura", () => {
     expect(inicio).toContain("Quatro fases do percurso");
     expect(inicio).toContain("Sobre a fonte");
     expect(inicio).toContain('"Comece por aqui."');
-    expect(inicio).toContain('"Iniciar orientação"');
+    expect(inicio).toContain('"Iniciar formação"');
     expect(inicio).toContain('"Novo em hidrelétricas? Veja os fundamentos"');
     expect(inicio).toContain(
       'go(startedJourney ? "formacao" : "hidreletricas")',
@@ -225,7 +239,7 @@ describe("contratos incrementais de arquitetura", () => {
     const lessonSection = licao.slice(inicio, fim);
 
     expect(main).toContain("function MobileBottomNav");
-    for (const label of ["Início", "Aprender", "Praticar", "Consultar"]) {
+    for (const label of ["Início", "Formação", "Prática", "Consulta"]) {
       expect(main).toContain(`label: "${label}"`);
     }
     expect(styles).toContain(".mobile-bottom-nav");

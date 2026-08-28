@@ -31,15 +31,15 @@ const dados = {
 const state = { completed: [], bookmarks: [] };
 const roots = [];
 
-function mount(openLesson = vi.fn()) {
+function mount({ openLesson = vi.fn(), go = vi.fn() } = {}) {
   const host = document.createElement("div");
   document.body.append(host);
   const root = createRoot(host);
   roots.push(root);
   act(() => root.render(
-    <Formation state={state} openLesson={openLesson} dados={dados} />,
+    <Formation state={state} openLesson={openLesson} dados={dados} go={go} />,
   ));
-  return { host, openLesson };
+  return { host, openLesson, go };
 }
 
 afterEach(async () => {
@@ -78,5 +78,16 @@ describe("formação por rota", () => {
 
     await act(async () => host.querySelector(".lesson-list button").click());
     expect(openLesson).toHaveBeenCalledWith(lesson.id);
+  });
+
+  it("leva a CTA de fundamentos para a rota Hidrelétricas", async () => {
+    const { host, go } = mount();
+    const foundations = [...host.querySelectorAll("button")]
+      .find((button) => button.textContent.includes("Ver fundamentos"));
+
+    expect(foundations).toBeDefined();
+    await act(async () => foundations.click());
+
+    expect(go).toHaveBeenCalledWith("hidreletricas");
   });
 });

@@ -37,6 +37,41 @@ import { resumoDaNorma } from "./leiResumos";
 import { tracks } from "./courseData";
 import NormativeAuthorityAxes from "./NormativeAuthorityAxes.jsx";
 
+const LIBRARY_AREAS = Object.freeze([
+  ["buscar", "Buscar no POP", Search],
+  ["tabelas", "Quadros e tabelas", Table2],
+  ["figuras", "Figuras e fluxos", ImageIcon],
+  ["glossario", "Glossário", BookMarked],
+  ["legislacoes", "Legislações", Scale],
+  ["favoritos", "Meus favoritos", Bookmark],
+  ["anotacoes", "Minhas anotações", StickyNote],
+]);
+
+function useCompactLibraryNavigation() {
+  const [isCompact, setIsCompact] = useState(() =>
+    typeof window !== "undefined" &&
+    typeof window.matchMedia === "function" &&
+    window.matchMedia("(max-width: 640px)").matches,
+  );
+
+  useEffect(() => {
+    if (typeof window === "undefined" || typeof window.matchMedia !== "function") {
+      return undefined;
+    }
+    const query = window.matchMedia("(max-width: 640px)");
+    const update = () => setIsCompact(query.matches);
+    update();
+    if (typeof query.addEventListener === "function") {
+      query.addEventListener("change", update);
+      return () => query.removeEventListener("change", update);
+    }
+    query.addListener?.(update);
+    return () => query.removeListener?.(update);
+  }, []);
+
+  return isCompact;
+}
+
 export default function KnowledgeLibrary({
   state,
   openLesson,
@@ -50,6 +85,7 @@ export default function KnowledgeLibrary({
     [selectedTable, setSelectedTable] = useState(
       popData.tables.find((t) => !t.navigationOnly)?.id,
     );
+  const compactNavigation = useCompactLibraryNavigation();
   useEffect(() => {
     if (!target) return;
     if (target.tab) setTab(target.tab);
@@ -100,62 +136,105 @@ export default function KnowledgeLibrary({
   const glossary = popData.tables.find((t) =>
     /siglas e abreviações/i.test(t.title),
   );
+  const filteredGlossary = glossary
+    ? query.length > 1
+      ? {
+          ...glossary,
+          rows: [
+            glossary.rows[0],
+            ...glossary.rows
+              .slice(1)
+              .filter((row) =>
+                norm(row.cells.map((cell) => cell.text).join(" ")).includes(
+                  norm(query),
+                ),
+              ),
+          ],
+        }
+      : glossary
+    : null;
+  const glossaryResultCount = filteredGlossary
+    ? Math.max(filteredGlossary.rows.length - 1, 0)
+    : 0;
+  const resultSummary =
+    query.length > 1
+      ? matches.length > results.length
+        ? `Exibindo ${results.length} de ${matches.length} resultados.`
+        : `${matches.length} ${matches.length === 1 ? "resultado encontrado" : "resultados encontrados"}.`
+      : "";
   return (
-    <div className="page">
+    <div className="page library-page">
       <PageHeader
         title="Biblioteca operacional"
-        subtitle={`Pesquise na edição de treinamento, abra os ${popData.tables.filter((t) => !t.navigationOnly).length} quadros e tabelas disponibilizados e consulte as imagens do material-fonte.`}
+        subtitle="Pesquise na edição de treinamento, consulte quadros e tabelas e abra imagens do material-fonte."
         icon={Library}
       />
-      <nav className="library-tabs" aria-label="Áreas da biblioteca">
-        {[
-          ["buscar", "Buscar no POP", Search],
-          ["tabelas", "Quadros e tabelas", Table2],
-          ["figuras", "Figuras e fluxos", ImageIcon],
-          ["glossario", "Glossário", BookMarked],
-          ["legislacoes", "Legislações", Scale],
-          ["favoritos", "Meus favoritos", Bookmark],
-          ["anotacoes", "Minhas anotações", StickyNote],
-        ].map(([id, l, I]) => (
-          <button
-            type="button"
-            aria-pressed={tab === id}
-            className={tab === id ? "active" : ""}
-            onClick={() => setTab(id)}
-            key={id}
+      {compactNavigation ? (
+        <div className="library-mobile-nav">
+          <label htmlFor="library-area-select">
+            Área da biblioteca
+          </label>
+          <select
+            id="library-area-select"
+            value={tab}
+            onChange={(event) => setTab(event.target.value)}
+            aria-controls={`library-panel-${tab}`}
           >
-            <I aria-hidden="true" />
-            {l}
-          </button>
-        ))}
-      </nav>
+            {LIBRARY_AREAS.map(([id, label]) => (
+              <option key={id} value={id}>
+                {label}
+              </option>
+            ))}
+          </select>
+        </div>
+      ) : (
+        <nav className="library-tabs" aria-label="Áreas da biblioteca">
+          {LIBRARY_AREAS.map(([id, label, Icon]) => (
+            <button
+              type="button"
+              aria-pressed={tab === id}
+              aria-controls={`library-panel-${id}`}
+              className={tab === id ? "active" : ""}
+              onClick={() => setTab(id)}
+              key={id}
+            >
+              <Icon aria-hidden="true" />
+              {label}
+            </button>
+          ))}
+        </nav>
+      )}
       {tab === "buscar" && (
-        <section className="library-search">
+        <section className="library-search" id="library-panel-buscar">
           <div className="big-search">
             <Search aria-hidden="true" />
             <input
               aria-label="Buscar na edição de treinamento do POP"
+              aria-describedby={
+                query.length > 1
+                  ? "library-search-results-summary"
+                  : undefined
+              }
               autoFocus
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Ex.: transferência de titularidade, PACUERA, APP, condicionante..."
             />
-            <kbd aria-hidden="true">
-              {matches.length > results.length
-                ? `${results.length} de ${matches.length}`
-                : matches.length}{" "}
-              resultados
-            </kbd>
           </div>
+          {resultSummary ? (
+            <p
+              id="library-search-results-summary"
+              role="status"
+              aria-live="polite"
+              className="library-search-status"
+            >
+              {resultSummary}
+            </p>
+          ) : null}
           {query.length < 2 ? (
             <div className="search-start">
               <Database />
-              <h2>
-                {(popData.stats?.allDocumentParagraphNodes || 0).toLocaleString(
-                  "pt-BR",
-                )}{" "}
-                parágrafos pesquisáveis
-              </h2>
+              <h2>Pesquise por tema, documento ou etapa</h2>
               <p>
                 A busca percorre as seções e os conteúdos disponibilizados,
                 preservando o vínculo com a aula correspondente.
@@ -200,15 +279,11 @@ export default function KnowledgeLibrary({
         </section>
       )}
       {tab === "tabelas" && (
-        <div className="table-library">
+        <div className="table-library" id="library-panel-tabelas">
           <aside>
-            <div>
-              <Filter />
-              <span>
-                {popData.tables.length} tabelas ·{" "}
-                {popData.tables.filter((t) => t.navigationOnly).length} índices
-                estruturais ocultos
-              </span>
+            <div className="table-library-heading">
+              <Filter aria-hidden="true" />
+              <span>Escolha um quadro ou tabela</span>
             </div>
             {popData.tables
               .filter((t) => !t.navigationOnly)
@@ -229,7 +304,7 @@ export default function KnowledgeLibrary({
         </div>
       )}
       {tab === "figuras" && (
-        <div className="figure-library">
+        <div className="figure-library" id="library-panel-figuras">
           <h2>Figuras do POP</h2>
           <div className="figure-grid">
             {popData.figures.map((f) => (
@@ -267,7 +342,7 @@ export default function KnowledgeLibrary({
         </div>
       )}
       {tab === "glossario" && (
-        <div className="glossary-view">
+        <div className="glossary-view" id="library-panel-glossario">
           <div>
             <h2>Siglas e abreviações</h2>
             <p>
@@ -279,44 +354,27 @@ export default function KnowledgeLibrary({
             <Search aria-hidden="true" />
             <input
               aria-label="Filtrar siglas e abreviações do POP"
+              aria-describedby="library-glossary-results-summary"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Ex.: PACUERA, ADA, TVR, RTAA..."
             />
-            <kbd aria-hidden="true">
-              {glossary
-                ? query.length > 1
-                  ? glossary.rows
-                      .slice(1)
-                      .filter((r) =>
-                        norm(r.cells.map((c) => c.text).join(" ")).includes(
-                          norm(query),
-                        ),
-                      ).length
-                  : glossary.rows.length - 1
-                : 0}{" "}
-              siglas
-            </kbd>
           </div>
-          {glossary && (
+          <p
+            className="library-search-status"
+            id="library-glossary-results-summary"
+            role="status"
+            aria-live="polite"
+          >
+            {glossaryResultCount}{" "}
+            {glossaryResultCount === 1
+              ? "sigla encontrada"
+              : "siglas encontradas"}
+            .
+          </p>
+          {filteredGlossary && (
             <TableRenderer
-              table={
-                query.length > 1
-                  ? {
-                      ...glossary,
-                      rows: [
-                        glossary.rows[0],
-                        ...glossary.rows
-                          .slice(1)
-                          .filter((r) =>
-                            norm(r.cells.map((c) => c.text).join(" ")).includes(
-                              norm(query),
-                            ),
-                          ),
-                      ],
-                    }
-                  : glossary
-              }
+              table={filteredGlossary}
               compact
             />
           )}
@@ -325,7 +383,7 @@ export default function KnowledgeLibrary({
       {tab === "legislacoes" && (
         <>
           <NormativeAuthorityAxes compact />
-          <div className="leis-view">
+          <div className="leis-view" id="library-panel-legislacoes">
           <aside className="leis-list">
             <div className="leis-head">
               <Scale />
@@ -449,7 +507,7 @@ export default function KnowledgeLibrary({
         </>
       )}
       {tab === "anotacoes" && (
-        <div className="notas-view">
+        <div className="notas-view" id="library-panel-anotacoes">
           {(() => {
             const notas = Object.entries(state.notes || {})
               .map(([id, txt]) => ({
@@ -485,7 +543,7 @@ export default function KnowledgeLibrary({
         </div>
       )}
       {tab === "favoritos" && (
-        <div className="favorites-view">
+        <div className="favorites-view" id="library-panel-favoritos">
           {(() => {
             const favs = state.bookmarks
               .map((id) => lessonMap.get(id))

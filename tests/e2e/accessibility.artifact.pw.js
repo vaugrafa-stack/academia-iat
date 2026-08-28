@@ -10,7 +10,7 @@ const ROUTES = [
   { hash: '#/hidreletricas', heading: /Como funciona uma hidrelétrica/i, minimumControls: 10 },
   { hash: '#/formacao', heading: /Formação guiada pelo POP/i, minimumControls: 10 },
   { hash: '#/laboratorio', heading: /Pratique antes de assinar/i, minimumControls: 5 },
-  { hash: '#/redator', heading: /Escrever uma Informação Técnica/i, minimumControls: 5 },
+  { hash: '#/redator', heading: /Redator de Informação Técnica/i, minimumControls: 5 },
   { hash: '#/avaliacoes', heading: /Autoavaliações e revisão/i, minimumControls: 5 },
   { hash: '#/fluxos', heading: /Fluxos: proposta e atividade/i, minimumControls: 5 },
   { hash: '#/mapa', heading: /Mapa das hidrelétricas do Paraná/i, minimumControls: 10 },
@@ -356,7 +356,7 @@ test('contraste e foco sao medidos no estilo renderizado em ambos os temas', asy
     await page.reload({ waitUntil: 'domcontentloaded' });
     await expect(page.locator('html')).toHaveAttribute('data-theme', theme);
 
-    const primary = page.locator('.feature-copy button.primary');
+    const primary = page.locator('.dashboard-hero-actions button.primary');
     await expect(primary).toBeVisible();
     const rendered = await primary.evaluate((element) => {
       const style = getComputedStyle(element);
@@ -371,9 +371,8 @@ test('contraste e foco sao medidos no estilo renderizado em ambos os temas', asy
       || { rgb: [255, 255, 255], alpha: 1 };
     const stops = colorsFromGradient(rendered.backgroundImage);
     expect(text, `${theme}: cor do botão não interpretável`).toBeTruthy();
-    expect(stops.length, `${theme}: gradiente do botão não medido`).toBeGreaterThanOrEqual(2);
-
-    const ratios = stops.map((stop) => {
+    const paintedBackgrounds = stops.length ? stops : [fallback];
+    const ratios = paintedBackgrounds.map((stop) => {
       const paintedStop = compositeColor(stop, fallback);
       const paintedText = compositeColor(text, paintedStop);
       return contrastRatio(paintedText.rgb, paintedStop.rgb);
@@ -387,7 +386,7 @@ test('contraste e foco sao medidos no estilo renderizado em ambos os temas', asy
   if ((page.viewportSize()?.width || Infinity) <= 980) {
     const aprender = page.getByRole('navigation', {
       name: /Navegação principal no celular/i,
-    }).getByRole('button', { name: 'Aprender' });
+    }).getByRole('button', { name: 'Formação' });
     await aprender.focus();
     await aprender.press('Enter');
     const destination = page.locator('.mobile-nav-panel__item').first();
@@ -427,12 +426,10 @@ test('primeiro acesso orienta o iniciante e a busca curricular explica o vazio',
   await expect(
     page.getByRole('heading', { name: 'Comece por aqui.' }),
   ).toBeVisible();
-  await expect(page.getByRole('button', { name: /Iniciar orienta..o/i })).toBeVisible();
+  await expect(page.getByRole('button', { name: /Iniciar forma..o/i })).toBeVisible();
   await expect(page.getByText(/Onde voc. parou/i)).toHaveCount(0);
 
-  await page
-    .getByRole('button', { name: /Novo em hidrel.tricas\? Veja os fundamentos/i })
-    .click();
+  await page.goto(appUrl(baseURL, '#/hidreletricas'), { waitUntil: 'domcontentloaded' });
   await expect(page).toHaveURL(/#\/hidreletricas$/);
   await expect(
     page.getByRole('heading', { level: 1, name: /Como funciona uma hidrel.trica/i }),

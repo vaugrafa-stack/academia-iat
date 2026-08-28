@@ -135,14 +135,15 @@ test('registra o Service Worker, abre o Suporte offline e atualiza com consentim
   expect(Number.isFinite(offlineWorkerStatus.conexaoDaUltimaNavegacaoEm)).toBe(true);
   await expect(page.getByRole('heading', { name: 'Central de Suporte' })).toBeVisible();
   await expect(page.locator('#boot-splash')).toHaveCount(0);
+  await page.getByText('Ver diagnóstico técnico seguro', { exact: true }).click();
   await expect(page.getByRole('textbox', { name: /Diagn.stico t.cnico/i }))
     .toHaveValue(/Conectividade: offline/);
   await expect(page.getByRole('link', { name: 'Enviar e-mail para o suporte' }))
     .toHaveAttribute('href', /^mailto:bol\.rafaelaugusto@iat\.pr\.gov\.br\?/);
 
-  await page.getByRole('button', { name: 'Curso guiado pelo POP' }).click();
+  await page.getByRole('button', { name: 'Formação pelo POP' }).click();
   await expect(page.getByRole('heading', { name: /Forma..o guiada pelo POP/i })).toBeVisible();
-  await page.getByRole('button', { name: 'Suporte' }).click();
+  await page.getByRole('button', { name: 'Ajuda' }).click();
   await expect(page.getByRole('heading', { name: 'Central de Suporte' })).toBeVisible();
 
   const switchResponse = await request.post(`${origin}/__pwa-test/version/2`);

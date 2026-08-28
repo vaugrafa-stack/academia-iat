@@ -91,6 +91,7 @@ async function abrirMapa(page, baseURL) {
   await expect(page.getByRole('heading', {
     name: 'Mapa das hidrelétricas do Paraná',
   })).toBeVisible();
+  await expect(page.getByRole('search', { name: 'Busca no mapa' })).toBeVisible();
 }
 
 function buscaUnica(page) {
@@ -302,6 +303,28 @@ test('em 390 px o resultado e acionavel por toque e permanece dentro da tela', a
   await abrirMapa(page, baseURL);
 
   const { regiao, campo, resultados } = buscaUnica(page);
+  const ordemVisual = await page.evaluate(() => {
+    const topo = (seletor) => {
+      const caixa = document.querySelector(seletor)?.getBoundingClientRect();
+      return caixa ? caixa.top + window.scrollY : null;
+    };
+    return {
+      pesquisa: topo('.mp-pesquisa-unificada'),
+      mapa: topo('.mp-quadro'),
+      camadas: topo('.gp-painel'),
+    };
+  });
+  expect(ordemVisual.pesquisa).not.toBeNull();
+  expect(ordemVisual.mapa).toBeGreaterThan(ordemVisual.pesquisa);
+  expect(ordemVisual.camadas).toBeGreaterThan(ordemVisual.mapa);
+
+  const ajuda = page.locator('details.mp-como-usar');
+  await expect(ajuda).not.toHaveAttribute('open');
+  await expect(ajuda.locator('.mp-como-usar-conteudo')).toBeHidden();
+  await ajuda.getByText('Como usar e interpretar este mapa', { exact: true }).click();
+  await expect(ajuda).toHaveAttribute('open', '');
+  await expect(ajuda).toContainText('Clique ou toque para fixar os detalhes');
+
   await regiao.scrollIntoViewIfNeeded();
   const caixaCampo = await campo.boundingBox();
   expect(caixaCampo).not.toBeNull();

@@ -16,11 +16,11 @@ test('navegação móvel abre categorias sem escolher uma página pelo usuário'
   const nav = page.getByRole('navigation', {
     name: 'Navegação principal no celular',
   });
-  const aprender = nav.getByRole('button', { name: 'Aprender' });
+  const aprender = nav.getByRole('button', { name: 'Formação' });
   const urlInicial = page.url();
 
   await aprender.click();
-  const painelAprender = page.getByRole('region', { name: 'Aprender' });
+  const painelAprender = page.getByRole('region', { name: 'Formação' });
   await expect(painelAprender).toBeVisible();
   await expect(aprender).toHaveAttribute('aria-expanded', 'true');
   await expect(page).toHaveURL(urlInicial);
@@ -33,11 +33,11 @@ test('navegação móvel abre categorias sem escolher uma página pelo usuário'
   await expect(aprender).toHaveAttribute('aria-expanded', 'false');
 
   await page.keyboard.press('Enter');
-  const painelReaberto = page.getByRole('region', { name: 'Aprender' });
+  const painelReaberto = page.getByRole('region', { name: 'Formação' });
   await expect(painelReaberto).toBeVisible();
   const primeiroDestino = painelReaberto.locator('.mobile-nav-panel__item').first();
   const fecharPainel = painelReaberto.getByRole('button', {
-    name: /Fechar opções de Aprender/i,
+    name: /Fechar opções de Formação/i,
   });
   await expect(primeiroDestino).toBeFocused();
   const indicador = await primeiroDestino.evaluate((element) => {
@@ -56,29 +56,29 @@ test('navegação móvel abre categorias sem escolher uma página pelo usuário'
   await page.keyboard.press('Escape');
   await expect(aprender).toBeFocused();
 
-  const praticar = nav.getByRole('button', { name: 'Praticar' });
+  const praticar = nav.getByRole('button', { name: 'Prática' });
   await praticar.click();
-  const painelPraticar = page.getByRole('region', { name: 'Praticar' });
+  const painelPraticar = page.getByRole('region', { name: 'Prática' });
   await expect(painelPraticar.locator('.mobile-nav-panel__item')).toHaveCount(3);
   await painelPraticar
-    .getByRole('button', { name: /Redigir Informação Técnica/ })
+    .getByRole('button', { name: /Redator de IT/ })
     .click();
   await expect(page).toHaveURL(/#\/redator$/);
   await expect(
-    page.getByRole('heading', { name: /Escrever uma Informação Técnica/i }),
+    page.getByRole('heading', { name: /Redator de Informação Técnica/i }),
   ).toBeVisible();
   await expect(praticar).toHaveClass(/active/);
   await expect(praticar).not.toHaveAttribute('aria-current');
   await praticar.click();
   const redatorAtual = page
-    .getByRole('region', { name: 'Praticar' })
-    .getByRole('button', { name: /Redigir Informação Técnica/ });
+    .getByRole('region', { name: 'Prática' })
+    .getByRole('button', { name: /Redator de IT/ });
   await expect(redatorAtual).toHaveAttribute('aria-current', 'page');
   await page.keyboard.press('Escape');
 
-  const consultar = nav.getByRole('button', { name: 'Consultar' });
+  const consultar = nav.getByRole('button', { name: 'Consulta' });
   await consultar.click();
-  const painelConsultar = page.getByRole('region', { name: 'Consultar' });
+  const painelConsultar = page.getByRole('region', { name: 'Consulta' });
   await expect(painelConsultar.locator('.mobile-nav-panel__item')).toHaveCount(4);
   const geopr = painelConsultar.getByRole('link', {
     name: 'Abrir GeoPR · portal completo em nova aba (site externo)',
@@ -91,7 +91,7 @@ test('navegação móvel abre categorias sem escolher uma página pelo usuário'
   await expect(geopr).toHaveAttribute('target', '_blank');
   await expect(geopr).toHaveAttribute('rel', 'noopener noreferrer');
 
-  await painelConsultar.getByRole('button', { name: /Mapa do Paraná/ }).click();
+  await painelConsultar.getByRole('button', { name: /Mapa GeoPR/ }).click();
   await expect(page).toHaveURL(/#\/mapa$/);
   await expect(
     page.getByRole('heading', { name: /Mapa das hidrelétricas do Paraná/i }),
@@ -139,7 +139,7 @@ test('menu lateral móvel é modal, contém o foco e navega por teclado', async 
 
   await trigger.press('Enter');
   const reopened = page.locator('#navegacao-lateral[role="dialog"]');
-  const formation = reopened.getByRole('button', { name: /Curso guiado pelo POP/i });
+  const formation = reopened.getByRole('button', { name: /Formação pelo POP/i });
   // Sob paralelismo alto, a tecla que abre o painel pode terminar antes de a
   // transicao montar e focar o dialogo. Fixar a pre-condicao conserva o que o
   // teste quer provar (navegacao por teclado) sem pressionar um alvo em montagem.

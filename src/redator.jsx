@@ -56,15 +56,17 @@ export default function RedatorIT({ scenarios, grupos, state, setState, go }) {
         <span><FileText /></span>
         <div>
           <small className="ph-kicker">PRODUTO TÉCNICO</small>
-          <h1>Escrever uma Informação Técnica</h1>
-          <p>Os 12 elementos mínimos do item 23.1, um por vez, com o caso da prática como matéria-prima. O texto fica salvo neste navegador.</p>
+          <h1>Redator de Informação Técnica</h1>
+          <p>Construa a IT por partes com o caso da prática como matéria-prima. O rascunho fica salvo somente neste navegador.</p>
         </div>
       </header>
 
-      <aside className="rd-divergencia" role="note">
-        <AlertTriangle size={17} aria-hidden="true" />
+      <details className="rd-divergencia">
+        <summary>
+          <AlertTriangle size={17} aria-hidden="true" />
+          <strong>Por que o exercício possui 12 elementos?</strong>
+        </summary>
         <div>
-          <strong>Diferença interna do POP mantida visível</strong>
           <p>
             O item 23.1 enumera 12 elementos, enquanto o modelo do Anexo B os
             consolida em 10 seções. Este exercício adota os 12 para não omitir a
@@ -73,7 +75,7 @@ export default function RedatorIT({ scenarios, grupos, state, setState, go }) {
             a revisão responsável.
           </p>
         </div>
-      </aside>
+      </details>
 
       <div className="rd-caso">
         <label className="case-combobox-label" htmlFor="rd-sel">
@@ -87,7 +89,7 @@ export default function RedatorIT({ scenarios, grupos, state, setState, go }) {
           onChange={trocarCaso}
         />
         <CaseAnswerSheet caseData={caso} groups={grupos} />
-        <span className="rd-prog">{prog.feitas} de {prog.total} itens com registro mínimo</span>
+        <span className="rd-prog">{prog.feitas} de {prog.total} itens prontos para revisão</span>
       </div>
 
       <div className="rd-step-mobile">
@@ -179,9 +181,13 @@ export default function RedatorIT({ scenarios, grupos, state, setState, go }) {
                       placeholder={`Escreva a seção "${secao.titulo}"...`}
                       aria-label={`Texto da seção ${secao.titulo}`} />
             <div className="rd-medidor">
-              <span>{texto.trim().length} caracteres</span>
-              <i><em style={{ width: `${Math.min(100, texto.trim().length / MINIMO_SECAO * 100)}%` }} /></i>
-              <span>{texto.trim().length >= MINIMO_SECAO ? 'mínimo de registro atingido' : `mínimo ${MINIMO_SECAO}`}</span>
+              <span aria-live="polite">
+                {texto.trim().length >= MINIMO_SECAO
+                  ? 'Registro suficiente para avançar e revisar'
+                  : texto.trim().length > 0
+              ? 'Rascunho em andamento: desenvolva o raciocínio técnico'
+                    : 'Comece pelo achado principal e pela evidência que o sustenta'}
+              </span>
             </div>
             <div className="rd-nav">
               <button disabled={passo === 0} onClick={() => setPasso((p) => p - 1)}>
@@ -203,7 +209,7 @@ export default function RedatorIT({ scenarios, grupos, state, setState, go }) {
 
       <footer className="rd-aviso">
         <Circle size={13} />
-        <p>Exercício didático. A contagem indica apenas preenchimento mínimo, não suficiência nem qualidade. O texto não é peça processual, não tem validade, depende de conferência técnica e não representa manifestação do IAT.</p>
+        <p>Exercício didático. O status indica apenas a presença de um rascunho, não suficiência nem qualidade. O texto não é peça processual, não tem validade, depende de conferência técnica e não representa manifestação do IAT.</p>
       </footer>
     </div>
   );

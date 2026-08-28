@@ -234,7 +234,30 @@ export function escolhaDeQuemNaoSabe(q) {
   return lideres.reduce((a, b) => (q.options[b].length > q.options[a].length ? b : a));
 }
 
-const TETO_ESPERTALHAO = 112;
+// Baixado de 112 para 95 em 22/08/2026, depois de o numero cair de 107 para 91.
+//
+// O que mudou: 58 distratores comecavam com "Somente" ou "Apenas". Medidos, eles
+// eram a alternativa correta em 1 de 58 casos, 2% contra 33% do acaso. A regra
+// "comecou com Somente, esta errada" eliminava um distrator com 98% de acerto em
+// 45 questoes, e numa questao de tres alternativas isso leva o chute de 33% para
+// 50%. Nenhuma medicao anterior pegava isso, porque a lista de absolutos aqui
+// nao incluia essas duas palavras.
+//
+// Os 58 foram reescritos para afirmar a MESMA proposicao falsa sem o limitador
+// de escopo que os denunciava. Cada reescrita passou por conferencia adversarial
+// contra o trecho do POP, e 11 foram recusadas por terem virado verdadeiras ou
+// defensaveis, o que criaria uma segunda resposta certa. Exemplo recusado: "A
+// triagem incide sobre o ponto do barramento" e verdade, porque o barramento
+// integra o arranjo integral do empreendimento.
+//
+// Resultado: pontos de graca caem de 33 para 17. Eco sai de 14 para 3, e
+// comprimento de 13 para 8.
+//
+// O QUE PIOROU, e fica registrado: alongar distratores fez a alternativa mais
+// CURTA ser a correta em 46% das questoes, contra 41% antes. A pista do mais
+// longo melhorou, a do mais curto piorou, e a composta melhorou muito. Quem
+// continuar este trabalho ataca o comprimento nas duas pontas.
+const TETO_ESPERTALHAO = 95;
 const acertosEspertalhao = questionBank.filter((q) => escolhaDeQuemNaoSabe(q) === q.answer).length;
 const pctEspertalhao = Math.round((100 * acertosEspertalhao) / questionBank.length);
 console.log(
@@ -305,6 +328,31 @@ for (const [pista, [casos, certos]] of porPista) {
     `   ${pista.padEnd(11)} decide ${String(casos).padStart(3)}, acerta `
     + `${String(certos).padStart(3)} (${taxa}%), acaso ${esperado}, de graca ${certos - esperado}`,
   );
+}
+
+// ------------------------------------------------------------ pista de escopo
+// Impede que "Somente" e "Apenas" voltem a abrir distrator em massa. Elas sao
+// mais perigosas que os absolutos comuns porque nao afirmam nada: so limitam o
+// alcance, e limitar alcance e o jeito mais rapido de escrever uma alternativa
+// obviamente errada. Sobraram 11 apos a reescrita; o teto da folga para uma
+// questao nova ocasional e reprova um retrocesso.
+const TETO_ESCOPO = 14;
+const abrePorEscopo = questionBank.flatMap((q) => q.options).filter(
+  (opcao) => /^\s*(somente|apenas)\b/i.test(opcao),
+);
+const escopoCorretas = questionBank.filter(
+  (q) => /^\s*(somente|apenas)\b/i.test(q.options[q.answer]),
+).length;
+console.log(
+  `pista de escopo: ${abrePorEscopo.length} alternativa(s) abrem com Somente/Apenas, `
+  + `${escopoCorretas} delas e a correta, teto ${TETO_ESCOPO}`,
+);
+if (abrePorEscopo.length > TETO_ESCOPO) {
+  console.error(
+    `FALHA: ${abrePorEscopo.length} alternativas abrem com Somente/Apenas, acima do teto `
+    + `${TETO_ESCOPO}. Quem nao sabe elimina essas primeiro, e quase sempre acerta.`,
+  );
+  erros += 1;
 }
 
 if (erros) { console.log(`${erros} problema(s) no banco de questoes.`); process.exit(1); }

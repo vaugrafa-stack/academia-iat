@@ -22,7 +22,7 @@ export const QUESTOES_EXTRA = [
     'O POP organiza o método e não é fundamento autônomo. Toda exigência precisa apontar a fonte que a sustenta.',
     { sec: 'pop-section-003', quote: 'A exigência deve decorrer da norma aplicável, do Termo de Referência pertinente' }],
   ['m00', 'Quais tipologias estão no escopo deste POP?',
-    ['Somente PCH e UHE', 'MCH, MGH, CGH, PCH, UHE e sistemas associados', 'Apenas empreendimentos sujeitos a EIA/RIMA'], 1,
+    ['O escopo deste POP corresponde às tipologias PCH e UHE', 'MCH, MGH, CGH, PCH, UHE e sistemas associados', 'As tipologias deste POP são as sujeitas a EIA/RIMA'], 1,
     'O escopo cobre toda a faixa de porte, das centrais menores às usinas, mais os sistemas associados do empreendimento.',
     { sec: 'pop-section-003', quote: 'MCH, MGH, CGH, PCH, UHE e sistemas associados no Estado do Paraná' }],
   ['m00', 'O que o POP busca preservar ao padronizar a análise?',
@@ -60,7 +60,7 @@ export const QUESTOES_EXTRA = [
 
   // ---------- M03 Enquadramento e Consulta Previa ----------
   ['m03', 'Para quais empreendimentos a Consulta Prévia é obrigatória?',
-    ['Para toda CGH, qualquer que seja a potência instalada declarada', 'Para CGH com potência instalada igual ou superior a 1 MW, PCH e UHE', 'Somente para UHE, por causa do porte do reservatório'], 1,
+    ['Para toda CGH, qualquer que seja a potência instalada declarada', 'Para CGH com potência instalada igual ou superior a 1 MW, PCH e UHE', 'A Consulta Prévia alcança a UHE pelo porte do reservatório, ficando de fora CGH e PCH'], 1,
     'Abaixo de 1 MW a CGH não tem Consulta Prévia obrigatória, mas o empreendedor pode buscá-la como orientação.',
     { sec: 'pop-section-024', quote: 'É obrigatória para CGH com potência instalada igual ou superior a 1 MW, PCH e UHE.' }],
   ['m03', 'A Consulta Prévia chegou com mapa da ADA e Memorial Descritivo, mas sem o arquivo digital do arranjo. Qual providência completa a entrada mínima?',
@@ -92,7 +92,7 @@ export const QUESTOES_EXTRA = [
 
   // ---------- M05 Licenciamento trifasico ----------
   ['m05', 'Qual critério numérico específico para PCH aparece no conjunto de situações passíveis de EIA e RIMA?',
-    ['Qualquer potência, sempre que houver outorga vigente', 'Potência acima de 10 MW ou alagamento superior a 100 ha', 'Somente alagamento superior a 1.000 ha'], 1,
+    ['Qualquer potência, sempre que houver outorga vigente', 'Potência acima de 10 MW ou alagamento superior a 100 ha', 'Para a PCH, o critério numérico é o alagamento superior a 1.000 ha'], 1,
     'O critério numérico não é uma conclusão automática sobre o estudo. O mesmo trecho também abrange UHE e empreendimento inicialmente simplificado que o IAT considere potencialmente impactante; estudo e rito devem ser confirmados no caso concreto.',
     { sec: 'pop-section-034', quote: 'as PCHs com potência instalada acima de 10 MW ou alagamento superior a 100 ha e os empreendimentos inicialmente simplificados que o IAT considere potencialmente impactantes' }],
   ['m05', 'Por quanto tempo o EIA e o RIMA devem ficar disponíveis ao público antes da audiência?',
@@ -128,7 +128,7 @@ export const QUESTOES_EXTRA = [
     'A ResNorm 875/2020 trata dos procedimentos setoriais de PCH e UHE; a 1.064/2023 é a referência de segurança de barragens sob fiscalização da ANEEL.',
     { sec: 'pop-section-054', quote: 'Resolução Normativa ANEEL nº 1.064, de 2 de maio de 2023' }],
   ['m07', 'O que a decisão deve registrar ao tratar sistemas associados e áreas de apoio?',
-    ['Apenas a área total ocupada e a distância até o empreendimento principal em análise', 'Vínculo funcional, área de intervenção, titularidade, competência e impactos cumulativos', 'Somente a titularidade do empreendedor e a fase em curso'], 1,
+    ['A decisão registra a área ocupada pelos sistemas associados e a distância, dispensado o vínculo funcional', 'Vínculo funcional, área de intervenção, titularidade, competência e impactos cumulativos', 'Nas áreas de apoio, a decisão registra a titularidade e a fase em curso, sem os impactos cumulativos'], 1,
     'Esse registro é o que permite justificar a análise conjunta ou separada de linhas, subestações, canteiros, jazidas e bota-fora.',
     { sec: 'pop-section-051', quote: 'A decisão deve registrar o vínculo funcional, a área de intervenção, a titularidade, a competência, os impactos cumulativos' }],
   ['m07', 'O que a manifestação do licenciamento não deve declarar sobre a barragem?',
@@ -152,7 +152,7 @@ export const QUESTOES_EXTRA = [
 
   // ---------- M09 PACUERA ----------
   ['m09', 'Com que periodicidade o TR PACUERA 2026 determina a revisão do plano?',
-    ['A cada 5 anos', 'A cada 10 anos', 'Somente na renovação da licença de operação'], 1,
+    ['A cada 5 anos', 'A cada 10 anos', 'Revisão a cada LO'], 1,
     'O plano também deve ser protocolado simultaneamente ao PBA ou ao RDPA, conforme a licença e o estudo aplicáveis.',
     { sec: 'pop-section-068', quote: 'revisto obrigatoriamente a cada 10 anos' }],
   ['m09', 'Qual escala preferencial o TR estabelece para os produtos temáticos do PACUERA?',

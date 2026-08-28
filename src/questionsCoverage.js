@@ -415,4 +415,59 @@ export const QUESTOES_COBERTURA = [
     ['Não, e confundir as duas coisas está entre os erros recorrentes que o POP evita', 'Sim, porque são etapas expressamente previstas no cronograma do programa de restauração aprovado', 'Sim, desde que estejam registradas em fotografia datada e georreferenciada no relatório do período'], 0,
     'Preparação não é execução. A restauração implantada exige resultado monitorado.',
     { sec: 'pop-section-183', quote: 'Confundir preparação de área, cercamento ou retirada de exótica com restauração efetivamente implantada e monitorada.' }],
+
+  // ---------------------------------------------------------------------
+  // Questões em que a norma É categórica
+  //
+  // Medido em 22/08/2026: das 84 alternativas do banco que usavam "sempre",
+  // "todo", "qualquer" ou "exclusivamente", só 6 eram a correta. Em 9 questões
+  // as únicas alternativas SEM absoluto eram justamente a certa, e ali a regra
+  // "se generaliza, está errada" acertava 9 de 9. O aluno passa sem ler o POP.
+  //
+  // Não dá para consertar tirando o absoluto daqueles distratores: em direito
+  // administrativo o erro típico É generalizar, e retirar a palavra muda o valor
+  // de verdade. O que faltava era o contrapeso. Estas oito têm o absoluto na
+  // alternativa CORRETA, porque o POP é categórico nesses pontos, e nenhum
+  // distrator traz absoluto. Quem eliminar por generalização elimina a resposta.
+  //
+  // Cada citação é literal. Onde o POP condiciona, elas não entram.
+  ['m01', 'Segundo o POP, quais manifestações técnicas precisam ser rastreáveis?',
+    ['Toda manifestação técnica, permitindo saber documento analisado, exigibilidade, suficiência, consequência e providência', 'As que concluem pelo indeferimento, porque nelas a motivação costuma ser contestada', 'As que integram processo sujeito a EIA/RIMA, pelo porte do empreendimento'], 0,
+    'A rastreabilidade é regra de método, e não um cuidado reservado a certas conclusões ou a certos portes.',
+    { sec: 'pop-section-011', quote: 'Toda manifestação técnica deve ser construída de forma rastreável.' }],
+
+  ['m02', 'A que processos se aplica o fluxo geral de análise previsto no POP?',
+    ['Aos processos trifásicos, ficando o licenciamento simplificado com roteiro próprio', 'A todo processo, com adaptação proporcional à fase em que ele se encontra', 'Aos processos que chegam sem manifestação anterior de interveniente setorial'], 1,
+    'O fluxo vale para todos; o que muda com a fase é a profundidade, não a existência das etapas.',
+    { sec: 'pop-section-015', quote: 'O fluxo geral deve ser aplicado em todo processo, com adaptação proporcional à fase.' }],
+
+  ['m08', 'O POP admite atividade de campo de estudo ambiental dentro de Unidade de Conservação?',
+    ['Sim, nas de Uso Sustentável, ficando as de Proteção Integral fora do alcance da regra', 'Não, porque a coleta em UC depende de licenciamento próprio do órgão gestor', 'Sim, em qualquer categoria de UC, com a menor interferência possível e aviso prévio de quinze dias ao órgão gestor'], 2,
+    'A categoria não barra o estudo. O que a regra impõe é interferência mínima, aviso prévio e a ressalva de que informar não substitui autorização específica.',
+    { sec: 'pop-section-058', quote: 'Os estudos podem ser realizados em qualquer categoria de UC, com a menor interferência possível em seus atributos, devendo o órgão gestor ser informado com antecedência de quinze dias' }],
+
+  ['m08', 'O que os TR1, TR2 e TR3 de EIA examinados no POP têm em comum?',
+    ['Todos exigem identificação, equipe multidisciplinar, legislação, histórico, alternativas e análise integrada', 'Diferem no conteúdo mínimo, e a estrutura comum aparece na análise integrada', 'Compartilham a abrangência, variando o responsável técnico exigido por meio'], 0,
+    'A estrutura é comum aos três; a diferença está na abrangência e no aprofundamento, não no rol de elementos.',
+    { sec: 'pop-section-064', quote: 'Todos exigem identificação, equipe multidisciplinar, legislação, histórico, apresentação do empreendimento, alternativas, caracterização e prognóstico dos meios físico, biótico e socioeconômico, análise integrada e conclusão geral.' }],
+
+  ['m08', 'Em série histórica de programa ambiental, o que precisa ser explicado?',
+    ['A variação de indicador acima do previsto no cronograma aprovado do programa', 'A troca de responsável técnico entre um relatório e o seguinte da série', 'Toda alteração retrospectiva de série, de classificação ou de método adotado'], 2,
+    'Mexer no passado da série muda a base de comparação. Sem explicação, a evolução entre períodos deixa de ser verificável.',
+    { sec: 'pop-section-178', quote: 'Toda alteração retrospectiva de série, classificação ou método deve ser explicada.' }],
+
+  ['m15', 'Ao ler o Plano de Manejo vigente, que extensão do empreendimento o técnico avalia?',
+    ['Todo o arranjo, com as normas gerais e as regras específicas da zona incidente', 'A porção situada dentro da UC, bastando o ato de criação para o restante', 'A área diretamente afetada, deixando o entorno para a fase de instalação'], 0,
+    'O Plano de Manejo é elemento central da análise, e a leitura alcança o arranjo inteiro, não a fatia que cai dentro do limite.',
+    { sec: 'pop-section-135', quote: 'O técnico deve verificar a versão vigente e seu ato formal de aprovação, ler normas gerais e regras específicas da zona incidente e avaliar todo o arranjo.' }],
+
+  ['m15', 'Na Consulta Prévia, em que momento entra a análise de unidades de conservação?',
+    ['Depois de fechada a lista de intervenientes, para confirmar as restrições', 'Antes de qualquer conclusão sobre intervenientes ou restrições locacionais', 'Junto da conferência do Memorial, quando já há resposta dos intervenientes'], 1,
+    'A ordem importa: concluir sobre interveniente antes de olhar UC produz uma triagem que precisa ser refeita.',
+    { sec: 'pop-section-027', quote: 'Na Consulta Prévia, a análise de unidades de conservação deve ocorrer antes de qualquer conclusão sobre intervenientes ou restrições locacionais.' }],
+
+  ['m12', 'O que o POP veda à Informação Técnica, ao checklist e ao Parecer Conclusivo?',
+    ['A conclusão motivada no Parecer, reservada à decisão administrativa posterior', 'Nenhum deles antecipa decisão fora da atribuição de quem assina o documento', 'O registro da consequência das pendências, que cabe ao despacho de encaminhamento'], 1,
+    'Cada produto tem função própria, e o limite comum é a atribuição do signatário: interpretar o conjunto não é decidir por quem decide.',
+    { sec: 'pop-section-090', quote: 'Nenhum desses produtos deve antecipar decisão fora da atribuição de seu signatário.' }],
 ];

@@ -30,7 +30,7 @@ Cada conjunto inclui:
 - pôster PNG;
 - animação SVG de 20 segundos como recurso complementar.
 
-Os MP4s foram validados com 300 quadros e duração de 20 segundos. `media-manifest.json` preserva o manifesto histórico desses três conjuntos, inclusive referências antigas a “v1.2”; a fonte operacional atual é a minuta v1.9 identificada na capa, com SHA-256 `d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4`.
+Os MP4s foram validados com 300 quadros e duração de 20 segundos. `media-manifest.json` preserva o manifesto histórico desses três conjuntos, inclusive referências antigas a “v1.2”; a fonte operacional atual é a minuta v1.9 identificada na capa, com SHA-256 `ad33a4939ac5f73d5669fc4784c43319d1c1cae0193c7c3a0aa04bdfd669b353`.
 
 `analista-licenciamento.png` é uma ilustração editorial gerada para a aula em destaque, sem logomarca ou texto incorporado.
 

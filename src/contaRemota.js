@@ -212,14 +212,6 @@ export async function concluirVerificacao(token, buscar) {
   );
 }
 
-export async function reenviarVerificacao(email, buscar) {
-  return chamar(
-    "/api/verificacao/reenviar",
-    { method: "POST", body: JSON.stringify({ email }) },
-    buscar,
-  );
-}
-
 export async function alterarSenha(senhaAtual, novaSenha, buscar) {
   return chamar(
     "/api/senha",

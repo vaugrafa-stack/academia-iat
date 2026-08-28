@@ -528,10 +528,3 @@
     grid-template-columns: 1fr 1fr;
   }
 }
-
-@media (prefers-reduced-motion: reduce) {
-  .hydro-motion-status > span,
-  .cs-focus-ring {
-    animation: none;
-  }
-}

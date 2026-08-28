@@ -428,18 +428,9 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .vls-stage,
-  .vls-play,
-  .vls-professor,
-  .vls-professor-mouth {
-    transition: none;
-  }
-
   .vls-professor {
-    animation: none;
-    /* Zera também a inclinação por fala e a oscilação do tronco. Elas não vêm
-       da animação: uma vem da variável e a outra de `rotate`, então desligar
-       `animation` sozinho deixaria movimento de pé para quem pediu para não ter. */
+    /* A regra global já desliga animação e transição. Estes valores zeram também
+       a inclinação por fala e a oscilação produzida por variável e `rotate`. */
     --vls-presenca: 0;
     transform: translateX(-50%);
     rotate: 0deg;

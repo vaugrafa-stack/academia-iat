@@ -12,12 +12,30 @@ const mainSource = readFileSync(resolve(root, 'src/main.jsx'), 'utf8');
 const supportSource = readFileSync(resolve(root, 'src/painelAluno.jsx'), 'utf8');
 
 describe('contrato de release imutável', () => {
+  it('audita semanalmente sem transformar o agendamento em publicação', () => {
+    expect(quality).toContain('schedule:');
+    expect(quality).toContain('cron: "17 7 * * 1"');
+    expect(quality).toContain(
+      "github.event_name == 'schedule' && github.run_id || github.ref",
+    );
+    const publisher = quality.slice(quality.indexOf('\n  publicar:'));
+    expect(publisher).toContain("github.event_name == 'push'");
+    expect(publisher).toContain("github.event_name == 'workflow_dispatch'");
+    expect(publisher).not.toContain("github.event_name == 'schedule'");
+  });
+
   it('mantém qualidade e publicação no mesmo workflow', () => {
     expect(existsSync(legacyDeployPath)).toBe(false);
     expect(quality).toMatch(/publicar:\s*\n[\s\S]*needs: build-and-test/);
     expect(quality).toContain('actions/download-artifact@');
     expect(quality).toContain('name: academia-iat-${{ github.sha }}');
     expect(quality).toContain('include-hidden-files: true');
+    expect(quality).toContain(
+      'aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25',
+    );
+    expect(quality).toContain('version: v0.74.0');
+    expect(quality).toContain('format: cyclonedx');
+    expect(quality).toContain('sbom-academia-iat-${{ github.sha }}');
   });
 
   it('aceita o marcador vazio exigido pelo GitHub Pages sem afrouxar os demais arquivos', () => {

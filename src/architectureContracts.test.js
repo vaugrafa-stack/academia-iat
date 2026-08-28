@@ -11,6 +11,7 @@ const licaoUrl = new URL("./licao.jsx", import.meta.url);
 const lessonObjectiveUrl = new URL("./lessonObjective.js", import.meta.url);
 const avaliacoesUrl = new URL("./avaliacoes.jsx", import.meta.url);
 const formacaoUrl = new URL("./formacao.jsx", import.meta.url);
+const inicioUrl = new URL("./inicio.jsx", import.meta.url);
 const stylesUrl = new URL("./styles.css", import.meta.url);
 const experienceUrl = new URL("./experience.css", import.meta.url);
 const mobileNavigationUrl = new URL("./mobileNavigation.css", import.meta.url);
@@ -56,7 +57,7 @@ describe("contratos incrementais de arquitetura", () => {
     const main = (await readFile(mainUrl, "utf8")).replace(/\r\n/g, "\n");
     const bytes = Buffer.byteLength(main, "utf8");
 
-    expect(bytes).toBeLessThanOrEqual(70_000);
+    expect(bytes).toBeLessThanOrEqual(58_000);
   });
 
   it("mantém a formação fora do orquestrador e carrega a rota sob demanda", async () => {
@@ -124,13 +125,14 @@ describe("contratos incrementais de arquitetura", () => {
     // `mediaForLesson` fica em main.jsx, que e quem tem a colecao de pilotos
     // carregada; a aula recebe a funcao pelo contrato `dados`. Por isso a
     // definicao e o uso do Inicio sao conferidos la, e o uso da aula aqui.
-    const [main, licao] = await Promise.all([
+    const [main, licao, inicio] = await Promise.all([
       readFile(mainUrl, "utf8"),
       readFile(licaoUrl, "utf8"),
+      readFile(inicioUrl, "utf8"),
     ]);
 
     expect(main).toContain("function mediaForLesson(lesson, pilotCollection)");
-    expect(main).toContain(
+    expect(inicio).toContain(
       "mediaForLesson(continueLesson, pilotMediaStatus.collection)",
     );
     expect(licao).toContain(
@@ -138,17 +140,18 @@ describe("contratos incrementais de arquitetura", () => {
     );
     expect(main).not.toContain('/media/tour-usina.mp4');
     expect(licao).not.toContain('/media/tour-usina.mp4');
-    // O rotulo e do cartao de continuidade do Inicio, que ficou em main.jsx.
-    expect(main).toContain("Resumo em vídeo desta aula");
+    // O rotulo pertence ao cartao de continuidade da tela inicial extraida.
+    expect(inicio).toContain("Resumo em vídeo desta aula");
   });
 
   it("mantém a tela de aula fora do orquestrador, com contrato de dados", async () => {
     // A aula saiu de main.jsx em 05/08/2026 com 1.441 linhas. O contrato que
     // impede a volta nao e o tamanho, e a FRONTEIRA: se `licao.jsx` voltar a
     // ler dado do escopo de main, a extracao terá sido só de texto.
-    const [main, licao, objective] = await Promise.all([
+    const [main, licao, inicio, objective] = await Promise.all([
       readFile(mainUrl, "utf8"),
       readFile(licaoUrl, "utf8"),
+      readFile(inicioUrl, "utf8"),
       readFile(lessonObjectiveUrl, "utf8"),
     ]);
 
@@ -165,32 +168,36 @@ describe("contratos incrementais de arquitetura", () => {
     // portão, que é o começo de publicar no escuro.
     expect(licao).toMatch(/export default function Lesson\(\{[\s\S]*?dados,\r?\n\}\)/);
     // O mesmo objetivo aparece no Inicio e na aula, vindo da mesma funcao.
-    expect(main).toContain("objetivoDaAula(lesson, blocks, tableMap)");
+    expect(inicio).toContain("objetivoDaAula(lesson, blocks, tableMap)");
     expect(licao).toContain("objetivoDaAula(lesson, blocks, tableMap)");
     expect(objective).toContain("export function objetivoDaAula");
     expect(objective).not.toMatch(/from ['\"]react['\"]/);
   });
 
   it("mantém o início enxuto e a sequência única M00–M16", async () => {
-    const [main, formacao] = await Promise.all([
+    const [main, formacao, inicio] = await Promise.all([
       readFile(mainUrl, "utf8"),
       readFile(formacaoUrl, "utf8"),
+      readFile(inicioUrl, "utf8"),
     ]);
 
-    expect(main).toContain("Objetivo atual");
-    expect(main).toContain("Próxima prática");
-    expect(main).toContain("Erros para revisar");
-    expect(main).toContain("Quatro fases do percurso");
-    expect(main).toContain("Sobre a fonte");
-    expect(main).toContain('"Comece por aqui."');
-    expect(main).toContain('"Iniciar orientação"');
-    expect(main).toContain('"Novo em hidrelétricas? Veja os fundamentos"');
-    expect(main).toContain(
+    expect(main).toContain('import Inicio from "./inicio.jsx"');
+    expect(main).toContain("dados={DADOS_INICIO}");
+    expect(main).not.toMatch(/^function (?:Inicio|Dashboard)\b/m);
+    expect(inicio).toContain("Objetivo atual");
+    expect(inicio).toContain("Próxima prática");
+    expect(inicio).toContain("Erros para revisar");
+    expect(inicio).toContain("Quatro fases do percurso");
+    expect(inicio).toContain("Sobre a fonte");
+    expect(inicio).toContain('"Comece por aqui."');
+    expect(inicio).toContain('"Iniciar orientação"');
+    expect(inicio).toContain('"Novo em hidrelétricas? Veja os fundamentos"');
+    expect(inicio).toContain(
       'go(startedJourney ? "formacao" : "hidreletricas")',
     );
     expect(formacao).toContain('className="formation-empty"');
     expect(formacao).toContain("Limpar filtro");
-    expect(main).toContain("A sequência permanece única, de M00 a M16.");
+    expect(inicio).toContain("A sequência permanece única, de M00 a M16.");
     expect(main).not.toContain("<TodayPlan");
     expect(main).not.toContain('className="river-journey"');
     expect(

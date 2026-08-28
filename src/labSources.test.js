@@ -322,7 +322,7 @@ describe('proveniência estruturada dos cenários do laboratório', () => {
     expect(LAB_SOURCE_POLICY).toMatchObject({
       schemaVersion: 1,
       sourceVersion: '1.9, agosto de 2026',
-      sourceSha256: 'd66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4',
+      sourceSha256: 'ad33a4939ac5f73d5669fc4784c43319d1c1cae0193c7c3a0aa04bdfd669b353',
       institutionalStatus: 'technical-draft',
     });
   });

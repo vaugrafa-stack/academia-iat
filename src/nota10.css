@@ -332,8 +332,6 @@
 .lab-case-evidence strong{font-size:11px;color:var(--ink)}
 .lab-case-evidence ul{margin:5px 0 0;padding-left:17px;color:var(--ink2);font-size:11px;line-height:1.5}
 .lab-source-body>.fund-nota{margin:0}
-.source-registry-summary{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 12px}
-.source-registry-summary span{padding:4px 7px;border:1px solid var(--line);border-radius:12px;color:var(--muted);font-size:11px}
 .sr-only{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important}
 .modal-close{width:40px;height:40px;display:grid;place-items:center;border:0;border-radius:6px;background:transparent;color:var(--muted)}
 .modal-close:hover{background:var(--soft);color:var(--ink)}
@@ -392,7 +390,7 @@
 .route-loading strong{font-size:13px}
 .route-loading small{margin-top:3px;color:var(--muted);font-size:11px}
 @keyframes route-loading-spin{to{transform:rotate(360deg)}}
-@media(prefers-reduced-motion:reduce){.route-loading>span{animation:none;border-color:var(--green)}}
+@media(prefers-reduced-motion:reduce){.route-loading>span{border-color:var(--green)}}
 
 .transcript-panel{
   border-top:1px solid color-mix(in srgb,#fff 18%,transparent);
@@ -582,7 +580,6 @@
 .lab-readiness-note,
 .lab-rubric div,
 .lab-answer-review li,
-.source-registry-summary span,
 .route-loading small,
 .transcript-panel>summary strong,
 .transcript-panel>summary small,
@@ -780,10 +777,6 @@
   .lesson-active-response textarea{font-size:16px}
   .flow-guidance{grid-template-columns:1fr}
   .flow-decision-gate{margin-inline:12px}
-}
-
-@media(prefers-reduced-motion:reduce){
-  .lesson-active-practice,.lesson-knowledge-check{scroll-behavior:auto}
 }
 
 /* Navegacao agrupada por natureza da atividade.

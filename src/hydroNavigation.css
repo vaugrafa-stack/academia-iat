@@ -182,13 +182,6 @@
   }
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .hydro-guide-nav__links button::after,
-  .hydro-guide-nav__progress span {
-    transition: none;
-  }
-}
-
 @media print {
   .hydro-guide-nav {
     display: none;

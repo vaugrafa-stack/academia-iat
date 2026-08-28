@@ -25,9 +25,10 @@ publicado é verificado pelo SHA incorporado ao aplicativo.
 
 ## Fonte e medidas reproduzíveis
 
-Fonte congelada: minuta `POP-DLE-HID-001`, versão operacional 1.9 indicada na
-capa, SHA-256
-`d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4`.
+Fonte congelada: minuta `POP-DLE-HID-001`, arquivo
+`POP_DLE_HID_001_v1.9_Sem_Empreendimento_Nomeado.docx`, versão operacional 1.9
+indicada na capa, SHA-256
+`ad33a4939ac5f73d5669fc4784c43319d1c1cae0193c7c3a0aa04bdfd669b353`.
 
 | Medida | Valor | Fonte reproduzível |
 |---|---:|---|
@@ -210,29 +211,38 @@ e a verificar centenas de URLs com concorrência limitada. No arranque, os quatr
 JSON necessários, 1.414.558 bytes sem compressão, começam a ser buscados em
 paralelo ao chunk principal e são reutilizados sem segunda requisição.
 
+A tela inicial foi extraída de `main.jsx` para uma fronteira própria, reduzindo
+o ponto de composição sem alterar rotas ou conteúdo. Um contrato automatizado
+agora confere o nome e o SHA-256 da fonte POP corrente e recusa documentação
+operacional obsoleta. Dependências diretas receberam atualizações compatíveis e
+o workflow ganhou auditoria semanal, inclusive quando não há novo commit, e
+preserva um SBOM CycloneDX identificado pelo SHA de cada candidato. O
+cadastro remoto opcional também passou a exibir somente a resposta genérica do
+backend, sem revelar se um endereço já possui conta.
+
 A validação corrente deste candidato obteve:
 
-- 69 arquivos de teste e 634 testes aprovados;
+- 70 arquivos de teste e 637 testes aprovados;
 - 65 cenários Playwright aprovados sobre o artefato, com 30 omissões esperadas
   pela matriz de projeto, largura e capacidade aplicável;
 - um cenário PWA local aprovado em Chromium contra o Service Worker real;
 - `pnpm build` e auditoria premium aprovados;
-- 38 chunks JavaScript, 878,8/900,0 KiB brutos e 286,1/300,0 KiB compactados;
-- CSS inicial em 183,7/205,0 KiB bruto e 33,2/38,0 KiB compactado; CSS total em
-  264,5/265,0 KiB bruto e 49,5/50,0 KiB compactado;
+- 38 chunks JavaScript, 879,2/900,0 KiB brutos e 286,3/300,0 KiB compactados;
+- CSS inicial em 178,7/205,0 KiB bruto e 32,5/38,0 KiB compactado; CSS total em
+  258,5/265,0 KiB bruto e 48,6/50,0 KiB compactado;
 - maior ativo compressível, o conteúdo público do POP, em 918,7/960,0 KiB bruto
   e 144,2/150,0 KiB compactado.
 
-Todos os limites automatizados foram respeitados. A margem do CSS total e do
-conteúdo público do POP permanece pequena; novas ampliações devem continuar
-sob demanda ou recuperar espaço antes de acrescentar volume inicial.
+Todos os limites automatizados foram respeitados. A remoção de estilos sem
+emissores recuperou cerca de 6 KiB no CSS; o conteúdo público do POP permanece
+próximo do teto e novas ampliações devem continuar sob demanda.
 
 ## Serviços separados
 
 | Serviço | Repositório | Estado comprovado | Não confundir com |
 |---|---|---|---|
-| Conta opcional de estudo | repositório privado separado | fonte validada e versionada no SHA `a89a81c130f4d784578ff02162b22b7511d95599`; 136 testes locais, wheel reproduzível, ciclo de e-mail/senha e sincronização exercitados; matriz Windows/Ubuntu e imagem Docker aprovadas no workflow `31509742433` | serviço implantado, conta obrigatória ou armazenamento de processos |
-| Área Técnica restrita | repositório privado separado | candidato local independente com OIDC, autorização nominal, upload, sanitização, conversa, fila, renderização, resultados, backup e retenção exercitados somente com dados sintéticos; há cliente opcional para a API Responses e catálogo de 11 produtos | Projeto IAT do ChatGPT, implantação pública, processamento automático habilitado ou tratamento autorizado de processo real |
+| Conta opcional de estudo | repositório separado | SHA `b037c95b49949980bc97dee05baf4fde52e31bd8`; 155 testes, matriz Windows/Ubuntu, auditoria de dependências, imagem sem CVE alta/crítica corrigível e SBOM aprovados no [workflow 33136151766](https://github.com/vaugrafa-stack/iat-contas/actions/runs/33136151766); confirmação vinculada à senha e ao nome da tentativa | serviço implantado, conta obrigatória ou armazenamento de processos |
+| Área Técnica restrita | repositório separado | SHA `6017f498b24d9effccfc48eb2a599fd83184964e`; 868 testes aprovados e quatro omissões opcionais; matriz Windows/Ubuntu, auditoria de dependências, imagem sem CVE alta/crítica corrigível e SBOM aprovados no [workflow 33136154274](https://github.com/vaugrafa-stack/iat-area-tecnica/actions/runs/33136154274); fluxo exercitado somente com dados sintéticos | Projeto IAT do ChatGPT, implantação pública, processamento automático habilitado ou tratamento autorizado de processo real |
 
 Os dois serviços privados não possuem implantação de produção comprovada. A
 Academia pública continua utilizável sem conta remota e seu build atual não
@@ -262,16 +272,16 @@ O estado seguro padrão mantém o provedor `desabilitado`. Sem selecionar
 explicitamente `openai_responses` e injetar uma chave fora do repositório, a
 prontidão publica `analise_automatica_disponivel: false` e nenhuma chamada de
 modelo ocorre. O piloto permanece limitado a dados sintéticos. PDF e DOCX com
-texto podem produzir derivados no gateway, mas não há OCR nem antimalware;
-imagens, digitalizações sem camada textual, ZIP, KMZ e documentos reais
-continuam fora do uso autorizado até existirem quarentena, isolamento,
-governança institucional e autorização formal.
+texto podem produzir derivados no gateway. A barreira antimalware por `clamd`
+é opcional, falha fechada quando habilitada e continua desligada no perfil
+padrão; não há OCR nem quarentena institucional. Imagens, digitalizações sem
+camada textual, ZIP, KMZ e documentos reais continuam fora do uso autorizado
+até existirem isolamento, governança institucional e autorização formal.
 
-Os dois candidatos privados incluem dependências travadas por hash, auditoria
-de vulnerabilidades, construção determinística de wheel e workflow de
-qualidade. A execução remota desses workflows deve ser conferida depois do
-envio; nenhuma dessas provas locais, isoladamente, autoriza implantar os
-serviços.
+Os dois candidatos separados incluem dependências travadas por hash, auditoria
+de vulnerabilidades, construção determinística de wheel, imagem auditada e
+SBOM. As execuções remotas correntes estão ligadas na tabela aos respectivos
+SHAs; essas provas técnicas não autorizam, isoladamente, implantar os serviços.
 
 O workflow externo de auditoria que antecedeu o primeiro push desses serviços
 não é evidência válida: cinco de cinco agentes falharam e o agregador registrou

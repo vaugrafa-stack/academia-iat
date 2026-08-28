@@ -347,11 +347,3 @@
     font-size: 12px;
   }
 }
-
-@media (prefers-reduced-motion: reduce) {
-  .learning-path-grid article,
-  .feature-media img,
-  .feature-media video {
-    transition: none;
-  }
-}

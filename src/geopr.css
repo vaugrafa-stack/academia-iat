@@ -158,6 +158,3 @@
 @media (max-width:640px){
   .gp-legenda{left:8px;right:8px;bottom:8px;max-width:none;max-height:44%}
 }
-@media (prefers-reduced-motion:reduce){
-  .gp-legenda-seta{transition:none}
-}

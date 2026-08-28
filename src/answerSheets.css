@@ -808,16 +808,6 @@
   }
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .answer-sheet-panel {
-    animation: none;
-  }
-
-  .answer-sheet-body {
-    scroll-behavior: auto;
-  }
-}
-
 @media print {
   body.answer-sheet-printing > :not(.answer-sheet-portal) {
     display: none !important;

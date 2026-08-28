@@ -480,23 +480,3 @@
     padding: 9px;
   }
 }
-
-@media (prefers-reduced-motion: reduce) {
-  .hydro-motion-surface :is(
-    .hcm-flow,
-    .hcm-pelton-rotor,
-    .spin-slow,
-    .kp-passo,
-    .hcm-bulbo-rotor,
-    .hcm-bulbo-generator,
-    .fa-alvo,
-    .hcm-reversible-rotor,
-    .hcm-accumulation-band
-  ) {
-    animation: none !important;
-  }
-
-  .hcm-reversible-motion :is(.rv-gera, .rv-bombeia, .rv-gera-rotulo, .rv-bombeia-rotulo) {
-    transition: none;
-  }
-}

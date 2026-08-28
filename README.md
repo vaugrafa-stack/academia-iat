@@ -11,8 +11,8 @@ painel de situação.
 
 ## Fonte e rastreabilidade
 
-- arquivo-fonte atual: `POP_DLE_HID_001_v1.9_Linguagem_Operacional_Revisada.docx`;
-- SHA-256: `d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4`;
+- arquivo-fonte atual: `POP_DLE_HID_001_v1.9_Sem_Empreendimento_Nomeado.docx`;
+- SHA-256: `ad33a4939ac5f73d5669fc4784c43319d1c1cae0193c7c3a0aa04bdfd669b353`;
 - versão operacional: 1.9, conforme a capa;
 - extração: 176 seções, das quais 170 não navegacionais e 6 apenas navegacionais;
 - percurso: 168 tópicos com conteúdo próprio; 2 dos 170 títulos não navegacionais são apenas cabeçalhos estruturais e permanecem representados pela hierarquia e pelas subseções;
@@ -105,14 +105,14 @@ distribuído em 35 chunks. O CSS inicial mede 181,3 KiB bruto e 32,5 KiB
 compactado; o total mede 236,5/43,0 KiB. Folhas exclusivas de rota e perfil
 ficam fora da inicialização, sem elevar os limites existentes.
 
-No candidato local corrente de 27/08/2026, a suíte aprovou 69 arquivos e 634
+No candidato local corrente de 27/08/2026, a suíte aprovou 70 arquivos e 637
 testes. O Playwright aprovou 65 cenários do artefato, com 30 omissões esperadas
 pela matriz aplicável, e o ensaio PWA local aprovou um cenário em Chromium com o
 Service Worker real. Build e auditoria premium foram aprovados. Os 38 chunks
-JavaScript somam 878,8/900,0 KiB brutos e 286,1/300,0 KiB compactados. O CSS
-inicial mede 183,7/205,0 KiB bruto e 33,2/38,0 KiB compactado; o total mede
-264,5/265,0 e 49,5/50,0 KiB. Todos os limites passam, com pouca margem no CSS
-total e no JSON público do POP.
+JavaScript somam 879,2/900,0 KiB brutos e 286,3/300,0 KiB compactados. O CSS
+inicial mede 178,7/205,0 KiB bruto e 32,5/38,0 KiB compactado; o total mede
+258,5/265,0 e 48,6/50,0 KiB. A retirada comprovada de estilos sem emissores
+recuperou 6 KiB de margem; o JSON público do POP continua próximo do teto.
 
 A rodada também antecipou os quatro JSON iniciais, 1.414.558 bytes sem
 compressão, para o mesmo intervalo de download do chunk principal, reutilizando
@@ -141,16 +141,18 @@ público verde e conferência do SHA incorporado ao aplicativo online.
 Os detalhes, limites e pendências humanas estão em
 [`AUDITORIA_NOTA_10_2026-08-10.md`](AUDITORIA_NOTA_10_2026-08-10.md).
 
-### Conta opcional e Área Técnica separada — 11/08/2026
+### Conta opcional e Área Técnica separada — atualização de 27/08/2026
 
 A Academia ganhou o ciclo visual completo da conta opcional: criação,
 verificação de e-mail, entrada, recuperação, troca de senha, encerramento de
 sessões e exclusão. A integração permanece desligada no build público comum e
 só é ativada com `IAT_CONTA_REMOTA=1`, sempre em mesma origem com o backend de
-contas. O backend correspondente foi validado e versionado no commit
-`a89a81c130f4d784578ff02162b22b7511d95599` do repositório privado
-`iat-contas`, com 136 testes aprovados e a matriz de qualidade mais a imagem
-Docker aprovadas no [workflow 31509742433](https://github.com/vaugrafa-stack/iat-contas/actions/runs/31509742433).
+contas. Um novo link de confirmação exige repetir nome e senha, e cada link
+ativa somente os dados da própria tentativa; isso fecha a apropriação prévia de
+um e-mail sem transformar o cadastro em consulta de contas. O backend está no
+commit `b037c95b49949980bc97dee05baf4fde52e31bd8` do repositório separado
+`iat-contas`, com 155 testes e imagem auditada aprovados no
+[workflow 33136151766](https://github.com/vaugrafa-stack/iat-contas/actions/runs/33136151766).
 
 Com essa superfície opcional, o artefato atual possui 38 chunks JavaScript,
 721,8 KiB brutos e 241,1 KiB compactados. O CSS inicial permanece em
@@ -166,6 +168,12 @@ estruturada e renderização determinística dos 11 produtos: inventário,
 checklist, linha do tempo, divergências, suficiência, condicionantes, programas
 ambientais e séries, diligência, Informação Técnica, síntese executiva e anexos
 de evidências.
+
+O candidato técnico corrente está no commit
+`6017f498b24d9effccfc48eb2a599fd83184964e`: 868 testes passaram, quatro foram
+omitidos pelas capacidades opcionais do ambiente, e a matriz multiplataforma,
+a imagem auditada e o SBOM foram aprovados no
+[workflow 33136154274](https://github.com/vaugrafa-stack/iat-area-tecnica/actions/runs/33136154274).
 
 Esse processador não é uma conexão com o Projeto IAT do ChatGPT. Seu provedor
 padrão permanece `desabilitado`; sem configuração explícita e chave injetada
@@ -194,7 +202,7 @@ pnpm test:e2e:pwa:local
 ```
 
 A suíte cobre testes unitários, PWA/offline, proveniência, referências, rubricas,
-questões, mídia e auditoria das aulas. No candidato corrente, 69 arquivos e 634
+questões, mídia e auditoria das aulas. No candidato corrente, 70 arquivos e 637
 testes foram aprovados. O Playwright valida o artefato renderizado em navegador
 real nas cinco larguras previstas e mantém auditoria de semântica, operação por
 toque e legibilidade; 65 cenários foram aprovados e 30 foram omitidos conforme a

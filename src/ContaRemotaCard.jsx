@@ -46,7 +46,6 @@ import {
   pedirRecuperacao,
   planejarSincronia,
   quemSou,
-  reenviarVerificacao,
   sair,
   sairDeTodas,
   servicoDisponivel,
@@ -214,14 +213,6 @@ export default function ContaRemotaCard({ state, setState, algoMaisNovo = false 
           : await entrar(campos.email, campos.senha);
 
       if (!r.ok) {
-        if (modo === CRIAR && r.corpo?.codigo === 'conta_criada_correspondencia_pendente') {
-          setEmailPendente(campos.email.trim());
-          setRecado(r.corpo.mensagem);
-          setModo(ENTRAR);
-          setCampos((atual) => ({ ...atual, senha: '', nome: '' }));
-          setOcupado(false);
-          return;
-        }
         if (r.corpo?.codigo === 'email_nao_verificado') {
           setEmailPendente(campos.email.trim());
         }
@@ -236,9 +227,13 @@ export default function ContaRemotaCard({ state, setState, algoMaisNovo = false 
       }
 
       if (modo === CRIAR) {
-        // A conta não abre sessão antes de provar que o endereço responde.
+        // A mesma resposta cobre conta nova e endereço já cadastrado. Isso
+        // impede que o formulário público seja usado como consulta de contas.
         setEmailPendente(campos.email.trim());
-        setRecado('Conta criada. Abra o link enviado ao seu e-mail antes de entrar.');
+        setRecado(
+          r.corpo?.mensagem
+            || 'Se o endereço puder ser cadastrado, enviaremos um link de confirmação.',
+        );
         setModo(ENTRAR);
         setCampos((atual) => ({ ...atual, senha: '', nome: '' }));
         setOcupado(false);
@@ -265,25 +260,16 @@ export default function ContaRemotaCard({ state, setState, algoMaisNovo = false 
     setRecado('Você saiu da conta. O estudo deste computador continua aqui.');
   }, [conta]);
 
-  const reenviarConfirmacao = useCallback(async () => {
+  const prepararNovoLink = useCallback(() => {
     const email = emailPendente || campos.email.trim();
     if (!email) return;
-    setOcupado(true);
     setErro('');
-    setRecado('');
-    const resposta = await reenviarVerificacao(email);
-    if (resposta.erro || !resposta.ok) {
-      setErro(
-        resposta.corpo?.mensagem ||
-          'Não foi possível alcançar o serviço de conta. Tente novamente em instantes.',
-      );
-    } else {
-      setRecado(
-        resposta.corpo?.mensagem ||
-          'Se existir conta ainda não verificada, um novo link foi enviado.',
-      );
-    }
-    setOcupado(false);
+    setModo(CRIAR);
+    setCampos({ email, senha: '', nome: '' });
+    setEmailPendente('');
+    setRecado(
+      'Informe novamente o nome e a senha desejados. O novo link confirmará somente essa tentativa.',
+    );
   }, [campos.email, emailPendente]);
 
   const limparSeguranca = useCallback(() => {
@@ -517,6 +503,7 @@ export default function ContaRemotaCard({ state, setState, algoMaisNovo = false 
             Como quer ser chamado
             <input
               type="text"
+              required
               value={campos.nome}
               autoComplete="nickname"
               onChange={(e) => setCampos((c) => ({ ...c, nome: e.target.value }))}
@@ -582,9 +569,9 @@ export default function ContaRemotaCard({ state, setState, algoMaisNovo = false 
           type="button"
           className="text-action conta-reenviar"
           disabled={ocupado}
-          onClick={reenviarConfirmacao}
+          onClick={prepararNovoLink}
         >
-          Reenviar link de confirmação
+          Gerar novo link de confirmação
         </button>
       )}
     </article>

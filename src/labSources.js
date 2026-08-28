@@ -9,9 +9,9 @@ import { LAB_SOURCE_INDEX } from './labSourceIndex.js';
 export const LAB_SOURCE_POLICY = Object.freeze({
   schemaVersion: 1,
   sourceTitle: 'POP de Licenciamento Ambiental de Empreendimentos Hidrelétricos',
-  sourceDocument: 'POP_DLE_HID_001_v1.9_Linguagem_Operacional_Revisada.docx',
+  sourceDocument: 'POP_DLE_HID_001_v1.9_Sem_Empreendimento_Nomeado.docx',
   sourceVersion: '1.9, agosto de 2026',
-  sourceSha256: 'd66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4',
+  sourceSha256: 'ad33a4939ac5f73d5669fc4784c43319d1c1cae0193c7c3a0aa04bdfd669b353',
   institutionalStatus: 'technical-draft',
   institutionalStatusLabel: 'Minuta técnica',
   supportModes: Object.freeze({

@@ -4,7 +4,7 @@
 
 Este documento especifica a arquitetura pedagógica pretendida para transformar o conteúdo das duas fontes fornecidas em uma plataforma de aprendizagem operacional, interativa e avaliável:
 
-- `POP_DLE_HID_001_v1.9_Linguagem_Operacional_Revisada.docx`;
+- `POP_DLE_HID_001_v1.9_Sem_Empreendimento_Nomeado.docx`;
 - `Proposta de Fluxogramas (Original, Simplificado e Detalhado).docx`.
 
 O desenho cobre os 27 capítulos do POP, os 6 anexos, as referências normativas, os 49 quadros, as 20 tabelas, as 14 figuras do POP e os 7 fluxogramas apresentados em três níveis (original, simplificado e completo). O conteúdo não deve ser reduzido a cartões resumidos: cada tema precisa aparecer como explicação, demonstração visual, decisão simulada, prática com feedback e evidência de aprendizagem.
@@ -12,8 +12,8 @@ O desenho cobre os 27 capítulos do POP, os 6 anexos, as referências normativas
 ### Controle da fonte e status deste documento
 
 - versão operacional: **1.9**, conforme o texto visível da capa;
-- data: julho de 2026;
-- SHA-256 da fonte: `d66151bd6f171357ae1bd20f256d417abd1719151f115ac2325397c1962d83d4`;
+- data: agosto de 2026;
+- SHA-256 da fonte: `ad33a4939ac5f73d5669fc4784c43319d1c1cae0193c7c3a0aa04bdfd669b353`;
 - natureza: minuta técnica pendente de validação humana, jurídica e institucional;
 - o valor “1.2” preservado nas propriedades internas do Word é metadado legado e não deve ser exibido como versão operacional;
 - os fluxogramas são uma proposta de treinamento e comparação, não um fluxo institucional automaticamente aprovado.

@@ -984,13 +984,6 @@
   }
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .lab-case-catalog button,
-  .lab-page .decision-readiness em {
-    transition: none;
-  }
-}
-
 .lab-catalog-open,
 .lab-catalog-close,
 .lab-catalog-scrim {

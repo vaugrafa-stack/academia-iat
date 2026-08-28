@@ -330,6 +330,40 @@ for (const [pista, [casos, certos]] of porPista) {
   );
 }
 
+// --------------------------------------------------- comprimento, outra ponta
+// O portao ja media "chutar na mais LONGA". Faltava a ponta oposta, e faltar
+// custou caro: a reescrita dos distratores de escopo, em 22/08/2026, alongou
+// alternativas erradas e levou "chutar na mais CURTA" de 41% para 46% sem que
+// nada acusasse. Uma pista trocada por outra e um empate disfarcado de avanco.
+//
+// Medido hoje: 99 de 224, sem contar empate. Olhei as 9 questoes em que a
+// diferenca e gritante, com a correta abaixo de 72% da media das outras, e nao
+// ha conserto mecanico ali. A correta e curta porque e uma afirmacao normativa
+// seca; o distrator e longo porque precisa carregar a condicao falsa que o torna
+// errado. "APA e RPPN" tem 10 caracteres e nao se infla sem escrever pior.
+//
+// Entao aqui o teto nao promete conserto: ele impede que a proxima rodada de
+// edicao empurre o numero para cima sem ninguem ver.
+const TETO_MAIS_CURTA = 105;
+const acertosMaisCurta = questionBank.filter((q) => {
+  const tamanhos = q.options.map((opcao) => opcao.length);
+  const menor = Math.min(...tamanhos);
+  return tamanhos[q.answer] === menor
+    && tamanhos.filter((tamanho) => tamanho === menor).length === 1;
+}).length;
+console.log(
+  `pista de comprimento, ponta curta: chutador acerta ${acertosMaisCurta} `
+  + `(${Math.round((100 * acertosMaisCurta) / questionBank.length)}%), acaso ${acaso}%, `
+  + `teto ${TETO_MAIS_CURTA}`,
+);
+if (acertosMaisCurta > TETO_MAIS_CURTA) {
+  console.error(
+    `FALHA: chutar na alternativa mais curta leva a ${acertosMaisCurta} acertos, acima do `
+    + `teto ${TETO_MAIS_CURTA}. Alongar distrator resolve uma ponta e piora a outra.`,
+  );
+  erros += 1;
+}
+
 // ------------------------------------------------------------ pista de escopo
 // Impede que "Somente" e "Apenas" voltem a abrir distrator em massa. Elas sao
 // mais perigosas que os absolutos comuns porque nao afirmam nada: so limitam o

@@ -45,7 +45,28 @@ export const BUNDLE_BUDGETS = Object.freeze({
   // nao existe aqui um detector de codigo orfao com tolerancia zero. Enquanto
   // nao existir, este teto e a unica trava, e por isso a folga e generosa mas
   // nao infinita.
-  totalJs: Object.freeze({ raw: 900 * KIB, gzip: 300 * KIB }),
+  // Subido em 22/08/2026 para 960 / 320 KiB, com a medicao antes do numero.
+  //
+  // As animacoes dos diagramas e o painel do GeoPR levaram o total a 869,1 de
+  // 900 KiB brutos, 96,6%. Procurei gordura em tres frentes, e nao achei:
+  //
+  //   Duplicacao entre pedacos. O Vite pode embutir o mesmo modulo em varias
+  //   rotas, e o total cresce sem uma linha nova de codigo. Medido por janela
+  //   deslizante de 120 caracteres sobre os 19 pedacos acima de 8 KiB: 0,0 KiB
+  //   repetidos em 802 KiB. O fatiamento esta limpo.
+  //
+  //   Caminho SVG longo embutido. Os diagramas de hidreletrica seriam o suspeito
+  //   obvio: zero encontrados nos pedacos hydro e mapa.
+  //
+  //   Literal gigante. O maior e uma descricao de 12 KiB do corte esquematico
+  //   para leitor de tela. E conteudo de acessibilidade, nao sobra.
+  //
+  //   O que resta: vendor-react com 177,9 KiB, 20,5% do total e irredutivel sem
+  //   trocar de biblioteca, e codigo de aplicacao com conteudo real.
+  //
+  // Vale o que o bloco acima ja dizia e continua verdade: o JS nao tem catraca
+  // equivalente ao check-css-morto, entao este teto e a unica trava.
+  totalJs: Object.freeze({ raw: 960 * KIB, gzip: 320 * KIB }),
   // Teto de CSS revisto em 01/08/2026, com a conta na mesa.
   //
   // O anterior (200 / 37 KiB) estava em 96,9% de uso e travaria a proxima

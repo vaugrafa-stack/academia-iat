@@ -68,8 +68,45 @@ describe('política editorial da apresentação pública', () => {
     expect(publicContent.blocks[380].paragraph.text).toBe(
       source.blocks[380].paragraph.text,
     );
-    expect(publicContent.tables[21].rows[2].cells[0].paragraphs[0].text).toBe(
-      source.tables[21].rows[2].cells[0].paragraphs[0].text,
+    // Compara `text`, e nao `paragraphs[0].text`, porque o artefato publico
+    // deixou de levar a copia redundante do paragrafo. O invariante e o mesmo e
+    // ate mais direto: `text` e o que a tela mostra e o que a busca indexa.
+    expect(publicContent.tables[21].rows[2].cells[0].text).toBe(
+      source.tables[21].rows[2].cells[0].text,
     );
+  });
+
+  it('so descarta a copia do paragrafo quando ela era mesmo redundante', () => {
+    // A economia nao pode virar perda de conteudo. Celula sem `paragraphs`
+    // precisa ter vindo de um unico paragrafo igual ao `text`; celula com mais
+    // de um preserva o campo, porque ali o `text` perde a quebra de linha.
+    let semCopia = 0;
+    let comVarios = 0;
+    publicContent.tables.forEach((tabela, t) => {
+      tabela.rows.forEach((linha, l) => {
+        linha.cells.forEach((celula, c) => {
+          const original = source.tables[t].rows[l].cells[c];
+          if (celula.paragraphs === undefined) {
+            semCopia += 1;
+            expect(original.paragraphs).toHaveLength(1);
+            expect(original.paragraphs[0].text).toBe(celula.text);
+          } else {
+            comVarios += 1;
+            // Preservou por um motivo verificavel, e nao por descuido. Sao tres
+            // formas de nao ser redundante, e todas ocorrem no POP: celula de
+            // sumario com varios paragrafos; celula com um paragrafo real mais
+            // varios vazios, que o `text` descarta no join mas a contabilidade
+            // conta; e uma celula cujo paragrafo difere do `text` por um espaco
+            // final. Nenhuma delas pode perder o campo.
+            const redundante =
+              celula.paragraphs.length === 1
+              && celula.paragraphs[0].text === celula.text;
+            expect(redundante).toBe(false);
+          }
+        });
+      });
+    });
+    expect(semCopia).toBeGreaterThan(2000);
+    expect(comVarios).toBeGreaterThan(0);
   });
 });

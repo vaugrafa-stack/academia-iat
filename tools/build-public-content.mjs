@@ -138,6 +138,35 @@ function buildPublicContent(source) {
     sourceParagraphNodeCount:
       (publicResult.stats?.sourceBodyParagraphCount || 0) + tableParagraphCount,
   };
+  // Cada celula guardava `paragraphs` repetindo o proprio `text`. Sao 2587 de
+  // 2594 celulas do POP com os dois identicos, e nao por acaso: `text` E o join
+  // dos paragrafos, entao com um paragrafo so eles sao iguais por construcao.
+  //
+  // Nada em src/ le esse campo. Ele servia a contabilidade de procedencia, que
+  // ja foi feita logo acima, com o artefato ainda completo. Levar a copia ate o
+  // navegador custava 268 KiB brutos e 18 KiB comprimidos por visitante, num
+  // ativo que estava a 96% do orcamento: uma edicao a mais no POP quebrava o
+  // build.
+  //
+  // A copia so sai quando e comprovadamente redundante. Celula com mais de um
+  // paragrafo preserva o campo, porque ali o `text` perde a quebra de linha.
+  // Para reconstruir: `cell.paragraphs ?? [{ index: 1, text: cell.text }]`.
+  let copiasRemovidas = 0;
+  for (const table of publicResult.tables) {
+    for (const row of table.rows) {
+      for (const cell of row.cells) {
+        const paragrafos = cell.paragraphs;
+        if (paragrafos?.length === 1 && paragrafos[0].text === cell.text) {
+          delete cell.paragraphs;
+          copiasRemovidas += 1;
+        }
+      }
+    }
+  }
+  console.log(
+    `Tabelas: ${copiasRemovidas} copia(s) redundante(s) de paragrafo removida(s) do artefato publico.`,
+  );
+
   publicResult.publicPresentation = {
     policyVersion: 1,
     sourceContentPreservedSeparately: true,

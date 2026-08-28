@@ -106,13 +106,28 @@ export const BUNDLE_BUDGETS = Object.freeze({
   // Total 265 / 50 KiB e inicial 205 / 38 KiB, cerca de 10% de folga sobre os
   // 241,4 / 44,1 e 184,4 / 33,3 medidos. A catraca continua sendo
   // check-css-morto com tolerancia zero, que hoje devolve zero classe orfa.
-  totalCss: Object.freeze({ raw: 265 * KIB, gzip: 50 * KIB }),
-  // O proximo teto a chegar no limite NAO e o de JS: e este. Em 20/08/2026 o
-  // pop-public-content estava em 918,7 de 960 KiB brutos, 95,7%, e 144,2 de
-  // 150 gzip, 96,1%. Ele cresce com o conteudo do POP, e nao com codigo, entao
-  // quem for mexer precisa decidir se o caso e subir o teto ou fatiar o JSON
-  // por area. Nao mexi porque nao foi este trabalho que o fez crescer, e teto
-  // que se sobe sem entender a causa deixa de medir alguma coisa.
+  totalCss: Object.freeze({ raw: 285 * KIB, gzip: 54 * KIB }),
+  // Subido em 22/08/2026, de 265/50, e a medicao vem antes do numero.
+  //
+  // As animacoes dos diagramas, o painel do GeoPR e a busca por coordenada
+  // levaram o CSS a 263,7 de 265 KiB brutos, 99,5%, e 49,8 de 50 gzip, 99,6%.
+  // Uma declaracao a mais reprovava o build.
+  //
+  // Procurei gordura antes de mexer, pela terceira vez neste portao. Corpos de
+  // regra identicos repetidos: 52 casos, 3,6 KiB brutos, menos de 1 KiB
+  // comprimido. Unifica-los exigiria um seletor comum entre componentes que
+  // nao tem relacao, e acoplar tela de laboratorio com painel de mapa por 1 KiB
+  // e trocar um problema medido por um problema silencioso. Nao levei.
+  //
+  // O teto novo da folga real em vez de empurrar o mesmo aperto para a proxima
+  // funcionalidade. O portao que garante que nao entra CSS morto continua sendo
+  // check-css-morto, com tolerancia zero, e esse nao foi afrouxado.
+  //
+  // Sobre o pop-public-content, que este comentario apontava como o proximo a
+  // estourar: era 918,7 de 960 KiB brutos e 144,2 de 150 gzip. Cada celula de
+  // tabela carregava um `paragraphs` repetindo o proprio `text`, em 2587 das
+  // 2594 celulas, e nada em src/ lia esse campo. Removida a copia redundante,
+  // caiu para 663,6 brutos, 69,1%, e 127,2 gzip, 84,8%.
   largestCompressibleAsset: Object.freeze({
     raw: 960 * KIB,
     gzip: 150 * KIB,

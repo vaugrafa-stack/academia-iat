@@ -70,7 +70,15 @@ const ESTILO_NOTA_TOOLTIP = { fontSize: 11, color: 'var(--muted)' };
  * simbolo e o rotulo vem do proprio servico, entao a legenda e a mesma que o
  * GeoPR usa, e nao uma interpretacao nossa das cores.
  */
-export function GeoprLegenda({ camadas, legendas, esperando, aoDesligar }) {
+export function GeoprLegenda({
+  camadas,
+  legendas,
+  esperando,
+  aoDesligar,
+  naoResponderam = [],
+  aoTentarNovamente,
+}) {
+  const idsQueFalharam = new Set(naoResponderam.map((c) => c.id));
   // Comeca FECHADA de proposito. Aberta, ela ocupa cerca de 40% da largura e
   // 58% da altura do quadro, e fica justamente sobre o sudoeste, onde estao as
   // usinas do Iguacu. Quem liga uma camada quer ver a camada; tapar a camada
@@ -95,6 +103,25 @@ export function GeoprLegenda({ camadas, legendas, esperando, aoDesligar }) {
         <ChevronDown size={13} aria-hidden="true" className="gp-legenda-seta" />
       </button>
 
+      {/* Falha de servidor de terceiro precisa aparecer aqui, no cabecalho que
+          fica visivel com a legenda recolhida. Antes disto o estado era
+          registrado e descartado: o botao ficava ligado, nada desenhava, e a
+          leitura natural era que o site estava quebrado, e nao que a fonte
+          oficial nao respondeu. */}
+      {idsQueFalharam.size > 0 && (
+        <p className="gp-legenda-falha" role="status">
+          <AlertTriangle size={12} aria-hidden="true" />
+          <span>
+            {idsQueFalharam.size === 1
+              ? '1 camada não foi desenhada: o GeoPR não respondeu.'
+              : `${idsQueFalharam.size} camadas não foram desenhadas: o GeoPR não respondeu.`}
+          </span>
+          {aoTentarNovamente && (
+            <button type="button" onClick={aoTentarNovamente}>tentar de novo</button>
+          )}
+        </p>
+      )}
+
       {aberta && (
         <ul>
           {camadas.map((camada) => {
@@ -113,7 +140,10 @@ export function GeoprLegenda({ camadas, legendas, esperando, aoDesligar }) {
                     <X size={12} />
                   </button>
                 </div>
-                <small>{creditoDe(camada)}</small>
+                <small>
+                  {creditoDe(camada)}
+                  {idsQueFalharam.has(camada.id) && ' · não respondeu'}
+                </small>
                 {legenda?.simbolos?.length ? (
                   <ul className="gp-simbolos">
                     {legenda.simbolos.map((simbolo, indice) => (

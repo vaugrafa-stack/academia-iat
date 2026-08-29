@@ -599,6 +599,10 @@ export function useCamadasGeopr({ camadas, projecao, largura, altura, vista, qua
   const [falhas, setFalhas] = useState(() => new Set());
   const [carregadas, setCarregadas] = useState(() => new Set());
   const vistaEstavel = useVistaEstavel(vista);
+  // Tentar de novo precisa mudar o endereco, senao o navegador devolve a mesma
+  // resposta do cache, inclusive a falha. O mesmo recurso ja existe na camada
+  // de satelite, com o mesmo nome, e por isso a solucao aqui repete a de la.
+  const [tentativa, setTentativa] = useState(0);
 
   const larguraPx = Math.max(1, Math.round(quadro?.larguraPx || largura || 1));
   const alturaPx = Math.max(1, Math.round(quadro?.alturaPx || altura || 1));
@@ -614,12 +618,19 @@ export function useCamadasGeopr({ camadas, projecao, largura, altura, vista, qua
     const retangulo = vistaEstavel || { x: 0, y: 0, w: largura, h: altura };
     return (camadas || [])
       .map((camada) => {
-        const href = camada && urlDaImagem(camada, { bbox, larguraPx, alturaPx });
-        if (!href) return null;
-        return { id: camada.id, camada, href, chave: `${camada.id}@${bbox}`, retangulo };
+        const base = camada && urlDaImagem(camada, { bbox, larguraPx, alturaPx });
+        if (!base) return null;
+        const href = tentativa ? `${base}&tentativa=${tentativa}` : base;
+        return {
+          id: camada.id,
+          camada,
+          href,
+          chave: `${camada.id}@${bbox}@${tentativa}`,
+          retangulo,
+        };
       })
       .filter(Boolean);
-  }, [camadas, caixa, vistaEstavel, largura, altura, larguraPx, alturaPx]);
+  }, [camadas, caixa, vistaEstavel, largura, altura, larguraPx, alturaPx, tentativa]);
 
   // Some com o registro de camadas que a pessoa desligou, para a tela nao
   // guardar erro de algo que nao esta mais na vista.
@@ -644,12 +655,22 @@ export function useCamadasGeopr({ camadas, projecao, largura, altura, vista, qua
     else setCarregadas(juntar);
   }, []);
 
+  // Quais camadas o servidor do GeoPR deixou de desenhar. Sem esta lista, a
+  // falha de um servidor que nao e nosso chega a pessoa como um botao ligado
+  // que nao faz nada, e a leitura natural e que o site esta quebrado.
+  const naoResponderam = useMemo(
+    () => pedidos.filter((p) => falhas.has(p.chave)).map((p) => p.camada),
+    [pedidos, falhas],
+  );
+
   return {
     caixa,
     pedidos,
     registrar,
     carregadas,
     falhas,
+    naoResponderam,
+    tentarNovamente: useCallback(() => setTentativa((n) => n + 1), []),
     larguraPx,
     alturaPx,
     // Uma camada so e "esperando" enquanto nao carregou nem falhou.

@@ -1087,6 +1087,8 @@ function MapaConteudo({ dados, state, setState }) {
               legendas={legendasGeopr}
               esperando={camadasGeopr.esperando}
               aoDesligar={alternarGeopr}
+              naoResponderam={camadasGeopr.naoResponderam}
+              aoTentarNovamente={camadasGeopr.tentarNovamente}
             />
             {camadas.satelite && satelite.status === 'loading' && (
               <div className="mp-satelite-estado" role="status">Carregando imagens de satélite…</div>

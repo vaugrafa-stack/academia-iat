@@ -113,6 +113,54 @@ describe('didática e acesso por teclado no mapa', () => {
     expect(indiceCatalogoPorTecla('ArrowDown', 0, 0)).toBeNull();
   });
 
+  it('diz quando o GeoPR nao desenha uma camada e oferece nova tentativa', async () => {
+    const host = document.createElement('div');
+    document.body.append(host);
+    const root = createRoot(host);
+
+    await act(async () => {
+      root.render(<MapaParana dados={dados} />);
+    });
+
+    const ligar = [...host.querySelectorAll('.gp-grupo button[aria-pressed]')][0];
+    await act(async () => {
+      ligar.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    });
+
+    const imagem = host.querySelector('.mp-map-stage svg image');
+    expect(imagem).not.toBeNull();
+    const enderecoAntes = imagem.getAttribute('href');
+
+    // Enquanto nada falhou, a tela nao pode inventar erro.
+    expect(host.querySelector('.gp-legenda-falha')).toBeNull();
+
+    await act(async () => {
+      imagem.dispatchEvent(new Event('error', { bubbles: false }));
+    });
+
+    // O estado existia no gancho e era descartado: o botao ficava ligado, nada
+    // desenhava, e a leitura natural era que o site estava quebrado, e nao que
+    // a fonte oficial nao respondeu.
+    const aviso = host.querySelector('.gp-legenda-falha');
+    expect(aviso).not.toBeNull();
+    expect(aviso.textContent).toMatch(/GeoPR não respondeu/i);
+
+    const tentar = aviso.querySelector('button');
+    expect(tentar).not.toBeNull();
+    await act(async () => {
+      tentar.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    });
+
+    // Nova tentativa precisa mudar o endereco: repetir o mesmo faria o
+    // navegador devolver a resposta do cache, inclusive a falha.
+    const depois = host.querySelector('.mp-map-stage svg image')?.getAttribute('href');
+    expect(depois).not.toBe(enderecoAntes);
+    expect(depois).toMatch(/tentativa=1/);
+    expect(host.querySelector('.gp-legenda-falha')).toBeNull();
+
+    await act(async () => root.unmount());
+  });
+
   it('filtra as camadas do GeoPR por módulo e avisa o que ficou ligado fora do filtro', async () => {
     const host = document.createElement('div');
     document.body.append(host);

@@ -227,3 +227,17 @@
 @media (prefers-reduced-motion:reduce){
   .gp-modulos-fichas>button{transition:none}
 }
+
+/* Falha da fonte oficial, no cabecalho da legenda, que fica visivel mesmo com
+   ela recolhida. O estado existia no gancho e nao chegava a tela: o botao
+   ficava ligado, nada desenhava, e a leitura natural era que o site estava
+   quebrado, e nao que o servidor do IAT nao respondeu. */
+.gp-legenda-falha{display:flex;align-items:flex-start;gap:6px;flex-wrap:wrap;
+ margin:0;padding:0 10px 9px;font-size:11.5px;line-height:1.45;color:var(--ink2)}
+.gp-legenda-falha>svg{flex:none;margin-top:2px;color:var(--amber,#d08a20)}
+.gp-legenda-falha>span{flex:1;min-width:0}
+.gp-legenda-falha>button{flex:none;min-height:44px;padding:0 10px;border-radius:8px;
+ border:1px solid var(--line);background:var(--surface2);color:var(--ink);
+ font:inherit;font-size:11.5px;font-weight:800;cursor:pointer}
+.gp-legenda-falha>button:hover{border-color:var(--ink2)}
+.gp-legenda-falha>button:focus-visible{outline:3px solid var(--blue);outline-offset:2px}

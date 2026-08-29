@@ -282,7 +282,7 @@
   max-width: 590px;
   margin: 0;
   color: var(--muted);
-  font-size: 12.5px;
+  font-size: 13px;
   line-height: 1.5;
 }
 
@@ -327,7 +327,7 @@
   background: var(--surface);
   color: var(--ink2);
   font: inherit;
-  font-size: 11.5px;
+  font-size: 12px;
   font-weight: 700;
   text-decoration: none;
   cursor: pointer;
@@ -368,14 +368,14 @@
 
 .answer-sheet-case h3 {
   margin: 3px 0 5px;
-  font-size: 17px;
+  font-size: 16px;
   line-height: 1.35;
 }
 
 .answer-sheet-case p {
   margin: 0;
   color: var(--muted);
-  font-size: 12.5px;
+  font-size: 13px;
   line-height: 1.5;
 }
 
@@ -409,7 +409,7 @@
 
 .answer-sheet-use-note p {
   margin: 0;
-  font-size: 12.5px;
+  font-size: 13px;
   line-height: 1.55;
 }
 
@@ -497,7 +497,7 @@
   padding: 10px 12px;
   background: color-mix(in srgb, var(--blue) 6%, var(--surface));
   color: var(--ink2);
-  font-size: 12.5px;
+  font-size: 13px;
   line-height: 1.5;
 }
 
@@ -519,7 +519,7 @@
 .answer-sheet-table-wrap table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 11.5px;
+  font-size: 12px;
 }
 
 .answer-sheet-table-wrap caption {
@@ -564,7 +564,7 @@
 .answer-sheet-decision-title p {
   margin: 0;
   color: var(--ink);
-  font-size: 13.5px;
+  font-size: 13px;
   font-weight: 700;
   line-height: 1.48;
 }
@@ -592,7 +592,7 @@
 .answer-sheet-related {
   margin: 8px 0 0;
   color: var(--ink2);
-  font-size: 12.5px;
+  font-size: 13px;
   line-height: 1.55;
 }
 
@@ -607,7 +607,7 @@
 .answer-sheet-decisions summary,
 .answer-sheet-model summary {
   color: var(--blue);
-  font-size: 12.5px;
+  font-size: 13px;
   font-weight: 800;
   cursor: pointer;
 }
@@ -656,7 +656,7 @@
   padding: 10px;
   background: var(--surface2);
   color: var(--ink2);
-  font-size: 12.5px;
+  font-size: 13px;
   line-height: 1.45;
 }
 
@@ -721,7 +721,7 @@
 
 .answer-sheet-gaps strong {
   color: var(--ink);
-  font-size: 12.5px;
+  font-size: 13px;
 }
 
 .answer-sheet-gaps p {

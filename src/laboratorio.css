@@ -75,14 +75,14 @@
   flex-direction: column;
   align-items: flex-end;
   color: var(--green);
-  font-size: 25px;
+  font-size: 26px;
   font-weight: 800;
   font-variant-numeric: tabular-nums;
 }
 
 .lab-catalog-total small {
   color: var(--muted);
-  font-size: 12.5px;
+  font-size: 13px;
   font-weight: 700;
 }
 
@@ -234,7 +234,7 @@
 .lab-case-catalog button small {
   overflow: hidden;
   color: var(--muted);
-  font-size:12.5px;
+  font-size:13px;
   font-weight: 700;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -306,7 +306,7 @@
 
 .lab-selected-overview h3 {
   margin: 5px 0 2px;
-  font-size: 18px;
+  font-size: 19px;
 }
 
 .lab-selected-overview p {
@@ -377,7 +377,7 @@
 
 .lab-mode-bar h2 {
   margin-bottom: 3px;
-  font-size: 17px;
+  font-size: 16px;
 }
 
 .lab-mode-options {
@@ -492,7 +492,7 @@
   color: var(--ink2);
   /* Este bloco e o enunciado da tarefa, prosa corrida, e nao rotulo: o piso de
      11px foi pensado para rotulo em caixa alta lido por reconhecimento. */
-  font-size: 12.5px;
+  font-size: 13px;
   line-height: 1.5;
 }
 
@@ -635,7 +635,7 @@
 .lab-help-empty {
   margin: 0;
   color: var(--muted);
-  font-size: 12.5px;
+  font-size: 13px;
   line-height: 1.5;
 }
 
@@ -726,7 +726,7 @@
 
 .lab-help-ladder > button small {
   color: var(--muted);
-  font-size:12.5px;
+  font-size:13px;
 }
 
 .lab-help-ladder > button svg {
@@ -1095,7 +1095,7 @@
 
   .lab-mode-bar h2 {
     margin-bottom: 0;
-    font-size: 15px;
+    font-size: 14px;
   }
 
   .lab-mode-options {

@@ -78,6 +78,42 @@ export function pesosForaDaEscala(css, arquivo = '') {
   return fora;
 }
 
+// --- tamanho de fonte -----------------------------------------------------
+//
+// Medido em 22/08/2026, antes da migracao: 23 valores em px, 767 usos.
+//
+//   texto de interface  11 a 17, com 713 usos, e meios-passos 11,5 / 12,5 / 13,5
+//   titulos             18 a 39, com 55 usos espalhados por TREZE valores
+//
+// Treze tamanhos para 55 titulos quer dizer que quase todo titulo escolheu o
+// proprio. Nao ha ritmo possivel assim: a diferenca entre 24 e 25 px nao
+// comunica nada, so gasta uma decisao.
+//
+// A escala tem dez degraus. O mapeamento moveu o minimo: cada valor foi para o
+// degrau vizinho, e no empate para o mais usado, que e o que menos mexe na
+// tela. Onde havia quase-duplicado, encolheu em vez de crescer, porque crescer
+// e o que transborda em 320 px.
+//
+//   11 12 13 14 16       interface
+//   19 22 26 31 39       titulos
+//
+// clamp(), rem e var() ficam de fora: eles existem justamente para o caso em
+// que o tamanho depende da largura, e nao sao numero escolhido a mao.
+const TAMANHOS_VALIDOS = new Set([11, 12, 13, 14, 16, 19, 22, 26, 31, 39]);
+const TAMANHO = /font-size:\s*(\d+(?:\.\d+)?)px/g;
+
+/** Tamanhos escritos fora dos dez degraus. */
+export function tamanhosForaDaEscala(css, arquivo = '') {
+  const fora = [];
+  for (const achado of css.matchAll(TAMANHO)) {
+    const valor = Number(achado[1]);
+    if (TAMANHOS_VALIDOS.has(valor)) continue;
+    const linha = css.slice(0, achado.index).split('\n').length;
+    fora.push({ arquivo, linha, valor });
+  }
+  return fora;
+}
+
 // --- autoteste ------------------------------------------------------------
 // Um portao que nunca reprovou e indistinguivel de um portao quebrado. Estas
 // armadilhas provam que ele reage ao defeito que promete pegar, e que nao
@@ -114,6 +150,22 @@ function autoteste() {
       process.exit(1);
     }
   }
+
+  const casosTamanho = [
+    ['.a{font-size:12.5px}', 1, 'meio-passo passou batido'],
+    ['.a{font-size:25px}', 1, 'tamanho fora dos degraus passou batido'],
+    ['.a{font-size:13px}', 0, 'degrau valido foi reprovado'],
+    ['.a{font-size:39px}', 0, 'degrau valido foi reprovado'],
+    ['.a{font-size:clamp(32px,4.2vw,52px)}', 0, 'clamp foi tratado como numero na mao'],
+    ['.a{font-size:.8rem}', 0, 'rem foi tratado como numero na mao'],
+  ];
+  for (const [css, esperado, queixa] of casosTamanho) {
+    const achados = tamanhosForaDaEscala(css).length;
+    if (achados !== esperado) {
+      console.error(`FALHA no autoteste: ${queixa} (${css})`);
+      process.exit(1);
+    }
+  }
 }
 
 autoteste();
@@ -121,10 +173,12 @@ autoteste();
 const arquivos = (await readdir(fonte)).filter((n) => n.endsWith('.css'));
 const problemas = [];
 const problemasPeso = [];
+const problemasTamanho = [];
 for (const nome of arquivos) {
   const css = await readFile(join(fonte, nome), 'utf8');
   problemas.push(...raiosForaDaEscala(css, `src/${nome}`));
   problemasPeso.push(...pesosForaDaEscala(css, `src/${nome}`));
+  problemasTamanho.push(...tamanhosForaDaEscala(css, `src/${nome}`));
 }
 
 const declaracoes = (
@@ -162,4 +216,16 @@ console.log(
   `Escala de raio: ${declaracoes} declaracoes em ${arquivos.length} folhas, `
   + `todas nos ${TOKENS.length} degraus.`,
 );
+if (problemasTamanho.length) {
+  console.error(
+    `FALHA: ${problemasTamanho.length} tamanho(s) de fonte fora dos dez degraus da escala.`,
+  );
+  for (const p of problemasTamanho.slice(0, 12)) {
+    console.error(`- ${p.arquivo}:${p.linha} → font-size: ${p.valor}px`);
+  }
+  console.error('Use 11, 12, 13, 14, 16, 19, 22, 26, 31 ou 39, ou clamp() quando depender da largura.');
+  process.exit(1);
+}
+
 console.log('Escala de peso: todos nos 5 degraus que a Manrope entrega.');
+console.log('Escala de tamanho: todos nos 10 degraus.');

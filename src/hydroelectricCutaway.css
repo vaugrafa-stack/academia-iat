@@ -584,7 +584,7 @@
 .hec-equipment-key p {
   margin: 0 0 7px;
   color: #bcd1d0;
-  font-size: 12.5px;
+  font-size: 13px;
   font-weight: 800;
 }
 
@@ -707,7 +707,7 @@
 
 .hec-stage-panel > span {
   color: rgba(116, 220, 255, 0.5);
-  font-size: 24px;
+  font-size: 26px;
   font-weight: 800;
   line-height: 1;
   letter-spacing: -0.06em;
@@ -722,7 +722,7 @@
 .hec-stage-panel p {
   margin: 3px 0 0;
   color: #afc4c4;
-  font-size: 12.5px;
+  font-size: 13px;
   line-height: 1.45;
 }
 
@@ -749,7 +749,7 @@
   display: block;
   margin-top: 7px;
   color: #829d9f;
-  font-size: 12.5px;
+  font-size: 13px;
   line-height: 1.4;
 }
 
@@ -1006,7 +1006,7 @@
   }
 
   .hec-stage-panel > span {
-    font-size: 20px;
+    font-size: 19px;
   }
 }
 

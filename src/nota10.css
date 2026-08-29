@@ -23,7 +23,7 @@
  * para tamanho grande, e em 27px ele só fecha o desenho da letra. */
 .dashboard-intro h1{
   max-width:24ch;
-  font-size:27px;font-weight:600;letter-spacing:-.6px;line-height:1.2;
+  font-size:26px;font-weight:600;letter-spacing:-.6px;line-height:1.2;
   margin-bottom:0;
 }
 
@@ -76,7 +76,7 @@
 .lesson-header p{
   max-width:62ch;
   color:var(--ink2);
-  font-size:15px;font-weight:400;line-height:1.55;
+  font-size:14px;font-weight:400;line-height:1.55;
 }
 .lesson-header p svg{margin-top:3px}
 
@@ -216,16 +216,16 @@
 }
 .learning-challenge>svg{width:19px;color:var(--amber)}
 .learning-challenge strong{font-size:12px}
-.learning-challenge p{margin:2px 0 0;color:var(--muted);font-size:12.5px;line-height:1.4}
+.learning-challenge p{margin:2px 0 0;color:var(--muted);font-size:13px;line-height:1.4}
 .learning-challenge>span{
   max-width:180px;
   color:var(--blue);
-  font-size:12.5px;
+  font-size:13px;
   font-weight:800;
   line-height:1.4;
   text-align:right;
 }
-.learning-contract>details{padding:0 14px 12px;color:var(--muted);font-size:12.5px}
+.learning-contract>details{padding:0 14px 12px;color:var(--muted);font-size:13px}
 .learning-contract>details summary{cursor:pointer;font-weight:800}
 .learning-contract>details ul{display:grid;gap:6px;margin:10px 0 0;padding:0;list-style:none}
 .learning-contract>details li{display:flex;gap:7px;align-items:flex-start}
@@ -287,7 +287,7 @@
   width:110%;
   transform:translate(-50%,-50%) rotate(-15deg);
   color:color-mix(in srgb,var(--red) 12%,transparent);
-  font-size:25px;
+  font-size:26px;
   font-weight:800;
   text-align:center;
   pointer-events:none;
@@ -411,7 +411,7 @@
 .transcript-panel>summary span{display:flex;flex-direction:column}
 .transcript-panel>summary strong{font-size:11px}
 .transcript-panel>summary small{margin-top:2px;color:var(--muted);font-size:11px}
-.transcript-panel>summary:after{content:"+";margin-left:auto;color:var(--blue);font-size:18px;font-weight:700}
+.transcript-panel>summary:after{content:"+";margin-left:auto;color:var(--blue);font-size:19px;font-weight:700}
 .transcript-panel[open]>summary:after{content:"−"}
 .transcript-body{padding:0 14px 14px}
 .transcript-status{margin:0;padding:12px;border-radius:var(--raio-1);background:var(--soft);color:var(--muted);font-size:11px}
@@ -456,7 +456,7 @@
 .offline-manager{margin:26px 0;padding:24px;border:1px solid var(--line);border-radius:var(--raio-3);background:var(--surface)}
 .offline-manager>header{display:flex;justify-content:space-between;gap:20px;align-items:start}
 .offline-manager>header small{font-size:11px;font-weight:800;letter-spacing:.08em;color:var(--blue)}
-.offline-manager>header h2{margin:4px 0 6px;font-size:21px}
+.offline-manager>header h2{margin:4px 0 6px;font-size:22px}
 .offline-manager>header p{max-width:760px;margin:0;color:var(--muted);font-size:12px;line-height:1.55}
 .offline-manager>header>button,.offline-persist{min-height:44px;display:flex;align-items:center;gap:7px;padding:8px 12px;border:1px solid var(--line);border-radius:var(--raio-2);background:var(--surface);font-size:11px;font-weight:800}
 .offline-manager>header button svg,.offline-persist svg{width:16px}
@@ -646,7 +646,7 @@
   margin-bottom:13px;
 }
 .lesson-knowledge-check header small,.lesson-active-practice header small{color:var(--blue);font-size:11px;font-weight:800;letter-spacing:.08em}
-.lesson-knowledge-check h3,.lesson-active-practice h3{margin:3px 0 0;font-size:18px}
+.lesson-knowledge-check h3,.lesson-active-practice h3{margin:3px 0 0;font-size:19px}
 .lesson-knowledge-check header>span,.lesson-active-practice header>span{
   display:flex;
   align-items:center;
@@ -663,7 +663,7 @@
 .lesson-knowledge-check header svg,.lesson-active-practice header svg{width:15px;height:15px}
 .lesson-check-scope{margin:0 0 12px;padding:9px 11px;border-left:3px solid var(--amber);background:color-mix(in srgb,var(--amber) 10%,var(--surface));color:var(--muted);font-size:12px;line-height:1.5}
 .lesson-knowledge-check fieldset{margin:0;padding:0;border:0}
-.lesson-knowledge-check legend{width:100%;margin:0 0 12px;font-size:15px;font-weight:800;line-height:1.45}
+.lesson-knowledge-check legend{width:100%;margin:0 0 12px;font-size:14px;font-weight:800;line-height:1.45}
 .lesson-check-options{display:grid;gap:8px}
 .lesson-check-options button{
   min-height:48px;
@@ -711,7 +711,7 @@
 .lesson-active-counter>span,.lesson-active-practice>footer span{display:flex;align-items:center;gap:6px;color:var(--muted);font-size:12px;font-weight:700}
 .lesson-active-counter>span.done,.lesson-active-practice>footer span.done{color:var(--green)}
 .lesson-active-counter svg,.lesson-active-practice>footer svg{width:15px}
-.lesson-active-counter small{color:var(--muted);font-size:12.5px;text-align:right}
+.lesson-active-counter small{color:var(--muted);font-size:13px;text-align:right}
 .lesson-active-rubric{display:grid;gap:7px;margin:0;padding:0;border:0}
 .lesson-active-rubric legend{margin-bottom:8px;font-size:13px;font-weight:800}
 .lesson-active-rubric label{display:grid;grid-template-columns:20px minmax(0,1fr);gap:9px;align-items:start;min-height:44px;padding:9px 11px;border:1px solid var(--line);border-radius:var(--raio-2);color:var(--ink2);font-size:12px;line-height:1.5;cursor:pointer}
@@ -720,7 +720,7 @@
 .lesson-active-rubric .lesson-active-criterion{display:block;min-width:0;overflow-wrap:anywhere}
 .lesson-active-rubric svg{width:17px;color:var(--green)}
 .lesson-active-practice>footer{display:flex;flex-wrap:wrap;gap:12px 20px;margin-top:13px;padding-top:12px;border-top:1px solid var(--line)}
-.lesson-active-limit{margin:12px 0 0;padding:10px;border-left:3px solid var(--amber);background:color-mix(in srgb,var(--amber) 9%,var(--surface));color:var(--muted);font-size:12.5px;line-height:1.5}
+.lesson-active-limit{margin:12px 0 0;padding:10px;border-left:3px solid var(--amber);background:color-mix(in srgb,var(--amber) 9%,var(--surface));color:var(--muted);font-size:13px;line-height:1.5}
 .lesson-completion-notice,.lesson-legacy-completion{flex:1 0 100%;margin:0;padding:9px 11px;border-left:3px solid var(--amber);background:color-mix(in srgb,var(--amber) 10%,var(--surface));color:var(--ink2);font-size:12px;line-height:1.45}
 .lesson-legacy-completion{border-left-color:var(--blue);background:color-mix(in srgb,var(--blue) 8%,var(--surface))}
 .lesson-footer button.needs-evidence{border-color:var(--amber);color:var(--ink2)}

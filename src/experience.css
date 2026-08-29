@@ -80,7 +80,7 @@
 .brand-panel .brand-name {
   display: block;
   margin: 0;
-  font-size: 21px;
+  font-size: 22px;
   font-weight: 500;
   letter-spacing: -.035em;
 }
@@ -273,13 +273,13 @@ button.secondary svg { width: 17px; }
   max-width: 63ch;
   margin: 0;
   color: var(--ink2);
-  font-size: 15px;
+  font-size: 14px;
   line-height: 1.65;
 }
 .dashboard-hero-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 22px; }
 .dashboard-hero-actions .primary,
 .dashboard-hero-actions .secondary { min-width: 176px; }
-.dashboard-section-label { margin: 0 0 12px; font-size: 18px; letter-spacing: -.02em; }
+.dashboard-section-label { margin: 0 0 12px; font-size: 19px; letter-spacing: -.02em; }
 .dashboard-feature {
   grid-template-columns: minmax(300px,.95fr) minmax(260px,.72fr) minmax(250px,.68fr);
   min-height: 270px;
@@ -293,7 +293,7 @@ button.secondary svg { width: 17px; }
 .feature-media .video-data-loading small { color: #d5e5df; }
 .feature-copy { padding: 25px 24px; }
 .feature-copy h2 { font-size: 22px; }
-.feature-progress-summary { margin: auto 0 12px; color: var(--muted); font-size: 12.5px; }
+.feature-progress-summary { margin: auto 0 12px; color: var(--muted); font-size: 13px; }
 .feature-open-lesson { width: 100%; }
 .current-objective-card { padding: 24px; }
 
@@ -460,7 +460,7 @@ button.secondary svg { width: 17px; }
 
 .learning-path-copy h3 {
   margin: 4px 0 7px;
-  font-size: 17px;
+  font-size: 16px;
 }
 
 .learning-path-copy p,
@@ -559,7 +559,7 @@ button.secondary svg { width: 17px; }
 
 .formation-empty h2 {
   margin: 13px 0 7px;
-  font-size: 20px;
+  font-size: 19px;
 }
 
 .formation-empty p {

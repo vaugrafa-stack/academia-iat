@@ -127,7 +127,36 @@ export const BUNDLE_BUDGETS = Object.freeze({
   // Total 265 / 50 KiB e inicial 205 / 38 KiB, cerca de 10% de folga sobre os
   // 241,4 / 44,1 e 184,4 / 33,3 medidos. A catraca continua sendo
   // check-css-morto com tolerancia zero, que hoje devolve zero classe orfa.
-  totalCss: Object.freeze({ raw: 285 * KIB, gzip: 54 * KIB }),
+  //
+  // Revisto em 22/08/2026, com o mesmo metodo. O painel do GeoPR, o filtro por
+  // modulo e o aviso de falha da fonte levaram o total a 265,7 KiB, 93,2% do
+  // teto. Refiz a medicao de bloco identico: 74 corpos repetidos, 5,5 KiB, 2,1%
+  // do total. E a mesma reserva de antes, um pouco menor, e continua sendo do
+  // tipo que nao se colhe: `.pot-card p`, `.res-card p` e `.lic-col p` dividem
+  // corpo por coincidencia de aparencia, e junta-los prende tres componentes
+  // sem parentesco ao mesmo destino. Segue declarada, nao colhida.
+  //
+  // ACHADO NOVO, e vale mais do que o teto: 29,5% da folha INICIAL parecia
+  // pertencer a telas especificas. Fui conferir e a conta estava inflada em
+  // metade, porque prefixo de classe aqui nomeia FAMILIA DE COMPONENTE, e nao
+  // tela. `.flow-` aparece em quatro arquivos, entre eles a biblioteca e o
+  // corte da hidreletrica; `.dashboard-` so existe no inicio, que todo mundo
+  // carrega; `.offline-` e usado pelo proprio main.
+  //
+  // Sobram como candidatas reais, todas de rota unica e ja com pedaco JS
+  // proprio: `.lab-` com 6,8 KiB, `.quiz-` com 3,4 e `.lesson-` com 16,1.
+  // Cerca de 26 KiB, e nao 52,7.
+  //
+  // Nao movi, e o motivo nao e preguica: mover regra de folha muda a ORDEM da
+  // cascata, porque folha de rota carrega depois da inicial, e empate de
+  // especificidade passa a resolver para o outro lado. O ganho e de primeira
+  // pintura, nao de total, entao nao alivia ESTE teto. Fica como trabalho
+  // deliberado, com verificacao visual das rotas afetadas, e nao como efeito
+  // colateral de uma rodada de ajuste de peso.
+  //
+  // Total 300 / 58 KiB, cerca de 13% sobre os 265,7 / 49,8 medidos. O inicial
+  // fica onde esta: as folhas de rota e que vem crescendo, e nao ele.
+  totalCss: Object.freeze({ raw: 300 * KIB, gzip: 58 * KIB }),
   // Subido em 22/08/2026, de 265/50, e a medicao vem antes do numero.
   //
   // As animacoes dos diagramas, o painel do GeoPR e a busca por coordenada

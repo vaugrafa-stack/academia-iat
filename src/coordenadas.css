@@ -2,7 +2,7 @@
    Folha de rota, como a do GeoPR: so existe na tela do mapa. */
 
 .co-painel{display:flex;flex-direction:column;gap:9px;padding:13px;
- border:1px solid var(--line);border-radius:12px;background:var(--surface2)}
+ border:1px solid var(--line);border-radius:var(--raio-3);background:var(--surface2)}
 .co-painel.mp-pesquisa-unificada{position:relative;z-index:3;grid-area:pesquisa;margin:0;
  box-shadow:0 8px 22px color-mix(in srgb,var(--ink) 8%,transparent)}
 .mapa-layout{grid-template-areas:"mapa pesquisa" "mapa painel";
@@ -19,13 +19,13 @@
 .co-painel .mp-busca{height:auto;min-height:48px;padding:2px 3px 2px 12px}
 .co-painel .mp-busca>.co-ir{display:inline-flex;align-items:center;justify-content:center;
  min-width:64px;min-height:44px;padding:0 12px;border:1px solid var(--green);
- border-radius:8px;background:var(--green3);color:var(--green)}
+ border-radius:var(--raio-2);background:var(--green3);color:var(--green)}
 
 /* 44 x 44 e o piso de alvo de toque adotado neste projeto, acima dos 24 do
    WCAG 2.2. O rotulo "Ir" tem duas letras: sem o piso explicito o botao
    encolhia para 35 px de largura, e o portao de acessibilidade reprovou a
    rota do mapa por causa dele. */
-.co-ir{flex:none;min-width:44px;min-height:44px;padding:0 13px;border-radius:8px;cursor:pointer;
+.co-ir{flex:none;min-width:44px;min-height:44px;padding:0 13px;border-radius:var(--raio-2);cursor:pointer;
  border:1px solid var(--ink2);background:var(--surface2);color:var(--ink);
  font:inherit;font-size:13px;font-weight:800}
 .co-ir:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
@@ -35,7 +35,7 @@
 
 .co-leitura{display:flex;flex-direction:column;gap:8px;
  padding-top:9px;border-top:1px solid var(--line)}
-.co-aviso{display:flex;gap:7px;margin:0;padding:8px 10px;border-radius:8px;
+.co-aviso{display:flex;gap:7px;margin:0;padding:8px 10px;border-radius:var(--raio-2);
  border:1px solid var(--line);background:var(--surface);
  font-size:12px;line-height:1.45;color:var(--muted)}
 .co-aviso svg{flex:none;margin-top:2px;color:var(--amber,var(--ink2))}
@@ -51,7 +51,7 @@
 
 .co-acoes{display:flex;flex-wrap:wrap;gap:7px}
 .co-acoes button{display:inline-flex;align-items:center;gap:6px;
- min-height:34px;padding:0 11px;border-radius:999px;cursor:pointer;
+ min-height:34px;padding:0 11px;border-radius:var(--raio-pill);cursor:pointer;
  border:1px solid var(--line);background:var(--surface);color:var(--muted);
  font:inherit;font-size:12px;font-weight:700}
 .co-acoes button:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
@@ -67,7 +67,7 @@
 
 /* A busca vem antes do mapa no DOM e no fluxo visual. As explicações extensas
    ficam depois da superfície de trabalho, disponíveis sem competir com ela. */
-.mp-como-usar{margin-top:18px;border:1px solid var(--line);border-radius:12px;
+.mp-como-usar{margin-top:18px;border:1px solid var(--line);border-radius:var(--raio-3);
  background:var(--surface2);color:var(--ink)}
 .mp-como-usar>summary{display:flex;align-items:center;min-height:44px;padding:0 13px;
  cursor:pointer;font-size:13px;font-weight:800;list-style:none}
@@ -75,7 +75,7 @@
 .mp-como-usar>summary::after{content:'+';margin-left:auto;color:var(--muted);font-size:17px;font-weight:600}
 .mp-como-usar[open]>summary{border-bottom:1px solid var(--line)}
 .mp-como-usar[open]>summary::after{content:'−'}
-.mp-como-usar>summary:focus-visible{outline:3px solid var(--blue);outline-offset:-3px;border-radius:11px}
+.mp-como-usar>summary:focus-visible{outline:3px solid var(--blue);outline-offset:-3px;border-radius:var(--raio-3)}
 .mp-como-usar-conteudo{display:flex;flex-direction:column;gap:9px;padding:12px 13px 13px}
 .mp-como-usar-conteudo p{margin:0;font-size:12.5px;line-height:1.55;color:var(--muted)}
 

@@ -9,7 +9,7 @@
   min-width: 0;
   padding: 9px 12px 0;
   border: 1px solid color-mix(in srgb, var(--green) 22%, var(--line));
-  border-radius: 12px;
+  border-radius: var(--raio-3);
   background: color-mix(in srgb, var(--surface) 92%, transparent);
   box-shadow: 0 12px 32px rgba(15, 42, 32, 0.12);
   backdrop-filter: blur(16px) saturate(1.2);
@@ -57,7 +57,7 @@
 }
 
 .hydro-guide-nav__links::-webkit-scrollbar-thumb {
-  border-radius: 999px;
+  border-radius: var(--raio-pill);
   background: color-mix(in srgb, var(--green) 48%, var(--line));
 }
 
@@ -67,7 +67,7 @@
   min-height: 44px;
   padding: 9px 11px;
   border: 0;
-  border-radius: 7px 7px 0 0;
+  border-radius: var(--raio-2) var(--raio-2) 0 0;
   background: transparent;
   color: var(--muted);
   font-size: 12px;
@@ -83,7 +83,7 @@
   bottom: 2px;
   left: 10px;
   height: 3px;
-  border-radius: 3px;
+  border-radius: var(--raio-1);
   background: linear-gradient(90deg, var(--green2), var(--blue));
   opacity: 0;
   transform: scaleX(0.4);
@@ -118,7 +118,7 @@
   height: 3px;
   margin-inline: -12px;
   overflow: hidden;
-  border-radius: 0 0 12px 12px;
+  border-radius: 0 0 var(--raio-3) var(--raio-3);
   background: color-mix(in srgb, var(--green) 10%, var(--line));
 }
 
@@ -164,7 +164,7 @@
   .hydro-guide-nav {
     top: calc(var(--top) + 4px);
     margin-inline: -8px;
-    border-radius: 10px;
+    border-radius: var(--raio-3);
   }
 
   .hydro-guide-nav__summary span {

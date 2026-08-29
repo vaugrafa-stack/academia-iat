@@ -41,7 +41,7 @@
 }
 
 .gp-painel{display:flex;flex-direction:column;gap:11px;padding:13px;
- border:1px solid var(--line);border-radius:12px;background:var(--surface2)}
+ border:1px solid var(--line);border-radius:var(--raio-3);background:var(--surface2)}
 
 .gp-cabecalho{display:flex;align-items:flex-start;gap:9px}
 .gp-cabecalho>div{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
@@ -56,7 +56,7 @@
 /* O limite do POP nao e nota de rodape. Ele fica no topo, com contraste
    suficiente para ser lido, porque o erro que evita e concluir sobreposicao
    olhando poligonal na tela. */
-.gp-limite{display:flex;gap:8px;margin:0;padding:9px 11px;border-radius:9px;
+.gp-limite{display:flex;gap:8px;margin:0;padding:9px 11px;border-radius:var(--raio-2);
  border:1px solid var(--line);background:var(--surface);
  font-size:12.5px;line-height:1.5;color:var(--muted)}
 .gp-limite svg{flex:none;margin-top:2px;color:var(--amber,var(--ink2))}
@@ -69,7 +69,7 @@
 
 .gp-grupo li>button,.gp-achados li>button{
  width:100%;display:flex;align-items:center;gap:9px;text-align:left;
- min-height:44px;padding:9px 12px;border-radius:9px;cursor:pointer;
+ min-height:44px;padding:9px 12px;border-radius:var(--raio-2);cursor:pointer;
  border:1px solid var(--line);background:var(--surface);color:var(--muted);
  font:inherit;font-size:13px;font-weight:700}
 .gp-grupo li>button.on,.gp-achados li>button.on{
@@ -78,7 +78,7 @@
  outline:3px solid var(--blue);outline-offset:2px}
 .gp-titulo{flex:1;min-width:0;line-height:1.35}
 .gp-modulo{flex:none;font-size:11px;font-weight:700;letter-spacing:.04em;
- padding:2px 7px;border-radius:999px;border:1px solid currentColor;opacity:.75}
+ padding:2px 7px;border-radius:var(--raio-pill);border:1px solid currentColor;opacity:.75}
 .gp-achados li>button small{flex:none;font-size:11px;font-weight:600;opacity:.7}
 
 .gp-detalhe{padding:7px 12px 2px}
@@ -99,7 +99,7 @@
  padding-top:10px;border-top:1px solid var(--line)}
 .gp-atributos h3{margin:0;font-size:11px;font-weight:800;letter-spacing:.06em;
  text-transform:uppercase;color:var(--muted)}
-.gp-atributos article{border:1px solid var(--line);border-radius:9px;
+.gp-atributos article{border:1px solid var(--line);border-radius:var(--raio-2);
  background:var(--surface);padding:9px 11px}
 .gp-atributos h4{margin:0 0 6px;font-size:12.5px;color:var(--ink);line-height:1.35}
 .gp-atributos dl{display:grid;grid-template-columns:minmax(0,auto) minmax(0,1fr);
@@ -123,7 +123,7 @@
    procurar a resposta noutro canto da pagina e o que havia antes. */
 .gp-legenda{position:absolute;left:10px;bottom:10px;z-index:2;
  max-width:min(300px,calc(100% - 20px));max-height:min(58%,340px);overflow:auto;
- border:1px solid var(--line);border-radius:10px;
+ border:1px solid var(--line);border-radius:var(--raio-3);
  background:color-mix(in srgb,var(--surface) 92%,transparent);
  backdrop-filter:blur(3px)}
 
@@ -152,7 +152,7 @@
  font-size:11px;line-height:1.35;color:var(--muted)}
 /* O simbolo vem do servico como PNG minusculo. `image-rendering` fica no
    automatico: forcar pixelado deixaria o tracejado e a hachura ilegiveis. */
-.gp-simbolos img{flex:none;border-radius:2px}
+.gp-simbolos img{flex:none;border-radius:var(--raio-1)}
 .gp-simbolos-resto{font-style:italic;opacity:.85}
 
 @media (max-width:640px){
@@ -206,7 +206,7 @@
  text-transform:uppercase;color:var(--muted)}
 .gp-modulos-fichas{display:flex;flex-wrap:wrap;gap:6px}
 .gp-modulos-fichas>button{display:inline-flex;align-items:center;gap:5px;
- min-height:44px;padding:0 11px;border-radius:999px;cursor:pointer;
+ min-height:44px;padding:0 11px;border-radius:var(--raio-pill);cursor:pointer;
  border:1px solid var(--line);background:var(--surface2);color:var(--ink2);
  font:inherit;font-size:12.5px;font-weight:700;line-height:1;
  transition:border-color .15s ease,background-color .15s ease,color .15s ease}
@@ -236,7 +236,7 @@
  margin:0;padding:0 10px 9px;font-size:11.5px;line-height:1.45;color:var(--ink2)}
 .gp-legenda-falha>svg{flex:none;margin-top:2px;color:var(--amber,#d08a20)}
 .gp-legenda-falha>span{flex:1;min-width:0}
-.gp-legenda-falha>button{flex:none;min-height:44px;padding:0 10px;border-radius:8px;
+.gp-legenda-falha>button{flex:none;min-height:44px;padding:0 10px;border-radius:var(--raio-2);
  border:1px solid var(--line);background:var(--surface2);color:var(--ink);
  font:inherit;font-size:11.5px;font-weight:800;cursor:pointer}
 .gp-legenda-falha>button:hover{border-color:var(--ink2)}

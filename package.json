@@ -12,7 +12,7 @@
   "scripts": {
     "dev": "node tools/build-public-content.mjs --check && node tools/check-public-editorial-policy.mjs && vite --host 127.0.0.1 --port 5173 --strictPort --open",
     "build": "node tools/build-public-content.mjs --check && node tools/check-public-editorial-policy.mjs && node tools/sanitize-public-data.mjs --check && node tools/build-lab-data.mjs --check && node tools/build-question-data.mjs --check && node tools/build-offline-packages.mjs --check && vite build && node tools/check-public-editorial-policy.mjs --dist=dist && node tools/build-sw.mjs dist && node tools/check-public-editorial-policy.mjs --dist=dist && node tools/check-bundle.mjs dist",
-    "test": "vitest run && node tools/build-public-content.mjs --check && node tools/check-public-editorial-policy.mjs && node tools/sanitize-public-data.mjs --check && node tools/test-pwa.mjs && node tools/build-lab-data.mjs --check && node tools/build-question-data.mjs --check && node tools/build-offline-packages.mjs --check && node tools/security-check.mjs && node tools/check-segredos.mjs && node tools/check-provenance.mjs && node tools/check-media-governance.mjs && node tools/check-referencias.mjs && node tools/check-css-morto.mjs && node tools/check-css-comentario.mjs && node tools/check-tipografia.mjs && node tools/check-travessao.mjs && node tools/check-normas.mjs && node tools/check-geopr.mjs && node tools/check-rubricas.mjs && node tools/check-niveis.mjs && node tools/check-questoes.mjs && node tools/check-videoaulas.mjs && node tools/check-audiovisual-pilots.mjs && node tools/audit-lessons.mjs && node tools/audit-premium.mjs && node tools/smoke-test.mjs",
+    "test": "vitest run && node tools/build-public-content.mjs --check && node tools/check-public-editorial-policy.mjs && node tools/sanitize-public-data.mjs --check && node tools/test-pwa.mjs && node tools/build-lab-data.mjs --check && node tools/build-question-data.mjs --check && node tools/build-offline-packages.mjs --check && node tools/security-check.mjs && node tools/check-segredos.mjs && node tools/check-provenance.mjs && node tools/check-media-governance.mjs && node tools/check-referencias.mjs && node tools/check-css-morto.mjs && node tools/check-escala.mjs && node tools/check-css-comentario.mjs && node tools/check-tipografia.mjs && node tools/check-travessao.mjs && node tools/check-normas.mjs && node tools/check-geopr.mjs && node tools/check-rubricas.mjs && node tools/check-niveis.mjs && node tools/check-questoes.mjs && node tools/check-videoaulas.mjs && node tools/check-audiovisual-pilots.mjs && node tools/audit-lessons.mjs && node tools/audit-premium.mjs && node tools/smoke-test.mjs",
     "audit": "node tools/audit-lessons.mjs",
     "audit:premium": "node tools/audit-premium.mjs",
     "extract:pop": "python tools/extract_pop.py && node tools/build-public-content.mjs",
@@ -44,7 +44,7 @@
     "lab:data": "node tools/build-lab-data.mjs",
     "questions:data": "node tools/build-question-data.mjs",
     "check:niveis": "node tools/check-niveis.mjs",
-    "check:css": "node tools/check-css-morto.mjs"
+    "check:css": "node tools/check-css-morto.mjs && node tools/check-escala.mjs"
   },
   "dependencies": {
     "lucide-react": "1.34.0",

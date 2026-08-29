@@ -15,7 +15,7 @@
   margin: 0 0 12px;
   padding: 10px 12px;
   border: 1px solid var(--hcm-control-border);
-  border-radius: 12px;
+  border-radius: var(--raio-3);
   background: var(--soft, #f3f7f4);
 }
 
@@ -101,7 +101,7 @@
   gap: 7px;
   min-width: 112px;
   padding: 8px 14px;
-  border-radius: 10px;
+  border-radius: var(--raio-3);
 }
 
 .hcm-play svg {
@@ -136,7 +136,7 @@
 
 .hcm-tabs button {
   padding: 8px 16px;
-  border-radius: 22px;
+  border-radius: var(--raio-4);
 }
 
 .hcm-tabs button.active,
@@ -152,7 +152,7 @@
   margin: 0;
   padding: 10px 12px;
   border-left: 4px solid var(--hcm-water);
-  border-radius: 8px;
+  border-radius: var(--raio-2);
   background: color-mix(in srgb, var(--hcm-water) 10%, var(--surface, #fff));
   color: var(--ink2, #31463d);
   font-size: 13px;
@@ -167,7 +167,7 @@
   grid-column: 1 / -1;
   padding: 14px 16px;
   border: 1px solid var(--hcm-control-border);
-  border-radius: 10px;
+  border-radius: var(--raio-3);
   background: var(--soft, #f3f7f4);
 }
 
@@ -308,14 +308,14 @@
 .hcm-phase-selector button {
   min-width: 132px;
   padding: 8px 14px;
-  border-radius: 10px;
+  border-radius: var(--raio-3);
 }
 
 .hcm-reversible-motion {
   margin: 8px 0;
   padding: 12px;
   border: 1px solid var(--hcm-control-border);
-  border-radius: 12px;
+  border-radius: var(--raio-3);
   background: var(--surface, #fff);
 }
 

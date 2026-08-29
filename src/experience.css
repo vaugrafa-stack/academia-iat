@@ -172,7 +172,7 @@ button.secondary {
   gap: 8px;
   padding: 0 17px;
   border: 1px solid var(--green);
-  border-radius: 9px;
+  border-radius: var(--raio-2);
   color: var(--green);
   background: var(--surface);
   font-weight: 800;
@@ -373,7 +373,7 @@ button.secondary svg { width: 17px; }
   margin: 0 0 28px;
   padding: 26px;
   border: 1px solid var(--line);
-  border-radius: 16px;
+  border-radius: var(--raio-4);
   background:
     radial-gradient(circle at 96% 4%, color-mix(in srgb, var(--blue) 11%, transparent), transparent 34%),
     linear-gradient(145deg, var(--surface), color-mix(in srgb, var(--green3) 16%, var(--surface)));
@@ -406,7 +406,7 @@ button.secondary svg { width: 17px; }
   flex: none;
   padding: 7px 10px;
   border: 1px solid color-mix(in srgb, var(--blue) 32%, var(--line));
-  border-radius: 999px;
+  border-radius: var(--raio-pill);
   color: var(--blue);
   background: color-mix(in srgb, var(--blue) 7%, var(--surface));
   font-size: 12px;
@@ -425,7 +425,7 @@ button.secondary svg { width: 17px; }
   gap: 12px 14px;
   padding: 18px;
   border: 1px solid var(--line);
-  border-radius: 13px;
+  border-radius: var(--raio-3);
   background: color-mix(in srgb, var(--surface) 94%, transparent);
   box-shadow: 0 8px 22px color-mix(in srgb, var(--ink) 6%, transparent);
   transition: border-color .18s ease, transform .18s ease, box-shadow .18s ease;
@@ -442,7 +442,7 @@ button.secondary svg { width: 17px; }
   height: 44px;
   display: grid;
   place-items: center;
-  border-radius: 12px;
+  border-radius: var(--raio-3);
   color: var(--green);
   background: color-mix(in srgb, var(--green3) 65%, var(--surface));
 }
@@ -497,7 +497,7 @@ button.secondary svg { width: 17px; }
 .learning-path-progress i {
   height: 6px;
   overflow: hidden;
-  border-radius: 999px;
+  border-radius: var(--raio-pill);
   background: var(--soft);
 }
 
@@ -515,7 +515,7 @@ button.secondary svg { width: 17px; }
   width: 100%;
   padding: 0 13px;
   border: 1px solid color-mix(in srgb, var(--green) 42%, var(--line));
-  border-radius: 9px;
+  border-radius: var(--raio-2);
   color: var(--green);
   background: color-mix(in srgb, var(--green3) 24%, var(--surface));
   font-size: 13px;
@@ -546,7 +546,7 @@ button.secondary svg { width: 17px; }
   max-width: 720px;
   padding: 42px 24px;
   border: 1px dashed color-mix(in srgb, var(--green) 45%, var(--line));
-  border-radius: 14px;
+  border-radius: var(--raio-4);
   text-align: center;
   background: color-mix(in srgb, var(--green3) 18%, var(--surface));
 }
@@ -574,7 +574,7 @@ button.secondary svg { width: 17px; }
   margin-top: 18px;
   padding: 0 17px;
   border: 0;
-  border-radius: 8px;
+  border-radius: var(--raio-2);
   color: var(--sobre-acento);
   background: var(--green);
   font-weight: 800;
@@ -589,7 +589,7 @@ button.secondary svg { width: 17px; }
   .learning-paths {
     margin-inline: -2px;
     padding: 19px 14px;
-    border-radius: 13px;
+    border-radius: var(--raio-3);
   }
 
   .learning-paths > header {

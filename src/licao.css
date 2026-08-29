@@ -4,7 +4,7 @@
 .siglas-aula-principal{display:none;padding:0;overflow:hidden;background:var(--surface);box-shadow:var(--shadow-1)}
 .siglas-aula-toggle{width:100%;min-height:44px;border:0;background:var(--surface2);color:var(--green2);padding:9px 12px;display:flex;align-items:center;gap:8px;text-align:left;font:inherit;font-size:13px;font-weight:800;cursor:pointer}
 .siglas-aula-toggle span{flex:1}
-.siglas-aula-toggle small{min-width:24px;height:24px;border-radius:12px;background:var(--green3);display:grid;place-items:center;color:var(--green2)}
+.siglas-aula-toggle small{min-width:24px;height:24px;border-radius:var(--raio-3);background:var(--green3);display:grid;place-items:center;color:var(--green2)}
 .siglas-aula-toggle>svg:last-child{transition:transform .18s var(--ease)}
 .siglas-aula-toggle>svg:last-child.aberto{transform:rotate(90deg)}
 .siglas-aula-principal>div{padding:12px 14px;border-top:1px solid var(--line)}

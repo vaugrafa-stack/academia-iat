@@ -188,7 +188,7 @@
   transform: translateX(-50%);
   padding: 4px 10px;
   border: 1px solid #d9f6ec42;
-  border-radius: 999px;
+  border-radius: var(--raio-pill);
   color: #e8fff7;
   background: #03241ecc;
   font-size: 11px;
@@ -216,7 +216,7 @@
   min-height: 44px;
   padding: 5px 9px;
   border: 1px solid #d4eee575;
-  border-radius: 6px;
+  border-radius: var(--raio-2);
   color: #fff;
   background: #03271fe6;
   box-shadow: 0 3px 10px #0003;

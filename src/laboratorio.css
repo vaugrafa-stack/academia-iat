@@ -1,7 +1,7 @@
 .lab-catalog,
 .lab-mode-bar {
   border: 1px solid var(--line);
-  border-radius: 14px;
+  border-radius: var(--raio-4);
   background: var(--surface);
 }
 
@@ -110,7 +110,7 @@
   height: 42px;
   padding: 0 12px;
   border: 1px solid var(--line);
-  border-radius: 8px;
+  border-radius: var(--raio-2);
   background: var(--surface2);
 }
 
@@ -126,7 +126,7 @@
   min-width: 0;
   height: 42px;
   border: 1px solid var(--line);
-  border-radius: 8px;
+  border-radius: var(--raio-2);
   background: var(--surface2);
   color: var(--ink);
   font-size: 13px;
@@ -187,7 +187,7 @@
   padding: 8px;
   overflow-y: auto;
   border: 1px solid var(--line);
-  border-radius: 10px;
+  border-radius: var(--raio-3);
   background: var(--soft);
   list-style: none;
   scrollbar-width: thin;
@@ -206,7 +206,7 @@
   min-height: 58px;
   padding: 9px 11px;
   border: 1px solid var(--line);
-  border-radius: 8px;
+  border-radius: var(--raio-2);
   background: var(--surface);
   color: var(--ink);
   text-align: left;
@@ -275,7 +275,7 @@
   margin: 0 24px;
   padding: 34px 20px;
   border: 1px dashed var(--line);
-  border-radius: 10px;
+  border-radius: var(--raio-3);
   color: var(--muted);
   text-align: center;
 }
@@ -355,7 +355,7 @@
   gap: 7px;
   min-height: 44px;
   border: 0;
-  border-radius: 7px;
+  border-radius: var(--raio-2);
   background: var(--green);
   color: #fff;
   font-size: 12px;
@@ -386,7 +386,7 @@
   gap: 6px;
   padding: 4px;
   border: 1px solid var(--line);
-  border-radius: 10px;
+  border-radius: var(--raio-3);
   background: var(--soft);
 }
 
@@ -397,7 +397,7 @@
   justify-content: center;
   padding: 7px 13px;
   border: 1px solid transparent;
-  border-radius: 7px;
+  border-radius: var(--raio-2);
   background: transparent;
   color: var(--muted);
   font-size: 12px;
@@ -418,7 +418,7 @@
 
 .lab-page .lab-workspace {
   overflow: hidden;
-  border-radius: 14px;
+  border-radius: var(--raio-4);
 }
 
 /* Cada evidência passou a reunir o documento e, nos casos de aplicação, a
@@ -428,7 +428,7 @@
   margin-bottom: 8px;
   overflow: hidden;
   border: 1px solid var(--line);
-  border-radius: 8px;
+  border-radius: var(--raio-2);
   background: var(--surface);
 }
 
@@ -474,7 +474,7 @@
   min-height: 44px;
   padding: 6px 34px 6px 9px;
   border: 1px solid var(--line);
-  border-radius: 6px;
+  border-radius: var(--raio-2);
   background: var(--surface);
   color: var(--ink);
   font: inherit;
@@ -487,7 +487,7 @@
   margin: 9px 0 12px;
   padding: 10px 11px;
   border: 1px solid color-mix(in srgb, var(--blue) 32%, var(--line));
-  border-radius: 8px;
+  border-radius: var(--raio-2);
   background: color-mix(in srgb, var(--blue) 6%, var(--surface));
   color: var(--ink2);
   /* Este bloco e o enunciado da tarefa, prosa corrida, e nao rotulo: o piso de
@@ -535,7 +535,7 @@
 .lab-classification-review > ol > li {
   padding: 10px;
   border: 1px solid var(--line);
-  border-radius: 8px;
+  border-radius: var(--raio-2);
   background: var(--surface);
 }
 
@@ -601,7 +601,7 @@
 .lab-help-ladder {
   margin: 18px 22px 4px;
   border: 1px solid color-mix(in srgb, var(--blue) 34%, var(--line));
-  border-radius: 11px;
+  border-radius: var(--raio-3);
   background: color-mix(in srgb, var(--blue) 5%, var(--surface));
   overflow: hidden;
 }
@@ -642,7 +642,7 @@
 .lab-help-ladder > header > span {
   min-width: 38px;
   padding: 4px 8px;
-  border-radius: 999px;
+  border-radius: var(--raio-pill);
   background: var(--surface);
   color: var(--blue);
   font-size: 11px;
@@ -997,7 +997,7 @@
     margin: 0 0 10px;
     padding: 9px 12px;
     border: 1px solid var(--green);
-    border-radius: 10px;
+    border-radius: var(--raio-3);
     background: var(--green3);
     color: var(--green);
     text-align: left;
@@ -1074,7 +1074,7 @@
     height: 44px;
     padding: 0;
     border: 1px solid var(--line);
-    border-radius: 9px;
+    border-radius: var(--raio-2);
     background: var(--surface2);
     color: var(--ink);
   }
@@ -1137,7 +1137,7 @@
    a daltonismo nem a impressao. */
 .lab-help-columns li.lab-ausente{color:var(--muted);text-decoration:line-through;text-decoration-color:var(--red)}
 .lab-help-columns li.lab-ausente span{
-  margin-right:6px;padding:1px 6px;border-radius:10px;
+  margin-right:6px;padding:1px 6px;border-radius:var(--raio-3);
   background:var(--red);color:#fff;font-size:11px;font-weight:900;
   letter-spacing:.06em;text-transform:uppercase;text-decoration:none;
   display:inline-block;vertical-align:middle;

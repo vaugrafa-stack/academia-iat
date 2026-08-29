@@ -6,7 +6,7 @@
   margin-bottom: 14px;
   padding: 14px 16px;
   border: 1px solid color-mix(in srgb, var(--blue) 32%, var(--line));
-  border-radius: 12px;
+  border-radius: var(--raio-3);
   background: color-mix(in srgb, var(--blue) 6%, var(--surface));
 }
 
@@ -43,7 +43,7 @@
   align-self: center;
   padding: 9px 12px;
   border: 1px solid var(--blue);
-  border-radius: 9px;
+  border-radius: var(--raio-2);
   color: var(--blue);
   background: var(--surface);
   font-size: 12px;

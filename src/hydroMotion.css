@@ -8,7 +8,7 @@
   margin-block: 16px 12px;
   padding: 10px 12px;
   border: 1px solid var(--line);
-  border-radius: 12px;
+  border-radius: var(--raio-3);
   background: color-mix(in srgb, var(--surface) 88%, var(--green3));
 }
 
@@ -23,7 +23,7 @@
   width: 10px;
   height: 10px;
   flex: none;
-  border-radius: 999px;
+  border-radius: var(--raio-pill);
   background: var(--green2);
   box-shadow: 0 0 0 5px color-mix(in srgb, var(--green2) 18%, transparent);
   animation: hydroStatusPulse 1.8s ease-in-out infinite;
@@ -59,7 +59,7 @@
   gap: 7px;
   padding: 8px 14px;
   border: 1px solid var(--green);
-  border-radius: 9px;
+  border-radius: var(--raio-2);
   background: var(--green3);
   color: var(--green);
   font: inherit;
@@ -135,7 +135,7 @@
   max-width: calc(100% - 24px);
   padding: 8px 11px;
   border: 1px solid #81f1ce73;
-  border-radius: 9px;
+  border-radius: var(--raio-2);
   background: #071b17df;
   box-shadow: 0 8px 22px #0005;
   color: #fff;
@@ -258,7 +258,7 @@
   gap: 9px;
   padding: 9px 11px;
   border: 1px solid var(--line);
-  border-radius: 10px;
+  border-radius: var(--raio-3);
   background: var(--surface);
   color: var(--ink2);
   text-align: left;
@@ -275,7 +275,7 @@
   height: 28px;
   flex: none;
   place-items: center;
-  border-radius: 8px;
+  border-radius: var(--raio-2);
   background: var(--soft);
   color: var(--muted);
   font-size: 11px;
@@ -306,7 +306,7 @@
   margin: 0;
   overflow: hidden;
   border: 1px solid var(--line);
-  border-radius: 13px;
+  border-radius: var(--raio-3);
   background: #141f1b;
   box-shadow: 0 16px 34px #07171224;
 }
@@ -350,7 +350,7 @@
 .dam-facts > div {
   padding: 12px 13px;
   border: 1px solid var(--line);
-  border-radius: 10px;
+  border-radius: var(--raio-3);
   background: var(--soft);
 }
 
@@ -446,7 +446,7 @@
     gap: 9px;
     padding: 8px 10px;
     border: 1px solid var(--line);
-    border-radius: 9px;
+    border-radius: var(--raio-2);
     background: var(--surface);
     color: var(--ink2);
     text-align: left;

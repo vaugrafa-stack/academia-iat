@@ -186,3 +186,44 @@
 /* Em coluna unica nao existe "ao lado": fixar o mapa comeria a tela inteira,
    porque o bloco tem 650 px. Ali a solucao e de comportamento, e nao de
    layout, e esta em mapa.jsx: ligar uma camada traz o mapa de volta a vista. */
+
+/* ---------------------------------------------------------------------------
+   Filtro por modulo
+
+   A busca do acervo alcanca mais de mil servicos do GeoPR; a lista curada, com
+   23, nao tinha filtro. Quem estudava unidades de conservacao percorria as 23
+   para achar as quatro do M12.
+
+   As fichas repetem a etiqueta que cada camada ja exibe, entao o vocabulario e
+   o mesmo do curso e da lista. O numero em negrito e a contagem, e nao um
+   enfeite: e ele que diz se vale filtrar.
+
+   44 px de altura minima: e o piso de alvo de toque adotado no projeto, acima
+   dos 24 do WCAG 2.2, e ficha de filtro e o tipo de controle pequeno que
+   costuma passar por baixo dele. */
+.gp-modulos{display:flex;flex-direction:column;gap:7px}
+.gp-modulos-rotulo{font-size:11.5px;font-weight:800;letter-spacing:.04em;
+ text-transform:uppercase;color:var(--muted)}
+.gp-modulos-fichas{display:flex;flex-wrap:wrap;gap:6px}
+.gp-modulos-fichas>button{display:inline-flex;align-items:center;gap:5px;
+ min-height:44px;padding:0 11px;border-radius:999px;cursor:pointer;
+ border:1px solid var(--line);background:var(--surface2);color:var(--ink2);
+ font:inherit;font-size:12.5px;font-weight:700;line-height:1;
+ transition:border-color .15s ease,background-color .15s ease,color .15s ease}
+.gp-modulos-fichas>button>b{font-size:11px;font-weight:800;opacity:.65;
+ font-variant-numeric:tabular-nums}
+.gp-modulos-fichas>button:hover{border-color:var(--ink2);color:var(--ink)}
+.gp-modulos-fichas>button.on{border-color:var(--green2);color:var(--ink);
+ background:color-mix(in srgb,var(--green2) 16%,var(--surface2))}
+.gp-modulos-fichas>button.on>b{opacity:.9}
+.gp-modulos-fichas>button:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+
+/* O aviso de camada ligada fora do filtro precisa de uma acao no meio da frase,
+   e nao de um botao solto embaixo: quem le a frase resolve ali mesmo. */
+.gp-nota-acao{border:0;padding:0;background:none;cursor:pointer;font:inherit;
+ font-weight:800;color:var(--blue);text-decoration:underline}
+.gp-nota-acao:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+
+@media (prefers-reduced-motion:reduce){
+  .gp-modulos-fichas>button{transition:none}
+}

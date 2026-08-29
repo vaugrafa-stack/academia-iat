@@ -113,6 +113,61 @@ describe('didática e acesso por teclado no mapa', () => {
     expect(indiceCatalogoPorTecla('ArrowDown', 0, 0)).toBeNull();
   });
 
+  it('filtra as camadas do GeoPR por módulo e avisa o que ficou ligado fora do filtro', async () => {
+    const host = document.createElement('div');
+    document.body.append(host);
+    const root = createRoot(host);
+
+    await act(async () => {
+      root.render(<MapaParana dados={dados} />);
+    });
+
+    const fichas = () => [...host.querySelectorAll('.gp-modulos-fichas button')];
+    const camadasVisiveis = () => host.querySelectorAll('.gp-grupo li').length;
+    const porRotulo = (inicio) => fichas().find((b) => b.textContent.trim().startsWith(inicio));
+
+    // A contagem na ficha e o que diz se vale filtrar, entao ela precisa bater
+    // com o que a lista mostra depois do clique. Se as duas divergirem, a ficha
+    // vira enfeite e o numero passa a mentir.
+    const todas = camadasVisiveis();
+    expect(todas).toBeGreaterThan(0);
+    expect(porRotulo('Todas')?.textContent.replace(/\s+/g, ' ')).toContain(String(todas));
+
+    const m12 = porRotulo('M12');
+    const quantasM12 = Number(m12.querySelector('b').textContent);
+    await act(async () => {
+      m12.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    });
+    expect(camadasVisiveis()).toBe(quantasM12);
+    expect(m12.getAttribute('aria-pressed')).toBe('true');
+
+    // Ligar uma camada de outro modulo e voltar ao filtro nao pode deixa-la
+    // desenhando no mapa sem aviso: uma camada invisivel na lista nao tem como
+    // ser desligada dali.
+    await act(async () => {
+      porRotulo('Todas').dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    });
+    const forasteira = [...host.querySelectorAll('.gp-grupo button[aria-pressed]')]
+      .find((b) => !/M12/.test(b.textContent));
+    await act(async () => {
+      forasteira.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    });
+    await act(async () => {
+      porRotulo('M12').dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    });
+
+    const aviso = host.querySelector('.gp-modulos .gp-nota');
+    expect(aviso?.textContent).toMatch(/continuam? desenhando no mapa/i);
+    const verTodas = host.querySelector('.gp-nota-acao');
+    expect(verTodas).not.toBeNull();
+    await act(async () => {
+      verTodas.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    });
+    expect(camadasVisiveis()).toBe(todas);
+
+    await act(async () => root.unmount());
+  });
+
   it('ordena busca, mapa e camadas no DOM e recolhe a ajuda detalhada', async () => {
     const host = document.createElement('div');
     document.body.append(host);

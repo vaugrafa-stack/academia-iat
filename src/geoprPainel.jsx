@@ -450,14 +450,44 @@ function BuscaNoAcervo({ ativas, alternar }) {
 }
 
 export default function GeoprPainel({ ativas, alternar, limpar, consulta, aoFecharConsulta }) {
+  // Filtro por modulo do curso.
+  //
+  // A busca logo abaixo varre o acervo inteiro do GeoPR, com mais de mil
+  // servicos. A lista curada, com 23, nao tinha filtro nenhum: quem estudava
+  // unidades de conservacao percorria as 23 para achar as quatro do M12.
+  //
+  // O eixo e o modulo porque e ele que liga o mapa ao curso. Cada camada ja
+  // carrega a etiqueta, e ela e o vocabulario que a pessoa ve nas aulas; o
+  // rotulo da linha existe para que "M12" nao chegue sem contexto.
+  const [modulo, setModulo] = useState(null);
+
+  const modulos = useMemo(() => {
+    const conta = new Map();
+    for (const camada of CAMADAS_GEOPR) {
+      if (!camada.modulo) continue;
+      conta.set(camada.modulo, (conta.get(camada.modulo) || 0) + 1);
+    }
+    return [...conta.entries()].sort(([a], [b]) => a.localeCompare(b));
+  }, []);
+
   const porGrupo = useMemo(
     () => GRUPOS.map((g) => ({
       ...g,
-      itens: CAMADAS_GEOPR.filter((c) => c.grupo === g.id),
+      itens: CAMADAS_GEOPR.filter(
+        (c) => c.grupo === g.id && (!modulo || c.modulo === modulo),
+      ),
     })).filter((g) => g.itens.length),
-    [],
+    [modulo],
   );
   const idsAtivos = useMemo(() => new Set(ativas.map((c) => c.id)), [ativas]);
+
+  // Filtrar esconde camada ligada, e uma camada que desenha no mapa sem aparecer
+  // na lista nao tem como ser desligada dali. Em vez de abrir excecao na regra
+  // do filtro, que confundiria mais, a tela diz quantas ficaram fora e devolve
+  // a lista inteira num clique.
+  const ligadasForaDoFiltro = modulo
+    ? ativas.filter((camada) => camada.modulo !== modulo).length
+    : 0;
 
   return (
     <section className="gp-painel">
@@ -482,6 +512,43 @@ export default function GeoprPainel({ ativas, alternar, limpar, consulta, aoFech
           registre a camada, a fonte e a data da consulta.
         </span>
       </p>
+
+      <div className="gp-modulos" role="group" aria-label="Filtrar camadas por módulo do curso">
+        <span className="gp-modulos-rotulo">Filtrar por módulo</span>
+        <div className="gp-modulos-fichas">
+          <button
+            type="button"
+            className={modulo ? '' : 'on'}
+            aria-pressed={!modulo}
+            onClick={() => setModulo(null)}
+          >
+            Todas <b>{CAMADAS_GEOPR.length}</b>
+          </button>
+          {modulos.map(([codigo, quantas]) => (
+            <button
+              key={codigo}
+              type="button"
+              className={modulo === codigo ? 'on' : ''}
+              aria-pressed={modulo === codigo}
+              aria-label={`Mostrar apenas as ${quantas} camadas do módulo ${codigo}`}
+              onClick={() => setModulo((atual) => (atual === codigo ? null : codigo))}
+            >
+              {codigo} <b>{quantas}</b>
+            </button>
+          ))}
+        </div>
+        {ligadasForaDoFiltro > 0 && (
+          <p className="gp-nota">
+            {ligadasForaDoFiltro === 1
+              ? '1 camada ligada está fora deste filtro e continua desenhando no mapa.'
+              : `${ligadasForaDoFiltro} camadas ligadas estão fora deste filtro e continuam desenhando no mapa.`}
+            {' '}
+            <button type="button" className="gp-nota-acao" onClick={() => setModulo(null)}>
+              ver todas
+            </button>
+          </p>
+        )}
+      </div>
 
       <DetalhesDaConsulta consulta={consulta} aoFechar={aoFecharConsulta} />
 

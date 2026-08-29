@@ -396,13 +396,38 @@ function MapaConteudo({ dados, state, setState }) {
     svgRef.current?.focus({ preventScroll: true });
   }, [encerrarConsultaFixada]);
 
+  // Em coluna unica a lista de camadas comeca centenas de pixels abaixo do
+  // desenho, e o CSS nao resolve: fixar um bloco de 650 px comeria a tela.
+  // Entao ligar uma camada traz o mapa de volta a vista, porque um clique cujo
+  // efeito acontece fora do campo de visao e indistinguivel de um clique que
+  // nao funcionou. So age quando o mapa esta mesmo fora da tela, para nao
+  // sequestrar a rolagem de quem ja o tem diante dos olhos, e respeita quem
+  // pediu menos movimento.
+  const trazerMapaParaVista = React.useCallback(() => {
+    const palco = svgRef.current?.closest('.mp-map-stage');
+    if (!palco || typeof window === 'undefined') return;
+    const area = palco.getBoundingClientRect();
+    const alturaBarra = 72;
+    const visivel = Math.min(area.bottom, window.innerHeight) - Math.max(area.top, alturaBarra);
+    if (visivel > Math.min(area.height, window.innerHeight - alturaBarra) * 0.5) return;
+    const menosMovimento = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+    // A chamada e opcional porque o jsdom nao implementa scrollIntoView, e o
+    // mesmo cuidado ja aparece em `escolher`, logo acima. Sem ele a suite de
+    // mapa quebrava com TypeError em tres testes que nem tratam de rolagem.
+    palco.scrollIntoView?.({
+      behavior: menosMovimento ? 'auto' : 'smooth',
+      block: 'center',
+    });
+  }, []);
+
   const alternarGeopr = React.useCallback((camada) => {
     setGeopr((atuais) => (atuais.some((c) => c.id === camada.id)
       ? atuais.filter((c) => c.id !== camada.id)
       : [...atuais, camada]));
     encerrarHoverGeopr();
     encerrarConsultaFixada();
-  }, [encerrarHoverGeopr, encerrarConsultaFixada]);
+    trazerMapaParaVista();
+  }, [encerrarHoverGeopr, encerrarConsultaFixada, trazerMapaParaVista]);
 
   // Resultado de busca liga a camada de modo idempotente. Reutilizar o gesto
   // de alternancia aqui desligaria justamente uma camada que ja estivesse

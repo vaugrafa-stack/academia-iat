@@ -158,3 +158,31 @@
 @media (max-width:640px){
   .gp-legenda{left:8px;right:8px;bottom:8px;max-width:none;max-height:44%}
 }
+
+/* ---------------------------------------------------------------------------
+   O mapa acompanha a lista de camadas
+
+   Medido em 22/08/2026, na versao publicada: em 1440 px o painel tem 2500 px de
+   altura e o mapa termina em y=757. Passado esse ponto, quem rola a lista para
+   ligar uma camada NAO ve mais o mapa. Em 925 px e pior, porque o layout vira
+   coluna unica e a lista comeca cerca de 900 px abaixo do desenho.
+
+   Isso anulava o proprio motivo da integracao. O ganho de trazer o GeoPR para
+   dentro era ver a camada assentar sobre as bacias e as usinas; com o mapa fora
+   da tela, ligar uma camada vira um clique sem retorno visivel, e a pessoa
+   precisa rolar para cima so para descobrir se algo aconteceu.
+
+   A barra do topo tem 72 px e e fixa, entao o encosto fica logo abaixo dela.
+   O z-index fica em 1: precisa cobrir o corpo da pagina e passar por baixo da
+   barra, que esta em 50. */
+@media (min-width:981px){
+  .mapa-layout>.mp-quadro{
+    position:sticky;
+    top:84px;
+    z-index:1;
+  }
+}
+
+/* Em coluna unica nao existe "ao lado": fixar o mapa comeria a tela inteira,
+   porque o bloco tem 650 px. Ali a solucao e de comportamento, e nao de
+   layout, e esta em mapa.jsx: ligar uma camada traz o mapa de volta a vista. */

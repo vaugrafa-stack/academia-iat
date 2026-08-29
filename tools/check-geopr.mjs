@@ -27,7 +27,7 @@ import { fileURLToPath } from 'node:url';
 const raiz = join(dirname(fileURLToPath(import.meta.url)), '..');
 const exigirRede = process.argv.includes('--exigir-rede');
 
-const GRUPOS_VALIDOS = new Set(['agua', 'energia', 'protegidas', 'base']);
+const GRUPOS_VALIDOS = new Set(['agua', 'energia', 'ucs', 'vegetacao', 'patrimonio', 'base']);
 const ORDENS_VALIDAS = new Set(['fundo', 'topo']);
 const PRAZO_MS = 45000;
 

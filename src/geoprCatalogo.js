@@ -22,10 +22,17 @@
 // oficial que nao declara a propria origem e exatamente o caso em que quem
 // analisa precisa ir atras, e nao herdar uma atribuicao que ninguem afirmou.
 
+// Os grupos seguem a categoria juridica, e nao uma ideia solta de "area
+// protegida". Unidade de conservacao, APP, caverna, sitio arqueologico e
+// territorio quilombola tem norma, orgao e momento de analise diferentes, e
+// cada bloco abaixo corresponde a um modulo do curso. Antes disto, 13 das 23
+// camadas moravam num balde unico de 653 px que ninguem varria inteiro.
 export const GRUPOS = [
   { id: 'agua', rotulo: 'Água e bacias' },
   { id: 'energia', rotulo: 'Geração e outorga' },
-  { id: 'protegidas', rotulo: 'Áreas protegidas' },
+  { id: 'ucs', rotulo: 'Unidades de conservação' },
+  { id: 'vegetacao', rotulo: 'Vegetação, APP e espeleologia' },
+  { id: 'patrimonio', rotulo: 'Patrimônio e comunidades' },
   { id: 'base', rotulo: 'Base territorial' },
 ];
 
@@ -115,7 +122,7 @@ export const CAMADAS_GEOPR = [
   {
     id: 'ucs-estaduais',
     titulo: 'Unidades de conservação estaduais',
-    grupo: 'protegidas',
+    grupo: 'ucs',
     ordem: 'fundo',
     caminho: '00_PUBLICACOES/unidades_conservacao_estaduais',
     camadas: '0',
@@ -141,7 +148,7 @@ export const CAMADAS_GEOPR = [
   {
     id: 'apps-hidricas-fbds',
     titulo: 'Áreas de Preservação Permanente hídricas',
-    grupo: 'protegidas',
+    grupo: 'vegetacao',
     ordem: 'fundo',
     caminho: '00_PUBLICACOES/fbds_app',
     camadas: '0',
@@ -155,7 +162,7 @@ export const CAMADAS_GEOPR = [
   {
     id: 'uso-apps-hidricas-fbds',
     titulo: 'Uso e cobertura do solo nas APPs hídricas',
-    grupo: 'protegidas',
+    grupo: 'vegetacao',
     ordem: 'fundo',
     caminho: '00_PUBLICACOES/fbds_app_uso',
     camadas: '0',
@@ -169,7 +176,7 @@ export const CAMADAS_GEOPR = [
   {
     id: 'apps-rios-litoral',
     titulo: 'Áreas de Preservação Permanente de rios do litoral',
-    grupo: 'protegidas',
+    grupo: 'vegetacao',
     ordem: 'fundo',
     caminho: '00_PUBLICACOES/zeelit_apps_rios',
     camadas: '0',
@@ -212,7 +219,7 @@ export const CAMADAS_GEOPR = [
   {
     id: 'zoneamento-plano-manejo',
     titulo: 'Zoneamento de Planos de Manejo',
-    grupo: 'protegidas',
+    grupo: 'ucs',
     ordem: 'topo',
     caminho: '00_PUBLICACOES/zoneamento_plano_manejo_uc_est_fed',
     camadas: '0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26'
@@ -226,7 +233,7 @@ export const CAMADAS_GEOPR = [
   {
     id: 'ucs-federais',
     titulo: 'Unidades de conservação federais',
-    grupo: 'protegidas',
+    grupo: 'ucs',
     ordem: 'fundo',
     caminho: '00_PUBLICACOES/uc_federal_cnuc_mma',
     camadas: '0',
@@ -239,7 +246,7 @@ export const CAMADAS_GEOPR = [
   {
     id: 'bioma-original',
     titulo: 'Bioma original',
-    grupo: 'protegidas',
+    grupo: 'vegetacao',
     ordem: 'fundo',
     caminho: '00_PUBLICACOES/iap_uf_bioma_original',
     camadas: '0',
@@ -252,7 +259,7 @@ export const CAMADAS_GEOPR = [
   {
     id: 'reserva-mata-atlantica',
     titulo: 'Grande Reserva Mata Atlântica',
-    grupo: 'protegidas',
+    grupo: 'ucs',
     ordem: 'fundo',
     caminho: '00_PUBLICACOES/grande_reserva_mata_atlantica',
     camadas: '0',
@@ -265,7 +272,7 @@ export const CAMADAS_GEOPR = [
   {
     id: 'cavernas',
     titulo: 'Cavernas cadastradas',
-    grupo: 'protegidas',
+    grupo: 'vegetacao',
     ordem: 'topo',
     caminho: '00_PUBLICACOES/iap_cavernas',
     camadas: '0',
@@ -278,7 +285,7 @@ export const CAMADAS_GEOPR = [
   {
     id: 'potencial-espeleo',
     titulo: 'Potencialidade espeleológica',
-    grupo: 'protegidas',
+    grupo: 'vegetacao',
     ordem: 'fundo',
     caminho: '00_PUBLICACOES/iap_potencialidade_cavernas',
     camadas: '0',
@@ -291,7 +298,7 @@ export const CAMADAS_GEOPR = [
   {
     id: 'sitios-arqueologicos',
     titulo: 'Sítios arqueológicos cadastrados',
-    grupo: 'protegidas',
+    grupo: 'patrimonio',
     ordem: 'topo',
     caminho: '00_PUBLICACOES/iap_sitios_arqueologicos_cnsa',
     camadas: '0',
@@ -304,7 +311,7 @@ export const CAMADAS_GEOPR = [
   {
     id: 'patrimonio-iphan',
     titulo: 'Patrimônio cultural do IPHAN',
-    grupo: 'protegidas',
+    grupo: 'patrimonio',
     ordem: 'topo',
     caminho: '00_PUBLICACOES/Patrimônio_Cultural_IPHAN',
     camadas: '0,1,2,3,4',
@@ -317,7 +324,7 @@ export const CAMADAS_GEOPR = [
   {
     id: 'quilombolas',
     titulo: 'Territórios quilombolas',
-    grupo: 'protegidas',
+    grupo: 'patrimonio',
     ordem: 'topo',
     caminho: '00_PUBLICACOES/quilombolas_incra',
     camadas: '0',

@@ -413,3 +413,35 @@ test('experiência responsiva prioriza aprender e praticar sem overflow', async 
   }
   await expectHealthyPage(page, runtimeIssues);
 });
+
+test('endereço que nomeia rota inexistente é corrigido, e não fica no histórico', async ({
+  page,
+  baseURL,
+}) => {
+  const runtime = monitorRuntime(page, baseURL);
+
+  // Link velho, rota renomeada, endereço digitado errado: o efeito era sempre
+  // o mesmo, e silencioso. A tela mostrava o Início e a barra de endereço
+  // continuava afirmando a rota morta. Quem chegasse assim não descobria que o
+  // link quebrou, e ao compartilhar propagava o endereço que não funciona.
+  await page.goto(appUrl(baseURL, '#/rota-que-nao-existe'));
+  await expect(page.getByRole('heading', { name: /Comece por aqui|Onde você parou/i }))
+    .toBeVisible();
+  expect(new URL(page.url()).hash, 'endereço direto não foi corrigido').toBe('#/');
+
+  // O outro caminho de entrada é a navegação de dentro, por hashchange.
+  await page.evaluate(() => { window.location.hash = '#/mapa'; });
+  await expect(page.getByRole('heading', { name: /Mapa das hidrelétricas/i })).toBeVisible();
+  await page.evaluate(() => { window.location.hash = '#/outra-que-nao-existe'; });
+  await expect(page.getByRole('heading', { name: /Comece por aqui|Onde você parou/i }))
+    .toBeVisible();
+  expect(new URL(page.url()).hash, 'navegação interna não foi corrigida').toBe('#/');
+
+  // A correção usa replaceState de propósito: com pushState, voltar levaria de
+  // novo ao endereço quebrado, e a pessoa ficaria presa num laço.
+  await page.goBack();
+  await expect(page.getByRole('heading', { name: /Mapa das hidrelétricas/i })).toBeVisible();
+  expect(new URL(page.url()).hash, 'o link morto ficou no histórico').toBe('#/mapa');
+
+  await expectHealthyPage(page, runtime);
+});

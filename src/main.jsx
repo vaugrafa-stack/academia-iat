@@ -516,7 +516,18 @@ function parseHash() {
     };
   if (VIEW_IDS.includes(seg))
     return { view: seg, lesson: null, scenario: null, accountLink: null };
-  return { view: "dashboard", lesson: null, scenario: null, accountLink: null };
+  // Segmento que nao existe. Cair no inicio esta certo; o que estava errado era
+  // a barra de endereco continuar afirmando a rota morta enquanto a tela mostra
+  // outra coisa. Quem chega por link velho nao descobre que o link quebrou, e
+  // ao compartilhar propaga o endereco que nao funciona. `desconhecida` deixa a
+  // aplicacao corrigir a URL; ver o efeito que normaliza, em App.
+  return {
+    view: "dashboard",
+    lesson: null,
+    scenario: null,
+    accountLink: null,
+    desconhecida: true,
+  };
 }
 function reloadFade() {
   document.body.classList.add("page-leave");
@@ -725,11 +736,25 @@ function App() {
       scrollRouteToTop();
       announceRoute();
     };
+    // Endereco que nomeia uma rota inexistente e corrigido para a que aparece
+    // de fato. `replaceState`, e nao `pushState`: o link morto tambem nao deve
+    // ficar no historico, senao voltar leva de novo ao mesmo lugar quebrado.
+    const normalizarRotaDesconhecida = () => {
+      if (!parseHash().desconhecida) return;
+      try {
+        history.replaceState(null, "", "#/");
+      } catch {
+        location.hash = "#/";
+      }
+    };
+    normalizarRotaDesconhecida();
     window.addEventListener("popstate", onNav);
     window.addEventListener("hashchange", onNav);
+    window.addEventListener("hashchange", normalizarRotaDesconhecida);
     return () => {
       window.removeEventListener("popstate", onNav);
       window.removeEventListener("hashchange", onNav);
+      window.removeEventListener("hashchange", normalizarRotaDesconhecida);
     };
   }, []);
   function announceRoute() {

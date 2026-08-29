@@ -16,7 +16,7 @@
 .conta-remota .profile-form small{font-weight:400;color:var(--muted);font-size:.8rem;line-height:1.45}
 .conta-conflito{margin-top:.9rem;padding:.9rem 1rem;border-left:3px solid var(--amber);background:var(--amber2);border-radius:0 var(--raio-3) var(--raio-3) 0}
 .conta-conflito p{margin:0 0 .8rem;font-size:.88rem;line-height:1.5;color:var(--ink)}
-.conta-conflito button{min-height:40px;padding:.5rem .8rem;border:1px solid var(--line);border-radius:var(--raio-2);background:var(--surface);color:var(--ink);font:inherit;font-weight:650}
+.conta-conflito button{min-height:40px;padding:.5rem .8rem;border:1px solid var(--line);border-radius:var(--raio-2);background:var(--surface);color:var(--ink);font:inherit;font-weight:600}
 .conta-aviso{display:flex;gap:.5rem;align-items:flex-start;margin:.9rem 0 0;font-size:.85rem;line-height:1.5}
 .conta-aviso svg{width:16px;flex:none;margin-top:.15rem}
 .conta-aviso-ok svg{color:var(--green2)}
@@ -81,7 +81,7 @@
 .profile-storage-actions button{min-height:40px;border:1px solid var(--line);border-radius:var(--raio-1);background:var(--surface);color:var(--ink);padding:7px 10px;display:inline-flex;align-items:center;gap:6px;font:inherit;font-weight:700}
 .profile-storage-actions svg{width:16px}
 .conta-seguranca{margin-top:1rem;border-top:1px solid var(--line);padding-top:.9rem}
-.conta-seguranca summary{width:fit-content;color:var(--ink);font-weight:750;cursor:pointer}
+.conta-seguranca summary{width:fit-content;color:var(--ink);font-weight:700;cursor:pointer}
 .conta-seguranca-actions{display:flex;flex-wrap:wrap;gap:.65rem;margin-top:.85rem}
 .conta-seguranca-actions .text-action{display:inline-flex;align-items:center;gap:.35rem}
 .conta-seguranca-actions svg{width:16px}
@@ -89,7 +89,7 @@
 .conta-security-form{grid-template-columns:repeat(3,minmax(0,1fr));margin-top:1rem}
 .conta-security-form .profile-actions-row,.conta-danger-zone>p{grid-column:1/-1}
 .conta-danger-zone{border-color:color-mix(in srgb,var(--red) 45%,var(--line));background:color-mix(in srgb,var(--red2) 45%,var(--surface))}
-.conta-danger-zone button.danger{min-height:40px;border:1px solid var(--red);border-radius:var(--raio-2);background:var(--red);color:#fff;padding:.55rem .85rem;font:inherit;font-weight:750;cursor:pointer}
+.conta-danger-zone button.danger{min-height:40px;border:1px solid var(--red);border-radius:var(--raio-2);background:var(--red);color:#fff;padding:.55rem .85rem;font:inherit;font-weight:700;cursor:pointer}
 .conta-reenviar{margin-top:.65rem}
 .conta-link-page{padding-top:1rem}
 .conta-link-card{display:grid;grid-template-columns:auto minmax(0,1fr);gap:1rem;max-width:760px;margin:1.25rem auto}

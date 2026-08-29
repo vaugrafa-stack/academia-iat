@@ -47,6 +47,37 @@ export function raiosForaDaEscala(css, arquivo = '') {
   return fora;
 }
 
+// --- peso de fonte --------------------------------------------------------
+//
+// A Manrope e variavel e a face declara `font-weight: 200 800`. Acima de 800 o
+// navegador limita, e nao ha master mais pesado para ele alcancar.
+//
+// Medido no navegador, com a fonte carregada, o mesmo texto a 32px:
+//
+//   800 -> 646,18 px      850 -> 646,18 px
+//   900 -> 646,18 px      950 -> 646,18 px
+//
+// Antes desta trava o CSS tinha 57 declaracoes em 850, 900 e 950. Elas se
+// julgavam uma hierarquia e rendiam identicas. O custo nao e estetico: quem
+// fosse ajustar aquilo mudava o numero, nada acontecia na tela, e a conclusao
+// natural seria que o problema estava em outro lugar.
+//
+// A escala tem cinco degraus, e todos existem de verdade na fonte.
+const PESOS_VALIDOS = new Set([400, 500, 600, 700, 800]);
+const PESO = /font-weight:\s*(\d{3})\b(?!\s+\d)/g;
+
+/** Pesos escritos fora dos cinco degraus que a fonte entrega. */
+export function pesosForaDaEscala(css, arquivo = '') {
+  const fora = [];
+  for (const achado of css.matchAll(PESO)) {
+    const valor = Number(achado[1]);
+    if (PESOS_VALIDOS.has(valor)) continue;
+    const linha = css.slice(0, achado.index).split('\n').length;
+    fora.push({ arquivo, linha, valor, alemDoMaximo: valor > 800 });
+  }
+  return fora;
+}
+
 // --- autoteste ------------------------------------------------------------
 // Um portao que nunca reprovou e indistinguivel de um portao quebrado. Estas
 // armadilhas provam que ele reage ao defeito que promete pegar, e que nao
@@ -67,15 +98,33 @@ function autoteste() {
       process.exit(1);
     }
   }
+
+  const casosPeso = [
+    ['.a{font-weight:900}', 1, 'peso acima do que a fonte entrega passou batido'],
+    ['.a{font-weight:850}', 1, 'peso acima do que a fonte entrega passou batido'],
+    ['.a{font-weight:750}', 1, 'peso fora dos degraus passou batido'],
+    ['.a{font-weight:800}', 0, 'degrau valido foi reprovado'],
+    ['.a{font-weight:400}', 0, 'degrau valido foi reprovado'],
+    ['@font-face{font-weight:200 800}', 0, 'a FAIXA da face foi confundida com peso de uso'],
+  ];
+  for (const [css, esperado, queixa] of casosPeso) {
+    const achados = pesosForaDaEscala(css).length;
+    if (achados !== esperado) {
+      console.error(`FALHA no autoteste: ${queixa} (${css})`);
+      process.exit(1);
+    }
+  }
 }
 
 autoteste();
 
 const arquivos = (await readdir(fonte)).filter((n) => n.endsWith('.css'));
 const problemas = [];
+const problemasPeso = [];
 for (const nome of arquivos) {
   const css = await readFile(join(fonte, nome), 'utf8');
   problemas.push(...raiosForaDaEscala(css, `src/${nome}`));
+  problemasPeso.push(...pesosForaDaEscala(css, `src/${nome}`));
 }
 
 const declaracoes = (
@@ -95,7 +144,22 @@ if (problemas.length) {
   process.exit(1);
 }
 
+if (problemasPeso.length) {
+  console.error(
+    `FALHA: ${problemasPeso.length} peso(s) de fonte fora dos cinco degraus da escala.`,
+  );
+  for (const p of problemasPeso.slice(0, 12)) {
+    const causa = p.alemDoMaximo
+      ? ' (a face vai ate 800; acima disso o navegador limita e a tela nao muda)'
+      : '';
+    console.error(`- ${p.arquivo}:${p.linha} → font-weight: ${p.valor}${causa}`);
+  }
+  console.error('Use 400, 500, 600, 700 ou 800.');
+  process.exit(1);
+}
+
 console.log(
   `Escala de raio: ${declaracoes} declaracoes em ${arquivos.length} folhas, `
   + `todas nos ${TOKENS.length} degraus.`,
 );
+console.log('Escala de peso: todos nos 5 degraus que a Manrope entrega.');

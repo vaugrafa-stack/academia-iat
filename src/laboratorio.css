@@ -59,7 +59,7 @@
   gap: 7px;
   color: var(--green);
   font-size: 11px;
-  font-weight: 900;
+  font-weight: 800;
   letter-spacing: .08em;
   text-transform: uppercase;
 }
@@ -76,7 +76,7 @@
   align-items: flex-end;
   color: var(--green);
   font-size: 25px;
-  font-weight: 900;
+  font-weight: 800;
   font-variant-numeric: tabular-nums;
 }
 
@@ -359,7 +359,7 @@
   background: var(--green);
   color: #fff;
   font-size: 12px;
-  font-weight: 900;
+  font-weight: 800;
 }
 
 .lab-selected-meta button svg {
@@ -401,7 +401,7 @@
   background: transparent;
   color: var(--muted);
   font-size: 12px;
-  font-weight: 900;
+  font-weight: 800;
 }
 
 .lab-mode-options button small {
@@ -646,7 +646,7 @@
   background: var(--surface);
   color: var(--blue);
   font-size: 11px;
-  font-weight: 900;
+  font-weight: 800;
   text-align: center;
 }
 
@@ -1138,7 +1138,7 @@
 .lab-help-columns li.lab-ausente{color:var(--muted);text-decoration:line-through;text-decoration-color:var(--red)}
 .lab-help-columns li.lab-ausente span{
   margin-right:6px;padding:1px 6px;border-radius:var(--raio-3);
-  background:var(--red);color:#fff;font-size:11px;font-weight:900;
+  background:var(--red);color:#fff;font-size:11px;font-weight:800;
   letter-spacing:.06em;text-transform:uppercase;text-decoration:none;
   display:inline-block;vertical-align:middle;
 }

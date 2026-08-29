@@ -10,7 +10,7 @@
   margin-bottom: 9px;
   color: var(--ink2);
   font-size: 13px;
-  font-weight: 850;
+  font-weight: 800;
 }
 
 .diagnostic-depth {
@@ -118,7 +118,7 @@
 .question-objective small {
   color: var(--blue);
   font-size: 12px;
-  font-weight: 850;
+  font-weight: 800;
   letter-spacing: .06em;
 }
 
@@ -155,7 +155,7 @@
   margin: 3px 0 0;
   color: var(--ink2);
   font-size: 13px;
-  font-weight: 850;
+  font-weight: 800;
 }
 
 .pedagogy-method-note {

@@ -204,9 +204,54 @@ button.secondary svg { width: 17px; }
   margin: -36px calc(clamp(24px, 3vw, 48px) * -1) 28px;
   padding: 54px clamp(24px, 5vw, 76px) 46px;
   border-bottom: 1px solid var(--line);
+  /* Os aneis concentricos que ficavam aqui nao diziam nada: serviriam igual a
+     qualquer produto. O lugar deles agora e do corte da queda, em
+     `dashboard-queda`, que e o assunto da plataforma inteira.
+     Cheguei a por linhas de nivel no proprio fundo e desfiz: elas corriam por
+     tras do titulo e do paragrafo, e fundo que disputa com o texto e pior do
+     que fundo nenhum. As linhas ficaram dentro do desenho, onde ha espaco. */
   background:
-    linear-gradient(105deg, color-mix(in srgb, var(--green3) 55%, var(--surface)) 0 62%, transparent 62%),
-    repeating-radial-gradient(ellipse at 92% 20%, transparent 0 21px, color-mix(in srgb, var(--green) 10%, transparent) 22px 23px);
+    linear-gradient(105deg, color-mix(in srgb, var(--green3) 55%, var(--surface)) 0 62%, transparent 62%);
+}
+
+/* O corte fica a direita, onde o texto nao chega: o h1 para em 22ch e o
+   paragrafo em 63ch. Some abaixo de 900 px, porque ali ele passaria por tras
+   da leitura em vez de ao lado dela, e um fundo que atrapalha o texto e pior
+   do que fundo nenhum. */
+.dashboard-queda {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: min(40%, 400px);
+  height: auto;
+  pointer-events: none;
+}
+.dashboard-queda .dq-agua { fill: var(--blue); opacity: .16 }
+/* A queda em si e a unica forma com peso: e o que o desenho existe para dizer. */
+.dashboard-queda .dq-queda {
+  fill: none;
+  stroke: var(--green);
+  stroke-width: 14;
+  stroke-linecap: round;
+  opacity: .3;
+}
+/* Um movimento so na abertura, e o que define o assunto: a agua descendo. */
+.dashboard-queda .dq-fluxo {
+  fill: none;
+  stroke: var(--blue);
+  stroke-width: 4;
+  stroke-linecap: round;
+  stroke-dasharray: 10 20;
+  opacity: .75;
+  animation: dqDescer 2.1s linear infinite;
+}
+@keyframes dqDescer { to { stroke-dashoffset: -60 } }
+
+@media (max-width: 900px) {
+  .dashboard-queda { display: none }
+}
+@media (prefers-reduced-motion: reduce) {
+  .dashboard-queda .dq-fluxo { animation: none }
 }
 .dashboard-intro > small {
   display: block;

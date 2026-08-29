@@ -18,6 +18,44 @@ import { hasStartedJourney } from "./learningJourney.js";
 import { objetivoDaAula } from "./lessonObjective.js";
 
 /**
+ * Corte esquemático da queda, ao fundo da abertura.
+ *
+ * O lugar era ocupado por um padrão de anéis concêntricos que não dizia nada:
+ * enfeite que serviria igual a qualquer produto. A plataforma inteira trata de
+ * uma coisa só, e é esta: a diferença de nível entre montante e jusante. É dela
+ * que sai a energia, e é ela que puxa enquadramento, outorga, estudo e licença.
+ * Abrir a página com o próprio assunto vale mais do que abrir com textura.
+ *
+ * Fica decorativo para leitor de tela porque o desenho não acrescenta
+ * informação ao texto ao lado; quem quiser o corte de verdade, com as peças
+ * nomeadas e navegáveis, tem a página de anatomia. Aqui é presença, não aula.
+ */
+function QuedaDeAbertura() {
+  return (
+    <svg
+      className="dashboard-queda"
+      viewBox="0 0 400 200"
+      aria-hidden="true"
+      focusable="false"
+      preserveAspectRatio="xMaxYMax meet"
+    >
+      {/* Quatro formas, e nao mais.
+          A primeira versao tinha nove: reservatorio com linhas de nivel,
+          terreno, barragem, conduto, casa de forca e cotas. Desenhei, olhei e
+          nao lia: em opacidade de marca d'agua as linhas do reservatorio
+          viravam papel pautado e a barragem virava uma barra solta. Detalhe
+          precisa de contraste para existir, e aqui contraste nao ha, porque o
+          texto vem antes. Sobrou o que define o assunto: duas cotas de agua e a
+          queda entre elas. */}
+      <path className="dq-agua" d="M0 46 H150 V96 H0 Z" />
+      <path className="dq-agua" d="M232 150 H400 V200 H232 Z" />
+      <path className="dq-queda" d="M150 46 L232 150" />
+      <path className="dq-fluxo" d="M150 46 L232 150" />
+    </svg>
+  );
+}
+
+/**
  * Tela inicial da Academia.
  *
  * Os dados derivados do POP chegam por um contrato explícito. Isso mantém o
@@ -53,6 +91,7 @@ export default function Inicio({
   return (
     <div className="page dashboard-page">
       <section className="dashboard-intro">
+        <QuedaDeAbertura />
         <small>ACADEMIA IAT</small>
         <h1>{startedJourney ? "Onde você parou, e o que decidir a seguir." : "Comece por aqui."}</h1>
         <p>

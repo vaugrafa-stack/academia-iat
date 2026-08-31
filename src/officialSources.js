@@ -291,12 +291,14 @@ const OFFICIAL_INDEXES = [
     portal: 'ANEEL',
   }],
   [/^INSTITUTO DO PATRIM[ÔO]NIO\b|\bIPHAN\b/i, {
-    url: 'https://www.gov.br/iphan/pt-br/acesso-a-informacao/legislacao',
+    url: 'https://www.gov.br/iphan/pt-br/patrimonio-cultural/licenciamento-ambiental/legislacao',
     portal: 'IPHAN',
+    checkedAt: '2026-08-31',
   }],
   [/\bIBAMA\b|^INSTITUTO BRASILEIRO DO MEIO AMBIENTE\b/i, {
-    url: 'https://www.gov.br/ibama/pt-br/acesso-a-informacao/institucional/legislacao',
+    url: 'https://www.gov.br/ibama/pt-br/assuntos/laf/legislacao/legislacao',
     portal: 'Ibama',
+    checkedAt: '2026-08-31',
   }],
   [/\bABNT\b/i, {
     url: 'https://www.abntcatalogo.com.br/',
@@ -344,17 +346,18 @@ export function resolveOfficialSource(reference = '') {
 
   const officialIndex = OFFICIAL_INDEXES.find(([pattern]) => pattern.test(reference))?.[1];
   if (!officialIndex) return null;
+  const checkedAt = officialIndex.checkedAt || CHECKED_AT;
   return {
     kind: 'index',
     url: officialIndex.url,
     portal: officialIndex.portal,
     label: `Consultar índice oficial do ${officialIndex.portal}`,
     status: 'Órgão oficial identificado; ato exato ainda sem vínculo direto',
-    checkedAt: CHECKED_AT,
+    checkedAt,
     validUntil: null,
     transition: null,
     humanReview: 'pendente',
-    note: `Este link abre o índice do órgão, não a íntegra do ato. Localize a referência exata e confirme vigência, alterações e aplicação ao caso. Índice conferido em ${CHECKED_AT.split('-').reverse().join('/')}.`,
+    note: `Este link abre o índice do órgão, não a íntegra do ato. Localize a referência exata e confirme vigência, alterações e aplicação ao caso. Índice conferido em ${checkedAt.split('-').reverse().join('/')}.`,
   };
 }
 

@@ -8,6 +8,8 @@ import MapaParana, {
   indiceCatalogoPorTecla,
   validarDadosMapa,
 } from './mapa.jsx';
+import { CAMADAS_GEOPR, GRUPOS } from './geoprCatalogo.js';
+import { PRAZO_IMAGEM_GEOPR_MS } from './geoprCamadas.js';
 import { tilesParaVista } from './satelliteLayer.js';
 
 globalThis.IS_REACT_ACT_ENVIRONMENT = true;
@@ -122,20 +124,28 @@ describe('didática e acesso por teclado no mapa', () => {
       root.render(<MapaParana dados={dados} />);
     });
 
-    const ligar = [...host.querySelectorAll('.gp-grupo button[aria-pressed]')][0];
+    const botoes = [...host.querySelectorAll('.gp-grupo button[aria-pressed]')];
+    const ligar = botoes[0];
+    const ligarOutra = botoes[1];
     await act(async () => {
       ligar.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+      ligarOutra.dispatchEvent(new MouseEvent('click', { bubbles: true }));
     });
 
-    const imagem = host.querySelector('.mp-map-stage svg image');
+    const imagens = [...host.querySelectorAll('.mp-map-stage svg image')];
+    const imagem = imagens[0];
+    const imagemOk = imagens[1];
     expect(imagem).not.toBeNull();
+    expect(imagemOk).not.toBeNull();
     const enderecoAntes = imagem.getAttribute('href');
+    const enderecoOkAntes = imagemOk.getAttribute('href');
 
     // Enquanto nada falhou, a tela nao pode inventar erro.
     expect(host.querySelector('.gp-legenda-falha')).toBeNull();
 
     await act(async () => {
       imagem.dispatchEvent(new Event('error', { bubbles: false }));
+      imagemOk.dispatchEvent(new Event('load', { bubbles: false }));
     });
 
     // O estado existia no gancho e era descartado: o botao ficava ligado, nada
@@ -154,10 +164,77 @@ describe('didática e acesso por teclado no mapa', () => {
     // Nova tentativa precisa mudar o endereco: repetir o mesmo faria o
     // navegador devolver a resposta do cache, inclusive a falha.
     const depois = host.querySelector('.mp-map-stage svg image')?.getAttribute('href');
+    const depoisOk = [...host.querySelectorAll('.mp-map-stage svg image')][1]?.getAttribute('href');
     expect(depois).not.toBe(enderecoAntes);
     expect(depois).toMatch(/tentativa=1/);
+    expect(depoisOk).toBe(enderecoOkAntes);
     expect(host.querySelector('.gp-legenda-falha')).toBeNull();
 
+    await act(async () => root.unmount());
+  });
+
+  it('encerra o carregamento pendurado do GeoPR com aviso e sem falso sucesso', async () => {
+    vi.useFakeTimers();
+    const host = document.createElement('div');
+    document.body.append(host);
+    const root = createRoot(host);
+
+    await act(async () => {
+      root.render(<MapaParana dados={dados} />);
+    });
+    await act(async () => {
+      host.querySelector('.gp-grupo button[aria-pressed]')
+        .dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    });
+    expect(host.querySelector('.gp-legenda-espera')).not.toBeNull();
+
+    await act(async () => {
+      vi.advanceTimersByTime(PRAZO_IMAGEM_GEOPR_MS + 1);
+    });
+
+    expect(host.querySelector('.gp-legenda-espera')).toBeNull();
+    expect(host.querySelector('.gp-legenda-falha')?.textContent).toMatch(/GeoPR não respondeu/i);
+
+    await act(async () => {
+      host.querySelector('.mp-map-stage svg image')
+        .dispatchEvent(new Event('load', { bubbles: false }));
+    });
+    expect(host.querySelector('.gp-legenda-falha')).toBeNull();
+    await act(async () => root.unmount());
+  });
+
+  it('nao apresenta a Grande Reserva Mata Atlantica como unidade de conservacao', () => {
+    const camada = CAMADAS_GEOPR.find((item) => item.id === 'reserva-mata-atlantica');
+    const grupo = GRUPOS.find((item) => item.id === camada?.grupo);
+    expect(grupo?.rotulo).toBe('Paisagem e conectividade');
+    expect(grupo?.rotulo).not.toMatch(/unidades de conserva/i);
+  });
+
+  it('traz o mapa ao ligar uma camada distante, mas preserva a lista ao desligar', async () => {
+    const host = document.createElement('div');
+    document.body.append(host);
+    const root = createRoot(host);
+    await act(async () => {
+      root.render(<MapaParana dados={dados} />);
+    });
+
+    const palco = host.querySelector('.mp-map-stage');
+    palco.getBoundingClientRect = () => ({
+      top: 1000, bottom: 1620, left: 0, right: 1000, width: 1000, height: 620,
+      x: 0, y: 1000, toJSON: () => ({}),
+    });
+    palco.scrollIntoView = vi.fn();
+
+    const camada = () => host.querySelector('.gp-grupo button[aria-pressed]');
+    await act(async () => {
+      camada().dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    });
+    expect(palco.scrollIntoView).toHaveBeenCalledTimes(1);
+
+    await act(async () => {
+      camada().dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    });
+    expect(palco.scrollIntoView).toHaveBeenCalledTimes(1);
     await act(async () => root.unmount());
   });
 

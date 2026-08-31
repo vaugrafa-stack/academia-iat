@@ -31,6 +31,7 @@ export const GRUPOS = [
   { id: 'agua', rotulo: 'Água e bacias' },
   { id: 'energia', rotulo: 'Geração e outorga' },
   { id: 'ucs', rotulo: 'Unidades de conservação' },
+  { id: 'conectividade', rotulo: 'Paisagem e conectividade' },
   { id: 'vegetacao', rotulo: 'Vegetação, APP e espeleologia' },
   { id: 'patrimonio', rotulo: 'Patrimônio e comunidades' },
   { id: 'base', rotulo: 'Base territorial' },
@@ -259,7 +260,7 @@ export const CAMADAS_GEOPR = [
   {
     id: 'reserva-mata-atlantica',
     titulo: 'Grande Reserva Mata Atlântica',
-    grupo: 'ucs',
+    grupo: 'conectividade',
     ordem: 'fundo',
     caminho: '00_PUBLICACOES/grande_reserva_mata_atlantica',
     camadas: '0',

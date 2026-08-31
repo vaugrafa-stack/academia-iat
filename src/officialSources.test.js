@@ -39,6 +39,19 @@ describe('registro de fontes oficiais', () => {
     }
   });
 
+  it('mantém os índices de licenciamento do IPHAN e do Ibama em páginas oficiais ativas', () => {
+    const iphan = resolveOfficialSource('IPHAN. Ato a confirmar.');
+    const ibama = resolveOfficialSource('IBAMA. Ato a confirmar.');
+    expect(iphan?.url).toBe(
+      'https://www.gov.br/iphan/pt-br/patrimonio-cultural/licenciamento-ambiental/legislacao',
+    );
+    expect(ibama?.url).toBe(
+      'https://www.gov.br/ibama/pt-br/assuntos/laf/legislacao/legislacao',
+    );
+    expect(iphan?.checkedAt).toBe('2026-08-31');
+    expect(ibama?.checkedAt).toBe('2026-08-31');
+  });
+
   it('distingue íntegra vinculada de índice oficial', () => {
     const references = [
       ...requiredReferences,

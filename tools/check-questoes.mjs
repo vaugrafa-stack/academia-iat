@@ -101,16 +101,16 @@ for (const q of questionBank) {
 //
 // Em 04/08/2026 a meta foi ATINGIDA: 41 de 136, ou 30,1%, contra 32,8% do
 // acaso. Escolher a alternativa mais longa deixou de dar vantagem sobre
-// chutar. O teto fica em 45, um pouco acima do medido, para uma questao nova
-// legitimamente longa nao reprovar o build sozinha; acima disso o padrao
-// voltou e precisa de correcao.
+// chutar. O teto agora e percentual: 20% preserva a folga da medicao atual sem
+// punir o simples crescimento do banco; acima disso o padrao voltou e precisa
+// de correcao.
 // A pista so existe quando a correta e VISIVELMENTE a maior. Empate, ou
 // vantagem de poucos caracteres, nao orienta ninguem: a primeira versao deste
 // portao contava "47, 47, 44" como pista porque pegava o primeiro maximo, e
 // media formato do array em vez de percepcao de quem responde. A margem de 10%
 // e o que separa "a maior" de "uma das maiores".
 const MARGEM = 1.10;
-const TETO_CHUTADOR = 45;
+const TETO_CHUTADOR_PCT = 20;
 
 // Palavra portuguesa comum escrita sem acento. Entrou porque eu mesmo escrevi
 // dezenove alternativas sem acentuacao ao reescrever distratores em 04/08/2026,
@@ -151,11 +151,11 @@ const acaso = Math.round(
   (100 * questionBank.reduce((s, q) => s + 1 / q.options.length, 0)) / questionBank.length,
 );
 
-if (acertosDoChutador > TETO_CHUTADOR) {
+if ((100 * acertosDoChutador) / questionBank.length > TETO_CHUTADOR_PCT) {
   fail(
     `pista de comprimento piorou: um chutador que escolhe a alternativa mais `
     + `longa acerta ${acertosDoChutador} de ${questionBank.length} (${percentual}%), `
-    + `acima do teto de ${TETO_CHUTADOR}. Equilibre o tamanho das alternativas.`,
+    + `acima do teto de ${TETO_CHUTADOR_PCT}%. Equilibre o tamanho das alternativas.`,
   );
 }
 
@@ -167,7 +167,7 @@ console.log(
 );
 console.log(
   `pista de comprimento: chutador acerta ${acertosDoChutador} (${percentual}%), `
-  + `acaso ${acaso}%, teto ${TETO_CHUTADOR}`,
+  + `acaso ${acaso}%, teto ${TETO_CHUTADOR_PCT}%`,
 );
 if (percentual > acaso + 8) {
   console.log(
@@ -257,17 +257,19 @@ export function escolhaDeQuemNaoSabe(q) {
 // CURTA ser a correta em 46% das questoes, contra 41% antes. A pista do mais
 // longo melhorou, a do mais curto piorou, e a composta melhorou muito. Quem
 // continuar este trabalho ataca o comprimento nas duas pontas.
-const TETO_ESPERTALHAO = 95;
+// 42,5% equivale ao teto anterior de 95 em 224 questoes, mas continua
+// comparavel quando novas aulas acrescentam itens ao banco.
+const TETO_ESPERTALHAO_PCT = 42.5;
 const acertosEspertalhao = questionBank.filter((q) => escolhaDeQuemNaoSabe(q) === q.answer).length;
 const pctEspertalhao = Math.round((100 * acertosEspertalhao) / questionBank.length);
 console.log(
   `pistas de eliminacao: quem nao sabe acerta ${acertosEspertalhao} (${pctEspertalhao}%), `
-  + `acaso ${acaso}%, teto ${TETO_ESPERTALHAO}`,
+  + `acaso ${acaso}%, teto ${TETO_ESPERTALHAO_PCT}%`,
 );
-if (acertosEspertalhao > TETO_ESPERTALHAO) {
+if ((100 * acertosEspertalhao) / questionBank.length > TETO_ESPERTALHAO_PCT) {
   console.error(
     `FALHA: eliminar absolutos e seguir o eco do enunciado leva a ${acertosEspertalhao} acertos, `
-    + `acima do teto ${TETO_ESPERTALHAO}. A pista de formato cresceu.`,
+    + `acima do teto ${TETO_ESPERTALHAO_PCT}%. A pista de formato cresceu.`,
   );
   erros += 1;
 }
@@ -336,7 +338,7 @@ for (const [pista, [casos, certos]] of porPista) {
 // alternativas erradas e levou "chutar na mais CURTA" de 41% para 46% sem que
 // nada acusasse. Uma pista trocada por outra e um empate disfarcado de avanco.
 //
-// Medido hoje: 99 de 224, sem contar empate. Olhei as 9 questoes em que a
+// Medido em 31/08/2026: 101 de 232 (43,5%), sem contar empate. Olhei as 9 questoes em que a
 // diferenca e gritante, com a correta abaixo de 72% da media das outras, e nao
 // ha conserto mecanico ali. A correta e curta porque e uma afirmacao normativa
 // seca; o distrator e longo porque precisa carregar a condicao falsa que o torna
@@ -344,7 +346,9 @@ for (const [pista, [casos, certos]] of porPista) {
 //
 // Entao aqui o teto nao promete conserto: ele impede que a proxima rodada de
 // edicao empurre o numero para cima sem ninguem ver.
-const TETO_MAIS_CURTA = 105;
+// 47% preserva o limite anterior de 105 em 224 questoes sem transformar o
+// crescimento do banco, por si so, em regressao.
+const TETO_MAIS_CURTA_PCT = 47;
 const acertosMaisCurta = questionBank.filter((q) => {
   const tamanhos = q.options.map((opcao) => opcao.length);
   const menor = Math.min(...tamanhos);
@@ -354,12 +358,12 @@ const acertosMaisCurta = questionBank.filter((q) => {
 console.log(
   `pista de comprimento, ponta curta: chutador acerta ${acertosMaisCurta} `
   + `(${Math.round((100 * acertosMaisCurta) / questionBank.length)}%), acaso ${acaso}%, `
-  + `teto ${TETO_MAIS_CURTA}`,
+  + `teto ${TETO_MAIS_CURTA_PCT}%`,
 );
-if (acertosMaisCurta > TETO_MAIS_CURTA) {
+if ((100 * acertosMaisCurta) / questionBank.length > TETO_MAIS_CURTA_PCT) {
   console.error(
     `FALHA: chutar na alternativa mais curta leva a ${acertosMaisCurta} acertos, acima do `
-    + `teto ${TETO_MAIS_CURTA}. Alongar distrator resolve uma ponta e piora a outra.`,
+    + `teto ${TETO_MAIS_CURTA_PCT}%. Alongar distrator resolve uma ponta e piora a outra.`,
   );
   erros += 1;
 }
@@ -368,23 +372,27 @@ if (acertosMaisCurta > TETO_MAIS_CURTA) {
 // Impede que "Somente" e "Apenas" voltem a abrir distrator em massa. Elas sao
 // mais perigosas que os absolutos comuns porque nao afirmam nada: so limitam o
 // alcance, e limitar alcance e o jeito mais rapido de escrever uma alternativa
-// obviamente errada. Sobraram 11 apos a reescrita; o teto da folga para uma
-// questao nova ocasional e reprova um retrocesso.
-const TETO_ESCOPO = 14;
+// obviamente errada. Sobraram 11 apos a reescrita; o teto percentual da folga
+// para uma questao nova ocasional e continua comparavel se o banco crescer.
+const TETO_ESCOPO_PCT = 2.1;
 const abrePorEscopo = questionBank.flatMap((q) => q.options).filter(
   (opcao) => /^\s*(somente|apenas)\b/i.test(opcao),
 );
+const totalAlternativas = questionBank.reduce((total, q) => total + q.options.length, 0);
+const percentualEscopo = (100 * abrePorEscopo.length) / totalAlternativas;
 const escopoCorretas = questionBank.filter(
   (q) => /^\s*(somente|apenas)\b/i.test(q.options[q.answer]),
 ).length;
 console.log(
   `pista de escopo: ${abrePorEscopo.length} alternativa(s) abrem com Somente/Apenas, `
-  + `${escopoCorretas} delas e a correta, teto ${TETO_ESCOPO}`,
+  + `${escopoCorretas} delas e a correta, ${percentualEscopo.toFixed(1)}% do banco, `
+  + `teto ${TETO_ESCOPO_PCT}%`,
 );
-if (abrePorEscopo.length > TETO_ESCOPO) {
+if (percentualEscopo > TETO_ESCOPO_PCT) {
   console.error(
-    `FALHA: ${abrePorEscopo.length} alternativas abrem com Somente/Apenas, acima do teto `
-    + `${TETO_ESCOPO}. Quem nao sabe elimina essas primeiro, e quase sempre acerta.`,
+    `FALHA: ${abrePorEscopo.length} alternativas abrem com Somente/Apenas `
+    + `(${percentualEscopo.toFixed(1)}%), acima do teto ${TETO_ESCOPO_PCT}%. `
+    + 'Quem nao sabe elimina essas primeiro, e quase sempre acerta.',
   );
   erros += 1;
 }

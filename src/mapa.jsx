@@ -421,13 +421,17 @@ function MapaConteudo({ dados, state, setState }) {
   }, []);
 
   const alternarGeopr = React.useCallback((camada) => {
-    setGeopr((atuais) => (atuais.some((c) => c.id === camada.id)
-      ? atuais.filter((c) => c.id !== camada.id)
+    const estavaAtiva = geopr.some((item) => item.id === camada.id);
+    setGeopr((atuais) => (estavaAtiva
+      ? atuais.filter((item) => item.id !== camada.id)
       : [...atuais, camada]));
     encerrarHoverGeopr();
     encerrarConsultaFixada();
-    trazerMapaParaVista();
-  }, [encerrarHoverGeopr, encerrarConsultaFixada, trazerMapaParaVista]);
+    // O salto ajuda a perceber uma camada recém-ligada no celular. Ao desligar,
+    // porém, ele expulsava a pessoa da lista e obrigava nova rolagem para cada
+    // item seguinte.
+    if (!estavaAtiva) trazerMapaParaVista();
+  }, [geopr, encerrarHoverGeopr, encerrarConsultaFixada, trazerMapaParaVista]);
 
   // Resultado de busca liga a camada de modo idempotente. Reutilizar o gesto
   // de alternancia aqui desligaria justamente uma camada que ja estivesse

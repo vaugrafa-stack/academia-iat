@@ -18,7 +18,7 @@
 // fonte e ano, e a tela exibe os dois: o POP manda registrar camada, fonte e
 // data da consulta.
 
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 /** Raio equatorial usado pelo Web Mercator, em metros. */
 export const RAIO_MERCATOR = 20037508.342789244;
@@ -570,6 +570,7 @@ export async function consultarCamadasNoPonto({
  * por gesto, e nao por quadro de animacao.
  */
 export const ESPERA_ANTES_DE_PEDIR_MS = 280;
+export const PRAZO_IMAGEM_GEOPR_MS = 15000;
 
 export function useVistaEstavel(vista, espera = ESPERA_ANTES_DE_PEDIR_MS) {
   const [estavel, setEstavel] = useState(vista);
@@ -598,11 +599,12 @@ export function useVistaEstavel(vista, espera = ESPERA_ANTES_DE_PEDIR_MS) {
 export function useCamadasGeopr({ camadas, projecao, largura, altura, vista, quadro }) {
   const [falhas, setFalhas] = useState(() => new Set());
   const [carregadas, setCarregadas] = useState(() => new Set());
+  const estadoAtual = useRef({ falhas, carregadas });
   const vistaEstavel = useVistaEstavel(vista);
   // Tentar de novo precisa mudar o endereco, senao o navegador devolve a mesma
   // resposta do cache, inclusive a falha. O mesmo recurso ja existe na camada
   // de satelite, com o mesmo nome, e por isso a solucao aqui repete a de la.
-  const [tentativa, setTentativa] = useState(0);
+  const [tentativas, setTentativas] = useState(() => new Map());
 
   const larguraPx = Math.max(1, Math.round(quadro?.larguraPx || largura || 1));
   const alturaPx = Math.max(1, Math.round(quadro?.alturaPx || altura || 1));
@@ -620,6 +622,7 @@ export function useCamadasGeopr({ camadas, projecao, largura, altura, vista, qua
       .map((camada) => {
         const base = camada && urlDaImagem(camada, { bbox, larguraPx, alturaPx });
         if (!base) return null;
+        const tentativa = tentativas.get(camada.id) || 0;
         const href = tentativa ? `${base}&tentativa=${tentativa}` : base;
         return {
           id: camada.id,
@@ -630,7 +633,7 @@ export function useCamadasGeopr({ camadas, projecao, largura, altura, vista, qua
         };
       })
       .filter(Boolean);
-  }, [camadas, caixa, vistaEstavel, largura, altura, larguraPx, alturaPx, tentativa]);
+  }, [camadas, caixa, vistaEstavel, largura, altura, larguraPx, alturaPx, tentativas]);
 
   // Some com o registro de camadas que a pessoa desligou, para a tela nao
   // guardar erro de algo que nao esta mais na vista.
@@ -644,6 +647,27 @@ export function useCamadasGeopr({ camadas, projecao, largura, altura, vista, qua
     setCarregadas(podar);
   }, [pedidos]);
 
+  useEffect(() => {
+    estadoAtual.current = { falhas, carregadas };
+  }, [falhas, carregadas]);
+
+  // Alguns servidores deixam a conexão pendurada sem disparar `load` nem
+  // `error` na imagem SVG. Sem prazo, a interface dizia “carregando...” para
+  // sempre e escondia a indisponibilidade da fonte oficial.
+  useEffect(() => {
+    const relogios = pedidos.map(({ chave }) => setTimeout(() => {
+      const atual = estadoAtual.current;
+      if (atual.carregadas.has(chave) || atual.falhas.has(chave)) return;
+      setFalhas((conjunto) => {
+        if (conjunto.has(chave) || estadoAtual.current.carregadas.has(chave)) return conjunto;
+        const novo = new Set(conjunto);
+        novo.add(chave);
+        return novo;
+      });
+    }, PRAZO_IMAGEM_GEOPR_MS));
+    return () => relogios.forEach(clearTimeout);
+  }, [pedidos]);
+
   const registrar = useCallback((tipo, chave) => {
     const juntar = (conjunto) => {
       if (conjunto.has(chave)) return conjunto;
@@ -651,8 +675,21 @@ export function useCamadasGeopr({ camadas, projecao, largura, altura, vista, qua
       novo.add(chave);
       return novo;
     };
-    if (tipo === 'falhou') setFalhas(juntar);
-    else setCarregadas(juntar);
+    const tirar = (conjunto) => {
+      if (!conjunto.has(chave)) return conjunto;
+      const novo = new Set(conjunto);
+      novo.delete(chave);
+      return novo;
+    };
+    if (tipo === 'falhou') {
+      setCarregadas(tirar);
+      setFalhas(juntar);
+    } else {
+      // Se a resposta chegou depois do prazo, o carregamento tardio substitui
+      // corretamente o aviso de falha em vez de manter os dois estados.
+      setFalhas(tirar);
+      setCarregadas(juntar);
+    }
   }, []);
 
   // Quais camadas o servidor do GeoPR deixou de desenhar. Sem esta lista, a
@@ -663,6 +700,18 @@ export function useCamadasGeopr({ camadas, projecao, largura, altura, vista, qua
     [pedidos, falhas],
   );
 
+  const tentarNovamente = useCallback(() => {
+    const ids = pedidos
+      .filter((pedido) => falhas.has(pedido.chave))
+      .map((pedido) => pedido.id);
+    if (!ids.length) return;
+    setTentativas((atuais) => {
+      const novas = new Map(atuais);
+      for (const id of ids) novas.set(id, (novas.get(id) || 0) + 1);
+      return novas;
+    });
+  }, [pedidos, falhas]);
+
   return {
     caixa,
     pedidos,
@@ -670,7 +719,7 @@ export function useCamadasGeopr({ camadas, projecao, largura, altura, vista, qua
     carregadas,
     falhas,
     naoResponderam,
-    tentarNovamente: useCallback(() => setTentativa((n) => n + 1), []),
+    tentarNovamente,
     larguraPx,
     alturaPx,
     // Uma camada so e "esperando" enquanto nao carregou nem falhou.

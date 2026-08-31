@@ -304,9 +304,11 @@ describe('didática e acesso por teclado no mapa', () => {
 
     const layout = host.querySelector('.mapa-layout');
     const pesquisa = layout?.querySelector(':scope > .mp-pesquisa-unificada');
-    const mapa = layout?.querySelector(':scope > .mp-quadro');
+    const colunaMapa = layout?.querySelector(':scope > .mp-coluna-mapa');
     const painel = layout?.querySelector(':scope > .mp-painel');
-    expect([...layout.children]).toEqual([pesquisa, mapa, painel]);
+    expect([...layout.children]).toEqual([pesquisa, colunaMapa, painel]);
+    // O desenho e a leitura do ponto ocupam a mesma coluna, nesta ordem.
+    expect(colunaMapa?.querySelector(':scope > .mp-quadro')).not.toBeNull();
 
     const ajuda = host.querySelector('details.mp-como-usar');
     expect(ajuda?.open).toBe(false);
@@ -812,13 +814,17 @@ describe('didática e acesso por teclado no mapa', () => {
     });
 
     const painel = host.querySelector('.gp-atributos');
+    // A leitura do ponto nasce olhando para o simbolo clicado. Ela fica abaixo
+    // do mapa, na mesma coluna, e nao no painel de camadas da direita.
+    expect(host.querySelector('.mp-coluna-mapa > .gp-atributos')).toBe(painel);
+    expect(host.querySelector('.mp-painel .gp-atributos')).toBeNull();
     expect(painel?.textContent).toContain('Detalhes do ponto');
     expect(painel?.textContent).toContain('Usina consultada');
     expect(painel?.textContent).toContain('Município de exemplo');
     expect(painel?.textContent).toContain('Fonte declarada pelo serviço: IAT, 2021');
     expect(painel?.textContent).toContain('1 campo não exibido');
     expect(painel?.textContent).not.toContain('18.945.221-4');
-    expect(host.querySelector('.gp-tooltip.fixada')?.textContent).toContain('Detalhes fixados no painel');
+    expect(host.querySelector('.gp-tooltip.fixada')?.textContent).toContain('Detalhes fixados abaixo do mapa');
 
     const identify = fetchMock.mock.calls.filter(([url]) => String(url).includes('/identify?'));
     expect(identify).toHaveLength(4);

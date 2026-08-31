@@ -264,7 +264,7 @@ export function GeoprResumoNoMapa({ consulta }) {
             </span>
           )}
           <em style={{ paddingTop: 4, borderTop: '1px solid var(--line)', fontSize: 11, color: 'var(--muted)', fontStyle: 'normal' }}>
-            {consulta.tipo === 'fixada' ? 'Detalhes fixados no painel' : 'Clique para fixar os detalhes'}
+            {consulta.tipo === 'fixada' ? 'Detalhes fixados abaixo do mapa' : 'Clique para fixar os detalhes'}
           </em>
         </>
       )}
@@ -272,7 +272,16 @@ export function GeoprResumoNoMapa({ consulta }) {
   );
 }
 
-function DetalhesDaConsulta({ consulta, aoFechar }) {
+/**
+ * Detalhes do ponto consultado.
+ *
+ * Fica abaixo do mapa, e nao na coluna da direita, porque a pergunta nasce
+ * olhando para o simbolo clicado: separar a resposta do desenho obrigava a
+ * mover os olhos por toda a largura da tela e procurar o bloco no meio da
+ * lista de camadas. Abaixo do mapa, o ponto e a leitura ficam no mesmo campo
+ * de visao.
+ */
+export function GeoprDetalhesDaConsulta({ consulta, aoFechar }) {
   if (!consulta || consulta.estado === 'ociosa') return null;
   const momento = dataDaConsulta(consulta.consultadoEm);
   const limiteVisual = 12;
@@ -313,8 +322,8 @@ function DetalhesDaConsulta({ consulta, aoFechar }) {
       {consulta.estado === 'pronto' && (
         <p className="sr-only" role="status" aria-live="polite" aria-atomic="true">
           {consulta.achados.length === 1
-            ? 'Um resultado do GeoPR identificado; detalhes disponíveis no painel.'
-            : `${consulta.achados.length} resultados do GeoPR identificados; detalhes disponíveis no painel.`}
+            ? 'Um resultado do GeoPR identificado; detalhes disponíveis abaixo do mapa.'
+            : `${consulta.achados.length} resultados do GeoPR identificados; detalhes disponíveis abaixo do mapa.`}
         </p>
       )}
 
@@ -479,7 +488,7 @@ function BuscaNoAcervo({ ativas, alternar }) {
   );
 }
 
-export default function GeoprPainel({ ativas, alternar, limpar, consulta, aoFecharConsulta }) {
+export default function GeoprPainel({ ativas, alternar, limpar }) {
   // Filtro por modulo do curso.
   //
   // A busca logo abaixo varre o acervo inteiro do GeoPR, com mais de mil
@@ -579,8 +588,6 @@ export default function GeoprPainel({ ativas, alternar, limpar, consulta, aoFech
           </p>
         )}
       </div>
-
-      <DetalhesDaConsulta consulta={consulta} aoFechar={aoFecharConsulta} />
 
       {porGrupo.map((grupo) => (
         <div key={grupo.id} className="gp-grupo">

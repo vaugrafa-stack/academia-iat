@@ -19,7 +19,11 @@ import {
   useCamadasGeopr,
   useLegendas,
 } from './geoprCamadas.js';
-import GeoprPainel, { GeoprLegenda, GeoprResumoNoMapa } from './geoprPainel.jsx';
+import GeoprPainel, {
+  GeoprDetalhesDaConsulta,
+  GeoprLegenda,
+  GeoprResumoNoMapa,
+} from './geoprPainel.jsx';
 import PainelCoordenada from './painelCoordenada.jsx';
 import { dentroDoParana, geoParaMercator, mercatorParaGeo } from './coordenadas.js';
 import { localizarResultadoMapa, pesquisarMapa } from './mapaPesquisa.js';
@@ -944,211 +948,219 @@ function MapaConteudo({ dados, state, setState }) {
           aoLimpar={() => setMarca(null)}
         />
 
-        <figure className="mp-quadro">
-          <div className="mp-controles">
-            <div className="mp-camadas" role="group" aria-label="Camadas do mapa">
-              {[['bacias', 'Bacias'], ['usinas', 'Usinas'], ['municipios', 'Municípios'], ['satelite', 'Satélite']].map(([id, rot]) => (
-                <button key={id} className={camadas[id] ? 'on' : ''} aria-pressed={camadas[id]}
-                        title={id === 'satelite' ? 'Imagem de satélite carregada pela internet' : undefined}
-                        onClick={() => camada(id)}>{rot}</button>
-              ))}
+        {/* O mapa e a leitura do ponto formam uma coluna so: quem clica num
+            simbolo le a resposta logo abaixo do desenho, sem atravessar a tela
+            ate a lista de camadas. */}
+        <div className="mp-coluna-mapa">
+          <figure className="mp-quadro">
+            <div className="mp-controles">
+              <div className="mp-camadas" role="group" aria-label="Camadas do mapa">
+                {[['bacias', 'Bacias'], ['usinas', 'Usinas'], ['municipios', 'Municípios'], ['satelite', 'Satélite']].map(([id, rot]) => (
+                  <button key={id} className={camadas[id] ? 'on' : ''} aria-pressed={camadas[id]}
+                          title={id === 'satelite' ? 'Imagem de satélite carregada pela internet' : undefined}
+                          onClick={() => camada(id)}>{rot}</button>
+                ))}
+              </div>
+              <div className="mp-zoom" role="group" aria-label="Aproximar e afastar">
+                <button onClick={() => ampliar(1.3)} disabled={!podeAproximar} aria-label="Aproximar"><ZoomIn size={15} /></button>
+                <button onClick={() => ampliar(1 / 1.3)} disabled={!podeAfastar} aria-label="Afastar"><ZoomOut size={15} /></button>
+                <button onClick={inteiro} disabled={!podeAfastar} aria-label="Ver o mapa inteiro"><Maximize2 size={15} /></button>
+                <span aria-live="polite" aria-atomic="true">{escala.toFixed(1)}x</span>
+              </div>
             </div>
-            <div className="mp-zoom" role="group" aria-label="Aproximar e afastar">
-              <button onClick={() => ampliar(1.3)} disabled={!podeAproximar} aria-label="Aproximar"><ZoomIn size={15} /></button>
-              <button onClick={() => ampliar(1 / 1.3)} disabled={!podeAfastar} aria-label="Afastar"><ZoomOut size={15} /></button>
-              <button onClick={inteiro} disabled={!podeAfastar} aria-label="Ver o mapa inteiro"><Maximize2 size={15} /></button>
-              <span aria-live="polite" aria-atomic="true">{escala.toFixed(1)}x</span>
-            </div>
-          </div>
-          <div className="mp-map-stage">
-            <svg ref={svgRef} viewBox={`${v.x} ${v.y} ${v.w} ${v.h}`} role="img" tabIndex={0}
-                 aria-describedby="mp-ajuda-teclado"
-                 className={[
-                   escala > 1.02 ? 'mp-arrastavel' : '',
-                   camadas.satelite && satelite.online ? 'mp-satelite-on' : '',
-                   // Camada de fundo do GeoPR desenha ABAIXO das bacias locais,
-                   // que tem preenchimento opaco e a esconderiam por inteiro.
-                   // A marca abaixo deixa a bacia translucida, com o contorno
-                   // preservado, do mesmo jeito que o modo satelite ja fazia.
-                   camadasGeopr.pedidos.some((p) => p.camada.ordem !== 'topo') ? 'gp-fundo-on' : '',
-                 ].filter(Boolean).join(' ')}
-                 onWheel={roda} onPointerDown={pegar} onPointerMove={moverComConsulta}
-                 onPointerUp={soltar} onPointerCancel={soltar} onPointerLeave={encerrarHoverGeopr}
-                 onKeyDown={tecla}
-                 onClick={consultarGeopr}
-                 aria-label={`Mapa do Paraná com ${(dados.bacias || []).length} bacias hidrográficas e ${usinas.length} usinas em exibição`}>
-              {camadas.satelite && satelite.online && (
-                <g className="mp-satelite" aria-hidden="true">
-                  {satelite.grid.tiles.map((tile, tileIndex) => (
-                    <image
-                      key={`${tile.id}:${satelite.retryKey}`}
-                      href={`${tile.href}${satelite.retryKey ? `?retry=${satelite.retryKey}` : ''}`}
-                      x={tile.x}
-                      y={tile.y}
-                      width={tile.width}
-                      height={tile.height}
-                      preserveAspectRatio="none"
-                      onLoad={() => satelite.registrar('loaded', satelite.currentTileKeys[tileIndex])}
-                      onError={() => satelite.registrar('failed', satelite.currentTileKeys[tileIndex])}
-                    />
+            <div className="mp-map-stage">
+              <svg ref={svgRef} viewBox={`${v.x} ${v.y} ${v.w} ${v.h}`} role="img" tabIndex={0}
+                   aria-describedby="mp-ajuda-teclado"
+                   className={[
+                     escala > 1.02 ? 'mp-arrastavel' : '',
+                     camadas.satelite && satelite.online ? 'mp-satelite-on' : '',
+                     // Camada de fundo do GeoPR desenha ABAIXO das bacias locais,
+                     // que tem preenchimento opaco e a esconderiam por inteiro.
+                     // A marca abaixo deixa a bacia translucida, com o contorno
+                     // preservado, do mesmo jeito que o modo satelite ja fazia.
+                     camadasGeopr.pedidos.some((p) => p.camada.ordem !== 'topo') ? 'gp-fundo-on' : '',
+                   ].filter(Boolean).join(' ')}
+                   onWheel={roda} onPointerDown={pegar} onPointerMove={moverComConsulta}
+                   onPointerUp={soltar} onPointerCancel={soltar} onPointerLeave={encerrarHoverGeopr}
+                   onKeyDown={tecla}
+                   onClick={consultarGeopr}
+                   aria-label={`Mapa do Paraná com ${(dados.bacias || []).length} bacias hidrográficas e ${usinas.length} usinas em exibição`}>
+                {camadas.satelite && satelite.online && (
+                  <g className="mp-satelite" aria-hidden="true">
+                    {satelite.grid.tiles.map((tile, tileIndex) => (
+                      <image
+                        key={`${tile.id}:${satelite.retryKey}`}
+                        href={`${tile.href}${satelite.retryKey ? `?retry=${satelite.retryKey}` : ''}`}
+                        x={tile.x}
+                        y={tile.y}
+                        width={tile.width}
+                        height={tile.height}
+                        preserveAspectRatio="none"
+                        onLoad={() => satelite.registrar('loaded', satelite.currentTileKeys[tileIndex])}
+                        onError={() => satelite.registrar('failed', satelite.currentTileKeys[tileIndex])}
+                      />
+                    ))}
+                  </g>
+                )}
+                {!!camadasGeopr.pedidos.length && (
+                  <g className="gp-camadas gp-fundo" aria-hidden="true">
+                    {camadasGeopr.pedidos
+                      .filter((pedido) => pedido.camada.ordem !== 'topo')
+                      .map((pedido) => (
+                        <image
+                          key={pedido.chave}
+                          href={pedido.href}
+                          // O retangulo e o da vista em que a imagem FOI PEDIDA.
+                          // Enquanto a nova nao chega, a anterior continua no
+                          // lugar certo do mundo em vez de esticar sobre a area
+                          // errada durante o arrasto.
+                          x={pedido.retangulo.x}
+                          y={pedido.retangulo.y}
+                          width={pedido.retangulo.w}
+                          height={pedido.retangulo.h}
+                          preserveAspectRatio="none"
+                          onLoad={() => camadasGeopr.registrar('carregou', pedido.chave)}
+                          onError={() => camadasGeopr.registrar('falhou', pedido.chave)}
+                        />
+                      ))}
+                  </g>
+                )}
+                {camadas.bacias && <g className="mp-bacias">
+                  {(dados.bacias || []).map((b, i) => (
+                    // Alterna o tom para a divisao ficar legivel: 16 bacias no mesmo
+                    // preenchimento viram uma mancha unica e o mapa perde a funcao.
+                    // Sem <title>: o tooltip nativo do navegador e feio, chega
+                    // atrasado e nao cabe informacao. A bacia passa a falar no
+                    // painel abaixo do mapa, e o clique filtra a lista.
+                    <path key={b.nome} d={b.d}
+                          className={(baciaSel === b.nome ? 'escolhida' : bacia === b.nome ? 'ativa' : '') + (i % 2 ? ' par' : '')}
+                          onMouseEnter={() => setBacia(b.nome)}
+                          onMouseLeave={() => setBacia(null)}
+                          onClick={() => setBaciaSel((n) => (n === b.nome ? null : b.nome))} />
                   ))}
-                </g>
-              )}
-              {!!camadasGeopr.pedidos.length && (
-                <g className="gp-camadas gp-fundo" aria-hidden="true">
-                  {camadasGeopr.pedidos
-                    .filter((pedido) => pedido.camada.ordem !== 'topo')
-                    .map((pedido) => (
-                      <image
-                        key={pedido.chave}
-                        href={pedido.href}
-                        // O retangulo e o da vista em que a imagem FOI PEDIDA.
-                        // Enquanto a nova nao chega, a anterior continua no
-                        // lugar certo do mundo em vez de esticar sobre a area
-                        // errada durante o arrasto.
-                        x={pedido.retangulo.x}
-                        y={pedido.retangulo.y}
-                        width={pedido.retangulo.w}
-                        height={pedido.retangulo.h}
-                        preserveAspectRatio="none"
-                        onLoad={() => camadasGeopr.registrar('carregou', pedido.chave)}
-                        onError={() => camadasGeopr.registrar('falhou', pedido.chave)}
-                      />
-                    ))}
-                </g>
-              )}
-              {camadas.bacias && <g className="mp-bacias">
-                {(dados.bacias || []).map((b, i) => (
-                  // Alterna o tom para a divisao ficar legivel: 16 bacias no mesmo
-                  // preenchimento viram uma mancha unica e o mapa perde a funcao.
-                  // Sem <title>: o tooltip nativo do navegador e feio, chega
-                  // atrasado e nao cabe informacao. A bacia passa a falar no
-                  // painel abaixo do mapa, e o clique filtra a lista.
-                  <path key={b.nome} d={b.d}
-                        className={(baciaSel === b.nome ? 'escolhida' : bacia === b.nome ? 'ativa' : '') + (i % 2 ? ' par' : '')}
-                        onMouseEnter={() => setBacia(b.nome)}
-                        onMouseLeave={() => setBacia(null)}
-                        onClick={() => setBaciaSel((n) => (n === b.nome ? null : b.nome))} />
-                ))}
-              </g>}
-              {camadas.municipios && (
-                <g className="mp-municipios" aria-hidden="true">
-                  {municipios
-                    // Com o mapa inteiro so cabem os municipios com mais usinas;
-                    // conforme aproxima, entram os demais sem virar amontoado.
-                    .filter((m, i) => i < Math.round(8 * escala * escala))
-                    .map((m) => (
-                      <text key={m.nome} x={m.x} y={m.y - 9} fontSize={7.5 / Math.sqrt(escala) * 1.35}>{m.nome}</text>
-                    ))}
-                </g>
-              )}
-              {!!camadasGeopr.pedidos.length && (
-                <g className="gp-camadas gp-topo" aria-hidden="true">
-                  {camadasGeopr.pedidos
-                    .filter((pedido) => pedido.camada.ordem === 'topo')
-                    .map((pedido) => (
-                      <image
-                        key={pedido.chave}
-                        href={pedido.href}
-                        x={pedido.retangulo.x}
-                        y={pedido.retangulo.y}
-                        width={pedido.retangulo.w}
-                        height={pedido.retangulo.h}
-                        preserveAspectRatio="none"
-                        onLoad={() => camadasGeopr.registrar('carregou', pedido.chave)}
-                        onError={() => camadasGeopr.registrar('falhou', pedido.chave)}
-                      />
-                    ))}
-                </g>
-              )}
-              {marca && Number.isFinite(marca.x) && (
-                // Alvo, e nao um pino: pino aponta para um lugar aproximado, e
-                // aqui o que importa e o ponto exato onde a coordenada cai.
-                <g className="co-marca" aria-hidden="true">
-                  <circle cx={marca.x} cy={marca.y} r={12 / escala} />
-                  <line x1={marca.x - 19 / escala} y1={marca.y} x2={marca.x - 5 / escala} y2={marca.y} />
-                  <line x1={marca.x + 5 / escala} y1={marca.y} x2={marca.x + 19 / escala} y2={marca.y} />
-                  <line x1={marca.x} y1={marca.y - 19 / escala} x2={marca.x} y2={marca.y - 5 / escala} />
-                  <line x1={marca.x} y1={marca.y + 5 / escala} x2={marca.x} y2={marca.y + 19 / escala} />
-                </g>
-              )}
-              {camadas.usinas && <g className="mp-usinas" aria-hidden="true">
-                {usinas.map((u, i) => (
-                  <circle key={`${u.nome}-${i}`} cx={u.x} cy={u.y} r={raio(u)}
-                          fill={COR[u.tipo]}
-                          className={sel && sel.nome === u.nome && sel.x === u.x ? 'ativa' : ''}
-                          onClick={() => escolher(u)}>
-                    <title>{u.nome} · {u.tipo}{u.mw ? ` · ${u.mw} MW` : ''}</title>
-                  </circle>
-                ))}
-              </g>}
-            </svg>
+                </g>}
+                {camadas.municipios && (
+                  <g className="mp-municipios" aria-hidden="true">
+                    {municipios
+                      // Com o mapa inteiro so cabem os municipios com mais usinas;
+                      // conforme aproxima, entram os demais sem virar amontoado.
+                      .filter((m, i) => i < Math.round(8 * escala * escala))
+                      .map((m) => (
+                        <text key={m.nome} x={m.x} y={m.y - 9} fontSize={7.5 / Math.sqrt(escala) * 1.35}>{m.nome}</text>
+                      ))}
+                  </g>
+                )}
+                {!!camadasGeopr.pedidos.length && (
+                  <g className="gp-camadas gp-topo" aria-hidden="true">
+                    {camadasGeopr.pedidos
+                      .filter((pedido) => pedido.camada.ordem === 'topo')
+                      .map((pedido) => (
+                        <image
+                          key={pedido.chave}
+                          href={pedido.href}
+                          x={pedido.retangulo.x}
+                          y={pedido.retangulo.y}
+                          width={pedido.retangulo.w}
+                          height={pedido.retangulo.h}
+                          preserveAspectRatio="none"
+                          onLoad={() => camadasGeopr.registrar('carregou', pedido.chave)}
+                          onError={() => camadasGeopr.registrar('falhou', pedido.chave)}
+                        />
+                      ))}
+                  </g>
+                )}
+                {marca && Number.isFinite(marca.x) && (
+                  // Alvo, e nao um pino: pino aponta para um lugar aproximado, e
+                  // aqui o que importa e o ponto exato onde a coordenada cai.
+                  <g className="co-marca" aria-hidden="true">
+                    <circle cx={marca.x} cy={marca.y} r={12 / escala} />
+                    <line x1={marca.x - 19 / escala} y1={marca.y} x2={marca.x - 5 / escala} y2={marca.y} />
+                    <line x1={marca.x + 5 / escala} y1={marca.y} x2={marca.x + 19 / escala} y2={marca.y} />
+                    <line x1={marca.x} y1={marca.y - 19 / escala} x2={marca.x} y2={marca.y - 5 / escala} />
+                    <line x1={marca.x} y1={marca.y + 5 / escala} x2={marca.x} y2={marca.y + 19 / escala} />
+                  </g>
+                )}
+                {camadas.usinas && <g className="mp-usinas" aria-hidden="true">
+                  {usinas.map((u, i) => (
+                    <circle key={`${u.nome}-${i}`} cx={u.x} cy={u.y} r={raio(u)}
+                            fill={COR[u.tipo]}
+                            className={sel && sel.nome === u.nome && sel.x === u.x ? 'ativa' : ''}
+                            onClick={() => escolher(u)}>
+                      <title>{u.nome} · {u.tipo}{u.mw ? ` · ${u.mw} MW` : ''}</title>
+                    </circle>
+                  ))}
+                </g>}
+              </svg>
 
-            <GeoprResumoNoMapa consulta={consultaNoMapa} />
+              <GeoprResumoNoMapa consulta={consultaNoMapa} />
 
-            <GeoprLegenda
-              camadas={geopr}
-              legendas={legendasGeopr}
-              esperando={camadasGeopr.esperando}
-              aoDesligar={alternarGeopr}
-              naoResponderam={camadasGeopr.naoResponderam}
-              aoTentarNovamente={camadasGeopr.tentarNovamente}
-            />
-            {camadas.satelite && satelite.status === 'loading' && (
-              <div className="mp-satelite-estado" role="status">Carregando imagens de satélite…</div>
-            )}
-            {camadas.satelite && satelite.status === 'offline' && (
-              <div className="mp-satelite-estado aviso" role="status">
-                A imagem de satélite precisa de internet. O mapa vetorial continua disponível.
-              </div>
-            )}
-            {camadas.satelite && satelite.status === 'error' && (
-              <div className="mp-satelite-estado aviso" role="alert">
-                <span>Não foi possível carregar a imagem de satélite agora.</span>
-                <button type="button" onClick={satelite.retry}>Tentar novamente</button>
-              </div>
-            )}
-            {camadas.satelite && satelite.status === 'partial' && (
-              <div className="mp-satelite-estado aviso" role="status">
-                <span>Algumas imagens de satélite não carregaram.</span>
-                <button type="button" onClick={satelite.retry}>Recarregar</button>
-              </div>
-            )}
-            {camadas.satelite && ['ready', 'partial'].includes(satelite.status) && (
-              <a
-                className="mp-satelite-credito"
-                href={SATELLITE_INFO_URL}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Imagens: {satelite.attribution}
-              </a>
-            )}
-          </div>
-          <figcaption>
-            {infoBacia ? (
-              <>
-                <Layers3 size={14} />
-                <span className="mp-bacia-nome">Bacia {infoBacia.nome}</span>
-                {infoBacia.area != null && <span>{infoBacia.area.toLocaleString('pt-BR')} km²</span>}
-                <span>{infoBacia.usinas} {infoBacia.usinas === 1 ? 'usina' : 'usinas'}</span>
-                {baciaSel === infoBacia.nome
-                  ? <button className="mp-limpar" onClick={() => setBaciaSel(null)}>ver todas <X size={12} /></button>
-                  : <em>clique para filtrar</em>}
-              </>
-            ) : (
-              <>Passe sobre uma bacia para identificá-la, clique para filtrar a lista ou use a lista “Bacia hidrográfica” no painel. Clique num ponto para ver a usina.</>
-            )}
-          </figcaption>
-        </figure>
+              <GeoprLegenda
+                camadas={geopr}
+                legendas={legendasGeopr}
+                esperando={camadasGeopr.esperando}
+                aoDesligar={alternarGeopr}
+                naoResponderam={camadasGeopr.naoResponderam}
+                aoTentarNovamente={camadasGeopr.tentarNovamente}
+              />
+              {camadas.satelite && satelite.status === 'loading' && (
+                <div className="mp-satelite-estado" role="status">Carregando imagens de satélite…</div>
+              )}
+              {camadas.satelite && satelite.status === 'offline' && (
+                <div className="mp-satelite-estado aviso" role="status">
+                  A imagem de satélite precisa de internet. O mapa vetorial continua disponível.
+                </div>
+              )}
+              {camadas.satelite && satelite.status === 'error' && (
+                <div className="mp-satelite-estado aviso" role="alert">
+                  <span>Não foi possível carregar a imagem de satélite agora.</span>
+                  <button type="button" onClick={satelite.retry}>Tentar novamente</button>
+                </div>
+              )}
+              {camadas.satelite && satelite.status === 'partial' && (
+                <div className="mp-satelite-estado aviso" role="status">
+                  <span>Algumas imagens de satélite não carregaram.</span>
+                  <button type="button" onClick={satelite.retry}>Recarregar</button>
+                </div>
+              )}
+              {camadas.satelite && ['ready', 'partial'].includes(satelite.status) && (
+                <a
+                  className="mp-satelite-credito"
+                  href={SATELLITE_INFO_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Imagens: {satelite.attribution}
+                </a>
+              )}
+            </div>
+            <figcaption>
+              {infoBacia ? (
+                <>
+                  <Layers3 size={14} />
+                  <span className="mp-bacia-nome">Bacia {infoBacia.nome}</span>
+                  {infoBacia.area != null && <span>{infoBacia.area.toLocaleString('pt-BR')} km²</span>}
+                  <span>{infoBacia.usinas} {infoBacia.usinas === 1 ? 'usina' : 'usinas'}</span>
+                  {baciaSel === infoBacia.nome
+                    ? <button className="mp-limpar" onClick={() => setBaciaSel(null)}>ver todas <X size={12} /></button>
+                    : <em>clique para filtrar</em>}
+                </>
+              ) : (
+                <>Passe sobre uma bacia para identificá-la, clique para filtrar a lista ou use a lista “Bacia hidrográfica” no painel. Clique num ponto para ver a usina.</>
+              )}
+            </figcaption>
+          </figure>
+
+          <GeoprDetalhesDaConsulta
+            consulta={consultaFixada}
+            aoFechar={fecharConsultaPeloPainel}
+          />
+        </div>
 
         <aside className="mp-painel">
           <GeoprPainel
             ativas={geopr}
             alternar={alternarGeopr}
             limpar={limparGeopr}
-            consulta={consultaFixada}
-            aoFecharConsulta={fecharConsultaPeloPainel}
           />
           {state && setState && <ExercicioEnquadrar usinas={dados.usinas} state={state} setState={setState} />}
           <div className="mp-busca">

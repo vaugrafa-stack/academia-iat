@@ -2,7 +2,7 @@
 import React, { act } from 'react';
 import { createRoot } from 'react-dom/client';
 import { afterEach, describe, expect, it } from 'vitest';
-import GeoprPainel from './geoprPainel.jsx';
+import { GeoprDetalhesDaConsulta } from './geoprPainel.jsx';
 
 globalThis.IS_REACT_ACT_ENVIRONMENT = true;
 
@@ -34,11 +34,8 @@ describe('painel de detalhes do GeoPR', () => {
 
     await act(async () => {
       root.render(
-        <GeoprPainel
-          ativas={[]}
-          alternar={() => {}}
-          limpar={() => {}}
-          aoFecharConsulta={() => {}}
+        <GeoprDetalhesDaConsulta
+          aoFechar={() => {}}
           consulta={{ estado: 'pronto', achados, falhas: 0, consultadoEm: '2026-08-27T12:00:00Z' }}
         />,
       );

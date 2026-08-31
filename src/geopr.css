@@ -174,12 +174,26 @@
 
    A barra do topo tem 72 px e e fixa, entao o encosto fica logo abaixo dela.
    O z-index fica em 1: precisa cobrir o corpo da pagina e passar por baixo da
-   barra, que esta em 50. */
+   barra, que esta em 50.
+
+   Quem acompanha a lista e a coluna inteira, e nao so a figura, porque os
+   detalhes do ponto ficam abaixo do mapa desde 31/08/2026. Se apenas a figura
+   ficasse fixa, a leitura do ponto passaria por baixo dela ao rolar. A coluna
+   e limitada a altura visivel e a lista de atributos rola por dentro; sem esse
+   teto, um ponto com muitos registros deixaria a propria coluna maior que a
+   tela e o seu rodape ficaria inalcancavel. */
 @media (min-width:981px){
-  .mapa-layout>.mp-quadro{
+  .mapa-layout>.mp-coluna-mapa{
     position:sticky;
     top:84px;
     z-index:1;
+    max-height:calc(100vh - 96px);
+  }
+
+  .mp-coluna-mapa>.gp-atributos{
+    min-height:0;
+    overflow-y:auto;
+    overscroll-behavior:contain;
   }
 }
 

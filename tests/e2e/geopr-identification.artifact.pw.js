@@ -118,6 +118,18 @@ test('camadas GeoPR identificam, fixam e permanecem acessíveis em cada largura'
     await mapa.click({ position: ponto });
     const painel = page.locator('.gp-atributos');
     await expect(painel).toBeVisible();
+    // A leitura do ponto fica abaixo do desenho, na mesma coluna, e nao na
+    // lista de camadas da direita: a pergunta nasce olhando para o simbolo.
+    await expect(page.locator('.mp-coluna-mapa > .gp-atributos')).toBeVisible();
+    await expect(page.locator('.mp-painel .gp-atributos')).toHaveCount(0);
+    const ordem = await page.evaluate(() => {
+      const topo = (seletor) => {
+        const caixa = document.querySelector(seletor)?.getBoundingClientRect();
+        return caixa ? caixa.top + window.scrollY : null;
+      };
+      return { mapa: topo('.mp-quadro'), detalhes: topo('.gp-atributos') };
+    });
+    expect(ordem.detalhes).toBeGreaterThan(ordem.mapa);
     await expect(painel).toContainText('Detalhes do ponto');
     await expect(painel).toContainText('Usina determinística do teste');
     await expect(painel).toContainText('Fonte declarada pelo serviço: IAT, 2021');

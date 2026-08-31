@@ -1,6 +1,6 @@
 # Status atual da Academia IAT
 
-Atualizado em 27/08/2026. Este é o único documento de situação corrente. Os
+Atualizado em 31/08/2026. Este é o único documento de situação corrente. Os
 planos detalhados do repositório preservam decisões e snapshots históricos.
 Quando houver divergência, prevalecem os manifestos gerados, os testes do commit
 identificado e este status.
@@ -236,6 +236,44 @@ A validação corrente deste candidato obteve:
 Todos os limites automatizados foram respeitados. A remoção de estilos sem
 emissores recuperou cerca de 6 KiB no CSS; o conteúdo público do POP permanece
 próximo do teto e novas ampliações devem continuar sob demanda.
+
+### Candidato local de 31/08/2026 — leitura do ponto e quadro da aula
+
+Duas correções de leitura, ambas verificadas em navegador antes e depois.
+
+Os detalhes do ponto do GeoPR saíram da coluna da direita e passaram a ficar
+abaixo do mapa, na mesma coluna do desenho. A pergunta nasce olhando para o
+símbolo clicado; a resposta estava do outro lado da tela, no meio da lista de
+camadas. O bloco recebeu a mesma moldura do mapa, e a coluna inteira passou a
+acompanhar a rolagem, limitada à altura visível, com a lista de atributos
+rolando por dentro. Sem esse teto, um ponto com muitos registros deixaria a
+coluna maior que a tela e o seu rodapé ficaria inalcançável. Em 390 px a ordem
+continua busca, mapa, detalhes e camadas, sem rolagem interna.
+
+O quadro de vídeo da abertura deixou de ser cortado. Medido em 1440 px, o
+cartão de "Continue de onde parou" tem 447 × 374, ou seja 1,196, e o quadro da
+aula é 16/9, ou seja 1,778: com `object-fit: cover`, 32,7% da largura sumia e o
+título e o texto queimados dentro do quadro ficavam ilegíveis nas duas pontas.
+Esses vídeos não são textura de fundo; preservar o quadro inteiro vale mais que
+preencher o cartão.
+
+As provas locais desta rodada são:
+
+- 72 arquivos de teste e 652 testes aprovados, com todos os portões encadeados
+  de `pnpm test`;
+- `pnpm build` e auditoria premium aprovados, em 38 chunks, 873,0/960,0 KiB de
+  JavaScript bruto e 284,3/320,0 KiB compactado; CSS inicial em 187,7/205,0 KiB
+  bruto e 33,7/38,0 KiB compactado; CSS total em 269,8/300,0 KiB bruto e
+  50,2/58,0 KiB compactado;
+- 70 cenários Playwright aprovados sobre o artefato e 30 omissões previstas
+  pela matriz de projeto, largura e capacidade aplicável;
+- inspeção em navegador real, em 1440 e 390 px, nos temas claro e escuro, com o
+  serviço oficial do GeoPR respondendo, sem erro de console e sem rolagem
+  horizontal.
+
+Dois orçamentos permanecem em atenção e sem regressão nesta rodada: o CSS
+inicial em 91,5% do teto bruto e o JavaScript total em 90,9%. A próxima
+ampliação visual precisa recuperar margem ou permanecer sob demanda.
 
 ## Serviços separados
 

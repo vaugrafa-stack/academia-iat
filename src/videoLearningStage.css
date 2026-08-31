@@ -295,8 +295,17 @@
   aspect-ratio: auto;
 }
 
+/* Preencher a caixa custava a metade do que a aula diz.
+   Medido em 31/08/2026, em 1440 px: o cartao de "Continue de onde parou" tem
+   447 x 374, ou seja 1,196, e o quadro da aula e 16/9, ou seja 1,778. Com
+   "cover", 32,7% da largura era cortada, e o titulo e o texto queimados no
+   quadro ficavam ilegiveis nas duas pontas.
+   Estes videos nao sao textura de fundo: a primeira coisa que a pessoa ve na
+   abertura e o assunto da aula escrito dentro do quadro. Preservar o quadro
+   inteiro vale mais que preencher o cartao; a folga vertical mostra o fundo
+   do palco, que ja existe. */
 .vls-compact .vls-video {
-  object-fit: cover !important;
+  object-fit: contain !important;
 }
 
 .vls-compact .vls-professor-rail {

@@ -123,13 +123,16 @@ test('camadas GeoPR identificam, fixam e permanecem acessíveis em cada largura'
     await expect(page.locator('.mp-coluna-mapa > .gp-atributos')).toBeVisible();
     await expect(page.locator('.mp-painel .gp-atributos')).toHaveCount(0);
     const ordem = await page.evaluate(() => {
-      const topo = (seletor) => {
+      const caixa = (seletor) => {
         const caixa = document.querySelector(seletor)?.getBoundingClientRect();
-        return caixa ? caixa.top + window.scrollY : null;
+        return caixa ? {
+          topo: caixa.top + window.scrollY,
+          fim: caixa.bottom + window.scrollY,
+        } : null;
       };
-      return { mapa: topo('.mp-quadro'), detalhes: topo('.gp-atributos') };
+      return { mapa: caixa('.mp-quadro'), detalhes: caixa('.gp-atributos') };
     });
-    expect(ordem.detalhes).toBeGreaterThan(ordem.mapa);
+    expect(ordem.detalhes.topo).toBeGreaterThanOrEqual(ordem.mapa.fim);
     await expect(painel).toContainText('Detalhes do ponto');
     await expect(painel).toContainText('Usina determinística do teste');
     await expect(painel).toContainText('Fonte declarada pelo serviço: IAT, 2021');
@@ -153,6 +156,15 @@ test('camadas GeoPR identificam, fixam e permanecem acessíveis em cada largura'
     await expect(painel).toBeVisible();
     await expect(painel).toContainText('Usina determinística do teste');
     await expect(painel).not.toContainText('18.945.221-4');
+    const ordem = await page.evaluate(() => {
+      const mapa = document.querySelector('.mp-quadro')?.getBoundingClientRect();
+      const detalhes = document.querySelector('.gp-atributos')?.getBoundingClientRect();
+      return {
+        fimDoMapa: mapa ? mapa.bottom + window.scrollY : null,
+        topoDosDetalhes: detalhes ? detalhes.top + window.scrollY : null,
+      };
+    });
+    expect(ordem.topoDosDetalhes).toBeGreaterThanOrEqual(ordem.fimDoMapa);
     await expect(tooltip).toBeVisible();
     await expect(tooltip).toContainText('Usina determinística do teste');
 
@@ -174,5 +186,53 @@ test('camadas GeoPR identificam, fixam e permanecem acessíveis em cada largura'
     expect(caixaPainel.x + caixaPainel.width).toBeLessThanOrEqual(viewport.width + 1);
   }
 
+  await expectHealthyPage(page, runtimeIssues);
+});
+
+test('desktop largo e baixo mantém mapa e detalhes no fluxo da página', async ({
+  page,
+  baseURL,
+}, testInfo) => {
+  test.skip(testInfo.project.name !== 'artifact-desktop', 'um projeto basta para a altura reduzida');
+  await page.setViewportSize({ width: 1366, height: 700 });
+
+  const runtimeIssues = monitorRuntime(page, baseURL);
+  await simularGeoPr(page);
+  await page.goto(appUrl(baseURL, '#/mapa'), { waitUntil: 'domcontentloaded' });
+
+  const camada = page.locator('.gp-grupo button').filter({
+    hasText: 'Usinas de geração hidrelétrica',
+  }).first();
+  await camada.scrollIntoViewIfNeeded();
+  await camada.click();
+
+  const mapa = page.locator('.mp-map-stage > svg');
+  await mapa.scrollIntoViewIfNeeded();
+  const caixaMapa = await mapa.boundingBox();
+  expect(caixaMapa).not.toBeNull();
+  await mapa.click({
+    position: {
+      x: Math.round(caixaMapa.width * 0.5),
+      y: Math.round(caixaMapa.height * 0.5),
+    },
+  });
+
+  const painel = page.locator('.mp-coluna-mapa > .gp-atributos');
+  await expect(painel).toContainText('Usina determinística do teste');
+  const layout = await page.evaluate(() => {
+    const coluna = document.querySelector('.mp-coluna-mapa');
+    const mapa = document.querySelector('.mp-quadro')?.getBoundingClientRect();
+    const detalhes = document.querySelector('.gp-atributos')?.getBoundingClientRect();
+    return {
+      posicaoDaColuna: coluna ? getComputedStyle(coluna).position : null,
+      fimDoMapa: mapa ? mapa.bottom + window.scrollY : null,
+      topoDosDetalhes: detalhes ? detalhes.top + window.scrollY : null,
+    };
+  });
+  expect(layout.posicaoDaColuna).not.toBe('sticky');
+  expect(layout.topoDosDetalhes).toBeGreaterThanOrEqual(layout.fimDoMapa);
+
+  await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
+  await expect.poll(() => page.evaluate(() => window.scrollY)).toBeGreaterThan(0);
   await expectHealthyPage(page, runtimeIssues);
 });

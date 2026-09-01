@@ -9,15 +9,12 @@
 // 2. A procedencia. Cada camada mostra a fonte que o servico declara, ou diz
 //    que ele nao declara nenhuma. O POP manda registrar camada, fonte e data.
 // 3. O acervo. As camadas curadas cobrem o que a analise consulta com mais
-//    frequencia; a busca ao vivo alcanca o resto do GeoPR sem sair daqui.
+//    frequencia; a busca unica acima do mapa alcanca o resto do GeoPR.
 
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { AlertTriangle, ChevronDown, ExternalLink, Layers3, Search, X } from 'lucide-react';
+import React, { useMemo, useState } from 'react';
+import { AlertTriangle, ChevronDown, ExternalLink, Layers3, X } from 'lucide-react';
 import {
   GEOPR_PORTAL,
-  camadaDoAcervo,
-  carregarAcervo,
-  filtrarAcervo,
   resumoDoAchado,
   rotuloDeAtributo,
   tituloDoAchado,
@@ -290,7 +287,7 @@ export function GeoprDetalhesDaConsulta({ consulta, aoFechar }) {
   return (
     <div className="gp-atributos">
       <div className="gp-atributos-topo" style={{ display: 'flex', alignItems: 'center', gap: 8, minHeight: 44 }}>
-        <h3>{consulta.origemBusca === 'pesquisa' ? 'Detalhes da busca' : 'Detalhes do ponto'}</h3>
+        <h2>{consulta.origemBusca === 'pesquisa' ? 'Detalhes da busca' : 'Detalhes do ponto'}</h2>
         <button
           type="button"
           className="mp-limpar"
@@ -332,7 +329,7 @@ export function GeoprDetalhesDaConsulta({ consulta, aoFechar }) {
           <small className="gp-camada-consultada" style={{ display: 'block', marginBottom: 3, fontSize: 10.5, fontWeight: 800, letterSpacing: '.035em', textTransform: 'uppercase', color: 'var(--muted)' }}>
             {achado.origem?.titulo || 'Camada do GeoPR'}
           </small>
-          <h4>{tituloDoAchado(achado, 180)}</h4>
+          <h3>{tituloDoAchado(achado, 180)}</h3>
           {achado.origem?.paraQue && (
             <p className="gp-resumo-camada" style={{ margin: '0 0 8px', fontSize: 11.5, lineHeight: 1.45, color: 'var(--muted)' }}>
               {achado.origem.paraQue}
@@ -399,101 +396,13 @@ export function GeoprDetalhesDaConsulta({ consulta, aoFechar }) {
   );
 }
 
-function BuscaNoAcervo({ ativas, alternar }) {
-  const [termo, setTermo] = useState('');
-  const [acervo, setAcervo] = useState(null);
-  const [estado, setEstado] = useState('ocioso');
-  const abortar = useRef(null);
-
-  useEffect(() => () => abortar.current?.abort(), []);
-
-  const carregar = useCallback(() => {
-    if (acervo || estado === 'carregando') return;
-    setEstado('carregando');
-    abortar.current = new AbortController();
-    carregarAcervo({
-      sinal: abortar.current.signal,
-      // Cada pasta que chega ja alimenta a lista, em vez de esperar a ultima.
-      aoChegar: (parcial) => setAcervo(parcial),
-    })
-      .then((lista) => setEstado(lista.length ? 'pronto' : 'erro'))
-      .catch(() => setEstado('erro'));
-  }, [acervo, estado]);
-
-  // Carregar so no foco era fragil: quem cola texto, chega por teclado ou usa
-  // preenchimento automatico podia digitar num campo que nunca buscou nada, e
-  // a tela nao dizia o porque. Digitar tambem carrega.
-  useEffect(() => {
-    if (termo) carregar();
-  }, [termo, carregar]);
-
-  const achados = useMemo(() => filtrarAcervo(acervo, termo), [acervo, termo]);
-  const idsAtivos = useMemo(() => new Set(ativas.map((c) => c.id)), [ativas]);
-
-  return (
-    <div className="gp-acervo">
-      <div className="mp-busca">
-        <Search size={16} aria-hidden="true" />
-        <input
-          value={termo}
-          onFocus={carregar}
-          onChange={(evento) => setTermo(evento.target.value)}
-          placeholder="Buscar no acervo do GeoPR..."
-          aria-label="Buscar qualquer camada do acervo do GeoPR"
-          aria-describedby="gp-acervo-ajuda"
-        />
-        {termo && (
-          <button onClick={() => setTermo('')} aria-label="Limpar busca no acervo">
-            <X size={14} />
-          </button>
-        )}
-      </div>
-      <p id="gp-acervo-ajuda" className="gp-nota">
-        As camadas acima são as que a análise consulta com mais frequência. A busca alcança
-        o acervo inteiro do GeoPR, com mais de mil serviços, sem sair da Academia.
-      </p>
-
-      {estado === 'carregando' && <p className="gp-nota" role="status">Carregando o acervo...</p>}
-      {estado === 'erro' && (
-        <p className="gp-nota gp-aviso" role="status">
-          Não foi possível ler o acervo agora. As camadas acima continuam disponíveis.
-        </p>
-      )}
-      {estado === 'pronto' && termo && !achados.length && (
-        <p className="gp-nota" role="status">Nada encontrado para “{termo}”.</p>
-      )}
-
-      {!!achados.length && (
-        <ul className="gp-achados">
-          {achados.map((item) => {
-            const camada = camadaDoAcervo(item);
-            const ligada = idsAtivos.has(camada.id);
-            return (
-              <li key={camada.id}>
-                <button
-                  type="button"
-                  className={ligada ? 'on' : ''}
-                  aria-pressed={ligada}
-                  onClick={() => alternar(camada)}
-                >
-                  <span>{camada.titulo}</span>
-                  <small>{item.pasta || 'raiz'}</small>
-                </button>
-              </li>
-            );
-          })}
-        </ul>
-      )}
-    </div>
-  );
-}
-
 export default function GeoprPainel({ ativas, alternar, limpar }) {
   // Filtro por modulo do curso.
   //
-  // A busca logo abaixo varre o acervo inteiro do GeoPR, com mais de mil
-  // servicos. A lista curada, com 23, nao tinha filtro nenhum: quem estudava
-  // unidades de conservacao percorria as 23 para achar as quatro do M12.
+  // A busca unificada acima do mapa varre o acervo inteiro do GeoPR, com mais
+  // de mil servicos. A lista curada, com 23, nao tinha filtro nenhum: quem
+  // estudava unidades de conservacao percorria as 23 para achar as quatro do
+  // M12.
   //
   // O eixo e o modulo porque e ele que liga o mapa ao curso. Cada camada ja
   // carrega a etiqueta, e ela e o vocabulario que a pessoa ve nas aulas; o
@@ -626,8 +535,6 @@ export default function GeoprPainel({ ativas, alternar, limpar }) {
           </ul>
         </div>
       ))}
-
-      <BuscaNoAcervo ativas={ativas} alternar={alternar} />
 
       <a className="gp-portal" href={GEOPR_PORTAL} target="_blank" rel="noopener noreferrer">
         Abrir o portal completo do GeoPR <ExternalLink size={13} aria-hidden="true" />

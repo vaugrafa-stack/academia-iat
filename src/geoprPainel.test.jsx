@@ -42,6 +42,10 @@ describe('painel de detalhes do GeoPR', () => {
     });
 
     expect(host.querySelectorAll('.gp-atributos article')).toHaveLength(12);
+    expect(host.querySelector('.gp-atributos > .gp-atributos-topo h2')?.textContent)
+      .toBe('Detalhes do ponto');
+    expect(host.querySelector('.gp-atributos article h3')?.textContent).toBe('Feição 1');
+    expect(host.querySelector('.gp-atributos h4')).toBeNull();
     expect(host.textContent).toContain('3 resultados adicionais não foram expandidos');
     expect(host.textContent).toContain('Serviço oficial: 00_PUBLICACOES/camada_1');
     expect(host.querySelectorAll('.gp-atributos [aria-live="polite"]')).toHaveLength(1);

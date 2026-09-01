@@ -64,23 +64,21 @@
 .gp-grupo{display:flex;flex-direction:column;gap:6px}
 .gp-grupo h3{margin:0;font-size:11px;font-weight:800;letter-spacing:.06em;
  text-transform:uppercase;color:var(--muted)}
-.gp-grupo ul,.gp-achados{list-style:none;margin:0;padding:0;
+.gp-grupo ul{list-style:none;margin:0;padding:0;
  display:flex;flex-direction:column;gap:5px}
 
-.gp-grupo li>button,.gp-achados li>button{
+.gp-grupo li>button{
  width:100%;display:flex;align-items:center;gap:9px;text-align:left;
  min-height:44px;padding:9px 12px;border-radius:var(--raio-2);cursor:pointer;
  border:1px solid var(--line);background:var(--surface);color:var(--muted);
  font:inherit;font-size:13px;font-weight:700}
-.gp-grupo li>button.on,.gp-achados li>button.on{
+.gp-grupo li>button.on{
  color:var(--ink);border-color:var(--ink2);background:var(--surface2)}
-.gp-grupo li>button:focus-visible,.gp-achados li>button:focus-visible{
+.gp-grupo li>button:focus-visible{
  outline:3px solid var(--blue);outline-offset:2px}
 .gp-titulo{flex:1;min-width:0;line-height:1.35}
 .gp-modulo{flex:none;font-size:11px;font-weight:700;letter-spacing:.04em;
  padding:2px 7px;border-radius:var(--raio-pill);border:1px solid currentColor;opacity:.75}
-.gp-achados li>button small{flex:none;font-size:11px;font-weight:600;opacity:.7}
-
 .gp-detalhe{padding:7px 12px 2px}
 .gp-detalhe p{margin:0 0 5px;font-size:13px;line-height:1.5;color:var(--muted)}
 
@@ -89,19 +87,16 @@
    informacao, e o POP manda registrar a fonte. */
 .gp-sem-fonte{font-style:italic;opacity:.9}
 
-.gp-acervo{display:flex;flex-direction:column;gap:7px;
- padding-top:10px;border-top:1px solid var(--line)}
 .gp-nota{margin:0;font-size:12px;line-height:1.5;color:var(--muted)}
 .gp-aviso{color:var(--ink2)}
-.gp-achados{max-height:230px;overflow-y:auto}
 
 .gp-atributos{display:flex;flex-direction:column;gap:8px;
  padding-top:10px;border-top:1px solid var(--line)}
-.gp-atributos h3{margin:0;font-size:11px;font-weight:800;letter-spacing:.06em;
+.gp-atributos h2{margin:0;font-size:11px;font-weight:800;letter-spacing:.06em;
  text-transform:uppercase;color:var(--muted)}
 .gp-atributos article{border:1px solid var(--line);border-radius:var(--raio-2);
  background:var(--surface);padding:9px 11px}
-.gp-atributos h4{margin:0 0 6px;font-size:13px;color:var(--ink);line-height:1.35}
+.gp-atributos h3{margin:0 0 6px;font-size:13px;color:var(--ink);line-height:1.35}
 .gp-atributos dl{display:grid;grid-template-columns:minmax(0,auto) minmax(0,1fr);
  gap:3px 11px;margin:0}
 .gp-atributos dt{font-size:11px;font-weight:700;color:var(--muted);
@@ -112,7 +107,6 @@
  min-height:44px;font-size:13px;font-weight:700;color:var(--blue)}
 
 @media (max-width:640px){
-  .gp-achados{max-height:190px}
   .gp-atributos dl{grid-template-columns:minmax(0,1fr)}
   .gp-atributos dt{margin-top:5px}
 }
@@ -182,7 +176,10 @@
    e limitada a altura visivel e a lista de atributos rola por dentro; sem esse
    teto, um ponto com muitos registros deixaria a propria coluna maior que a
    tela e o seu rodape ficaria inalcancavel. */
-@media (min-width:981px){
+/* Em notebooks largos e baixos o desenho, sozinho, pode ocupar quase toda a
+   altura. Nessa faixa a coluna permanece no fluxo da pagina: tentar fixa-la
+   deixaria os detalhes com altura zero. */
+@media (min-width:981px) and (min-height:800px){
   .mapa-layout>.mp-coluna-mapa{
     position:sticky;
     top:84px;
@@ -193,7 +190,6 @@
   .mp-coluna-mapa>.gp-atributos{
     min-height:0;
     overflow-y:auto;
-    overscroll-behavior:contain;
   }
 }
 

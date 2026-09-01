@@ -309,6 +309,9 @@ describe('didática e acesso por teclado no mapa', () => {
     expect([...layout.children]).toEqual([pesquisa, colunaMapa, painel]);
     // O desenho e a leitura do ponto ocupam a mesma coluna, nesta ordem.
     expect(colunaMapa?.querySelector(':scope > .mp-quadro')).not.toBeNull();
+    expect(layout?.querySelectorAll('[role="search"]')).toHaveLength(1);
+    expect(layout?.querySelectorAll('[role="combobox"]')).toHaveLength(1);
+    expect(host.querySelector('[aria-label="Buscar qualquer camada do acervo do GeoPR"]')).toBeNull();
 
     const ajuda = host.querySelector('details.mp-como-usar');
     expect(ajuda?.open).toBe(false);

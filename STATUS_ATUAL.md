@@ -244,11 +244,19 @@ Duas correções de leitura, ambas verificadas em navegador antes e depois.
 Os detalhes do ponto do GeoPR saíram da coluna da direita e passaram a ficar
 abaixo do mapa, na mesma coluna do desenho. A pergunta nasce olhando para o
 símbolo clicado; a resposta estava do outro lado da tela, no meio da lista de
-camadas. O bloco recebeu a mesma moldura do mapa, e a coluna inteira passou a
-acompanhar a rolagem, limitada à altura visível, com a lista de atributos
-rolando por dentro. Sem esse teto, um ponto com muitos registros deixaria a
-coluna maior que a tela e o seu rodapé ficaria inalcançável. Em 390 px a ordem
-continua busca, mapa, detalhes e camadas, sem rolagem interna.
+camadas. O bloco recebeu a mesma moldura do mapa. Em telas com pelo menos
+981 px de largura e 800 px de altura a coluna acompanha a rolagem e limita a
+lista de atributos à altura visível. Em notebooks largos e baixos a coluna
+permanece no fluxo normal, para que o mapa não deixe os detalhes sem espaço. A
+rolagem interna também deixa a rolagem da página prosseguir quando chega ao
+fim. Em 390 px a ordem continua busca, mapa, detalhes e camadas.
+
+A pesquisa do mapa agora tem uma única caixa, acima do desenho. Ela reconhece
+coordenada, município, empreendimento, bacia, APP, unidade de conservação,
+zoneamento, camadas curadas e nomes do catálogo oficial. A segunda caixa
+"Buscar no acervo do GeoPR", que repetia parte da mesma função e confundia o
+fluxo, foi removida. Os detalhes expostos após a seleção também recuperaram a
+hierarquia semântica correta de títulos.
 
 O quadro de vídeo da abertura deixou de ser cortado. Medido em 1440 px, o
 cartão de "Continue de onde parou" tem 447 × 374, ou seja 1,196, e o quadro da
@@ -259,20 +267,23 @@ preencher o cartão.
 
 As provas locais desta rodada são:
 
-- 72 arquivos de teste e 652 testes aprovados, com todos os portões encadeados
+- 73 arquivos de teste e 653 testes aprovados, com todos os portões encadeados
   de `pnpm test`;
-- `pnpm build` e auditoria premium aprovados, em 38 chunks, 873,0/960,0 KiB de
-  JavaScript bruto e 284,3/320,0 KiB compactado; CSS inicial em 187,7/205,0 KiB
-  bruto e 33,7/38,0 KiB compactado; CSS total em 269,8/300,0 KiB bruto e
-  50,2/58,0 KiB compactado;
-- 70 cenários Playwright aprovados sobre o artefato e 30 omissões previstas
+- `pnpm build` e auditoria premium aprovados, em 38 chunks, 871,3/960,0 KiB de
+  JavaScript bruto e 283,8/320,0 KiB compactado; CSS inicial em 187,7/205,0 KiB
+  bruto e 33,7/38,0 KiB compactado; CSS total em 269,5/300,0 KiB bruto e
+  50,1/58,0 KiB compactado;
+- 71 cenários Playwright aprovados sobre o artefato e 34 omissões previstas
   pela matriz de projeto, largura e capacidade aplicável;
+- um cenário PWA aprovado contra o Service Worker local e 32 testes da
+  ferramenta de publicação aprovados;
 - inspeção em navegador real, em 1440 e 390 px, nos temas claro e escuro, com o
   serviço oficial do GeoPR respondendo, sem erro de console e sem rolagem
-  horizontal.
+  horizontal; o contrato de notebook largo e baixo também foi exercitado em
+  1366 × 700 px.
 
 Dois orçamentos permanecem em atenção e sem regressão nesta rodada: o CSS
-inicial em 91,5% do teto bruto e o JavaScript total em 90,9%. A próxima
+inicial em 91,6% do teto bruto e o JavaScript total em 90,8%. A próxima
 ampliação visual precisa recuperar margem ou permanecer sob demanda.
 
 ## Serviços separados

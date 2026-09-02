@@ -286,6 +286,68 @@ Dois orçamentos permanecem em atenção e sem regressão nesta rodada: o CSS
 inicial em 91,6% do teto bruto e o JavaScript total em 90,8%. A próxima
 ampliação visual precisa recuperar margem ou permanecer sob demanda.
 
+### Candidato local de 02/09/2026 — guia de hidrelétricas consolidado
+
+A seção "Anatomia" repetia, num desenho próprio, o que o corte técnico já
+mostrava. As duas representações foram unificadas: o corte principal passou a
+identificar 17 equipamentos ao longo de 8 estágios do percurso da água, e a
+duplicação saiu. Barramentos agora distinguem o corte da vista em planta e
+nomeiam núcleo, ombreiras, contrafortes, face e camadas, em vez de apresentar
+um desenho único sem referência de ponto de vista. Turbinas mantêm o esquema ao
+lado da fotografia anotada, e arranjos preservam os rótulos na rolagem
+horizontal orientada. O guia tem 10 seções.
+
+Sete mídias legadas sem nenhuma referência ativa saíram do acervo publicado:
+4.205.428 bytes, cerca de 4,0 MiB. A remoção está registrada na governança de
+mídia, e um contrato de arquitetura confere que `main` e a tela de aula não
+voltam a citar `tour-usina.mp4`, a maior delas. As outras seis contam apenas
+com o portão de governança e com a checagem de referências.
+
+A faixa rolável de atalhos do guia passou a existir só onde ela resolve algo. No
+celular a largura não comporta os dez rótulos, e a faixa continua. No desktop
+eles cabem, então quebram em linha e aparecem de uma vez. O motivo é mais que
+estético: manter a faixa no desktop obrigava a descobrir se o item ativo tinha
+saído da parte visível e a rolar até ele, um cálculo que dependia do ancestral
+rolável e do scroll-snap. Ele reprovou a regressão de navegador três vezes
+seguidas, sempre e somente no desktop do runner, enquanto as quatro larguras
+estreitas passavam. Sem faixa não há item fora da vista, e o efeito nem dispara.
+
+As provas locais desta rodada são:
+
+- 73 arquivos de teste e 655 testes aprovados, com todos os portões encadeados
+  de `pnpm test`, inclusive governança de mídia, referências, CSS morto, escala,
+  tipografia, normas e smoke;
+- `pnpm build` aprovado em 38 chunks, com 854,4/960,0 KiB de JavaScript bruto e
+  279,3/320,0 KiB compactado; CSS inicial em 184,4/205,0 KiB bruto e
+  33,0/38,0 KiB compactado; CSS total em 264,5/300,0 KiB bruto e 49,2/58,0 KiB
+  compactado;
+- 70 cenários Playwright aprovados sobre o artefato e 30 omissões previstas pela
+  matriz de projeto, largura e capacidade aplicável, incluindo o cenário do guia
+  que vinha reprovando no desktop;
+- inspeção em navegador real do artefato construído, em 1440 e 375 px, com a
+  faixa confirmada só no celular e os dez atalhos visíveis no desktop, sem
+  rolagem horizontal de página.
+
+O cenário PWA desta rodada foi aprovado pelo workflow público, e não localmente.
+Nesta máquina Windows ele reprova de forma reprodutível na etapa de atualização
+com consentimento: depois da troca para a versão 2, nenhum Service Worker chega
+ao estado `waiting` dentro do prazo. Os arquivos do teste e do executor local
+não mudam desde `23c648a`, e a mesma etapa aprovou no Linux em `56db5fb`,
+`e857e11` e nesta rodada. O sintoma é do executor local, não do produto, mas
+enquanto não for corrigido a verificação de PWA nesta máquina não vale como
+prova.
+
+A consolidação recuperou margem de orçamento: o CSS inicial caiu de 91,6% para
+90,0% do teto bruto e o JavaScript total, de 90,8% para 89,0%. Os dois seguem
+em atenção.
+
+Uma pendência conhecida ficou aberta por esta rodada. `tools/build_tour_video.py`
+e a função `do_tour` de `tools/build_narration.py` geram `tour-usina.mp4`, que
+foi removido. São ferramentas de geração, fora do artefato publicado e fora do
+caminho de teste, mas quem executar `build_narration.py` hoje encontra falha na
+etapa do tour. A decisão entre regenerar a peça ou aposentar os dois geradores é
+editorial e não foi tomada aqui.
+
 ## Serviços separados
 
 | Serviço | Repositório | Estado comprovado | Não confundir com |

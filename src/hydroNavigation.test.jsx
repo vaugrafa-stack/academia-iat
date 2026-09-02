@@ -100,6 +100,12 @@ describe('navegação local do guia de hidrelétricas', () => {
     await act(async () => root.render(<HydroLocalNav />));
 
     const buttons = [...host.querySelectorAll('[data-hydro-nav-target]')];
+    const links = host.querySelector('.hydro-guide-nav__links');
+    const scrollLinksTo = vi.fn();
+    Object.defineProperty(links, 'scrollLeft', { configurable: true, value: 40 });
+    links.scrollTo = scrollLinksTo;
+    links.getBoundingClientRect = () => ({ left: 200, right: 600 });
+    buttons[4].getBoundingClientRect = () => ({ left: 640, right: 760 });
     expect(buttons).toHaveLength(HYDRO_SECTIONS.length);
     expect(host.querySelector('[role="progressbar"]')?.getAttribute('aria-valuenow')).toBe('1');
 
@@ -116,6 +122,7 @@ describe('navegação local do guia de hidrelétricas', () => {
       block: 'start',
       inline: 'nearest',
     });
+    expect(scrollLinksTo).toHaveBeenCalledWith({ behavior: 'smooth', left: 340 });
     expect(scrollTo).toHaveBeenCalledWith({ behavior: 'auto', top: 2816 });
     expect(targets.every((target) => target.style.contentVisibility === '')).toBe(true);
     expect(document.activeElement).toBe(targets[4]);

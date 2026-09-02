@@ -306,8 +306,14 @@ export function HydroLocalNav() {
     if (!outside) return;
 
     const reducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+    // offsetLeft pode ser relativo ao nav sticky, e não à própria faixa.
+    // Calcular o deslocamento pelos retângulos visíveis evita que o último
+    // item permaneça cortado quando a grade também contém o resumo lateral.
+    const centerDelta = (
+      (activeBox.left + activeBox.right) - (linksBox.left + linksBox.right)
+    ) / 2;
     links.scrollTo({
-      left: Math.max(0, active.offsetLeft - (links.clientWidth - active.offsetWidth) / 2),
+      left: Math.max(0, links.scrollLeft + centerDelta),
       behavior: reducedMotion ? 'auto' : 'smooth',
     });
   }, [reading.activeId]);

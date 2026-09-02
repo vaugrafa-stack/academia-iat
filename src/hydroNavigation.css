@@ -3,9 +3,9 @@
   top: calc(var(--top) + 8px);
   z-index: 24;
   display: grid;
-  grid-template-columns: auto minmax(0, 1fr);
+  grid-template-columns: 1fr;
   align-items: center;
-  gap: 8px 18px;
+  gap: 2px;
   min-width: 0;
   padding: 9px 12px 0;
   border: 1px solid color-mix(in srgb, var(--green) 22%, var(--line));
@@ -144,10 +144,23 @@
   contain-intrinsic-size: auto 720px;
 }
 
+/* No desktop os dez atalhos cabem em duas linhas, e a faixa rolável some.
+   Ela existia para o celular, onde a largura nao comporta a lista inteira;
+   no desktop ela so criava um estado a manter: descobrir se o item ativo
+   ficou fora da parte visível e rolar ate ele. Esse calculo dependia do
+   ancestral rolavel e do scroll-snap, variava entre plataformas e reprovava
+   a regressao de navegador somente no desktop do runner. Sem faixa, nao ha
+   item fora da vista, o efeito de rolagem nem chega a disparar e as dez
+   secoes ficam visiveis de uma vez. */
+@media (min-width: 981px) {
+  .hydro-guide-nav__links {
+    flex-wrap: wrap;
+    overflow-x: visible;
+  }
+}
+
 @media (max-width: 980px) {
   .hydro-guide-nav {
-    grid-template-columns: 1fr;
-    gap: 2px;
     padding-top: 7px;
   }
 

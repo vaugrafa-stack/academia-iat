@@ -170,19 +170,19 @@ test('corte hidrelétrico interativo carrega o ativo original e responde em qual
   const cutaway = page.locator('.hec-shell');
   await expect(cutaway).toBeVisible();
   await expect(cutaway.getByRole('heading', {
-    name: 'Usina hidrelétrica em operação',
+    name: 'Funcionamento e anatomia de uma usina hidrelétrica',
   })).toBeVisible();
 
   const image = cutaway.locator('.hec-scene img');
   await expect(image).toHaveJSProperty('complete', true);
   await expect.poll(() => image.evaluate((node) => node.naturalWidth)).toBe(1600);
   await expect(cutaway.getByRole('tab')).toHaveCount(8);
-  await expect(cutaway.locator('.hec-callout')).toHaveCount(16);
-  await expect(cutaway.locator('.hec-leader')).toHaveCount(16);
-  await expect(cutaway.locator('.hec-equipment-key button')).toHaveCount(16);
+  await expect(cutaway.locator('.hec-callout')).toHaveCount(17);
+  await expect(cutaway.locator('.hec-leader')).toHaveCount(17);
+  await expect(cutaway.locator('.hec-equipment-key button')).toHaveCount(17);
 
   await cutaway.getByRole('tab', { name: /Transformação/ }).click();
-  await expect(cutaway.locator('.hec-stage-panel strong')).toHaveText('Transformador');
+  await expect(cutaway.locator('.hec-stage-panel > div > strong')).toHaveText('Transformador');
   await expect(cutaway).toHaveAttribute('data-playing', 'false');
   await expect(cutaway.getByRole('button', { name: /Reproduzir/ })).toBeVisible();
 
@@ -215,21 +215,21 @@ test('demais animações hidrelétricas mantêm identificação, controles e lei
     waitUntil: 'domcontentloaded',
   });
 
-  const anatomy = page.locator('#hydro-anatomia');
-  await anatomy.scrollIntoViewIfNeeded();
-  await expect(anatomy.locator('.cs-hot')).toHaveCount(9);
-  await expect(anatomy.locator('.cs-mobile-equipment button')).toHaveCount(9);
-  await anatomy.locator('.cd-nav').getByRole('button', { name: 'Vertedouro' }).click();
-  await expect(anatomy.locator('.cross-wrap')).toHaveAttribute('data-selected', 'vertedouro');
-  await expect(anatomy.locator('.cs-spill')).toHaveClass(/is-active/);
-  await expect(anatomy.locator('#hydro-anatomia-detail h3')).toHaveText('Vertedouro');
+  const cutaway = page.locator('#hydro-principio .hec-shell');
+  await cutaway.scrollIntoViewIfNeeded();
+  await expect(page.locator('#hydro-anatomia')).toHaveCount(0);
+  await expect(cutaway.locator('.hec-callout')).toHaveCount(17);
+  await expect(cutaway.locator('.hec-equipment-key button')).toHaveCount(17);
+  await cutaway.locator('button:visible').filter({ hasText: 'Vertedouro' }).click();
+  await expect(cutaway.locator('.hec-stage-panel')).toContainText('Vertedouro');
+  await expect(cutaway).toHaveAttribute('data-playing', 'false');
 
   const dams = page.locator('#hydro-barramentos');
   await dams.scrollIntoViewIfNeeded();
   await expect(dams.locator('.dam-selector [role="tab"]')).toHaveCount(6);
   await expect(dams.locator('.dam-stage .dam-mini')).toHaveCount(1);
   await dams.getByRole('tab', { name: /Enrocamento/ }).click();
-  await expect(dams.locator('.dam-selected-panel')).toContainText('Maciço de rocha');
+  await expect(dams.locator('.dam-selected-panel')).toContainText('Face de concreto e enrocamento');
 
   const turbines = page.locator('#hydro-turbinas');
   await turbines.scrollIntoViewIfNeeded();
@@ -253,11 +253,7 @@ test('demais animações hidrelétricas mantêm identificação, controles e lei
   await expect(arrangements.locator('.hcm-arrangement-stage svg')).toHaveCount(1);
   await expect(arrangements.locator('.hcm-equipment-key li')).toHaveCount(4);
 
-  if (viewport.width <= 720) {
-    await expect(anatomy.locator('.cs-rotulo').first()).toBeHidden();
-    await expect(anatomy.locator('.cs-hot').first()).toBeHidden();
-    await expect(anatomy.locator('.cs-mobile-equipment')).toBeVisible();
-  }
+  if (viewport.width <= 720) await expect(cutaway.locator('.hec-equipment-key')).toBeVisible();
   if (viewport.width <= 430) {
     await expect.poll(() => page.locator('html').evaluate((node) => (
       node.scrollWidth <= node.clientWidth + 1
@@ -265,7 +261,6 @@ test('demais animações hidrelétricas mantêm identificação, controles e lei
       message: 'as animações técnicas não podem alargar a página no celular',
     }).toBe(true);
     for (const selector of [
-      '.cross-explorer .hydro-motion-toggle',
       '.dam-explorer .hydro-motion-toggle',
       '.hcm-turbine-motion .hcm-play',
       '.hcm-arrangements .hcm-play',

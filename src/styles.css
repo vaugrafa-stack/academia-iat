@@ -132,56 +132,6 @@ button.sidebar-help{background:transparent;font:inherit;color:inherit;cursor:poi
 .energy-chain span{background:var(--green3);color:var(--green);font-weight:800;font-size:13px;padding:7px 13px;border-radius:var(--raio-4)}
 .energy-chain svg{width:16px;color:var(--muted)}
 .hydro-block{border:1px solid var(--line);border-radius:var(--raio-3);padding:22px;background:var(--surface)}
-.cross-layout{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:22px;margin-top:16px}
-.cross-wrap{position:relative;border:1px solid var(--line);border-radius:var(--raio-3);overflow:hidden}
-.cross-svg{width:100%;display:block}
-.cs-flow{stroke-dasharray:14 18;animation:csflow 1.1s linear infinite}
-/* Rotulo permanente do corte. A pastilha existe porque o desenho tem fundo
-   escuro no ceu e claro na agua, e um tom unico de texto falharia em metade
-   dele. O rotulo tambem seleciona a peca, entao ele e alvo de clique. */
-.cs-rotulo{cursor:pointer}
-.cs-rotulo line{stroke:#7fd8bd;stroke-width:1.2;opacity:.75}
-.cs-rotulo rect{fill:#0d1714;stroke:#3fe0a6;stroke-width:1;opacity:.9}
-.cs-rotulo text{fill:#d8f5ea;font:700 12.5px/1 Manrope,Segoe UI,Arial,sans-serif;dominant-baseline:middle}
-.cs-rotulo:hover rect,.cs-rotulo.ativo rect{fill:#12312a;stroke:#6fffd0;opacity:1}
-.cs-rotulo:hover line,.cs-rotulo.ativo line{opacity:1;stroke-width:1.6}
-.cs-rotulo.ativo text{fill:#fff}
-@keyframes csflow{to{stroke-dashoffset:-32}}
-.cs-spill{stroke-dasharray:5 12;animation:csflow 1.6s linear infinite}
-.cs-turbine{transform-box:fill-box;transform-origin:center;animation:csspin 2.6s linear infinite}
-@keyframes csspin{to{transform:rotate(360deg)}}
-/* O circuito so fecha se a energia sair da casa de forca. Antes disto, a agua
-   descia, girava a turbina e a geracao morria num traco parado: o desenho
-   mostrava meia usina. O periodo do pulso eletrico e bem menor que o da agua
-   porque eletricidade nao viaja na velocidade da vazao, e esse contraste entre
-   os dois ritmos e parte do que o corte ensina. */
-.cs-energia{stroke-dasharray:3 26;animation:csenergia .85s linear infinite}
-@keyframes csenergia{to{stroke-dashoffset:-29}}
-/* O gerador acende no mesmo compasso do cabo, para ligar causa e efeito. */
-.cs-gerador{animation:csgerador .85s ease-in-out infinite}
-@keyframes csgerador{0%,100%{opacity:.45;r:6}50%{opacity:1;r:7.6}}
-/* Amplitude minima e periodo longo: reservatorio nao tem correnteza visivel,
-   tem respiracao. Deslocar 62 fecha um ciclo inteiro da onda, entao a volta e
-   invisivel. */
-.cs-lamina{animation:cslamina 7s linear infinite}
-@keyframes cslamina{to{transform:translateX(-62px)}}
-.cs-hots{position:absolute;top:0;left:0;width:100%;aspect-ratio:900/350;pointer-events:none}
-.cs-hot{position:absolute;width:44px;height:44px;transform:translate(-50%,-50%);border:0;background:none;padding:0;cursor:pointer;pointer-events:auto;display:grid;place-items:center}
-.cs-hot span{width:18px;height:18px;border-radius:50%;border:2px solid #fff;background:#0b201b59;box-shadow:0 0 0 1px #09181866,0 2px 6px #09181840;display:block;transition:transform .15s,background .15s}
-.cs-hot:hover span,.cs-hot:focus-visible span{transform:scale(1.16);background:#0b201bcc}
-.cs-hot::after{content:'';position:absolute;top:50%;left:50%;width:18px;height:18px;margin:-9px;border-radius:50%;border:2px solid #fff;opacity:.42;animation:cspulse 1.8s ease-out infinite;pointer-events:none}
-@keyframes cspulse{0%{transform:scale(.6);opacity:.7}100%{transform:scale(1.25);opacity:0}}
-.cs-hot.active span{background:var(--amber);border-color:#fff;transform:scale(1.16)}
-.cs-hot.active::after{border-color:var(--amber)}
-.cross-detail{border:1px solid var(--line);border-radius:var(--raio-3);padding:16px 18px;background:var(--soft)}
-.cd-head{display:flex;align-items:center;gap:10px;margin-bottom:6px}
-.cd-head svg{width:22px;color:var(--green)}
-.cd-head h3{margin:0;font-size:19px}
-.cd-resumo{font-weight:700;color:var(--green);font-size:14px;margin:4px 0}
-.cross-detail>p{font-size:14px;line-height:1.6;color:var(--ink2)}
-.cd-nav{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
-.cd-nav button{border:1px solid var(--line);background:var(--surface);border-radius:var(--raio-4);padding:5px 11px;font-size:12px;font-weight:700;cursor:pointer}
-.cd-nav button.active{background:var(--green);border-color:var(--green);color:#fff}
 .power-calc{margin-top:14px}
 .pc-formula{display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:19px;font-weight:800;color:var(--green);margin-bottom:14px}
 .pc-formula svg{width:20px}
@@ -243,7 +193,7 @@ button.sidebar-help{background:transparent;font:inherit;color:inherit;cursor:poi
 .hydro-cta>div{display:flex;align-items:center;gap:12px}
 .hydro-cta svg{width:26px;color:var(--green);flex:none}
 .hydro-cta p{margin:2px 0 0;font-size:13px;color:var(--ink2)}
-@media(max-width:980px){.hydro-hero,.cross-layout{grid-template-columns:1fr}.tp-scale{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:980px){.hydro-hero{grid-template-columns:1fr}.tp-scale{grid-template-columns:repeat(2,1fr)}}
 /* ===== Camada premium: profundidade, movimento e micro-interacoes ===== */
 :root{--shadow-1:0 1px 2px #0f2a2008,0 2px 8px #0f2a200a;--shadow-2:0 2px 6px #0f2a200d,0 10px 28px #0f2a2014;--shadow-3:0 6px 16px #0f2a2014,0 22px 48px #0f2a201f;--ease:cubic-bezier(.22,.9,.3,1)}
 .view-anim{animation:routeIn .18s var(--ease)}
@@ -306,6 +256,8 @@ button.primary:active{transform:translateY(0);box-shadow:0 2px 8px #16563C33}
 .fa-palco img{display:block;width:100%;height:100%;max-height:none;object-fit:cover}
 .fa-camada{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
 .fa-rot{fill:none;stroke:#8fe3cf;stroke-width:4;stroke-linecap:round;opacity:.92}
+@keyframes csflow{to{stroke-dashoffset:-32}}
+@keyframes csspin{to{transform:rotate(360deg)}}
 .fa-jato{stroke:#8fdcff;stroke-width:6;stroke-linecap:round;fill:none;stroke-dasharray:9 11;animation:csflow .7s linear infinite}
 .fa-fluxo{stroke:#8fdcff;stroke-width:4.5;stroke-linecap:round;fill:none;stroke-dasharray:8 10;animation:csflow 1.5s linear infinite}
 .fa-alvo{fill:none;stroke:#ffd479;stroke-width:2.5;transform-box:fill-box;transform-origin:center;animation:faAlvo 2.4s ease-in-out infinite}
@@ -488,8 +440,6 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
 .energy-chain span:nth-child(3){animation-delay:.08s}
 .energy-chain span:nth-child(5){animation-delay:.16s}
 .energy-chain span:nth-child(7){animation-delay:.24s}
-/* painel do corte troca com fade (key remonta) */
-.cross-detail{animation:tabIn .3s var(--ease) both}
 .prc-wide{grid-column:1/-1}
 .prc-fotos{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px;margin:6px 0}
 .prc-fotos figure{margin:0;border:1px solid var(--line);border-radius:var(--raio-3);overflow:hidden;background:var(--surface)}
@@ -588,7 +538,7 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
 /* marca com tema de ensino */
 .brand-hydro{width:100%;max-width:150px}
 /* ===== Profundidade nos clicaveis ===== */
-.track-summary,.module-tests button,.flow-menu button,.library-tabs button,.tg-tabs button,.variant-tabs button,.lesson-list button,.leis-list button,.leis-cites button,.quiz-options button,.lab-evidence button,.cd-nav button,.user-list li,.cert-modules li{box-shadow:0 1px 2px #0f2a200a,inset 0 1px 0 #ffffffcc}
+.track-summary,.module-tests button,.flow-menu button,.library-tabs button,.tg-tabs button,.variant-tabs button,.lesson-list button,.leis-list button,.leis-cites button,.quiz-options button,.lab-evidence button,.user-list li,.cert-modules li{box-shadow:0 1px 2px #0f2a200a,inset 0 1px 0 #ffffffcc}
 .module-tests button:active,.flow-menu button:active,.tg-tabs button:active,.variant-tabs button:active,.quiz-options button:not(:disabled):active,.lab-evidence button:active{transform:translateY(1px);box-shadow:inset 0 2px 4px #0f2a2014}
 .lesson-tabs button:active,.library-tabs button:active{transform:translateY(1px)}
 button.primary:active{box-shadow:inset 0 2px 6px #04231c40}
@@ -624,7 +574,7 @@ button.primary:active{box-shadow:inset 0 2px 6px #04231c40}
 @media(max-width:640px){.arr-grid,.prc-grid,.tg-body,.lic-cols{grid-template-columns:1fr}.page{padding:24px 14px 60px}}
 /* ===== Ajustes finos mobile ===== */
 @media(max-width:560px){
-  .tg-body,.cross-layout,.hydro-hero,.leis-view,.prc-fotos{grid-template-columns:1fr}
+  .tg-body,.hydro-hero,.leis-view,.prc-fotos{grid-template-columns:1fr}
   .page-header{gap:10px}
   .page-header span{width:40px;height:40px}
   .page-header h1{font-size:26px}
@@ -686,7 +636,7 @@ input::placeholder,textarea::placeholder{color:var(--muted)}
 .top-progress i,.track-metrics i,.context-progress i,.decision-readiness i,.quiz-top i,.leis-list,.cert-bar{background:var(--track)}
 .pring{background:conic-gradient(var(--green) calc(var(--v)*1% - .5%),var(--track) calc(var(--v)*1% + .5%))}
 /* cartoes ganham leve profundidade de vidro */
-.hydro-block,.pot-card,.res-card,.prc-card,.leis-detail,.profile-card,.support-faq-item,.support-diagnostic,.support-contact,.turb-picker,.tg-info,.lab-canvas,.lab-inspector,.quiz-question,.quiz-options button,.module-tests button,.case-summary,.debrief,.context-sticky,.data-table,.lesson-checklist,.lesson-children,.notes-panel,.material-figure,.answer-feedback,.cross-detail,.arr-grid figure,.tg-schema,.tg-photo{background:var(--surface);border-color:var(--line)}
+.hydro-block,.pot-card,.res-card,.prc-card,.leis-detail,.profile-card,.support-faq-item,.support-diagnostic,.support-contact,.turb-picker,.tg-info,.lab-canvas,.lab-inspector,.quiz-question,.quiz-options button,.module-tests button,.case-summary,.debrief,.context-sticky,.data-table,.lesson-checklist,.lesson-children,.notes-panel,.material-figure,.answer-feedback,.arr-grid figure,.tg-schema,.tg-photo{background:var(--surface);border-color:var(--line)}
 /* botoes-pilula e navegacao */
 .sidebar-v2 nav button{color:var(--ink2)}
 .sidebar-v2 nav button:hover{background:rgba(255,255,255,.05);color:var(--ink)}
@@ -719,14 +669,14 @@ button:focus-visible,input:focus-visible,textarea:focus-visible,a:focus-visible,
 :root[data-theme="light"] .sidebar-v2{background:#fff;border-right:1px solid var(--line)}
 :root[data-theme="light"] input:not([type=range]),:root[data-theme="light"] textarea,:root[data-theme="light"] select,:root[data-theme="light"] .global-search{background:#fff}
 /* diagramas tecnicos sempre em painel escuro (tracos sao claros) */
-.cross-wrap,.turb-svg,.dam-mini,.arr-svg,.sfp-scroll{background:#141f1b!important}
+.turb-svg,.dam-mini,.arr-svg,.sfp-scroll{background:#141f1b!important}
 
 .theme-toggle{width:auto;min-width:40px;padding:0 12px;gap:8px;height:40px;border-radius:var(--raio-2);border:1px solid var(--line);background:var(--surface2);color:var(--ink2);display:inline-flex;align-items:center;justify-content:center;cursor:pointer;transition:background .18s var(--ease),color .18s var(--ease),transform .18s var(--ease)}
 .theme-toggle:hover{color:var(--green2);transform:translateY(-1px)}
 
 .tg-schema figcaption{flex-direction:column;align-items:flex-start;gap:3px}
-.tg-cap-t{font-weight:700;color:var(--ink2)}
-.tg-cap-d{color:var(--muted);line-height:1.5}
+.tg-cap-t{font-weight:700;color:#f3fffa}
+.tg-cap-d{color:#c8dcd3;line-height:1.5}
 
 /* ===== Ajustes finos de celular ===== */
 @media(max-width:640px){
@@ -751,7 +701,7 @@ button:focus-visible,input:focus-visible,textarea:focus-visible,a:focus-visible,
   .decision-path{padding-bottom:6px}
   /* alvos de toque confortaveis */
   .sidebar-v2 nav button{min-height:46px}
-  .cd-nav button,.tg-tabs button{min-height:38px}
+  .tg-tabs button{min-height:38px}
 }
 @media(max-width:640px){
   /* a marca cede espaco para que busca, tema e avatar sempre caibam */
@@ -818,7 +768,6 @@ button:focus-visible,input:focus-visible,textarea:focus-visible,a:focus-visible,
 :root{--sobre-acento:#08231b}
 :root:not([data-theme="light"]) .tg-tabs button.active,
 :root:not([data-theme="light"]) .variant-tabs button.active,
-:root:not([data-theme="light"]) .cd-nav button.active,
 :root:not([data-theme="light"]) .flow-mode-tabs button.active,
 :root:not([data-theme="light"]) .tp-band.rec,
 :root:not([data-theme="light"]) .tp-band.rec .tp-name,

@@ -3625,6 +3625,48 @@
       "rightsBasis": "conteudo derivado da minuta institucional do proprio IAT; narracao em voz sintetica Piper offline, sem locutor humano e sem material de terceiros",
       "reviewedBy": "portoes tecnicos automatizados desta rodada (check-videoaulas, check-media-governance, check-public-editorial-policy); aprovacao humana institucional pendente",
       "reviewedAt": "2026-08-15"
+    },
+    {
+      "cycle": "2026-08",
+      "action": "remove",
+      "path": "public/hidro/arranjos.png",
+      "reason": "ilustracao estatica antiga sem referencia; substituida pelos arranjos vetoriais animados e identificados"
+    },
+    {
+      "cycle": "2026-08",
+      "action": "remove",
+      "path": "public/hidro/componentes.png",
+      "reason": "ilustracao estatica antiga sem referencia; substituida pelo corte interativo com identificacao dos equipamentos"
+    },
+    {
+      "cycle": "2026-08",
+      "action": "remove",
+      "path": "public/hidro/fluxo-tecnico.png",
+      "reason": "ilustracao estatica antiga sem referencia; substituida pelas camadas vetoriais animadas do fluxo tecnico"
+    },
+    {
+      "cycle": "2026-08",
+      "action": "remove",
+      "path": "public/hidro/funcionamento.gif",
+      "reason": "animacao antiga sem referencia, sem controles ou identificacao equivalente ao componente atual"
+    },
+    {
+      "cycle": "2026-08",
+      "action": "remove",
+      "path": "public/media/tour-usina-poster.png",
+      "reason": "poster do tour legado sem referencia na aplicacao"
+    },
+    {
+      "cycle": "2026-08",
+      "action": "remove",
+      "path": "public/media/tour-usina.mp4",
+      "reason": "tour legado sem referencia; substituido pelo corte interativo acessivel e responsivo"
+    },
+    {
+      "cycle": "2026-08",
+      "action": "remove",
+      "path": "public/media/tour-usina.vtt",
+      "reason": "legenda vinculada exclusivamente ao tour legado removido"
     }
   ]
 }

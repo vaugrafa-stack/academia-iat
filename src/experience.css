@@ -353,19 +353,6 @@ button.secondary svg { width: 17px; }
   min-inline-size: var(--target-min);
 }
 
-/* O ponto continua visualmente compacto, mas a área interativa cresce. */
-.cs-hot {
-  width: var(--target-min);
-  height: var(--target-min);
-  border-width: 8px;
-  border-color: color-mix(in srgb, var(--surface) 88%, transparent);
-  background-clip: padding-box;
-}
-
-.cs-hot:focus-visible {
-  outline-offset: 3px;
-}
-
 /* Percursos orientados por tarefa: uma entrada para o novato sem criar uma
    segunda grade curricular nem sugerir certificação de competência. */
 .learning-paths {

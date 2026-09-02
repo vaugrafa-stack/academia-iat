@@ -37,43 +37,35 @@ function setRangeValue(range, value) {
 }
 
 describe('sistema de movimento da rota Hidrelétricas', () => {
-  it('identifica os nove equipamentos da Anatomia no corte e na legenda móvel', async () => {
+  it('consolida funcionamento e anatomia no corte realista de dezessete equipamentos', async () => {
     const host = await mountGuide();
 
-    expect(host.querySelectorAll('.cs-hot')).toHaveLength(9);
-    expect(host.querySelectorAll('.cs-mobile-equipment button')).toHaveLength(9);
-    expect(host.querySelector('.cross-wrap')?.dataset.selected).toBe('turbina');
-    expect(host.querySelector('.cross-stage-label')?.textContent).toContain('Turbina + gerador');
-    expect(host.querySelector('.cs-focus-ring')).not.toBeNull();
+    expect(host.querySelector('#hydro-anatomia')).toBeNull();
+    expect(host.querySelectorAll('.hec-callout')).toHaveLength(17);
+    expect(host.querySelectorAll('.hec-equipment-key button')).toHaveLength(17);
+    expect(host.querySelector('.hec-heading')?.textContent)
+      .toContain('Funcionamento e anatomia de uma usina hidrelétrica');
   });
 
-  it('destaca a peça selecionada e só ativa o vertedouro no contexto de cheia', async () => {
+  it('seleciona equipamento, pausa e altera a velocidade no corte consolidado', async () => {
     const host = await mountGuide();
-    const vertedouro = [...host.querySelectorAll('.cs-mobile-equipment button')]
+    const shell = host.querySelector('.hec-shell');
+    const vertedouro = [...host.querySelectorAll('.hec-equipment-key button')]
       .find((button) => button.textContent.includes('Vertedouro'));
 
-    expect(host.querySelector('.cs-spill')?.classList.contains('is-active')).toBe(false);
+    expect(shell?.dataset.playing).toBe('true');
     await act(async () => vertedouro.click());
 
-    expect(host.querySelector('.cross-wrap')?.dataset.selected).toBe('vertedouro');
-    expect(host.querySelector('.cs-spill')?.classList.contains('is-active')).toBe(true);
-    expect(host.querySelector('#hydro-anatomia-detail h3')?.textContent).toBe('Vertedouro');
-  });
+    expect(shell?.dataset.playing).toBe('false');
+    expect(host.querySelector('.hec-stage-panel > div > strong')?.textContent).toContain('Vertedouro');
+    expect(host.querySelector('[id$="-equipment-description"]')?.textContent)
+      .toContain('excedente');
 
-  it('pausa e altera a velocidade de todas as camadas da Anatomia', async () => {
-    const host = await mountGuide();
-    const explorer = host.querySelector('.cross-explorer');
-    const stage = explorer.querySelector('.cross-wrap');
-    const toggle = explorer.querySelector('.hydro-motion-toggle');
-    const speed = explorer.querySelector('.hydro-motion-speed input');
+    const speed = host.querySelector('.hec-flow-control input');
+    await act(async () => setRangeValue(speed, 80));
 
-    expect(stage.dataset.playing).toBe('true');
-    await act(async () => toggle.click());
-    expect(stage.dataset.playing).toBe('false');
-
-    await act(async () => setRangeValue(speed, 2));
-    expect(stage.style.getPropertyValue('--hydro-motion-scale')).toBe('0.500');
-    expect(speed.getAttribute('aria-valuetext')).toContain('2 vezes');
+    expect(speed.getAttribute('aria-valuetext')).toBe('80% da velocidade visual');
+    expect(shell.style.getPropertyValue('--hec-flow-duration')).toBeTruthy();
   });
 
   it('amplia um barramento por vez e oferece navegação de tabs por teclado', async () => {

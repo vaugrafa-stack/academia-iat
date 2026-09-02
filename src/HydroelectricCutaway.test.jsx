@@ -21,12 +21,12 @@ afterEach(async () => {
   vi.unstubAllGlobals();
 });
 
-async function mount() {
+async function mount(ui = <HydroelectricCutaway />) {
   const host = document.createElement('div');
   document.body.append(host);
   const root = createRoot(host);
   roots.push(root);
-  await act(async () => root.render(<HydroelectricCutaway />));
+  await act(async () => root.render(ui));
   return host;
 }
 
@@ -35,7 +35,7 @@ describe('corte animado da usina hidrelétrica', () => {
     const html = renderToStaticMarkup(<HydroelectricCutaway />);
 
     expect(CUTAWAY_STAGES).toHaveLength(8);
-    expect(CUTAWAY_EQUIPMENT).toHaveLength(16);
+    expect(CUTAWAY_EQUIPMENT).toHaveLength(17);
     expect(html).toContain('/hidro/usina-corte-realista.webp');
     expect(html).toContain('data-visual-layer="base-estatica"');
     expect(html).toContain('Base ilustrada estática');
@@ -45,23 +45,26 @@ describe('corte animado da usina hidrelétrica', () => {
     expect(html).toContain('data-motion-layer="eixo"');
     expect(html).toContain('data-motion-layer="gerador"');
     expect(html).toContain('data-motion-layer="energia"');
-    expect(html).toContain('Corte de uma usina: a água sai do reservatório');
+    expect(html).toContain('Corte interativo que reúne funcionamento e anatomia de uma usina');
+    expect(html).toContain('Funcionamento e anatomia de uma usina hidrelétrica');
+    expect(html).toContain('selecione cada equipamento para entender sua função no conjunto');
     expect(html).toContain('role="tablist"');
     expect(html).toContain('alt=""');
     expect(html).not.toContain('<text');
     for (const equipment of CUTAWAY_EQUIPMENT) expect(html).toContain(equipment.name);
   });
 
-  it('expõe dezesseis chamadas com linhas-guia e uma legenda móvel completa', async () => {
+  it('expõe dezessete chamadas com linhas-guia e uma legenda móvel completa', async () => {
     const host = await mount();
 
-    expect(host.querySelectorAll('.hec-callout')).toHaveLength(16);
-    expect(host.querySelectorAll('.hec-leader')).toHaveLength(16);
-    expect(host.querySelectorAll('.hec-equipment-key button')).toHaveLength(16);
+    expect(host.querySelectorAll('.hec-callout')).toHaveLength(17);
+    expect(host.querySelectorAll('.hec-leader')).toHaveLength(17);
+    expect(host.querySelectorAll('.hec-equipment-key button')).toHaveLength(17);
     expect([...host.querySelectorAll('.hec-equipment-key button')].map((button) => button.textContent))
       .toEqual(expect.arrayContaining([
         expect.stringContaining('Reservatório a montante'),
         expect.stringContaining('Barragem'),
+        expect.stringContaining('Vertedouro'),
         expect.stringContaining('Grade de proteção'),
         expect.stringContaining('Comporta'),
         expect.stringContaining('Tomada d’água'),
@@ -69,6 +72,44 @@ describe('corte animado da usina hidrelétrica', () => {
         expect.stringContaining('Tubo de sucção'),
         expect.stringContaining('Linhas de transmissão'),
       ]));
+  });
+
+  it('descreve individualmente os dezessete equipamentos no painel selecionado', async () => {
+    const host = await mount();
+    const buttons = [...host.querySelectorAll('.hec-equipment-key button')];
+
+    expect(CUTAWAY_EQUIPMENT.every((equipment) => equipment.description.length > 30)).toBe(true);
+    expect(new Set(CUTAWAY_EQUIPMENT.map((equipment) => equipment.description))).toHaveLength(17);
+
+    for (const [index, equipment] of CUTAWAY_EQUIPMENT.entries()) {
+      await act(async () => buttons[index].click());
+      expect(host.querySelector('.hec-stage-panel > div > strong')?.textContent).toBe(equipment.name);
+      expect(host.querySelector('[id$="-equipment-description"]')?.textContent).toBe(equipment.description);
+      expect(host.querySelector('[id$="-stage-description"]')?.textContent)
+        .toContain(CUTAWAY_STAGES.find((stage) => stage.id === equipment.stageId)?.description);
+    }
+  });
+
+  it('mantém ids e referências ARIA exclusivos em cada instância', async () => {
+    const host = await mount(<><HydroelectricCutaway /><HydroelectricCutaway /></>);
+    const shells = [...host.querySelectorAll('.hec-shell')];
+
+    expect(shells).toHaveLength(2);
+    const idSets = shells.map((shell) => new Set(
+      [...shell.querySelectorAll('[id]')].map((element) => element.id),
+    ));
+    expect([...idSets[0]].some((id) => idSets[1].has(id))).toBe(false);
+
+    for (const [shellIndex, shell] of shells.entries()) {
+      const ownIds = idSets[shellIndex];
+      expect(ownIds.size).toBeGreaterThan(10);
+      for (const attribute of ['aria-controls', 'aria-labelledby', 'aria-describedby']) {
+        for (const element of shell.querySelectorAll(`[${attribute}]`)) {
+          const references = element.getAttribute(attribute).trim().split(/\s+/);
+          expect(references.every((id) => ownIds.has(id))).toBe(true);
+        }
+      }
+    }
   });
 
   it('permite localizar um equipamento e pausa o percurso guiado', async () => {

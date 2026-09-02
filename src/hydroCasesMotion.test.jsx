@@ -46,6 +46,26 @@ async function setRangeValue(range, value) {
 }
 
 describe('galeria animada de turbinas', () => {
+  it('mantém fotos anotadas leves, legíveis e sem colisão de marcadores SVG', async () => {
+    const { host } = await mount(<><TurbineGallery /><TurbineGallery /></>);
+    const photos = [...host.querySelectorAll('.fa-palco img')];
+    const markers = [...host.querySelectorAll('.fa-camada marker')];
+
+    expect(photos).toHaveLength(2);
+    expect(photos.every((image) => image.getAttribute('loading') === 'lazy')).toBe(true);
+    expect(photos.every((image) => image.getAttribute('decoding') === 'async')).toBe(true);
+    expect(photos.every((image) => image.width > 0 && image.height > 0)).toBe(true);
+    expect(new Set(markers.map((marker) => marker.id)).size).toBe(2);
+    expect(host.querySelectorAll('.fa-mobile-callouts li').length).toBeGreaterThan(0);
+
+    for (const layer of host.querySelectorAll('.fa-camada')) {
+      const markerId = layer.querySelector('marker').id;
+      expect([...layer.querySelectorAll('[marker-end]')].every((node) => (
+        node.getAttribute('marker-end') === `url(#${markerId})`
+      ))).toBe(true);
+    }
+  });
+
   it('funciona sem props e oferece tabs acessíveis por teclado', async () => {
     const { host } = await mount(<TurbineGallery />);
     const tabs = [...host.querySelectorAll('[role="tab"]')];
@@ -160,6 +180,9 @@ describe('arranjos e usina reversível', () => {
 
     expect(host.querySelectorAll('[role="tab"]')).toHaveLength(3);
     expect(host.querySelectorAll('.hcm-arrangement-stage .arr-svg')).toHaveLength(1);
+    expect(host.querySelector('.hcm-arrangement-canvas')).not.toBeNull();
+    expect(host.querySelectorAll('.hcm-arrangement-stage .hcm-svg-label').length).toBeGreaterThan(0);
+    expect(host.querySelector('.hcm-mobile-scroll-hint')?.textContent).toContain('Deslize');
     expect(host.querySelectorAll('.hcm-equipment-key li')).toHaveLength(4);
     expect(host.querySelector('.hcm-current-state')?.textContent).toContain('Pé de barragem');
 
@@ -196,6 +219,7 @@ describe('arranjos e usina reversível', () => {
 
     await act(async () => pump.click());
     expect(surface.dataset.reversibleMode).toBe('pump');
+    expect(surface.dataset.automaticPhase).toBe('false');
     expect(pump.getAttribute('aria-pressed')).toBe('true');
     expect(surface.querySelector('.hcm-current-state')?.textContent).toContain('Modo em destaque: Bombeamento');
   });

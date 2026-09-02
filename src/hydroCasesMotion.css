@@ -372,6 +372,13 @@
   width: 100%;
 }
 
+.hcm-arrangement-canvas {
+  width: 100%;
+  overflow-x: auto;
+  overscroll-behavior-inline: contain;
+  scrollbar-width: thin;
+}
+
 .hcm-arrangement-stage .arr-svg {
   width: 100%;
   min-height: 300px;
@@ -382,6 +389,26 @@
   padding: 12px 14px;
   font-size: 13px;
   line-height: 1.5;
+}
+
+.hcm-mobile-scroll-hint {
+  display: none;
+  margin: 0;
+  color: var(--muted, #65736b);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.fa-mobile-callouts {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
 
 .hcm-arrangements .hcm-accumulation-band {
@@ -443,13 +470,45 @@
   }
 
   .hcm-arrangement-stage .arr-svg {
+    width: 680px;
+    min-width: 680px;
     min-height: 0;
   }
 
-  /* At phone widths the SVG labels become too small. The complete names and
-     functions remain immediately below in semantic HTML. */
-  .hcm-arrangement-stage .hcm-svg-label {
-    display: none;
+  .hcm-mobile-scroll-hint {
+    display: block;
+  }
+
+  .fa-mobile-callouts {
+    position: static;
+    width: auto;
+    height: auto;
+    padding: 10px 12px;
+    margin: 0;
+    overflow: visible;
+    clip: auto;
+    white-space: normal;
+    border-top: 1px solid rgba(255, 255, 255, .14);
+    background: #04231c;
+    color: #d8ebe4;
+    font-size: 12px;
+    line-height: 1.45;
+  }
+
+  .fa-mobile-callouts strong {
+    display: block;
+    margin-bottom: 5px;
+    color: #f3fffa;
+    font-size: 12px;
+  }
+
+  .fa-mobile-callouts ul {
+    margin: 0;
+    padding-left: 18px;
+  }
+
+  .fa-mobile-callouts li + li {
+    margin-top: 3px;
   }
 }
 

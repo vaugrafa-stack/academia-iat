@@ -31,8 +31,7 @@ describe("contratos incrementais de arquitetura", () => {
 
     expect(experience).toContain("--target-min: 44px");
     expect(experience).toMatch(/\.page\s*\{\s*animation:\s*none/);
-    expect(experience).toContain(".cs-hot");
-    expect(experience).toContain("width: var(--target-min)");
+    expect(experience).toContain("min-block-size: var(--target-min)");
   });
 
   it("mantém o domínio de fluxos fora do orquestrador e sob lazy loading", async () => {

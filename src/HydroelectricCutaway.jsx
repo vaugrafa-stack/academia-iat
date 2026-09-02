@@ -101,22 +101,74 @@ export const CUTAWAY_STAGES = Object.freeze([
 ]);
 
 export const CUTAWAY_EQUIPMENT = Object.freeze([
-  { id: 'reservatorio', name: 'Reservatório a montante', stageId: 'captacao', x: 8, y: 29, labelX: 7, labelY: 15 },
-  { id: 'barragem', name: 'Barragem', stageId: 'captacao', x: 30, y: 32, labelX: 30, labelY: 16 },
-  { id: 'grade', name: 'Grade de proteção', stageId: 'captacao', x: 18.5, y: 26, labelX: 8.5, labelY: 30 },
-  { id: 'comporta', name: 'Comporta', stageId: 'captacao', x: 20, y: 30.5, labelX: 9.5, labelY: 38 },
-  { id: 'tomada', name: 'Tomada d’água', stageId: 'captacao', x: 20.5, y: 35, labelX: 11.5, labelY: 46 },
-  { id: 'conduto', name: 'Conduto forçado', stageId: 'aducao', x: 36, y: 58, labelX: 23, labelY: 58 },
-  { id: 'casa-forca', name: 'Casa de força', stageId: 'gerador', x: 47, y: 27, labelX: 42, labelY: 19 },
-  { id: 'ponte-rolante', name: 'Ponte rolante', stageId: 'gerador', x: 55, y: 22, labelX: 63, labelY: 18 },
-  { id: 'gerador', name: 'Gerador', stageId: 'gerador', x: 53.5, y: 39, labelX: 43, labelY: 35 },
-  { id: 'eixo', name: 'Eixo', stageId: 'eixo', x: 53.5, y: 62, labelX: 64, labelY: 59 },
-  { id: 'turbina', name: 'Turbina / rotor', stageId: 'turbina', x: 53.5, y: 78, labelX: 43, labelY: 82 },
-  { id: 'tubo-succao', name: 'Tubo de sucção', stageId: 'restituicao', x: 55, y: 87, labelX: 63, labelY: 91 },
-  { id: 'canal-fuga', name: 'Canal de fuga', stageId: 'restituicao', x: 70, y: 87, labelX: 81, labelY: 85 },
-  { id: 'transformador', name: 'Transformador', stageId: 'transformacao', x: 75, y: 40, labelX: 83, labelY: 48 },
-  { id: 'subestacao', name: 'Subestação', stageId: 'rede', x: 77, y: 29, labelX: 86.5, labelY: 34 },
-  { id: 'linhas', name: 'Linhas de transmissão', stageId: 'rede', x: 88, y: 14, labelX: 82.5, labelY: 11 },
+  {
+    id: 'reservatorio', name: 'Reservatório a montante', stageId: 'captacao', x: 8, y: 29, labelX: 7, labelY: 15,
+    description: 'Armazena água a montante e mantém o desnível que fornece energia potencial ao aproveitamento.',
+  },
+  {
+    id: 'barragem', name: 'Barragem', stageId: 'captacao', x: 30, y: 32, labelX: 30, labelY: 16,
+    description: 'Barra o curso d’água, eleva o nível a montante e contribui para formar a queda aproveitada pela usina.',
+  },
+  {
+    id: 'vertedouro', name: 'Vertedouro (via de cheia)', stageId: 'captacao', x: 34, y: 36, labelX: 38, labelY: 45,
+    description: 'Conduz com segurança a água excedente das cheias sem passar pela turbina e ajuda a evitar o galgamento da barragem.',
+  },
+  {
+    id: 'grade', name: 'Grade de proteção', stageId: 'captacao', x: 18.5, y: 26, labelX: 8.5, labelY: 30,
+    description: 'Retém detritos antes da tomada e protege o circuito hidráulico e a turbina.',
+  },
+  {
+    id: 'comporta', name: 'Comporta', stageId: 'captacao', x: 20, y: 30.5, labelX: 9.5, labelY: 38,
+    description: 'Controla a passagem e permite isolar a tomada e o conduto para inspeção ou manutenção.',
+  },
+  {
+    id: 'tomada', name: 'Tomada d’água', stageId: 'captacao', x: 20.5, y: 35, labelX: 11.5, labelY: 46,
+    description: 'Capta a água do reservatório e a direciona para o circuito de adução.',
+  },
+  {
+    id: 'conduto', name: 'Conduto forçado', stageId: 'aducao', x: 36, y: 58, labelX: 23, labelY: 58,
+    description: 'Conduz a água sob pressão até a turbina; seu traçado e suas perdas influenciam a queda líquida disponível.',
+  },
+  {
+    id: 'casa-forca', name: 'Casa de força', stageId: 'gerador', x: 47, y: 27, labelX: 42, labelY: 19,
+    description: 'Abriga as unidades geradoras, os sistemas auxiliares e os espaços necessários à operação e à manutenção.',
+  },
+  {
+    id: 'ponte-rolante', name: 'Ponte rolante', stageId: 'gerador', x: 55, y: 22, labelX: 63, labelY: 18,
+    description: 'Movimenta componentes pesados da unidade geradora durante montagem, inspeção e manutenção.',
+  },
+  {
+    id: 'gerador', name: 'Gerador', stageId: 'gerador', x: 53.5, y: 39, labelX: 43, labelY: 35,
+    description: 'Converte a rotação transmitida pelo eixo em energia elétrica por indução eletromagnética.',
+  },
+  {
+    id: 'eixo', name: 'Eixo', stageId: 'eixo', x: 53.5, y: 62, labelX: 64, labelY: 59,
+    description: 'Acopla mecanicamente turbina e gerador e transmite o torque entre os dois equipamentos.',
+  },
+  {
+    id: 'turbina', name: 'Turbina / rotor', stageId: 'turbina', x: 53.5, y: 78, labelX: 43, labelY: 82,
+    description: 'Recebe a energia do escoamento e a transforma em rotação mecânica.',
+  },
+  {
+    id: 'tubo-succao', name: 'Tubo de sucção', stageId: 'restituicao', x: 55, y: 87, labelX: 63, labelY: 91,
+    description: 'Conduz a água que deixa a turbina, recupera parte da energia do escoamento e amplia a seção até a restituição.',
+  },
+  {
+    id: 'canal-fuga', name: 'Canal de fuga', stageId: 'restituicao', x: 70, y: 87, labelX: 81, labelY: 85,
+    description: 'Devolve ao rio, a jusante, a água que atravessou a unidade geradora.',
+  },
+  {
+    id: 'transformador', name: 'Transformador', stageId: 'transformacao', x: 75, y: 40, labelX: 83, labelY: 48,
+    description: 'Adequa a tensão produzida pelo gerador às condições definidas para a conexão elétrica.',
+  },
+  {
+    id: 'subestacao', name: 'Subestação', stageId: 'rede', x: 77, y: 29, labelX: 86.5, labelY: 34,
+    description: 'Reúne equipamentos de manobra, proteção e medição que encaminham a energia ao ponto de conexão.',
+  },
+  {
+    id: 'linhas', name: 'Linhas de transmissão', stageId: 'rede', x: 88, y: 14, labelX: 82.5, labelY: 11,
+    description: 'Transportam a energia da subestação até a rede de distribuição ou transmissão definida para o empreendimento.',
+  },
 ]);
 
 function useReducedMotion() {
@@ -283,6 +335,15 @@ export default function HydroelectricCutaway() {
   const sceneRef = useRef(null);
   const isSceneVisible = useSceneVisibility(sceneRef);
   const idPrefix = `hec-${useId().replace(/:/g, '')}`;
+  const titleId = `${idPrefix}-title`;
+  const descriptionId = `${idPrefix}-description`;
+  const layerDescriptionId = `${idPrefix}-layer-description`;
+  const flowControlId = `${idPrefix}-flow-control`;
+  const flowNoteId = `${idPrefix}-flow-note`;
+  const stagePanelId = `${idPrefix}-stage-panel`;
+  const equipmentDescriptionId = `${idPrefix}-equipment-description`;
+  const stageDescriptionId = `${idPrefix}-stage-description`;
+  const tabId = (stageId) => `${idPrefix}-tab-${stageId}`;
   const [selection, setSelection] = useState({
     stageId: CUTAWAY_STAGES[0].id,
     equipmentId: CUTAWAY_STAGES[0].focusEquipmentId,
@@ -365,8 +426,8 @@ export default function HydroelectricCutaway() {
       data-playing={motionActive ? 'true' : 'false'}
       data-tour-active={tourActive ? 'true' : 'false'}
       data-motion-preference={reducedMotion ? 'reduced' : 'full'}
-      aria-labelledby="hec-title"
-      aria-describedby="hec-description hec-layer-description"
+      aria-labelledby={titleId}
+      aria-describedby={`${descriptionId} ${layerDescriptionId}`}
       onPointerDown={() => setAutoTour(false)}
       onFocusCapture={() => setAutoTour(false)}
     >
@@ -375,21 +436,22 @@ export default function HydroelectricCutaway() {
         <div className="hec-heading">
           <span aria-hidden="true"><Waves /></span>
           <div>
-            <h2 id="hec-title">Usina hidrelétrica em operação</h2>
-            <p>Observe o percurso animado e selecione cada equipamento.</p>
+            <h2 id={titleId}>Funcionamento e anatomia de uma usina hidrelétrica</h2>
+            <p>Acompanhe o percurso da água à rede e selecione cada equipamento para entender sua função no conjunto.</p>
           </div>
         </div>
         <div className="hec-controls">
-          <label className="hec-flow-control">
+          <label className="hec-flow-control" htmlFor={flowControlId}>
             <span>Velocidade do fluxo <strong>{flow}%</strong></span>
             <input
+              id={flowControlId}
               type="range"
               min="35"
               max="100"
               value={flow}
               onChange={(event) => setFlow(Number(event.target.value))}
               aria-valuetext={`${flow}% da velocidade visual`}
-              aria-describedby="hec-flow-note"
+              aria-describedby={flowNoteId}
             />
           </label>
           <button
@@ -409,13 +471,14 @@ export default function HydroelectricCutaway() {
         </div>
       </header>
 
-      <p id="hec-description" className="hec-visually-hidden">
-        Corte de uma usina: a água sai do reservatório, atravessa a tomada e o conduto forçado,
+      <p id={descriptionId} className="hec-visually-hidden">
+        Corte interativo que reúne funcionamento e anatomia de uma usina: a água sai do reservatório,
+        atravessa a tomada e o conduto forçado,
         movimenta a turbina e o eixo, aciona o gerador, retorna ao rio e a energia segue pelo
         transformador e pela subestação até o ponto de conexão em rede de distribuição ou transmissão.
       </p>
 
-      <div className="hec-layer-status" id="hec-layer-description">
+      <div className="hec-layer-status" id={layerDescriptionId}>
         <span><i className="hec-layer-status__static" aria-hidden="true" />Base ilustrada estática</span>
         <span><i className="hec-layer-status__motion" aria-hidden="true" />Água, turbina, eixo, gerador e energia animados</span>
       </div>
@@ -449,7 +512,7 @@ export default function HydroelectricCutaway() {
               style={{ '--hec-label-x': `${equipment.labelX}%`, '--hec-label-y': `${equipment.labelY}%` }}
               aria-label={`Localizar ${equipment.name}`}
               aria-pressed={equipment.id === selectedEquipmentId}
-              aria-controls="hec-stage-panel"
+              aria-controls={stagePanelId}
               data-stage-active={equipment.stageId === activeId ? 'true' : 'false'}
               onClick={() => selectEquipment(equipment)}
             >
@@ -471,7 +534,7 @@ export default function HydroelectricCutaway() {
               <button
                 type="button"
                 aria-pressed={equipment.id === selectedEquipmentId}
-                aria-controls="hec-stage-panel"
+                aria-controls={stagePanelId}
                 data-stage-active={equipment.stageId === activeId ? 'true' : 'false'}
                 onClick={() => selectEquipment(equipment)}
               >
@@ -495,9 +558,9 @@ export default function HydroelectricCutaway() {
               key={stage.id}
               type="button"
               role="tab"
-              id={`hec-tab-${stage.id}`}
+              id={tabId(stage.id)}
               aria-selected={stage.id === activeId}
-              aria-controls="hec-stage-panel"
+              aria-controls={stagePanelId}
               tabIndex={stage.id === activeId ? 0 : -1}
               data-stage-id={stage.id}
               onClick={() => selectStage(stage.id)}
@@ -507,22 +570,27 @@ export default function HydroelectricCutaway() {
           ))}
         </div>
         <div
-          id="hec-stage-panel"
+          id={stagePanelId}
           className="hec-stage-panel"
           role="tabpanel"
-          aria-labelledby={`hec-tab-${activeStage.id}`}
+          aria-labelledby={tabId(activeStage.id)}
+          aria-describedby={`${equipmentDescriptionId} ${stageDescriptionId}`}
           aria-live={tourActive ? 'off' : 'polite'}
           aria-atomic="true"
           tabIndex="0"
         >
           <span>{String(activeIndex + 1).padStart(2, '0')}</span>
           <div>
-            <strong>{activeStage.component}</strong>
-            <p>{activeStage.description}</p>
+            <strong>{selectedEquipment.name}</strong>
+            <p id={equipmentDescriptionId}>{selectedEquipment.description}</p>
+            <p id={stageDescriptionId}>
+              <strong>Etapa {activeStage.label}: {activeStage.component}</strong>
+              {activeStage.description}
+            </p>
           </div>
           <i className="hec-stage-progress" aria-hidden="true"><b /></i>
         </div>
-        <small id="hec-flow-note" className="hec-note">
+        <small id={flowNoteId} className="hec-note">
           Representação didática, sem escala e sem vínculo com empreendimento específico. O controle altera
           somente a velocidade visual das camadas; não representa vazão ou desempenho de projeto.
         </small>

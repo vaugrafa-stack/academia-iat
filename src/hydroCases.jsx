@@ -40,15 +40,23 @@ const DURATION_TOKEN = Object.freeze({
 });
 
 function useReducedMotion() {
-  const [reduced, setReduced] = useState(false);
+  const [reduced, setReduced] = useState(() => (
+    typeof window !== 'undefined'
+    && typeof window.matchMedia === 'function'
+    && window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  ));
 
   useEffect(() => {
     if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') return undefined;
     const query = window.matchMedia('(prefers-reduced-motion: reduce)');
     const update = () => setReduced(query.matches);
     update();
-    query.addEventListener?.('change', update);
-    return () => query.removeEventListener?.('change', update);
+    if (typeof query.addEventListener === 'function') {
+      query.addEventListener('change', update);
+      return () => query.removeEventListener('change', update);
+    }
+    query.addListener?.(update);
+    return () => query.removeListener?.(update);
   }, []);
 
   return reduced;
@@ -529,6 +537,11 @@ function normalizeTurbineType(value) {
    marcadores do corte anatomico saiam do lugar: a camada seguia um contentor
    que esticava por fora e as coordenadas deixavam de valer. */
 function FotoAnotada({ src, alt, w, h, credito, notas, children }) {
+  const markerId = `fa-ponta-${useId().replace(/:/g, '')}`;
+  const annotationLayer = React.isValidElement(children)
+    ? React.cloneElement(children, { markerId })
+    : children;
+
   return (
     <figure className="tg-photo">
       {/* A camada e aria-hidden porque a geometria dela e mesmo decorativa. As
@@ -537,24 +550,32 @@ function FotoAnotada({ src, alt, w, h, credito, notas, children }) {
           dentro do elemento escondido. Quem usa leitor de tela recebia a
           fotografia e perdia a licao. Aqui elas saem em texto, da mesma lista
           que desenha as chapas, para os dois nao poderem divergir. */}
-      {notas?.length ? (
-        <p className="sr-only">
-          {`Sobre a fotografia, a camada assinala: ${notas.join('; ')}.`}
-        </p>
-      ) : null}
       <div className="fa-palco" style={{ aspectRatio: `${w} / ${h}` }}>
-        <img src={src} alt={alt} />
+        <img
+          src={src}
+          alt={alt}
+          width={w}
+          height={h}
+          loading="lazy"
+          decoding="async"
+        />
         <svg className="fa-camada" viewBox={`0 0 ${w} ${h}`} aria-hidden="true"
              preserveAspectRatio="xMidYMid slice">
           <defs>
-            <marker id="fa-ponta" viewBox="0 0 10 10" refX="8" refY="5"
+            <marker id={markerId} viewBox="0 0 10 10" refX="8" refY="5"
                     markerWidth="4.6" markerHeight="4.6" orient="auto-start-reverse">
               <path d="M0 1 L9 5 L0 9 Z" fill="context-stroke" />
             </marker>
           </defs>
-          {children}
+          {annotationLayer}
         </svg>
       </div>
+      {notas?.length ? (
+        <div className="fa-mobile-callouts" aria-label="Pontos identificados na fotografia">
+          <strong>O que a foto identifica</strong>
+          <ul>{notas.map((nota) => <li key={nota}>{nota}</li>)}</ul>
+        </div>
+      ) : null}
       {credito}
     </figure>
   );
@@ -585,14 +606,14 @@ const CHAPAS_PELTON = [
   { x: 8, y: 44, texto: 'cubo e eixo', ate: [176, 330] },
   { x: 8, y: 772, texto: 'concha em dupla colher', ate: [258, 690] },
 ];
-function CamadaPelton() {
+function CamadaPelton({ markerId }) {
   return (
     <>
       <path className="fa-rot" d="M120 190 A 272 340 0 0 1 404 106"
-            markerEnd="url(#fa-ponta)" />
+            markerEnd={`url(#${markerId})`} />
       <circle className="fa-alvo" cx="452" cy="150" r="46" />
       <AnimatedFlow className="fa-jato" dash={[9, 11]} duration={0.7}
-                    d="M566 44 L470 128" markerEnd="url(#fa-ponta)" />
+                    d="M566 44 L470 128" markerEnd={`url(#${markerId})`} />
       {CHAPAS_PELTON.map((c) => <Chapa key={c.texto} {...c} />)}
     </>
   );
@@ -611,15 +632,15 @@ const CHAPAS_FRANCIS = [
   { x: 6, y: 434, texto: 'distribuidor (palhetas móveis)', ate: [245, 230] },
   { x: 452, y: 440, ancora: 'end', texto: 'tubo de sucção', ate: [356, 338] },
 ];
-function CamadaFrancis() {
+function CamadaFrancis({ markerId }) {
   return (
     <>
       <AnimatedFlow className="fa-fluxo" dash={[8, 10]} duration={1.5}
-                    d="M424 12 L380 44" markerEnd="url(#fa-ponta)" />
+                    d="M424 12 L380 44" markerEnd={`url(#${markerId})`} />
       <circle className="fa-alvo" cx="292" cy="210" r="60" />
-      <path className="fa-rot" d="M232 196 A 66 66 0 0 1 340 178" markerEnd="url(#fa-ponta)" />
+      <path className="fa-rot" d="M232 196 A 66 66 0 0 1 340 178" markerEnd={`url(#${markerId})`} />
       <AnimatedFlow className="fa-fluxo" dash={[8, 10]} duration={1.5}
-                    d="M330 300 L362 346" markerEnd="url(#fa-ponta)" />
+                    d="M330 300 L362 346" markerEnd={`url(#${markerId})`} />
       {CHAPAS_FRANCIS.map((c) => <Chapa key={c.texto} {...c} />)}
     </>
   );
@@ -632,15 +653,15 @@ const CHAPAS_KAPLAN = [
   { x: 290, y: 22, ancora: 'end', texto: 'fluxo axial desce', ate: [252, 106] },
   { x: 4, y: 360, texto: 'pás do rotor', ate: [112, 202] },
 ];
-function CamadaKaplan() {
+function CamadaKaplan({ markerId }) {
   return (
     <>
       <AnimatedFlow className="fa-fluxo" dash={[8, 10]} duration={1.5}
-                    d="M62 112 C 74 158 92 178 118 192" markerEnd="url(#fa-ponta)" />
+                    d="M62 112 C 74 158 92 178 118 192" markerEnd={`url(#${markerId})`} />
       <AnimatedFlow className="fa-fluxo" dash={[8, 10]} duration={1.5}
-                    d="M256 112 C 244 158 226 178 202 192" markerEnd="url(#fa-ponta)" />
+                    d="M256 112 C 244 158 226 178 202 192" markerEnd={`url(#${markerId})`} />
       <circle className="fa-alvo" cx="162" cy="186" r="34" />
-      <path className="fa-rot" d="M126 178 A 38 38 0 0 1 196 170" markerEnd="url(#fa-ponta)" />
+      <path className="fa-rot" d="M126 178 A 38 38 0 0 1 196 170" markerEnd={`url(#${markerId})`} />
       {CHAPAS_KAPLAN.map((c) => <Chapa key={c.texto} {...c} />)}
     </>
   );
@@ -880,16 +901,17 @@ const REVERSIBLE_PHASES = Object.freeze({
 function ReversibleCaseMedia() {
   const motion = useHydroMotion();
   const [phase, setPhase] = useState('generate');
+  const [automaticPhase, setAutomaticPhase] = useState(true);
   const currentPhase = REVERSIBLE_PHASES[phase];
 
   useEffect(() => {
-    if (!motion.motionActive) return undefined;
+    if (!motion.motionActive || !automaticPhase) return undefined;
     const interval = window.setInterval(
       () => setPhase((current) => current === 'generate' ? 'pump' : 'generate'),
       4500 * (100 / motion.speed),
     );
     return () => window.clearInterval(interval);
-  }, [motion.motionActive, motion.speed]);
+  }, [automaticPhase, motion.motionActive, motion.speed]);
 
   return (
     <section
@@ -899,6 +921,7 @@ function ReversibleCaseMedia() {
       data-motion-state={motion.motionActive ? 'running' : 'paused'}
       data-playing={motion.playing ? 'true' : 'false'}
       data-reversible-mode={phase}
+      data-automatic-phase={automaticPhase ? 'true' : 'false'}
       aria-label="Funcionamento da usina reversível"
     >
       <MotionControls motion={motion} context="Animação da usina reversível" />
@@ -909,7 +932,10 @@ function ReversibleCaseMedia() {
             key={id}
             className={phase === id ? 'active' : ''}
             aria-pressed={phase === id}
-            onClick={() => setPhase(id)}
+            onClick={() => {
+              setAutomaticPhase(false);
+              setPhase(id);
+            }}
           >
             {item.label}
           </button>
@@ -920,7 +946,7 @@ function ReversibleCaseMedia() {
       </p>
       <div className="prc-fotos">
         <figure><SvgReversivel /><figcaption>Ciclo diário: funciona como bateria hídrica, consome energia para estocar água no reservatório superior e gera na hora de ponta.</figcaption></figure>
-        <figure><img src={BASE + '/hidro/reversivel-bath-county.jpg'} alt="Bath County Pumped Storage Station: casa de força e subestação" /><figcaption><Camera size={13} /> Foto real da usina · <a href={WMPAGE('Bath_County_Pumped_Storage_Station.jpg')} target="_blank" rel="noreferrer">Wikimedia Commons</a> (licença livre)</figcaption></figure>
+        <figure><img src={BASE + '/hidro/reversivel-bath-county.jpg'} alt="Bath County Pumped Storage Station: casa de força e subestação" width="1280" height="960" loading="lazy" decoding="async" /><figcaption><Camera size={13} /> Foto real da usina · <a href={WMPAGE('Bath_County_Pumped_Storage_Station.jpg')} target="_blank" rel="noreferrer">Wikimedia Commons</a> (licença livre)</figcaption></figure>
       </div>
       <section className="hcm-equipment-key" aria-label="Componentes do armazenamento por bombeamento">
         <h3>Como ler o esquema</h3>
@@ -1277,8 +1303,12 @@ export function ArrangementSchematics() {
         className="hcm-arrangement-panel"
       >
         <p className="hcm-current-state"><strong>Em exibição: {active.label}.</strong> As linhas pontilhadas mostram o caminho e a velocidade relativa da água.</p>
+        <p className="hcm-mobile-scroll-hint">Deslize o diagrama para ler os rótulos sem reduzir o texto.</p>
         <div className="arr-grid hcm-arrangement-stage">
-          <figure><active.Svg /><figcaption>{active.caption}</figcaption></figure>
+          <figure>
+            <div className="hcm-arrangement-canvas"><active.Svg /></div>
+            <figcaption>{active.caption}</figcaption>
+          </figure>
         </div>
         <section className="hcm-equipment-key" aria-label={`Componentes do arranjo ${active.label}`}>
           <h3>Como identificar o arranjo</h3>

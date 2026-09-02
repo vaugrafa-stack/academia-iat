@@ -110,92 +110,6 @@
   50% { opacity: .55; transform: scale(.82); }
 }
 
-/* Anatomia: uma cena grande, com equipamento selecionado e legenda externa. */
-.cross-explorer {
-  min-width: 0;
-}
-
-.cross-wrap {
-  isolation: isolate;
-  background: #141f1b;
-  box-shadow: 0 16px 34px #07171224;
-}
-
-.cross-svg {
-  min-height: 300px;
-  object-fit: cover;
-}
-
-.cross-stage-label {
-  position: absolute;
-  z-index: 4;
-  top: 12px;
-  left: 12px;
-  display: none;
-  max-width: calc(100% - 24px);
-  padding: 8px 11px;
-  border: 1px solid #81f1ce73;
-  border-radius: var(--raio-2);
-  background: #071b17df;
-  box-shadow: 0 8px 22px #0005;
-  color: #fff;
-  pointer-events: none;
-}
-
-.cross-stage-label small,
-.cross-stage-label strong {
-  display: block;
-}
-
-.cross-stage-label small {
-  margin-bottom: 2px;
-  color: #9edbc9;
-  font-size: 11px;
-  font-weight: 800;
-  letter-spacing: .08em;
-  text-transform: uppercase;
-}
-
-.cross-stage-label strong {
-  font-size: 13px;
-  line-height: 1.25;
-}
-
-.cs-focus-ring {
-  fill: #3fe0a60e;
-  stroke: #7ff0c4;
-  stroke-width: 3;
-  stroke-dasharray: 9 7;
-  vector-effect: non-scaling-stroke;
-  filter: drop-shadow(0 0 5px #0a3);
-  pointer-events: none;
-  animation: hydroFocusOrbit calc(2.4s * var(--hydro-motion-scale, 1)) linear infinite;
-}
-
-.cs-flow { animation-duration: calc(1.1s * var(--hydro-motion-scale, 1)); }
-.cs-turbine { animation-duration: calc(2.6s * var(--hydro-motion-scale, 1)); }
-.cs-energia,
-.cs-gerador { animation-duration: calc(.85s * var(--hydro-motion-scale, 1)); }
-.cs-lamina { animation-duration: calc(7s * var(--hydro-motion-scale, 1)); }
-.cs-hot::after { animation-duration: calc(1.8s * var(--hydro-motion-scale, 1)); }
-
-.cs-spill {
-  opacity: .15;
-  animation-play-state: paused;
-  transition: opacity .28s ease;
-}
-
-.cs-spill.is-active {
-  opacity: .9;
-  animation-duration: calc(1.7s * var(--hydro-motion-scale, 1));
-  animation-play-state: running;
-}
-
-@keyframes hydroFocusOrbit {
-  to { stroke-dashoffset: -32; }
-}
-
-.hydro-motion-legend,
 .dam-force-legend {
   display: flex;
   flex-wrap: wrap;
@@ -206,14 +120,12 @@
   font-weight: 700;
 }
 
-.hydro-motion-legend span,
 .dam-force-legend span {
   display: inline-flex;
   align-items: center;
   gap: 6px;
 }
 
-.hydro-motion-legend i,
 .dam-force-legend i {
   width: 10px;
   height: 10px;
@@ -222,21 +134,9 @@
   background: var(--muted);
 }
 
-.hydro-motion-legend__water,
 .dam-force-legend__water { background: #4cc4f5 !important; }
-.hydro-motion-legend__rotation { background: #3fe0a6 !important; }
-.hydro-motion-legend__energy,
 .dam-force-legend__reaction { background: #ffd479 !important; }
-.hydro-motion-legend__spill { background: #8ea9b8 !important; }
-.hydro-motion-legend .is-active .hydro-motion-legend__spill {
-  background: #d9f2ff !important;
-  box-shadow: 0 0 0 4px #4cc4f530;
-}
 .dam-force-legend__thrust { background: #eaf7ff !important; }
-
-.cs-mobile-equipment {
-  display: none;
-}
 
 /* Barramentos: em vez de seis miniaturas concorrendo por espaco, um corte
    selecionado ocupa a area de estudo e os seis tipos continuam comparaveis. */
@@ -317,6 +217,23 @@
   display: block;
   border: 0;
   border-radius: 0;
+}
+
+.dam-stage-feature {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  max-width: calc(100% - 24px);
+  padding: 7px 10px;
+  border: 1px solid #9ff4d684;
+  border-radius: var(--raio-pill);
+  background: #071b17e8;
+  box-shadow: 0 8px 18px #0005;
+  color: #effff9;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: .02em;
+  pointer-events: none;
 }
 
 .dam-stage figcaption {
@@ -401,7 +318,6 @@
 }
 
 @media (max-width: 980px) {
-  .cross-svg { min-height: 0; }
   .dam-selected-panel { grid-template-columns: 1fr; }
   .dam-stage { grid-row: auto; }
 }
@@ -417,54 +333,6 @@
 
   .hydro-motion-speed {
     min-width: 0;
-  }
-
-  .cross-stage-label {
-    display: block;
-  }
-
-  .cross-svg .cs-rotulo,
-  .cs-hots {
-    display: none;
-  }
-
-  .cs-mobile-equipment {
-    display: grid;
-    grid-auto-flow: column;
-    grid-auto-columns: minmax(150px, 72%);
-    gap: 8px;
-    margin-top: 10px;
-    padding: 2px 2px 8px;
-    overflow-x: auto;
-    scroll-snap-type: x proximity;
-  }
-
-  .cs-mobile-equipment button {
-    min-height: 48px;
-    display: flex;
-    align-items: center;
-    gap: 9px;
-    padding: 8px 10px;
-    border: 1px solid var(--line);
-    border-radius: var(--raio-2);
-    background: var(--surface);
-    color: var(--ink2);
-    text-align: left;
-    font: inherit;
-    font-size: 11px;
-    font-weight: 800;
-    scroll-snap-align: start;
-  }
-
-  .cs-mobile-equipment button > span {
-    color: var(--muted);
-    font-size: 11px;
-  }
-
-  .cs-mobile-equipment button.active {
-    border-color: var(--green2);
-    background: var(--green3);
-    color: var(--green);
   }
 
   .dam-selector {
@@ -511,18 +379,6 @@
     width: 100%;
   }
 
-  .cross-wrap {
-    min-height: 210px;
-  }
-
-  .cross-svg {
-    width: 540px;
-    max-width: none;
-    min-height: 210px;
-    transform: translateX(-13%);
-  }
-
-  .hydro-motion-legend,
   .dam-force-legend {
     display: grid;
     grid-template-columns: 1fr 1fr;

@@ -298,7 +298,7 @@ export function HydroLocalNav() {
     const active = links?.querySelector(
       `[data-hydro-nav-target="${reading.activeId}"]`,
     );
-    if (!links || !active || typeof links.scrollTo !== 'function') return;
+    if (!links || !active || typeof active.scrollIntoView !== 'function') return;
 
     const linksBox = links.getBoundingClientRect();
     const activeBox = active.getBoundingClientRect();
@@ -306,14 +306,12 @@ export function HydroLocalNav() {
     if (!outside) return;
 
     const reducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
-    // offsetLeft pode ser relativo ao nav sticky, e não à própria faixa.
-    // Calcular o deslocamento pelos retângulos visíveis evita que o último
-    // item permaneça cortado quando a grade também contém o resumo lateral.
-    const centerDelta = (
-      (activeBox.left + activeBox.right) - (linksBox.left + linksBox.right)
-    ) / 2;
-    links.scrollTo({
-      left: Math.max(0, links.scrollLeft + centerDelta),
+    // Deixe o navegador resolver o ancestral rolável e o scroll-snap. Um
+    // cálculo manual por offsetLeft varia conforme o offsetParent e scrollTo
+    // pode ser reajustado pelo snap no Chromium do runner.
+    active.scrollIntoView({
+      block: 'nearest',
+      inline: 'center',
       behavior: reducedMotion ? 'auto' : 'smooth',
     });
   }, [reading.activeId]);

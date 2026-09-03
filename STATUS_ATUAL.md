@@ -329,13 +329,50 @@ As provas locais desta rodada são:
   rolagem horizontal de página.
 
 O cenário PWA desta rodada foi aprovado pelo workflow público, e não localmente.
-Nesta máquina Windows ele reprova de forma reprodutível na etapa de atualização
-com consentimento: depois da troca para a versão 2, nenhum Service Worker chega
-ao estado `waiting` dentro do prazo. Os arquivos do teste e do executor local
-não mudam desde `23c648a`, e a mesma etapa aprovou no Linux em `56db5fb`,
-`e857e11` e nesta rodada. O sintoma é do executor local, não do produto, mas
-enquanto não for corrigido a verificação de PWA nesta máquina não vale como
-prova.
+Nesta máquina Windows ele reprovou duas vezes na etapa de atualização com
+consentimento: depois da troca para a versão 2, nenhum Service Worker chega ao
+estado `waiting` dentro do prazo. Os arquivos do teste e do executor local não
+mudam desde `23c648a`, e a mesma etapa aprovou no Linux em `56db5fb`, `e857e11`
+e nesta rodada. Enquanto não for corrigido, a verificação de PWA nesta máquina
+não vale como prova.
+
+### Correção do registro acima, em 03/09/2026
+
+O parágrafo anterior dizia que a reprovação era reprodutível. Ela não é, e a
+investigação mostrou por quê. Com a máquina ociosa o cenário aprova em 3,7 s,
+tanto por `test:e2e:pwa` quanto por `test:e2e:pwa:local`, que reconstrói antes.
+Com a suíte de artefato rodando ao mesmo tempo, ele reprova com a assinatura
+idêntica das duas primeiras vezes: 33,6 s e `Received: null` na linha 154. Com o
+prazo de asserção elevado a 150 s sob a mesma carga, ele aprova em 6,9 s. Ou
+seja, o caso ruim não é lentidão, e sim uma verificação que às vezes não ocorre.
+
+A instrumentação do fluxo mostra o mecanismo. Depois da recarga feita offline, a
+página passa a informar `navigator.onLine === true`, enquanto o Service Worker
+registra corretamente `conexaoDaUltimaNavegacao: "offline"`. Como a página já se
+considera online, `setOffline(false)` não dispara evento `online`, e o contador
+desse evento ficou em zero em todas as execuções instrumentadas. O produto liga
+a verificação de atualização ao evento `online` e à volta da aba ao estado
+visível, e nenhum dos dois ocorre no ensaio. O Service Worker em `waiting` que o
+teste aguarda aparece, então, por reverificação interna do próprio Chromium, sem
+garantia de prazo: com a máquina ociosa ela chega em cerca de um segundo; sob
+carga pode passar dos 30 s da janela.
+
+Nada nessa apuração contraria o produto; o ensaio é que dependia de um gatilho
+que não é dele. O teste passou a entregar o evento `online` depois de restaurar
+a conexão, que é o que uma reconexão real produz e o que o produto escuta.
+
+A medida que sustenta a correção, com a suíte de artefato rodando em paralelo
+para manter a máquina sob carga:
+
+| Modo | Chegou ao `waiting` | Tempo quando chegou |
+|---|---:|---|
+| Sem o evento, como estava | 6 de 11 | 419 a 833 ms |
+| Com o evento | 11 de 11 | 406 a 832 ms |
+
+Depois da correção, o cenário real aprovou 6 de 6 sob a mesma carga, entre 4,6 e
+10,4 segundos. A asserção não mudou: continuam exigidos o `waiting` na versão 2,
+o aviso de versão nova, a permanência da versão 1 como ativa e a recarga apenas
+após o consentimento.
 
 A consolidação recuperou margem de orçamento: o CSS inicial caiu de 91,6% para
 90,0% do teto bruto e o JavaScript total, de 90,8% para 89,0%. Os dois seguem

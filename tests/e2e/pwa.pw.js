@@ -150,6 +150,18 @@ test('registra o Service Worker, abre o Suporte offline e atualiza com consentim
   expect(switchResponse.ok()).toBeTruthy();
   await context.setOffline(false);
 
+  // A emulacao de rede perde `navigator.onLine` na recarga: depois dela a
+  // pagina ja se declara online, embora o Service Worker registre a navegacao
+  // como offline. Sem essa transicao o navegador nao dispara `online`, e o
+  // gatilho que o produto escuta nunca chega. Ate aqui o Service Worker em
+  // `waiting` aparecia apenas por reverificacao interna do Chromium, sem
+  // garantia de prazo: com a maquina ociosa ela chega em cerca de 400 ms, mas
+  // sob carga falhou em 5 de 11 medicoes, e era essa a origem da intermitencia
+  // do ensaio. Entregar o evento reproduz o que uma reconexao real produz e
+  // devolve o teste ao caminho do produto; com ele, 11 de 11 medicoes sob a
+  // mesma carga chegaram ao `waiting` em menos de 900 ms.
+  await page.evaluate(() => window.dispatchEvent(new Event('online')));
+
   await expect.poll(async () => (await statusFromWorker(page, 'waiting'))?.versao || null)
     .toBe(serverState.versionV2);
   await expect(page.getByText(/H. uma vers.o nova da Academia\./i)).toBeVisible();

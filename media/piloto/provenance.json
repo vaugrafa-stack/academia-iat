@@ -1,0 +1,67 @@
+{
+  "background": {
+    "bytes": 387812,
+    "path": "/media/learning-stage/thematic-atlas.webp",
+    "rightsBasis": "ativo temático já aprovado e incorporado à plataforma",
+    "sha256": "1800c76226a8f9c3f4572d0c6803456aa7482fc82149d3791e979f32f5a9ae01"
+  },
+  "presenterSprite": {
+    "grid": {
+      "columns": 3,
+      "frames": 12,
+      "rows": 4
+    },
+    "optimized": {
+      "bytes": 157938,
+      "path": "/media/learning-stage/professor-visemes-v2.webp",
+      "sha256": "5a256fdd0449fb896bb477fd40cac0b41dee7f90ceb20bfa7ec99669c24c77d0"
+    },
+    "order": [
+      "rest",
+      "MBP",
+      "IE",
+      "A",
+      "O",
+      "U",
+      "FV",
+      "L",
+      "CHJ",
+      "E_OPEN",
+      "SCHWA",
+      "rest_alt"
+    ],
+    "rightsBasis": "ativo visual fictício criado para uso na plataforma",
+    "source": {
+      "bytes": 2283656,
+      "path": "/media/learning-stage/professor-visemes-v2.png",
+      "sha256": "ef077fddc5e5141e721fdea7c23db2d8ae695773595acc6f5871cf2b826daa47"
+    }
+  },
+  "schemaVersion": "1.0.0",
+  "sourceDocument": {
+    "code": "POP-DLE-HID-001",
+    "sha256": "ad33a4939ac5f73d5669fc4784c43319d1c1cae0193c7c3a0aa04bdfd669b353",
+    "status": "minuta técnica pendente de validação técnica e institucional",
+    "version": "1.9"
+  },
+  "voice": {
+    "allowedWordsPerMinute": [
+      130,
+      150
+    ],
+    "clonedVoice": false,
+    "configSha256": "7e694de195ae3fc36dd732c445eb04fb49b649854893cb5506b978f0d50a1d6f",
+    "datasetLicense": "CC0",
+    "engine": "Piper",
+    "id": "pt_BR-faber-medium",
+    "language": "pt-BR",
+    "modelCard": "https://huggingface.co/rhasspy/piper-voices/blob/main/pt/pt_BR/faber/medium/MODEL_CARD",
+    "modelRepositoryLicense": "MIT",
+    "modelSha256": "858555e3a064209c57088fe6bd70c4c3dc54d03eaa00c45d5ecaf43a33f95aa7",
+    "modelSource": "https://huggingface.co/rhasspy/piper-voices/tree/main/pt/pt_BR/faber/medium",
+    "provider": "piper-faber",
+    "quality": "medium",
+    "sampleRate": 22050,
+    "targetWordsPerMinute": 140
+  }
+}

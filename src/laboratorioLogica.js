@@ -16,10 +16,7 @@
 import { tracks } from './courseData.js';
 import { getLabSources } from './labSources.js';
 import { nivelDoCaso } from './niveisLab.js';
-
-function normalizar(valor = '') {
-  return valor.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
-}
+import { bateTermo, normalizarTexto as normalizar } from './textoTermos.js';
 
 const LAB_DRAFT_VERSION = 2;
 const LAB_COMPLETION_HISTORY_LIMIT = 5;
@@ -169,16 +166,6 @@ export function registrarConclusaoLaboratorio(registroAnterior, conclusaoAtual) 
     ...conclusaoAtual,
     ...(historicoConclusoes.length ? { historicoConclusoes } : {}),
   };
-}
-
-function bateTermo(texto, termo) {
-  const normalizado = normalizar(termo).trim();
-  if (!normalizado) return false;
-  if (normalizado.length <= 3) {
-    const seguro = normalizado.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    return new RegExp(`(^|[^a-z0-9])${seguro}([^a-z0-9]|$)`).test(texto);
-  }
-  return texto.includes(normalizado);
 }
 
 export function conferirElementos(cenario, texto) {

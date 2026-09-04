@@ -1,0 +1,132 @@
+/* Conferência da minuta, dentro da pré-visualização do Redator de IT.
+ *
+ * Folha própria, e não um trecho de `styles.css`, porque o Redator é rota sob
+ * demanda e o CSS inicial já operava em 90% do teto. O que nasce depois do
+ * primeiro carregamento não precisa viajar com ele.
+ *
+ * A cor separa o que falta do que é risco, mas nunca sozinha: cada achado
+ * carrega o selo em texto, porque distinguir âmbar de verde não pode ser a
+ * única forma de saber o que a plataforma está dizendo. */
+
+.rd-conferencia {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 16px;
+  padding: 15px 16px;
+  border: 1px solid var(--line);
+  border-radius: var(--raio-3);
+  background: var(--surface2);
+}
+
+.rd-conferencia > strong {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--ink);
+  font-size: 14px;
+}
+
+.rd-conferencia-escopo {
+  margin: 0;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.rd-conferencia-limpa,
+.rd-conferencia-resumo {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.rd-conferencia-limpa {
+  color: var(--muted);
+}
+
+.rd-conferencia-resumo {
+  color: var(--ink);
+  font-weight: 700;
+}
+
+.rd-conferencia-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.rd-achado {
+  padding: 11px 12px;
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--muted);
+  border-radius: var(--raio-2);
+  background: var(--surface);
+}
+
+.rd-achado.faltou {
+  border-left-color: var(--blue);
+  background: var(--blue2);
+}
+
+.rd-achado.risco {
+  border-left-color: var(--amber);
+  background: var(--amber2);
+}
+
+.rd-achado-cab {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 5px;
+}
+
+.rd-achado-selo {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.045em;
+  text-transform: uppercase;
+  color: var(--ink2);
+}
+
+.rd-achado-ir {
+  margin-left: auto;
+  min-height: 44px;
+  padding: 0 12px;
+  border: 1px solid var(--line);
+  border-radius: var(--raio-2);
+  background: var(--surface2);
+  color: var(--ink);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.rd-achado-ir:hover {
+  border-color: var(--green2);
+  color: var(--green2);
+}
+
+.rd-achado > p {
+  margin: 0 0 5px;
+  color: var(--ink);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.rd-achado > small {
+  display: block;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+@media (max-width: 640px) {
+  .rd-achado-ir {
+    width: 100%;
+    margin-left: 0;
+  }
+}

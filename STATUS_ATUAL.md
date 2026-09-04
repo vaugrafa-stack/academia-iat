@@ -385,6 +385,76 @@ caminho de teste, mas quem executar `build_narration.py` hoje encontra falha na
 etapa do tour. A decisão entre regenerar a peça ou aposentar os dois geradores é
 editorial e não foi tomada aqui.
 
+### Candidato local de 03/09/2026 — conferência da minuta de Informação Técnica
+
+O Redator é a tela do produto que o analista assina, e era a tela com menos
+retorno de toda a plataforma: o único sinal que ela dava era contar caracteres,
+e 60 caracteres de qualquer coisa devolviam "registro suficiente para avançar e
+revisar". Os 12 elementos já traziam `exige` e `armadilha`, derivados dos itens
+23, 24.1 e 25 do POP, escritos desde o início e nunca conferidos.
+
+A conferência da minuta passa a confrontá-los. Ela roda nove verificações e
+devolve o que revisar, com a seção de origem e o critério que a sustenta:
+tipologia ausente ou divergente da do caso; POP citado como fundamento de
+exigência sem nenhuma norma ao lado; norma sem dispositivo; peça registrada como
+apresentada sem consequência técnica; conclusão que trata de um só dos dois
+juízos; condicionante usada para adiar pendência impeditiva; conclusão que
+contradiz o encaminhamento; e minuta que não cita nenhuma evidência nem fato do
+caso escolhido.
+
+O que ela não faz está no código, e não só nesta página: não atribui nota, não
+emite percentual e não declara a minuta correta. O estado sem achado diz que
+nenhuma verificação encontrou o que sabe procurar, e que a conferência técnica
+continua necessária. Um teste automatizado recusa qualquer campo de aprovação ou
+porcentagem no retorno.
+
+O mecanismo é o mesmo da rubrica do laboratório, que já era provado por portão:
+grupo conceitual de termos, com texto genérico não pontuando. As três cópias da
+regra de casamento de termo, que viviam separadas entre a rubrica, o portão dela
+e agora a conferência, foram reduzidas a uma em `src/textoTermos.js`.
+
+Um falso positivo foi encontrado e corrigido antes de publicar, e ele ilustra o
+risco da abordagem: `indeferimento` contém `deferimento`, e `apto` cabe inteiro
+dentro de `inapto`. A verificação de coerência acusava justamente quem concluiu
+pela insuficiência e encaminhou pelo indeferimento, que é a decisão coerente.
+Acusar o acerto é pior do que não verificar, porque destrói a confiança na
+ferramenta inteira; a lista de exclusão e as duas direções do caso entraram no
+portão.
+
+O portão `tools/check-conferencia-it.mjs` cobra quatro propriedades: cada
+verificação tem um texto que ela deve acusar e um que ela não pode acusar; a
+minuta modelo dos doze elementos não recebe achado; os mesmos textos genéricos
+do portão da rubrica produzem achado aqui; e a minuta vazia não recebe nada.
+Cinco armadilhas de autoteste rodam junto. Conferido nos dois sentidos: com a
+regra da base legal desativada de propósito, o portão reprovou apontando a
+verificação e a armadilha; restaurada, aprovou.
+
+As provas locais desta rodada são:
+
+- 74 arquivos de teste e 667 testes aprovados, com todos os portões encadeados
+  de `pnpm test`, inclusive o novo;
+- `pnpm build` aprovado em 38 chunks, com 861,9/960,0 KiB de JavaScript bruto e
+  281,7/320,0 KiB compactado; CSS total em 266,1/300,0 KiB bruto e 49,7/58,0 KiB
+  compactado;
+- **CSS inicial inalterado em 184,4/205,0 KiB**, porque a folha da conferência
+  saiu como pedaço sob demanda de 1,60 KiB brutos e 0,56 KiB compactados, junto
+  da rota do Redator;
+- 81 cenários Playwright aprovados sobre o artefato e 34 omissões previstas,
+  incluindo o cenário novo nas cinco larguras;
+- inspeção em navegador real do artefato construído, em 1440 e 390 px, nos temas
+  claro e escuro, com os seis achados de uma minuta problemática, o estado sem
+  achado, alvos de toque de 44 px e nenhuma rolagem horizontal.
+
+O contraste foi medido compondo o alfa das camadas, e não pela cor declarada.
+A primeira medição, ingênua, acusou 1,02 no tema escuro e era falso positivo da
+régua: `rgba(228,160,74,.16)` sobre superfície escura foi tratado como âmbar
+opaco. Composto corretamente, o menor valor é 4,63 sobre o mínimo de 4,5, na
+linha do critério citado.
+
+A conferência é auxiliar de revisão e não substitui leitura técnica. Os termos e
+os critérios de cada verificação são decisão editorial e continuam sujeitos à
+revisão de quem responde pela norma, como as rubricas do laboratório.
+
 ## Serviços separados
 
 | Serviço | Repositório | Estado comprovado | Não confundir com |

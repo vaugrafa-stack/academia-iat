@@ -440,3 +440,47 @@ test('endereço que nomeia rota inexistente é corrigido, e não fica no histór
 
   await expectHealthyPage(page, runtime);
 });
+
+test('conferência da minuta aponta a armadilha e leva de volta à seção', async ({
+  page,
+  baseURL,
+}) => {
+  const runtimeIssues = monitorRuntime(page, baseURL);
+  await page.goto(appUrl(baseURL, '#/redator'), { waitUntil: 'domcontentloaded' });
+
+  // A rota carrega sob demanda. Sem esperar o título, `isVisible` responde
+  // antes de a trilha existir, o desktop cai no ramo do celular e o teste
+  // falha por um motivo que não é o que ele investiga.
+  await expect(page.getByRole('heading', { name: /Redator de Informação Técnica/i }))
+    .toBeVisible();
+  const trilha = page.locator('.rd-trilha');
+  const desktop = await trilha.isVisible();
+  const irParaEtapa = async (indice) => {
+    if (desktop) await trilha.getByRole('tab').nth(indice).click();
+    else await page.locator('#rd-step-select').selectOption(String(indice));
+  };
+
+  // Base legal apoiada apenas no POP. É a armadilha do elemento 4 e o erro mais
+  // caro do conjunto: o POP organiza o método e não cria exigência.
+  await irParaEtapa(3);
+  await page.getByRole('textbox', { name: /Texto da seção Base legal/i }).fill(
+    'A exigência decorre do POP de licenciamento de hidrelétricas, que orienta esta análise.',
+  );
+
+  await irParaEtapa(11);
+  await page.getByRole('button', { name: /Ver a IT e conferir/i }).click();
+
+  const conferencia = page.locator('.rd-conferencia');
+  await expect(conferencia).toBeVisible();
+  await expect(conferencia).toContainText('não cria exigência');
+  await expect(conferencia).toContainText('1 ponto para revisar');
+  // A conferência não pode virar nota nem selo de aprovação.
+  await expect(conferencia).not.toContainText(/aprovad/i);
+  await expect(conferencia).not.toContainText(/%/);
+
+  await conferencia.getByRole('button', { name: /Ir para 4\. Base legal/i }).click();
+  await expect(page.getByRole('textbox', { name: /Texto da seção Base legal/i }))
+    .toHaveValue(/POP de licenciamento/);
+
+  await expectHealthyPage(page, runtimeIssues);
+});

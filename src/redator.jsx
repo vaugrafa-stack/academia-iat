@@ -10,9 +10,16 @@
 // redacao, e fingir que tem seria pior do que nao avaliar. Ele guarda o
 // rascunho, mostra o que falta, confronta com o desfecho do caso e permite
 // levar o texto para avaliacao tecnica.
+//
+// A conferencia da minuta, adicionada depois, nao muda essa regra: ela confere
+// o conferivel, elemento exigido pelo item 23.1, armadilha que o proprio POP
+// nomeia e coerencia entre secoes, e nao devolve nota nem aprovacao. Ver o
+// cabecalho de `conferenciaIT.js`.
 import React, { useMemo, useState } from 'react';
-import { FileText, ChevronRight, ChevronLeft, Download, Check, Circle, Lightbulb, AlertTriangle, Eye } from 'lucide-react';
+import { FileText, ChevronRight, ChevronLeft, Download, Check, Circle, Lightbulb, AlertTriangle, Eye, ClipboardCheck } from 'lucide-react';
 import { ESTRUTURA_IT, MINIMO_SECAO, progressoIT, montarIT } from './redatorIT.js';
+import { conferirMinuta } from './conferenciaIT.js';
+import './redatorConferencia.css';
 import CaseAnswerSheet from './CaseAnswerSheet.jsx';
 import CaseCombobox from './CaseCombobox.jsx';
 
@@ -24,6 +31,7 @@ export default function RedatorIT({ scenarios, grupos, state, setState, go }) {
   const caso = scenarios.find((c) => c.id === casoId) || scenarios[0];
   const rascunho = (state.its && state.its[caso.id]) || {};
   const prog = useMemo(() => progressoIT(rascunho), [rascunho]);
+  const conferencia = useMemo(() => conferirMinuta(caso, rascunho), [caso, rascunho]);
   const secao = ESTRUTURA_IT[passo];
   const texto = rascunho[secao.id] || '';
 
@@ -136,6 +144,60 @@ export default function RedatorIT({ scenarios, grupos, state, setState, go }) {
             </div>
           </div>
           <pre>{montarIT(caso, rascunho)}</pre>
+
+          <section className="rd-conferencia" aria-labelledby="rd-conferencia-titulo">
+            <strong id="rd-conferencia-titulo">
+              <ClipboardCheck size={15} aria-hidden="true" /> Conferência da minuta
+            </strong>
+            <p className="rd-conferencia-escopo">
+              Confere o que é conferível: elemento exigido pelo item 23.1, armadilha que o POP
+              nomeia e coerência entre seções. Não avalia redação, não atribui nota e não
+              declara a minuta correta.
+            </p>
+            {conferencia.achados.length === 0 ? (
+              <p className="rd-conferencia-limpa" role="status">
+                Nenhuma das {conferencia.conferiveis} verificações aplicáveis encontrou o que sabe
+                procurar. Isso não significa que a minuta esteja correta: a conferência técnica
+                continua necessária.
+              </p>
+            ) : (
+              <>
+                <p className="rd-conferencia-resumo" role="status">
+                  {conferencia.achados.length === 1
+                    ? '1 ponto para revisar'
+                    : `${conferencia.achados.length} pontos para revisar`}
+                  , em {conferencia.conferiveis} verificações aplicáveis.
+                </p>
+                <ul className="rd-conferencia-lista">
+                  {conferencia.achados.map((item) => (
+                    <li key={item.id} className={`rd-achado ${item.natureza}`}>
+                      <div className="rd-achado-cab">
+                        <span className="rd-achado-selo">
+                          {item.natureza === 'faltou' ? 'Falta um elemento' : 'Risco de armadilha'}
+                        </span>
+                        <button
+                          type="button"
+                          className="rd-achado-ir"
+                          onClick={() => {
+                            const indice = ESTRUTURA_IT.findIndex((s) => s.id === item.secaoId);
+                            if (indice >= 0) {
+                              setPasso(indice);
+                              setVerTexto(false);
+                            }
+                          }}
+                        >
+                          Ir para {item.secaoN}. {item.secaoTitulo}
+                        </button>
+                      </div>
+                      <p>{item.mensagem}</p>
+                      <small>{item.criterio}</small>
+                    </li>
+                  ))}
+                </ul>
+              </>
+            )}
+          </section>
+
           <article className="rd-confronto">
             <strong><Lightbulb size={15} /> Confronte com o desfecho do caso</strong>
             <p>{caso.outcome}</p>
@@ -199,7 +261,7 @@ export default function RedatorIT({ scenarios, grupos, state, setState, go }) {
                 </button>
               ) : (
                 <button className="primary" onClick={() => setVerTexto(true)}>
-                  Ver a IT completa <Eye size={16} />
+                  Ver a IT e conferir <Eye size={16} />
                 </button>
               )}
             </div>

@@ -4,6 +4,7 @@ import { createRoot } from 'react-dom/client';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import MapaParana, {
   carregarDadosMapa,
+  decisaoDaRoda,
   faixaDidaticaDe,
   indiceCatalogoPorTecla,
   validarDadosMapa,
@@ -113,6 +114,66 @@ describe('didática e acesso por teclado no mapa', () => {
     expect(indiceCatalogoPorTecla('Home', 146, 147)).toBe(0);
     expect(indiceCatalogoPorTecla('Enter', 2, 147)).toBeNull();
     expect(indiceCatalogoPorTecla('ArrowDown', 0, 0)).toBeNull();
+  });
+
+  it('a roda decide entre ampliar o mapa e devolver a rolagem para a pagina', () => {
+    expect(decisaoDaRoda({ deltaY: -120, podeAproximar: true, podeAfastar: true }))
+      .toEqual({ fator: 1.25, aproximar: true });
+    expect(decisaoDaRoda({ deltaY: 120, podeAproximar: true, podeAfastar: true }).aproximar)
+      .toBe(false);
+    // Nos limites a roda pertence a pagina. Sem isso o mapa prende quem so
+    // queria descer a tela, que e a armadilha classica de mapa em pagina longa.
+    expect(decisaoDaRoda({ deltaY: -120, podeAproximar: false, podeAfastar: true })).toBeNull();
+    expect(decisaoDaRoda({ deltaY: 120, podeAproximar: true, podeAfastar: false })).toBeNull();
+    expect(decisaoDaRoda({ deltaY: 0, podeAproximar: true, podeAfastar: true })).toBeNull();
+  });
+
+  it('a roda sobre o mapa amplia e cancela a rolagem da pagina', async () => {
+    const host = document.createElement('div');
+    document.body.append(host);
+    const root = createRoot(host);
+    await act(async () => {
+      root.render(<MapaParana dados={dados} />);
+    });
+
+    const svg = host.querySelector('.mp-map-stage > svg');
+    svg.getBoundingClientRect = () => ({
+      left: 0, top: 0, width: 600, height: 372, right: 600, bottom: 372,
+    });
+    const escala = () => host.querySelector('.mp-zoom span').textContent;
+    expect(escala()).toBe('1.0x');
+
+    // `cancelable` importa: o `onWheel` do React e registrado como passivo, e
+    // nesse modo o preventDefault e ignorado sem erro nenhum. O mapa ampliava e
+    // a pagina rolava junto, entao o mapa fugia de baixo do cursor.
+    const aproximar = new WheelEvent('wheel', {
+      deltaY: -120, clientX: 300, clientY: 186, bubbles: true, cancelable: true,
+    });
+    await act(async () => { svg.dispatchEvent(aproximar); });
+    expect(aproximar.defaultPrevented).toBe(true);
+    expect(escala()).toBe('1.3x');
+
+    // Ctrl com a roda e o zoom do navegador, e continua sendo dele.
+    const comCtrl = new WheelEvent('wheel', {
+      deltaY: -120, clientX: 300, clientY: 186, bubbles: true, cancelable: true, ctrlKey: true,
+    });
+    await act(async () => { svg.dispatchEvent(comCtrl); });
+    expect(comCtrl.defaultPrevented).toBe(false);
+    expect(escala()).toBe('1.3x');
+
+    // De volta ao mapa inteiro, afastar mais nao e do mapa: a pagina rola.
+    await act(async () => {
+      host.querySelector('button[aria-label="Ver o mapa inteiro"]')
+        .dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    });
+    const afastarNoLimite = new WheelEvent('wheel', {
+      deltaY: 120, clientX: 300, clientY: 186, bubbles: true, cancelable: true,
+    });
+    await act(async () => { svg.dispatchEvent(afastarNoLimite); });
+    expect(afastarNoLimite.defaultPrevented).toBe(false);
+    expect(escala()).toBe('1.0x');
+
+    await act(async () => root.unmount());
   });
 
   it('diz quando o GeoPR nao desenha uma camada e oferece nova tentativa', async () => {

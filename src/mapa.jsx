@@ -103,6 +103,27 @@ export const faixaDidaticaDe = (mw) => {
 // de Tab; as demais continuam acessiveis pelas setas, Home, End, Page Up e
 // Page Down. Isso evita que a pessoa precise pressionar Tab uma centena de
 // vezes para chegar ao proximo controle da pagina.
+/**
+ * O que a roda do mouse faz sobre o mapa.
+ *
+ * Devolve o fator de ampliacao, ou `null` quando o mapa deve deixar a rolagem
+ * seguir para a pagina. Os dois limites sao os mesmos que habilitam os botoes
+ * Aproximar e Afastar, de proposito: roda e botao discordarem seria a pessoa
+ * ampliar com a roda o que o botao mostra como desabilitado.
+ *
+ * Devolver `null` no limite e o que impede a armadilha classica de mapa em
+ * pagina longa: capturar toda a rolagem e prender quem so queria descer a tela.
+ * Com esta regra a rolagem sempre se solta, porque a escala se esgota na
+ * direcao em que a pessoa insiste.
+ */
+export function decisaoDaRoda({ deltaY, podeAproximar, podeAfastar }) {
+  if (!deltaY) return null;
+  const aproximar = deltaY < 0;
+  if (aproximar && !podeAproximar) return null;
+  if (!aproximar && !podeAfastar) return null;
+  return { fator: aproximar ? 1.25 : 1 / 1.25, aproximar };
+}
+
 export function indiceCatalogoPorTecla(tecla, atual, total) {
   if (!Number.isInteger(total) || total <= 0) return null;
   const indice = Number.isInteger(atual) && atual >= 0 ? atual : 0;
@@ -507,10 +528,32 @@ function MapaConteudo({ dados, state, setState }) {
     };
   };
   const roda = (ev) => {
+    // Ctrl e Cmd com a roda sao o zoom do navegador. Capturar isso quebraria a
+    // ampliacao de pagina de quem depende dela para ler.
+    if (ev.ctrlKey || ev.metaKey) return;
+    const decisao = decisaoDaRoda({ deltaY: ev.deltaY, podeAproximar, podeAfastar });
+    // No limite da escala o mapa devolve a roda para a pagina, em vez de
+    // engolir a rolagem e prender quem so queria descer a tela.
+    if (!decisao) return;
     ev.preventDefault();
     const { cx, cy } = noMapa(ev);
-    ampliar(ev.deltaY < 0 ? 1.25 : 1 / 1.25, cx, cy);
+    ampliar(decisao.fator, cx, cy);
   };
+  // A roda precisa de ouvinte nao passivo.
+  //
+  // O `onWheel` do React e registrado na raiz como passivo, e nesse modo o
+  // `preventDefault` e ignorado sem erro. O efeito era exatamente o relatado:
+  // a roda sobre o mapa aproximava e rolava a pagina ao mesmo tempo, entao o
+  // mapa fugia de baixo do cursor e a ampliacao parecia nao funcionar.
+  const rodaRef = useRef(roda);
+  rodaRef.current = roda;
+  useEffect(() => {
+    const alvo = svgRef.current;
+    if (!alvo) return undefined;
+    const ouvir = (ev) => rodaRef.current?.(ev);
+    alvo.addEventListener('wheel', ouvir, { passive: false });
+    return () => alvo.removeEventListener('wheel', ouvir, { passive: false });
+  }, []);
   const pegar = (ev) => {
     encerrarHoverGeopr();
     if (escala > 1.02) encerrarConsultaFixada();
@@ -980,7 +1023,7 @@ function MapaConteudo({ dados, state, setState }) {
                      // preservado, do mesmo jeito que o modo satelite ja fazia.
                      camadasGeopr.pedidos.some((p) => p.camada.ordem !== 'topo') ? 'gp-fundo-on' : '',
                    ].filter(Boolean).join(' ')}
-                   onWheel={roda} onPointerDown={pegar} onPointerMove={moverComConsulta}
+                   onPointerDown={pegar} onPointerMove={moverComConsulta}
                    onPointerUp={soltar} onPointerCancel={soltar} onPointerLeave={encerrarHoverGeopr}
                    onKeyDown={tecla}
                    onClick={consultarGeopr}

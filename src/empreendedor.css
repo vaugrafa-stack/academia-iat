@@ -32,13 +32,13 @@
   display: block;
   margin-bottom: 4px;
   color: var(--ink);
-  font-size: 14px;
+  font-size:var(--texto-4);
 }
 
 .emp-aviso p {
   margin: 0;
   color: var(--ink2);
-  font-size: 13px;
+  font-size:var(--texto-3);
   line-height: 1.55;
 }
 
@@ -60,7 +60,7 @@
 
 .emp-nav-rotulo {
   color: var(--green);
-  font-size: 13px;
+  font-size:var(--texto-3);
   font-weight: 800;
   letter-spacing: 0.02em;
 }
@@ -81,7 +81,7 @@
   border-radius: var(--raio-2);
   background: transparent;
   color: var(--muted);
-  font-size: 13px;
+  font-size:var(--texto-3);
   font-weight: 700;
   white-space: nowrap;
   cursor: pointer;
@@ -119,7 +119,7 @@
   margin: 0 0 12px;
   max-width: 78ch;
   color: var(--ink2);
-  font-size: 14px;
+  font-size:var(--texto-4);
   line-height: 1.65;
 }
 
@@ -131,7 +131,7 @@
 
 .emp-sub {
   margin: 22px 0 12px;
-  font-size: 16px;
+  font-size:var(--texto-5);
   color: var(--ink);
 }
 
@@ -155,7 +155,7 @@
   align-items: center;
   gap: 8px;
   margin: 0 0 12px;
-  font-size: 14px;
+  font-size:var(--texto-4);
   color: var(--ink);
 }
 
@@ -186,7 +186,7 @@
   border-radius: var(--raio-pill);
   background: var(--green3);
   color: var(--green);
-  font-size: 13px;
+  font-size:var(--texto-3);
   font-weight: 800;
 }
 
@@ -199,13 +199,13 @@
   display: block;
   margin-bottom: 3px;
   color: var(--ink);
-  font-size: 13px;
+  font-size:var(--texto-3);
 }
 
 .emp-trilho li p {
   margin: 0;
   color: var(--muted);
-  font-size: 13px;
+  font-size:var(--texto-3);
   line-height: 1.55;
 }
 
@@ -235,7 +235,7 @@
   display: block;
   margin-bottom: 5px;
   color: var(--ink);
-  font-size: 14px;
+  font-size:var(--texto-4);
 }
 
 .emp-papeis p,
@@ -244,7 +244,7 @@
 .emp-erros p {
   margin: 0 0 6px;
   color: var(--muted);
-  font-size: 13px;
+  font-size:var(--texto-3);
   line-height: 1.55;
 }
 
@@ -255,7 +255,7 @@
   border-radius: var(--raio-pill);
   background: var(--green3);
   color: var(--green);
-  font-size: 11px;
+  font-size:var(--texto-1);
   font-weight: 800;
   letter-spacing: 0.04em;
 }
@@ -297,14 +297,14 @@
   display: block;
   margin-bottom: 6px;
   color: var(--ink);
-  font-size: 14px;
+  font-size:var(--texto-4);
 }
 
 .emp-limite p,
 .emp-limite li {
   margin: 0;
   color: var(--ink2);
-  font-size: 13px;
+  font-size:var(--texto-3);
   line-height: 1.6;
 }
 
@@ -344,13 +344,13 @@
   display: block;
   margin-bottom: 4px;
   color: var(--ink);
-  font-size: 16px;
+  font-size:var(--texto-5);
 }
 
 .emp-cta p {
   margin: 0;
   color: var(--muted);
-  font-size: 13px;
+  font-size:var(--texto-3);
   line-height: 1.55;
 }
 
@@ -362,4 +362,118 @@
   .emp-nav {
     top: calc(var(--top) + 4px);
   }
+}
+
+/* Dominio do corpo hidrico: Uniao e Parana lado a lado.
+   Separar visualmente evita o que a revisao tecnica apontou, que era misturar
+   a terminologia federal e a estadual num paragrafo unico. */
+.emp-dominios {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.emp-dominios article {
+  padding: 14px 15px;
+  border: 1px solid var(--line);
+  border-radius: var(--raio-3);
+  background: var(--surface2);
+}
+
+.emp-dominios strong {
+  display: block;
+  margin-bottom: 6px;
+  color: var(--ink);
+  font-size: var(--texto-4);
+}
+
+.emp-dominios p {
+  margin: 0;
+  color: var(--muted);
+  font-size: var(--texto-3);
+  line-height: 1.55;
+}
+
+/* A tabela rola dentro do proprio bloco: a pagina nunca rola na horizontal. */
+.emp-tabela-envolucro {
+  overflow-x: auto;
+  margin-top: 12px;
+  border: 1px solid var(--line);
+  border-radius: var(--raio-3);
+}
+
+.emp-tabela {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--texto-3);
+}
+
+.emp-tabela th,
+.emp-tabela td {
+  padding: 11px 14px;
+  text-align: left;
+  vertical-align: top;
+  border-bottom: 1px solid var(--line);
+  line-height: 1.55;
+}
+
+.emp-tabela thead th {
+  background: var(--soft);
+  color: var(--ink);
+  font-size: var(--texto-2);
+  letter-spacing: .03em;
+  text-transform: uppercase;
+}
+
+.emp-tabela tbody th {
+  width: 26%;
+  min-width: 150px;
+  color: var(--ink);
+  font-weight: 800;
+}
+
+.emp-tabela td {
+  color: var(--muted);
+}
+
+.emp-tabela tbody tr:last-child th,
+.emp-tabela tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.emp-fonte-atencao {
+  display: flex;
+  gap: 7px;
+  margin: 8px 0 0;
+  padding-top: 8px;
+  border-top: 1px solid var(--line);
+  color: var(--ink);
+  font-size: var(--texto-2);
+  font-weight: 700;
+  line-height: 1.5;
+}
+
+.emp-fonte-atencao svg {
+  flex: 0 0 auto;
+  margin-top: 2px;
+  color: var(--amber, #b26a00);
+}
+
+.emp-revisao {
+  margin-top: 18px;
+  padding: 13px 15px;
+  border: 1px dashed var(--line);
+  border-radius: var(--raio-3);
+}
+
+.emp-revisao p {
+  margin: 0;
+  color: var(--muted);
+  font-size: var(--texto-2);
+  line-height: 1.6;
+}
+
+.emp-revisao strong {
+  color: var(--ink);
 }

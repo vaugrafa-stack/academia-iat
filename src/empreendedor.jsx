@@ -12,7 +12,7 @@
 //
 // As regras de conteudo estao no cabecalho de `empreendedorGuia.js`, e a
 // primeira delas governa a secao de documentos: o POP nao cria exigencia.
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   AlertTriangle, Building2, CircleHelp, Compass, Droplets, ExternalLink,
   FileText, Landmark, Layers3, ListChecks, Scale, Users, Zap,
@@ -21,8 +21,10 @@ import {
   CUSTA_PRAZO,
   EMPREENDEDOR_SECOES,
   MODALIDADES,
+  NAO_CONFUNDA,
   ONDE_ESTA_A_EXIGENCIA,
   PAPEIS_EMPREENDIMENTO,
+  REVISAO_NORMATIVA,
   TRILHO_AMBIENTAL,
   TRILHO_SETORIAL,
 } from './empreendedorGuia.js';
@@ -30,6 +32,36 @@ import NormativeAuthorityAxes from './NormativeAuthorityAxes.jsx';
 import './empreendedor.css';
 
 function NavegacaoLocal() {
+  // A seção corrente precisa ser anunciada, e não apenas alcançada.
+  //
+  // A primeira versão desta navegação levava à seção e parava aí: sem
+  // `aria-current`, quem usa leitor de tela ficava sem saber onde estava, e sem
+  // estado visual ninguém via qual dos dez atalhos correspondia ao que está na
+  // tela. O guia de hidrelétricas já resolvia isso; este ficou atrás.
+  //
+  // O observador é a régua honesta: marcar no clique mentiria assim que a
+  // pessoa rolasse para outra seção.
+  const [corrente, setCorrente] = useState(EMPREENDEDOR_SECOES[0].id);
+
+  useEffect(() => {
+    const alvos = EMPREENDEDOR_SECOES
+      .map((secao) => document.getElementById(secao.id))
+      .filter(Boolean);
+    if (!alvos.length || typeof IntersectionObserver !== 'function') return undefined;
+    const visiveis = new Map();
+    const observador = new IntersectionObserver((entradas) => {
+      for (const entrada of entradas) visiveis.set(entrada.target.id, entrada.isIntersecting);
+      const primeira = EMPREENDEDOR_SECOES.find((secao) => visiveis.get(secao.id));
+      if (primeira) setCorrente(primeira.id);
+    }, {
+      // A faixa de leitura fica logo abaixo da barra fixa e da própria
+      // navegação, e não no meio da tela: é ali que o olho está.
+      rootMargin: '-140px 0px -55% 0px',
+    });
+    for (const alvo of alvos) observador.observe(alvo);
+    return () => observador.disconnect();
+  }, []);
+
   const irPara = (id) => {
     const alvo = document.getElementById(id);
     if (!alvo) return;
@@ -38,13 +70,21 @@ function NavegacaoLocal() {
     // O foco vai junto: sem isso, quem navega por teclado continua no topo e
     // a proxima tabulacao volta para o inicio do guia.
     alvo.focus({ preventScroll: true });
+    setCorrente(id);
   };
+
   return (
     <nav className="emp-nav" aria-label="Seções deste guia">
       <span className="emp-nav-rotulo">Neste guia</span>
       <div className="emp-nav-links">
         {EMPREENDEDOR_SECOES.map((secao) => (
-          <button key={secao.id} type="button" onClick={() => irPara(secao.id)}>
+          <button
+            key={secao.id}
+            type="button"
+            data-emp-nav-target={secao.id}
+            aria-current={corrente === secao.id ? 'location' : undefined}
+            onClick={() => irPara(secao.id)}
+          >
             {secao.rotulo}
           </button>
         ))}
@@ -102,9 +142,23 @@ export default function GuiaEmpreendedor({ go }) {
       <Secao
         id="emp-competencias"
         titulo="Quem decide o quê"
-        resumo="Três autoridades, três decisões diferentes. Nenhuma delas substitui a outra, e o que cada uma não decide está escrito junto."
+        resumo="Três eixos decisórios, competências diferentes. O que cada um não decide está escrito junto."
         icone={Scale}
       >
+        {/* A versao anterior dizia "tres autoridades". Isso sugeria que IAT,
+            ANEEL e ANA estariam sempre presentes como tres instituicoes
+            distintas no mesmo processo, e nao estao: em rio de dominio
+            estadual no Parana, o proprio IAT tambem exerce a gestao dos
+            recursos hidricos. O eixo e a decisao; a autoridade depende da
+            competencia e, na agua, do dominio do corpo hidrico. */}
+        <p className="emp-texto">
+          O licenciamento ambiental, a regulação do setor elétrico e a regularização do uso
+          dos recursos hídricos são decisões distintas e precisam permanecer compatíveis. A
+          autoridade responsável por cada eixo depende da competência administrativa e, no
+          caso dos recursos hídricos, do domínio do corpo hídrico. No Paraná, o IAT exerce
+          tanto o licenciamento ambiental estadual quanto a gestão dos recursos hídricos de
+          domínio estadual, de modo que dois eixos podem ter a mesma autoridade.
+        </p>
         <NormativeAuthorityAxes />
       </Secao>
 
@@ -135,9 +189,18 @@ export default function GuiaEmpreendedor({ go }) {
       <Secao
         id="emp-ordem"
         titulo="A ordem dos atos"
-        resumo="Os dois trilhos correm em paralelo. A ordem dentro de cada um importa; entre eles, o que importa é a compatibilidade."
+        resumo="Os dois trilhos correm em paralelo, e não são independentes: há fases do licenciamento ambiental que exigem ato do outro eixo já emitido."
         icone={Layers3}
       >
+        {/* Dizer apenas "precisam ser compativeis" subestima a dependencia: a
+            norma ambiental pede documento setorial e a outorga previa em fases
+            determinadas, entao a ordem entre os trilhos tambem importa. */}
+        <p className="emp-texto">
+          Tratar os dois trilhos como independentes até o fim é o erro de planejamento mais
+          caro desta etapa. A norma ambiental exige, em fases determinadas, a portaria de
+          outorga prévia e documentos setoriais específicos. Levantar cedo o que cada fase
+          pedirá do outro eixo evita somar prazos em série.
+        </p>
         <div className="emp-trilhos">
           <section className="emp-trilho emp-trilho-setorial">
             <h3><Zap size={17} aria-hidden="true" /> Trilho setorial</h3>
@@ -181,18 +244,25 @@ export default function GuiaEmpreendedor({ go }) {
         icone={CircleHelp}
       >
         <p className="emp-texto">
-          A Consulta Prévia acontece antes de formalizar o pedido de licença. Ela serve para
-          orientar a modalidade e o estudo prováveis e para revelar restrições de sensibilidade
-          antes de o estudo completo ser contratado. As condições e as peças de caracterização
-          estão na Instrução Normativa IAT nº 09/2025.
+          A Consulta Prévia de Viabilidade antecede a formalização do requerimento de licença
+          para <strong>CGH com potência instalada igual ou superior a 1 MW, PCH e UHE</strong>.
+          Ela não é etapa universal de toda MCH, MGH ou CGH. Sua finalidade é permitir a
+          identificação de pedido de licenciamento incidente no eixo pretendido e de possíveis
+          restrições ambientais, impeditivos e intervenientes.
+        </p>
+        <p className="emp-texto">
+          Para a consulta, devem ser apresentados mapa da delimitação da ADA, mapa digital do
+          arranjo em formato KML ou KMZ e Memorial Descritivo, conforme a Instrução Normativa
+          IAT nº 09/2025. O enquadramento de modalidade e de estudo não se decide aqui: ele é
+          disciplinado pela própria Instrução Normativa e pelo quadro de enquadramento.
         </p>
         <div className="emp-limite">
           <strong>O que a manifestação não faz</strong>
           <ul>
             <li>Não aprova a viabilidade ambiental do empreendimento.</li>
-            <li>Não assegura prioridade sobre outro interessado.</li>
-            <li>Não confere domínio nem direito sobre a área ou sobre o corpo hídrico.</li>
-            <li>Tem prazo de validade próprio e não é prorrogável.</li>
+            <li>Não assegura prioridade no licenciamento nem no aproveitamento do potencial.</li>
+            <li>Não confere domínio sobre os imóveis afetados.</li>
+            <li>Vale 24 meses e não é prorrogável.</li>
           </ul>
         </div>
         <p className="emp-texto">
@@ -204,7 +274,7 @@ export default function GuiaEmpreendedor({ go }) {
 
       <Secao
         id="emp-modalidades"
-        titulo="Modalidades e o que cada uma decide"
+        titulo="Atos ambientais e modalidades de licenciamento"
         resumo="O rito segue o enquadramento e a norma, e não a preferência pelo caminho mais curto."
         icone={FileText}
       >
@@ -218,6 +288,27 @@ export default function GuiaEmpreendedor({ go }) {
             </article>
           ))}
         </div>
+        <h3 className="emp-sub">Não confunda os documentos</h3>
+        <p className="emp-texto">
+          Entregar um no lugar do outro reabre a análise inteira. O conteúdo exigido de cada
+          um está no Termo de Referência aplicável.
+        </p>
+        <div className="emp-tabela-envolucro">
+          <table className="emp-tabela">
+            <caption className="sr-only">Documentos do processo e a função de cada um</caption>
+            <thead>
+              <tr><th scope="col">Documento</th><th scope="col">Para que serve</th></tr>
+            </thead>
+            <tbody>
+              {NAO_CONFUNDA.map((d) => (
+                <tr key={d.documento}>
+                  <th scope="row">{d.documento}</th>
+                  <td>{d.serve}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </Secao>
 
       <Secao
@@ -228,10 +319,31 @@ export default function GuiaEmpreendedor({ go }) {
       >
         <p className="emp-texto">
           A regularização do uso da água segue a Lei Federal nº 9.433/1997 e as regras do gestor
-          competente. Quem emite o ato depende do domínio do corpo hídrico: corpo de domínio da
-          União segue o fluxo da agência nacional; corpo de domínio estadual segue o órgão gestor
-          estadual. Identificar o domínio é o primeiro passo, e ele não se deduz do tamanho do rio.
+          competente. Identificar o domínio do corpo hídrico é o primeiro passo, e ele não se
+          deduz do tamanho do rio. A terminologia muda com o domínio, e misturá-la é fonte de
+          erro no próprio requerimento.
         </p>
+        <div className="emp-dominios">
+          <article>
+            <strong>Corpo hídrico de domínio da União</strong>
+            <p>
+              Aplicam-se as regras da ANA. A Resolução ANA nº 286/2026 diferencia a Declaração
+              de Reserva de Disponibilidade Hídrica, a outorga preventiva e a outorga de direito
+              de uso. Para PCH e UHE, a Declaração é solicitada pela ANEEL à ANA, previamente à
+              concessão ou à autorização. Para CGH, observe os procedimentos específicos de
+              outorga previstos para aproveitamentos de capacidade reduzida.
+            </p>
+          </article>
+          <article>
+            <strong>Corpo hídrico de domínio estadual no Paraná</strong>
+            <p>
+              A competência de outorga é do IAT. Para novos empreendimentos sujeitos a
+              licenciamento ambiental, o procedimento estadual trabalha, em regra, com Outorga
+              Prévia e posterior Outorga de Direito, observadas as particularidades do
+              aproveitamento hidrelétrico e a fase do empreendimento.
+            </p>
+          </article>
+        </div>
         <p className="emp-texto">
           A licença ambiental não substitui a outorga, e a outorga não substitui a licença. Os dois
           atos precisam existir e ser compatíveis entre si quanto a vazão, arranjo e operação
@@ -261,6 +373,11 @@ export default function GuiaEmpreendedor({ go }) {
               <strong>{item.grupo}</strong>
               <p className="emp-fonte-norma">{item.fonte}</p>
               <p>{item.conteudo}</p>
+              {item.atencao && (
+                <p className="emp-fonte-atencao">
+                  <AlertTriangle size={13} aria-hidden="true" /> {item.atencao}
+                </p>
+              )}
             </article>
           ))}
         </div>
@@ -300,14 +417,43 @@ export default function GuiaEmpreendedor({ go }) {
       >
         <p className="emp-texto">
           A licença fixa condicionantes verificáveis. Cada uma tem prazo e precisa de evidência do
-          cumprimento, e é esse acervo que a renovação examina. Condicionante cumprida sem registro
-          equivale, na análise, a condicionante não cumprida.
+          cumprimento, e é esse acervo que a renovação examina.
         </p>
+        {/* A versao anterior dizia que condicionante cumprida sem registro
+            "equivale a nao cumprida". E categorico demais: confunde o fato com
+            a possibilidade de reconhece-lo. */}
+        <p className="emp-texto emp-alerta">
+          <strong>O cumprimento precisa ser demonstrável.</strong> Executar materialmente a
+          condicionante não dispensa apresentar a evidência exigida na licença ou tecnicamente
+          necessária à verificação. Sem documentação suficiente, não é possível reconhecer com
+          segurança o atendimento da obrigação.
+        </p>
+        <div className="emp-limite">
+          <strong>Renovação, regularização, alteração e transferência</strong>
+          <ul>
+            <li>
+              A renovação da Licença de Operação tem requerimento próprio e antecedência a
+              observar. Ela examina condicionantes, programas, outorga e documentação setorial,
+              e não equivale a um novo licenciamento.
+            </li>
+            <li>
+              Alteração definitiva de projeto ou de operação pode exigir licenciamento próprio,
+              e não se resolve por comunicação informal.
+            </li>
+            <li>
+              Instalação ou operação irregular tem rito de regularização, previsto entre as
+              modalidades da Instrução Normativa IAT nº 09/2025.
+            </li>
+            <li>
+              Mudança societária não transfere automaticamente a titularidade ambiental, hídrica
+              e setorial: cada eixo tem o seu ato de transferência.
+            </li>
+          </ul>
+        </div>
         <p className="emp-texto">
-          Alteração de projeto, de titularidade ou de operação tem rito próprio e não se resolve por
-          comunicação informal. Barragens seguem, ainda, a política nacional de segurança
-          estabelecida pela Lei Federal nº 12.334/2010, alterada pela Lei Federal nº 14.066/2020,
-          com plano de segurança e plano de ação de emergência conforme a classificação.
+          Barragens seguem, ainda, a política nacional de segurança estabelecida pela Lei Federal
+          nº 12.334/2010, alterada pela Lei Federal nº 14.066/2020, com plano de segurança e plano
+          de ação de emergência conforme a classificação.
         </p>
       </Secao>
 
@@ -342,6 +488,15 @@ export default function GuiaEmpreendedor({ go }) {
           Ver a formação
         </button>
       </section>
+
+      <footer className="emp-revisao">
+        <p>
+          <strong>Revisão normativa: {REVISAO_NORMATIVA}.</strong> ANEEL, recursos hídricos,
+          legislação federal e procedimento estadual mudam com frequência. A data acima diz
+          quando este conteúdo foi conferido, e não que ele continue vigente hoje: confirme
+          cada norma na fonte oficial, na data do seu protocolo.
+        </p>
+      </footer>
     </div>
   );
 }

@@ -27,6 +27,12 @@
 //      aplicacao a confirmar. O aviso de topo diz isso ao leitor, e nao so a
 //      quem le o codigo.
 
+// Data da ultima revisao normativa do conteudo desta pagina, feita por quem
+// responde tecnicamente pelo assunto. Fica visivel no rodape porque ANEEL,
+// recursos hidricos e o regime estadual mudam com frequencia: sem a data, o
+// leitor nao tem como saber a que altura do tempo este texto foi conferido.
+export const REVISAO_NORMATIVA = '04/09/2026';
+
 export const EMPREENDEDOR_SECOES = Object.freeze([
   { id: 'emp-competencias', rotulo: 'Quem decide' },
   { id: 'emp-enquadramento', rotulo: 'Enquadramento' },
@@ -48,27 +54,31 @@ export const TRILHO_SETORIAL = Object.freeze([
     detalhe: 'Inventário do trecho, partição de quedas e definição de potência, queda, vazão e arranjo. É aqui que nasce o dado que todos os outros atos vão repetir.',
   },
   {
-    passo: 'Registro na ANEEL e obtenção do CEG',
-    detalhe: 'Registro do projeto conforme a Resolução Normativa ANEEL nº 875/2020, com a adequabilidade do sumário executivo, e o código único do empreendimento.',
+    passo: 'Registro na ANEEL',
+    // O codigo unico do empreendimento existe e e usado no setor, mas nem o POP
+    // nem o registro de fontes oficiais desta plataforma o sustentam. Citar a
+    // sigla como etapa obrigatoria seria afirmar exigencia sem lastro, que e
+    // exatamente o que este guia recusa nas outras linhas.
+    detalhe: 'Registro do projeto conforme a Resolução Normativa ANEEL nº 875/2020, com a adequabilidade do sumário executivo. O código que identifica o empreendimento e as demais obrigações do registro devem ser confirmados na própria ANEEL.',
   },
   {
-    passo: 'Outorga setorial conforme o porte',
-    detalhe: 'Registro, autorização ou concessão, conforme o regime aplicável ao aproveitamento. O ato setorial e o limite de potência de cada regime precisam ser conferidos na norma vigente na data do pedido.',
+    passo: 'Outorga setorial conforme o porte, e ela não é a mesma para todos',
+    detalhe: 'Central geradora de capacidade reduzida tem procedimento de registro próprio junto à ANEEL. PCH e UHE seguem outro caminho, com despacho de requisitos, adequabilidade do sumário executivo e o ato de outorga correspondente. O regime e o limite de potência precisam ser conferidos na norma vigente na data do pedido.',
   },
   {
     passo: 'Acesso e conexão à rede',
-    detalhe: 'Parecer de acesso, projeto da linha e da subestação e os contratos de conexão e uso do sistema. A linha e a subestação são sistemas associados e entram também no licenciamento ambiental.',
+    detalhe: 'Parecer de acesso, projeto da linha e da subestação e os contratos de conexão e uso do sistema. A linha e a subestação precisam ser identificadas e ter o enquadramento ambiental definido: conforme configuração, interdependência, localização e norma aplicável, podem integrar o escopo do processo principal ou exigir processo próprio.',
   },
 ]);
 
 export const TRILHO_AMBIENTAL = Object.freeze([
   {
-    passo: 'Consulta Prévia',
-    detalhe: 'Antes de formalizar o pedido de licença. Orienta modalidade e estudo prováveis, e não aprova viabilidade nem assegura prioridade.',
+    passo: 'Consulta Prévia de Viabilidade, para CGH a partir de 1 MW, PCH e UHE',
+    detalhe: 'Antecede a formalização do requerimento de licença. Identifica pedido de licenciamento incidente no mesmo eixo e possíveis restrições, impeditivos e intervenientes. Não alcança toda MCH, MGH ou CGH: a obrigatoriedade começa na potência instalada igual ou superior a 1 MW.',
   },
   {
     passo: 'Enquadramento',
-    detalhe: 'Potência, área de alagamento, supressão de vegetação e sensibilidade do local orientam a modalidade e o estudo. Nenhum desses dados, isolado, define a modalidade.',
+    detalhe: 'A modalidade e o estudo não são escolhidos pelo empreendedor. Avaliam-se primeiro a potência instalada e a área de alagamento, excluída a calha do rio, prevalecendo o enquadramento mais restritivo. Depois, quando aplicável, o Índice de Degradação Ambiental, que considera área alagada, supressão de vegetação nativa, sistema de adução, trecho de vazão reduzida, propriedades rurais inviabilizadas e potência instalada.',
   },
   {
     passo: 'Protocolo',
@@ -114,13 +124,10 @@ export const PAPEIS_EMPREENDIMENTO = Object.freeze([
 
 // Cada modalidade traz o que ela e e o que ela nao e. A confusao entre elas e
 // a origem de boa parte do retrabalho, porque muda o estudo, o prazo e a peca.
+// A Consulta Previa saiu desta lista: ela nao e modalidade de licenciamento, e
+// tem secao propria. A DLAM continua aqui porque e o ato que mais se confunde
+// com licenca, e o cartao existe justamente para dizer que ela nao e.
 export const MODALIDADES = Object.freeze([
-  {
-    sigla: 'Consulta Prévia',
-    nome: 'Manifestação orientativa anterior ao pedido',
-    serve: 'Orientar modalidade, estudo provável e restrições de sensibilidade antes de contratar o estudo completo.',
-    limite: 'Tem prazo de validade próprio, não é prorrogável, não assegura prioridade, não confere domínio e não equivale à aprovação de viabilidade ambiental.',
-  },
   {
     sigla: 'DLAM',
     nome: 'Declaração de Dispensa de Licenciamento Ambiental Estadual',
@@ -151,6 +158,62 @@ export const MODALIDADES = Object.freeze([
     serve: 'Usada apenas nas hipóteses previstas na norma e no fluxo institucional, com aplicação definida na Instrução Normativa IAT nº 09/2025.',
     limite: 'Não substitui a licença principal, a Autorização Florestal, a outorga nem a manifestação de quem tem competência própria.',
   },
+  {
+    sigla: 'LIR e LOR',
+    nome: 'Regularização de instalação e de operação',
+    serve: 'Rito próprio para o empreendimento que já está instalado ou operando sem o ato exigível, previsto entre as modalidades da Instrução Normativa IAT nº 09/2025.',
+    limite: 'Regularizar não apaga a apuração da irregularidade nem antecipa o resultado: é o caminho para reingressar na legalidade, e não um atalho para quem escolhe começar antes.',
+  },
+  {
+    sigla: 'Ampliação',
+    nome: 'Licenciamento de ampliação ou alteração definitiva',
+    serve: 'Aplica-se quando o empreendimento licenciado muda de forma definitiva, em porte, arranjo ou operação.',
+    limite: 'Alteração definitiva não se resolve por comunicação no processo existente. Avalie o rito antes de executar a mudança.',
+  },
+  {
+    sigla: 'RLO',
+    nome: 'Renovação de Licença de Operação',
+    serve: 'Requerimento próprio, com antecedência a observar, que examina condicionantes cumpridas, programas, outorga e documentação setorial vigente.',
+    limite: 'Não é um novo licenciamento e não é automática. O acervo de evidências do período anterior é o que a sustenta.',
+  },
+]);
+
+// Documentos que o processo pede, e que sao confundidos entre si com custo
+// alto: entregar um no lugar do outro reabre a analise inteira. O que cada um
+// deve conter esta no Termo de Referencia aplicavel, e nao aqui.
+export const NAO_CONFUNDA = Object.freeze([
+  {
+    documento: 'Memorial Descritivo',
+    serve: 'Caracterização de engenharia: arranjo, estruturas, potência, vazões, reservatório, trecho de vazão reduzida, acessos e intervenções.',
+  },
+  {
+    documento: 'RAS',
+    serve: 'Diagnóstico ambiental simplificado, com impactos e medidas.',
+  },
+  {
+    documento: 'RDPA',
+    serve: 'Detalhamento dos programas ambientais propostos no RAS, com objetivos, metodologia, resultados esperados, indicadores e cronograma.',
+  },
+  {
+    documento: 'PCA',
+    serve: 'Estudo ambiental com o conjunto de medidas e programas de controle, gestão e monitoramento, conforme o Termo de Referência aplicável.',
+  },
+  {
+    documento: 'EIA e RIMA',
+    serve: 'Avaliação da viabilidade ambiental e dos impactos significativos, com o RIMA em linguagem acessível.',
+  },
+  {
+    documento: 'PBA',
+    serve: 'Detalhamento dos programas ambientais decorrentes do EIA e do RIMA.',
+  },
+  {
+    documento: 'Outorga',
+    serve: 'Regulariza o uso ou a interferência em recursos hídricos. Não substitui a licença ambiental.',
+  },
+  {
+    documento: 'ART',
+    serve: 'Comprova responsabilidade técnica compatível entre profissional, objeto, documento e empreendimento.',
+  },
 ]);
 
 // O documento nao e pedido pelo POP. Esta lista aponta ONDE a exigencia mora,
@@ -163,14 +226,22 @@ export const ONDE_ESTA_A_EXIGENCIA = Object.freeze([
     conteudo: 'Define o enquadramento ambiental por tipologia e as condições da Consulta Prévia, inclusive as peças de caracterização do arranjo e da área.',
   },
   {
-    grupo: 'Listas documentais por fase',
-    fonte: 'Portaria IAT nº 12/2024, seus Anexos e os checklists vigentes',
-    conteudo: 'É onde a exigência documental por fase é estabelecida. Confirme a versão vigente na data do protocolo e a regra de transição aplicável ao seu processo.',
+    // Correcao de erro material, apontado na revisao tecnica de 04/09/2026.
+    //
+    // A versao anterior apontava a Portaria IAT no 12/2024 como fonte das
+    // listas documentais. Ela nao e: disciplina estudos de fauna. O numero
+    // tinha lastro no POP, entao o portao de normas aprovou, e isso mostra o
+    // limite do portao: ele confere que a norma existe, e nao que ela foi
+    // aplicada ao assunto certo. Erro de aplicacao so a revisao humana pega.
+    grupo: 'Listas documentais por ato e por fase',
+    fonte: 'Instrução Normativa IAT nº 09/2025 e Decreto Estadual nº 9.541/2025',
+    conteudo: 'A Instrução Normativa estabelece a documentação dos diferentes atos, modalidades e fases, com listas próprias para DLAM, LAC, LAS, LP, LI, LO, RLO e Autorização Ambiental, além dos documentos complementares conforme tipologia e potência. O Decreto Estadual fixa os requisitos gerais do procedimento, observadas as alterações posteriores e a regra de transição.',
+    atencao: 'A Portaria IAT nº 12/2024 não é a fonte das listas documentais do licenciamento hidrelétrico. Ela disciplina estudos de fauna e deve ser consultada apenas quanto a esse tema.',
   },
   {
-    grupo: 'Conteúdo dos estudos',
-    fonte: 'Termo de Referência da fase e da tipologia',
-    conteudo: 'O Termo de Referência define o conteúdo do memorial e dos estudos. Ele é o parâmetro de suficiência técnica, e não a preferência de quem elabora.',
+    grupo: 'Conteúdo dos estudos ambientais',
+    fonte: 'Termo de Referência do estudo aplicável',
+    conteudo: 'Os Termos de Referência definem o conteúdo dos estudos ambientais e são o parâmetro de suficiência técnica, e não a preferência de quem elabora. O Memorial Descritivo tem regime próprio: a Instrução Normativa o exige em diversos procedimentos e fixa o nível de detalhe conforme a fase.',
   },
   {
     grupo: 'Uso da água',
@@ -184,8 +255,18 @@ export const ONDE_ESTA_A_EXIGENCIA = Object.freeze([
   },
   {
     grupo: 'Unidade de conservação afetada',
-    fonte: 'Lei Federal nº 9.985/2000, Decreto Federal nº 4.340/2002 e Resolução CONAMA nº 428/2010',
-    conteudo: 'A afetação de unidade de conservação e de sua zona de amortecimento exige manifestação do órgão gestor.',
+    fonte: 'Lei Federal nº 9.985/2000, Decreto Federal nº 4.340/2002 e Resolução CONAMA nº 428/2010, alterada pela Resolução CONAMA nº 508/2025',
+    conteudo: 'A incidência sobre unidade de conservação ou sua zona de amortecimento é analisada considerando a categoria da unidade, o ato de criação e o Plano de Manejo. A providência perante o órgão gestor varia com o regime aplicável: autorização nos empreendimentos de significativo impacto sujeitos a EIA/RIMA, e ciência nos processos não sujeitos a EIA/RIMA.',
+  },
+  {
+    grupo: 'Regra de transição',
+    fonte: 'Decreto Estadual nº 9.541/2025, art. 173',
+    conteudo: 'Procedimentos protocolados até a entrada em vigor do novo regime seguem as normas vigentes na data do protocolo, sem aplicação retroativa das demais disposições. Isso não impede complementação técnica no processo em curso. É a primeira coisa a confirmar quando o processo é antigo.',
+  },
+  {
+    grupo: 'Base geral do licenciamento',
+    fonte: 'Lei Federal nº 15.190/2025',
+    conteudo: 'Integra a base normativa geral do licenciamento ambiental. A incidência sobre o caso deve ser avaliada em conjunto com o regime estadual e com a norma específica de empreendimentos hidrelétricos.',
   },
   {
     grupo: 'Segurança de barragem',
@@ -194,7 +275,7 @@ export const ONDE_ESTA_A_EXIGENCIA = Object.freeze([
   },
   {
     grupo: 'Competência federal ou delegada',
-    fonte: 'Lei Complementar nº 140/2011, Decreto Federal nº 8.437/2015 e Instrução Normativa nº 08/2019',
+    fonte: 'Lei Complementar nº 140/2011, Decreto Federal nº 8.437/2015 e Instrução Normativa Ibama nº 08/2019',
     conteudo: 'Definem quando o licenciamento é federal e quando há delegação. Errar a instância custa o processo inteiro.',
   },
 ]);
@@ -205,7 +286,7 @@ export const ONDE_ESTA_A_EXIGENCIA = Object.freeze([
 export const CUSTA_PRAZO = Object.freeze([
   {
     erro: 'Titularidade incompatível entre os atos',
-    efeito: 'O nome no ato setorial, na outorga e no pedido de licença precisa fechar. Divergência vira diligência antes de qualquer análise de mérito.',
+    efeito: 'O nome no ato setorial, na outorga e no pedido de licença precisa fechar, ou a divergência precisa estar formalizada. Transferência, sucessão, assunção e alteração de titularidade regularmente processadas não são irregularidade; divergência sem formalização vira diligência antes de qualquer análise de mérito.',
   },
   {
     erro: 'Arranjo e potência que mudam entre as peças',
@@ -229,7 +310,7 @@ export const CUSTA_PRAZO = Object.freeze([
   },
   {
     erro: 'Iniciar obra ou supressão antes da licença da fase',
-    efeito: 'Não antecipa o cronograma: converte o pedido em apuração de irregularidade, com reflexo na própria licença pretendida.',
+    efeito: 'Não antecipa o cronograma. A intervenção sem o ato exigível pode caracterizar irregularidade e demandar apuração e regularização, conforme o caso, com reflexo possível na própria licença pretendida.',
   },
   {
     erro: 'Deixar o interveniente para o fim',

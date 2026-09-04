@@ -9,6 +9,7 @@ import { createRoot } from 'react-dom/client';
 import { afterEach, describe, expect, it } from 'vitest';
 import GuiaEmpreendedor from './empreendedor.jsx';
 import {
+  CICLO_DE_VIDA,
   CUSTA_PRAZO,
   EMPREENDEDOR_SECOES,
   MODALIDADES,
@@ -98,6 +99,25 @@ describe('guia do empreendedor', () => {
     expect(consultaNoTrilho.passo).toMatch(/1 MW/);
     // A CP não é modalidade de licenciamento e saiu daquela lista.
     expect(MODALIDADES.some((m) => /consulta prévia/i.test(m.sigla))).toBe(false);
+  });
+
+  it('quem já tem empreendimento acha o caminho pelo menu', async () => {
+    // A revisão técnica pediu seção própria: o guia estava concentrado em
+    // projeto novo, e renovar, regularizar, alterar e transferir ficavam
+    // dentro de outra seção, alcançáveis só por rolagem.
+    expect(EMPREENDEDOR_SECOES.some((s) => s.id === 'emp-renovacao')).toBe(true);
+    expect(CICLO_DE_VIDA).toHaveLength(4);
+    for (const item of CICLO_DE_VIDA) {
+      expect(item.situacao).toBeTruthy();
+      expect(item.caminho).toBeTruthy();
+      expect(item.detalhe).toBeTruthy();
+      expect(item.engano, `engano de "${item.caminho}"`).toBeTruthy();
+    }
+    const { host } = await montar();
+    const secao = host.querySelector('#emp-renovacao');
+    expect(secao).toBeTruthy();
+    // A transferência é o caso que mais gera divergência de titularidade.
+    expect(secao.textContent).toMatch(/não transfere automaticamente/i);
   });
 
   it('a tabela de documentos distingue os estudos entre si', () => {

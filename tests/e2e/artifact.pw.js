@@ -5,6 +5,9 @@ import {
   expectHealthyPage,
   monitorRuntime,
 } from './helpers.js';
+// Dado puro, sem JSX: a contagem de seções do guia sai da fonte, e não de um
+// número repetido aqui que envelhece na primeira seção nova.
+import { EMPREENDEDOR_SECOES } from '../../src/empreendedorGuia.js';
 
 const ROUTES = [
   {
@@ -506,7 +509,11 @@ test('guia do empreendedor leva à seção e devolve o foco', async ({
 
   const nav = page.getByRole('navigation', { name: 'Seções deste guia' });
   await expect(nav).toBeVisible();
-  await expect(nav.getByRole('button')).toHaveCount(10);
+  // Contagem derivada da fonte, e não fixada aqui: com o número escrito à mão,
+  // acrescentar uma seção reprovava o guia inteiro em cinco larguras por um
+  // motivo que não era defeito nenhum.
+  await expect(nav.getByRole('button')).toHaveCount(EMPREENDEDOR_SECOES.length);
+  await expect(page.locator('.emp-secao')).toHaveCount(EMPREENDEDOR_SECOES.length);
 
   await nav.getByRole('button', { name: 'Documentos' }).click();
   const alvo = page.locator('#emp-documentos');
@@ -515,7 +522,12 @@ test('guia do empreendedor leva à seção e devolve o foco', async ({
   // A seção de documentos não pode virar lista de exigências: ela aponta a
   // norma que cria cada uma e diz por que não fecha a lista.
   await expect(alvo).toContainText('não cria exigência');
-  await expect(alvo).toContainText('Portaria IAT nº 12/2024');
+  await expect(alvo).toContainText('Instrução Normativa IAT nº 09/2025');
+  // A Portaria de fauna só pode aparecer como ressalva. A asserção anterior
+  // pedia apenas que o texto a citasse, e teria passado igual se ela voltasse
+  // a figurar como fonte das listas documentais, que foi o erro corrigido.
+  await expect(alvo).toContainText('disciplina estudos de fauna');
+  await expect(alvo).not.toContainText('Portaria IAT nº 12/2024, seus Anexos');
 
   await expectHealthyPage(page, runtimeIssues);
 });

@@ -43,6 +43,11 @@ export const EMPREENDEDOR_SECOES = Object.freeze([
   { id: 'emp-documentos', rotulo: 'Documentos' },
   { id: 'emp-intervenientes', rotulo: 'Intervenientes' },
   { id: 'emp-depois', rotulo: 'Depois da licença' },
+  // Secao propria, e nao um bloco dentro de "Depois da licenca", porque o guia
+  // estava concentrado em projeto novo. Quem chega com empreendimento em
+  // operacao, irregular ou em mudanca societaria precisa achar isso pelo menu,
+  // e nao rolando ate o meio de outra secao.
+  { id: 'emp-renovacao', rotulo: 'Renovar e regularizar' },
   { id: 'emp-erros', rotulo: 'O que custa prazo' },
 ]);
 
@@ -175,6 +180,38 @@ export const MODALIDADES = Object.freeze([
     nome: 'Renovação de Licença de Operação',
     serve: 'Requerimento próprio, com antecedência a observar, que examina condicionantes cumpridas, programas, outorga e documentação setorial vigente.',
     limite: 'Não é um novo licenciamento e não é automática. O acervo de evidências do período anterior é o que a sustenta.',
+  },
+]);
+
+// Empreendimento que ja existe: renovar, regularizar, alterar e transferir.
+//
+// Cada um destes tem rito proprio, e o erro comum e trata-los como variacao do
+// licenciamento novo. O que muda em cada caso e quem pede, quando e com base
+// em que acervo.
+export const CICLO_DE_VIDA = Object.freeze([
+  {
+    situacao: 'A licença de operação vence',
+    caminho: 'Renovação de Licença de Operação',
+    detalhe: 'Requerimento próprio, com antecedência a observar. Examina o cumprimento das condicionantes, os programas ambientais, a outorga e a documentação setorial vigente.',
+    engano: 'Não é um novo licenciamento, e não é automática: é o acervo de evidências do período anterior que a sustenta.',
+  },
+  {
+    situacao: 'O empreendimento mudou de forma definitiva',
+    caminho: 'Licenciamento de ampliação ou alteração',
+    detalhe: 'Mudança definitiva de porte, arranjo ou operação tem rito próprio, e ela precisa ser avaliada antes de ser executada.',
+    engano: 'Não se resolve por comunicação dentro do processo existente nem por anotação em relatório.',
+  },
+  {
+    situacao: 'Já está instalado ou operando sem o ato exigível',
+    caminho: 'Regularização, com LIR ou LOR',
+    detalhe: 'Existe caminho previsto para reingressar na legalidade, entre as modalidades da Instrução Normativa IAT nº 09/2025.',
+    engano: 'Regularizar não apaga a apuração da irregularidade nem antecipa o resultado dela.',
+  },
+  {
+    situacao: 'A empresa mudou de dono ou de controle',
+    caminho: 'Transferência de titularidade em cada eixo',
+    detalhe: 'Licença ambiental, outorga de recursos hídricos e ato setorial têm, cada um, o seu procedimento de transferência.',
+    engano: 'Mudança societária não transfere automaticamente a titularidade. Enquanto os três não fecharem, a divergência aparece na primeira conferência.',
   },
 ]);
 

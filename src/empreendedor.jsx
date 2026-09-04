@@ -5,19 +5,24 @@
 // empreendimento e precisa de resposta, nao de percurso.
 //
 // A navegacao local repete a forma da aba de hidreletricas porque o problema e
-// o mesmo, guia longo com secoes independentes, mas ela e deliberadamente mais
-// simples: leva a secao e devolve o foco, sem barra de leitura nem calculo de
-// secao ativa por rolagem. Aquela maquinaria existe la porque o guia e um
-// percurso; aqui ela seria estado a manter sem pergunta que responda.
+// o mesmo: guia longo com secoes independentes. Ela leva a secao, devolve o
+// foco e anuncia a secao corrente por observador de interseccao. Nao tem a
+// barra de progresso de leitura daquele guia, que existe la porque aquilo e um
+// percurso; aqui seria estado a manter sem pergunta que responda.
+//
+// O anuncio da secao corrente nao estava na primeira versao, e a falta dele era
+// uma regressao de acessibilidade em relacao ao guia que serviu de modelo: a
+// navegacao levava ao destino e nao dizia onde a pessoa estava.
 //
 // As regras de conteudo estao no cabecalho de `empreendedorGuia.js`, e a
 // primeira delas governa a secao de documentos: o POP nao cria exigencia.
 import React, { useEffect, useState } from 'react';
 import {
   AlertTriangle, Building2, CircleHelp, Compass, Droplets, ExternalLink,
-  FileText, Landmark, Layers3, ListChecks, Scale, Users, Zap,
+  FileText, Landmark, Layers3, ListChecks, RefreshCw, Scale, Users, Zap,
 } from 'lucide-react';
 import {
+  CICLO_DE_VIDA,
   CUSTA_PRAZO,
   EMPREENDEDOR_SECOES,
   MODALIDADES,
@@ -428,33 +433,31 @@ export default function GuiaEmpreendedor({ go }) {
           necessária à verificação. Sem documentação suficiente, não é possível reconhecer com
           segurança o atendimento da obrigação.
         </p>
-        <div className="emp-limite">
-          <strong>Renovação, regularização, alteração e transferência</strong>
-          <ul>
-            <li>
-              A renovação da Licença de Operação tem requerimento próprio e antecedência a
-              observar. Ela examina condicionantes, programas, outorga e documentação setorial,
-              e não equivale a um novo licenciamento.
-            </li>
-            <li>
-              Alteração definitiva de projeto ou de operação pode exigir licenciamento próprio,
-              e não se resolve por comunicação informal.
-            </li>
-            <li>
-              Instalação ou operação irregular tem rito de regularização, previsto entre as
-              modalidades da Instrução Normativa IAT nº 09/2025.
-            </li>
-            <li>
-              Mudança societária não transfere automaticamente a titularidade ambiental, hídrica
-              e setorial: cada eixo tem o seu ato de transferência.
-            </li>
-          </ul>
-        </div>
         <p className="emp-texto">
           Barragens seguem, ainda, a política nacional de segurança estabelecida pela Lei Federal
           nº 12.334/2010, alterada pela Lei Federal nº 14.066/2020, com plano de segurança e plano
           de ação de emergência conforme a classificação.
         </p>
+      </Secao>
+
+      <Secao
+        id="emp-renovacao"
+        titulo="Renovar, regularizar, alterar e transferir"
+        resumo="O guia até aqui fala de projeto novo. Estes quatro casos são de empreendimento que já existe, e cada um tem rito próprio."
+        icone={RefreshCw}
+      >
+        <div className="emp-ciclo">
+          {CICLO_DE_VIDA.map((item) => (
+            <article key={item.situacao}>
+              <span className="emp-ciclo-situacao">{item.situacao}</span>
+              <strong>{item.caminho}</strong>
+              <p>{item.detalhe}</p>
+              <p className="emp-naofaz">
+                <AlertTriangle size={13} aria-hidden="true" /> {item.engano}
+              </p>
+            </article>
+          ))}
+        </div>
       </Secao>
 
       <Secao

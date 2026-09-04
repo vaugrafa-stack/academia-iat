@@ -477,3 +477,46 @@
 .emp-revisao strong {
   color: var(--ink);
 }
+
+/* Empreendimento que ja existe: quatro situacoes, quatro ritos. O rotulo da
+   situacao vem antes do nome do ato porque a pessoa chega sabendo o problema
+   dela, e nao o nome do procedimento que o resolve. */
+.emp-ciclo {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(258px, 1fr));
+  gap: 12px;
+}
+
+.emp-ciclo article {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 15px 16px;
+  border: 1px solid var(--line);
+  border-radius: var(--raio-3);
+  background: var(--surface2);
+}
+
+.emp-ciclo-situacao {
+  align-self: flex-start;
+  padding: 3px 9px;
+  border-radius: var(--raio-pill);
+  background: var(--soft);
+  color: var(--muted);
+  font-size: var(--texto-1);
+  font-weight: 800;
+  letter-spacing: .02em;
+}
+
+.emp-ciclo strong {
+  color: var(--ink);
+  font-size: var(--texto-4);
+  line-height: 1.35;
+}
+
+.emp-ciclo p {
+  margin: 0;
+  color: var(--muted);
+  font-size: var(--texto-3);
+  line-height: 1.55;
+}

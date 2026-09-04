@@ -455,6 +455,88 @@ A conferência é auxiliar de revisão e não substitui leitura técnica. Os ter
 os critérios de cada verificação são decisão editorial e continuam sujeitos à
 revisão de quem responde pela norma, como as rubricas do laboratório.
 
+### Candidato local de 03/09/2026 — guia do empreendedor e da consultoria
+
+A plataforma inteira era escrita do lado de quem analisa: o documento-fonte é o
+procedimento interno do órgão e as 17 trilhas ensinam a conferir. Quem
+desenvolve o empreendimento tem outra pergunta, e ela não é respondida
+invertendo a primeira. A rota `#/empreendedor` responde a dela: quem decide o
+quê, em que ordem os atos acontecem e onde está escrita cada exigência.
+
+É rota de consulta, e não de treinamento. Sem exercício, sem questão, sem
+pontuação e sem progresso. Dez seções: competências, enquadramento, ordem dos
+atos, Consulta Prévia, modalidades, água, documentos, intervenientes, depois da
+licença e o que custa prazo. A navegação local repete a forma do guia de
+hidrelétricas, com a máquina de leitura removida de propósito: ela leva à seção
+e devolve o foco, sem barra de progresso nem cálculo de seção ativa, porque isso
+é maquinaria de percurso e não de consulta.
+
+A decisão de conteúdo mais importante está na seção de documentos, e ela é uma
+recusa. **O guia não lista o que o empreendedor precisa entregar.** Ele aponta a
+norma que estabelece cada exigência, porque o documento que organiza o método de
+análise não cria exigência: ele descreve o que o órgão confere. Uma lista
+copiada para a plataforma envelheceria sem aviso e passaria a valer como se
+fosse fonte. As oito entradas apontam, entre outras, a Instrução Normativa IAT
+nº 09/2025, a Portaria IAT nº 12/2024 com seus Anexos e checklists, o Termo de
+Referência da fase e a Lei Complementar nº 140/2011. O portão `check-normas`
+subiu de 34 para 41 normas citadas com lastro, todas conferidas.
+
+Um aviso fixo abre o guia e diz o que ele não é: ambiente independente de
+treinamento, não canal oficial, sem antecipar decisão de processo, com fonte que
+é minuta pendente de validação e vigência a confirmar na data do protocolo. Um
+cenário de navegador falha se esse aviso desaparecer de uma reorganização.
+
+#### Um erro meu, e o portão que ele originou
+
+Escrevendo a seção de modalidades, expandi DLAM como "Declaração de
+licenciamento ambiental municipal". O POP diz outra coisa, e a diferença não é
+de redação: DLAM é **Declaração de Dispensa de Licenciamento Ambiental
+Estadual**, ato administrativo de dispensa que o próprio POP distingue de
+licença e de modalidade de licenciamento. LAC eu escrevi como "por cadastro"
+quando é **Licença Ambiental por Adesão e Compromisso**.
+
+Nenhum portão pegou. `check-normas` confere número de norma, `check-questoes`
+confere a fonte de cada questão, `check-provenance` confere hash e contagem, e
+nada olhava para o significado de uma sigla. E a sigla é exatamente o que se
+leva para dentro de um documento sem reconferir, porque parece vocabulário e não
+afirmação.
+
+`tools/check-siglas.mjs` fecha isso: todo par sigla e nome declarado em texto de
+tela é comparado com a tabela "Siglas e abreviações" do POP, que tem 104
+entradas. Conferido nos dois sentidos: reintroduzindo a expansão errada de DLAM
+o portão reprova, nomeando a sigla, o que a tela afirma e o que a fonte diz;
+corrigida, aprova. Quatro armadilhas de autoteste rodam junto.
+
+As provas locais desta rodada são:
+
+- 74 arquivos de teste e 668 testes aprovados, com todos os portões encadeados,
+  inclusive o novo `check-siglas`;
+- `pnpm build` aprovado em 39 chunks; a rota saiu como pedaço sob demanda de
+  21,33 KiB de JavaScript e 4,70 KiB de CSS, e o **CSS inicial ficou inalterado
+  em 184,4/205,0 KiB**;
+- 86 cenários Playwright aprovados sobre o artefato e 34 omissões previstas,
+  incluindo a varredura de contraste que passou a cobrir a rota nova;
+- inspeção em navegador real do artefato construído, em 1440 px, com as dez
+  seções, os dez atalhos em duas linhas sem faixa rolável, alvos de toque de
+  44 px e nenhuma rolagem horizontal.
+
+Três orçamentos passaram a marcar atenção: JavaScript total em 92,0% do teto
+bruto e 90,1% do compactado, e CSS total em 90,2% do bruto. A rota é sob
+demanda e não pesa no primeiro carregamento, mas o total subiu, e a próxima
+ampliação precisa recuperar margem antes de somar.
+
+Uma correção de medição, não de produto, para o registro: minha régua caseira de
+contraste acusou 3,37 nos atalhos do guia, abaixo do mínimo. Era falso positivo.
+O fundo computado é `color(srgb 1 1 1 / 0.92)` e a régua leu `1, 1, 1` como
+valores de 0 a 255, produzindo um fundo quase preto. O valor real fica em torno
+de 5,5, e a varredura de contraste do próprio repositório, que trata esse
+formato, já aprovava a rota. É a segunda vez na mesma sessão que a medição
+caseira erra onde o portão versionado acerta.
+
+O conteúdo do guia é decisão editorial e continua sujeito à revisão de quem
+responde pela norma. A vigência de cada ato citado precisa ser confirmada na
+fonte oficial, e o guia diz isso ao leitor, e não apenas a quem lê o código.
+
 ## Serviços separados
 
 | Serviço | Repositório | Estado comprovado | Não confundir com |

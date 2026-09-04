@@ -68,7 +68,7 @@ try {
 
   assert(packageJson.scripts.dev.includes('--open'), 'iniciador abre o navegador quando o servidor fica pronto');
 
-  assert(document.querySelectorAll('.sidebar-v2 nav button').length === 11, 'onze áreas principais disponíveis (inclui Mapa e Informação Técnica)');
+  assert(document.querySelectorAll('.sidebar-v2 nav button').length === 12, 'doze áreas principais disponíveis (inclui o Guia do empreendedor, o Mapa e a Informação Técnica)');
   assert(document.querySelector('.dashboard-page h1')?.textContent.includes('Comece por aqui'), 'primeiro acesso oferece início, e não uma continuidade inexistente');
   assert(document.querySelectorAll('.dashboard-phases > li').length === 4, 'início resume o percurso em quatro fases');
   assert(

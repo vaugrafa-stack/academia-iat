@@ -16,6 +16,10 @@ const ROUTES = [
     ready: (page) => page.getByRole('heading', { name: /Como funciona uma hidrelétrica/i }),
   },
   {
+    hash: '#/empreendedor',
+    ready: (page) => page.getByRole('heading', { name: /Guia de quem desenvolve o empreendimento/i }),
+  },
+  {
     hash: '#/formacao',
     ready: (page) => page.getByRole('heading', { name: /Formação guiada pelo POP/i }),
   },
@@ -481,6 +485,37 @@ test('conferência da minuta aponta a armadilha e leva de volta à seção', asy
   await conferencia.getByRole('button', { name: /Ir para 4\. Base legal/i }).click();
   await expect(page.getByRole('textbox', { name: /Texto da seção Base legal/i }))
     .toHaveValue(/POP de licenciamento/);
+
+  await expectHealthyPage(page, runtimeIssues);
+});
+
+test('guia do empreendedor leva à seção e devolve o foco', async ({
+  page,
+  baseURL,
+}) => {
+  const runtimeIssues = monitorRuntime(page, baseURL);
+  await page.goto(appUrl(baseURL, '#/empreendedor'), { waitUntil: 'domcontentloaded' });
+  await expect(page.getByRole('heading', { name: /Guia de quem desenvolve o empreendimento/i }))
+    .toBeVisible();
+
+  // O aviso de limite abre o guia. Ele é o que separa material de treinamento
+  // de orientação oficial, e some se alguém reorganizar a página sem ler.
+  const aviso = page.locator('.emp-aviso');
+  await expect(aviso).toHaveAttribute('role', 'note');
+  await expect(aviso).toContainText('não é canal oficial');
+
+  const nav = page.getByRole('navigation', { name: 'Seções deste guia' });
+  await expect(nav).toBeVisible();
+  await expect(nav.getByRole('button')).toHaveCount(10);
+
+  await nav.getByRole('button', { name: 'Documentos' }).click();
+  const alvo = page.locator('#emp-documentos');
+  await expect(alvo).toBeFocused();
+
+  // A seção de documentos não pode virar lista de exigências: ela aponta a
+  // norma que cria cada uma e diz por que não fecha a lista.
+  await expect(alvo).toContainText('não cria exigência');
+  await expect(alvo).toContainText('Portaria IAT nº 12/2024');
 
   await expectHealthyPage(page, runtimeIssues);
 });

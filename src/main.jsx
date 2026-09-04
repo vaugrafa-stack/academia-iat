@@ -165,6 +165,7 @@ if (!mobileNavigationMedia || mobileNavigationMedia.matches) {
 }
 
 const HydroGuide = lazy(() => import("./hydro.jsx"));
+const GuiaEmpreendedor = lazy(() => import("./empreendedor.jsx"));
 const Lesson = lazy(() => import("./licao.jsx"));
 const MapaParana = lazy(() => import("./mapa.jsx"));
 const RedatorIT = lazy(() => import("./redator.jsx"));
@@ -352,6 +353,9 @@ const NAV_GRUPOS = [
     ["hidreletricas", "Entenda uma hidrelétrica", Zap],
     ["formacao", "Formação pelo POP", BookOpen],
   ]],
+  ["Empreendimento", [
+    ["empreendedor", "Guia do empreendedor", Building2],
+  ]],
   ["Prática técnica", [
     ["laboratorio", "Laboratório", FlaskConical],
     ["redator", "Redator de IT", FileText],
@@ -475,6 +479,7 @@ function requisitosAutoestudo(trackId, state, catalogState = null) {
 const VIEW_IDS = [
   "dashboard",
   "hidreletricas",
+  "empreendedor",
   "mapa",
   "formacao",
   "fluxos",
@@ -860,6 +865,7 @@ function App() {
       />
     ),
     hidreletricas: <HydroGuide go={go} />,
+    empreendedor: <GuiaEmpreendedor go={go} />,
     mapa: <MapaParana state={state} setState={setState} />,
     formacao: (
       <Formation

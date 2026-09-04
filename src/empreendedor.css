@@ -1,0 +1,365 @@
+/* Guia do empreendedor e da consultoria.
+ *
+ * Folha da rota, carregada sob demanda com o guia. O CSS inicial já opera perto
+ * do teto, e uma aba de consulta que a maioria dos visitantes não abre não
+ * precisa viajar no primeiro carregamento.
+ *
+ * A regra visual do guia é uma só: o que a autoridade NÃO decide tem o mesmo
+ * peso do que ela decide. Por isso o limite de cada bloco não é nota de rodapé
+ * cinza-claro, é linha marcada, com ícone e contraste próprio. */
+
+.emp-page {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+.emp-aviso {
+  display: flex;
+  gap: 12px;
+  padding: 14px 16px;
+  border: 1px solid var(--amber);
+  border-radius: var(--raio-3);
+  background: var(--amber2);
+}
+
+.emp-aviso svg {
+  flex: none;
+  color: var(--amber);
+}
+
+.emp-aviso strong {
+  display: block;
+  margin-bottom: 4px;
+  color: var(--ink);
+  font-size: 14px;
+}
+
+.emp-aviso p {
+  margin: 0;
+  color: var(--ink2);
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+/* Navegação local. Leva à seção e devolve o foco; sem barra de leitura e sem
+   cálculo de seção ativa, que é maquinaria de percurso e não de consulta. */
+.emp-nav {
+  position: sticky;
+  top: calc(var(--top) + 8px);
+  z-index: 24;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 6px;
+  padding: 10px 12px;
+  border: 1px solid color-mix(in srgb, var(--green) 22%, var(--line));
+  border-radius: var(--raio-3);
+  background: color-mix(in srgb, var(--surface) 92%, transparent);
+  backdrop-filter: blur(16px) saturate(1.2);
+}
+
+.emp-nav-rotulo {
+  color: var(--green);
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+}
+
+.emp-nav-links {
+  display: flex;
+  min-width: 0;
+  gap: 4px;
+  overflow-x: auto;
+  scrollbar-width: thin;
+}
+
+.emp-nav-links button {
+  flex: 0 0 auto;
+  min-height: 44px;
+  padding: 8px 11px;
+  border: 0;
+  border-radius: var(--raio-2);
+  background: transparent;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 700;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.emp-nav-links button:hover {
+  background: var(--green3);
+  color: var(--green);
+}
+
+/* No desktop as dez seções cabem em linha e a faixa rolável deixa de existir,
+   pela mesma razão registrada no guia de hidrelétricas: sem faixa não há item
+   fora da vista. */
+@media (min-width: 981px) {
+  .emp-nav-links {
+    flex-wrap: wrap;
+    overflow-x: visible;
+  }
+}
+
+.emp-secao {
+  padding: 20px 22px;
+  border: 1px solid var(--line);
+  border-radius: var(--raio-4);
+  background: var(--surface);
+  scroll-margin-top: calc(var(--top) + 96px);
+}
+
+.emp-secao:focus {
+  outline: 3px solid color-mix(in srgb, var(--blue) 72%, white);
+  outline-offset: 5px;
+}
+
+.emp-texto {
+  margin: 0 0 12px;
+  max-width: 78ch;
+  color: var(--ink2);
+  font-size: 14px;
+  line-height: 1.65;
+}
+
+.emp-texto.emp-alerta {
+  padding-left: 12px;
+  border-left: 3px solid var(--amber);
+  color: var(--ink);
+}
+
+.emp-sub {
+  margin: 22px 0 12px;
+  font-size: 16px;
+  color: var(--ink);
+}
+
+/* Trilhos em paralelo. Duas colunas no amplo, empilhados no estreito: a ordem
+   do DOM é setorial e depois ambiental, e a leitura segue a mesma. */
+.emp-trilhos {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 14px;
+}
+
+.emp-trilho {
+  padding: 15px 16px;
+  border: 1px solid var(--line);
+  border-radius: var(--raio-3);
+  background: var(--surface2);
+}
+
+.emp-trilho h3 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 12px;
+  font-size: 14px;
+  color: var(--ink);
+}
+
+.emp-trilho-setorial h3 { color: var(--blue); }
+.emp-trilho-ambiental h3 { color: var(--green); }
+
+.emp-trilho ol {
+  display: flex;
+  flex-direction: column;
+  gap: 11px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: passo;
+}
+
+.emp-trilho li {
+  display: flex;
+  gap: 11px;
+}
+
+.emp-trilho li > span {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border-radius: var(--raio-pill);
+  background: var(--green3);
+  color: var(--green);
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.emp-trilho-setorial li > span {
+  background: var(--blue2);
+  color: var(--blue);
+}
+
+.emp-trilho li strong {
+  display: block;
+  margin-bottom: 3px;
+  color: var(--ink);
+  font-size: 13px;
+}
+
+.emp-trilho li p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+.emp-papeis,
+.emp-modalidades,
+.emp-fontes,
+.emp-erros {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 12px;
+}
+
+.emp-papeis article,
+.emp-modalidades article,
+.emp-fontes article,
+.emp-erros article {
+  padding: 13px 14px;
+  border: 1px solid var(--line);
+  border-radius: var(--raio-3);
+  background: var(--surface2);
+}
+
+.emp-papeis strong,
+.emp-modalidades strong,
+.emp-fontes strong,
+.emp-erros strong {
+  display: block;
+  margin-bottom: 5px;
+  color: var(--ink);
+  font-size: 14px;
+}
+
+.emp-papeis p,
+.emp-modalidades p,
+.emp-fontes p,
+.emp-erros p {
+  margin: 0 0 6px;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+.emp-sigla {
+  display: inline-block;
+  margin-bottom: 6px;
+  padding: 3px 9px;
+  border-radius: var(--raio-pill);
+  background: var(--green3);
+  color: var(--green);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+}
+
+.emp-fonte-norma {
+  color: var(--blue) !important;
+  font-weight: 700;
+}
+
+/* O limite não é rodapé: é a metade da informação que evita o erro caro. */
+.emp-naofaz {
+  display: flex;
+  gap: 7px;
+  margin: 0 !important;
+  padding-top: 7px;
+  border-top: 1px solid var(--line);
+  color: var(--ink2) !important;
+}
+
+.emp-naofaz svg {
+  flex: none;
+  margin-top: 3px;
+}
+
+.emp-limite {
+  margin: 0 0 14px;
+  padding: 13px 15px;
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--amber);
+  border-radius: var(--raio-2);
+  background: var(--surface2);
+}
+
+.emp-limite-forte {
+  border-left-color: var(--blue);
+}
+
+.emp-limite strong {
+  display: block;
+  margin-bottom: 6px;
+  color: var(--ink);
+  font-size: 14px;
+}
+
+.emp-limite p,
+.emp-limite li {
+  margin: 0;
+  color: var(--ink2);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.emp-limite ul {
+  margin: 0;
+  padding-left: 19px;
+}
+
+.emp-ir {
+  margin-top: 6px;
+}
+
+.emp-cta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 14px;
+  padding: 18px 20px;
+  border: 1px solid var(--line);
+  border-radius: var(--raio-4);
+  background: var(--surface2);
+}
+
+.emp-cta > div {
+  display: flex;
+  flex: 1;
+  min-width: 240px;
+  gap: 12px;
+}
+
+.emp-cta svg {
+  flex: none;
+  color: var(--green);
+}
+
+.emp-cta strong {
+  display: block;
+  margin-bottom: 4px;
+  color: var(--ink);
+  font-size: 16px;
+}
+
+.emp-cta p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+@media (max-width: 720px) {
+  .emp-secao {
+    padding: 16px 14px;
+  }
+
+  .emp-nav {
+    top: calc(var(--top) + 4px);
+  }
+}

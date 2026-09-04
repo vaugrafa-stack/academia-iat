@@ -8,6 +8,7 @@ import {
 const ROUTES = [
   { hash: '', heading: /Comece por aqui|Onde você parou/i, minimumControls: 5 },
   { hash: '#/hidreletricas', heading: /Como funciona uma hidrelétrica/i, minimumControls: 10 },
+  { hash: '#/empreendedor', heading: /Guia de quem desenvolve o empreendimento/i, minimumControls: 10 },
   { hash: '#/formacao', heading: /Formação guiada pelo POP/i, minimumControls: 10 },
   { hash: '#/laboratorio', heading: /Pratique antes de assinar/i, minimumControls: 5 },
   { hash: '#/redator', heading: /Redator de Informação Técnica/i, minimumControls: 5 },

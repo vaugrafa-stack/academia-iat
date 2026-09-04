@@ -67,7 +67,7 @@
 .hec-heading h2 {
   margin: 0 0 2px;
   color: #fff;
-  font-size: clamp(15px, 1.5vw, 19px);
+  font-size:clamp(17px, 1.5vw, 21px);
   line-height: 1.2;
   letter-spacing: -0.015em;
 }
@@ -75,7 +75,7 @@
 .hec-heading p {
   margin: 0;
   color: #a9c5c4;
-  font-size: 12px;
+  font-size:var(--texto-2);
 }
 
 .hec-controls {
@@ -88,7 +88,7 @@
   width: 174px;
   gap: 5px;
   color: #bfcecf;
-  font-size: 11px;
+  font-size:var(--texto-1);
   font-weight: 700;
 }
 
@@ -119,7 +119,7 @@
   background: rgba(27, 99, 81, 0.42);
   color: #ebfff8;
   font: inherit;
-  font-size: 12px;
+  font-size:var(--texto-2);
   font-weight: 800;
   cursor: pointer;
 }
@@ -145,7 +145,7 @@
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   background: #092128;
   color: #b9cdcc;
-  font-size: 11px;
+  font-size:var(--texto-1);
   font-weight: 700;
   letter-spacing: 0.01em;
 }
@@ -476,7 +476,7 @@
   color: #fff;
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
   font: inherit;
-  font-size: clamp(12px, 0.78vw, 13px);
+  font-size:clamp(14px, 0.78vw, 15px);
   font-weight:800;
   line-height: 1.12;
   text-align: left;
@@ -497,7 +497,7 @@
   border-radius: 50%;
   background: rgba(9, 54, 58, 0.9);
   color: var(--hec-cyan);
-  font-size: 12px;
+  font-size:var(--texto-2);
   font-weight: 800;
   text-shadow: none;
 }
@@ -532,7 +532,7 @@
   border-radius: var(--raio-2);
   background: rgba(4, 22, 26, 0.86);
   color: #f0fbf9;
-  font-size: 13px;
+  font-size:var(--texto-3);
   font-weight: 800;
   pointer-events: none;
 }
@@ -549,7 +549,7 @@
   background: rgba(4, 22, 26, 0.82);
   color: #e9f6f4;
   box-shadow: 0 5px 18px rgba(0, 0, 0, 0.24);
-  font-size: 11px;
+  font-size:var(--texto-1);
   font-weight: 800;
   transform: translateX(-50%);
   pointer-events: none;
@@ -584,7 +584,7 @@
 .hec-equipment-key p {
   margin: 0 0 7px;
   color: #bcd1d0;
-  font-size: 13px;
+  font-size:var(--texto-3);
   font-weight: 800;
 }
 
@@ -609,7 +609,7 @@
   background: rgba(255, 255, 255, 0.035);
   color: #c3d5d4;
   font: inherit;
-  font-size: 11px;
+  font-size:var(--texto-1);
   font-weight:700;
   line-height: 1.2;
   text-align: left;
@@ -624,7 +624,7 @@
   border-radius: 50%;
   background: rgba(116, 220, 255, 0.1);
   color: var(--hec-cyan);
-  font-size: 11px;
+  font-size:var(--texto-1);
   font-weight: 800;
 }
 
@@ -667,7 +667,7 @@
   background: rgba(255, 255, 255, 0.035);
   color: #a9c0c0;
   font: inherit;
-  font-size: 11px;
+  font-size:var(--texto-1);
   font-weight: 800;
   white-space: nowrap;
 }
@@ -691,7 +691,7 @@
   border-radius: 50%;
   background: rgba(255, 255, 255, 0.09);
   color: var(--hec-cyan);
-  font-size: 11px;
+  font-size:var(--texto-1);
 }
 
 .hec-stage-panel {
@@ -707,7 +707,7 @@
 
 .hec-stage-panel > span {
   color: rgba(116, 220, 255, 0.5);
-  font-size: 26px;
+  font-size:var(--titulo-3);
   font-weight: 800;
   line-height: 1;
   letter-spacing: -0.06em;
@@ -716,13 +716,13 @@
 .hec-stage-panel strong {
   display: block;
   color: #f5fffc;
-  font-size: 12px;
+  font-size:var(--texto-2);
 }
 
 .hec-stage-panel p {
   margin: 3px 0 0;
   color: #afc4c4;
-  font-size: 13px;
+  font-size:var(--texto-3);
   line-height: 1.45;
 }
 
@@ -749,7 +749,7 @@
   display: block;
   margin-top: 7px;
   color: #829d9f;
-  font-size: 13px;
+  font-size:var(--texto-3);
   line-height: 1.4;
 }
 
@@ -942,7 +942,7 @@
     bottom: 6px;
     min-height: 26px;
     padding: 4px 7px;
-    font-size: 11px;
+    font-size:var(--texto-1);
   }
 
   .hec-callout {
@@ -974,11 +974,11 @@
   }
 
   .hec-heading h2 {
-    font-size: 14px;
+    font-size:var(--texto-4);
   }
 
   .hec-heading p {
-    font-size: 11px;
+    font-size:var(--texto-1);
   }
 
   .hec-play {
@@ -988,7 +988,7 @@
   .hec-layer-status {
     align-items: flex-start;
     flex-direction: column;
-    font-size: 11px;
+    font-size:var(--texto-1);
   }
 
   .hec-equipment-key ol {
@@ -997,16 +997,16 @@
 
   .hec-equipment-key button {
     padding: 4px 5px;
-    font-size: 13px;
+    font-size:var(--texto-3);
   }
 
   .hec-callout {
     max-width: 105px;
-    font-size: 11px;
+    font-size:var(--texto-1);
   }
 
   .hec-stage-panel > span {
-    font-size: 19px;
+    font-size:var(--titulo-1);
   }
 }
 

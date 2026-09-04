@@ -9,7 +9,7 @@
 .answer-confidence legend {
   margin-bottom: 9px;
   color: var(--ink2);
-  font-size: 13px;
+  font-size:var(--texto-3);
   font-weight: 800;
 }
 
@@ -47,7 +47,7 @@
 .diagnostic-depth > small {
   margin-top: 4px;
   color: var(--muted);
-  font-size: 13px;
+  font-size:var(--texto-3);
   line-height: 1.35;
 }
 
@@ -79,7 +79,7 @@
 .confidence-recorded {
   margin: 12px 0 0;
   color: var(--muted);
-  font-size: 12px;
+  font-size:var(--texto-2);
   text-transform: capitalize;
 }
 
@@ -92,7 +92,7 @@
   border-left: 3px solid var(--amber);
   color: var(--ink2);
   background: color-mix(in srgb, var(--amber) 11%, var(--surface));
-  font-size: 12px;
+  font-size:var(--texto-2);
   line-height: 1.5;
 }
 
@@ -117,7 +117,7 @@
 
 .question-objective small {
   color: var(--blue);
-  font-size: 12px;
+  font-size:var(--texto-2);
   font-weight: 800;
   letter-spacing: .06em;
 }
@@ -125,7 +125,7 @@
 .question-objective p {
   margin: 5px 0 0;
   color: var(--ink2);
-  font-size: 14px;
+  font-size:var(--texto-4);
   font-weight: 700;
   line-height: 1.48;
 }
@@ -147,21 +147,21 @@
 
 .question-pedagogy dt {
   color: var(--muted);
-  font-size: 12px;
+  font-size:var(--texto-2);
   line-height: 1.25;
 }
 
 .question-pedagogy dd {
   margin: 3px 0 0;
   color: var(--ink2);
-  font-size: 13px;
+  font-size:var(--texto-3);
   font-weight: 800;
 }
 
 .pedagogy-method-note {
   grid-column: 1 / -1;
   color: var(--muted);
-  font-size: 12px;
+  font-size:var(--texto-2);
   line-height: 1.45;
 }
 
@@ -173,7 +173,7 @@
 }
 
 .answer-feedback .distractor-explanation strong {
-  font-size: 13px;
+  font-size:var(--texto-3);
 }
 
 .answer-feedback .distractor-explanation p {
@@ -188,7 +188,7 @@
   border-radius: var(--raio-pill);
   color: var(--muted);
   background: var(--soft);
-  font-size: 12px;
+  font-size:var(--texto-2);
   font-weight: 800;
   text-transform: capitalize;
 }
@@ -244,7 +244,7 @@
   .diagnostic-depth button,
   .answer-confidence button {
     min-height: 64px;
-    font-size: 14px;
+    font-size:var(--texto-4);
   }
 
   .question-pedagogy {
@@ -264,6 +264,6 @@
   .confidence-recorded,
   .confidence-priority,
   .re-q .confidence-tag {
-    font-size: 13px;
+    font-size:var(--texto-3);
   }
 }

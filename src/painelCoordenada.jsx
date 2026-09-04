@@ -436,12 +436,12 @@ export default function PainelCoordenada({
                 }}
                 onClick={() => escolher(resultado)}
               >
-                <small style={{ color: 'var(--muted)', fontSize: 10.5, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.035em' }}>
+                <small style={{ color: 'var(--muted)', fontSize: 12.5, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.035em' }}>
                   {resultado.categoria}
                 </small>
-                <strong style={{ fontSize: 13, overflowWrap: 'anywhere' }}>{resultado.titulo}</strong>
+                <strong style={{ fontSize: 15, overflowWrap: 'anywhere' }}>{resultado.titulo}</strong>
                 {resultado.resumo && (
-                  <span style={{ color: 'var(--muted)', fontSize: 11.5, lineHeight: 1.35, overflowWrap: 'anywhere' }}>
+                  <span style={{ color: 'var(--muted)', fontSize: 13.5, lineHeight: 1.35, overflowWrap: 'anywhere' }}>
                     {resultado.resumo.length > 180 ? `${resultado.resumo.slice(0, 177)}...` : resultado.resumo}
                   </span>
                 )}

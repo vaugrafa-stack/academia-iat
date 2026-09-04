@@ -49,20 +49,20 @@
    titulo. A pagina do mapa abre em h1; um h3 logo abaixo pulava um nivel,
    e o portao de acessibilidade reprovou a rota por isso. Como h2, ele
    tambem passa a nomear a secao para quem navega por titulos. */
-.gp-cabecalho h2{margin:0;font-size:14px;font-weight:800;
+.gp-cabecalho h2{margin:0;font-size:var(--texto-4);font-weight:800;
  color:var(--ink);line-height:1.3}
-.gp-cabecalho small{font-size:12px;color:var(--muted);line-height:1.45}
+.gp-cabecalho small{font-size:var(--texto-2);color:var(--muted);line-height:1.45}
 
 /* O limite do POP nao e nota de rodape. Ele fica no topo, com contraste
    suficiente para ser lido, porque o erro que evita e concluir sobreposicao
    olhando poligonal na tela. */
 .gp-limite{display:flex;gap:8px;margin:0;padding:9px 11px;border-radius:var(--raio-2);
  border:1px solid var(--line);background:var(--surface);
- font-size:13px;line-height:1.5;color:var(--muted)}
+ font-size:var(--texto-3);line-height:1.5;color:var(--muted)}
 .gp-limite svg{flex:none;margin-top:2px;color:var(--amber,var(--ink2))}
 
 .gp-grupo{display:flex;flex-direction:column;gap:6px}
-.gp-grupo h3{margin:0;font-size:11px;font-weight:800;letter-spacing:.06em;
+.gp-grupo h3{margin:0;font-size:var(--texto-1);font-weight:800;letter-spacing:.06em;
  text-transform:uppercase;color:var(--muted)}
 .gp-grupo ul{list-style:none;margin:0;padding:0;
  display:flex;flex-direction:column;gap:5px}
@@ -71,40 +71,40 @@
  width:100%;display:flex;align-items:center;gap:9px;text-align:left;
  min-height:44px;padding:9px 12px;border-radius:var(--raio-2);cursor:pointer;
  border:1px solid var(--line);background:var(--surface);color:var(--muted);
- font:inherit;font-size:13px;font-weight:700}
+ font:inherit;font-size:var(--texto-3);font-weight:700}
 .gp-grupo li>button.on{
  color:var(--ink);border-color:var(--ink2);background:var(--surface2)}
 .gp-grupo li>button:focus-visible{
  outline:3px solid var(--blue);outline-offset:2px}
 .gp-titulo{flex:1;min-width:0;line-height:1.35}
-.gp-modulo{flex:none;font-size:11px;font-weight:700;letter-spacing:.04em;
+.gp-modulo{flex:none;font-size:var(--texto-1);font-weight:700;letter-spacing:.04em;
  padding:2px 7px;border-radius:var(--raio-pill);border:1px solid currentColor;opacity:.75}
 .gp-detalhe{padding:7px 12px 2px}
-.gp-detalhe p{margin:0 0 5px;font-size:13px;line-height:1.5;color:var(--muted)}
+.gp-detalhe p{margin:0 0 5px;font-size:var(--texto-3);line-height:1.5;color:var(--muted)}
 
-.gp-credito{display:block;font-size:12px;line-height:1.45;color:var(--muted)}
+.gp-credito{display:block;font-size:var(--texto-2);line-height:1.45;color:var(--muted)}
 /* Servico que nao declara origem recebe marca visual propria: a lacuna e
    informacao, e o POP manda registrar a fonte. */
 .gp-sem-fonte{font-style:italic;opacity:.9}
 
-.gp-nota{margin:0;font-size:12px;line-height:1.5;color:var(--muted)}
+.gp-nota{margin:0;font-size:var(--texto-2);line-height:1.5;color:var(--muted)}
 .gp-aviso{color:var(--ink2)}
 
 .gp-atributos{display:flex;flex-direction:column;gap:8px;
  padding-top:10px;border-top:1px solid var(--line)}
-.gp-atributos h2{margin:0;font-size:11px;font-weight:800;letter-spacing:.06em;
+.gp-atributos h2{margin:0;font-size:var(--texto-1);font-weight:800;letter-spacing:.06em;
  text-transform:uppercase;color:var(--muted)}
 .gp-atributos article{border:1px solid var(--line);border-radius:var(--raio-2);
  background:var(--surface);padding:9px 11px}
-.gp-atributos h3{margin:0 0 6px;font-size:13px;color:var(--ink);line-height:1.35}
+.gp-atributos h3{margin:0 0 6px;font-size:var(--texto-3);color:var(--ink);line-height:1.35}
 .gp-atributos dl{display:grid;grid-template-columns:minmax(0,auto) minmax(0,1fr);
  gap:3px 11px;margin:0}
-.gp-atributos dt{font-size:11px;font-weight:700;color:var(--muted);
+.gp-atributos dt{font-size:var(--texto-1);font-weight:700;color:var(--muted);
  overflow-wrap:anywhere}
-.gp-atributos dd{margin:0;font-size:12px;color:var(--ink);overflow-wrap:anywhere}
+.gp-atributos dd{margin:0;font-size:var(--texto-2);color:var(--ink);overflow-wrap:anywhere}
 
 .gp-portal{display:inline-flex;align-items:center;gap:6px;align-self:flex-start;
- min-height:44px;font-size:13px;font-weight:700;color:var(--blue)}
+ min-height:44px;font-size:var(--texto-3);font-weight:700;color:var(--blue)}
 
 @media (max-width:640px){
   .gp-atributos dl{grid-template-columns:minmax(0,1fr)}
@@ -123,9 +123,9 @@
 
 .gp-legenda-topo{display:flex;align-items:center;gap:7px;width:100%;
  min-height:34px;padding:7px 10px;border:0;background:none;cursor:pointer;
- color:var(--ink);font:inherit;font-size:12px;font-weight:800;text-align:left}
+ color:var(--ink);font:inherit;font-size:var(--texto-2);font-weight:800;text-align:left}
 .gp-legenda-topo>span{flex:1;min-width:0}
-.gp-legenda-espera{font-weight:600;font-style:normal;font-size:11px;color:var(--muted)}
+.gp-legenda-espera{font-weight:600;font-style:normal;font-size:var(--texto-1);color:var(--muted)}
 .gp-legenda-seta{flex:none;transition:transform .18s ease}
 .gp-legenda.fechada .gp-legenda-seta{transform:rotate(-90deg)}
 .gp-legenda-topo:focus-visible{outline:3px solid var(--blue);outline-offset:-3px}
@@ -134,16 +134,16 @@
  display:flex;flex-direction:column;gap:9px}
 .gp-legenda>ul>li{display:flex;flex-direction:column;gap:2px}
 .gp-legenda-nome{display:flex;align-items:center;gap:6px}
-.gp-legenda-nome strong{flex:1;min-width:0;font-size:12px;line-height:1.35;color:var(--ink)}
+.gp-legenda-nome strong{flex:1;min-width:0;font-size:var(--texto-2);line-height:1.35;color:var(--ink)}
 .gp-legenda-nome>button{flex:none;display:flex;border:0;background:none;
  color:var(--muted);cursor:pointer;padding:2px}
 .gp-legenda-nome>button:focus-visible{outline:2px solid var(--blue);outline-offset:1px}
-.gp-legenda>ul>li>small{font-size:11px;line-height:1.4;color:var(--muted)}
+.gp-legenda>ul>li>small{font-size:var(--texto-1);line-height:1.4;color:var(--muted)}
 
 .gp-simbolos{list-style:none;margin:4px 0 0;padding:0;
  display:flex;flex-direction:column;gap:3px}
 .gp-simbolos li{display:flex;align-items:center;gap:6px;
- font-size:11px;line-height:1.35;color:var(--muted)}
+ font-size:var(--texto-1);line-height:1.35;color:var(--muted)}
 /* O simbolo vem do servico como PNG minusculo. `image-rendering` fica no
    automatico: forcar pixelado deixaria o tracejado e a hachura ilegiveis. */
 .gp-simbolos img{flex:none;border-radius:var(--raio-1)}
@@ -212,15 +212,15 @@
    dos 24 do WCAG 2.2, e ficha de filtro e o tipo de controle pequeno que
    costuma passar por baixo dele. */
 .gp-modulos{display:flex;flex-direction:column;gap:7px}
-.gp-modulos-rotulo{font-size:12px;font-weight:800;letter-spacing:.04em;
+.gp-modulos-rotulo{font-size:var(--texto-2);font-weight:800;letter-spacing:.04em;
  text-transform:uppercase;color:var(--muted)}
 .gp-modulos-fichas{display:flex;flex-wrap:wrap;gap:6px}
 .gp-modulos-fichas>button{display:inline-flex;align-items:center;gap:5px;
  min-height:44px;padding:0 11px;border-radius:var(--raio-pill);cursor:pointer;
  border:1px solid var(--line);background:var(--surface2);color:var(--ink2);
- font:inherit;font-size:13px;font-weight:700;line-height:1;
+ font:inherit;font-size:var(--texto-3);font-weight:700;line-height:1;
  transition:border-color .15s ease,background-color .15s ease,color .15s ease}
-.gp-modulos-fichas>button>b{font-size:11px;font-weight:800;opacity:.65;
+.gp-modulos-fichas>button>b{font-size:var(--texto-1);font-weight:800;opacity:.65;
  font-variant-numeric:tabular-nums}
 .gp-modulos-fichas>button:hover{border-color:var(--ink2);color:var(--ink)}
 .gp-modulos-fichas>button.on{border-color:var(--green2);color:var(--ink);
@@ -243,11 +243,11 @@
    ficava ligado, nada desenhava, e a leitura natural era que o site estava
    quebrado, e nao que o servidor do IAT nao respondeu. */
 .gp-legenda-falha{display:flex;align-items:flex-start;gap:6px;flex-wrap:wrap;
- margin:0;padding:0 10px 9px;font-size:12px;line-height:1.45;color:var(--ink2)}
+ margin:0;padding:0 10px 9px;font-size:var(--texto-2);line-height:1.45;color:var(--ink2)}
 .gp-legenda-falha>svg{flex:none;margin-top:2px;color:var(--amber,#d08a20)}
 .gp-legenda-falha>span{flex:1;min-width:0}
 .gp-legenda-falha>button{flex:none;min-height:44px;padding:0 10px;border-radius:var(--raio-2);
  border:1px solid var(--line);background:var(--surface2);color:var(--ink);
- font:inherit;font-size:12px;font-weight:800;cursor:pointer}
+ font:inherit;font-size:var(--texto-2);font-weight:800;cursor:pointer}
 .gp-legenda-falha>button:hover{border-color:var(--ink2)}
 .gp-legenda-falha>button:focus-visible{outline:3px solid var(--blue);outline-offset:2px}

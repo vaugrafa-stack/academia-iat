@@ -16,7 +16,7 @@
   background: var(--surface2);
   color: var(--ink);
   font: inherit;
-  font-size: 14px;
+  font-size:var(--texto-4);
   outline: none;
   text-overflow: ellipsis;
 }
@@ -83,7 +83,7 @@
   gap: 10px;
   padding: 7px 9px 5px;
   color: var(--muted);
-  font-size: 11px;
+  font-size:var(--texto-1);
   letter-spacing: .04em;
   text-transform: uppercase;
 }
@@ -126,14 +126,14 @@
 }
 
 .case-combobox-option strong {
-  font-size: 13px;
+  font-size:var(--texto-3);
 }
 
 .case-combobox-option small {
   overflow: hidden;
   margin-top: 2px;
   color: var(--muted);
-  font-size: 12px;
+  font-size:var(--texto-2);
   line-height: 1.35;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -144,7 +144,7 @@
   border-radius: var(--raio-pill);
   padding: 2px 7px;
   color: var(--muted);
-  font-size:11px;
+  font-size:var(--texto-1);
   font-style: normal;
   font-weight: 800;
 }
@@ -153,13 +153,13 @@
   margin: 0;
   padding: 18px 12px;
   color: var(--muted);
-  font-size: 13px;
+  font-size:var(--texto-3);
   text-align: center;
 }
 
 .rd-caso .case-combobox-label {
   color: var(--ink);
-  font-size: 14px;
+  font-size:var(--texto-4);
   letter-spacing: 0;
   text-transform: none;
 }
@@ -183,7 +183,7 @@
   background: color-mix(in srgb, var(--green2) 9%, var(--surface));
   color: var(--green2);
   font: inherit;
-  font-size: 13px;
+  font-size:var(--texto-3);
   font-weight: 800;
   cursor: pointer;
 }
@@ -196,7 +196,7 @@
   display: block;
   max-width: 34rem;
   color: var(--danger, #b42318);
-  font-size: 12px;
+  font-size:var(--texto-2);
   line-height: 1.4;
 }
 
@@ -267,14 +267,14 @@
 
 .answer-sheet-heading small {
   color: var(--green2);
-  font-size:11px;
+  font-size:var(--texto-1);
   font-weight: 800;
   letter-spacing: .09em;
 }
 
 .answer-sheet-heading h2 {
   margin: 2px 0 4px;
-  font-size: clamp(18px, 2.6vw, 25px);
+  font-size:clamp(20px, 2.6vw, 27px);
   line-height: 1.2;
 }
 
@@ -282,7 +282,7 @@
   max-width: 590px;
   margin: 0;
   color: var(--muted);
-  font-size: 13px;
+  font-size:var(--texto-3);
   line-height: 1.5;
 }
 
@@ -327,7 +327,7 @@
   background: var(--surface);
   color: var(--ink2);
   font: inherit;
-  font-size: 12px;
+  font-size:var(--texto-2);
   font-weight: 700;
   text-decoration: none;
   cursor: pointer;
@@ -360,7 +360,7 @@
 
 .answer-sheet-case small {
   color: var(--green2);
-  font-size:11px;
+  font-size:var(--texto-1);
   font-weight: 800;
   letter-spacing: .06em;
   text-transform: uppercase;
@@ -368,14 +368,14 @@
 
 .answer-sheet-case h3 {
   margin: 3px 0 5px;
-  font-size: 16px;
+  font-size:var(--texto-5);
   line-height: 1.35;
 }
 
 .answer-sheet-case p {
   margin: 0;
   color: var(--muted);
-  font-size: 13px;
+  font-size:var(--texto-3);
   line-height: 1.5;
 }
 
@@ -385,7 +385,7 @@
   padding: 5px 9px;
   background: color-mix(in srgb, var(--blue) 10%, var(--surface2));
   color: var(--blue);
-  font-size: 11px;
+  font-size:var(--texto-1);
   font-weight: 800;
 }
 
@@ -409,7 +409,7 @@
 
 .answer-sheet-use-note p {
   margin: 0;
-  font-size: 13px;
+  font-size:var(--texto-3);
   line-height: 1.55;
 }
 
@@ -438,19 +438,19 @@
   border-radius: 50%;
   background: var(--green2);
   color: var(--sobre-acento);
-  font-size: 12px;
+  font-size:var(--texto-2);
   font-weight: 800;
 }
 
 .answer-sheet-section h3 {
   margin: 0;
-  font-size: 16px;
+  font-size:var(--texto-5);
 }
 
 .answer-sheet-section header p {
   margin: 2px 0 0;
   color: var(--muted);
-  font-size: 12px;
+  font-size:var(--texto-2);
   line-height: 1.45;
 }
 
@@ -459,7 +459,7 @@
   margin: 0;
   padding-left: 23px;
   color: var(--ink2);
-  font-size: 13px;
+  font-size:var(--texto-3);
   line-height: 1.55;
 }
 
@@ -474,7 +474,7 @@
 
 .answer-sheet-evidence summary {
   color: var(--blue);
-  font-size: 12px;
+  font-size:var(--texto-2);
   font-weight: 800;
   cursor: pointer;
 }
@@ -497,7 +497,7 @@
   padding: 10px 12px;
   background: color-mix(in srgb, var(--blue) 6%, var(--surface));
   color: var(--ink2);
-  font-size: 13px;
+  font-size:var(--texto-3);
   line-height: 1.5;
 }
 
@@ -519,7 +519,7 @@
 .answer-sheet-table-wrap table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 12px;
+  font-size:var(--texto-2);
 }
 
 .answer-sheet-table-wrap caption {
@@ -564,7 +564,7 @@
 .answer-sheet-decision-title p {
   margin: 0;
   color: var(--ink);
-  font-size: 13px;
+  font-size:var(--texto-3);
   font-weight: 700;
   line-height: 1.48;
 }
@@ -574,7 +574,7 @@
   min-width: 44px;
   border-radius: var(--raio-pill);
   padding: 4px 8px;
-  font-size: 11px;
+  font-size:var(--texto-1);
   text-align: center;
 }
 
@@ -592,7 +592,7 @@
 .answer-sheet-related {
   margin: 8px 0 0;
   color: var(--ink2);
-  font-size: 13px;
+  font-size:var(--texto-3);
   line-height: 1.55;
 }
 
@@ -607,7 +607,7 @@
 .answer-sheet-decisions summary,
 .answer-sheet-model summary {
   color: var(--blue);
-  font-size: 13px;
+  font-size:var(--texto-3);
   font-weight: 800;
   cursor: pointer;
 }
@@ -619,7 +619,7 @@
 
 .answer-sheet-decisions details li {
   color: var(--ink2);
-  font-size: 12px;
+  font-size:var(--texto-2);
 }
 
 .answer-sheet-decisions blockquote {
@@ -632,7 +632,7 @@
 
 .answer-sheet-decisions details small {
   color: var(--muted);
-  font-size: 11px;
+  font-size:var(--texto-1);
 }
 
 .answer-sheet-minimum,
@@ -656,7 +656,7 @@
   padding: 10px;
   background: var(--surface2);
   color: var(--ink2);
-  font-size: 13px;
+  font-size:var(--texto-3);
   line-height: 1.45;
 }
 
@@ -672,14 +672,14 @@
 
 .answer-sheet-minimum small {
   color: var(--muted);
-  font-size:11px;
+  font-size:var(--texto-1);
 }
 
 .answer-sheet-outcome,
 .answer-sheet-model p {
   margin: 0;
   color: var(--ink2);
-  font-size: 13px;
+  font-size:var(--texto-3);
   line-height: 1.65;
 }
 
@@ -721,13 +721,13 @@
 
 .answer-sheet-gaps strong {
   color: var(--ink);
-  font-size: 13px;
+  font-size:var(--texto-3);
 }
 
 .answer-sheet-gaps p {
   margin: 3px 0 0;
   color: var(--ink2);
-  font-size: 12px;
+  font-size:var(--texto-2);
   line-height: 1.55;
 }
 
@@ -739,7 +739,7 @@
   border-top: 1px solid var(--line);
   padding-top: 13px;
   color: var(--muted);
-  font-size:11px;
+  font-size:var(--texto-1);
   line-height: 1.45;
 }
 
@@ -754,7 +754,7 @@
 
 @media (max-width: 720px) {
   .case-combobox > input {
-    font-size: 16px;
+    font-size:var(--texto-5);
   }
 
   .rd-caso {

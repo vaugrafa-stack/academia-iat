@@ -52,7 +52,7 @@ export function StartupFailure({ error, onRetry = reloadCurrentPage }) {
         >
           <RefreshCw size={18} aria-hidden="true" /> Tentar novamente
         </button>
-        <p style={{ color: '#9ecaba', fontSize: 13, marginTop: 24 }}>
+        <p style={{ color: '#9ecaba', fontSize: 15, marginTop: 24 }}>
           Seu progresso permanece neste navegador. Minuta técnica · validação institucional pendente.
         </p>
       </section>

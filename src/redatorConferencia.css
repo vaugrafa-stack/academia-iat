@@ -24,20 +24,20 @@
   align-items: center;
   gap: 8px;
   color: var(--ink);
-  font-size: 14px;
+  font-size:var(--texto-4);
 }
 
 .rd-conferencia-escopo {
   margin: 0;
   color: var(--muted);
-  font-size: 13px;
+  font-size:var(--texto-3);
   line-height: 1.5;
 }
 
 .rd-conferencia-limpa,
 .rd-conferencia-resumo {
   margin: 0;
-  font-size: 13px;
+  font-size:var(--texto-3);
   line-height: 1.5;
 }
 
@@ -86,7 +86,7 @@
 }
 
 .rd-achado-selo {
-  font-size: 11px;
+  font-size:var(--texto-1);
   font-weight: 800;
   letter-spacing: 0.045em;
   text-transform: uppercase;
@@ -101,7 +101,7 @@
   border-radius: var(--raio-2);
   background: var(--surface2);
   color: var(--ink);
-  font-size: 13px;
+  font-size:var(--texto-3);
   font-weight: 700;
   cursor: pointer;
 }
@@ -114,14 +114,14 @@
 .rd-achado > p {
   margin: 0 0 5px;
   color: var(--ink);
-  font-size: 13px;
+  font-size:var(--texto-3);
   line-height: 1.5;
 }
 
 .rd-achado > small {
   display: block;
   color: var(--muted);
-  font-size: 13px;
+  font-size:var(--texto-3);
 }
 
 @media (max-width: 640px) {

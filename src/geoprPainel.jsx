@@ -53,11 +53,11 @@ const ESTILO_ESTADO = {
   border: '1px solid var(--line)',
   borderRadius: 9,
   background: 'var(--surface)',
-  fontSize: 12,
+  fontSize: 14,
   lineHeight: 1.5,
   color: 'var(--muted)',
 };
-const ESTILO_NOTA_TOOLTIP = { fontSize: 11, color: 'var(--muted)' };
+const ESTILO_NOTA_TOOLTIP = { fontSize: 13, color: 'var(--muted)' };
 
 /**
  * Legenda sobre o mapa.
@@ -241,16 +241,16 @@ export function GeoprResumoNoMapa({ consulta }) {
       )}
       {consulta.estado === 'pronto' && achado && (
         <>
-          <small style={{ fontSize: 10.5, fontWeight: 800, letterSpacing: '.035em', textTransform: 'uppercase', color: 'var(--muted)', overflowWrap: 'anywhere' }}>
+          <small style={{ fontSize: 12.5, fontWeight: 800, letterSpacing: '.035em', textTransform: 'uppercase', color: 'var(--muted)', overflowWrap: 'anywhere' }}>
             {achado.origem?.titulo || achado.camada || 'Camada do GeoPR'}
           </small>
-          <strong style={{ fontSize: 13.5, overflowWrap: 'anywhere' }}>{tituloDoAchado(achado, 120)}</strong>
+          <strong style={{ fontSize: 15.5, overflowWrap: 'anywhere' }}>{tituloDoAchado(achado, 120)}</strong>
           {!!resumo.length && (
             <dl style={{ display: 'grid', gridTemplateColumns: 'auto minmax(0,1fr)', gap: '2px 8px', margin: 0 }}>
               {resumo.map((par) => (
                 <React.Fragment key={par.chave}>
-                  <dt style={{ fontSize: 10.5, fontWeight: 700, color: 'var(--muted)' }}>{par.rotulo}</dt>
-                  <dd style={{ margin: 0, fontSize: 11.5, overflowWrap: 'anywhere' }}>{par.valor}</dd>
+                  <dt style={{ fontSize: 12.5, fontWeight: 700, color: 'var(--muted)' }}>{par.rotulo}</dt>
+                  <dd style={{ margin: 0, fontSize: 13.5, overflowWrap: 'anywhere' }}>{par.valor}</dd>
                 </React.Fragment>
               ))}
             </dl>
@@ -260,7 +260,7 @@ export function GeoprResumoNoMapa({ consulta }) {
               + {consulta.achados.length - 1} {consulta.achados.length === 2 ? 'registro próximo' : 'registros próximos'} ao ponto consultado
             </span>
           )}
-          <em style={{ paddingTop: 4, borderTop: '1px solid var(--line)', fontSize: 11, color: 'var(--muted)', fontStyle: 'normal' }}>
+          <em style={{ paddingTop: 4, borderTop: '1px solid var(--line)', fontSize: 13, color: 'var(--muted)', fontStyle: 'normal' }}>
             {consulta.tipo === 'fixada' ? 'Detalhes fixados abaixo do mapa' : 'Clique para fixar os detalhes'}
           </em>
         </>
@@ -326,12 +326,12 @@ export function GeoprDetalhesDaConsulta({ consulta, aoFechar }) {
 
       {consulta.estado === 'pronto' && achadosVisiveis.map((achado, indice) => (
         <article key={`${achado.origem?.id}-${achado.camada}-${indice}`}>
-          <small className="gp-camada-consultada" style={{ display: 'block', marginBottom: 3, fontSize: 10.5, fontWeight: 800, letterSpacing: '.035em', textTransform: 'uppercase', color: 'var(--muted)' }}>
+          <small className="gp-camada-consultada" style={{ display: 'block', marginBottom: 3, fontSize: 12.5, fontWeight: 800, letterSpacing: '.035em', textTransform: 'uppercase', color: 'var(--muted)' }}>
             {achado.origem?.titulo || 'Camada do GeoPR'}
           </small>
           <h3>{tituloDoAchado(achado, 180)}</h3>
           {achado.origem?.paraQue && (
-            <p className="gp-resumo-camada" style={{ margin: '0 0 8px', fontSize: 11.5, lineHeight: 1.45, color: 'var(--muted)' }}>
+            <p className="gp-resumo-camada" style={{ margin: '0 0 8px', fontSize: 13.5, lineHeight: 1.45, color: 'var(--muted)' }}>
               {achado.origem.paraQue}
             </p>
           )}

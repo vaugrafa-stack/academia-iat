@@ -43,11 +43,34 @@ const RAIZ_PX = 16;
  * em e % NÃO são convertidos: dependem do elemento pai e não são resolvíveis
  * lendo o arquivo. Eles saem em `dependentes` para virar aviso visível, em vez
  * de silêncio. */
-export function tamanhosDeclarados(css) {
+/** Tokens `--texto-*` e `--titulo-*` declarados, em pixels. */
+export function escalaDeclarada(css) {
+  const escala = new Map();
+  for (const m of semComentario(css).matchAll(/(--(?:texto|titulo)-\d+)\s*:\s*(\d*\.?\d+)px/g)) {
+    escala.set(m[1], Number(m[2]));
+  }
+  return escala;
+}
+
+export function tamanhosDeclarados(css, escala = new Map()) {
   const achados = [];
   const dependentes = [];
   for (const regra of semComentario(css).matchAll(/([^{}]+)\{([^}]*)\}/g)) {
     const seletor = regra[1].trim().replace(/\s+/g, " ");
+    // Tamanho vindo da escala tipográfica.
+    //
+    // Sem isto, migrar os 785 literais para token cegaria este portão por
+    // inteiro: ele continuaria anunciando que nada está abaixo do piso de
+    // leitura enquanto deixaria de medir a quase totalidade das declarações.
+    // O mesmo buraco que `check-normas` tinha com número curto.
+    for (const decl of regra[2].matchAll(/font-size:\s*var\(\s*(--[\w-]+)\s*\)/g)) {
+      const px = escala.get(decl[1]);
+      if (px === undefined) {
+        achados.push({ seletor, px: Number.NaN, unidade: 'token', token: decl[1] });
+        continue;
+      }
+      achados.push({ seletor, px, unidade: 'token', token: decl[1] });
+    }
     for (const decl of regra[2].matchAll(/font-size:\s*(\d*\.?\d+)(px|rem)\b/g)) {
       const valor = Number(decl[1]);
       achados.push({
@@ -70,9 +93,24 @@ export function tamanhosDeclarados(css) {
 }
 
 const falhas = [];
-for (const arquivo of readdirSync(PASTA).filter((n) => n.endsWith(".css"))) {
+const folhas = readdirSync(PASTA).filter((n) => n.endsWith(".css"));
+// A escala é declarada uma vez, em `styles.css`, e usada por todas as folhas.
+const escala = new Map();
+for (const arquivo of folhas) {
+  for (const [token, px] of escalaDeclarada(readFileSync(join(PASTA, arquivo), "utf8"))) {
+    escala.set(token, px);
+  }
+}
+if (!escala.size) falhas.push("nenhum token da escala tipografica encontrado");
+let medidas = 0;
+for (const arquivo of folhas) {
   const css = readFileSync(join(PASTA, arquivo), "utf8");
-  for (const { seletor, px } of tamanhosDeclarados(css)) {
+  for (const { seletor, px, token } of tamanhosDeclarados(css, escala)) {
+    medidas += 1;
+    if (Number.isNaN(px)) {
+      falhas.push(`${arquivo}: ${token} nao existe na escala, em ${seletor.slice(0, 60)}`);
+      continue;
+    }
     if (px < PISO) {
       falhas.push(`${arquivo}: ${px}px em ${seletor.slice(0, 70)}`);
     }
@@ -96,6 +134,17 @@ if (!tamanhosDeclarados(DEVE_ACUSAR_REM).some((d) => d.px < PISO)) {
 }
 if (tamanhosDeclarados(NAO_PODE_ACUSAR).some((d) => d.px < PISO)) {
   falhas.push("autoteste: acusou tamanho que estava dentro de comentario");
+}
+// Armadilhas da escala em token. A primeira prova que o portao mede o valor
+// atras do token, e nao apenas registra que ha um token; a segunda, que token
+// inexistente reprova em vez de passar como tamanho desconhecido.
+const ESCALA_TESTE = escalaDeclarada(":root{--texto-9:9px;--texto-8:16px}");
+if (!tamanhosDeclarados(".x{font-size:var(--texto-9)}", ESCALA_TESTE).some((d) => d.px < PISO)) {
+  falhas.push("autoteste: nao mediu o valor por tras do token da escala");
+}
+if (!tamanhosDeclarados(".y{font-size:var(--nao-existe)}", ESCALA_TESTE)
+  .some((d) => Number.isNaN(d.px))) {
+  falhas.push("autoteste: aceitou token fora da escala em silencio");
 }
 
 if (falhas.length) {

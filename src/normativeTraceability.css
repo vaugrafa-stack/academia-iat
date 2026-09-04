@@ -16,7 +16,7 @@
 
 .normative-axes .eyebrow {
   color: var(--green2);
-  font-size: 11px;
+  font-size:var(--texto-1);
   font-weight: 800;
   letter-spacing: .09em;
   text-transform: uppercase;
@@ -24,7 +24,7 @@
 
 .normative-axes h2 {
   margin: 5px 0 6px;
-  font-size: clamp(19px, 2vw, 25px);
+  font-size:clamp(21px, 2vw, 27px);
 }
 
 .normative-axes header p {
@@ -40,7 +40,7 @@
   border-radius: var(--raio-pill);
   background: var(--amber2);
   color: var(--ink);
-  font-size: 13px;
+  font-size:var(--texto-3);
   font-weight: 700;
 }
 
@@ -82,9 +82,9 @@
 
 .normative-axis-icon svg { width: 20px; height: 20px; }
 .normative-axis-heading small { color: var(--muted); font-weight: 800; }
-.normative-axis h3 { margin: 2px 0 0; font-size: 16px; }
-.normative-axis > p { color: var(--muted); font-size: 13px; }
-.normative-axis ul { margin: 4px 0 14px; padding-left: 19px; font-size: 12px; }
+.normative-axis h3 { margin: 2px 0 0; font-size:var(--texto-5); }
+.normative-axis > p { color: var(--muted); font-size:var(--texto-3); }
+.normative-axis ul { margin: 4px 0 14px; padding-left: 19px; font-size:var(--texto-2); }
 .normative-axis li + li { margin-top: 6px; }
 
 .normative-axis-meta {
@@ -94,7 +94,7 @@
   padding-top: 12px;
   border-top: 1px solid var(--line);
   color: var(--muted);
-  font-size: 11px;
+  font-size:var(--texto-1);
 }
 
 .normative-axis-limit {
@@ -111,7 +111,7 @@
   border-radius: var(--raio-2);
   background: var(--amber2);
   color: var(--ink) !important;
-  font-size: 12px !important;
+  font-size:var(--texto-2) !important;
 }
 
 .normative-axis-links {
@@ -130,7 +130,7 @@
   border-radius: var(--raio-2);
   background: var(--surface);
   color: var(--green2);
-  font-size: 11px;
+  font-size:var(--texto-1);
   font-weight: 700;
   text-decoration: none;
 }
@@ -146,7 +146,7 @@
   border-radius: var(--raio-2);
   background: var(--amber2);
   color: var(--muted);
-  font-size: 12px;
+  font-size:var(--texto-2);
 }
 
 .normative-axes.compact { margin-bottom: 18px; }

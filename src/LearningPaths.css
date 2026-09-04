@@ -12,7 +12,7 @@
 
 .foundation-gateway small {
   color: var(--blue);
-  font-size: 11px;
+  font-size:var(--texto-1);
   font-weight: 800;
   letter-spacing: .06em;
   text-transform: uppercase;
@@ -20,13 +20,13 @@
 
 .foundation-gateway h3 {
   margin: 4px 0;
-  font-size: 16px;
+  font-size:var(--texto-5);
 }
 
 .foundation-gateway p {
   margin: 0;
   color: var(--muted);
-  font-size: 13px;
+  font-size:var(--texto-3);
   line-height: 1.55;
 }
 
@@ -46,7 +46,7 @@
   border-radius: var(--raio-2);
   color: var(--blue);
   background: var(--surface);
-  font-size: 12px;
+  font-size:var(--texto-2);
   font-weight: 800;
 }
 
@@ -66,6 +66,6 @@
 
 @media (max-width: 620px) {
   .foundation-gateway { gap: 11px; padding: 13px; }
-  .foundation-gateway h3 { font-size: 16px; }
-  .foundation-gateway p { font-size: 12px; }
+  .foundation-gateway h3 { font-size:var(--texto-5); }
+  .foundation-gateway p { font-size:var(--texto-2); }
 }

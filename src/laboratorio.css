@@ -40,7 +40,7 @@
 .lab-mode-bar h2 {
   margin: 5px 0 6px;
   color: var(--ink);
-  font-size: clamp(20px, 2vw, 25px);
+  font-size:clamp(22px, 2vw, 27px);
   letter-spacing: -.45px;
 }
 
@@ -49,7 +49,7 @@
   max-width: 74ch;
   margin: 0;
   color: var(--muted);
-  font-size: 13px;
+  font-size:var(--texto-3);
   line-height: 1.55;
 }
 
@@ -58,7 +58,7 @@
   align-items: center;
   gap: 7px;
   color: var(--green);
-  font-size: 11px;
+  font-size:var(--texto-1);
   font-weight: 800;
   letter-spacing: .08em;
   text-transform: uppercase;
@@ -75,14 +75,14 @@
   flex-direction: column;
   align-items: flex-end;
   color: var(--green);
-  font-size: 26px;
+  font-size:var(--titulo-3);
   font-weight: 800;
   font-variant-numeric: tabular-nums;
 }
 
 .lab-catalog-total small {
   color: var(--muted);
-  font-size: 13px;
+  font-size:var(--texto-3);
   font-weight: 700;
 }
 
@@ -98,7 +98,7 @@
   gap: 6px;
   min-width: 0;
   color: var(--ink2);
-  font-size: 11px;
+  font-size:var(--texto-1);
   font-weight: 800;
 }
 
@@ -129,7 +129,7 @@
   border-radius: var(--raio-2);
   background: var(--surface2);
   color: var(--ink);
-  font-size: 13px;
+  font-size:var(--texto-3);
 }
 
 .lab-catalog-search input {
@@ -162,7 +162,7 @@
 .lab-catalog-results p {
   margin: 0;
   color: var(--muted);
-  font-size: 12px;
+  font-size:var(--texto-2);
 }
 
 .lab-catalog-results strong {
@@ -174,7 +174,7 @@
   border: 0;
   background: transparent;
   color: var(--blue);
-  font-size: 12px;
+  font-size:var(--texto-2);
   font-weight: 800;
 }
 
@@ -234,14 +234,14 @@
 .lab-case-catalog button small {
   overflow: hidden;
   color: var(--muted);
-  font-size:13px;
+  font-size:var(--texto-3);
   font-weight: 700;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
 .lab-case-catalog button strong {
-  font-size: 12px;
+  font-size:var(--texto-2);
   line-height: 1.35;
 }
 
@@ -255,7 +255,7 @@
   align-items: center;
   gap: 4px;
   color: var(--green);
-  font-size:11px;
+  font-size:var(--texto-1);
   font-weight: 800;
   white-space: nowrap;
 }
@@ -287,11 +287,11 @@
 
 .lab-catalog-empty strong {
   color: var(--ink);
-  font-size: 14px;
+  font-size:var(--texto-4);
 }
 
 .lab-catalog-empty span {
-  font-size: 12px;
+  font-size:var(--texto-2);
 }
 
 .lab-selected-overview {
@@ -306,13 +306,13 @@
 
 .lab-selected-overview h3 {
   margin: 5px 0 2px;
-  font-size: 19px;
+  font-size:var(--titulo-1);
 }
 
 .lab-selected-overview p {
   margin: 0;
   color: var(--ink2);
-  font-size: 13px;
+  font-size:var(--texto-3);
   line-height: 1.45;
 }
 
@@ -322,7 +322,7 @@
   margin: 10px 0 0;
   padding-left: 18px;
   color: var(--muted);
-  font-size: 12px;
+  font-size:var(--texto-2);
 }
 
 .lab-selected-meta {
@@ -336,14 +336,14 @@
   display: flex;
   flex-direction: column;
   color: var(--muted);
-  font-size:11px;
+  font-size:var(--texto-1);
   text-align: center;
   text-transform: uppercase;
 }
 
 .lab-selected-meta > span strong {
   color: var(--ink);
-  font-size: 13px;
+  font-size:var(--texto-3);
   text-transform: none;
 }
 
@@ -358,7 +358,7 @@
   border-radius: var(--raio-2);
   background: var(--green);
   color: #fff;
-  font-size: 12px;
+  font-size:var(--texto-2);
   font-weight: 800;
 }
 
@@ -377,7 +377,7 @@
 
 .lab-mode-bar h2 {
   margin-bottom: 3px;
-  font-size: 16px;
+  font-size:var(--texto-5);
 }
 
 .lab-mode-options {
@@ -400,12 +400,12 @@
   border-radius: var(--raio-2);
   background: transparent;
   color: var(--muted);
-  font-size: 12px;
+  font-size:var(--texto-2);
   font-weight: 800;
 }
 
 .lab-mode-options button small {
-  font-size:11px;
+  font-size:var(--texto-1);
   font-weight: 600;
 }
 
@@ -465,7 +465,7 @@
   border-top: 1px solid var(--line);
   background: var(--surface2);
   color: var(--ink2);
-  font-size: 12px;
+  font-size:var(--texto-2);
   font-weight: 800;
 }
 
@@ -478,7 +478,7 @@
   background: var(--surface);
   color: var(--ink);
   font: inherit;
-  font-size: 14px;
+  font-size:var(--texto-4);
   font-weight: 600;
 }
 
@@ -492,14 +492,14 @@
   color: var(--ink2);
   /* Este bloco e o enunciado da tarefa, prosa corrida, e nao rotulo: o piso de
      11px foi pensado para rotulo em caixa alta lido por reconhecimento. */
-  font-size: 13px;
+  font-size:var(--texto-3);
   line-height: 1.5;
 }
 
 .lab-evidence-task strong,
 .lab-open-task strong {
   color: var(--ink);
-  font-size: 12px;
+  font-size:var(--texto-2);
 }
 
 .lab-evidence-task p,
@@ -515,13 +515,13 @@
 
 .lab-classification-review > h4 {
   margin: 0 0 4px;
-  font-size: 14px;
+  font-size:var(--texto-4);
 }
 
 .lab-classification-review > p {
   margin: 0 0 9px;
   color: var(--muted);
-  font-size: 12px;
+  font-size:var(--texto-2);
 }
 
 .lab-classification-review > ol {
@@ -549,7 +549,7 @@
 .lab-classification-review > ol > li p {
   margin: 5px 0 0;
   color: var(--ink2);
-  font-size: 11px;
+  font-size:var(--texto-1);
   line-height: 1.45;
 }
 
@@ -563,7 +563,7 @@
 
 .lab-classification-review b {
   flex: 0 0 auto;
-  font-size:11px;
+  font-size:var(--texto-1);
 }
 
 .lab-page .fund-check li > span {
@@ -573,7 +573,7 @@
 
 .lab-page .fund-check li > span small {
   color: var(--muted);
-  font-size:11px;
+  font-size:var(--texto-1);
   line-height: 1.4;
 }
 
@@ -628,14 +628,14 @@
 
 .lab-help-ladder h3 {
   margin: 0 0 2px;
-  font-size: 14px;
+  font-size:var(--texto-4);
 }
 
 .lab-help-ladder header p,
 .lab-help-empty {
   margin: 0;
   color: var(--muted);
-  font-size: 13px;
+  font-size:var(--texto-3);
   line-height: 1.5;
 }
 
@@ -645,7 +645,7 @@
   border-radius: var(--raio-pill);
   background: var(--surface);
   color: var(--blue);
-  font-size: 11px;
+  font-size:var(--texto-1);
   font-weight: 800;
   text-align: center;
 }
@@ -663,7 +663,7 @@
   display: block;
   margin-bottom: 8px;
   color: var(--ink);
-  font-size: 12px;
+  font-size:var(--texto-2);
 }
 
 .lab-help-section ul,
@@ -673,7 +673,7 @@
   margin: 0;
   padding-left: 19px;
   color: var(--ink2);
-  font-size: 11px;
+  font-size:var(--texto-1);
   line-height: 1.45;
 }
 
@@ -721,12 +721,12 @@
 }
 
 .lab-help-ladder > button strong {
-  font-size: 12px;
+  font-size:var(--texto-2);
 }
 
 .lab-help-ladder > button small {
   color: var(--muted);
-  font-size:13px;
+  font-size:var(--texto-3);
 }
 
 .lab-help-ladder > button svg {
@@ -742,14 +742,14 @@
 .lab-page .decision-readiness {
   display: block;
   margin: 2px 0 15px;
-  font-size: 12px;
+  font-size:var(--texto-2);
 }
 
 .lab-page .decision-readiness > strong {
   display: block;
   margin-bottom: 9px;
   color: var(--ink);
-  font-size: 12px;
+  font-size:var(--texto-2);
 }
 
 .lab-page .decision-readiness ul {
@@ -789,7 +789,7 @@
 
 .lab-page .decision-readiness b {
   color: var(--ink);
-  font-size:11px;
+  font-size:var(--texto-1);
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
 }
@@ -814,7 +814,7 @@
 
 @media (max-width: 760px) {
   .lab-page .lab-evidence-item select {
-    font-size: 16px;
+    font-size:var(--texto-5);
   }
 
   .lab-catalog-header,
@@ -1014,13 +1014,13 @@
   }
 
   .lab-catalog-open strong {
-    font-size: 12px;
+    font-size:var(--texto-2);
   }
 
   .lab-catalog-open small {
     overflow: hidden;
     color: var(--ink2);
-    font-size: 11px;
+    font-size:var(--texto-1);
     font-weight: 600;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -1095,7 +1095,7 @@
 
   .lab-mode-bar h2 {
     margin-bottom: 0;
-    font-size: 14px;
+    font-size:var(--texto-4);
   }
 
   .lab-mode-options {
@@ -1117,7 +1117,7 @@
   }
 
   .lab-page .lab-trust-note p {
-    font-size: 11px;
+    font-size:var(--texto-1);
     line-height: 1.45;
   }
 
@@ -1138,7 +1138,7 @@
 .lab-help-columns li.lab-ausente{color:var(--muted);text-decoration:line-through;text-decoration-color:var(--red)}
 .lab-help-columns li.lab-ausente span{
   margin-right:6px;padding:1px 6px;border-radius:var(--raio-3);
-  background:var(--red);color:#fff;font-size:11px;font-weight:800;
+  background:var(--red);color:#fff;font-size:var(--texto-1);font-weight:800;
   letter-spacing:.06em;text-transform:uppercase;text-decoration:none;
   display:inline-block;vertical-align:middle;
 }

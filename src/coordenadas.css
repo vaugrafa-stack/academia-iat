@@ -18,8 +18,8 @@
 .mapa-layout>.mp-painel{grid-area:painel}
 .co-painel>header{display:flex;align-items:flex-start;gap:9px}
 .co-painel>header>div{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
-.co-painel>header strong{font-size:14px;color:var(--ink);line-height:1.3}
-.co-painel>header small{font-size:12px;color:var(--muted);line-height:1.45}
+.co-painel>header strong{font-size:var(--texto-4);color:var(--ink);line-height:1.3}
+.co-painel>header small{font-size:var(--texto-2);color:var(--muted);line-height:1.45}
 
 /* A regra genérica do mapa deixava o botão de envio maior que a própria
    caixa e ele parecia sobreposto ao texto, sobretudo em 390 px. */
@@ -34,33 +34,33 @@
    rota do mapa por causa dele. */
 .co-ir{flex:none;min-width:44px;min-height:44px;padding:0 13px;border-radius:var(--raio-2);cursor:pointer;
  border:1px solid var(--ink2);background:var(--surface2);color:var(--ink);
- font:inherit;font-size:13px;font-weight:800}
+ font:inherit;font-size:var(--texto-3);font-weight:800}
 .co-ir:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
 
-.co-nota{margin:0;font-size:12px;line-height:1.5;color:var(--muted)}
+.co-nota{margin:0;font-size:var(--texto-2);line-height:1.5;color:var(--muted)}
 .co-erro{color:var(--ink2);font-weight:700}
 
 .co-leitura{display:flex;flex-direction:column;gap:8px;
  padding-top:9px;border-top:1px solid var(--line)}
 .co-aviso{display:flex;gap:7px;margin:0;padding:8px 10px;border-radius:var(--raio-2);
  border:1px solid var(--line);background:var(--surface);
- font-size:12px;line-height:1.45;color:var(--muted)}
+ font-size:var(--texto-2);line-height:1.45;color:var(--muted)}
 .co-aviso svg{flex:none;margin-top:2px;color:var(--amber,var(--ink2))}
 
 .co-leitura dl{display:grid;grid-template-columns:minmax(0,auto) minmax(0,1fr);
  gap:4px 12px;margin:0}
-.co-leitura dt{font-size:11px;font-weight:800;color:var(--muted);
+.co-leitura dt{font-size:var(--texto-1);font-weight:800;color:var(--muted);
  letter-spacing:.03em;overflow-wrap:anywhere}
 /* Numero de coordenada se le em coluna, digito a digito. Fonte proporcional
    desalinha as casas e a conferencia com o memorial fica mais dificil. */
-.co-leitura dd{margin:0;font-size:13px;color:var(--ink);
+.co-leitura dd{margin:0;font-size:var(--texto-3);color:var(--ink);
  font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
 
 .co-acoes{display:flex;flex-wrap:wrap;gap:7px}
 .co-acoes button{display:inline-flex;align-items:center;gap:6px;
  min-height:34px;padding:0 11px;border-radius:var(--raio-pill);cursor:pointer;
  border:1px solid var(--line);background:var(--surface);color:var(--muted);
- font:inherit;font-size:12px;font-weight:700}
+ font:inherit;font-size:var(--texto-2);font-weight:700}
 .co-acoes button:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
 
 /* A marca e um alvo, e nao um pino: pino aponta para um lugar aproximado, e
@@ -77,14 +77,14 @@
 .mp-como-usar{margin-top:18px;border:1px solid var(--line);border-radius:var(--raio-3);
  background:var(--surface2);color:var(--ink)}
 .mp-como-usar>summary{display:flex;align-items:center;min-height:44px;padding:0 13px;
- cursor:pointer;font-size:13px;font-weight:800;list-style:none}
+ cursor:pointer;font-size:var(--texto-3);font-weight:800;list-style:none}
 .mp-como-usar>summary::-webkit-details-marker{display:none}
-.mp-como-usar>summary::after{content:'+';margin-left:auto;color:var(--muted);font-size:16px;font-weight:600}
+.mp-como-usar>summary::after{content:'+';margin-left:auto;color:var(--muted);font-size:var(--texto-5);font-weight:600}
 .mp-como-usar[open]>summary{border-bottom:1px solid var(--line)}
 .mp-como-usar[open]>summary::after{content:'−'}
 .mp-como-usar>summary:focus-visible{outline:3px solid var(--blue);outline-offset:-3px;border-radius:var(--raio-3)}
 .mp-como-usar-conteudo{display:flex;flex-direction:column;gap:9px;padding:12px 13px 13px}
-.mp-como-usar-conteudo p{margin:0;font-size:13px;line-height:1.55;color:var(--muted)}
+.mp-como-usar-conteudo p{margin:0;font-size:var(--texto-3);line-height:1.55;color:var(--muted)}
 
 @media (max-width:640px){
   .co-leitura dl{grid-template-columns:minmax(0,1fr)}

@@ -39,8 +39,16 @@ describe('contrato visual das autoavaliações', () => {
     expect(contrast('#fbbf24', '#14252c')).toBeGreaterThanOrEqual(3);
   });
 
-  it('eleva os microtextos essenciais da avaliação para 13 px no móvel', () => {
-    expect(css).toMatch(/@media \(max-width: 720px\)[\s\S]*\.confidence-recorded,[\s\S]*\.confidence-priority,[\s\S]*\.re-q \.confidence-tag\s*\{\s*font-size:\s*13px;/s);
+  it('eleva os microtextos essenciais da avaliação no móvel', () => {
+    // O contrato nasceu apontando para o literal `13px`. Depois que os 785
+    // tamanhos migraram para a escala em token, um literal aqui passaria a
+    // cobrar justamente o que o projeto deixou de fazer. O que importa é a
+    // intenção: estes três microtextos sobem para um degrau de leitura no
+    // móvel, e o degrau não pode encolher abaixo do que era antes.
+    expect(css).toMatch(/@media \(max-width: 720px\)[\s\S]*\.confidence-recorded,[\s\S]*\.confidence-priority,[\s\S]*\.re-q \.confidence-tag\s*\{\s*font-size:\s*var\(--texto-3\);/s);
+    const escala = readFileSync(new URL('./styles.css', import.meta.url), 'utf8');
+    const degrau = Number(escala.match(/--texto-3:\s*(\d+)px/)?.[1]);
+    expect(degrau).toBeGreaterThanOrEqual(13);
   });
 });
 

@@ -1064,3 +1064,46 @@ Serviços encontrados pela busca do acervo completo continuam sujeitos às
 capacidades declaradas por cada MapServer. Um serviço sem subcamada consultável
 ou temporariamente indisponível agora informa a limitação, mas a Academia não
 pode garantir atributos para cada um dos mais de mil serviços externos.
+
+## Rodada de confiabilidade e uso em celular — 28/09/2026
+
+### Evidências e plano antes da implementação
+
+O estado inicial é o commit `548735c`. Os 681 testes unitários passaram;
+o portão posterior encontrou uma pasta de cache local sem permissão de leitura,
+o que ainda impede considerar a validação integral concluída.
+
+1. Corrigir o Guia do Empreendedor: em 320 px, quatro grades excedem a largura
+   interna disponível; a navegação não distingue visualmente a seção ativa e,
+   após clicar em Documentos, o observador volta a indicar Água. Aceite: grades
+   contidas no cartão, estado ativo perceptível e coerente com clique e rolagem,
+   verificados em desktop e celular, incluindo teclado.
+2. Corrigir, no repositório privado da Área Técnica, a troca de processo durante
+   o envio. O fluxo atual captura o processo mas relê a lista mutável de arquivos
+   após esperas. Aceite: contexto estável até finalizar/cancelar a revisão e
+   teste de corrida que impeça enviar um acervo diferente do selecionado.
+3. Corrigir, no repositório privado de contas, a validação das revisões de
+   progresso. Números fracionários são truncados e inteiros excessivos podem
+   gerar erro interno no armazenamento. Aceite: rejeição explícita de entradas
+   inválidas, intervalo seguro para cliente e banco e progresso preservado.
+   A regressão revelou também que a segunda gravação legítima devolvia conflito:
+   incluir avanço 1 → 2 → 3, concorrência, idempotência e isolamento entre contas
+   no aceite, preservando a atualização atômica por revisão-base.
+4. Executar os portões do site, testes dos componentes privados acessíveis e
+   regressões de navegador. Registrar resultados e limites sem confundir teste
+   local com implantação institucional.
+
+Não fazem parte desta rodada: alterações normativas, ingestão de documentos
+reais, ativação de serviços externos nem promessa de integração com a memória
+do Projeto IAT no ChatGPT. A Área Técnica continua sendo um piloto sintético
+com processador de API opcional.
+
+### Resultado local da rodada
+
+Os quatro itens do plano foram executados. O site passou por 682 testes,
+build do Pages, 91 cenários de navegador aplicáveis e um cenário PWA; 34
+cenários da matriz são omissões previstas pelo próprio teste. A Área Técnica
+aprovou 869 testes (quatro opcionais omitidos) e Contas aprovou 229. O problema
+do cache era de permissão de leitura no ambiente restrito e desapareceu na
+reexecução; não exigiu mudar o produto. As medidas e os limites desta rodada
+estão registrados em `STATUS_ATUAL.md`.

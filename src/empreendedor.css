@@ -42,8 +42,8 @@
   line-height: 1.55;
 }
 
-/* Navegação local. Leva à seção e devolve o foco; sem barra de leitura e sem
-   cálculo de seção ativa, que é maquinaria de percurso e não de consulta. */
+/* Navegação local. O destino e a indicação ativa usam a mesma linha de leitura
+   abaixo desta faixa, incluindo quando os atalhos ocupam mais de uma linha. */
 .emp-nav {
   position: sticky;
   top: calc(var(--top) + 8px);
@@ -92,9 +92,14 @@
   color: var(--green);
 }
 
-/* No desktop as dez seções cabem em linha e a faixa rolável deixa de existir,
-   pela mesma razão registrada no guia de hidrelétricas: sem faixa não há item
-   fora da vista. */
+.emp-nav-links button[aria-current="location"] {
+  background: var(--green3);
+  color: var(--green2);
+  box-shadow: inset 0 -3px 0 var(--green2);
+}
+
+/* No desktop os atalhos podem quebrar em linha; no celular a faixa rola e o
+   item da seção corrente é mantido visível. */
 @media (min-width: 981px) {
   .emp-nav-links {
     flex-wrap: wrap;
@@ -139,7 +144,7 @@
    do DOM é setorial e depois ambiental, e a leitura segue a mesma. */
 .emp-trilhos {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
   gap: 14px;
 }
 
@@ -214,7 +219,7 @@
 .emp-fontes,
 .emp-erros {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
   gap: 12px;
 }
 
@@ -330,8 +335,8 @@
 
 .emp-cta > div {
   display: flex;
-  flex: 1;
-  min-width: 240px;
+  flex: 1 1 240px;
+  min-width: 0;
   gap: 12px;
 }
 
@@ -369,7 +374,7 @@
    a terminologia federal e a estadual num paragrafo unico. */
 .emp-dominios {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
   gap: 12px;
   margin-top: 12px;
 }
@@ -483,7 +488,7 @@
    dela, e nao o nome do procedimento que o resolve. */
 .emp-ciclo {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(258px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 258px), 1fr));
   gap: 12px;
 }
 

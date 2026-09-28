@@ -76,7 +76,7 @@ nos registros gerados. Builds locais usam o SHA atual com o sufixo `-local`.
 - 26 cenários de laboratório com documentos e dados exclusivamente sintéticos, distribuídos em cinco níveis objetivos: 10 para Reconhecer, 5 para Aplicar, 2 para Decidir, 5 para Integrar e 4 para Fundamentar;
 - cinco casos acrescentam classificação de evidências e quatro acrescentam tarefa aberta; contratos versionados de objetivo impedem que conclusões antigas ou incompletas sejam reaproveitadas como domínio do exercício atual;
 - 26 folhas-resposta de consulta, cobrindo 130 decisões com justificativa específica, evidência relacionada, apoio literal do POP, conteúdo mínimo, desfecho, glossário, lacunas a confirmar e proveniência das classificações e tarefas abertas;
-- 224 questões comentadas, com uma questão exclusiva para cada uma das 168 aulas, avaliações por módulo e diagnóstico em formas A e B; o candidato de 10/08/2026 acrescenta objetivo, nível cognitivo, dificuldade estrutural, prioridade de remediação e feedback por distrator, todos marcados para revisão humana;
+- 232 questões comentadas, com uma questão exclusiva para cada uma das 168 aulas, avaliações por módulo e diagnóstico em formas A e B; os metadados incluem objetivo, nível cognitivo, dificuldade estrutural, prioridade de remediação e feedback por distrator, todos marcados para revisão humana;
 - Redator de Informação Técnica organizado pelos 12 elementos do item 23.1, seleção pesquisável de caso e a divergência em relação às 10 seções do Anexo B mantida visível;
 - registro das 60 referências do POP: 22 vínculos diretos para fonte oficial, 38 vínculos para índice oficial e nenhuma referência sem portal oficial mapeado; vigência e aplicação continuam pendentes de revisão humana;
 - busca sobre 3.396 nós textuais, 69 quadros/tabelas e 35 imagens extraídas das fontes;
@@ -88,14 +88,14 @@ nos registros gerados. Builds locais usam o SHA atual com o sufixo `-local`.
   detalhes fixáveis, origem, horário da consulta e filtragem de identificadores
   que não devem aparecer no material público;
 - favoritos, caderno pessoal, progresso, resultados e retomada no navegador;
-- PWA com 17 pacotes opcionais de mídia para estudo offline, totalizando aproximadamente 203,1 MiB; a reprodução online usa streaming e só persiste mídia após comando explícito;
+- PWA com 17 pacotes opcionais de mídia para estudo offline, totalizando aproximadamente 202,9 MiB; a reprodução online usa streaming e só persiste mídia após comando explícito;
 - quatro catálogos volumosos — mapa, índice do laboratório, mídia piloto e pacotes offline — são carregados como JSON externos validados, somente quando necessários;
 - o menu lateral possui rolagem própria para manter o Suporte alcançável em telas baixas e oferece acesso externo ao portal GeoPR logo após o Mapa do Paraná;
 - layout responsivo, navegação por teclado e suporte a `prefers-reduced-motion`.
 
 Os números demonstram presença e rastreabilidade, não eficácia pedagógica nem competência profissional. Os vídeos são resumos para orientação e revisão; não substituem a leitura, a consulta à fonte, a prática deliberada ou uma demonstração técnica aprofundada. Os pacotes offline atuais cobrem a mídia catalogada de cada módulo e os recursos compartilhados do palco, mas não equivalem a uma cópia integral de todos os recursos da plataforma.
 
-As travas de conclusão das aulas comprovam apenas que uma resposta foi registrada, dois critérios foram autodeclarados e uma questão objetiva foi respondida corretamente. Comprimento de texto e autoauditoria não medem qualidade técnica. As 168 aulas possuem questão exclusiva, dentro de um banco de 224 questões com fonte verificada. Em 42 questões, a alternativa correta ainda supera em pelo menos 10% o maior distrator; o portão de qualidade mede essa pista para impedir regressão. Revisão editorial, psicométrica e especializada continua necessária.
+As travas de conclusão das aulas comprovam apenas que uma resposta foi registrada, dois critérios foram autodeclarados e uma questão objetiva foi respondida corretamente. Comprimento de texto e autoauditoria não medem qualidade técnica. As 168 aulas possuem questão exclusiva, dentro de um banco de 232 questões com fonte verificada. O portão `check:questoes` mede pistas de comprimento, eliminação e escopo para impedir regressão; seus resultados valem para o banco do commit testado. Revisão editorial, psicométrica e especializada continua necessária.
 
 Os laboratórios usam casos e documentos sintéticos marcados como exemplos didáticos sem validade administrativa. Nenhum processo real ou dado pessoal deve ser inserido na plataforma.
 

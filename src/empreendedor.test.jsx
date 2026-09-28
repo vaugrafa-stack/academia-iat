@@ -6,7 +6,7 @@
 // resultado, exigencia sem fonte, e o POP aparecendo como fundamento.
 import React, { act } from 'react';
 import { createRoot } from 'react-dom/client';
-import { afterEach, describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import GuiaEmpreendedor from './empreendedor.jsx';
 import {
   CICLO_DE_VIDA,
@@ -21,25 +21,22 @@ import {
 } from './empreendedorGuia.js';
 
 globalThis.IS_REACT_ACT_ENVIRONMENT = true;
-// jsdom nao implementa rolagem nem observador de interseccao. O que este
-// arquivo verifica e o destino e o anuncio, e nao a animacao do navegador.
-Element.prototype.scrollIntoView ??= function scrollIntoView() {};
-globalThis.IntersectionObserver ??= class {
-  observe() {}
-
-  disconnect() {}
-};
-
 const hospedeiros = [];
-afterEach(() => {
-  while (hospedeiros.length) hospedeiros.pop()?.remove();
+afterEach(async () => {
+  await act(async () => {
+    for (const { host, root } of hospedeiros.splice(0)) {
+      root.unmount();
+      host.remove();
+    }
+  });
+  vi.restoreAllMocks();
 });
 
 async function montar() {
   const host = document.createElement('div');
   document.body.append(host);
-  hospedeiros.push(host);
   const root = createRoot(host);
+  hospedeiros.push({ host, root });
   await act(async () => { root.render(<GuiaEmpreendedor go={() => {}} />); });
   return { host, root };
 }
@@ -170,11 +167,44 @@ describe('guia do empreendedor', () => {
   });
 
   it('o atalho leva à seção e devolve o foco a ela', async () => {
+    const scrollTo = vi.spyOn(window, 'scrollTo').mockImplementation(() => {});
     const { host } = await montar();
     const alvo = EMPREENDEDOR_SECOES[6].id;
     const botao = host.querySelector(`[data-emp-nav-target="${alvo}"]`);
     await act(async () => { botao.dispatchEvent(new MouseEvent('click', { bubbles: true })); });
     expect(document.activeElement?.id).toBe(alvo);
     expect(botao.getAttribute('aria-current')).toBe('location');
+    expect(scrollTo).toHaveBeenCalled();
+  });
+
+  it('o destino continua anunciado após a rolagem e muda ao entrar na seção seguinte', async () => {
+    const frames = [];
+    vi.spyOn(window, 'requestAnimationFrame').mockImplementation((callback) => {
+      frames.push(callback);
+      return frames.length;
+    });
+    vi.spyOn(window, 'cancelAnimationFrame').mockImplementation(() => {});
+    let rolagem = 0;
+    vi.spyOn(window, 'scrollTo').mockImplementation(({ top }) => {
+      rolagem = top;
+      window.dispatchEvent(new Event('scroll'));
+    });
+    const { host } = await montar();
+    const nav = host.querySelector('.emp-nav');
+    nav.style.top = '78px';
+    nav.getBoundingClientRect = () => ({ height: 93 });
+    [...host.querySelectorAll('.emp-secao')].forEach((secao, indice) => {
+      secao.getBoundingClientRect = () => ({ top: 400 + indice * 1000 - rolagem, height: 978 });
+    });
+    const documentos = host.querySelector('[data-emp-nav-target="emp-documentos"]');
+    await act(async () => documentos.click());
+    await act(async () => { while (frames.length) frames.shift()(); });
+    expect(documentos.getAttribute('aria-current')).toBe('location');
+    expect(document.activeElement?.id).toBe('emp-documentos');
+
+    rolagem += 1000;
+    await act(async () => window.dispatchEvent(new Event('scroll')));
+    await act(async () => { while (frames.length) frames.shift()(); });
+    expect(host.querySelector('[aria-current="location"]').textContent).toBe('Intervenientes');
   });
 });

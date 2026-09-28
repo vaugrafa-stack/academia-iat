@@ -15,7 +15,7 @@ O desenho cobre os 27 capítulos do POP, os 6 anexos, as referências normativas
 - data: agosto de 2026;
 - SHA-256 da fonte: `ad33a4939ac5f73d5669fc4784c43319d1c1cae0193c7c3a0aa04bdfd669b353`;
 - natureza: minuta técnica pendente de validação humana, jurídica e institucional;
-- o valor “1.2” preservado nas propriedades internas do Word é metadado legado e não deve ser exibido como versão operacional;
+- na fonte v1.9, as propriedades internas do Word coincidem com a capa; a divergência histórica “1.2” pertencia à minuta v1.7. A autoridade sobre a versão operacional continua sendo o texto visível da capa, conforme a proveniência registrada na extração;
 - os fluxogramas são uma proposta de treinamento e comparação, não um fluxo institucional automaticamente aprovado.
 
 Este arquivo combina requisitos-alvo e decisões de desenho. Ele não deve ser lido como inventário automático do que já está implementado. O estado verificável da aplicação e da extração é registrado no `README.md`, em `src/data/extraction-validation.json` e nos testes automatizados.

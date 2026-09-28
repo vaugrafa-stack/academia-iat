@@ -1,6 +1,6 @@
 # Status atual da Academia IAT
 
-Atualizado em 31/08/2026. Este é o único documento de situação corrente. Os
+Atualizado em 28/09/2026. Este é o único documento de situação corrente. Os
 planos detalhados do repositório preservam decisões e snapshots históricos.
 Quando houver divergência, prevalecem os manifestos gerados, os testes do commit
 identificado e este status.
@@ -41,7 +41,7 @@ indicada na capa, SHA-256
 | Fluxogramas-fonte | 21 | `src/data/extraction-validation.json` |
 | Ativos extraídos | 35 | `public/source-assets/asset-manifest.json` |
 | Casos sintéticos | 26 | `src/data/lab-index.json` |
-| Questões comentadas | 224 | `src/data/question-bank.json` |
+| Questões comentadas | 232 | `src/data/question-bank.json` |
 | Referências registradas | 60 | dados de referência e `check-questoes` |
 
 Essas contagens provam cobertura e integridade estrutural. Não provam vigência
@@ -536,6 +536,45 @@ caseira erra onde o portão versionado acerta.
 O conteúdo do guia é decisão editorial e continua sujeito à revisão de quem
 responde pela norma. A vigência de cada ato citado precisa ser confirmada na
 fonte oficial, e o guia diz isso ao leitor, e não apenas a quem lê o código.
+
+### Candidato local de 28/09/2026 — guia móvel e fluxos privados
+
+No Guia do Empreendedor, quatro grades e o chamado de ação podiam ultrapassar
+os próprios cartões em 320 px sem produzir rolagem horizontal da página. O
+atalho ativo tinha anúncio para leitores de tela, mas não destaque visual, e
+clicar em Documentos podia voltar a marcar Água após a rolagem. As grades agora
+respeitam a largura disponível; o destino, a leitura por rolagem e o destaque
+usam a mesma posição medida abaixo da navegação fixa.
+
+Em candidatos locais dos serviços privados, a Área Técnica captura processo,
+lote, instrução e entregas antes da primeira espera da prévia de privacidade,
+impede a troca durante o envio e confere o contexto após cada resposta. A conta
+opcional rejeita revisões fracionárias ou fora do intervalo seguro e permite a
+segunda e as demais sincronizações legítimas, mantendo o conflito atômico entre
+dispositivos. Essas correções ainda dependem de implantação dos serviços para
+chegar a usuários externos.
+
+Provas locais desta rodada, sobre os arquivos editados e dados sintéticos:
+
+- Site: 75 arquivos e 682 testes unitários aprovados; `pnpm test` completo,
+  `pnpm audit:premium`, inventário de mídia e `pnpm audit` aprovados;
+- build na base `/academia-iat/` aprovado, com 39 partes JavaScript; CSS inicial
+  em 190,0/205,0 KiB, JavaScript total em 895,5/960,0 KiB e CSS total em
+  280,8/300,0 KiB, sem aumento de orçamentos;
+- 91 cenários Chromium aprovados em desktop e 320, 360, 390 e 430 px, com 34
+  omissões previstas por contexto; o novo cenário mede também se os cartões
+  permanecem dentro da própria grade e se a seção ativa acompanha clique,
+  rolagem, foco e tema; um cenário de instalação e atualização offline aprovado;
+- Área Técnica: 869 testes aprovados e quatro omissões opcionais; a regressão
+  adicional reproduz troca de processo durante prévia, confirmação e upload,
+  cancelamento e recuperação após falha parcial;
+- Contas: 229 testes aprovados, incluindo avanço 1 → 2 → 3, concorrência,
+  isolamento entre contas e rejeição de revisões inválidas sem perda de dados.
+
+O primeiro `pnpm test` nesta máquina parou na auditoria de um cache `.pytest_cache`
+ilegível no ambiente restrito. A reexecução com permissão de leitura do cache
+passou; nenhum dado do cache foi alterado. As verificações locais não equivalem
+a revisão normativa humana nem à implantação institucional dos serviços.
 
 ## Serviços separados
 

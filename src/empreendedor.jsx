@@ -6,7 +6,7 @@
 //
 // A navegacao local repete a forma da aba de hidreletricas porque o problema e
 // o mesmo: guia longo com secoes independentes. Ela leva a secao, devolve o
-// foco e anuncia a secao corrente por observador de interseccao. Nao tem a
+// foco e anuncia a secao corrente pela mesma linha de leitura do destino. Nao tem a
 // barra de progresso de leitura daquele guia, que existe la porque aquilo e um
 // percurso; aqui seria estado a manter sem pergunta que responda.
 //
@@ -16,7 +16,7 @@
 //
 // As regras de conteudo estao no cabecalho de `empreendedorGuia.js`, e a
 // primeira delas governa a secao de documentos: o POP nao cria exigencia.
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   AlertTriangle, Building2, CircleHelp, Compass, Droplets, ExternalLink,
   FileText, Landmark, Layers3, ListChecks, RefreshCw, Scale, Users, Zap,
@@ -36,42 +36,82 @@ import {
 import NormativeAuthorityAxes from './NormativeAuthorityAxes.jsx';
 import './empreendedor.css';
 
+function linhaDeLeitura(nav) {
+  if (!nav) return 0;
+  return (Number.parseFloat(getComputedStyle(nav).top) || 0)
+    + nav.getBoundingClientRect().height + 12;
+}
+
 function NavegacaoLocal() {
-  // A seção corrente precisa ser anunciada, e não apenas alcançada.
-  //
-  // A primeira versão desta navegação levava à seção e parava aí: sem
-  // `aria-current`, quem usa leitor de tela ficava sem saber onde estava, e sem
-  // estado visual ninguém via qual dos dez atalhos correspondia ao que está na
-  // tela. O guia de hidrelétricas já resolvia isso; este ficou atrás.
-  //
-  // O observador é a régua honesta: marcar no clique mentiria assim que a
-  // pessoa rolasse para outra seção.
+  const navRef = useRef(null);
+  const linksRef = useRef(null);
   const [corrente, setCorrente] = useState(EMPREENDEDOR_SECOES[0].id);
 
   useEffect(() => {
     const alvos = EMPREENDEDOR_SECOES
       .map((secao) => document.getElementById(secao.id))
       .filter(Boolean);
-    if (!alvos.length || typeof IntersectionObserver !== 'function') return undefined;
-    const visiveis = new Map();
-    const observador = new IntersectionObserver((entradas) => {
-      for (const entrada of entradas) visiveis.set(entrada.target.id, entrada.isIntersecting);
-      const primeira = EMPREENDEDOR_SECOES.find((secao) => visiveis.get(secao.id));
-      if (primeira) setCorrente(primeira.id);
-    }, {
-      // A faixa de leitura fica logo abaixo da barra fixa e da própria
-      // navegação, e não no meio da tela: é ali que o olho está.
-      rootMargin: '-140px 0px -55% 0px',
-    });
-    for (const alvo of alvos) observador.observe(alvo);
-    return () => observador.disconnect();
+    if (!alvos.length) return undefined;
+    let frame = 0;
+    const atualizar = () => {
+      frame = 0;
+      const linha = linhaDeLeitura(navRef.current);
+      let id = alvos[0].id;
+      for (const alvo of alvos) {
+        const retangulo = alvo.getBoundingClientRect();
+        if (!retangulo.height) continue;
+        if (retangulo.top > linha + 2) break;
+        id = alvo.id;
+      }
+      // Em janelas altas o fim da página pode chegar antes de o último título
+      // alcançar a régua. Nesse limite a última seção já é a seção de leitura.
+      const altura = document.documentElement.scrollHeight;
+      if (altura > window.innerHeight && window.scrollY + window.innerHeight >= altura - 2) {
+        id = alvos.at(-1).id;
+      }
+      setCorrente((anterior) => anterior === id ? anterior : id);
+    };
+    const agendar = () => {
+      if (!frame) frame = window.requestAnimationFrame(atualizar);
+    };
+    // A primeira seção ainda intersectava a faixa antiga depois de um salto,
+    // sobrescrevendo o destino. O clique e a rolagem agora usam a mesma régua,
+    // medida abaixo da navegação, inclusive quando ela quebra em mais linhas.
+    const observador = typeof ResizeObserver === 'function'
+      ? new ResizeObserver(agendar) : null;
+    if (navRef.current) observador?.observe(navRef.current);
+    if (navRef.current?.parentElement) observador?.observe(navRef.current.parentElement);
+    atualizar();
+    window.addEventListener('scroll', agendar, { passive: true });
+    window.addEventListener('resize', agendar);
+    return () => {
+      window.removeEventListener('scroll', agendar);
+      window.removeEventListener('resize', agendar);
+      observador?.disconnect();
+      if (frame) window.cancelAnimationFrame(frame);
+    };
   }, []);
+
+  useEffect(() => {
+    const links = linksRef.current;
+    const ativo = links?.querySelector('[aria-current="location"]');
+    if (!links || !ativo || links.scrollWidth <= links.clientWidth) return;
+    const faixa = links.getBoundingClientRect();
+    const botao = ativo.getBoundingClientRect();
+    if (botao.left < faixa.left || botao.right > faixa.right) {
+      // Rolagem só horizontal: revelar o atalho não desloca a seção lida.
+      links.scrollLeft += botao.left - faixa.left - (faixa.width - botao.width) / 2;
+    }
+  }, [corrente]);
 
   const irPara = (id) => {
     const alvo = document.getElementById(id);
     if (!alvo) return;
     const reduzido = window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches;
-    alvo.scrollIntoView({ block: 'start', behavior: reduzido ? 'auto' : 'smooth' });
+    window.scrollTo({
+      top: Math.max(0, window.scrollY + alvo.getBoundingClientRect().top - linhaDeLeitura(navRef.current)),
+      behavior: reduzido ? 'instant' : 'smooth',
+    });
     // O foco vai junto: sem isso, quem navega por teclado continua no topo e
     // a proxima tabulacao volta para o inicio do guia.
     alvo.focus({ preventScroll: true });
@@ -79,9 +119,9 @@ function NavegacaoLocal() {
   };
 
   return (
-    <nav className="emp-nav" aria-label="Seções deste guia">
+    <nav className="emp-nav" aria-label="Seções deste guia" ref={navRef}>
       <span className="emp-nav-rotulo">Neste guia</span>
-      <div className="emp-nav-links">
+      <div className="emp-nav-links" ref={linksRef}>
         {EMPREENDEDOR_SECOES.map((secao) => (
           <button
             key={secao.id}

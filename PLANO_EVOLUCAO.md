@@ -1100,10 +1100,14 @@ com processador de API opcional.
 
 ### Resultado local da rodada
 
-Os quatro itens do plano foram executados. O site passou por 682 testes,
+Os quatro itens do plano foram executados. Uma verificação complementar, ainda
+na mesma rodada, reproduziu uma espera global na recuperação de senha durante
+Argon2. O aceite adicional foi manter a leitura de progresso de outra conta
+responsiva e preservar consumo único e revogação de sessões; o teste falhou
+antes da correção e passou depois. O site passou por 682 testes,
 build do Pages, 91 cenários de navegador aplicáveis e um cenário PWA; 34
 cenários da matriz são omissões previstas pelo próprio teste. A Área Técnica
-aprovou 869 testes (quatro opcionais omitidos) e Contas aprovou 229. O problema
+aprovou 869 testes (quatro opcionais omitidos) e Contas aprovou 230. O problema
 do cache era de permissão de leitura no ambiente restrito e desapareceu na
 reexecução; não exigiu mudar o produto. As medidas e os limites desta rodada
 estão registrados em `STATUS_ATUAL.md`.

@@ -554,6 +554,12 @@ segunda e as demais sincronizações legítimas, mantendo o conflito atômico en
 dispositivos. Essas correções ainda dependem de implantação dos serviços para
 chegar a usuários externos.
 
+Uma checagem adicional encontrou espera global na conclusão da recuperação de
+senha: o cálculo Argon2 ocupava a trava da conexão SQLite compartilhada. O
+serviço de contas agora consulta o token sob a trava, calcula o hash fora dela
+e revalida o consumo em transação curta. O teste de concorrência reproduziu a
+espera antes da correção e passou depois, sem liberar token inválido ou antigo.
+
 Provas locais desta rodada, sobre os arquivos editados e dados sintéticos:
 
 - Site: 75 arquivos e 682 testes unitários aprovados; `pnpm test` completo,
@@ -568,8 +574,9 @@ Provas locais desta rodada, sobre os arquivos editados e dados sintéticos:
 - Área Técnica: 869 testes aprovados e quatro omissões opcionais; a regressão
   adicional reproduz troca de processo durante prévia, confirmação e upload,
   cancelamento e recuperação após falha parcial;
-- Contas: 229 testes aprovados, incluindo avanço 1 → 2 → 3, concorrência,
-  isolamento entre contas e rejeição de revisões inválidas sem perda de dados.
+- Contas: 230 testes aprovados, incluindo avanço 1 → 2 → 3, concorrência,
+  isolamento entre contas, rejeição de revisões inválidas sem perda de dados e
+  leitura de progresso durante recuperação de outra conta.
 
 O primeiro `pnpm test` nesta máquina parou na auditoria de um cache `.pytest_cache`
 ilegível no ambiente restrito. A reexecução com permissão de leitura do cache

@@ -1,0 +1,45 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-07-21",
+  "language": "pt-BR",
+  "dimensions": {"width": 1280, "height": 720},
+  "videoGeneration": {
+    "mp4Available": true,
+    "codec": "H.264 / yuv420p",
+    "fps": 15,
+    "validation": "Cada MP4 possui 300 quadros e duração validada de 20 segundos.",
+    "accessibility": "Legendas WebVTT em português e pôster PNG para cada vídeo."
+  },
+  "items": [
+    {
+      "id": "fluxo-geral",
+      "title": "Fluxo geral da análise",
+      "video": "/media/fluxo-geral.mp4",
+      "animation": "/media/fluxo-geral.svg",
+      "poster": "/media/fluxo-geral-poster.png",
+      "captions": "/media/fluxo-geral.vtt",
+      "durationSeconds": 20,
+      "sourceBasis": ["POP-DLE-HID-001 v1.2, seções 6, 6.1 e 7"]
+    },
+    {
+      "id": "enquadramento",
+      "title": "Enquadramento sem atalhos",
+      "video": "/media/enquadramento.mp4",
+      "animation": "/media/enquadramento.svg",
+      "poster": "/media/enquadramento-poster.png",
+      "captions": "/media/enquadramento.vtt",
+      "durationSeconds": 20,
+      "sourceBasis": ["POP-DLE-HID-001 v1.2, seção 8"]
+    },
+    {
+      "id": "pacuera",
+      "title": "PACUERA: território em foco",
+      "video": "/media/pacuera.mp4",
+      "animation": "/media/pacuera.svg",
+      "poster": "/media/pacuera-poster.png",
+      "captions": "/media/pacuera.vtt",
+      "durationSeconds": 20,
+      "sourceBasis": ["POP-DLE-HID-001 v1.2, seção 18.10 e Quadros 30 a 32"]
+    }
+  ]
+}

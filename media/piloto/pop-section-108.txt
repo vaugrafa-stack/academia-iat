@@ -1,0 +1,56 @@
+Controle final de qualidade
+
+Objetivo: Executar revisão final técnica, normativa, documental, linguística e visual antes da assinatura.
+Pré-requisito: Ter concluído a minuta e a matriz de achados.
+
+[0.0s] Antes da assinatura, pare
+A análise pode estar tecnicamente bem encaminhada e ainda assim falhar na última página: nome de outro empreendimento, norma sem ressalva, data incompatível, condicionante genérica ou conclusão sem suporte. A etapa de controle final não é um detalhe.
+Fonte: POP, item 27
+
+[16.2s] Cinco camadas de controle
+Ao final, você deverá revisar cinco camadas: técnica, normativa, documental, linguística e visual; e bloquear a assinatura quando permanecer uma falha que impeça a validação do documento.
+Fonte: POP, item 27; POP, Tabela 14
+
+[28.4s] Vocabulário do controle final
+Coerência é a compatibilidade entre fatos, análise e conclusão. Rastreabilidade permite localizar a fonte de cada afirmação. Renderização é a conferência do arquivo final exatamente como será lido e assinado.
+Fonte: POP, item 27; POP, Tabela 14
+
+[42.0s] Camada 1 · Identidade e método
+Comece pela identidade e pelo método. Confirme empreendimento, CNPJ, município, corpo hídrico, protocolo e modalidade. Verifique se documento, fase, tipologia, data, norma, suficiência, consequência e encaminhamento aparecem de forma coerente.
+Fonte: POP, Tabela 14
+
+[60.1s] Camada 2 · Norma e decisão
+Depois, confira norma e transição, separe adequação da modalidade e suficiência documental, e compare o status com a consequência técnica. Remova pendências sem base e reformule condicionantes genéricas.
+Fonte: POP, item 27; POP, Tabela 14
+
+[73.8s] Camada 3 · Linguagem e dados
+Revise português brasileiro, concordância, pontuação e tom institucional. Confira dados pessoais e sensíveis pela necessidade de uso. Valide referências, numeração, sumário, quadros, tabelas e anexos.
+Fonte: POP, Tabela 14
+
+[88.2s] Camada 4 · Inspeção renderizada
+Por fim, renderize o arquivo e inspecione todas as páginas. A revisão do texto extraído não revela tabela quebrada, cabeçalho ausente, página em branco, imagem ilegível ou numeração que mudou na paginação final.
+Fonte: POP, item 27
+
+[102.4s] Camada 5 · Interfaces aplicáveis
+Aplique também os blocos específicos quando pertinentes: PACUERA, unidades de conservação, APAs, Planos de Manejo, GeoPR, competência federal, acordo de cooperação e obrigações anuais.
+Fonte: POP, Tabela 14
+
+[116.4s] Erro: revisar só a conclusão
+O erro é tratar a revisão como leitura rápida do final. O POP exige eliminar resíduos de outro empreendimento, datas incompatíveis, dados sem fonte e conclusões não suportadas, além de conferir o arquivo renderizado.
+Fonte: POP, item 27
+
+[130.4s] Decida antes de continuar
+Pausa para decidir. A minuta está correta no editor, mas o PDF mostra uma tabela cortada e uma página sem cabeçalho. O documento pode seguir para assinatura?
+Fonte: POP, item 27
+
+[141.2s] Resposta comentada
+Não. O arquivo renderizado faz parte da checagem. Corrija a tabela e o cabeçalho, renderize novamente e repita o controle final antes da assinatura.
+Fonte: POP, item 27; POP, Tabela 14
+
+[151.3s] Síntese do controle final
+A revisão final pergunta: este é o caso correto, a fonte correta, o raciocínio completo, a linguagem adequada e o documento visualmente íntegro? Qualquer resposta negativa volta para correção.
+Fonte: POP, item 27; POP, Tabela 14
+
+[163.7s] Próximo passo
+Na próxima prática, revise uma minuta sintética em duas passagens: primeiro o conteúdo editável; depois o arquivo renderizado. Registre cada falha que impeça a assinatura antes de autorizá-la.
+Fonte: POP, item 27; POP, Tabela 14

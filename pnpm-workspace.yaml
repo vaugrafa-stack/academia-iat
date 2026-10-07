@@ -8,8 +8,11 @@
 #
 # O undici entra por jsdom, que entra por vitest: e dependencia de
 # DESENVOLVIMENTO e nao vai para o pacote publicado. Ainda assim vale corrigir,
-# porque portao vermelho por motivo alheio e portao desligado. A versao 7.29.0 e
-# a primeira com as correcoes das GHSA-jr45-8vmc-qm54 e GHSA-v3r7-h72x-cjcm.
+# porque portao vermelho por motivo alheio e portao desligado. A versao 7.29.1
+# cobre tambem os avisos posteriores de WebSocket e TLS (GHSA-rfgv-xxqx-mfg5
+# e GHSA-w293-vg96-wgc3).
+# source-map-js entra por css-tree e postcss. A versao 1.2.2 corrige a validacao
+# dos offsets em mapas de origem indexados (GHSA-68fv-2mgg-jv7q).
 # postcss: mesmo caso. Entra por vite, e o aviso e sobre leitura de arquivo
 # .map por sourceMappingURL controlada por terceiro quando `from` nao e
 # definido. Aqui o vite so processa CSS do proprio repositorio, entao o vetor
@@ -28,6 +31,7 @@ overrides:
   # 8.9.0, que removeu `lib/handler/wrap-handler.js`, e o jsdom 29 depende dele:
   # seis arquivos de teste deixaram de subir com MODULE_NOT_FOUND e a bateria
   # caiu de 195 para 159 sem falhar por conteudo nenhum.
-  undici: '>=7.29.0 <8'
+  undici: '>=7.29.1 <8'
+  source-map-js: '>=1.2.2 <2'
   postcss: '>=8.5.23'
   nanoid: '>=3.3.17 <4'

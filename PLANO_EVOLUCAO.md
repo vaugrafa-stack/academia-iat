@@ -1157,3 +1157,14 @@ passou. A inspeção visual dos tópicos 13, 14 e 13.2 em desktop/celular não
 encontrou tela vazia, imagem quebrada, sobreposição, erro de console ou
 rolagem horizontal da página. O uso em processo real continua sujeito à
 verificação da fonte, vigência normativa e revisão institucional.
+
+### Portão de dependências após o primeiro envio
+
+O workflow de `3705cbb` parou no `pnpm audit --audit-level=moderate` antes de
+construir ou publicar o artefato. `undici` 7.29.0 e `source-map-js` 1.2.1,
+transitivos de ferramentas de teste/build, acumularam avisos publicados depois
+do travamento anterior. As faixas compatíveis foram elevadas para `undici`
+7.29.1+ dentro da linha 7 e `source-map-js` 1.2.2+ dentro da linha 1, com
+lockfile regenerado. A auditoria local voltou a zero avisos; testes, build,
+Playwright em cinco larguras e PWA/offline passaram novamente. O portão segue
+obrigatório para publicar.

@@ -70,6 +70,15 @@ quebrada, erro de console ou rolagem horizontal da página. Estes resultados
 descrevem o candidato local; publicação exige workflow público verde e
 conferência do SHA no aplicativo online.
 
+O primeiro workflow público deste ciclo, no commit `3705cbb`, parou antes dos
+testes porque a auditoria de dependências detectou avisos novos em `undici` e
+`source-map-js`, ambos transitivos de ferramentas de desenvolvimento. As faixas
+compatíveis foram atualizadas no `pnpm-workspace.yaml` e no lockfile, sem
+desligar o portão. `pnpm audit --audit-level=moderate` agora não encontra
+vulnerabilidades conhecidas; `pnpm test`, `pnpm build`, os 101 cenários de
+artefato e o teste PWA/offline passaram novamente. A publicação desta correção
+continua condicionada ao novo workflow e à verificação do SHA ao vivo.
+
 ## Linha de base histórica e validação corrente
 
 Na linha de base histórica `e298901511b984fea315f675cb0ba2c2736fb762`, a

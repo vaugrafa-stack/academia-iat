@@ -67,7 +67,7 @@ nos registros gerados. Builds locais usam o SHA atual com o sufixo `-local`.
 
 - 17 módulos e 168 tópicos didáticos vinculados às seções com conteúdo próprio do POP;
 - Formação em uma sequência única de 17 módulos, com pesquisa, expansão por módulo, acesso livre a qualquer aula e código carregado sob demanda;
-- aulas com orientação, texto-fonte, quadros, tabelas, figuras, anotações e referências;
+- aulas com orientação, texto-fonte, quadros, tabelas, figuras, anotações e referências; os 69 quadros/tabelas e 14 figuras aparecem também no próprio tópico, junto da leitura guiada, em área recolhível, sem exigir troca de aba;
 - cada aula oferece checagem comentada, recuperação ativa escrita e autoauditoria; para novas conclusões, a checagem deve estar correta, o registro deve ter ao menos 80 caracteres significativos e dois de três critérios devem ser conferidos;
 - 168 resumos audiovisuais por seção, com 10,5 a 102,5 segundos, voz em português, pôster, texto aberto, legenda WebVTT opcional e transcrição;
 - seis microaulas piloto usam professor fictício, voz, legenda, transcrição e cenários de barragem, território, campo e análise documental; a boca é exibida em cadência visual reduzida, com transições curtas, pausas neutras, cabeça estável e rosto integralmente enquadrado também em áreas estreitas, mas os tempos continuam estimados e não possuem comprovação formal de precisão de até 100 ms;
@@ -78,7 +78,7 @@ nos registros gerados. Builds locais usam o SHA atual com o sufixo `-local`.
 - 26 folhas-resposta de consulta, cobrindo 130 decisões com justificativa específica, evidência relacionada, apoio literal do POP, conteúdo mínimo, desfecho, glossário, lacunas a confirmar e proveniência das classificações e tarefas abertas;
 - 232 questões comentadas, com uma questão exclusiva para cada uma das 168 aulas, avaliações por módulo e diagnóstico em formas A e B; os metadados incluem objetivo, nível cognitivo, dificuldade estrutural, prioridade de remediação e feedback por distrator, todos marcados para revisão humana;
 - Redator de Informação Técnica organizado pelos 12 elementos do item 23.1, seleção pesquisável de caso e a divergência em relação às 10 seções do Anexo B mantida visível;
-- registro das 60 referências do POP: 22 vínculos diretos para fonte oficial, 38 vínculos para índice oficial e nenhuma referência sem portal oficial mapeado; vigência e aplicação continuam pendentes de revisão humana;
+- registro das 66 referências do POP: 22 vínculos diretos para fonte oficial, 44 vínculos para índice oficial e nenhuma referência sem portal oficial mapeado; vigência e aplicação continuam pendentes de revisão humana;
 - busca sobre 3.396 nós textuais, 69 quadros/tabelas e 35 imagens extraídas das fontes;
 - busca unificada do mapa para coordenadas decimais, grau/minuto/segundo e UTM,
   empreendimentos, municípios, bacias, APP, unidades de conservação, PACUERA,

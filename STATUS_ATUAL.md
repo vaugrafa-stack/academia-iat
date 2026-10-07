@@ -1,6 +1,6 @@
 # Status atual da Academia IAT
 
-Atualizado em 28/09/2026. Este é o único documento de situação corrente. Os
+Atualizado em 07/10/2026. Este é o único documento de situação corrente. Os
 planos detalhados do repositório preservam decisões e snapshots históricos.
 Quando houver divergência, prevalecem os manifestos gerados, os testes do commit
 identificado e este status.
@@ -42,10 +42,33 @@ indicada na capa, SHA-256
 | Ativos extraídos | 35 | `public/source-assets/asset-manifest.json` |
 | Casos sintéticos | 26 | `src/data/lab-index.json` |
 | Questões comentadas | 232 | `src/data/question-bank.json` |
-| Referências registradas | 60 | dados de referência e `check-questoes` |
+| Referências registradas | 66 | seção `Referências normativas e técnicas` em `src/data/pop-public-content.json` |
 
 Essas contagens provam cobertura e integridade estrutural. Não provam vigência
 normativa, validade pedagógica, competência profissional ou aprovação humana.
+
+### Correção de leitura integrada do POP em 07/10/2026
+
+O candidato local mantém o texto da minuta intacto e corrige sua apresentação:
+retira a evidência-base que repetia o primeiro trecho na aula guiada, coloca
+figuras e tabelas no próprio tópico em área recolhível e renderiza na aba Fonte
+do POP as 14 figuras antes omitidas por estarem ligadas a parágrafos vazios.
+As legendas são associadas ao elemento visual sem repetição. O capítulo 14
+possui três parágrafos substantivos e a Figura 5, conferidos na versão pública
+anterior e no candidato local. A lista de normas ganhou orientação para abrir
+resumo, fonte e citações; a contagem vem dos dados correntes, que registram 66
+referências (22 vínculos diretos e 44 índices oficiais), como mencionado no
+arquivo de correções.
+
+Nesta rodada, `pnpm test` aprovou 76 arquivos e 684 testes; `pnpm build` e
+`pnpm audit:premium` passaram dentro dos orçamentos, embora CSS e JavaScript
+totais estejam acima de 90% do teto e mereçam atenção na próxima ampliação.
+O Playwright aprovou 101 cenários nas larguras 1440, 320, 360, 390 e 430 px,
+com 34 omissões previstas. Um cenário PWA/offline passou. A leitura renderizada
+dos tópicos 13, 14 e 13.2 foi inspecionada em desktop e celular, sem imagem
+quebrada, erro de console ou rolagem horizontal da página. Estes resultados
+descrevem o candidato local; publicação exige workflow público verde e
+conferência do SHA no aplicativo online.
 
 ## Linha de base histórica e validação corrente
 
@@ -644,7 +667,7 @@ nem para receber documentos reais.
 
 ## Riscos e portões ainda abertos
 
-1. **Conteúdo normativo.** As 60 referências possuem rota oficial mapeada, mas
+1. **Conteúdo normativo.** As 66 referências possuem rota oficial mapeada, mas
    vigência, transição, escopo e aplicação ao caso continuam sujeitos a revisão
    humana registrada.
 2. **Validade pedagógica.** Questões, casos, rubricas e vídeos precisam de revisão

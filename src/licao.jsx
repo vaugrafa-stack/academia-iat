@@ -47,7 +47,6 @@ import {
   RotateCcw,
   ShieldCheck,
   StickyNote,
-  Table2,
   Target,
   Trophy,
   X,
@@ -61,6 +60,7 @@ import { comoLerQuadro } from "./comoLerQuadro.js";
 import { errosDaAula } from "./errosRecorrentes.js";
 import { trackGroups, tracks } from "./courseData";
 import { getLearningDesign } from "./learningDesign.js";
+import { montarMateriaisDaSecao } from "./lessonMaterials.js";
 import VideoDataLoading from "./VideoDataLoading.jsx";
 import { objetivoDaAula } from "./lessonObjective.js";
 import {
@@ -246,6 +246,7 @@ export default function Lesson({
   const figures = popData.figures.filter(
     (f) => f.blockId && lesson.blockIds?.includes(f.blockId),
   );
+  const materiaisDaSecao = montarMateriaisDaSecao(blocks, tableMap, figureByBlock);
   const siglas = encontrarSiglasDaAula({
     lesson,
     blocks,
@@ -253,7 +254,7 @@ export default function Lesson({
     siglasDaAula,
   });
   const note = state.notes[lesson.id] || "";
-  const design = getLearningDesign(lesson, blocks);
+  const design = getLearningDesign(lesson);
   const alvo = objetivoDaAula(lesson, blocks, tableMap);
   const evidence = state.lessonEvidence?.[lesson.id] || {};
   const questionSelection = selectLessonQuestion(questionBank, lesson, index);
@@ -536,7 +537,7 @@ export default function Lesson({
               design={design}
               blocks={blocks}
               lessons={lessons}
-              tableMap={tableMap}
+              materiais={materiaisDaSecao}
               errosDoPop={errosDoPop}
               setTab={setTab}
               openLesson={openLesson}
@@ -570,11 +571,11 @@ export default function Lesson({
             <SourceContent
               blocks={blocks}
               tableMap={tableMap}
-              figureByBlock={figureByBlock}
+              materiais={materiaisDaSecao}
             />
           )}{" "}
           {tab === "materiais" && (
-            <LessonMaterials tables={tables} figures={figures} />
+            <LessonMaterials tables={tables} figures={figures} materiais={materiaisDaSecao} />
           )}{" "}
           {tab === "notas" && <Notes value={note} setValue={setNote} />}
         </div>
@@ -1237,7 +1238,7 @@ function LessonOverview({
   design,
   blocks,
   lessons = [],
-  tableMap,
+  materiais,
   errosDoPop = [],
   checked = [],
   toggleCheck,
@@ -1257,7 +1258,8 @@ function LessonOverview({
 }) {
   const allParas = blocks.filter(
     (b) =>
-      b.type === "paragraph" && b.paragraph?.text && b.paragraph.text.trim(),
+      b.type === "paragraph" && b.paragraph?.text && b.paragraph.text.trim()
+      && !materiais.legendasConsumidas.has(b.id),
   );
   const steps = allParas.filter((b) => /^\d+\./.test(b.paragraph.text));
   const shown = steps.slice(0, 10);
@@ -1269,7 +1271,6 @@ function LessonOverview({
     naoPasso,
   );
   const notas = idxPasso < 0 ? [] : allParas.slice(idxPasso).filter(naoPasso);
-  const nTab = blocks.filter((b) => b.type === "table").length;
   const kids = lesson.number
     ? lessons.filter(
         (l) =>
@@ -1298,7 +1299,7 @@ function LessonOverview({
             .split(".").length === 1,
       )
     : [];
-  const vazia = allParas.length === 0 && nTab === 0;
+  const vazia = allParas.length === 0 && materiais.itens.length === 0;
   return (
     <article className="lesson-article">
       <h2>
@@ -1318,13 +1319,6 @@ function LessonOverview({
             : "Esta seção reúne os tópicos abaixo. Estude cada um e volte ao desafio de transferência."}
         </p>
       )}
-      <blockquote className="learning-source-basis">
-        <small>EVIDÊNCIA-BASE DA SEÇÃO</small>
-        <p>{design.sourceBasis}</p>
-        <button type="button" onClick={() => setTab && setTab("fonte")}>
-          Conferir na fonte <ArrowRight />
-        </button>
-      </blockquote>
       {kids.length > 0 && (
         <nav className="lesson-children">
           <strong>
@@ -1339,29 +1333,6 @@ function LessonOverview({
           ))}
         </nav>
       )}
-      {nTab > 0 &&
-        prosa.every((b) =>
-          /^(Quadro|Tabela|Figura)\s*\d/i.test(b.paragraph.text),
-        ) && (
-          <div className="kp-quadro">
-            <p className="kp-quadro-nota">
-              <Table2 size={15} /> O conteúdo desta seção é um quadro do POP.
-              Ele está abaixo, e também na aba Quadros e figuras.
-            </p>
-            {blocks
-              .filter((b) => b.type === "table")
-              .map((b) => {
-                const t = tableMap.get(b.tableId);
-                if (!t) return null;
-                return (
-                  <React.Fragment key={b.id}>
-                    <ComoLerEsteQuadro table={t} />
-                    <TableRenderer table={t} />
-                  </React.Fragment>
-                );
-              })}
-          </div>
-        )}
       {prosa.length > 0 && (
         <div className="lesson-keypoints kp-fonte">
           {/* Estes paragrafos sao o texto do POP na redacao original, e nao
@@ -1397,6 +1368,7 @@ function LessonOverview({
           </button>
         </div>
       )}
+      <LessonInlineMaterials key={lesson.id} materiais={materiais} />
       {steps.length >= 3 ? (
         <div className="lesson-checklist">
           <div className="lc-head">
@@ -1537,7 +1509,7 @@ function LessonOverview({
         toggleCriterion={toggleEvidenceCriterion}
         hasObjectiveCheck={lessonQuestionProvesObjective(questionSelection)}
       />
-      {(prosa.length > 0 || steps.length > 0 || nTab > 0) && (
+      {!prosa.length && (steps.length > 0 || materiais.itens.length > 0) && (
         <button
           className="source-jump"
           onClick={() => setTab && setTab("fonte")}
@@ -1548,7 +1520,41 @@ function LessonOverview({
     </article>
   );
 }
-function SourceContent({ blocks, tableMap, figureByBlock }) {
+function FiguraDoPop({ figure, legenda }) {
+  return (
+    <figure className="source-figure">
+      <img src={figure.publicPath} alt={figure.altText || figure.title} loading="lazy" decoding="async" />
+      <figcaption>{legenda}</figcaption>
+    </figure>
+  );
+}
+
+function LessonInlineMaterials({ materiais }) {
+  const [aberto, setAberto] = useState(true);
+  if (!materiais.itens.length) return null;
+  const rotulos = materiais.itens.map((item) => item.tipo === "figura"
+    ? `Figura ${item.figure.number}`
+    : `${item.table.labelType} ${item.table.labelNumber}`);
+  return (
+    <details className="lesson-inline-materials" open={aberto} onToggle={(event) => setAberto(event.currentTarget.open)}>
+      <summary>
+        <Layers3 size={18} aria-hidden="true" />
+        <span>Figuras e tabelas deste tópico</span>
+        <small>{rotulos.join(" · ")}</small>
+      </summary>
+      <div className="lesson-inline-materials-body">
+        {materiais.itens.map((item) => item.tipo === "figura"
+          ? <FiguraDoPop key={item.blockId} figure={item.figure} legenda={item.legenda} />
+          : <React.Fragment key={item.blockId}>
+              <ComoLerEsteQuadro table={item.table} />
+              <TableRenderer table={item.table} />
+            </React.Fragment>)}
+      </div>
+    </details>
+  );
+}
+
+function SourceContent({ blocks, tableMap, materiais }) {
   if (!blocks.length)
     return (
       <Empty text="Esta seção funciona como título de organização. O conteúdo substantivo está nos subtópicos vinculados; a ausência de texto aqui não deve ser interpretada como cobertura integral." />
@@ -1559,45 +1565,38 @@ function SourceContent({ blocks, tableMap, figureByBlock }) {
         <ShieldCheck />
         <p>
           <strong>Trechos vinculados ao documento-fonte.</strong> Esta aba
-          reproduz os blocos associados à seção e suas tabelas. Sumário e
+          reproduz os blocos associados à seção, suas figuras e tabelas. Sumário e
           elementos de navegação podem estar fora desta visualização; confira o
           arquivo original antes de usar o conteúdo em decisão real.
         </p>
       </div>
-      {blocks.map((b) => (
+      {blocks.filter((b) => !materiais.legendasConsumidas.has(b.id)).map((b) => (
         <BlockRenderer
           block={b}
           key={b.id}
           tableMap={tableMap}
-          figureByBlock={figureByBlock}
+          item={materiais.itens.find((item) => item.blockId === b.id)}
         />
       ))}
     </article>
   );
 }
-function BlockRenderer({ block, tableMap, figureByBlock }) {
+function BlockRenderer({ block, tableMap, item }) {
   if (block.type === "table") {
     const table = tableMap.get(block.tableId);
     return table ? <TableRenderer table={table} /> : null;
   }
+  if (item?.tipo === "figura")
+    return <FiguraDoPop figure={item.figure} legenda={item.legenda} />;
   const p = block.paragraph;
   if (!p?.text) return null;
-  const figure = figureByBlock.get(block.id);
-  let text = p.text;
-  let cls = p.semanticType === "list-item" || p.list ? "source-list" : "";
+  const text = p.text;
+  const cls = p.semanticType === "list-item" || p.list ? "source-list" : "";
   return (
-    <React.Fragment>
-      {p.headingLevel ? <h3>{text}</h3> : <p className={cls}>{text}</p>}
-      {figure && (
-        <figure className="source-figure">
-          <img src={figure.publicPath} alt={figure.altText || figure.title} />
-          <figcaption>{figure.caption}</figcaption>
-        </figure>
-      )}
-    </React.Fragment>
+    p.headingLevel ? <h3>{text}</h3> : <p className={cls}>{text}</p>
   );
 }
-function LessonMaterials({ tables, figures }) {
+function LessonMaterials({ tables, figures, materiais }) {
   if (!tables.length && !figures.length)
     return (
       <Empty text="Este tópico não possui quadro ou figura próprio. Consulte o conteúdo disponibilizado na fonte." />
@@ -1607,7 +1606,7 @@ function LessonMaterials({ tables, figures }) {
       {figures.map((f) => (
         <figure className="material-figure" key={f.id}>
           <img src={f.publicPath} alt={f.altText || f.title} />
-          <figcaption>{f.caption}</figcaption>
+          <figcaption>{materiais.itens.find((item) => item.tipo === "figura" && item.figure.id === f.id)?.legenda || f.caption}</figcaption>
           <a href={f.publicPath} download>
             <Download /> Baixar imagem
           </a>

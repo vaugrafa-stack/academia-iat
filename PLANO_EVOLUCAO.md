@@ -1111,3 +1111,49 @@ aprovou 869 testes (quatro opcionais omitidos) e Contas aprovou 230. O problema
 do cache era de permissão de leitura no ambiente restrito e desapareceu na
 reexecução; não exigiu mudar o produto. As medidas e os limites desta rodada
 estão registrados em `STATUS_ATUAL.md`.
+
+## Rodada de leitura integrada do POP — 07/10/2026
+
+### Diagnóstico antes da implementação
+
+O arquivo de correções recebido aponta repetição na trilha, figuras e tabelas
+afastadas do texto, aparente ausência de trechos no capítulo 14 e falta de
+orientação na lista de normas. A inspeção da versão pública confirmou que a
+evidência-base repete o primeiro parágrafo do POP nas aulas 13 e 14. Os textos
+originais do capítulo 14 existem nas duas abas, mas a Figura 5 não aparece na
+aba Fonte do POP. Na extração pública, as 14 figuras estão ancoradas a
+parágrafos sem texto; o renderizador atual retorna antes de desenhá-las.
+
+### Plano e critério de aceite
+
+1. Remover o cartão de evidência-base redundante da aula guiada, preservando
+   os trechos originais e o acesso à fonte.
+2. Mostrar quadros, tabelas e figuras no próprio tópico, com possibilidade de
+   recolher a área. Conservar a aba de materiais para consulta separada e
+   evitar repetir legendas na aula guiada.
+3. Corrigir a renderização da fonte para mostrar as 14 figuras mesmo quando o
+   bloco associado não contém texto. Conferir especialmente capítulos 13 e 14.
+4. Explicar junto da contagem dinâmica de normas que a seleção revela resumo,
+   fonte e trechos relacionados. Não hardcodar a contagem referida no pedido.
+5. Executar testes, build, auditoria premium e inspeção real em computador e
+   celular; registrar limites e estado de publicação no status corrente.
+
+### Resultado local
+
+A evidência-base duplicada saiu da interface e de seu gerador; os trechos do POP
+continuam visíveis na aula. Os 69 quadros/tabelas e as 14 figuras agora têm
+legenda associada e aparecem no próprio tópico em área recolhível, mantendo a
+aba separada de materiais. A aba Fonte do POP renderiza inclusive a imagem
+ancorada em parágrafo vazio. O capítulo 14 foi conferido com seus três
+parágrafos substantivos e a Figura 5. A Biblioteca explica a seleção de normas
+sem fixar o número no código: a fonte pública corrente contém 66 referências,
+como indicado no arquivo de correções (22 vínculos diretos e 44 índices
+oficiais).
+
+`pnpm test` aprovou 76 arquivos e 684 testes; `pnpm build` e
+`pnpm audit:premium` passaram. A matriz Playwright aprovou 101 cenários em
+1440, 320, 360, 390 e 430 px, com 34 omissões previstas, e o cenário PWA
+passou. A inspeção visual dos tópicos 13, 14 e 13.2 em desktop/celular não
+encontrou tela vazia, imagem quebrada, sobreposição, erro de console ou
+rolagem horizontal da página. O uso em processo real continua sujeito à
+verificação da fonte, vigência normativa e revisão institucional.

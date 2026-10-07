@@ -231,18 +231,6 @@
 .learning-contract>details li{display:flex;gap:7px;align-items:flex-start}
 .learning-contract>details li svg{width:14px;flex:none;color:var(--green)}
 
-.learning-source-basis{
-  position:relative;
-  margin:15px 0 20px;
-  padding:14px 16px;
-  border:0;
-  border-left:3px solid var(--blue);
-  background:color-mix(in srgb,var(--blue) 7%,var(--surface));
-}
-.learning-source-basis small{color:var(--blue);font-size:var(--texto-1);font-weight:800;letter-spacing:.08em}
-.learning-source-basis p{margin:5px 0 8px;color:var(--ink2);font-size:var(--texto-3);line-height:1.6}
-.learning-source-basis button{border:0;background:transparent;color:var(--blue);font-size:var(--texto-1);font-weight:800}
-.learning-source-basis button svg{width:12px;vertical-align:middle}
 .fb-status{flex:0 0 auto!important;padding:2px 7px;border-radius:var(--raio-3);font-size:var(--texto-1)!important;font-weight:800}
 .fb-slots li.ok .fb-status{color:var(--green)}
 .fb-slots li.bad .fb-status{color:var(--red)}
@@ -568,8 +556,6 @@
 .learning-challenge p,
 .learning-challenge button,
 .learning-contract>details,
-.learning-source-basis small,
-.learning-source-basis button,
 .evidence-document header small,
 .evidence-document dl,
 .evidence-checkpoint,
@@ -898,14 +884,13 @@
 .source-content p,
 .lesson-keypoints p,
 .lesson-active-practice p,
-.learning-source-basis p,
 .anexo-b-guia .abg-exige p,
 .anexo-b-guia .abg-armadilha p,
 .ler-quadro p,
 .lab-trust-note p,
 .lesson-header p,
 .analysis-alert p,
-.kp-quadro-nota{max-width:58ch}
+.leis-orientacao{max-width:58ch}
 
 /* Linguagem visual de PROCEDENCIA: fonte, interpretacao e exemplo.
    Misturar os tres e o defeito de maior consequência possível neste dominio, porque

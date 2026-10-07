@@ -9,3 +9,12 @@
 .siglas-aula-toggle>svg:last-child.aberto{transform:rotate(90deg)}
 .siglas-aula-principal>div{padding:12px 14px;border-top:1px solid var(--line)}
 @media(max-width:1250px){.siglas-aula-principal{display:block;margin:14px 0}.siglas-aula-lateral{display:none}}
+
+/* Material visual junto do trecho, sem exigir troca de aba. */
+.lesson-inline-materials{margin:18px 0;border:1px solid var(--line);border-radius:var(--raio-2);background:var(--surface)}
+.lesson-inline-materials>summary{display:flex;align-items:center;flex-wrap:wrap;gap:8px;min-height:48px;padding:11px 14px;cursor:pointer;color:var(--green2);font-size:var(--texto-3);font-weight:800}
+.lesson-inline-materials>summary small{margin-left:auto;color:var(--muted);font-size:var(--texto-2);font-weight:600}
+.lesson-inline-materials-body{padding:0 14px 14px;border-top:1px solid var(--line)}
+.lesson-inline-materials-body .source-figure,.lesson-inline-materials-body .data-table{margin:14px 0 0}
+.lesson-inline-materials-body .ler-quadro{margin-top:14px}
+@media(max-width:620px){.lesson-inline-materials>summary small{flex-basis:100%;margin-left:26px}}

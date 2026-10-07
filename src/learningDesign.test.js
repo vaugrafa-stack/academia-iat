@@ -30,27 +30,6 @@ describe("learningDesign", () => {
     );
   });
 
-  it("preserva uma evidência-base substantiva e ignora legenda solta", () => {
-    const design = getLearningDesign(
-      { number: "7", title: "Triagem documental" },
-      [
-        {
-          type: "paragraph",
-          paragraph: { text: "Figura 2 — fluxo", headingLevel: 0 },
-        },
-        {
-          type: "paragraph",
-          paragraph: {
-            text: "A leitura do processo deve confrontar objeto, fase, documentos e histórico antes da conclusão.",
-            headingLevel: 0,
-          },
-        },
-      ],
-    );
-    expect(design.sourceBasis).toContain("confrontar objeto");
-    expect(design.sourceBasis).not.toContain("Figura 2");
-  });
-
   it("explicita tarefa observável nos três níveis", () => {
     const design = getLearningDesign({
       number: "25",

@@ -108,6 +108,55 @@ test('artefato final mantém build, rotas principais e console íntegros', async
   await expectBuildIdentity(page);
 });
 
+test('aula integra figuras e quadros ao texto sem duplicar a evidência-base', async ({ page, baseURL }) => {
+  const runtimeIssues = monitorRuntime(page, baseURL);
+  for (const [id, numero, trecho] of [
+    ['043', '4', 'Em RLO, RLAS'],
+    ['048', '5', 'Transferência de titularidade não se confunde'],
+  ]) {
+    await page.goto(appUrl(baseURL, `#/aula/pop-section-${id}`), { waitUntil: 'domcontentloaded' });
+    await expect(page.locator('.lesson-article')).toContainText(trecho);
+    await expect(page.locator('.learning-source-basis')).toHaveCount(0);
+    await expect(page.locator('.lesson-article .kp-mais')).toHaveCount(1);
+    await expect(page.locator('.lesson-article .source-jump')).toHaveCount(0);
+    const inline = page.locator('.lesson-inline-materials');
+    const figura = inline.locator('.source-figure');
+    await expect(figura).toBeVisible();
+    await expect(figura.locator('figcaption')).toContainText(`Figura ${numero} - `);
+    await figura.scrollIntoViewIfNeeded();
+    await expect.poll(() => figura.locator('img').evaluate((img) => img.naturalWidth)).toBeGreaterThan(0);
+    await inline.locator('summary').click();
+    await expect(figura).toBeHidden();
+    await inline.locator('summary').click();
+    await expect(figura).toBeVisible();
+
+    await page.getByRole('tab', { name: 'Fonte do POP' }).click();
+    await expect(page.locator('.source-content')).toContainText(trecho);
+    await expect(page.locator('.source-content .source-figure')).toBeVisible();
+    await expect(page.locator('.source-content .source-figure figcaption')).toContainText(`Figura ${numero} - `);
+    await expectHealthyPage(page, runtimeIssues);
+  }
+
+  await page.goto(appUrl(baseURL, '#/aula/pop-section-046'), { waitUntil: 'domcontentloaded' });
+  await expect(page.locator('.lesson-inline-materials .data-table')).toContainText('Perguntas para análise de regularização');
+  await expect(page.locator('.kp-fonte')).not.toContainText('Quadro 17 - ');
+  await expectHealthyPage(page, runtimeIssues);
+});
+
+test('biblioteca explica como consultar resumos das normas', async ({ page, baseURL }) => {
+  const runtimeIssues = monitorRuntime(page, baseURL);
+  await page.goto(appUrl(baseURL, '#/biblioteca'), { waitUntil: 'domcontentloaded' });
+  await expect(page.getByRole('heading', { name: /Biblioteca operacional/i })).toBeVisible();
+  const seletor = page.locator('#library-area-select');
+  if (await seletor.isVisible()) await seletor.selectOption('legislacoes');
+  else await page.getByRole('navigation', { name: 'Áreas da biblioteca' })
+    .getByRole('button', { name: 'Legislações' }).click();
+  await expect(page.locator('.leis-orientacao')).toContainText('breve resumo');
+  await page.locator('.leis-list button').nth(1).click();
+  await expect(page.locator('.leis-resumo')).toBeVisible();
+  await expectHealthyPage(page, runtimeIssues);
+});
+
 test('guia de hidrelétricas leva cada atalho ao título visível e focado', async ({
   page,
   baseURL,

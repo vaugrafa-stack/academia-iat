@@ -356,6 +356,7 @@ button.primary:active{transform:translateY(0);box-shadow:0 2px 8px #16563C33}
 .leis-list{border:1px solid var(--line);border-radius:var(--raio-3);overflow:hidden;max-height:70vh;overflow-y:auto;background:var(--surface)}
 .leis-head{display:flex;align-items:center;gap:8px;padding:12px 14px;font-size:var(--texto-2);font-weight:800;color:var(--muted);border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--surface)}
 .leis-head svg{width:16px;color:var(--green)}
+.leis-orientacao{margin:0;padding:10px 14px;border-bottom:1px solid var(--line);color:var(--muted);font-size:var(--texto-2);line-height:1.45}
 .leis-list button{display:block;width:100%;text-align:left;border:0;border-bottom:1px solid var(--soft);background:var(--surface);padding:10px 14px;cursor:pointer}
 .leis-list button small{display:block;font-size:var(--texto-1);font-weight:800;letter-spacing:.05em;color:var(--blue)}
 .leis-list button strong{font-size:var(--texto-3);line-height:1.35;display:block;margin-top:2px}
@@ -771,10 +772,6 @@ button:focus-visible,input:focus-visible,textarea:focus-visible,a:focus-visible,
 .siglas-aula dt{font-weight:800;font-size:var(--texto-3);color:var(--ink)}
 .siglas-aula dd{margin:0 0 2px;font-size:var(--texto-3);color:var(--ink2);line-height:1.45}
 .siglas-aula dd em{display:block;font-style:normal;color:var(--muted);font-size:var(--texto-3);margin-top:2px}
-/* Aula cujo conteudo e um quadro */
-.kp-quadro{margin:14px 0}
-.kp-quadro-nota{display:flex;align-items:center;gap:8px;font-size:var(--texto-3);color:var(--muted);margin:0 0 10px}
-.kp-quadro-nota svg{color:var(--green2);flex:none}
 /* Busca do glossario */
 .glossario-busca{margin:14px 0}
 

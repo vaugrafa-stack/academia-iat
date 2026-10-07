@@ -233,24 +233,9 @@ function learningProfile(lesson) {
   );
 }
 
-function meaningfulParagraph(blocks = []) {
-  return blocks
-    .filter(
-      (block) =>
-        block?.type === "paragraph" &&
-        block.paragraph?.text &&
-        !block.paragraph?.headingLevel,
-    )
-    .map((block) => block.paragraph.text.replace(/\s+/g, " ").trim())
-    .find(
-      (text) => text.length >= 45 && !/^(quadro|tabela|figura)\s+\d/i.test(text),
-    );
-}
-
-export function getLearningDesign(lesson, blocks = []) {
+export function getLearningDesign(lesson) {
   const title = normalizedTitle(lesson) || "esta seção";
   const profile = learningProfile(lesson);
-  const sourceBasis = meaningfulParagraph(blocks);
   const section = lesson?.number
     ? `seção ${lesson.number}`
     : "seção introdutória";
@@ -277,9 +262,6 @@ export function getLearningDesign(lesson, blocks = []) {
     ],
     mastery: [...profile.mastery],
     challenge: `Em um processo relacionado a “${title}”, registre um fato que precisa ser confirmado, a evidência necessária, o fundamento aplicável e o encaminhamento se a evidência faltar. Mostre como evitaria ${profile.risk}.`,
-    sourceBasis: sourceBasis
-      ? sourceBasis.slice(0, 360) + (sourceBasis.length > 360 ? "…" : "")
-      : "Esta é uma seção de organização. Use os subtópicos vinculados como base para a atividade.",
   };
 }
 

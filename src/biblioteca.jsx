@@ -389,6 +389,10 @@ export default function KnowledgeLibrary({
               <Scale />
               <span>{leis.length} normas referenciadas no POP</span>
             </div>
+            <p className="leis-orientacao">
+              Selecione uma norma para ver um breve resumo, a fonte oficial e os
+              trechos do POP relacionados.
+            </p>
             {leis.map((l, i) => (
               <button
                 key={i}

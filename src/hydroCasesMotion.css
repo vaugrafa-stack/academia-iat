@@ -218,6 +218,18 @@
   color: var(--ink2, #31463d);
 }
 
+.hcm-hydrology-note {
+  margin-top: 12px;
+  padding: 15px 17px;
+  border-left: 3px solid var(--hcm-accent);
+  border-radius: var(--raio-2);
+  background: var(--soft, #f3f7f4);
+  color: var(--ink2, #31463d);
+}
+.hcm-hydrology-note h3 { margin: 0 0 7px; font-size: var(--texto-4); }
+.hcm-hydrology-note p { margin: 0 0 8px; font-size: var(--texto-3); line-height: 1.55; }
+.hcm-hydrology-note a { font-size: var(--texto-3); font-weight: 700; color: var(--blue); }
+
 /* Exact dash periods make the end frame identical to the first frame. */
 .hydro-motion-surface .hcm-flow {
   animation: hcmFlow var(--hcm-flow-duration) linear infinite;

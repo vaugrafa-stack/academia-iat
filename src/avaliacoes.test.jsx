@@ -330,7 +330,7 @@ describe("metadados pedagógicos do banco gerado", () => {
     }
   });
 
-  it("explica especificamente distratores com regras absolutas", () => {
+  it("explica distratores com regras absolutas, inclusive a revisão jurídica contextual", () => {
     const byId = new Map(generatedQuestionBank.map((question) => [question.id, question]));
 
     for (const id of ["q025", "q030"]) {
@@ -338,7 +338,11 @@ describe("metadados pedagógicos do banco gerado", () => {
         /exclusivamente|automática/i.test(option),
       );
       expect(distractor, id).toBeTruthy();
-      expect(distractor.feedback, id).toMatch(/regra absoluta/i);
+      if (id === "q030") {
+        expect(distractor.feedback, id).toMatch(/não apaga automaticamente/i);
+      } else {
+        expect(distractor.feedback, id).toMatch(/regra absoluta/i);
+      }
     }
   });
 });

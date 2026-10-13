@@ -23,6 +23,7 @@ import {
 } from 'lucide-react';
 import {
   CICLO_DE_VIDA,
+  CONFERENCIA_PONTUAL,
   CUSTA_PRAZO,
   EMPREENDEDOR_SECOES,
   MODALIDADES,
@@ -418,6 +419,11 @@ export default function GuiaEmpreendedor({ go }) {
               <strong>{item.grupo}</strong>
               <p className="emp-fonte-norma">{item.fonte}</p>
               <p>{item.conteudo}</p>
+              {item.url && (
+                <a href={item.url} target="_blank" rel="noopener noreferrer">
+                  Ler o texto oficial <ExternalLink size={13} aria-hidden="true" />
+                </a>
+              )}
               {item.atencao && (
                 <p className="emp-fonte-atencao">
                   <AlertTriangle size={13} aria-hidden="true" /> {item.atencao}
@@ -463,6 +469,13 @@ export default function GuiaEmpreendedor({ go }) {
         <p className="emp-texto">
           A licença fixa condicionantes verificáveis. Cada uma tem prazo e precisa de evidência do
           cumprimento, e é esse acervo que a renovação examina.
+        </p>
+        <p className="emp-texto">
+          Se uma condicionante da licença deferida precisar ser contestada, o{' '}
+          <a href="https://www.legislacao.pr.gov.br/legislacao/listarAtosAno.do?action=exibirImpressao&codAto=357341" target="_blank" rel="noopener noreferrer">art. 38 do Decreto Estadual nº 9.541/2025</a>
+          {' '}prevê contestação justificada, exclusivamente quanto às condicionantes, à
+          autoridade emissora, em 30 dias contados da emissão. A contestação não equivale,
+          por si, à suspensão da obrigação: confira o efeito atribuído no processo.
         </p>
         {/* A versao anterior dizia que condicionante cumprida sem registro
             "equivale a nao cumprida". E categorico demais: confunde o fato com
@@ -534,10 +547,12 @@ export default function GuiaEmpreendedor({ go }) {
 
       <footer className="emp-revisao">
         <p>
-          <strong>Revisão normativa: {REVISAO_NORMATIVA}.</strong> ANEEL, recursos hídricos,
-          legislação federal e procedimento estadual mudam com frequência. A data acima diz
-          quando este conteúdo foi conferido, e não que ele continue vigente hoje: confirme
-          cada norma na fonte oficial, na data do seu protocolo.
+          <strong>Revisão normativa geral: {REVISAO_NORMATIVA}.</strong> Conferência pontual em{' '}
+          {CONFERENCIA_PONTUAL} dos arts. 17 e 18 da Lei Federal nº 15.190/2025 e dos arts.
+          38, 173 e 175 do Decreto Estadual nº 9.541/2025. ANEEL, recursos hídricos,
+          legislação federal e procedimento estadual mudam com frequência. Essas datas
+          delimitam a conferência, não garantem vigência futura: confirme cada norma na
+          fonte oficial, na data do seu protocolo.
         </p>
       </footer>
     </div>

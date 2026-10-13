@@ -2,7 +2,7 @@
 import React, { act } from 'react';
 import { createRoot } from 'react-dom/client';
 import { afterEach, describe, expect, it } from 'vitest';
-import { GeoprDetalhesDaConsulta } from './geoprPainel.jsx';
+import GeoprPainel, { GeoprDetalhesDaConsulta } from './geoprPainel.jsx';
 
 globalThis.IS_REACT_ACT_ENVIRONMENT = true;
 
@@ -11,6 +11,19 @@ afterEach(() => {
 });
 
 describe('painel de detalhes do GeoPR', () => {
+  it('explica a conferência de sobreposição sem prometer interseção automática', async () => {
+    const host = document.createElement('div');
+    document.body.append(host);
+    const root = createRoot(host);
+    await act(async () => root.render(<GeoprPainel ativas={[]} alternar={() => {}} limpar={() => {}} />));
+    const guide = host.querySelector('.gp-guia');
+    expect(guide?.querySelector('summary')?.textContent).toContain('possível sobreposição');
+    expect(guide?.querySelectorAll('li')).toHaveLength(3);
+    expect(guide?.textContent).toContain('não calcula interseção geoespacial');
+    expect(guide?.textContent).toContain('Plano de Manejo');
+    await act(async () => root.unmount());
+  });
+
   it('limita a expansao visual, informa o restante e usa uma unica regiao viva', async () => {
     const achados = Array.from({ length: 15 }, (_, indice) => ({
       camada: 'Subcamada de teste',

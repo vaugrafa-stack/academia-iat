@@ -1316,6 +1316,30 @@ export function ArrangementSchematics() {
             <li key={name}><span aria-hidden="true">{index + 1}</span><p><strong>{name}</strong>{description}</p></li>
           ))}</ol>
         </section>
+        {active.id === 'derivacao' && (
+          <aside className="hcm-hydrology-note" aria-label="Vazões no trecho de vazão reduzida">
+            <h3>O que acontece no TVR?</h3>
+            <p>
+              Entre a tomada e a restituição, parte da água vai à turbina e o restante fica
+              no leito natural. Confira vazão desviada, remanescente, afluentes laterais,
+              usos da água e efeitos sobre habitats e qualidade da água.
+            </p>
+            <p>
+              <strong>Q7,10</strong> é a vazão mínima média de sete dias consecutivos com
+              retorno de dez anos: referência hidrológica, não o valor automaticamente
+              exigido no TVR. A condição aplicável vem da outorga e do licenciamento.
+              O art. 54 da IN IAT nº 09/2025 admite ajustar a vazão remanescente
+              para usos múltiplos e demandas sanitárias e ecológicas.
+            </p>
+            <a href="https://www.iat.pr.gov.br/sites/agua-terra/arquivos_restritos/files/documento/2025-06/instrucao_normativa_09-2025-empreendimentos_hidreletricos-23743957-0_republicado.pdf" target="_blank" rel="noopener noreferrer">
+              Conferir a IN IAT nº 09/2025, art. 54
+            </a>
+            {' · '}
+            <a href="https://www.gov.br/ana/pt-br/todos-os-documentos-do-portal/documentos-sre/coreg/manualdedrdh2013diretrizesparaestudoprognosticodequalidadedaagua.pdf/@@download/file" target="_blank" rel="noopener noreferrer">
+              Definição hidrológica da Q7,10 (ANA)
+            </a>
+          </aside>
+        )}
       </div>
     </section>
   );

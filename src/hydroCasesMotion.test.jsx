@@ -191,6 +191,11 @@ describe('arranjos e usina reversível', () => {
     expect(host.querySelector('.hcm-current-state')?.textContent).toContain('Derivação');
     expect(host.querySelector('.arr-fluxo-tvr')?.style.getPropertyValue('--hcm-dash-period')).toBe('25px');
     expect(host.textContent).toContain('Chaminé de equilíbrio');
+    const hydrology = host.querySelector('.hcm-hydrology-note');
+    expect(hydrology?.textContent).toContain('Q7,10');
+    expect(hydrology?.textContent).toContain('não o valor automaticamente exigido');
+    expect(hydrology?.textContent).toContain('art. 54');
+    expect(hydrology?.querySelector('a')?.href).toContain('iat.pr.gov.br');
   });
 
   it('oferece pausa e velocidade também para os arranjos', async () => {

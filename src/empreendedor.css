@@ -270,6 +270,16 @@
   font-weight: 700;
 }
 
+.emp-fontes article > a {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  margin: 2px 0 7px;
+  color: var(--blue);
+  font-size: var(--texto-3);
+  font-weight: 700;
+}
+
 /* O limite não é rodapé: é a metade da informação que evita o erro caro. */
 .emp-naofaz {
   display: flex;

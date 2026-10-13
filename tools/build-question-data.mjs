@@ -136,7 +136,27 @@ function remediationPriority(question, level) {
   return 'regular';
 }
 
-function distractorFeedback(option) {
+// Revisões pontuais substituem o comentário genérico por uma explicação da
+// confusão efetiva. A chave textual evita depender do ID/ordem gerados.
+const CURATED_DISTRACTORS = new Map([
+  ['Com a vigência da Lei Federal nº 15.190/2025, como a análise deve tratar a matriz estadual de enquadramento da IN IAT nº 09/2025?', new Map([
+    ['Presumir sua revogação automática pelo regime federal', 'Lei geral superveniente não apaga automaticamente cada critério estadual. Confira a compatibilidade da regra específica aplicável e registre eventual conflito.'],
+    ['Aplicá-la isoladamente, ignorando procedimentos federais supervenientes', 'A matriz estadual continua referência operacional, mas deve ser lida em conjunto com as normas gerais federais vigentes.'],
+  ])],
+  ['Conforme o art. 36 da IN IAT nº 09/2025, a entrada mínima esperada para a Consulta Prévia compreende:', new Map([
+    ['EIA/RIMA completo acompanhado da outorga de uso da água', 'A Consulta Prévia antecede o requerimento de licença. O art. 36 pede localização e caracterização preliminar do arranjo, não o estudo completo da fase de LP.'],
+    ['O requerimento assinado basta como entrada mínima da Consulta Prévia, dispensado o material cartográfico', 'Sem a delimitação da ADA e o mapa digital do arranjo, não há base espacial mínima para examinar o eixo pretendido.'],
+  ])],
+  ['Qual é o critério numérico que inclui uma PCH entre as situações passíveis de EIA e RIMA no art. 10 da IN IAT nº 09/2025?', new Map([
+    ['Qualquer outorga de uso da água vigente, sem considerar porte ou impacto', 'Ter outorga não é o limiar numérico do art. 10. Ele trata de potência acima de 10 MW ou alagamento superior a 100 ha para PCH.'],
+    ['Alagamento superior a 1.000 ha, independentemente da potência', 'O limiar de alagamento citado no art. 10 é 100 ha, não 1.000 ha. A potência também é critério alternativo.'],
+    ['Solicitação voluntária do estudo pelo empreendedor', 'A escolha do estudo não decorre de preferência do empreendedor; depende do enquadramento e da avaliação do órgão.'],
+  ])],
+]);
+
+function distractorFeedback(option, question) {
+  const curated = CURATED_DISTRACTORS.get(question.question)?.get(option);
+  if (curated) return curated;
   const text = canonical(option);
   if (/\b(sempre|nunca|automatic\w*|apenas|somente|exclusiv\w*|irrelevante|dispens\w*|substitu\w*)\b/.test(text)) {
     return 'A alternativa usa uma regra absoluta ou uma dispensa que o trecho citado não sustenta. Compare os limites da afirmação com a justificativa e a fonte.';
@@ -165,7 +185,7 @@ function pedagogyFor(question) {
     distractors: question.options.flatMap((option, index) => (
       index === question.answer
         ? []
-        : [{ option, feedback: distractorFeedback(option) }]
+        : [{ option, feedback: distractorFeedback(option, question) }]
     )),
   };
 }

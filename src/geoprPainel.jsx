@@ -461,6 +461,16 @@ export default function GeoprPainel({ ativas, alternar, limpar }) {
         </span>
       </p>
 
+      <details className="gp-guia">
+        <summary>Como conferir uma possível sobreposição</summary>
+        <ol>
+          <li>Confira o arranjo completo no processo: barragem, reservatório, adução, casa de força, TVR, acessos e linhas aplicáveis.</li>
+          <li>Ative uma camada por vez, aproxime e clique na feição para ler os atributos do serviço.</li>
+          <li>Anote camada, fonte, data e parte do arranjo afetada. Confira limite e restrição no ato legal, Plano de Manejo e vetor oficial.</li>
+        </ol>
+        <p>O mapa não calcula interseção geoespacial nem prova incidência legal. Para posição exata, confronte vetores no mesmo sistema de referência e documente a incerteza.</p>
+      </details>
+
       <div className="gp-modulos" role="group" aria-label="Filtrar camadas por módulo do curso">
         <span className="gp-modulos-rotulo">Filtrar por módulo</span>
         <div className="gp-modulos-fichas">

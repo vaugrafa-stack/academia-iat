@@ -1,6 +1,6 @@
 # Status atual da Academia IAT
 
-Atualizado em 07/10/2026. Este é o único documento de situação corrente. Os
+Atualizado em 13/10/2026. Este é o único documento de situação corrente. Os
 planos detalhados do repositório preservam decisões e snapshots históricos.
 Quando houver divergência, prevalecem os manifestos gerados, os testes do commit
 identificado e este status.
@@ -22,6 +22,27 @@ identificado e este status.
 Uma alteração local ou um push em repositório privado não é produção. A versão
 de produção só muda quando o workflow público termina com sucesso e o artefato
 publicado é verificado pelo SHA incorporado ao aplicativo.
+
+## Auditoria do plano global recebido em 13/10/2026
+
+O plano externo foi confrontado com o checkout e fontes oficiais, ponto a ponto,
+em `AUDITORIA_PLANO_GLOBAL_2026-10-13.md`. Foram incorporados: explicação de
+TVR/Q7,10 no arranjo de derivação; distinção entre o art. 17 da Lei Federal nº
+15.190/2025 e o Anexo I da IN IAT nº 09/2025; regime geral estadual,
+transição/revogação e contestação de condicionantes no guia; orientação de
+conferência territorial no GeoPR; feedback específico em três questões
+normativas. A minuta do POP, o total de 26 casos e as 232 perguntas não foram
+reescritos. Regras universalizantes incorretas do plano foram rejeitadas.
+
+No candidato local deste ciclo, `pnpm test` passou com 76 arquivos e 687
+testes, além dos portões de conteúdo, segurança e smoke; `pnpm build` e
+`pnpm audit:premium` passaram. O teste de navegador do artefato aprovou 101
+cenários nas larguras 1440, 320, 360, 390 e 430 px, com 34 omissões
+previstas. O painel de TVR e o guia GeoPR foram inspecionados visualmente em
+360 px, sem overflow horizontal. O orçamento de build passou, embora CSS
+inicial e totais de CSS/JS permaneçam acima de 90% do teto bruto, como no
+ciclo anterior. Esses resultados ainda não provam publicação, vigência futura
+ou validação institucional do conteúdo.
 
 ## Fonte e medidas reproduzíveis
 

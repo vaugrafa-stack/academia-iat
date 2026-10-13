@@ -11,8 +11,8 @@
 // A regra que governa cada linha daqui, e que vale para quem editar depois:
 //
 //   1. O POP NAO cria exigencia. Ele organiza o metodo do orgao. O fundamento
-//      de qualquer documento pedido esta na norma, na Portaria IAT no 12/2024 e
-//      seus Anexos, no Termo de Referencia da fase ou em condicionante
+//      de qualquer documento pedido esta na norma aplicavel, no Termo de
+//      Referencia da fase ou em condicionante
 //      anterior. Onde este guia nao conseguiu identificar o fundamento, ele
 //      diz isso na propria linha, em vez de listar documento como se a
 //      obrigacao fosse dele.
@@ -32,6 +32,7 @@
 // recursos hidricos e o regime estadual mudam com frequencia: sem a data, o
 // leitor nao tem como saber a que altura do tempo este texto foi conferido.
 export const REVISAO_NORMATIVA = '04/09/2026';
+export const CONFERENCIA_PONTUAL = '13/10/2026';
 
 export const EMPREENDEDOR_SECOES = Object.freeze([
   { id: 'emp-competencias', rotulo: 'Quem decide' },
@@ -296,14 +297,17 @@ export const ONDE_ESTA_A_EXIGENCIA = Object.freeze([
     conteudo: 'A incidência sobre unidade de conservação ou sua zona de amortecimento é analisada considerando a categoria da unidade, o ato de criação e o Plano de Manejo. A providência perante o órgão gestor varia com o regime aplicável: autorização nos empreendimentos de significativo impacto sujeitos a EIA/RIMA, e ciência nos processos não sujeitos a EIA/RIMA.',
   },
   {
-    grupo: 'Regra de transição',
-    fonte: 'Decreto Estadual nº 9.541/2025, art. 173',
-    conteudo: 'Procedimentos protocolados até a entrada em vigor do novo regime seguem as normas vigentes na data do protocolo, sem aplicação retroativa das demais disposições. Isso não impede complementação técnica no processo em curso. É a primeira coisa a confirmar quando o processo é antigo.',
+    grupo: 'Regime geral estadual e transição',
+    fonte: 'Lei Estadual nº 22.252/2024 e Decreto Estadual nº 9.541/2025, arts. 173 e 175',
+    url: 'https://www.legislacao.pr.gov.br/legislacao/pesquisarAto.do?action=exibir&codAto=347383&codTipoAto=1&tipoVisualizacao=compilado',
+    conteudo: 'A Lei estabelece o regime geral estadual e o Decreto o regulamenta. Pelo art. 173, pedidos protocolados antes da entrada em vigor do novo regime seguem a regra da data do protocolo, admitida complementação técnica motivada. O art. 175 revogou a Resolução CEMA nº 107/2020; ela permanece relevante para reconstruir o regime temporal de processos antigos.',
   },
   {
     grupo: 'Base geral do licenciamento',
-    fonte: 'Lei Federal nº 15.190/2025',
-    conteudo: 'Integra a base normativa geral do licenciamento ambiental. A incidência sobre o caso deve ser avaliada em conjunto com o regime estadual e com a norma específica de empreendimentos hidrelétricos.',
+    fonte: 'Lei Federal nº 15.190/2025, arts. 17 e 18',
+    url: 'https://www.planalto.gov.br/ccivil_03/_ato2023-2026/2025/lei/l15190.htm',
+    conteudo: 'O art. 17 estabelece que o licenciamento independe da emissão da certidão municipal de uso, parcelamento e ocupação do solo urbano e de autorizações ou outorgas de órgãos não integrantes do Sisnama, sem dispensar o empreendedor de cumprir a legislação desses atos. O art. 18 exige compatibilidade entre estudo, potencial de impacto, ambiente e fase. A aplicação deve ser compatibilizada com as regras estaduais e a norma específica de hidrelétricas.',
+    atencao: 'A IN IAT nº 09/2025 ainda contém modelo de certidão municipal em seu Anexo I. Em caso de aparente conflito, registre a norma, a data do protocolo e a dúvida para validação institucional; não presuma dispensa geral nem paralisação automática do licenciamento.',
   },
   {
     grupo: 'Segurança de barragem',

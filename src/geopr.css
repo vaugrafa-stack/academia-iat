@@ -61,6 +61,14 @@
  font-size:var(--texto-3);line-height:1.5;color:var(--muted)}
 .gp-limite svg{flex:none;margin-top:2px;color:var(--amber,var(--ink2))}
 
+.gp-guia{border:1px solid var(--line);border-radius:var(--raio-2);background:var(--surface);
+ padding:9px 11px;color:var(--ink2)}
+.gp-guia summary{cursor:pointer;font-size:var(--texto-3);font-weight:800}
+.gp-guia summary:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+.gp-guia ol{padding-left:22px;margin:10px 0 7px}
+.gp-guia li,.gp-guia p{font-size:var(--texto-3);line-height:1.55;margin-bottom:7px}
+.gp-guia p{margin:0;color:var(--muted)}
+
 .gp-grupo{display:flex;flex-direction:column;gap:6px}
 .gp-grupo h3{margin:0;font-size:var(--texto-1);font-weight:800;letter-spacing:.06em;
  text-transform:uppercase;color:var(--muted)}

@@ -85,6 +85,19 @@ describe('guia do empreendedor', () => {
     expect(documental.atencao).toMatch(/fauna/i);
   });
 
+  it('distingue o art. 17 federal da exigência estadual e o prazo de contestação', async () => {
+    const estadual = ONDE_ESTA_A_EXIGENCIA.find((g) => g.grupo === 'Regime geral estadual e transição');
+    expect(estadual.fonte).toContain('Lei Estadual nº 22.252/2024');
+    expect(estadual.conteudo).toMatch(/revogou a Resolução CEMA nº 107\/2020/i);
+    const base = ONDE_ESTA_A_EXIGENCIA.find((g) => g.grupo === 'Base geral do licenciamento');
+    expect(base.fonte).toContain('arts. 17 e 18');
+    expect(base.conteudo).toMatch(/independe da emissão da certidão municipal/i);
+    expect(base.atencao).toMatch(/não presuma dispensa geral/i);
+    const { host } = await montar();
+    expect(host.querySelector('#emp-depois')?.textContent).toMatch(/30 dias contados da emissão/i);
+    expect(host.querySelector('#emp-depois a')?.href).toContain('legislacao.pr.gov.br');
+  });
+
   it('a Consulta Prévia declara o alcance, a finalidade e a validade', async () => {
     const { host } = await montar();
     const secao = host.querySelector('#emp-consulta')?.textContent || '';

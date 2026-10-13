@@ -9,6 +9,9 @@ const pop = JSON.parse(
   readFileSync(resolve(import.meta.dirname, 'data/pop-content.json'), 'utf8'),
 );
 const learningLessons = derivarAulas(pop, tracks).lessons;
+const renderedQuestionBank = JSON.parse(
+  readFileSync(resolve(import.meta.dirname, 'data/question-bank.json'), 'utf8'),
+);
 
 const TARGETED_IDS = [
   'q001',
@@ -104,6 +107,20 @@ function editorialMetrics(questions) {
 }
 
 describe('validade editorial do banco de questões', () => {
+  it('explica o erro específico nas questões normativas revisadas', () => {
+    const cases = [
+      ['Com a vigência da Lei Federal nº 15.190/2025', 'revogação automática', 'não apaga automaticamente'],
+      ['Conforme o art. 36 da IN IAT nº 09/2025', 'O requerimento assinado basta', 'delimitação da ADA'],
+      ['Qual é o critério numérico que inclui uma PCH', '1.000 ha', '100 ha'],
+    ];
+    for (const [stem, option, expected] of cases) {
+      const question = renderedQuestionBank.find((item) => item.question.startsWith(stem));
+      expect(question, stem).toBeTruthy();
+      const distractor = question.pedagogy.distractors.find((item) => item.option.includes(option));
+      expect(distractor?.feedback, `${stem}: ${option}`).toContain(expected);
+    }
+  });
+
   const metrics = editorialMetrics(questionBank);
   const coveredSections = Object.keys(metrics.bySection).length;
 

@@ -289,12 +289,12 @@ describe("interação acessível das autoavaliações", () => {
 });
 
 describe("metadados pedagógicos do banco gerado", () => {
-  it("mantém as 232 questões rastreáveis e com revisão especializada pendente", () => {
+  it("mantém as 233 questões rastreáveis e com revisão especializada pendente", () => {
     const cognitiveLevels = new Set();
     const difficulties = new Set();
     const priorities = new Set();
 
-    expect(generatedQuestionBank).toHaveLength(232);
+    expect(generatedQuestionBank).toHaveLength(233);
     for (const question of generatedQuestionBank) {
       const metadata = question.pedagogy;
       expect(metadata?.schemaVersion).toBe(1);

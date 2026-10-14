@@ -45,7 +45,7 @@
     ".woff2": 250000
   },
   "firstGovernedCycle": "2026-08",
-  "currentCycle": "2026-08",
+  "currentCycle": "2026-10",
   "maxApprovedGrowthBytes": 20000000,
   "maxApprovedGrowthFiles": 80,
   "collections": [

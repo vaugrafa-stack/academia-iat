@@ -2,7 +2,7 @@
 """Cadeia canônica e auditável de extração do POP da Academia IAT.
 
 O script:
-1. valida a identidade da minuta-fonte v1.9 por nome, tamanho e SHA-256;
+1. valida a identidade da minuta-fonte v1.10.1 por nome, tamanho e SHA-256;
 2. preserva os IDs de seção existentes;
 3. extrai texto, tabelas, figuras e somente metadados públicos necessários;
 4. atualiza o catálogo, o manifesto de ativos e a validação de fidelidade;
@@ -18,6 +18,7 @@ Uso:
 from __future__ import annotations
 
 import argparse
+from difflib import SequenceMatcher
 import hashlib
 import io
 import json
@@ -50,22 +51,22 @@ DEFAULT_POP_SOURCE = (
     Path(os.environ["IAT_POP_SOURCE"]) if os.environ.get("IAT_POP_SOURCE") else None
 )
 
-PIPELINE_VERSION = "2.1.0"
+PIPELINE_VERSION = "2.2.0"
 EXPECTED = {
-    "fileName": "POP_DLE_HID_001_v1.9_Sem_Empreendimento_Nomeado.docx",
-    "bytes": 4_007_838,
-    "sha256": "ad33a4939ac5f73d5669fc4784c43319d1c1cae0193c7c3a0aa04bdfd669b353",
-    "version": "1.9",
-    "sections": 176,
-    "learningSections": 170,
+    "fileName": "POP_DLE_HID_001_v1.10.1_Conferido.docx",
+    "bytes": 5_445_873,
+    "sha256": "90d3b3b02edb97e3dc64dfc54330feb6b5904cef1dce8e365ee1ef8760d046c0",
+    "version": "1.10.1",
+    "sections": 177,
+    "learningSections": 171,
     "navigationSections": 6,
-    "tables": 69,
-    "quadros": 49,
+    "tables": 70,
+    "quadros": 50,
     "tabelas": 20,
     "figures": 14,
     "assets": 14,
-    "paragraphNodes": 3_396,
-    "bodyBlocks": 851,
+    "paragraphNodes": 3_449,
+    "bodyBlocks": 866,
 }
 
 W_NS = "http://schemas.openxmlformats.org/wordprocessingml/2006/main"
@@ -327,6 +328,122 @@ def build_id_maps(previous: dict) -> tuple[dict, dict, dict, int]:
         if match:
             maximum = max(maximum, int(match.group(1)))
     return by_number_title, by_title, by_number, maximum
+
+
+def preserve_content_ids(current: dict, previous: dict) -> dict:
+    """Mantém links de aulas/mídias ao inserir blocos no meio do POP.
+
+    A extração conserva a ordem real em sourceIndex/sourceTableIndex. IDs são
+    chaves persistentes, não ordinais: renumerá-los deslocaria citações e
+    roteiros externos para outros parágrafos, mesmo com seções preservadas.
+    """
+    if not previous.get("blocks"):
+        return {"blocks": 0, "tables": 0}
+
+    old_blocks = {block["id"]: block for block in previous["blocks"]}
+    new_blocks = {block["id"]: block for block in current["blocks"]}
+    old_tables = {table["id"]: table for table in previous.get("tables", [])}
+    new_tables = {table["id"]: table for table in current.get("tables", [])}
+    old_sections = {section["id"]: section for section in previous.get("sections", [])}
+    new_sections = {section["id"]: section for section in current.get("sections", [])}
+    block_ids: dict[str, str] = {}
+    table_ids: dict[str, str] = {}
+
+    def signature(block: dict, tables: dict) -> tuple[str, str]:
+        if block["type"] == "table":
+            table = tables[block["tableId"]]
+            return "table", norm(table.get("caption") or table.get("title") or "")
+        return "paragraph", norm(block.get("paragraph", {}).get("text") or "")
+
+    def pair(old_id: str, new_id: str) -> None:
+        old, new = old_blocks[old_id], new_blocks[new_id]
+        if old["type"] != new["type"]:
+            return
+        block_ids[new_id] = old_id
+        if new["type"] == "table":
+            table_ids[new["tableId"]] = old["tableId"]
+
+    def match_sequence(old_ids: list[str], new_ids: list[str]) -> None:
+        if len(old_ids) == len(new_ids) and all(
+            old_blocks[o]["type"] == new_blocks[n]["type"]
+            for o, n in zip(old_ids, new_ids, strict=True)
+        ):
+            for old_id, new_id in zip(old_ids, new_ids, strict=True):
+                pair(old_id, new_id)
+            return
+        old_signatures = [signature(old_blocks[item], old_tables) for item in old_ids]
+        new_signatures = [signature(new_blocks[item], new_tables) for item in new_ids]
+        matcher = SequenceMatcher(None, old_signatures, new_signatures, autojunk=False)
+        for opcode, old_start, old_end, new_start, new_end in matcher.get_opcodes():
+            if opcode == "equal":
+                for old_id, new_id in zip(
+                    old_ids[old_start:old_end], new_ids[new_start:new_end], strict=True
+                ):
+                    pair(old_id, new_id)
+            elif opcode == "replace":
+                # Um parágrafo reescrito na mesma posição continua sendo o
+                # mesmo bloco. Acréscimos excedentes recebem IDs novos.
+                for old_id, new_id in zip(
+                    old_ids[old_start:old_end], new_ids[new_start:new_end]
+                ):
+                    pair(old_id, new_id)
+
+    for section_id, new_section in new_sections.items():
+        old_section = old_sections.get(section_id)
+        if not old_section:
+            continue
+        pair(old_section["headingBlockId"], new_section["headingBlockId"])
+        match_sequence(old_section["blockIds"], new_section["blockIds"])
+
+    old_preamble = [b["id"] for b in previous["blocks"] if b.get("sectionId") is None]
+    new_preamble = [b["id"] for b in current["blocks"] if b.get("sectionId") is None]
+    match_sequence(old_preamble, new_preamble)
+
+    max_block = max(int(item.rsplit("-", 1)[-1]) for item in old_blocks)
+    for block in current["blocks"]:
+        if block["id"] not in block_ids:
+            max_block += 1
+            block_ids[block["id"]] = f"pop-block-{max_block:04d}"
+    max_table = max(int(item.rsplit("-", 1)[-1]) for item in old_tables)
+    for table in current["tables"]:
+        if table["id"] not in table_ids:
+            max_table += 1
+            table_ids[table["id"]] = f"pop-table-{max_table:03d}"
+
+    paragraph_ids = {}
+    for block in current["blocks"]:
+        if block["type"] != "paragraph":
+            continue
+        old_block = old_blocks.get(block_ids[block["id"]])
+        old_paragraph_id = old_block.get("paragraph", {}).get("id") if old_block else None
+        if old_paragraph_id:
+            paragraph_ids[block["paragraph"]["id"]] = old_paragraph_id
+        else:
+            suffix = block_ids[block["id"]].rsplit("-", 1)[-1]
+            paragraph_ids[block["paragraph"]["id"]] = f"pop-paragraph-{suffix}"
+
+    id_map = {**block_ids, **table_ids, **paragraph_ids}
+
+    def remap(value):
+        if isinstance(value, str):
+            return id_map.get(value, value)
+        if isinstance(value, list):
+            return [remap(item) for item in value]
+        if isinstance(value, dict):
+            return {key: remap(item) for key, item in value.items()}
+        return value
+
+    remapped = remap(current)
+    current.clear()
+    current.update(remapped)
+    if len({b["id"] for b in current["blocks"]}) != len(current["blocks"]):
+        raise ValueError("IDs de blocos repetidos após preservação")
+    if len({t["id"] for t in current["tables"]}) != len(current["tables"]):
+        raise ValueError("IDs de tabelas repetidos após preservação")
+    return {
+        "blocks": sum(item in old_blocks for item in block_ids.values()),
+        "tables": sum(item in old_tables for item in table_ids.values()),
+    }
 
 
 def extract_assets(document: DocxDocument) -> tuple[list[dict], dict[str, dict], dict[str, bytes]]:
@@ -673,6 +790,7 @@ def extract_pop(source: Path, source_bytes: bytes, previous: dict) -> tuple[dict
             "substantiveBlockCount": len(included_blocks),
         },
     }
+    preserved_content = preserve_content_ids(output, previous)
     output, privacy_redaction_count = redact_public_value(output, redaction_values)
     output["metadata"]["provenance"]["privacyRedactionCount"] = privacy_redaction_count
     output["metadata"]["provenance"]["privacyRedactionPolicy"] = (
@@ -682,6 +800,7 @@ def extract_pop(source: Path, source_bytes: bytes, previous: dict) -> tuple[dict
         "fidelity": fidelity,
         "newSections": new_sections,
         "preservedSectionIds": len(used_ids) - len(new_sections),
+        "preservedContentIds": preserved_content,
         "privacyRedactionCount": privacy_redaction_count,
     }
     return output, asset_payloads, diagnostics
@@ -1019,7 +1138,7 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
         nargs="?",
         type=Path,
         default=DEFAULT_POP_SOURCE,
-        help="Caminho da minuta DOCX v1.9.",
+        help="Caminho da minuta DOCX v1.10.1.",
     )
     parser.add_argument(
         "--check-only",
@@ -1055,7 +1174,7 @@ def main(argv: list[str] | None = None) -> int:
     if source_sha != EXPECTED["sha256"]:
         identity_errors.append(f"SHA-256: esperado {EXPECTED['sha256']}, recebido {source_sha}")
     if identity_errors:
-        print("FALHA: a fonte não corresponde à minuta v1.9 aprovada para extração.", file=sys.stderr)
+        print("FALHA: a fonte não corresponde à minuta v1.10.1 fixada para extração.", file=sys.stderr)
         for error in identity_errors:
             print(f"  - {error}", file=sys.stderr)
         return 1

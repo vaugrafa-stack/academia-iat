@@ -1,4 +1,4 @@
-// Gate de proveniência e integridade da minuta POP v1.9.
+// Gate de proveniência e integridade da minuta POP v1.10.1.
 //
 // Diferentemente do extrator, este teste não exige que o DOCX exista na
 // máquina de CI. Ele confere o fingerprint publicado, a coerência entre todos
@@ -14,24 +14,24 @@ import { derivarAulas } from '../src/lessons.js';
 
 const root = resolve(import.meta.dirname, '..');
 const EXPECTED = {
-  fileName: 'POP_DLE_HID_001_v1.9_Sem_Empreendimento_Nomeado.docx',
-  bytes: 4_007_838,
-  sha256: 'ad33a4939ac5f73d5669fc4784c43319d1c1cae0193c7c3a0aa04bdfd669b353',
-  version: '1.9',
-  sections: 176,
-  learningSections: 170,
-  teachableLessons: 168,
+  fileName: 'POP_DLE_HID_001_v1.10.1_Conferido.docx',
+  bytes: 5_445_873,
+  sha256: '90d3b3b02edb97e3dc64dfc54330feb6b5904cef1dce8e365ee1ef8760d046c0',
+  version: '1.10.1',
+  sections: 177,
+  learningSections: 171,
+  teachableLessons: 169,
   structuralHeaders: 2,
   navigationSections: 6,
-  tables: 69,
-  quadros: 49,
+  tables: 70,
+  quadros: 50,
   tabelas: 20,
   figures: 14,
   popAssets: 14,
   flowAssets: 21,
   totalAssets: 35,
-  searchableParagraphNodes: 3_396,
-  sourceParagraphNodes: 3_424,
+  searchableParagraphNodes: 3_449,
+  sourceParagraphNodes: 3_477,
 };
 
 let failures = 0;

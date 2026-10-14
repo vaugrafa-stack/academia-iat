@@ -96,7 +96,7 @@ function DecisionProvenance({ provenance, lessonMap }) {
               <blockquote>{source.quote}</blockquote>
               <figcaption>
                 <a href={`#/aula/${encodeURIComponent(source.sec)}`}>
-                  Minuta POP v1.9 · {rotuloAula(lesson, source.sec)}
+                  Minuta POP v{LAB_SOURCE_POLICY.sourceVersion.split(',')[0]} · {rotuloAula(lesson, source.sec)}
                   <ArrowRight aria-hidden="true" />
                 </a>
               </figcaption>
@@ -276,7 +276,7 @@ function EvidenceClassificationReview({ scenario, classifications, lessonMap }) 
                         <blockquote>{source.quote}</blockquote>
                         <figcaption>
                           <a href={`#/aula/${encodeURIComponent(source.sec)}`}>
-                            Minuta POP v1.9 · {rotuloAula(lesson, source.sec)}
+                            Minuta POP v{LAB_SOURCE_POLICY.sourceVersion.split(',')[0]} · {rotuloAula(lesson, source.sec)}
                             <ArrowRight aria-hidden="true" />
                           </a>
                         </figcaption>
@@ -809,7 +809,7 @@ export default function Laboratorio({
         <summary><ShieldCheck aria-hidden="true" /><strong>Caso sintético de treinamento</strong></summary>
         <p>
           Casos e documentos são sintéticos. O debriefing separa o fundamento
-          extraído da minuta POP v1.9 dos fatos,
+          extraído da minuta POP v{LAB_SOURCE_POLICY.sourceVersion.split(',')[0]} dos fatos,
           cálculos e inferências produzidos para a prática. Nada aqui reproduz processo,
           empreendimento, assinatura, decisão ou aprovação institucional.
         </p>

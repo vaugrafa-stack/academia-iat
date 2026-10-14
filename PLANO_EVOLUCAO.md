@@ -1168,3 +1168,22 @@ do travamento anterior. As faixas compatíveis foram elevadas para `undici`
 lockfile regenerado. A auditoria local voltou a zero avisos; testes, build,
 Playwright em cinco larguras e PWA/offline passaram novamente. O portão segue
 obrigatório para publicar.
+
+## Adendo de 14/10/2026 — revisão pontual da fonte
+
+Problema: a minuta de setembro, recém-recebida, continha linguagem operacional
+que o responsável dispensou e não explicitava a necessidade de compatibilizar
+as regras federal e estadual de CAR/LAC no caso concreto. A troca da fonte
+também afetava trechos citados pelas aulas, questões e mídias.
+
+Decisão: revisar em cópia o POP como v1.10.1, sem afirmar nova aprovação
+institucional ou atualização normativa integral; extrair a fonte conferida,
+preservar IDs didáticos e propagar apenas os conteúdos e ativos afetados.
+A fundamentação, os hashes e os limites constam de
+`REVISAO_POP_2026-10-14.md`; o estado corrente fica em `STATUS_ATUAL.md`.
+
+Evidência local: 152 páginas do Word conferidas; 76 arquivos e 687 testes
+aprovados em `pnpm test`; build e orçamento aprovados; 101 cenários de
+navegador aprovados, 34 omissões previstas; cenário PWA local aprovado. A
+etapa só se torna publicação após o workflow remoto e a conferência do SHA
+servido pelo site.

@@ -1,8 +1,8 @@
 # Academia IAT — Licenciamento Hidrelétrico
 
-Plataforma de aprendizagem, consulta técnica e prática aplicada baseada na minuta `POP-DLE-HID-001`, versão operacional 1.9, agosto de 2026, e na proposta de fluxogramas vinculada ao projeto.
+Plataforma de aprendizagem, consulta técnica e prática aplicada baseada na minuta `POP-DLE-HID-001`, versão operacional 1.10.1, outubro de 2026, e na proposta de fluxogramas vinculada ao projeto.
 
-> **Status da fonte:** a versão 1.9 vem do texto visível da capa, que continua sendo a única autoridade sobre a versão operacional. Na minuta v1.7 o metadado interno do arquivo Word trazia “1.2” e divergia da capa; na v1.9 ele coincide. O extrator registra por escrito qual dos três casos ocorreu, ausente, divergente ou coerente, e um metadado que divirja sem registro reprova. A minuta e os recursos desta plataforma permanecem sujeitos a validação humana, normativa e institucional.
+> **Status da fonte:** a versão 1.10.1 vem do texto visível da capa, que continua sendo a autoridade sobre a versão operacional. O metadado interno do arquivo Word está coerente; uma divergência sem registro reprova a extração. A revisão de outubro foi pontual e não equivale à revalidação integral da base normativa de setembro. A minuta e os recursos desta plataforma permanecem sujeitos a validação técnica, jurídica e institucional.
 
 O estado operacional corrente, a distinção entre produção e repositórios apenas
 enviados e os riscos ainda abertos ficam em [`STATUS_ATUAL.md`](STATUS_ATUAL.md).
@@ -11,16 +11,22 @@ painel de situação.
 
 ## Fonte e rastreabilidade
 
-- arquivo-fonte atual: `POP_DLE_HID_001_v1.9_Sem_Empreendimento_Nomeado.docx`;
-- SHA-256: `ad33a4939ac5f73d5669fc4784c43319d1c1cae0193c7c3a0aa04bdfd669b353`;
-- versão operacional: 1.9, conforme a capa;
-- extração: 176 seções, das quais 170 não navegacionais e 6 apenas navegacionais;
-- percurso: 168 tópicos com conteúdo próprio; 2 dos 170 títulos não navegacionais são apenas cabeçalhos estruturais e permanecem representados pela hierarquia e pelas subseções;
-- conteúdo pesquisável: 3.396 nós de parágrafo;
-- elementos estruturados: 69 quadros/tabelas, 14 figuras do POP e 21 fluxogramas da proposta;
-- fidelidade textual normalizada: nenhuma divergência detectada entre os 3.424 nós de parágrafo da fonte e da extração.
+- arquivo-fonte atual: `POP_DLE_HID_001_v1.10.1_Conferido.docx`;
+- SHA-256: `90d3b3b02edb97e3dc64dfc54330feb6b5904cef1dce8e365ee1ef8760d046c0`;
+- versão operacional: 1.10.1, conforme a capa;
+- extração: 177 seções, das quais 171 não navegacionais e 6 apenas navegacionais;
+- percurso: 169 tópicos com conteúdo próprio; 2 dos 171 títulos não navegacionais são cabeçalhos estruturais representados pela hierarquia;
+- conteúdo pesquisável: 3.449 nós de parágrafo;
+- elementos estruturados: 70 quadros/tabelas, 14 figuras do POP e 21 fluxogramas da proposta;
+- fidelidade textual normalizada: nenhuma divergência detectada entre os 3.477 nós de parágrafo da fonte e da extração.
 
 As evidências verificáveis ficam em `src/data/extraction-validation.json`, `src/data/content-catalog.json` e `public/source-assets/asset-manifest.json`. Os arquivos DOCX originais não integram o repositório público.
+
+A revisão pontual desta fonte, seus fundamentos e as verificações realizadas
+estão em [`REVISAO_POP_2026-10-14.md`](REVISAO_POP_2026-10-14.md). O script
+`tools/revise_pop_v1101.py` reproduz as edições do conteúdo a partir do DOCX
+original identificado por hash; a paginação e o arquivo final também exigem
+salvamento e conferência no Word. Não trate a minuta como ato oficial.
 
 ## Executar localmente
 
@@ -65,21 +71,21 @@ nos registros gerados. Builds locais usam o SHA atual com o sufixo `-local`.
 
 ## Estado atual da plataforma
 
-- 17 módulos e 168 tópicos didáticos vinculados às seções com conteúdo próprio do POP;
+- 17 módulos e 169 tópicos didáticos vinculados às seções com conteúdo próprio do POP;
 - Formação em uma sequência única de 17 módulos, com pesquisa, expansão por módulo, acesso livre a qualquer aula e código carregado sob demanda;
-- aulas com orientação, texto-fonte, quadros, tabelas, figuras, anotações e referências; os 69 quadros/tabelas e 14 figuras aparecem também no próprio tópico, junto da leitura guiada, em área recolhível, sem exigir troca de aba;
+- aulas com orientação, texto-fonte, quadros, tabelas, figuras, anotações e referências; os 70 quadros/tabelas e 14 figuras aparecem também no próprio tópico, junto da leitura guiada, em área recolhível, sem exigir troca de aba;
 - cada aula oferece checagem comentada, recuperação ativa escrita e autoauditoria; para novas conclusões, a checagem deve estar correta, o registro deve ter ao menos 80 caracteres significativos e dois de três critérios devem ser conferidos;
-- 168 resumos audiovisuais por seção, com 10,5 a 102,5 segundos, voz em português, pôster, texto aberto, legenda WebVTT opcional e transcrição;
+- 169 resumos audiovisuais por seção, com voz em português, pôster, texto aberto, legenda WebVTT opcional e transcrição;
 - seis microaulas piloto usam professor fictício, voz, legenda, transcrição e cenários de barragem, território, campo e análise documental; a boca é exibida em cadência visual reduzida, com transições curtas, pausas neutras, cabeça estável e rosto integralmente enquadrado também em áreas estreitas, mas os tempos continuam estimados e não possuem comprovação formal de precisão de até 100 ms;
 - 17 vídeos de abertura de módulo e três animações SVG complementares;
 - 7 fluxogramas interativos e 21 fluxogramas-fonte para comparação; cada atividade interativa explicita evidência, risco e fonte em seis etapas e termina em uma decisão ramificada comentada;
 - 26 cenários de laboratório com documentos e dados exclusivamente sintéticos, distribuídos em cinco níveis objetivos: 10 para Reconhecer, 5 para Aplicar, 2 para Decidir, 5 para Integrar e 4 para Fundamentar;
 - cinco casos acrescentam classificação de evidências e quatro acrescentam tarefa aberta; contratos versionados de objetivo impedem que conclusões antigas ou incompletas sejam reaproveitadas como domínio do exercício atual;
 - 26 folhas-resposta de consulta, cobrindo 130 decisões com justificativa específica, evidência relacionada, apoio literal do POP, conteúdo mínimo, desfecho, glossário, lacunas a confirmar e proveniência das classificações e tarefas abertas;
-- 232 questões comentadas, com uma questão exclusiva para cada uma das 168 aulas, avaliações por módulo e diagnóstico em formas A e B; os metadados incluem objetivo, nível cognitivo, dificuldade estrutural, prioridade de remediação e feedback por distrator, todos marcados para revisão humana;
+- 233 questões comentadas, com uma questão exclusiva para cada uma das 169 aulas, avaliações por módulo e diagnóstico em formas A e B; os metadados incluem objetivo, nível cognitivo, dificuldade estrutural, prioridade de remediação e feedback por distrator, todos marcados para revisão técnica;
 - Redator de Informação Técnica organizado pelos 12 elementos do item 23.1, seleção pesquisável de caso e a divergência em relação às 10 seções do Anexo B mantida visível;
 - registro das 66 referências do POP: 22 vínculos diretos para fonte oficial, 44 vínculos para índice oficial e nenhuma referência sem portal oficial mapeado; vigência e aplicação continuam pendentes de revisão humana;
-- busca sobre 3.396 nós textuais, 69 quadros/tabelas e 35 imagens extraídas das fontes;
+- busca sobre 3.449 nós textuais, 70 quadros/tabelas e 35 imagens extraídas das fontes;
 - busca unificada do mapa para coordenadas decimais, grau/minuto/segundo e UTM,
   empreendimentos, municípios, bacias, APP, unidades de conservação, PACUERA,
   planos, zoneamentos e camadas do acervo GeoPR; a escolha marca ou enquadra o
@@ -95,7 +101,7 @@ nos registros gerados. Builds locais usam o SHA atual com o sufixo `-local`.
 
 Os números demonstram presença e rastreabilidade, não eficácia pedagógica nem competência profissional. Os vídeos são resumos para orientação e revisão; não substituem a leitura, a consulta à fonte, a prática deliberada ou uma demonstração técnica aprofundada. Os pacotes offline atuais cobrem a mídia catalogada de cada módulo e os recursos compartilhados do palco, mas não equivalem a uma cópia integral de todos os recursos da plataforma.
 
-As travas de conclusão das aulas comprovam apenas que uma resposta foi registrada, dois critérios foram autodeclarados e uma questão objetiva foi respondida corretamente. Comprimento de texto e autoauditoria não medem qualidade técnica. As 168 aulas possuem questão exclusiva, dentro de um banco de 232 questões com fonte verificada. O portão `check:questoes` mede pistas de comprimento, eliminação e escopo para impedir regressão; seus resultados valem para o banco do commit testado. Revisão editorial, psicométrica e especializada continua necessária.
+As travas de conclusão das aulas comprovam apenas que uma resposta foi registrada, dois critérios foram autodeclarados e uma questão objetiva foi respondida corretamente. Comprimento de texto e autoauditoria não medem qualidade técnica. As 169 aulas possuem questão exclusiva, dentro de um banco de 233 questões com fonte verificada. O portão `check:questoes` mede pistas de comprimento, eliminação e escopo para impedir regressão; seus resultados valem para o banco do commit testado. Revisão editorial, psicométrica e especializada continua necessária.
 
 Os laboratórios usam casos e documentos sintéticos marcados como exemplos didáticos sem validade administrativa. Nenhum processo real ou dado pessoal deve ser inserido na plataforma.
 

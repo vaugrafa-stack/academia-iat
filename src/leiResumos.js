@@ -52,6 +52,7 @@ const RESUMOS = [
   [/Portaria n[ºo°] 069\/2015/, 'Fixa o cálculo da APP a ser preservada no entorno do reservatório a ser formado. O art. 50 da IN IAT nº 09/2025 remete a ela e exige relatório de cálculo e arquivos shapefile para conferência do IAT na solicitação de LP ou LAS. Aplicar apenas quando ainda vigente e pertinente ao caso.'],
   // --- IAT: instrucoes normativas ---
   [/Instrução Normativa IAT n[ºo°] 09/, 'Norma central do tema: disciplina o licenciamento ambiental de unidades hidrelétricas no Paraná: enquadramento por potência, alagamento, IDA e sensibilidade; modalidades (DLAM, LAC, LAS, trifásico); Consulta Prévia; documentação por fase.'],
+  [/Instrução Normativa IAT n[ºo°] 19\/2026/, 'Disciplina a compensação ambiental decorrente da supressão de vegetação nativa do Bioma Mata Atlântica. Conforme o art. 33 registrado no POP, tornou sem efeitos a IN IAT nº 16/2025; verificar a aplicação temporal no processo concreto.'],
   [/Instrução Normativa IAT n[ºo°] 16\/2025/, 'IN do IAT sobre a compensação ambiental decorrente de supressão de vegetação nativa: forma de cálculo e cumprimento.'],
   [/Instrução Normativa IAT n[ºo°] 08\/2025/, 'IN do IAT sobre reposição florestal e consumo de matéria-prima florestal.'],
   [/Instrução Normativa IAT n[ºo°] 15\/2025/, 'IN do IAT sobre o Plano de Resgate da Flora vinculado às autorizações de supressão.'],

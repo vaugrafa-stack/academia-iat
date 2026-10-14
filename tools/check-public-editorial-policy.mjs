@@ -46,20 +46,18 @@ const ACTIVE_OPERATIONAL_DOCUMENTS = [
 // editorial, e por isso a mídia dela fica presa por hash: regerar o vídeo não
 // pode reintroduzir o termo removido sem que alguém olhe.
 //
-// Repinado em 11/08/2026, na migração para o POP v1.9. O que foi conferido
-// antes de trocar o hash: a legenda regerada não contém nenhum dos termos
-// proibidos, e a cue de título narra "18.10.5 Participação social e
-// complementações". A diferença é do próprio POP, que deixou de citar uso de IA
-// no título da seção, de modo que a reescrita editorial virou operação nula
-// nesta versão. A trava continua porque a fonte pode voltar a citar.
+// Repinado em 14/10/2026 após a migração para o POP v1.10.1. Foram conferidos
+// o texto integral da legenda e o cartaz da aula: título "18.10.5 Participação
+// social e complementações", conteúdo sobre PACUERA, UC/APA e encaminhamento,
+// sem os termos vedados. A trava permanece para detectar uma regeneração futura.
 const LOCKED_PUBLIC_MEDIA = new Map([
   [
     'public/media/aula/pop-section-072.mp4',
-    'd049ffd6a3eb23279e411596c99993b5c5c64e93a31f1ddb2ceae262cb454919',
+    'a6919322f695410b52fc96938c8b3963e72ca5c566d5c778005c767802bed22e',
   ],
   [
     'public/media/aula/pop-section-072.jpg',
-    '3b6c8d9ac32871053a549403d43a016ad21a9867b5e45e2f767be87afdee7503',
+    'f5ef591e5ebf1cb38379ae4609d0fb9e5656a583915a1f69a54db486ad4bb256',
   ],
 ]);
 

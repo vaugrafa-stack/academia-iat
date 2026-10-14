@@ -3,6 +3,7 @@ dist/
 *.log
 dist-pages/
 dist-integration-check/
+outputs/
 .playwright-cli/
 playwright-report/
 test-results/

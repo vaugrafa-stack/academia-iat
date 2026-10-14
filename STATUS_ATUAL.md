@@ -1,6 +1,6 @@
 # Status atual da Academia IAT
 
-Atualizado em 13/10/2026. Este é o único documento de situação corrente. Os
+Atualizado em 14/10/2026. Este é o único documento de situação corrente. Os
 planos detalhados do repositório preservam decisões e snapshots históricos.
 Quando houver divergência, prevalecem os manifestos gerados, os testes do commit
 identificado e este status.
@@ -22,6 +22,20 @@ identificado e este status.
 Uma alteração local ou um push em repositório privado não é produção. A versão
 de produção só muda quando o workflow público termina com sucesso e o artefato
 publicado é verificado pelo SHA incorporado ao aplicativo.
+
+## Revisão pontual do POP e sincronização de 14/10/2026
+
+A minuta de setembro foi reavaliada nos pontos propostos, revisada em cópia
+como v1.10.1 e sincronizada com a fonte didática da plataforma. A conferência
+e os limites da revisão estão em `REVISAO_POP_2026-10-14.md`. O DOCX final não
+entra no repositório público. A nova extração mantém 169 tópicos, 233 questões
+com fonte e 169 videoaulas, com uma aula nova e mídias impactadas regeneradas.
+
+No candidato local desta rodada, `pnpm test` aprovou 76 arquivos e 687 testes,
+`pnpm build` passou, o Playwright aprovou 101 cenários com 34 omissões
+previstas e o cenário PWA local passou. O conteúdo permanece minuta de
+treinamento; a compatibilização CAR/LAC pede validação no caso concreto. Os
+tamanhos totais de CSS e JavaScript seguem acima de 90% do teto bruto.
 
 ## Auditoria do plano global recebido em 13/10/2026
 
@@ -47,22 +61,22 @@ ou validação institucional do conteúdo.
 ## Fonte e medidas reproduzíveis
 
 Fonte congelada: minuta `POP-DLE-HID-001`, arquivo
-`POP_DLE_HID_001_v1.9_Sem_Empreendimento_Nomeado.docx`, versão operacional 1.9
+`POP_DLE_HID_001_v1.10.1_Conferido.docx`, versão operacional 1.10.1
 indicada na capa, SHA-256
-`ad33a4939ac5f73d5669fc4784c43319d1c1cae0193c7c3a0aa04bdfd669b353`.
+`90d3b3b02edb97e3dc64dfc54330feb6b5904cef1dce8e365ee1ef8760d046c0`.
 
 | Medida | Valor | Fonte reproduzível |
 |---|---:|---|
-| Seções extraídas | 176 | `src/data/extraction-validation.json` |
-| Títulos não navegacionais | 170 | `src/data/extraction-validation.json` |
-| Tópicos didáticos com conteúdo | 168 | `src/data/extraction-validation.json` |
+| Seções extraídas | 177 | `src/data/extraction-validation.json` |
+| Títulos não navegacionais | 171 | `src/data/extraction-validation.json` |
+| Tópicos didáticos com conteúdo | 169 | `src/data/extraction-validation.json` |
 | Módulos | 17 | `src/courseData.js` e testes de contrato |
-| Quadros e tabelas | 69 | `src/data/extraction-validation.json` |
+| Quadros e tabelas | 70 | `src/data/extraction-validation.json` |
 | Figuras do POP | 14 | `src/data/extraction-validation.json` |
 | Fluxogramas-fonte | 21 | `src/data/extraction-validation.json` |
 | Ativos extraídos | 35 | `public/source-assets/asset-manifest.json` |
 | Casos sintéticos | 26 | `src/data/lab-index.json` |
-| Questões comentadas | 232 | `src/data/question-bank.json` |
+| Questões comentadas | 233 | `src/data/question-bank.json` |
 | Referências registradas | 66 | seção `Referências normativas e técnicas` em `src/data/pop-public-content.json` |
 
 Essas contagens provam cobertura e integridade estrutural. Não provam vigência

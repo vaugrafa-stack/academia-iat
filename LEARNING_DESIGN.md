@@ -4,18 +4,18 @@
 
 Este documento especifica a arquitetura pedagógica pretendida para transformar o conteúdo das duas fontes fornecidas em uma plataforma de aprendizagem operacional, interativa e avaliável:
 
-- `POP_DLE_HID_001_v1.9_Sem_Empreendimento_Nomeado.docx`;
+- `POP_DLE_HID_001_v1.10.1_Conferido.docx`;
 - `Proposta de Fluxogramas (Original, Simplificado e Detalhado).docx`.
 
-O desenho cobre os 27 capítulos do POP, os 6 anexos, as referências normativas, os 49 quadros, as 20 tabelas, as 14 figuras do POP e os 7 fluxogramas apresentados em três níveis (original, simplificado e completo). O conteúdo não deve ser reduzido a cartões resumidos: cada tema precisa aparecer como explicação, demonstração visual, decisão simulada, prática com feedback e evidência de aprendizagem.
+O desenho cobre os 27 capítulos do POP, os 6 anexos, as referências normativas, os 50 quadros, as 20 tabelas, as 14 figuras do POP e os 7 fluxogramas apresentados em três níveis (original, simplificado e completo). O conteúdo não deve ser reduzido a cartões resumidos: cada tema precisa aparecer como explicação, demonstração visual, decisão simulada, prática com feedback e evidência de aprendizagem.
 
 ### Controle da fonte e status deste documento
 
-- versão operacional: **1.9**, conforme o texto visível da capa;
-- data: agosto de 2026;
-- SHA-256 da fonte: `ad33a4939ac5f73d5669fc4784c43319d1c1cae0193c7c3a0aa04bdfd669b353`;
+- versão operacional: **1.10.1**, conforme o texto visível da capa;
+- data: outubro de 2026 (revisão pontual; base normativa integral de 1º de setembro de 2026);
+- SHA-256 da fonte: `90d3b3b02edb97e3dc64dfc54330feb6b5904cef1dce8e365ee1ef8760d046c0`;
 - natureza: minuta técnica pendente de validação humana, jurídica e institucional;
-- na fonte v1.9, as propriedades internas do Word coincidem com a capa; a divergência histórica “1.2” pertencia à minuta v1.7. A autoridade sobre a versão operacional continua sendo o texto visível da capa, conforme a proveniência registrada na extração;
+- na fonte v1.10.1, as propriedades internas do Word coincidem com a capa; a divergência histórica “1.2” pertencia à minuta v1.7. A autoridade sobre a versão operacional continua sendo o texto visível da capa, conforme a proveniência registrada na extração;
 - os fluxogramas são uma proposta de treinamento e comparação, não um fluxo institucional automaticamente aprovado.
 
 Este arquivo combina requisitos-alvo e decisões de desenho. Ele não deve ser lido como inventário automático do que já está implementado. O estado verificável da aplicação e da extração é registrado no `README.md`, em `src/data/extraction-validation.json` e nos testes automatizados.
@@ -32,7 +32,7 @@ Este arquivo combina requisitos-alvo e decisões de desenho. Ele não deve ser l
 
 ### Regra editorial da plataforma
 
-Todo conteúdo normativo deve exibir a faixa: **“Base de treinamento: minuta POP v1.9, agosto de 2026, pendente de validação institucional. Antes de decidir em processo real, confirme a fonte oficial, a norma, o Termo de Referência e o fluxo institucional vigentes.”** A plataforma ensina o método descrito na minuta; não cria exigência autônoma, não substitui o SGA, a manifestação jurídica, a outorga, o ato da ANEEL, a manifestação do IPHAN, o planejamento municipal, a decisão de unidade especializada ou a autoridade competente.
+Todo conteúdo normativo deve exibir a faixa: **“Base de treinamento: minuta POP v1.10.1, outubro de 2026, pendente de validação institucional. Antes de decidir em processo real, confirme a fonte oficial, a norma, o Termo de Referência e o fluxo institucional vigentes.”** A plataforma ensina o método descrito na minuta; não cria exigência autônoma, não substitui o SGA, a manifestação jurídica, a outorga, o ato da ANEEL, a manifestação do IPHAN, o planejamento municipal, a decisão de unidade especializada ou a autoridade competente.
 
 ### Resultado de aprendizagem final
 

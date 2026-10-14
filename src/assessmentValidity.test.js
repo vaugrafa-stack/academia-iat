@@ -89,7 +89,7 @@ describe('validade mínima do banco de avaliações', () => {
     expect(eiaPch.length).toBeGreaterThanOrEqual(2);
     expect(eiaPch.every((item) => (
       item.explanation.includes('inicialmente simplificado')
-      && /confirmad/iu.test(item.explanation)
+      && /confirmad|motivad|motivaç/iu.test(item.explanation)
     ))).toBe(true);
 
     const lacuna = questionBank.find((item) => (

@@ -62,7 +62,7 @@ const specifications = [
   }))),
   ...sourceAssetArgs.map((name) => ({
     path: `public/source-assets/${name}`,
-    reason: 'figura extraída novamente do POP para remover linguagem classificatória incorporada à imagem',
+    reason: 'figura reextraída da minuta revisada, com conteúdo e metadados conferidos contra o manifesto',
     kind: 'source-asset',
   })),
 ];
@@ -77,18 +77,19 @@ for (const specification of specifications) {
   }
   const existing = changesByPath.get(specification.path);
   const change = {
-    cycle: existing?.cycle || policy.currentCycle,
+    cycle: policy.currentCycle,
     action: existing?.action || (baselinePaths.has(specification.path) ? 'replace' : 'add'),
     path: specification.path,
     reason: specification.reason,
     bytes: info.size,
     sha256: sha256(contents),
-    sourceType: 'project-generated',
+    sourceType: specification.kind === 'source-asset'
+      ? 'source-document-extraction' : 'project-generated',
     privacyReview: 'synthetic-no-personal-data',
     technicalReview: 'approved',
     sourceLocator,
     rightsBasis: specification.kind === 'source-asset'
-      ? 'figura integrante da minuta institucional do IAT, extraída localmente sem material externo'
+      ? 'imagem incorporada à minuta fornecida para treinamento; não representa aprovação institucional'
       : 'conteúdo derivado da minuta institucional do IAT; narração Piper offline sem voz humana ou material de terceiros',
     reviewedBy: 'portões automatizados de conteúdo, mídia, proveniência e privacidade desta rodada',
     reviewedAt,

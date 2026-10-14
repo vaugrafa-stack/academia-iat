@@ -14,15 +14,15 @@ function materiaisDaSecao(numero) {
 }
 
 describe("figuras e tabelas junto da leitura do POP", () => {
-  it("associa todas as 14 figuras e 69 tabelas, sem duplicar as 83 legendas", () => {
+  it("associa todas as 14 figuras e 70 tabelas, sem duplicar as 84 legendas", () => {
     const secoes = pop.sections.map((secao) =>
       montarMateriaisDaSecao(secao.blockIds.map((id) => blocos.get(id)), tabelas, figuras),
     );
     const reunidas = secoes.flatMap((secao) => secao.itens);
     const imagens = reunidas.filter((item) => item.tipo === "figura");
     expect(imagens).toHaveLength(14);
-    expect(reunidas.filter((item) => item.tipo === "tabela")).toHaveLength(69);
-    expect(secoes.reduce((total, secao) => total + secao.legendasConsumidas.size, 0)).toBe(83);
+    expect(reunidas.filter((item) => item.tipo === "tabela")).toHaveLength(70);
+    expect(secoes.reduce((total, secao) => total + secao.legendasConsumidas.size, 0)).toBe(84);
     expect(new Set(imagens.map((item) => item.figure.id)).size).toBe(14);
     expect(imagens.every((item) => item.legenda.startsWith(`Figura ${item.figure.number} - `))).toBe(true);
   });
@@ -37,10 +37,10 @@ describe("figuras e tabelas junto da leitura do POP", () => {
       .filter((texto) => texto && !/^Figura\s+5\b/.test(texto))).toHaveLength(3);
   });
 
-  it("mostra o Quadro 17 no tópico 13.2 sem repetir o parágrafo de legenda", () => {
+  it("mostra o Quadro 18 no tópico 13.2 sem repetir o parágrafo de legenda", () => {
     const materiais = materiaisDaSecao("13.2");
     expect(materiais.itens).toHaveLength(1);
-    expect(materiais.itens[0].table.labelNumber).toBe(17);
+    expect(materiais.itens[0].table.labelNumber).toBe(18);
     expect(materiais.legendasConsumidas.size).toBe(1);
   });
 });

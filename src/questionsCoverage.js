@@ -8,13 +8,12 @@ export const QUESTOES_COBERTURA = [
     ['Dispensa nova conferência normativa quando a minuta já passou por revisão editorial', 'Não substitui nova conferência antes da aprovação nem a validação da norma no caso concreto', 'Fixa definitivamente as normas aplicáveis a todos os processos iniciados antes daquela data'], 1,
     'A data-base informa quando a verificação foi feita, mas não encerra a conferência normativa do processo concreto.',
     { sec: 'pop-section-001', quote: 'A data-base não substitui nova conferência antes da aprovação institucional nem a validação da norma aplicável ao processo concreto.' }],
-  // A pergunta era sobre a versão 1.6, e o histórico do POP v1.9 não traz mais
-  // essa linha: a tabela passou a listar 1.0, 1.8 e 1.9. Reescrita sobre a
-  // entrada que existe hoje, em vez de citar um trecho que sumiu da fonte.
-  ['m00', 'O que a versão 1.9 registrou no histórico de evolução do POP?',
-    ['A substituição integral do licenciamento trifásico por um procedimento ambiental simplificado', 'A inclusão da Portaria IAT nº 42/2022 e do Diagnóstico Climático nos pontos aplicáveis ao EIA/RIMA', 'A retirada dos controles anuais aplicáveis aos acordos de cooperação técnica atualmente vigentes'], 1,
-    'O histórico permite identificar qual conteúdo entrou em cada revisão do documento.',
-    { sec: 'pop-section-002', quote: 'Inclusão da Portaria IAT nº 42/2022 e do Diagnóstico Climático nos pontos aplicáveis ao EIA/RIMA' }],
+  // O histórico é uma trilha de mudanças: a pergunta acompanha a revisão
+  // corrente sem tratar a minuta como ato institucional aprovado.
+  ['m00', 'O que a versão 1.10.1 registrou no histórico de evolução do POP?',
+    ['A solução automática de qualquer conflito entre CAR e LAC', 'A explicitação da tensão CAR/LAC sem solução normativa automática', 'A dispensa geral do CAR para toda atividade em imóvel rural'], 1,
+    'A revisão exige confronto das normas e validação jurídica ou institucional no caso concreto; não cria dispensa automática.',
+    { sec: 'pop-section-002', quote: 'explicitação da tensão CAR/LAC sem solução normativa automática' }],
 
   // M01 — definições e método obrigatório
   ['m01', 'No vocabulário do POP, qual é a função do Memorial?',
@@ -30,9 +29,13 @@ export const QUESTOES_COBERTURA = [
     'Rastreabilidade conecta a evidência analisada ao juízo técnico e ao encaminhamento adotado.',
     { sec: 'pop-section-011', quote: 'O leitor deve compreender qual documento foi analisado, por que ele é exigível, se seu conteúdo é suficiente, qual consequência decorre da lacuna e qual providência é proporcional à fase do processo.' }],
   ['m01', 'Depois de registrar a consequência técnica de uma pendência, como deve ser definido o encaminhamento?',
-    ['Pelo modelo utilizado no processo anterior, para manter exatamente a mesma providência em todos os casos', 'De forma proporcional à fase, ao risco identificado e à possibilidade de saneamento', 'Pela quantidade de documentos ausentes, sem considerar o efeito da lacuna sobre a decisão'], 1,
-    'A sequência obrigatória liga a providência à fase, ao risco e à possibilidade real de corrigir a lacuna.',
-    { sec: 'pop-section-012', quote: 'Definir encaminhamento proporcional à fase, ao risco e à possibilidade de saneamento.' }],
+    ['Pelo modelo utilizado no processo anterior, para manter exatamente a mesma providência em todos os casos', 'De forma proporcional à fase, à consequência da lacuna e à possibilidade de saneamento', 'Pela quantidade de documentos ausentes, sem considerar o efeito da lacuna sobre a decisão'], 1,
+    'A sequência obrigatória liga a providência à fase, ao efeito da lacuna para a decisão e à possibilidade real de corrigi-la.',
+    { sec: 'pop-section-012', quote: 'Definir encaminhamento proporcional à fase, à consequência da lacuna para a decisão e à possibilidade de saneamento.' }],
+  ['m01', 'Quando faltam elementos para decidir com segurança, qual é o encaminhamento inicial?',
+    ['Deferir e transformar a lacuna em condicionante', 'Realizar diligência ou complementação antes da decisão', 'Marcar o tema como sem efeito decisório imediato'], 1,
+    'O Quadro 11 associa a impossibilidade de concluir com segurança a uma diligência ou complementação prévia; lacuna não sanável exige manifestação fundamentada.',
+    { sec: 'pop-section-184', quote: 'Realizar diligência ou complementação antes da decisão.' }],
   ['m01', 'Como classificar um documento que existe, mas não contém os dados mínimos para a decisão técnica?',
     ['Apresenta, pois a presença formal do arquivo encerra a verificação documental daquela etapa', 'Insuficiente, porque o conteúdo apresentado não sustenta a decisão técnica necessária', 'Inconsistente, ainda que não exista divergência interna ou conflito com outra evidência do processo'], 1,
     'A classificação “Insuficiente” distingue presença formal de suficiência material.',

@@ -1,13 +1,13 @@
 {
   "schemaVersion": "1.1.0",
   "source": {
-    "popVersion": "1.9",
-    "popSha256": "ad33a4939ac5f73d5669fc4784c43319d1c1cae0193c7c3a0aa04bdfd669b353"
+    "popVersion": "1.10.1",
+    "popSha256": "90d3b3b02edb97e3dc64dfc54330feb6b5904cef1dce8e365ee1ef8760d046c0"
   },
   "packageCount": 17,
-  "lessonCount": 168,
-  "itemCount": 555,
-  "totalBytes": 212798370,
+  "lessonCount": 169,
+  "itemCount": 558,
+  "totalBytes": 211197445,
   "packages": [
     {
       "id": "m00",
@@ -15,7 +15,7 @@
       "title": "Orientação, escopo e controle documental",
       "lessonCount": 3,
       "itemCount": 12,
-      "bytes": 5145781,
+      "bytes": 5043398,
       "items": [
         {
           "path": "media/m00.mp4",
@@ -31,27 +31,27 @@
         },
         {
           "path": "media/aula/pop-section-001.mp4",
-          "bytes": 1301273
+          "bytes": 1220477
         },
         {
           "path": "media/aula/pop-section-001.jpg",
-          "bytes": 30173
+          "bytes": 26327
         },
         {
           "path": "media/aula/pop-section-001.vtt",
-          "bytes": 1008
+          "bytes": 1258
         },
         {
           "path": "media/aula/pop-section-002.mp4",
-          "bytes": 291468
+          "bytes": 277929
         },
         {
           "path": "media/aula/pop-section-002.jpg",
-          "bytes": 32010
+          "bytes": 27533
         },
         {
           "path": "media/aula/pop-section-002.vtt",
-          "bytes": 207
+          "bytes": 232
         },
         {
           "path": "media/aula/pop-section-003.mp4",
@@ -71,9 +71,9 @@
       "id": "m01",
       "code": "M01",
       "title": "Papéis, normas, definições e método obrigatório",
-      "lessonCount": 11,
-      "itemCount": 36,
-      "bytes": 14472154,
+      "lessonCount": 12,
+      "itemCount": 39,
+      "bytes": 15104663,
       "items": [
         {
           "path": "media/m01.mp4",
@@ -101,39 +101,39 @@
         },
         {
           "path": "media/aula/pop-section-005.mp4",
-          "bytes": 1345463
+          "bytes": 1610648
         },
         {
           "path": "media/aula/pop-section-005.jpg",
-          "bytes": 30705
+          "bytes": 30892
         },
         {
           "path": "media/aula/pop-section-005.vtt",
-          "bytes": 1387
+          "bytes": 1665
         },
         {
           "path": "media/aula/pop-section-006.mp4",
-          "bytes": 1657561
+          "bytes": 1507181
         },
         {
           "path": "media/aula/pop-section-006.jpg",
-          "bytes": 41470
+          "bytes": 30702
         },
         {
           "path": "media/aula/pop-section-006.vtt",
-          "bytes": 1100
+          "bytes": 1375
         },
         {
           "path": "media/aula/pop-section-007.mp4",
-          "bytes": 1910004
+          "bytes": 1745233
         },
         {
           "path": "media/aula/pop-section-007.jpg",
-          "bytes": 44271
+          "bytes": 34380
         },
         {
           "path": "media/aula/pop-section-007.vtt",
-          "bytes": 1293
+          "bytes": 1568
         },
         {
           "path": "media/aula/pop-section-008.mp4",
@@ -149,15 +149,15 @@
         },
         {
           "path": "media/aula/pop-section-132.mp4",
-          "bytes": 1307526
+          "bytes": 1212049
         },
         {
           "path": "media/aula/pop-section-132.jpg",
-          "bytes": 37455
+          "bytes": 32389
         },
         {
           "path": "media/aula/pop-section-132.vtt",
-          "bytes": 1001
+          "bytes": 1201
         },
         {
           "path": "media/aula/pop-section-009.mp4",
@@ -197,15 +197,15 @@
         },
         {
           "path": "media/aula/pop-section-012.mp4",
-          "bytes": 616247
+          "bytes": 619277
         },
         {
           "path": "media/aula/pop-section-012.jpg",
-          "bytes": 29713
+          "bytes": 29703
         },
         {
           "path": "media/aula/pop-section-012.vtt",
-          "bytes": 544
+          "bytes": 569
         },
         {
           "path": "media/aula/pop-section-013.mp4",
@@ -218,6 +218,18 @@
         {
           "path": "media/aula/pop-section-013.vtt",
           "bytes": 633
+        },
+        {
+          "path": "media/aula/pop-section-184.mp4",
+          "bytes": 767165
+        },
+        {
+          "path": "media/aula/pop-section-184.jpg",
+          "bytes": 31484
+        },
+        {
+          "path": "media/aula/pop-section-184.vtt",
+          "bytes": 768
         }
       ]
     },
@@ -227,7 +239,7 @@
       "title": "Fluxo geral, recebimento e triagem",
       "lessonCount": 5,
       "itemCount": 18,
-      "bytes": 6416189,
+      "bytes": 6184723,
       "items": [
         {
           "path": "media/m02.mp4",
@@ -255,11 +267,11 @@
         },
         {
           "path": "media/aula/pop-section-016.mp4",
-          "bytes": 822675
+          "bytes": 828043
         },
         {
           "path": "media/aula/pop-section-016.jpg",
-          "bytes": 26908
+          "bytes": 26956
         },
         {
           "path": "media/aula/pop-section-016.vtt",
@@ -279,27 +291,27 @@
         },
         {
           "path": "media/aula/pop-section-018.mp4",
-          "bytes": 1505890
+          "bytes": 1363196
         },
         {
           "path": "media/aula/pop-section-018.jpg",
-          "bytes": 36545
+          "bytes": 30245
         },
         {
           "path": "media/aula/pop-section-018.vtt",
-          "bytes": 1169
+          "bytes": 1394
         },
         {
           "path": "media/aula/pop-section-019.mp4",
-          "bytes": 974311
+          "bytes": 885838
         },
         {
           "path": "media/aula/pop-section-019.jpg",
-          "bytes": 27334
+          "bytes": 27768
         },
         {
           "path": "media/aula/pop-section-019.vtt",
-          "bytes": 1031
+          "bytes": 957
         }
       ]
     },
@@ -309,7 +321,7 @@
       "title": "Enquadramento e Consulta Prévia",
       "lessonCount": 8,
       "itemCount": 27,
-      "bytes": 10064816,
+      "bytes": 9885645,
       "items": [
         {
           "path": "media/m03.mp4",
@@ -325,35 +337,35 @@
         },
         {
           "path": "media/aula/pop-section-020.mp4",
-          "bytes": 1504366
+          "bytes": 1386317
         },
         {
           "path": "media/aula/pop-section-020.jpg",
-          "bytes": 33468
+          "bytes": 33433
         },
         {
           "path": "media/aula/pop-section-020.vtt",
-          "bytes": 1170
+          "bytes": 1395
         },
         {
           "path": "media/aula/pop-section-021.mp4",
-          "bytes": 946490
+          "bytes": 946027
         },
         {
           "path": "media/aula/pop-section-021.jpg",
-          "bytes": 32449
+          "bytes": 32498
         },
         {
           "path": "media/aula/pop-section-021.vtt",
-          "bytes": 863
+          "bytes": 893
         },
         {
           "path": "media/aula/pop-section-022.mp4",
-          "bytes": 1140918
+          "bytes": 1146470
         },
         {
           "path": "media/aula/pop-section-022.jpg",
-          "bytes": 32161
+          "bytes": 32097
         },
         {
           "path": "media/aula/pop-section-022.vtt",
@@ -361,15 +373,15 @@
         },
         {
           "path": "media/aula/pop-section-023.mp4",
-          "bytes": 971401
+          "bytes": 926537
         },
         {
           "path": "media/aula/pop-section-023.jpg",
-          "bytes": 37175
+          "bytes": 33484
         },
         {
           "path": "media/aula/pop-section-023.vtt",
-          "bytes": 754
+          "bytes": 879
         },
         {
           "path": "media/aula/pop-section-024.mp4",
@@ -409,15 +421,15 @@
         },
         {
           "path": "media/aula/pop-section-133.mp4",
-          "bytes": 1025919
+          "bytes": 1007968
         },
         {
           "path": "media/aula/pop-section-133.jpg",
-          "bytes": 30669
+          "bytes": 30640
         },
         {
           "path": "media/aula/pop-section-133.vtt",
-          "bytes": 1034
+          "bytes": 1028
         }
       ]
     },
@@ -427,7 +439,7 @@
       "title": "DLAM, LAC e LAS",
       "lessonCount": 5,
       "itemCount": 18,
-      "bytes": 7768857,
+      "bytes": 7627217,
       "items": [
         {
           "path": "media/m04.mp4",
@@ -455,27 +467,27 @@
         },
         {
           "path": "media/aula/pop-section-029.mp4",
-          "bytes": 1315486
+          "bytes": 1326288
         },
         {
           "path": "media/aula/pop-section-029.jpg",
-          "bytes": 29860
+          "bytes": 29866
         },
         {
           "path": "media/aula/pop-section-029.vtt",
-          "bytes": 1327
+          "bytes": 1342
         },
         {
           "path": "media/aula/pop-section-030.mp4",
-          "bytes": 1781267
+          "bytes": 1634254
         },
         {
           "path": "media/aula/pop-section-030.jpg",
-          "bytes": 31786
+          "bytes": 26036
         },
         {
           "path": "media/aula/pop-section-030.vtt",
-          "bytes": 1322
+          "bytes": 1622
         },
         {
           "path": "media/aula/pop-section-031.mp4",
@@ -509,7 +521,7 @@
       "title": "Licenciamento trifásico: LP, LI e LO",
       "lessonCount": 8,
       "itemCount": 27,
-      "bytes": 9599257,
+      "bytes": 9307213,
       "items": [
         {
           "path": "media/m05.mp4",
@@ -537,15 +549,15 @@
         },
         {
           "path": "media/aula/pop-section-034.mp4",
-          "bytes": 1749728
+          "bytes": 1457976
         },
         {
           "path": "media/aula/pop-section-034.jpg",
-          "bytes": 28746
+          "bytes": 28760
         },
         {
           "path": "media/aula/pop-section-034.vtt",
-          "bytes": 1777
+          "bytes": 1526
         },
         {
           "path": "media/aula/pop-section-035.mp4",
@@ -573,7 +585,7 @@
         },
         {
           "path": "media/aula/pop-section-037.mp4",
-          "bytes": 893485
+          "bytes": 893430
         },
         {
           "path": "media/aula/pop-section-037.jpg",
@@ -627,7 +639,7 @@
       "title": "AA, renovação, regularização, transferência e alterações",
       "lessonCount": 9,
       "itemCount": 30,
-      "bytes": 13047681,
+      "bytes": 12913118,
       "items": [
         {
           "path": "media/m06.mp4",
@@ -667,15 +679,15 @@
         },
         {
           "path": "media/aula/pop-section-043.mp4",
-          "bytes": 1411289
+          "bytes": 1421610
         },
         {
           "path": "media/aula/pop-section-043.jpg",
-          "bytes": 31580
+          "bytes": 31582
         },
         {
           "path": "media/aula/pop-section-043.vtt",
-          "bytes": 1437
+          "bytes": 1444
         },
         {
           "path": "media/aula/pop-section-045.mp4",
@@ -691,27 +703,27 @@
         },
         {
           "path": "media/aula/pop-section-046.mp4",
-          "bytes": 1368662
+          "bytes": 1230402
         },
         {
           "path": "media/aula/pop-section-046.jpg",
-          "bytes": 40670
+          "bytes": 29010
         },
         {
           "path": "media/aula/pop-section-046.vtt",
-          "bytes": 1092
+          "bytes": 1292
         },
         {
           "path": "media/aula/pop-section-047.mp4",
-          "bytes": 926105
+          "bytes": 893632
         },
         {
           "path": "media/aula/pop-section-047.jpg",
-          "bytes": 36356
+          "bytes": 32056
         },
         {
           "path": "media/aula/pop-section-047.vtt",
-          "bytes": 704
+          "bytes": 804
         },
         {
           "path": "media/aula/pop-section-048.mp4",
@@ -739,15 +751,15 @@
         },
         {
           "path": "media/aula/pop-section-050.mp4",
-          "bytes": 1573071
+          "bytes": 1621714
         },
         {
           "path": "media/aula/pop-section-050.jpg",
-          "bytes": 41304
+          "bytes": 33686
         },
         {
           "path": "media/aula/pop-section-050.vtt",
-          "bytes": 1235
+          "bytes": 1710
         }
       ]
     },
@@ -851,7 +863,7 @@
       "title": "Memorial e estudos ambientais",
       "lessonCount": 23,
       "itemCount": 72,
-      "bytes": 28161139,
+      "bytes": 27494350,
       "items": [
         {
           "path": "media/m08.mp4",
@@ -879,55 +891,55 @@
         },
         {
           "path": "media/aula/pop-section-058.mp4",
-          "bytes": 1178744
+          "bytes": 1121395
         },
         {
           "path": "media/aula/pop-section-058.jpg",
-          "bytes": 39228
+          "bytes": 33197
         },
         {
           "path": "media/aula/pop-section-058.vtt",
-          "bytes": 909
+          "bytes": 1059
         },
         {
           "path": "media/aula/pop-section-059.mp4",
-          "bytes": 960358
+          "bytes": 900664
         },
         {
           "path": "media/aula/pop-section-059.jpg",
-          "bytes": 35296
+          "bytes": 28974
         },
         {
           "path": "media/aula/pop-section-059.vtt",
-          "bytes": 741
+          "bytes": 866
         },
         {
           "path": "media/aula/pop-section-060.mp4",
-          "bytes": 1090565
+          "bytes": 997972
         },
         {
           "path": "media/aula/pop-section-060.jpg",
-          "bytes": 31434
+          "bytes": 27192
         },
         {
           "path": "media/aula/pop-section-060.vtt",
-          "bytes": 840
+          "bytes": 990
         },
         {
           "path": "media/aula/pop-section-061.mp4",
-          "bytes": 912484
+          "bytes": 875724
         },
         {
           "path": "media/aula/pop-section-061.jpg",
-          "bytes": 31162
+          "bytes": 29050
         },
         {
           "path": "media/aula/pop-section-061.vtt",
-          "bytes": 715
+          "bytes": 840
         },
         {
           "path": "media/aula/pop-section-062.mp4",
-          "bytes": 990233
+          "bytes": 988141
         },
         {
           "path": "media/aula/pop-section-062.jpg",
@@ -939,23 +951,23 @@
         },
         {
           "path": "media/aula/pop-section-063.mp4",
-          "bytes": 755411
+          "bytes": 722897
         },
         {
           "path": "media/aula/pop-section-063.jpg",
-          "bytes": 35325
+          "bytes": 31397
         },
         {
           "path": "media/aula/pop-section-063.vtt",
-          "bytes": 598
+          "bytes": 648
         },
         {
           "path": "media/aula/pop-section-064.mp4",
-          "bytes": 1349479
+          "bytes": 1353927
         },
         {
           "path": "media/aula/pop-section-064.jpg",
-          "bytes": 30021
+          "bytes": 30036
         },
         {
           "path": "media/aula/pop-section-064.vtt",
@@ -963,11 +975,11 @@
         },
         {
           "path": "media/aula/pop-section-174.mp4",
-          "bytes": 1700280
+          "bytes": 1690653
         },
         {
           "path": "media/aula/pop-section-174.jpg",
-          "bytes": 32088
+          "bytes": 32108
         },
         {
           "path": "media/aula/pop-section-174.vtt",
@@ -975,51 +987,51 @@
         },
         {
           "path": "media/aula/pop-section-065.mp4",
-          "bytes": 878130
+          "bytes": 824770
         },
         {
           "path": "media/aula/pop-section-065.jpg",
-          "bytes": 35113
+          "bytes": 29408
         },
         {
           "path": "media/aula/pop-section-065.vtt",
-          "bytes": 713
+          "bytes": 838
         },
         {
           "path": "media/aula/pop-section-066.mp4",
-          "bytes": 1027317
+          "bytes": 934997
         },
         {
           "path": "media/aula/pop-section-066.jpg",
-          "bytes": 31951
+          "bytes": 28344
         },
         {
           "path": "media/aula/pop-section-066.vtt",
-          "bytes": 790
+          "bytes": 940
         },
         {
           "path": "media/aula/pop-section-073.mp4",
-          "bytes": 832721
+          "bytes": 778603
         },
         {
           "path": "media/aula/pop-section-073.jpg",
-          "bytes": 33757
+          "bytes": 30094
         },
         {
           "path": "media/aula/pop-section-073.vtt",
-          "bytes": 629
+          "bytes": 729
         },
         {
           "path": "media/aula/pop-section-074.mp4",
-          "bytes": 1050881
+          "bytes": 994910
         },
         {
           "path": "media/aula/pop-section-074.jpg",
-          "bytes": 42596
+          "bytes": 32621
         },
         {
           "path": "media/aula/pop-section-074.vtt",
-          "bytes": 852
+          "bytes": 1002
         },
         {
           "path": "media/aula/pop-section-175.mp4",
@@ -1035,11 +1047,11 @@
         },
         {
           "path": "media/aula/pop-section-176.mp4",
-          "bytes": 1894291
+          "bytes": 1870792
         },
         {
           "path": "media/aula/pop-section-176.jpg",
-          "bytes": 30443
+          "bytes": 30467
         },
         {
           "path": "media/aula/pop-section-176.vtt",
@@ -1047,11 +1059,11 @@
         },
         {
           "path": "media/aula/pop-section-177.mp4",
-          "bytes": 1217412
+          "bytes": 1216216
         },
         {
           "path": "media/aula/pop-section-177.jpg",
-          "bytes": 30570
+          "bytes": 30523
         },
         {
           "path": "media/aula/pop-section-177.vtt",
@@ -1059,11 +1071,11 @@
         },
         {
           "path": "media/aula/pop-section-178.mp4",
-          "bytes": 1002618
+          "bytes": 999594
         },
         {
           "path": "media/aula/pop-section-178.jpg",
-          "bytes": 33515
+          "bytes": 33514
         },
         {
           "path": "media/aula/pop-section-178.vtt",
@@ -1095,11 +1107,11 @@
         },
         {
           "path": "media/aula/pop-section-181.mp4",
-          "bytes": 1071830
+          "bytes": 1070441
         },
         {
           "path": "media/aula/pop-section-181.jpg",
-          "bytes": 32492
+          "bytes": 32499
         },
         {
           "path": "media/aula/pop-section-181.vtt",
@@ -1107,11 +1119,11 @@
         },
         {
           "path": "media/aula/pop-section-182.mp4",
-          "bytes": 947288
+          "bytes": 949245
         },
         {
           "path": "media/aula/pop-section-182.jpg",
-          "bytes": 31403
+          "bytes": 31408
         },
         {
           "path": "media/aula/pop-section-182.vtt",
@@ -1131,15 +1143,15 @@
         },
         {
           "path": "media/aula/pop-section-075.mp4",
-          "bytes": 986819
+          "bytes": 939439
         },
         {
           "path": "media/aula/pop-section-075.jpg",
-          "bytes": 36775
+          "bytes": 30779
         },
         {
           "path": "media/aula/pop-section-075.vtt",
-          "bytes": 758
+          "bytes": 883
         }
       ]
     },
@@ -1149,7 +1161,7 @@
       "title": "PACUERA integral",
       "lessonCount": 6,
       "itemCount": 21,
-      "bytes": 9574344,
+      "bytes": 9323870,
       "items": [
         {
           "path": "media/m09.mp4",
@@ -1189,15 +1201,15 @@
         },
         {
           "path": "media/aula/pop-section-069.mp4",
-          "bytes": 1462110
+          "bytes": 1313726
         },
         {
           "path": "media/aula/pop-section-069.jpg",
-          "bytes": 36192
+          "bytes": 29829
         },
         {
           "path": "media/aula/pop-section-069.vtt",
-          "bytes": 1148
+          "bytes": 1348
         },
         {
           "path": "media/aula/pop-section-070.mp4",
@@ -1213,27 +1225,27 @@
         },
         {
           "path": "media/aula/pop-section-071.mp4",
-          "bytes": 1401696
+          "bytes": 1274158
         },
         {
           "path": "media/aula/pop-section-071.jpg",
-          "bytes": 36550
+          "bytes": 30295
         },
         {
           "path": "media/aula/pop-section-071.vtt",
-          "bytes": 1050
+          "bytes": 1301
         },
         {
           "path": "media/aula/pop-section-072.mp4",
-          "bytes": 1066760
+          "bytes": 1104344
         },
         {
           "path": "media/aula/pop-section-072.jpg",
-          "bytes": 30020
+          "bytes": 30024
         },
         {
           "path": "media/aula/pop-section-072.vtt",
-          "bytes": 1113
+          "bytes": 1140
         }
       ]
     },
@@ -1243,7 +1255,7 @@
       "title": "Cartografia, APP, flora, fauna e recursos hídricos",
       "lessonCount": 6,
       "itemCount": 21,
-      "bytes": 8432588,
+      "bytes": 8355774,
       "items": [
         {
           "path": "media/m10.mp4",
@@ -1259,15 +1271,15 @@
         },
         {
           "path": "media/aula/pop-section-076.mp4",
-          "bytes": 801717
+          "bytes": 875743
         },
         {
           "path": "media/aula/pop-section-076.jpg",
-          "bytes": 33242
+          "bytes": 33470
         },
         {
           "path": "media/aula/pop-section-076.vtt",
-          "bytes": 775
+          "bytes": 818
         },
         {
           "path": "media/aula/pop-section-078.mp4",
@@ -1295,35 +1307,35 @@
         },
         {
           "path": "media/aula/pop-section-079.mp4",
-          "bytes": 1662750
+          "bytes": 1553445
         },
         {
           "path": "media/aula/pop-section-079.jpg",
-          "bytes": 35599
+          "bytes": 28821
         },
         {
           "path": "media/aula/pop-section-079.vtt",
-          "bytes": 1114
+          "bytes": 1414
         },
         {
           "path": "media/aula/pop-section-080.mp4",
-          "bytes": 1334434
+          "bytes": 1298980
         },
         {
           "path": "media/aula/pop-section-080.jpg",
-          "bytes": 28466
+          "bytes": 28420
         },
         {
           "path": "media/aula/pop-section-080.vtt",
-          "bytes": 1374
+          "bytes": 1301
         },
         {
           "path": "media/aula/pop-section-081.mp4",
-          "bytes": 842163
+          "bytes": 842413
         },
         {
           "path": "media/aula/pop-section-081.jpg",
-          "bytes": 31816
+          "bytes": 31811
         },
         {
           "path": "media/aula/pop-section-081.vtt",
@@ -1337,7 +1349,7 @@
       "title": "ANEEL, IPHAN, município e vistoria",
       "lessonCount": 8,
       "itemCount": 27,
-      "bytes": 10732076,
+      "bytes": 10708806,
       "items": [
         {
           "path": "media/m11.mp4",
@@ -1353,11 +1365,11 @@
         },
         {
           "path": "media/aula/pop-section-082.mp4",
-          "bytes": 1305336
+          "bytes": 1306214
         },
         {
           "path": "media/aula/pop-section-082.jpg",
-          "bytes": 34836
+          "bytes": 34827
         },
         {
           "path": "media/aula/pop-section-082.vtt",
@@ -1425,15 +1437,15 @@
         },
         {
           "path": "media/aula/pop-section-087.mp4",
-          "bytes": 632628
+          "bytes": 608548
         },
         {
           "path": "media/aula/pop-section-087.jpg",
-          "bytes": 28499
+          "bytes": 28496
         },
         {
           "path": "media/aula/pop-section-087.vtt",
-          "bytes": 644
+          "bytes": 588
         },
         {
           "path": "media/aula/pop-section-088.mp4",
@@ -1455,7 +1467,7 @@
       "title": "Unidades de conservação, APAs e Planos de Manejo",
       "lessonCount": 8,
       "itemCount": 27,
-      "bytes": 11960132,
+      "bytes": 11843890,
       "items": [
         {
           "path": "media/m15.mp4",
@@ -1519,11 +1531,11 @@
         },
         {
           "path": "media/aula/pop-section-137.mp4",
-          "bytes": 993077
+          "bytes": 994330
         },
         {
           "path": "media/aula/pop-section-137.jpg",
-          "bytes": 34794
+          "bytes": 34839
         },
         {
           "path": "media/aula/pop-section-137.vtt",
@@ -1555,15 +1567,15 @@
         },
         {
           "path": "media/aula/pop-section-140.mp4",
-          "bytes": 1350147
+          "bytes": 1240610
         },
         {
           "path": "media/aula/pop-section-140.jpg",
-          "bytes": 41648
+          "bytes": 33420
         },
         {
           "path": "media/aula/pop-section-140.vtt",
-          "bytes": 1006
+          "bytes": 1231
         }
       ]
     },
@@ -1573,7 +1585,7 @@
       "title": "Licenciamento federal delegado: ACT e RTAA",
       "lessonCount": 17,
       "itemCount": 54,
-      "bytes": 22197892,
+      "bytes": 22217143,
       "items": [
         {
           "path": "media/m16.mp4",
@@ -1769,15 +1781,15 @@
         },
         {
           "path": "media/aula/pop-section-172.mp4",
-          "bytes": 1288675
+          "bytes": 1307869
         },
         {
           "path": "media/aula/pop-section-172.jpg",
-          "bytes": 31286
+          "bytes": 31331
         },
         {
           "path": "media/aula/pop-section-172.vtt",
-          "bytes": 1364
+          "bytes": 1376
         },
         {
           "path": "media/aula/pop-section-173.mp4",
@@ -1799,7 +1811,7 @@
       "title": "Suficiência, pendências, condicionantes e conclusão",
       "lessonCount": 18,
       "itemCount": 57,
-      "bytes": 26144734,
+      "bytes": 25936063,
       "items": [
         {
           "path": "media/m12.mp4",
@@ -1839,75 +1851,75 @@
         },
         {
           "path": "media/aula/pop-section-091.mp4",
-          "bytes": 870061
+          "bytes": 822626
         },
         {
           "path": "media/aula/pop-section-091.jpg",
-          "bytes": 36149
+          "bytes": 31245
         },
         {
           "path": "media/aula/pop-section-091.vtt",
-          "bytes": 695
+          "bytes": 770
         },
         {
           "path": "media/aula/pop-section-092.mp4",
-          "bytes": 1087077
+          "bytes": 1021296
         },
         {
           "path": "media/aula/pop-section-092.jpg",
-          "bytes": 41928
+          "bytes": 28227
         },
         {
           "path": "media/aula/pop-section-092.vtt",
-          "bytes": 833
+          "bytes": 1008
         },
         {
           "path": "media/aula/pop-section-093.mp4",
-          "bytes": 1147188
+          "bytes": 1075932
         },
         {
           "path": "media/aula/pop-section-093.jpg",
-          "bytes": 29892
+          "bytes": 29685
         },
         {
           "path": "media/aula/pop-section-093.vtt",
-          "bytes": 1246
+          "bytes": 1181
         },
         {
           "path": "media/aula/pop-section-094.mp4",
-          "bytes": 862117
+          "bytes": 986230
         },
         {
           "path": "media/aula/pop-section-094.jpg",
-          "bytes": 36973
+          "bytes": 30642
         },
         {
           "path": "media/aula/pop-section-094.vtt",
-          "bytes": 686
+          "bytes": 1051
         },
         {
           "path": "media/aula/pop-section-095.mp4",
-          "bytes": 668577
+          "bytes": 671220
         },
         {
           "path": "media/aula/pop-section-095.jpg",
-          "bytes": 30733
+          "bytes": 30770
         },
         {
           "path": "media/aula/pop-section-095.vtt",
-          "bytes": 680
+          "bytes": 683
         },
         {
           "path": "media/aula/pop-section-096.mp4",
-          "bytes": 1621585
+          "bytes": 1494321
         },
         {
           "path": "media/aula/pop-section-096.jpg",
-          "bytes": 32014
+          "bytes": 28817
         },
         {
           "path": "media/aula/pop-section-096.vtt",
-          "bytes": 1223
+          "bytes": 1473
         },
         {
           "path": "media/aula/pop-section-097.mp4",
@@ -2019,11 +2031,11 @@
         },
         {
           "path": "media/aula/pop-section-098.mp4",
-          "bytes": 1195726
+          "bytes": 1199525
         },
         {
           "path": "media/aula/pop-section-098.jpg",
-          "bytes": 34014
+          "bytes": 34024
         },
         {
           "path": "media/aula/pop-section-098.vtt",
@@ -2037,7 +2049,7 @@
       "title": "Formatação, qualidade e rastreabilidade",
       "lessonCount": 11,
       "itemCount": 36,
-      "bytes": 11736768,
+      "bytes": 11957810,
       "items": [
         {
           "path": "media/m13.mp4",
@@ -2077,11 +2089,11 @@
         },
         {
           "path": "media/aula/pop-section-101.mp4",
-          "bytes": 1218792
+          "bytes": 1246556
         },
         {
           "path": "media/aula/pop-section-101.jpg",
-          "bytes": 28338
+          "bytes": 28370
         },
         {
           "path": "media/aula/pop-section-101.vtt",
@@ -2125,15 +2137,15 @@
         },
         {
           "path": "media/aula/pop-section-105.mp4",
-          "bytes": 740983
+          "bytes": 769242
         },
         {
           "path": "media/aula/pop-section-105.jpg",
-          "bytes": 28667
+          "bytes": 28940
         },
         {
           "path": "media/aula/pop-section-105.vtt",
-          "bytes": 743
+          "bytes": 756
         },
         {
           "path": "media/aula/pop-section-106.mp4",
@@ -2173,15 +2185,15 @@
         },
         {
           "path": "media/aula/pop-section-109.mp4",
-          "bytes": 764906
+          "bytes": 929440
         },
         {
           "path": "media/aula/pop-section-109.jpg",
-          "bytes": 28816
+          "bytes": 28818
         },
         {
           "path": "media/aula/pop-section-109.vtt",
-          "bytes": 756
+          "bytes": 921
         }
       ]
     },
@@ -2191,7 +2203,7 @@
       "title": "Anexos, referências e caso integrador",
       "lessonCount": 16,
       "itemCount": 51,
-      "bytes": 9579438,
+      "bytes": 9529238,
       "items": [
         {
           "path": "media/m14.mp4",
@@ -2207,15 +2219,15 @@
         },
         {
           "path": "media/aula/pop-section-110.mp4",
-          "bytes": 640307
+          "bytes": 604515
         },
         {
           "path": "media/aula/pop-section-110.jpg",
-          "bytes": 31278
+          "bytes": 31225
         },
         {
           "path": "media/aula/pop-section-110.vtt",
-          "bytes": 649
+          "bytes": 620
         },
         {
           "path": "media/aula/pop-section-111.mp4",
@@ -2351,23 +2363,23 @@
         },
         {
           "path": "media/aula/pop-section-122.mp4",
-          "bytes": 817873
+          "bytes": 829775
         },
         {
           "path": "media/aula/pop-section-122.jpg",
-          "bytes": 30976
+          "bytes": 30938
         },
         {
           "path": "media/aula/pop-section-122.vtt",
-          "bytes": 789
+          "bytes": 797
         },
         {
           "path": "media/aula/pop-section-123.mp4",
-          "bytes": 901823
+          "bytes": 905763
         },
         {
           "path": "media/aula/pop-section-123.jpg",
-          "bytes": 30093
+          "bytes": 30143
         },
         {
           "path": "media/aula/pop-section-123.vtt",
@@ -2375,19 +2387,19 @@
         },
         {
           "path": "media/aula/pop-section-124.mp4",
-          "bytes": 590250
+          "bytes": 572821
         },
         {
           "path": "media/aula/pop-section-124.jpg",
-          "bytes": 36423
+          "bytes": 28211
         },
         {
           "path": "media/aula/pop-section-124.vtt",
-          "bytes": 504
+          "bytes": 554
         },
         {
           "path": "media/aula/pop-section-125.mp4",
-          "bytes": 855644
+          "bytes": 851047
         },
         {
           "path": "media/aula/pop-section-125.jpg",

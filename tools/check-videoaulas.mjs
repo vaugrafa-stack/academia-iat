@@ -82,20 +82,20 @@ const MAX_CUE_SEG = 6.0;
 // do POP fica em ate 3 linhas e pode passar do teto de tempo.
 const MAX_LINHAS_TITULO = 3;
 // Tolerancia de linha: sobram poucos casos em que nenhuma fronteira de palavra
-// divide o bloco em duas linhas dentro do teto. Hoje sao 6 linhas em cerca de
-// 3.700, todas entre 43 e 46 caracteres. Se este numero crescer, a segmentacao
+// divide o bloco em duas linhas dentro do teto. Hoje sao 5 linhas entre 43 e
+// 43 caracteres. Se este numero crescer, a segmentacao
 // regrediu.
 const TOLERANCIA_LINHA_LONGA = 8;
-// Catraca do acervo legado, medida em 20/08/2026: 117 das 168 aulas ainda estao
-// no gerador 2, e o teto de linha nao e COBRADO nelas, so avisado. Sao 581
+// Catraca do acervo legado, atualizada em 14/10/2026: 85 das 169 aulas ainda estao
+// no gerador 2, e o teto de linha nao e COBRADO nelas, so avisado. Sao 403
 // linhas acima de 42 caracteres, e o portao encerrava com "OK: legendas
 // conferem" mesmo assim: o veredito falava do acervo inteiro e a regua tinha
-// medido 51 aulas, 30% dele.
+// medido 84 aulas, aproximadamente 50% dele.
 //
-// O numero abaixo nao aprova as 581. Ele impede que virem 582. Migrar uma aula
+// O numero abaixo nao aprova as 403. Ele impede que virem 404. Migrar uma aula
 // para o gerador 3 derruba a contagem, e quando ela cair o portao pede para
 // baixar a catraca, porque catraca que so sobe deixa de ser catraca.
-const TETO_LEGADO_LINHA_LONGA = 581;
+const TETO_LEGADO_LINHA_LONGA = 403;
 const TAMANHO_MINIMO = { mp4: 100_000, vtt: 40, jpg: 20_000 };
 
 let manifesto = {};

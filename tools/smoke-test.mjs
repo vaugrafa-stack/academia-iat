@@ -69,12 +69,9 @@ try {
   assert(packageJson.scripts.dev.includes('--open'), 'iniciador abre o navegador quando o servidor fica pronto');
 
   assert(document.querySelectorAll('.sidebar-v2 nav button').length === 12, 'doze áreas principais disponíveis (inclui o Guia do empreendedor, o Mapa e a Informação Técnica)');
-  assert(document.querySelector('.dashboard-page h1')?.textContent.includes('Comece por aqui'), 'primeiro acesso oferece início, e não uma continuidade inexistente');
-  assert(document.querySelectorAll('.dashboard-phases > li').length === 4, 'início resume o percurso em quatro fases');
-  assert(
-    document.querySelector('.dashboard-phases-section')?.textContent.includes('M00 a M16'),
-    'início preserva a sequência única M00–M16',
-  );
+  assert(document.querySelector('.dashboard-page h1')?.textContent.includes('Comece pelo método'), 'primeiro acesso oferece início, e não uma continuidade inexistente');
+  assert(document.querySelectorAll('.dashboard-feature .feature-open-lesson').length === 1, 'início apresenta uma ação principal para começar a aula');
+  assert(!document.querySelector('.dashboard-phases-section'), 'início não duplica o currículo de M00 a M16');
 
   const navButtons = [...document.querySelectorAll('.sidebar-v2 nav button')];
   await click(navButtons.find(x => x.textContent.includes('Formação pelo POP')));
@@ -83,6 +80,7 @@ try {
     'a rota lazy da formação não terminou de carregar os dezessete módulos',
   );
   assert(document.querySelectorAll('.track-row').length === 17, 'percurso formativo com dezessete módulos');
+  assert(document.querySelectorAll('.learning-path-list button').length === 4, 'quatro portas de entrada compactas para a mesma sequência');
   assert(!document.querySelector('.learning-path-selector'), 'formação apresenta uma sequência única, sem divisão por trilhas');
   // o M00 ja abre expandido, para o iniciante ver por onde comecar
   assert(Boolean(document.querySelector('.track-row.expanded .lesson-list button')), 'primeiro módulo já vem aberto para quem chega');

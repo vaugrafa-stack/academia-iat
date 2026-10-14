@@ -1,3 +1,32 @@
+.diagnostic {
+  display: block;
+  padding: 20px 0;
+  border: 0;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+
+.diagnostic > button {
+  display: inline-flex;
+  width: auto;
+  min-height: 48px;
+  margin-top: 18px;
+  padding: 0 18px;
+}
+
+.diagnostic > small {
+  display: block;
+  margin-top: 8px;
+  text-align: left;
+}
+
+.module-tests button {
+  border: 0;
+  border-bottom: 1px solid var(--line);
+  border-radius: 0;
+  background: transparent;
+}
+
 .diagnostic-depth,
 .answer-confidence {
   margin: 18px 0;

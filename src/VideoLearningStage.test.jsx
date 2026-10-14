@@ -186,17 +186,17 @@ describe("controles do palco das videoaulas", () => {
     );
 
     const toggle = [...host.querySelectorAll("button")].find((button) =>
-      button.textContent.includes("Ocultar professor"),
+      button.textContent.includes("Mostrar professor"),
     );
-    expect(toggle?.getAttribute("aria-pressed")).toBe("true");
+    expect(toggle?.getAttribute("aria-pressed")).toBe("false");
     expect(toggle?.getAttribute("aria-label")).toBe(
-      "Ocultar professor do palco da videoaula",
+      "Mostrar professor no palco da videoaula",
     );
 
     await act(async () => toggle.click());
-    expect(toggle.textContent).toContain("Mostrar professor");
-    expect(toggle.getAttribute("aria-pressed")).toBe("false");
-    expect(localStorage.getItem("academia-iat-video-professor")).toBe("hidden");
+    expect(toggle.textContent).toContain("Ocultar professor");
+    expect(toggle.getAttribute("aria-pressed")).toBe("true");
+    expect(localStorage.getItem("academia-iat-video-professor")).toBe("visible");
   });
 
   it("carrega a linha do tempo e mantém a boca em repouso enquanto o vídeo está pausado", async () => {
@@ -313,6 +313,10 @@ describe("controles do palco das videoaulas", () => {
       );
     });
 
+    await act(async () => {
+      host.querySelector(".vls-professor-toggle").click();
+      await Promise.resolve();
+    });
     await act(async () => {
       host.querySelector("video").dispatchEvent(new Event("play"));
       await Promise.resolve();

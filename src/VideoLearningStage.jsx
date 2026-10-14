@@ -269,9 +269,11 @@ export function learningStageTheme(track, lesson) {
 
 function readProfessorPreference() {
   try {
-    return localStorage.getItem(PROFESSOR_PREFERENCE) !== "hidden";
+    // A qualidade expressiva ainda não foi validada em uso: vídeo e áudio
+    // seguem disponíveis, e quem quiser pode ativar o professor manualmente.
+    return localStorage.getItem(PROFESSOR_PREFERENCE) === "visible";
   } catch {
-    return true;
+    return false;
   }
 }
 

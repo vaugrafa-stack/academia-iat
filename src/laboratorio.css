@@ -22,6 +22,9 @@
 .lab-catalog {
   margin: 22px 0 16px;
   overflow: hidden;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
 }
 
 .lab-catalog-header {
@@ -29,11 +32,9 @@
   align-items: flex-start;
   justify-content: space-between;
   gap: 24px;
-  padding: 22px 24px 18px;
+  padding: 12px 0 18px;
   border-bottom: 1px solid var(--line);
-  background:
-    radial-gradient(circle at 92% 8%, color-mix(in srgb, var(--blue) 10%, transparent), transparent 38%),
-    var(--surface);
+  background: transparent;
 }
 
 .lab-catalog-header h2,
@@ -90,7 +91,7 @@
   display: grid;
   grid-template-columns: minmax(260px, 1.35fr) minmax(190px, .75fr) minmax(180px, .65fr);
   gap: 12px;
-  padding: 16px 24px 10px;
+  padding: 16px 0 10px;
 }
 
 .lab-catalog-toolbar label {
@@ -156,7 +157,7 @@
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  padding: 2px 24px 10px;
+  padding: 2px 0 10px;
 }
 
 .lab-catalog-results p {
@@ -181,14 +182,15 @@
 .lab-case-catalog {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 7px;
+  gap: 0 20px;
   max-height: 316px;
-  margin: 0 24px;
-  padding: 8px;
+  margin: 0;
+  padding: 0;
   overflow-y: auto;
-  border: 1px solid var(--line);
-  border-radius: var(--raio-3);
-  background: var(--soft);
+  border: 0;
+  border-top: 1px solid var(--line);
+  border-radius: 0;
+  background: transparent;
   list-style: none;
   scrollbar-width: thin;
 }
@@ -205,9 +207,10 @@
   width: 100%;
   min-height: 58px;
   padding: 9px 11px;
-  border: 1px solid var(--line);
-  border-radius: var(--raio-2);
-  background: var(--surface);
+  border: 0;
+  border-bottom: 1px solid var(--line);
+  border-radius: 0;
+  background: transparent;
   color: var(--ink);
   text-align: left;
   transition: border-color .16s ease, background .16s ease, transform .16s ease;
@@ -219,7 +222,6 @@
 }
 
 .lab-case-catalog button.active {
-  border-color: var(--green);
   background: var(--green3);
   box-shadow: inset 3px 0 0 var(--green);
 }

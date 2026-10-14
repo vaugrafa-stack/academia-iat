@@ -12,7 +12,7 @@ import { EMPREENDEDOR_SECOES } from '../../src/empreendedorGuia.js';
 const ROUTES = [
   {
     hash: '',
-    ready: (page) => page.getByRole('heading', { name: /Comece por aqui|Onde você parou/i }),
+    ready: (page) => page.getByRole('heading', { name: /Comece pelo método|Continue sua formação/i }),
   },
   {
     hash: '#/hidreletricas',
@@ -121,6 +121,8 @@ test('aula integra figuras e quadros ao texto sem duplicar a evidência-base', a
     await expect(page.locator('.lesson-article .source-jump')).toHaveCount(0);
     const inline = page.locator('.lesson-inline-materials');
     const figura = inline.locator('.source-figure');
+    await expect(figura).toBeHidden();
+    await inline.locator('summary').click();
     await expect(figura).toBeVisible();
     await expect(figura.locator('figcaption')).toContainText(`Figura ${numero} - `);
     await figura.scrollIntoViewIfNeeded();
@@ -339,7 +341,7 @@ test('experiência responsiva prioriza aprender e praticar sem overflow', async 
 
   await page.goto(appUrl(baseURL), { waitUntil: 'domcontentloaded' });
   await expect(
-    page.getByRole('heading', { name: /Comece por aqui|Onde você parou/i }),
+    page.getByRole('heading', { name: /Comece pelo método|Continue sua formação/i }),
   ).toBeVisible();
 
   const bottomNav = page.getByRole('navigation', {
@@ -392,6 +394,7 @@ test('experiência responsiva prioriza aprender e praticar sem overflow', async 
     waitUntil: 'domcontentloaded',
   });
   const stage = page.locator('.vls-stage');
+  await stage.getByRole('button', { name: 'Mostrar professor no palco da videoaula' }).click();
   const stageBox = await stage.boundingBox();
   if ((stageBox?.width ?? Infinity) <= 640) {
     // As tres relacoes sao medidas DENTRO de um poll, e nao uma vez so.
@@ -476,7 +479,7 @@ test('endereço que nomeia rota inexistente é corrigido, e não fica no histór
   // continuava afirmando a rota morta. Quem chegasse assim não descobria que o
   // link quebrou, e ao compartilhar propagava o endereço que não funciona.
   await page.goto(appUrl(baseURL, '#/rota-que-nao-existe'));
-  await expect(page.getByRole('heading', { name: /Comece por aqui|Onde você parou/i }))
+  await expect(page.getByRole('heading', { name: /Comece pelo método|Continue sua formação/i }))
     .toBeVisible();
   expect(new URL(page.url()).hash, 'endereço direto não foi corrigido').toBe('#/');
 
@@ -484,7 +487,7 @@ test('endereço que nomeia rota inexistente é corrigido, e não fica no histór
   await page.evaluate(() => { window.location.hash = '#/mapa'; });
   await expect(page.getByRole('heading', { name: /Mapa das hidrelétricas/i })).toBeVisible();
   await page.evaluate(() => { window.location.hash = '#/outra-que-nao-existe'; });
-  await expect(page.getByRole('heading', { name: /Comece por aqui|Onde você parou/i }))
+  await expect(page.getByRole('heading', { name: /Comece pelo método|Continue sua formação/i }))
     .toBeVisible();
   expect(new URL(page.url()).hash, 'navegação interna não foi corrigida').toBe('#/');
 

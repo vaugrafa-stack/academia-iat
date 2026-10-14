@@ -13,7 +13,7 @@
 // Nada é inventado. Cada objetivo vem de material que já está no POP, em três
 // origens, nesta ordem de preferência:
 //
-//   quadro     a seção tem quadro próprio; as colunas são o que se reconstrói
+//   quadro     a seção tem quadro próprio; a pessoa sabe consultá-lo no caso
 //   acao       o POP nomeia uma ação de análise; ela vira o objetivo
 //   exigencia  o POP fixa uma exigência; ela é citada e localizada nos autos
 //
@@ -261,30 +261,6 @@ function referenciaDoQuadro(tabela) {
   return encontrado ? encontrado[1] : legenda || null;
 }
 
-/**
- * Concordância do rótulo do quadro.
- *
- * "Quadro" é masculino e "Tabela" é feminino, e o POP usa os dois. Sem isto
- * saía "Percorrer as 7 linhas do Tabela 1 sem consultá-lo", em vinte aulas.
- * Erro de concordância na primeira linha da tela custa mais do que parece: a
- * pessoa passa a ler o resto com desconfiança.
- */
-function generoDoRotulo(referencia) {
-  return /^tabela/i.test(String(referencia || ""))
-    ? { de: "da", pronome: "consultá-la" }
-    : { de: "do", pronome: "consultá-lo" };
-}
-
-/**
- * Acima disto, decorar deixa de ser objetivo honesto.
- *
- * O Quadro 46 tem 102 siglas e o Quadro 9 tem 30. Prometer "percorrer as 102
- * linhas sem consultar" é prometer o que ninguém faz e o que ninguém precisa
- * fazer: tabela de referência existe para ser consultada. O objetivo real ali é
- * saber que ela existe, o que responde e onde procurar.
- */
-const LIMITE_MEMORIZAVEL = 30;
-
 /** Lista em português: "A", "A e B", "A, B e C". */
 function enumerar(itens) {
   if (itens.length === 1) return itens[0];
@@ -306,9 +282,8 @@ function aspas(texto) {
 export function objetivoObservavel(secao, blocks = [], tabelasPorId = new Map()) {
   if (!secao || secao.navigationOnly) return null;
 
-  // 1. Quadro próprio. As colunas dizem o que se reconstrói, e isso é
-  //    verificável: ou a pessoa chega às demais colunas a partir da primeira,
-  //    ou não chega.
+  // 1. Quadro próprio. A competência é saber localizar a linha pertinente e
+  //    conferir seus campos no caso; decorar linhas não é necessário.
   const blocoDeTabela = blocks.find(
     (block) => block?.type === "table" && !block.navigationOnly,
   );
@@ -318,30 +293,14 @@ export function objetivoObservavel(secao, blocks = [], tabelasPorId = new Map())
       tabela && !tabela.navigationOnly ? colunasDoQuadro(tabela) : null;
     if (colunas) {
       const referencia = referenciaDoQuadro(tabela);
-      const linhas = Math.max(0, (tabela.rowCount || 0) - 1);
-      const { de, pronome } = generoDoRotulo(referencia);
       const [primeira, ...demais] = colunas;
-
-      if (linhas > LIMITE_MEMORIZAVEL) {
-        return {
-          origem: "quadro",
-          referencia,
-          objetivo: `Usar ${de.slice(1)} ${referencia}, com ${linhas} linhas, como referência de consulta.`,
-          comoSeVe:
-            `Diante de ${aspas(primeira)}, você sabe que a resposta está ali e ` +
-            `em qual coluna: ${enumerar(demais.map(aspas))}.`,
-        };
-      }
-
       return {
         origem: "quadro",
         referencia,
-        objetivo: linhas
-          ? `Percorrer as ${linhas} linhas ${de} ${referencia} sem ${pronome}.`
-          : `Percorrer ${de.slice(1)} ${referencia} sem ${pronome}.`,
+        objetivo: `Consultar ${/^tabela/i.test(referencia) ? "a" : "o"} ${referencia} para localizar e interpretar a linha pertinente.`,
         comoSeVe:
-          `Dada a coluna ${aspas(primeira)}, você reconstrói ` +
-          `${enumerar(demais.map(aspas))}.`,
+          `Dado um item em ${aspas(primeira)}, você confere ` +
+          `${enumerar(demais.map(aspas))} antes de usar a referência na análise.`,
       };
     }
   }

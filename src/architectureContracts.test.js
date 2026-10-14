@@ -180,8 +180,8 @@ describe("contratos incrementais de arquitetura", () => {
     // de quem desenvolve. Portão que só reprova localmente ensina a ignorar
     // portão, que é o começo de publicar no escuro.
     expect(licao).toMatch(/export default function Lesson\(\{[\s\S]*?dados,\r?\n\}\)/);
-    // O mesmo objetivo aparece no Inicio e na aula, vindo da mesma funcao.
-    expect(inicio).toContain("objetivoDaAula(lesson, blocks, tableMap)");
+    // O objetivo fica na aula; a tela inicial não o duplica.
+    expect(inicio).not.toContain("<CurrentObjectiveCard");
     expect(licao).toContain("objetivoDaAula(lesson, blocks, tableMap)");
     expect(objective).toContain("export function objetivoDaAula");
     expect(objective).not.toMatch(/from ['\"]react['\"]/);
@@ -197,12 +197,11 @@ describe("contratos incrementais de arquitetura", () => {
     expect(main).toContain('import Inicio from "./inicio.jsx"');
     expect(main).toContain("dados={DADOS_INICIO}");
     expect(main).not.toMatch(/^function (?:Inicio|Dashboard)\b/m);
-    expect(inicio).toContain("Objetivo atual");
     expect(inicio).toContain("Próxima prática");
     expect(inicio).toContain("Erros para revisar");
-    expect(inicio).toContain("Quatro fases do percurso");
-    expect(inicio).toContain("Sobre a fonte");
-    expect(inicio).toContain('"Comece por aqui."');
+    expect(inicio).not.toContain("<DashboardPhases");
+    expect(inicio).not.toContain("<DashboardSourceDetails");
+    expect(inicio).toContain('"Comece pelo método."');
     expect(inicio).toContain('"Iniciar formação"');
     expect(inicio).toContain('"Novo em hidrelétricas? Veja os fundamentos"');
     expect(inicio).toContain(
@@ -210,7 +209,6 @@ describe("contratos incrementais de arquitetura", () => {
     );
     expect(formacao).toContain('className="formation-empty"');
     expect(formacao).toContain("Limpar filtro");
-    expect(inicio).toContain("A sequência permanece única, de M00 a M16.");
     expect(main).not.toContain("<TodayPlan");
     expect(main).not.toContain('className="river-journey"');
     expect(

@@ -37,6 +37,25 @@ previstas e o cenário PWA local passou. O conteúdo permanece minuta de
 treinamento; a compatibilização CAR/LAC pede validação no caso concreto. Os
 tamanhos totais de CSS e JavaScript seguem acima de 90% do teto bruto.
 
+## Simplificação editorial da interface de 14/10/2026
+
+O candidato local torna Início, Formação e aulas do POP mais diretos: uma ação
+principal para começar ou retomar, rotas de formação em lista, currículo logo
+abaixo, aula sem coluna duplicada e fonte/método acessíveis na aba própria.
+Quadros e figuras acompanham a aula; quando o quadro é o único conteúdo
+substantivo, ele abre diretamente. O professor animado fica oculto por padrão,
+mas pode ser ativado. Avaliações e catálogo do Laboratório usam listas e
+seções com menos molduras. Fundamentos, mapa, biblioteca, guia do
+empreendedor e redator foram revistos visualmente sem retirar avisos ou
+ferramentas que sustentam o aprendizado.
+
+Na validação, 76 arquivos e 687 testes passaram, bem como build, auditoria
+premium, 101 cenários de navegador em cinco larguras (34 omissões previstas)
+e teste PWA local. Duas atribuições de camadas do GeoPR foram deixadas sem
+fonte declarada porque seus serviços não a informam mais. O CSS total permanece
+em 95% do teto bruto; a compactação do legado de estilos ainda merece ciclo
+próprio. Este registro descreve o candidato local e não afirma publicação.
+
 ## Auditoria do plano global recebido em 13/10/2026
 
 O plano externo foi confrontado com o checkout e fontes oficiais, ponto a ponto,

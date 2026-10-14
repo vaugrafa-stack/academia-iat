@@ -948,6 +948,7 @@ function App() {
     suporte: <Suporte online={online} />,
     lesson: (
       <Lesson
+        key={selectedLesson}
         lesson={lessonMap.get(selectedLesson) || lessons[0]}
         availableScenarios={labIndexStatus.casos}
         pilotMediaStatus={pilotMediaStatus}

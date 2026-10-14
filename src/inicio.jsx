@@ -92,22 +92,12 @@ export default function Inicio({
     <div className="page dashboard-page">
       <section className="dashboard-intro">
         <QuedaDeAbertura />
-        <small>ACADEMIA IAT</small>
-        <h1>{startedJourney ? "Onde você parou, e o que decidir a seguir." : "Comece por aqui."}</h1>
+        <h1>{startedJourney ? "Continue sua formação." : "Comece pelo método."}</h1>
         <p>
-          Aprenda o método do POP, confira a fonte e pratique decisões técnicas
-          em casos sintéticos antes de aplicar o raciocínio ao trabalho.
+          Estude o POP, confira a fonte e pratique decisões em casos sintéticos.
         </p>
-        <div className="dashboard-hero-actions">
-          <button className="primary" onClick={() => openLesson(continueLesson.id)}>
-            {startedJourney ? "Continuar formação" : "Iniciar formação"} <ArrowRight />
-          </button>
-          <button className="secondary" onClick={() => go("laboratorio")}>
-            Abrir caso prático <FlaskConical />
-          </button>
-        </div>
       </section>
-      <h2 className="dashboard-section-label">Continue de onde parou</h2>
+      <h2 className="dashboard-section-label">{startedJourney ? "Sua próxima aula" : "Primeiro passo"}</h2>
       <section className="dashboard-feature">
         <div className="feature-media">
           {pilotMediaStatus.loading ? (
@@ -143,10 +133,10 @@ export default function Inicio({
             {state.completed.length} de {lessons.length} tópicos concluídos
           </p>
           <button
-            className="secondary feature-open-lesson"
+            className="primary feature-open-lesson"
             onClick={() => openLesson(continueLesson.id)}
           >
-            {startedJourney ? "Abrir esta aula" : "Abrir orientação"} <Play />
+            {startedJourney ? "Continuar aula" : "Iniciar formação"} <ArrowRight />
           </button>
           <button
             className="text-action"
@@ -158,7 +148,6 @@ export default function Inicio({
             <ArrowRight />
           </button>
         </div>
-        <CurrentObjectiveCard lesson={continueLesson} dados={dados} />
       </section>
       <section className="dashboard-bottom">
         <NextPracticeCard
@@ -176,14 +165,6 @@ export default function Inicio({
           dados={dados}
         />
       </section>
-      <DashboardPhases
-        state={state}
-        currentTrackId={continueTrack.id}
-        openLesson={openLesson}
-        go={go}
-        dados={dados}
-      />
-      <DashboardSourceDetails go={go} dados={dados} />
     </div>
   );
 }
@@ -290,30 +271,15 @@ function ReviewErrorsCard({ state, go, openLesson, dados }) {
     ? lessonMap.get(reviewTrack.remediationLessonId) || firstLesson(reviewTrack.id)
     : null;
 
+  if (!diagnostic || errors.length === 0) return null;
+
   return (
     <article className="dashboard-action-card review">
       <header>
         <AlertTriangle aria-hidden="true" />
         <span>Erros para revisar</span>
       </header>
-      {!diagnostic ? (
-        <>
-          <h2>Nenhum erro registrado ainda</h2>
-          <p>Faça a autoavaliação para receber pontos de revisão direcionados.</p>
-          <button type="button" onClick={() => go("avaliacoes")}>
-            Fazer autoavaliação <ArrowRight />
-          </button>
-        </>
-      ) : errors.length === 0 ? (
-        <>
-          <h2>Nenhum erro na última aplicação</h2>
-          <p>Continue o percurso e reaplique os itens no momento de revisão.</p>
-          <button type="button" onClick={() => go("avaliacoes")}>
-            Abrir avaliações <ArrowRight />
-          </button>
-        </>
-      ) : (
-        <>
+      <>
           <strong className="dashboard-error-count">{errors.length}</strong>
           <h2>{errors.length === 1 ? "ponto pede revisão" : "pontos pedem revisão"}</h2>
           <p>
@@ -329,8 +295,7 @@ function ReviewErrorsCard({ state, go, openLesson, dados }) {
           >
             Revisar agora <ArrowRight />
           </button>
-        </>
-      )}
+      </>
     </article>
   );
 }

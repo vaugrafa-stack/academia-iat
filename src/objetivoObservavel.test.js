@@ -73,16 +73,16 @@ describe("origem quadro", () => {
     const r = objetivoObservavel(SECAO, blocos, mapa);
     expect(r.origem).toBe("quadro");
     expect(r.referencia).toBe("Quadro 8");
-    expect(r.objetivo).toBe("Percorrer as 25 linhas do Quadro 8 sem consultá-lo.");
+    expect(r.objetivo).toBe("Consultar o Quadro 8 para localizar e interpretar a linha pertinente.");
     expect(r.comoSeVe).toBe(
-      "Dada a coluna “Termo”, você reconstrói “Definição operacional para o POP” e “Erro recorrente a evitar”.",
+      "Dado um item em “Termo”, você confere “Definição operacional para o POP” e “Erro recorrente a evitar” antes de usar a referência na análise.",
     );
   });
 
   it("enumera corretamente com duas e com quatro colunas restantes", () => {
     const duas = comQuadro(quadro({ id: "a", colunas: ["Campo", "Informação"] }));
     expect(objetivoObservavel(SECAO, duas.blocos, duas.mapa).comoSeVe).toBe(
-      "Dada a coluna “Campo”, você reconstrói “Informação”.",
+      "Dado um item em “Campo”, você confere “Informação” antes de usar a referência na análise.",
     );
 
     const cinco = comQuadro(
@@ -92,39 +92,33 @@ describe("origem quadro", () => {
       }),
     );
     expect(objetivoObservavel(SECAO, cinco.blocos, cinco.mapa).comoSeVe).toBe(
-      "Dada a coluna “Versão”, você reconstrói “Data”, “Descrição”, “Responsável” e “Aprovação”.",
+      "Dado um item em “Versão”, você confere “Data”, “Descrição”, “Responsável” e “Aprovação” antes de usar a referência na análise.",
     );
   });
 
-  it("concorda em gênero com Quadro e com Tabela", () => {
-    // "Percorrer as 7 linhas do Tabela 1 sem consultá-lo" apareceu em vinte
-    // aulas. Erro de concordância na primeira linha da tela custa mais do que
-    // parece: a pessoa passa a ler o resto com desconfiança.
+  it("usa Quadro e Tabela como referência, sem exigir memorização", () => {
     const t = quadro({ id: "t", numero: 1, colunas: ["Item", "O que verificar"], linhas: 8 });
     t.labelType = "Tabela";
     t.caption = "Tabela 1 - teste";
     const r = objetivoObservavel(SECAO, [{ type: "table", tableId: "t" }], new Map([["t", t]]));
-    expect(r.objetivo).toBe("Percorrer as 7 linhas da Tabela 1 sem consultá-la.");
+    expect(r.objetivo).toBe("Consultar a Tabela 1 para localizar e interpretar a linha pertinente.");
 
     const q = comQuadro(quadro({ id: "q", numero: 5, colunas: ["Papel", "Produto"], linhas: 8 }));
     expect(objetivoObservavel(SECAO, q.blocos, q.mapa).objetivo).toBe(
-      "Percorrer as 7 linhas do Quadro 5 sem consultá-lo.",
+      "Consultar o Quadro 5 para localizar e interpretar a linha pertinente.",
     );
   });
 
-  it("não promete decorar tabela de referência grande", () => {
-    // O Quadro 46 tem 102 siglas. Prometer percorrê-lo "sem consultar" é
-    // prometer o que ninguém faz e o que ninguém precisa fazer: tabela de
-    // referência existe para ser consultada.
+  it("não promete decorar nem mesmo tabela de referência grande", () => {
     const { blocos, mapa } = comQuadro(
       quadro({ numero: 46, linhas: 103, colunas: ["Sigla", "Por extenso", "Explicação"] }),
     );
     const r = objetivoObservavel(SECAO, blocos, mapa);
     expect(r.objetivo).toBe(
-      "Usar o Quadro 46, com 102 linhas, como referência de consulta.",
+      "Consultar o Quadro 46 para localizar e interpretar a linha pertinente.",
     );
     expect(r.objetivo).not.toContain("sem consultá");
-    expect(r.comoSeVe).toContain("em qual coluna");
+    expect(r.comoSeVe).toContain("Dado um item em “Sigla”");
   });
 
   it("recusa índice navegável disfarçado de quadro", () => {

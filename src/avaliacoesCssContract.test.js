@@ -5,6 +5,7 @@ const css = readFileSync(new URL('./avaliacoes.css', import.meta.url), 'utf8');
 const mobileNavigationCss = readFileSync(new URL('./mobileNavigation.css', import.meta.url), 'utf8');
 const hydroNavigationCss = readFileSync(new URL('./hydroNavigation.css', import.meta.url), 'utf8');
 const experienceCss = readFileSync(new URL('./experience.css', import.meta.url), 'utf8');
+const learningPathsCss = readFileSync(new URL('./LearningPaths.css', import.meta.url), 'utf8');
 
 function rgb(hex) {
   const value = hex.replace('#', '');
@@ -69,7 +70,7 @@ describe('contrato visual dos estados ativos e ações', () => {
   });
 
   it('usa tinta adequada ao verde de ação nos dois temas', () => {
-    expect(experienceCss).toMatch(/\.learning-path-grid article > button:hover\s*\{[^}]*color:\s*var\(--sobre-acento\);[^}]*background:\s*var\(--green\);/s);
+    expect(learningPathsCss).toMatch(/\.learning-path-list button:hover\s*\{[^}]*background:\s*var\(--green3\);/s);
     expect(experienceCss).toMatch(/:root\[data-theme="light"\] \.formation-empty button\s*\{\s*color:\s*#fff;/s);
     expect(contrast('#08231b', '#3e9d74')).toBeGreaterThanOrEqual(4.5);
     expect(contrast('#ffffff', '#16563c')).toBeGreaterThanOrEqual(4.5);

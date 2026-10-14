@@ -69,3 +69,129 @@
   .foundation-gateway h3 { font-size:var(--texto-5); }
   .foundation-gateway p { font-size:var(--texto-2); }
 }
+
+/* As rotas não competem com o currículo: são quatro entradas curtas para ele. */
+.formation-page .page-header { margin-bottom: 16px; }
+.formation-page .page-header > span { display: none; }
+.formation-page .learning-paths {
+  max-width: 1120px;
+  margin: 0 0 27px;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+.formation-page .learning-paths > header {
+  display: block;
+  margin: 0 0 9px;
+}
+.formation-page .learning-paths > header h2 {
+  margin-bottom: 3px;
+  font-size: var(--titulo-1);
+}
+.formation-page .learning-paths > header p { max-width: 76ch; }
+.learning-path-list { border-top: 1px solid var(--line); }
+.learning-path-list > div { border-bottom: 1px solid var(--line); }
+.learning-path-list button {
+  display: grid;
+  grid-template-columns: 27px minmax(0, 1fr) max-content;
+  align-items: center;
+  gap: 13px;
+  width: 100%;
+  min-height: 62px;
+  padding: 9px 5px;
+  border: 0;
+  background: transparent;
+  text-align: left;
+  color: var(--ink);
+}
+.learning-path-list button:hover { background: var(--green3); }
+.learning-path-list button:disabled { opacity: .5; cursor: not-allowed; }
+.learning-path-symbol { width: 22px; height: 22px; color: var(--green); }
+.learning-path-list .learning-path-copy { display: grid; gap: 2px; }
+.learning-path-list .learning-path-copy strong { font-size: var(--texto-4); }
+.learning-path-list .learning-path-copy span {
+  color: var(--muted);
+  font-size: var(--texto-3);
+  line-height: 1.4;
+}
+.learning-path-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  color: var(--green);
+  font-size: var(--texto-3);
+  font-weight: 800;
+  white-space: nowrap;
+}
+.learning-path-action svg { width: 15px; height: 15px; }
+.formation-page .foundation-gateway {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 8px 0 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: var(--muted);
+  font-size: var(--texto-3);
+}
+.formation-page .foundation-gateway > svg { width: 16px; height: 16px; color: var(--green); }
+.formation-page .foundation-gateway-action {
+  min-height: 44px;
+  padding: 0 4px;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: var(--green);
+}
+.formation-page .foundation-gateway-action:hover {
+  background: transparent;
+  color: var(--green2);
+  text-decoration: underline;
+}
+.formation-page .learning-path-note { margin: 0; font-size: var(--texto-2); }
+.formation-page .formation-toolbar { max-width: 1120px; margin-bottom: 16px; }
+.formation-page .curriculum { max-width: 1120px; }
+.formation-page .curriculum > section { margin-bottom: 22px; }
+.formation-page .track-row {
+  margin: 0;
+  border: 0;
+  border-bottom: 1px solid var(--line);
+  border-radius: 0;
+}
+.formation-page .track-summary {
+  grid-template-columns: 50px minmax(0, 1fr) 75px 18px;
+  gap: 12px;
+  min-height: 64px;
+  padding: 9px 3px;
+  background: transparent;
+}
+.formation-page .track-summary:hover { background: var(--green3); }
+.formation-page .track-code {
+  color: var(--green);
+  font-family: var(--mono);
+  font-size: var(--texto-4);
+  font-weight: 800;
+}
+.formation-page .track-copy strong { margin: 0 0 2px; font-size: var(--texto-4); }
+.formation-page .track-copy em { line-height: 1.4; }
+.formation-page .track-metrics { display: block; text-align: right; }
+.formation-page .track-metrics small { white-space: nowrap; }
+.formation-page .lesson-list {
+  padding: 3px 0 8px 62px;
+  border-top: 0;
+  background: transparent;
+}
+.formation-page .lesson-list > button { padding: 8px 5px; }
+@media (max-width: 720px) {
+  .learning-path-list button { grid-template-columns: 24px minmax(0, 1fr) 18px; gap: 9px; }
+  .learning-path-action { font-size: 0; }
+  .learning-path-action svg { width: 18px; height: 18px; }
+  .formation-page .foundation-gateway { flex-wrap: wrap; }
+  .formation-page .track-summary { grid-template-columns: 43px minmax(0, 1fr) 16px; }
+  .formation-page .track-metrics { display: none; }
+  .formation-page .lesson-list { padding-left: 18px; }
+}

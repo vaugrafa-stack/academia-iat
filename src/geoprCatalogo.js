@@ -88,7 +88,7 @@ export const CAMADAS_GEOPR = [
     ordem: 'topo',
     caminho: '00_PUBLICACOES/out_captacao_crh',
     camadas: '0',
-    fonte: 'IAT',
+    fonte: null,
     modulo: 'M10',
     paraQue:
       'Revela usos a jusante e a montante que a vazão remanescente precisa respeitar. '
@@ -127,7 +127,7 @@ export const CAMADAS_GEOPR = [
     ordem: 'fundo',
     caminho: '00_PUBLICACOES/unidades_conservacao_estaduais',
     camadas: '0',
-    fonte: 'IAT, 2025',
+    fonte: null,
     modulo: 'M12',
     paraQue:
       'Levanta a suspeita de sobreposição com UC. Levanta, não decide: a poligonal '

@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import {
   BookmarkCheck,
-  BookOpen,
   Check,
   ChevronRight,
   GraduationCap,
@@ -15,9 +14,7 @@ export default function Formation({ state, openLesson, dados, go }) {
   const {
     lessons,
     trackGroups,
-    trackIcons,
     trackLessons,
-    trackProgress,
     tracks,
   } = dados;
   const [openTrack, setOpenTrack] = useState("m00");
@@ -56,10 +53,10 @@ export default function Formation({ state, openLesson, dados, go }) {
   );
 
   return (
-    <div className="page">
+    <div className="page formation-page">
       <PageHeader
         title="Formação guiada pelo POP"
-        subtitle={`${tracks.length} módulos conectam cada seção do POP a objetivos, conteúdo-fonte, prática e avaliação.`}
+        subtitle="Escolha uma tarefa ou percorra os módulos em sequência."
         icon={GraduationCap}
       />
       <LearningPaths
@@ -82,15 +79,7 @@ export default function Formation({ state, openLesson, dados, go }) {
         <span role="status" aria-live="polite">
           {filterNormalized
             ? `${visibleTopics} ${visibleTopics === 1 ? "tópico encontrado" : "tópicos encontrados"}`
-            : `${lessons.length} tópicos · ${tracks.reduce(
-              (total, track) => total + (
-                trackLessons.get(track.id)?.reduce(
-                  (minutes, lesson) => minutes + lesson.minutes,
-                  0,
-                ) || 0
-              ),
-              0,
-            )} min estimados`}
+            : `${tracks.length} módulos · ${lessons.length} tópicos`}
         </span>
       </div>
       <div className="curriculum">
@@ -101,8 +90,9 @@ export default function Formation({ state, openLesson, dados, go }) {
               <i />
             </div>
             {group.rows.map(({ id, track, full, lessons: visibleLessons }) => {
-              const progress = trackProgress(id, state);
-              const Icon = trackIcons[track.icon] || BookOpen;
+              const completed = state.completed.filter((lessonId) =>
+                full.some((lesson) => lesson.id === lessonId),
+              ).length;
               const expanded = openTrack === id || (
                 Boolean(filterNormalized) && visibleLessons.length > 0
               );
@@ -117,25 +107,13 @@ export default function Formation({ state, openLesson, dados, go }) {
                     aria-expanded={expanded}
                     onClick={() => setOpenTrack(openTrack === id ? "" : id)}
                   >
-                    <span className="track-icon" style={{ "--track": track.color }}>
-                      <Icon aria-hidden="true" />
-                    </span>
+                    <span className="track-code">{track.code}</span>
                     <span className="track-copy">
-                      <small>{track.code}</small>
                       <strong>{track.title}</strong>
                       <em>{track.summary}</em>
                     </span>
                     <span className="track-metrics">
-                      <b>{progress}%</b>
-                      <i aria-hidden="true">
-                        <em style={{ width: `${progress}%` }} />
-                      </i>
-                      <small>
-                        {state.completed.filter((lessonId) =>
-                          full.some((lesson) => lesson.id === lessonId),
-                        ).length}
-                        /{full.length} tópicos
-                      </small>
+                      <small>{completed}/{full.length} aulas</small>
                     </span>
                     <ChevronRight aria-hidden="true" />
                   </button>
@@ -162,7 +140,7 @@ export default function Formation({ state, openLesson, dados, go }) {
                               {lesson.title}
                             </strong>
                             <small>
-                              {lesson.minutes} min estimados · Fonte vinculada ao POP
+                              {lesson.minutes} min estimados
                             </small>
                           </span>
                           {state.bookmarks.includes(lesson.id) && (

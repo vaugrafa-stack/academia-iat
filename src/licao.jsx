@@ -436,6 +436,7 @@ export default function Lesson({
           <ChevronRight />
           <span>{lesson.number || "Introdução"}</span>
         </div>
+        <div className="lesson-lead">
         <header className="lesson-header">
           <div>
             <h1>
@@ -477,6 +478,7 @@ export default function Lesson({
             lesson={lesson}
           />
         )}
+        </div>
         {/* Proveniencia e percurso de raciocinio ficam RECOLHIDOS na aula.
             Os dois blocos sao compromissos reais da plataforma: um declara de
             onde o conteudo vem, o outro declara o que se espera da pessoa. Mas
@@ -484,16 +486,6 @@ export default function Lesson({
             conteudo, empurrando a aula para baixo da dobra em toda visita.
             Informacao que nao muda de aula para aula nao precisa ser parede:
             precisa estar a um clique, e verificavel quando alguem quiser. */}
-        <details className="aula-meta">
-          <summary>
-            <ShieldCheck size={14} aria-hidden="true" />
-            Fonte deste conteúdo e percurso de raciocínio
-          </summary>
-          <div className="aula-meta-corpo">
-            <SourceAssurance compact popData={popData} lessonCount={lessons.length} />
-            <LearningContract design={design} />
-          </div>
-        </details>
         <SiglasDaAula siglas={siglas} />
         <div
           className="lesson-tabs"
@@ -503,7 +495,9 @@ export default function Lesson({
           {[
             ["aula", "Aula guiada", BookOpen],
             ["fonte", "Fonte do POP", FileText],
-            ["materiais", "Quadros e figuras", Layers3],
+            ...(tables.length + figures.length > 0
+              ? [["materiais", "Quadros e figuras", Layers3]]
+              : []),
             ["notas", "Anotações", StickyNote],
           ].map(([id, label, Icon]) => (
             <button
@@ -531,6 +525,9 @@ export default function Lesson({
           aria-labelledby={`aba-aula-${lesson.id}-${tab}`}
           key={tab}
         >
+          <h2 className="sr-only">
+            {tab === "aula" ? "Aula guiada" : tab === "fonte" ? "Fonte do POP" : tab === "materiais" ? "Quadros e figuras" : "Anotações"}
+          </h2>
           {tab === "aula" && (
             <LessonOverview
               lesson={lesson}
@@ -568,11 +565,35 @@ export default function Lesson({
             />
           )}{" "}
           {tab === "fonte" && (
-            <SourceContent
-              blocks={blocks}
-              tableMap={tableMap}
-              materiais={materiaisDaSecao}
-            />
+            <>
+              <SourceContent
+                blocks={blocks}
+                tableMap={tableMap}
+                materiais={materiaisDaSecao}
+              />
+              <details className="aula-meta">
+                <summary>
+                  <ShieldCheck size={14} aria-hidden="true" />
+                  Sobre a fonte e o método de aprendizagem
+                </summary>
+                <div className="aula-meta-corpo">
+                  <SourceAssurance compact popData={popData} lessonCount={lessons.length} />
+                  <LearningContract design={design} />
+                  <div className="analysis-alert">
+                    <AlertTriangle aria-hidden="true" />
+                    <p>Antes de aplicar este conteúdo a um processo real, confirme a norma vigente, a regra de transição, a competência e a orientação institucional.</p>
+                  </div>
+                  <div className="quick-tip">
+                    <Lightbulb aria-hidden="true" />
+                    <p>Registre documento, fundamento, suficiência, consequência e encaminhamento antes de concluir.</p>
+                  </div>
+                  <div className="example-compare" aria-label="Critério de análise">
+                    <div className="bad"><X aria-hidden="true" /><span>Evite partir de uma conclusão sem confrontar as evidências.</span></div>
+                    <div className="good"><Check aria-hidden="true" /><span>Confronte as fontes e registre as limitações antes de encaminhar.</span></div>
+                  </div>
+                </div>
+              </details>
+            </>
           )}{" "}
           {tab === "materiais" && (
             <LessonMaterials tables={tables} figures={figures} materiais={materiaisDaSecao} />
@@ -671,60 +692,6 @@ export default function Lesson({
           )}
         </footer>
       </div>
-      <aside className="lesson-context">
-        <div className="context-sticky">
-          <h3>Nesta aula</h3>
-          <div className="context-progress">
-            <span>Progresso do módulo</span>
-            <b>{trackProgress(track.id, state)}%</b>
-            <i>
-              <em style={{ width: `${trackProgress(track.id, state)}%` }} />
-            </i>
-          </div>
-          <nav>
-            <button
-              className={tab === "aula" ? "active" : ""}
-              onClick={() => setTab("aula")}
-            >
-              <Target />
-              Aula guiada{tab === "aula" ? <CheckCircle2 /> : <Circle />}
-            </button>
-            <button
-              className={tab === "fonte" ? "active" : ""}
-              onClick={() => setTab("fonte")}
-            >
-              <FileText />
-              Fonte da seção{tab === "fonte" ? <CheckCircle2 /> : <Circle />}
-            </button>
-            <button
-              className={tab === "materiais" ? "active" : ""}
-              onClick={() => setTab("materiais")}
-            >
-              <Layers3 />
-              {tables.length} tabelas · {figures.length} figuras
-              {tab === "materiais" ? <CheckCircle2 /> : <Circle />}
-            </button>
-            <button
-              className={tab === "notas" ? "active" : ""}
-              onClick={() => setTab("notas")}
-            >
-              <StickyNote />
-              Caderno pessoal{tab === "notas" ? <CheckCircle2 /> : <Circle />}
-            </button>
-          </nav>
-          <div className="quick-tip">
-            <Lightbulb />
-            <div>
-              <strong>Regra de ouro</strong>
-              <p>
-                Identifique documento, fundamento, suficiência, consequência e
-                encaminhamento. Não comece pela conclusão.
-              </p>
-            </div>
-          </div>
-          <SiglasDaAula siglas={siglas} variante="lateral" />
-        </div>
-      </aside>
     </div>
   );
 }
@@ -1302,10 +1269,6 @@ function LessonOverview({
   const vazia = allParas.length === 0 && materiais.itens.length === 0;
   return (
     <article className="lesson-article">
-      <h2>
-        {lesson.number ? lesson.number + " · " : ""}
-        {lesson.title}
-      </h2>
       {/* O objetivo NAO se repete aqui. Ele ja esta no cabecalho da aula, e
           repetir era duplicacao desde sempre; depois que o cabecalho passou a
           usar o objetivo derivado do POP, virou CONTRADICAO, com duas promessas
@@ -1368,7 +1331,11 @@ function LessonOverview({
           </button>
         </div>
       )}
-      <LessonInlineMaterials key={lesson.id} materiais={materiais} />
+      <LessonInlineMaterials
+        key={lesson.id}
+        materiais={materiais}
+        inicialmenteAberto={prosa.length === 0 && steps.length === 0 && notas.length === 0}
+      />
       {steps.length >= 3 ? (
         <div className="lesson-checklist">
           <div className="lc-head">
@@ -1457,43 +1424,6 @@ function LessonOverview({
           ))}
         </nav>
       )}
-      {!vazia && (
-        <>
-          <div className="analysis-alert">
-            <AlertTriangle />
-            <div>
-              <strong>Limite de aplicação</strong>
-              <p>
-                Este conteúdo ensina a aplicar o POP. Antes de decidir em
-                processo real, confirme norma vigente, regra de transição,
-                competência e orientação institucional aplicável.
-              </p>
-            </div>
-          </div>
-          <div className="example-compare">
-            <div className="bad">
-              <X />
-              <div>
-                <strong>Atalho arriscado</strong>
-                <p>
-                  Assumir a conclusão e procurar documentos apenas para
-                  confirmá-la.
-                </p>
-              </div>
-            </div>
-            <div className="good">
-              <Check />
-              <div>
-                <strong>Análise rastreável</strong>
-                <p>
-                  Confrontar evidências, registrar limitações e deixar a
-                  conclusão resultar do percurso.
-                </p>
-              </div>
-            </div>
-          </div>
-        </>
-      )}
       <LessonKnowledgeCheck
         selection={questionSelection}
         evidence={evidence}
@@ -1529,8 +1459,8 @@ function FiguraDoPop({ figure, legenda }) {
   );
 }
 
-function LessonInlineMaterials({ materiais }) {
-  const [aberto, setAberto] = useState(true);
+function LessonInlineMaterials({ materiais, inicialmenteAberto = false }) {
+  const [aberto, setAberto] = useState(inicialmenteAberto);
   if (!materiais.itens.length) return null;
   const rotulos = materiais.itens.map((item) => item.tipo === "figura"
     ? `Figura ${item.figure.number}`

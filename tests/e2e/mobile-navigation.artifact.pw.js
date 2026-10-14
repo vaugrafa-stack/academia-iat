@@ -10,7 +10,7 @@ test('navegação móvel abre categorias sem escolher uma página pelo usuário'
 
   await page.goto(appUrl(baseURL), { waitUntil: 'domcontentloaded' });
   await expect(
-    page.getByRole('heading', { name: /Comece por aqui|Onde você parou/i }),
+    page.getByRole('heading', { name: /Comece pelo método|Continue sua formação/i }),
   ).toBeVisible();
 
   const nav = page.getByRole('navigation', {
@@ -102,7 +102,7 @@ test('navegação móvel abre categorias sem escolher uma página pelo usuário'
   await nav.getByRole('button', { name: 'Início' }).click();
   await expect(page).toHaveURL(/\/$/);
   await expect(
-    page.getByRole('heading', { name: /Comece por aqui|Onde você parou/i }),
+    page.getByRole('heading', { name: /Comece pelo método|Continue sua formação/i }),
   ).toBeVisible();
   await expect(page.locator('.mobile-nav-panel')).toHaveCount(0);
   await expectHealthyPage(page, runtimeIssues);

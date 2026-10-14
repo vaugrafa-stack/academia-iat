@@ -1187,3 +1187,65 @@ aprovados em `pnpm test`; build e orçamento aprovados; 101 cenários de
 navegador aprovados, 34 omissões previstas; cenário PWA local aprovado. A
 etapa só se torna publicação após o workflow remoto e a conferência do SHA
 servido pelo site.
+
+## Rodada de simplificação editorial da interface — 14/10/2026
+
+### Diagnóstico e decisão
+
+A inspeção da versão publicada em Início, Formação e numa aula do módulo M00
+mostrou repetição visual sem ganho proporcional: o Início oferece a mesma
+continuidade em mais de um botão e apresenta cartões de estado vazio; a
+Formação coloca quatro cartões densos antes do currículo; a aula repete abas
+na lateral, exibe siglas lateralmente e abre tabelas extensas no fluxo principal.
+Alertas e comparações genéricas iguais em todas as aulas também afastam a
+checagem e a prática da primeira leitura.
+
+Esta rodada não reduz o conteúdo extraído do POP nem retira quadros, figuras,
+fonte, vídeo, casos, checagem, registro de aprendizagem ou notas. Ela reorganiza
+a apresentação: o fluxo guiado prioriza objetivo observável, explicação
+vinculada, exemplo e prática; materiais e procedência permanecem a um clique.
+Quadros e figuras continuam junto do tópico, recolhidos quando acompanham
+prosa explicativa. Quando são o único conteúdo substantivo da aula, abrem
+diretamente: ocultar a fonte nesse caso deixaria a aula vazia.
+
+### Critérios de aceite
+
+1. Início com uma entrada principal para a aula, uma próxima prática e revisão
+   apenas quando houver erro; sem cartões vazios nem percurso duplicado.
+2. Formação com rotas em lista concisa e currículo sequencial visível na
+   primeira dobra, mantendo busca, expansão e retomada funcionais.
+3. Aula com uma navegação de recursos, sem coluna lateral repetida; quadros,
+   figuras, siglas e fonte consultáveis sem dominar a leitura inicial.
+4. Manter status de minuta, limites de aplicação e distinção entre fonte,
+   comentário didático e exemplo sintético acessíveis e explícitos.
+5. Passar em testes, build, auditoria premium e conferência de interação,
+   responsividade, acessibilidade básica e modo escuro em navegador real.
+
+### Resultado local e limite
+
+Início: uma entrada principal para a aula; a próxima prática aparece sem
+cartão decorativo e a revisão só aparece se há erro. Formação: quatro portas
+de entrada viraram linhas curtas, seguidas do currículo M00–M16. Aula: vídeo
+e objetivo compartilham a abertura; a terceira coluna e seus links repetidos
+saíram; siglas ficam em um recolhimento no fluxo, e procedência e método na
+aba da fonte. A checagem, o exemplo, a prática escrita, os materiais e as notas
+permanecem. Objetivos de aulas compostas só por quadro passaram a pedir
+consulta e interpretação, não memorização sem consulta. O professor animado
+fica oculto por padrão, com ativação voluntária e preferência local.
+
+A varredura visual também cobriu fundamentos hidrelétricos, avaliações,
+laboratório, biblioteca, guia do empreendedor, mapa e redator. A animação e os
+controles do guia de engenharia, o aviso de não oficialidade do empreendedor,
+as camadas e cautelas do mapa e as orientações do redator têm função didática
+ou de segurança e foram preservados. A abertura da avaliação e a biblioteca de
+casos do laboratório perderam molduras aninhadas; o conteúdo e os filtros não
+mudaram. Na checagem do GeoPR, dois serviços deixaram de declarar atribuição;
+o catálogo deixa de apresentar atribuição não confirmada pelo serviço nesses
+dois casos.
+
+O candidato local passou em 76 arquivos/687 testes, build e orçamento,
+auditoria premium, 101 cenários Playwright em cinco larguras (34 omissões
+previstas) e cenário PWA local. O total de CSS segue em 95% do limite bruto:
+reduzir código legado de estilos permanece uma frente separada. Nenhum teste
+substitui validação institucional da minuta. Publicação e SHA de produção
+devem ser registrados somente após o workflow remoto.

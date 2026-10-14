@@ -6,7 +6,7 @@ import {
 } from './helpers.js';
 
 const ROUTES = [
-  { hash: '', heading: /Comece por aqui|Onde você parou/i, minimumControls: 5 },
+  { hash: '', heading: /Comece pelo método|Continue sua formação/i, minimumControls: 5 },
   { hash: '#/hidreletricas', heading: /Como funciona uma hidrelétrica/i, minimumControls: 10 },
   { hash: '#/empreendedor', heading: /Guia de quem desenvolve o empreendimento/i, minimumControls: 10 },
   { hash: '#/formacao', heading: /Formação guiada pelo POP/i, minimumControls: 10 },
@@ -357,7 +357,7 @@ test('contraste e foco sao medidos no estilo renderizado em ambos os temas', asy
     await page.reload({ waitUntil: 'domcontentloaded' });
     await expect(page.locator('html')).toHaveAttribute('data-theme', theme);
 
-    const primary = page.locator('.dashboard-hero-actions button.primary');
+    const primary = page.locator('.dashboard-feature button.primary');
     await expect(primary).toBeVisible();
     const rendered = await primary.evaluate((element) => {
       const style = getComputedStyle(element);
@@ -425,7 +425,7 @@ test('primeiro acesso orienta o iniciante e a busca curricular explica o vazio',
   const runtimeIssues = monitorRuntime(page, baseURL);
   await page.goto(appUrl(baseURL), { waitUntil: 'domcontentloaded' });
   await expect(
-    page.getByRole('heading', { name: 'Comece por aqui.' }),
+    page.getByRole('heading', { name: 'Comece pelo método.' }),
   ).toBeVisible();
   await expect(page.getByRole('button', { name: /Iniciar forma..o/i })).toBeVisible();
   await expect(page.getByText(/Onde voc. parou/i)).toHaveCount(0);

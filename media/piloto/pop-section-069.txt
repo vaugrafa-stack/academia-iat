@@ -1,0 +1,52 @@
+Visão geral dos blocos de análise do PACUERA
+
+Objetivo: Reconhecer como os principais blocos de análise do PACUERA se conectam e localizar o checklist integral no POP e no termo vigente.
+Pré-requisito: Compreender o PACUERA como instrumento de gestão territorial do entorno do reservatório.
+
+[0.0s] Volume não garante suficiência
+Um PACUERA pode ter muitas páginas e ainda assim não sustentar o zoneamento. O ponto não é contar capítulos. É verificar se diagnóstico, cartografia, fragilidades, potencialidades e regras de uso formam uma cadeia coerente.
+Fonte: POP, item 18.10.2
+
+[14.8s] Quatro blocos para orientar a leitura
+Ao final, você deverá usar quatro blocos para orientar a primeira leitura: controle e área de estudo; reservatório e base cartográfica; diagnósticos integrados; zoneamento, implementação e revisão. Eles não substituem o checklist integral do item 18.10.2 nem o termo vigente.
+Fonte: POP, item 18.10.2
+
+[33.7s] Vocabulário territorial
+Três termos orientam a leitura. TVR é o trecho de vazão reduzida. UTH é a unidade territorial homogênea usada para organizar a análise espacial. Zoneamento é a tradução fundamentada do diagnóstico em zonas e regras de uso.
+Fonte: POP, item 18.10.2; IAT, TR PACUERA 2026
+
+[49.9s] Bloco 1 · Controle e área
+O primeiro bloco reúne autoria, equipe, assinaturas, ARTs, versão, protocolo e revisão. A área de estudo inclui a faixa mínima indicada no termo vigente, a totalidade do TVR e as extensões previstas a jusante e em sistemas de cascata.
+Fonte: POP, item 18.10.2; IAT, TR PACUERA 2026
+
+[66.7s] Bloco 2 · Reservatório e mapas
+O segundo bloco confronta cotas, níveis, área, APP, volume, barramento, potência e extensão do TVR com Memorial, outorga, operação e segurança. A cartografia precisa ter origem, precisão, projeção, topologia, atributos e dados reproduzíveis.
+Fonte: POP, item 18.10.2
+
+[85.3s] Bloco 3 · Diagnóstico integrado
+O terceiro bloco integra meio físico, biológico, socioeconômico, histórico-cultural, jurídico e institucional. Fragilidades e potencialidades precisam nascer desses dados e de sua representação espacial. Uma síntese sem base espacial é insuficiente.
+Fonte: POP, item 18.10.2
+
+[102.1s] Bloco 4 · Zoneamento e gestão
+No quarto bloco, as UTHs e as zonas devem decorrer das fragilidades, potencialidades e capacidade de suporte. Cada regra de uso precisa de fundamento. Implementação, indicadores, cronograma, participação, monitoramento e revisão completam o ciclo de gestão.
+Fonte: POP, item 18.10.2; IAT, TR PACUERA 2026
+
+[119.3s] Erro: mapa sem cadeia de evidência
+O erro é aprovar um mapa bonito sem nexo entre diagnóstico e zoneamento. Também é erro tratar o PACUERA como substituto de licença, outorga, aprovação municipal, ato da ANEEL, manifestação patrimonial ou instrumento de segurança.
+Fonte: POP, item 18.10.2
+
+[134.5s] Decida antes de continuar
+Pausa para decidir. O estudo apresenta zonas, mas não mostra fragilidades, potencialidades nem UTHs que expliquem seus limites. Ele está pronto para a etapa seguinte?
+Fonte: POP, item 18.10.2
+
+[145.2s] Resposta comentada
+Não. Sem vínculo entre dados, sínteses, UTHs e regras de cada zona, não é possível validar o zoneamento. A lacuna precisa ser registrada e encaminhada antes de tratar o plano como suficiente.
+Fonte: POP, item 18.10.2
+
+[157.9s] Síntese
+Leia o PACUERA como uma cadeia: controle e versão; área e cartografia; diagnósticos e sínteses; UTHs e zoneamento; participação, implementação, monitoramento e revisão. Este mapa de leitura não substitui a lista integral de requisitos. Se um elo faltar, registre a consequência.
+Fonte: POP, item 18.10.2; IAT, TR PACUERA 2026
+
+[176.7s] Próximo passo
+Agora abra o item 18.10.2 e o termo vigente. Para cada requisito integral, registre a fonte, a evidência apresentada, o nexo com o zoneamento e a consequência de eventual lacuna.
+Fonte: POP, item 18.10.2; IAT, TR PACUERA 2026

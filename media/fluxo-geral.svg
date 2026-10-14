@@ -1,0 +1,111 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720" role="img" aria-labelledby="title desc">
+  <title id="title">Fluxo geral da análise de processo hidrelétrico no IAT</title>
+  <desc id="desc">Animação educativa silenciosa em cinco etapas, do recebimento do processo às saídas possíveis da triagem.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#061f1c"/>
+      <stop offset="1" stop-color="#0a3440"/>
+    </linearGradient>
+    <linearGradient id="river" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#63d2c5"/>
+      <stop offset="1" stop-color="#3aa9d8"/>
+    </linearGradient>
+    <filter id="glow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="5" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#63d2c5"/>
+    </marker>
+    <style>
+      text{font-family:"Segoe UI",Arial,sans-serif;fill:#f4fbf8}
+      .eyebrow{font-size:16px;font-weight:700;letter-spacing:2.6px;fill:#83e4d7}
+      .title{font-size:42px;font-weight:750;letter-spacing:-1px}
+      .subtitle{font-size:18px;fill:#b8d7d4}
+      .box{fill:#0d3b38;stroke:#347a70;stroke-width:2}
+      .step-label{font-size:13px;font-weight:800;letter-spacing:1.8px;fill:#83e4d7}
+      .step-title{font-size:21px;font-weight:750}
+      .step-copy{font-size:15px;fill:#bed8d5}
+      .connector{fill:none;stroke:#63d2c5;stroke-width:4;stroke-linecap:round;marker-end:url(#arrow);stroke-dasharray:10 12;animation:stream 2.4s linear infinite}
+      .step{opacity:.74;transform-box:fill-box;transform-origin:center;animation:focus 20s ease-in-out infinite}
+      .s1{animation-delay:0s}.s2{animation-delay:4s}.s3{animation-delay:8s}.s4{animation-delay:12s}.s5{animation-delay:16s}
+      .outcome{fill:#0b2d2b;stroke:#285c58;stroke-width:1.5}
+      .outcome-text{font-size:14px;font-weight:650;fill:#d7e9e6}
+      .note{font-size:14px;fill:#a9c8c5}
+      @keyframes focus{0%,16%{opacity:1;transform:translateY(-8px);filter:url(#glow)}22%,100%{opacity:.74;transform:translateY(0);filter:none}}
+      @keyframes stream{to{stroke-dashoffset:-44}}
+      @media (prefers-reduced-motion:reduce){.step,.connector{animation:none!important}.step{opacity:1}}
+    </style>
+  </defs>
+  <rect width="1280" height="720" fill="url(#bg)"/>
+  <circle cx="1120" cy="80" r="210" fill="#1e7fae" opacity=".08"/>
+  <circle cx="80" cy="690" r="245" fill="#1f8a5b" opacity=".10"/>
+
+  <g transform="translate(70 62)">
+    <rect width="238" height="34" rx="17" fill="#164c43" stroke="#3f8d7f"/>
+    <text class="eyebrow" x="18" y="23">MICROAULA • 20 S</text>
+  </g>
+  <text class="title" x="70" y="146">Fluxo geral da análise</text>
+  <text class="subtitle" x="70" y="181">A conclusão resulta da compatibilização documental e técnica — não é o ponto de partida.</text>
+
+  <path class="connector" d="M270 338 H295"/>
+  <path class="connector" d="M500 338 H525"/>
+  <path class="connector" d="M730 338 H755"/>
+  <path class="connector" d="M960 338 H985"/>
+
+  <g class="step s1">
+    <rect class="box" x="70" y="260" width="200" height="156" rx="20"/>
+    <circle cx="105" cy="294" r="19" fill="#1f8a5b"/><text x="105" y="301" text-anchor="middle" font-size="19" font-weight="800">1</text>
+    <text class="step-label" x="92" y="338">RECEBER</text>
+    <text class="step-title" x="92" y="369">Identificar o</text>
+    <text class="step-title" x="92" y="394">objeto</text>
+  </g>
+  <g class="step s2">
+    <rect class="box" x="300" y="260" width="200" height="156" rx="20"/>
+    <circle cx="335" cy="294" r="19" fill="#1f8a5b"/><text x="335" y="301" text-anchor="middle" font-size="19" font-weight="800">2</text>
+    <text class="step-label" x="322" y="338">CONFERIR</text>
+    <text class="step-title" x="322" y="369">Histórico e</text>
+    <text class="step-title" x="322" y="394">suficiência</text>
+  </g>
+  <g class="step s3">
+    <rect class="box" x="530" y="260" width="200" height="156" rx="20"/>
+    <circle cx="565" cy="294" r="19" fill="#1e7fae"/><text x="565" y="301" text-anchor="middle" font-size="19" font-weight="800">3</text>
+    <text class="step-label" x="552" y="338">ENQUADRAR</text>
+    <text class="step-title" x="552" y="369">Tipologia, ato</text>
+    <text class="step-title" x="552" y="394">e estudo</text>
+  </g>
+  <g class="step s4">
+    <rect class="box" x="760" y="260" width="200" height="156" rx="20"/>
+    <circle cx="795" cy="294" r="19" fill="#1e7fae"/><text x="795" y="301" text-anchor="middle" font-size="19" font-weight="800">4</text>
+    <text class="step-label" x="782" y="338">ANALISAR</text>
+    <text class="step-title" x="782" y="369">Mérito e</text>
+    <text class="step-title" x="782" y="394">compatibilidade</text>
+  </g>
+  <g class="step s5">
+    <rect class="box" x="990" y="260" width="220" height="156" rx="20"/>
+    <circle cx="1025" cy="294" r="19" fill="#1f8a5b"/><text x="1025" y="301" text-anchor="middle" font-size="19" font-weight="800">5</text>
+    <text class="step-label" x="1012" y="338">REGISTRAR</text>
+    <text class="step-title" x="1012" y="369">Saída técnica</text>
+    <text class="step-copy" x="1012" y="397">fundamentada</text>
+  </g>
+
+  <text class="step-label" x="70" y="487">SAÍDAS POSSÍVEIS DA TRIAGEM</text>
+  <g transform="translate(70 508)">
+    <rect class="outcome" width="214" height="52" rx="14"/><circle cx="24" cy="26" r="7" fill="#63d2c5"/><text class="outcome-text" x="42" y="31">Prosseguir ao mérito</text>
+  </g>
+  <g transform="translate(300 508)">
+    <rect class="outcome" width="214" height="52" rx="14"/><circle cx="24" cy="26" r="7" fill="#f2c66d"/><text class="outcome-text" x="42" y="31">Diligência documental</text>
+  </g>
+  <g transform="translate(530 508)">
+    <rect class="outcome" width="214" height="52" rx="14"/><circle cx="24" cy="26" r="7" fill="#f2c66d"/><text class="outcome-text" x="42" y="31">Diligência técnica</text>
+  </g>
+  <g transform="translate(760 508)">
+    <rect class="outcome" width="214" height="52" rx="14"/><circle cx="24" cy="26" r="7" fill="#3aa9d8"/><text class="outcome-text" x="42" y="31">Encaminhamento</text>
+  </g>
+  <g transform="translate(990 508)">
+    <rect class="outcome" width="220" height="52" rx="14"/><circle cx="24" cy="26" r="7" fill="#ef8e7d"/><text class="outcome-text" x="42" y="31">Não favorável</text>
+  </g>
+
+  <path d="M70 626 C235 585, 355 680, 525 630 S825 584, 1005 632 S1190 660, 1240 625" fill="none" stroke="url(#river)" stroke-width="5" opacity=".65"/>
+  <text class="note" x="70" y="681">Fonte didática: POP-DLE-HID-001 v1.2 • Seções 6, 6.1 e 7 • Confirmar norma e orientação institucional vigentes.</text>
+</svg>
